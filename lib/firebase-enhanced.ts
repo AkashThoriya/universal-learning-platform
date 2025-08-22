@@ -375,8 +375,18 @@ export const userService = {
   async create(userId: string, userData: any): Promise<Result<void>> {
     const userDoc = {
       ...userData,
+      userId,
       createdAt: Timestamp.fromDate(new Date()),
-      updatedAt: Timestamp.fromDate(new Date())
+      onboardingComplete: false,
+      stats: {
+        totalStudyHours: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        totalMockTests: 0,
+        averageScore: 0,
+        topicsCompleted: 0,
+        totalTopics: 0
+      }
     };
     return firebaseService.setDocument('users', userId, userDoc);
   },
@@ -394,6 +404,13 @@ export const userService = {
       orderBy: [{ field: 'lastStudied', direction: 'desc' }],
       limit: 100
     });
+  },
+
+  async getStats(userId: string): Promise<Result<any | null>> {
+    const userResult = await this.get(userId);
+    if (!userResult.success) return userResult;
+    
+    return createSuccess(userResult.data?.stats || null);
   }
 };
 
@@ -461,6 +478,83 @@ export const progressService = {
     return firebaseService.queryCollection(`users/${userId}/progress`, {
       orderBy: [{ field: 'lastStudied', direction: 'desc' }]
     });
+  }
+};
+
+/**
+ * Enhanced revision queue operations  
+ */
+export const revisionService = {
+  async getQueue(userId: string): Promise<Result<any[]>> {
+    // This will use the existing getRevisionQueue logic but wrapped in service pattern
+    const progressResult = await firebaseService.queryCollection(`users/${userId}/progress`, {
+      where: [{ field: 'nextRevision', operator: '<=', value: Timestamp.fromDate(new Date()) }],
+      orderBy: [{ field: 'nextRevision', direction: 'asc' }],
+      limit: 20
+    });
+
+    return progressResult;
+  },
+
+  async updateRevision(userId: string, topicId: string, masteryScore: number): Promise<Result<void>> {
+    const now = Timestamp.fromDate(new Date());
+    const nextRevision = new Date();
+    nextRevision.setDate(nextRevision.getDate() + 7); // Default 7-day interval
+
+    // Get current revision count
+    const currentProgress = await firebaseService.getDocument(`users/${userId}/progress`, topicId);
+    const currentRevisionCount = (currentProgress.data as any)?.revisionCount || 0;
+
+    return firebaseService.updateDocument(`users/${userId}/progress`, topicId, {
+      lastRevised: now,
+      nextRevision: Timestamp.fromDate(nextRevision),
+      masteryScore,
+      revisionCount: currentRevisionCount + 1
+    });
+  }
+};
+
+/**
+ * Enhanced mock test operations
+ */
+export const mockTestService = {
+  async create(userId: string, testData: any): Promise<Result<string>> {
+    const testId = doc(collection(db, `users/${userId}/logs_mocks`)).id;
+    const mockTest = {
+      ...testData,
+      id: testId,
+      createdAt: Timestamp.fromDate(new Date())
+    };
+
+    const result = await firebaseService.setDocument(
+      `users/${userId}/logs_mocks`,
+      testId,
+      mockTest
+    );
+
+    return result.success ? createSuccess(testId) : result;
+  },
+
+  async getTests(userId: string, limit: number = 10): Promise<Result<any[]>> {
+    return firebaseService.queryCollection(`users/${userId}/logs_mocks`, {
+      orderBy: [{ field: 'date', direction: 'desc' }],
+      limit
+    });
+  },
+
+  async getTest(userId: string, testId: string): Promise<Result<any | null>> {
+    return firebaseService.getDocument(`users/${userId}/logs_mocks`, testId);
+  }
+};
+
+/**
+ * Enhanced insights service
+ */
+export const insightsService = {
+  async generate(userId: string): Promise<Result<any[]>> {
+    // This would implement the generateStudyInsights logic
+    // For now, return empty array as placeholder
+    return createSuccess([]);
   }
 };
 

@@ -324,6 +324,8 @@ export interface TopicProgress {
   userNotes: string;
   /** User's answer to "Why is this important for my exam?" */
   personalContext: string;
+  /** Legacy field for banking context - kept for backward compatibility */
+  userBankingContext?: string;
   /** User-defined tags for organization and filtering */
   tags: string[];
   /** User-perceived difficulty level from 1 (very easy) to 5 (very hard) */
@@ -332,6 +334,11 @@ export interface TopicProgress {
   importance: 1 | 2 | 3 | 4 | 5;
   /** Track score improvement over time compared to previous attempts */
   lastScoreImprovement: number;
+  /** Current affairs notes related to this topic */
+  currentAffairs?: Array<{
+    date: Timestamp;
+    note: string;
+  }>;
 }
 
 /**

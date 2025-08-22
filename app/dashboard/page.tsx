@@ -30,15 +30,11 @@ import {
   userService, 
   dailyLogService, 
   progressService,
+  revisionService,
+  mockTestService,
+  insightsService,
   firebaseService 
 } from '@/lib/firebase-enhanced';
-import { 
-  getRevisionQueue, 
-  getMockTests, 
-  generateStudyInsights,
-  subscribeToRevisionQueue,
-  subscribeToUserStats
-} from '@/lib/firebase-utils';
 import { useAsyncData, useDebouncedValue } from '@/hooks/enhanced-hooks';
 import { LoadingState } from '@/lib/types-utils';
 import AuthGuard from '@/components/AuthGuard';
@@ -122,16 +118,17 @@ export default function DashboardPage() {
       if (!user) return;
 
       try {
-        // Fetch data that hasn't been migrated to service layer yet
-        const [mockTestsData, revisionData, insightsData] = await Promise.all([
-          getMockTests(user.uid, 10),
-          getRevisionQueue(user.uid),
-          generateStudyInsights(user.uid)
+        // Fetch data using the new service layer
+        const [mockTestsResult, revisionResult, insightsResult] = await Promise.all([
+          mockTestService.getTests(user.uid, 10),
+          revisionService.getQueue(user.uid),
+          insightsService.generate(user.uid)
         ]);
 
-        setMockTests(mockTestsData);
-        setRevisionQueue(revisionData);
-        setInsights(insightsData);
+        // Process results and set state
+        if (mockTestsResult.success) setMockTests(mockTestsResult.data || []);
+        if (revisionResult.success) setRevisionQueue(revisionResult.data || []);
+        if (insightsResult.success) setInsights(insightsResult.data || []);
       } catch (error) {
         console.error('Error fetching legacy dashboard data:', error);
       } finally {
@@ -142,15 +139,17 @@ export default function DashboardPage() {
     fetchLegacyData();
 
     // Set up real-time subscriptions for live data updates
-    let unsubscribeRevision: (() => void) | undefined;
+    // TODO: Implement real-time subscriptions in the new service layer
+    // let unsubscribeRevision: (() => void) | undefined;
 
-    if (user) {
-      unsubscribeRevision = subscribeToRevisionQueue(user.uid, setRevisionQueue);
-    }
+    // if (user) {
+    //   unsubscribeRevision = subscribeToRevisionQueue(user.uid, setRevisionQueue);
+    // }
 
     // Cleanup subscriptions on component unmount
     return () => {
-      unsubscribeRevision?.();
+      // TODO: Add cleanup for real-time subscriptions
+      // unsubscribeRevision?.();
     };
   }, [user]);
 

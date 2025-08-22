@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { SUBJECTS_DATA } from '@/lib/subjects-data';
-import { UserProgress } from '@/types/user';
+import { TopicProgress } from '@/types/exam';
 import Link from 'next/link';
 import { ArrowLeft, Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
@@ -25,7 +25,7 @@ export default function TopicPage() {
   const topicId = params.topicId as string;
   const subjectId = searchParams.get('subject');
 
-  const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
+  const [userProgress, setUserProgress] = useState<TopicProgress | null>(null);
   const [userNotes, setUserNotes] = useState('');
   const [userBankingContext, setUserBankingContext] = useState('');
   const [newCurrentAffair, setNewCurrentAffair] = useState('');
@@ -43,19 +43,28 @@ export default function TopicPage() {
       try {
         const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
         if (progressDoc.exists()) {
-          const data = progressDoc.data() as UserProgress;
+          const data = progressDoc.data() as TopicProgress;
           setUserProgress(data);
           setUserNotes(data.userNotes || '');
           setUserBankingContext(data.userBankingContext || '');
         } else {
           // Create initial progress document
-          const initialProgress: UserProgress = {
-            progressId: topicId,
+          const initialProgress: TopicProgress = {
+            id: topicId,
             topicId: topicId,
+            subjectId: '', // Will be populated when syllabus data is available
             masteryScore: 0,
             lastRevised: Timestamp.now(),
+            nextRevision: Timestamp.now(),
+            revisionCount: 0,
+            totalStudyTime: 0,
             userNotes: '',
+            personalContext: '',
             userBankingContext: '',
+            tags: [],
+            difficulty: 3,
+            importance: 3,
+            lastScoreImprovement: 0,
             currentAffairs: [],
           };
           setUserProgress(initialProgress);
@@ -101,7 +110,7 @@ export default function TopicPage() {
 
     const updatedProgress = {
       ...userProgress,
-      currentAffairs: [...userProgress.currentAffairs, newAffair],
+      currentAffairs: [...(userProgress.currentAffairs || []), newAffair],
     };
 
     try {

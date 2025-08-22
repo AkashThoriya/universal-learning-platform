@@ -1,6 +1,13 @@
 import { Timestamp } from 'firebase/firestore';
 
-export interface User {
+/**
+ * @deprecated Use User from '@/types/exam' instead. This interface is kept for backward compatibility.
+ * Migration: Import { User } from '@/types/exam'
+ * 
+ * This legacy User interface will be removed in a future version.
+ * Please migrate to the comprehensive User type from types/exam.ts
+ */
+export interface LegacyUser {
   userId: string;
   email: string;
   displayName: string;
@@ -21,6 +28,26 @@ export interface User {
     sleepTime: string;
   };
 }
+
+/**
+ * Re-export the comprehensive User type from exam.ts as the standard
+ * This ensures all code uses the same User interface
+ */
+export type { 
+  User,
+  UserSettings,
+  UserStats,
+  TopicProgress,
+  DailyLog as EnhancedDailyLog,
+  MockTestLog,
+  StudyInsight,
+  RevisionItem
+} from './exam';
+
+/**
+ * Legacy interfaces kept for backward compatibility
+ * These will be removed in a future version - prefer using types from exam.ts
+ */
 
 export interface UserDiagnostic {
   diagnosticId: string;

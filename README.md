@@ -43,6 +43,22 @@ Uses a feedback loop of mock test analysis and health tracking to constantly ref
 ### 3. Contextual Mastery
 Moves beyond rote memorization by requiring users to create personal connections for each topic, mirroring contextual learning principles.
 
+## 📚 Documentation
+
+### **Complete Project Documentation**
+📋 **[Documentation Hub](./docs/README.md)** - Comprehensive project documentation with organized structure
+
+**Quick Access**:
+- 🗺️ **[Implementation Roadmap](./docs/planning/implementation-roadmap.md)** - 24-week development strategy with phase-wise tasks
+- 📊 **[Current Status Analysis](./docs/analysis/current-implementation-status.md)** - Feature completeness and readiness assessment  
+- 🔍 **[Technical Review Integration](./docs/analysis/technical-review-integration.md)** - Senior feedback analysis and strategic adjustments
+- 🏗️ **[Architecture Documentation](./docs/architecture/README.md)** - System design and technical specifications
+
+### **Development Resources**
+- **Implementation Guide**: See [docs/planning/](./docs/planning/) for detailed development plans
+- **Technical Analysis**: Review [docs/analysis/](./docs/analysis/) for current status and improvements
+- **Architecture Specs**: Check [docs/architecture/](./docs/architecture/) for system design details
+
 ## Technology Stack
 
 - **Next.js 15.0.3** (App Router) - Latest React features with stable routing and performance optimizations
