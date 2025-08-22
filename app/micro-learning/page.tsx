@@ -6,6 +6,7 @@ import { type SessionPerformance } from '@/types/micro-learning';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 type ViewState = 'dashboard' | 'session' | 'summary';
 
@@ -19,16 +20,34 @@ interface SessionConfig {
 
 function MicroLearningContent() {
   const searchParams = useSearchParams();
+  const { user } = useAuth();
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
   const [sessionConfig, setSessionConfig] = useState<SessionConfig | null>(null);
   const [sessionPerformance, setSessionPerformance] = useState<SessionPerformance | null>(null);
   const [completedSession, setCompletedSession] = useState<any>(null);
 
-  // Mock user ID - in a real app, this would come from authentication
-  const userId = 'user-123';
+  // Get authenticated user ID - ensure user is authenticated
+  const userId = user?.uid;
+
+  // Show authentication required if no user
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md">
+          <h2 className="text-2xl font-bold text-gray-900">Authentication Required</h2>
+          <p className="text-gray-600">Please log in to access micro-learning sessions.</p>
+          <Button onClick={() => window.location.href = '/login'}>
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Check for auto-start parameters from URL
   useEffect(() => {
+    if (!userId) return; // Don't process if user not authenticated
+    
     const autoStart = searchParams.get('auto');
     const subject = searchParams.get('subject');
     const topic = searchParams.get('topic');
@@ -45,7 +64,7 @@ function MicroLearningContent() {
       });
       setCurrentView('session');
     }
-  }, [searchParams]);
+  }, [searchParams, userId]); // Add userId to dependency array
 
   const handleStartSession = (
     subjectId: string, 
@@ -53,6 +72,8 @@ function MicroLearningContent() {
     track: 'exam' | 'course_tech', 
     duration?: number
   ) => {
+    if (!userId) return; // Safety check
+    
     setSessionConfig({
       userId,
       subjectId,

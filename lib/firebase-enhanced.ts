@@ -21,7 +21,8 @@ import {
   orderBy, 
   limit, 
   Timestamp,
-  writeBatch
+  writeBatch,
+  onSnapshot
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Result, createSuccess, createError, LoadingState } from './types-utils';
@@ -205,6 +206,36 @@ class FirebaseService {
       return createSuccess(undefined);
     } catch (error) {
       this.logger.error(`Error updating document ${collectionPath}/${docId}`, error as Error);
+      return createError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }
+
+  /**
+   * Enhanced document delete with cache invalidation
+   */
+  async deleteDocument(
+    collectionPath: string,
+    docId: string,
+    options: { invalidateCache?: boolean } = {}
+  ): Promise<Result<void>> {
+    const { invalidateCache = true } = options;
+
+    try {
+      await this.monitor.measure(`deleteDocument:${collectionPath}:${docId}`, async () => {
+        const docRef = doc(db, collectionPath, docId);
+        await deleteDoc(docRef);
+      });
+
+      // Invalidate cache
+      if (invalidateCache) {
+        const cacheKey = `doc:${collectionPath}:${docId}`;
+        this.cache.delete(cacheKey);
+      }
+
+      this.logger.debug(`Document deleted: ${collectionPath}/${docId}`);
+      return createSuccess(undefined);
+    } catch (error) {
+      this.logger.error(`Error deleting document ${collectionPath}/${docId}`, error as Error);
       return createError(error instanceof Error ? error : new Error('Unknown error'));
     }
   }
@@ -555,6 +586,395 @@ export const insightsService = {
     // This would implement the generateStudyInsights logic
     // For now, return empty array as placeholder
     return createSuccess([]);
+  }
+};
+
+/**
+ * Enhanced mission system operations
+ */
+export const missionFirebaseService = {
+  async saveTemplate(userId: string, template: any): Promise<Result<void>> {
+    try {
+      const templateId = template.id || doc(collection(db, `users/${userId}/mission-templates`)).id;
+      return firebaseService.setDocument(
+        `users/${userId}/mission-templates`,
+        templateId,
+        {
+          ...template,
+          id: templateId,
+          createdAt: template.createdAt || Timestamp.fromDate(new Date()),
+          updatedAt: Timestamp.fromDate(new Date())
+        }
+      );
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to save template'));
+    }
+  },
+
+  async getTemplates(userId: string, track?: string): Promise<Result<any[]>> {
+    try {
+      const options: any = {
+        useCache: true,
+        cacheTTL: 600000 // 10 minutes
+      };
+      
+      if (track) {
+        options.where = [{ field: 'track', operator: '==', value: track }];
+      }
+      
+      return firebaseService.queryCollection(`users/${userId}/mission-templates`, options);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get templates'));
+    }
+  },
+
+  async saveActiveMission(userId: string, mission: any): Promise<Result<string>> {
+    try {
+      const missionId = mission.id || doc(collection(db, `users/${userId}/active-missions`)).id;
+      const missionData = {
+        ...mission,
+        id: missionId,
+        createdAt: mission.createdAt || Timestamp.fromDate(new Date()),
+        updatedAt: Timestamp.fromDate(new Date())
+      };
+
+      const result = await firebaseService.setDocument(
+        `users/${userId}/active-missions`,
+        missionId,
+        missionData
+      );
+
+      return result.success ? createSuccess(missionId) : result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to save active mission'));
+    }
+  },
+
+  async getActiveMissions(userId: string): Promise<Result<any[]>> {
+    try {
+      return firebaseService.queryCollection(`users/${userId}/active-missions`, {
+        where: [{ field: 'status', operator: 'in', value: ['not_started', 'in_progress'] }],
+        orderBy: [{ field: 'deadline', direction: 'asc' }],
+        useCache: true,
+        cacheTTL: 300000 // 5 minutes
+      });
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get active missions'));
+    }
+  },
+
+  async updateMissionProgress(
+    userId: string, 
+    missionId: string, 
+    progress: any
+  ): Promise<Result<void>> {
+    try {
+      const status = progress.completionPercentage >= 100 ? 'completed' : 'in_progress';
+      return firebaseService.updateDocument(
+        `users/${userId}/active-missions`,
+        missionId,
+        { 
+          progress, 
+          status, 
+          updatedAt: Timestamp.fromDate(new Date()) 
+        }
+      );
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update mission progress'));
+    }
+  },
+
+  async completeMission(
+    userId: string, 
+    missionId: string, 
+    results: any
+  ): Promise<Result<void>> {
+    try {
+      const mission = await firebaseService.getDocument(`users/${userId}/active-missions`, missionId);
+      if (!mission.success || !mission.data) {
+        return createError(new Error('Mission not found'));
+      }
+
+      // Move to history and update status using batch operation
+      const completedMission = {
+        ...mission.data,
+        status: 'completed',
+        results,
+        completedAt: Timestamp.fromDate(new Date()),
+        updatedAt: Timestamp.fromDate(new Date())
+      };
+
+      const operations = [
+        {
+          type: 'set' as const,
+          path: `users/${userId}/mission-history`,
+          docId: missionId,
+          data: completedMission
+        },
+        {
+          type: 'delete' as const,
+          path: `users/${userId}/active-missions`,
+          docId: missionId
+        }
+      ];
+
+      const result = await firebaseService.batchWrite(operations);
+      
+      if (result.success) {
+        // Clear relevant cache entries
+        this.clearMissionCache(userId);
+      }
+      
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to complete mission'));
+    }
+  },
+
+  async getMissionHistory(userId: string, limit: number = 20): Promise<Result<any[]>> {
+    try {
+      return firebaseService.queryCollection(`users/${userId}/mission-history`, {
+        orderBy: [{ field: 'completedAt', direction: 'desc' }],
+        limit,
+        useCache: true,
+        cacheTTL: 600000 // 10 minutes
+      });
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get mission history'));
+    }
+  },
+
+  async deleteMission(userId: string, missionId: string): Promise<Result<void>> {
+    try {
+      const result = await firebaseService.deleteDocument(
+        `users/${userId}/active-missions`,
+        missionId
+      );
+      
+      if (result.success) {
+        this.clearMissionCache(userId);
+      }
+      
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to delete mission'));
+    }
+  },
+
+  async generateMissionAnalytics(
+    userId: string,
+    period: { startDate: Date; endDate: Date }
+  ): Promise<Result<any>> {
+    try {
+      const historyResult = await this.getMissionHistory(userId, 100);
+      
+      if (!historyResult.success) {
+        return historyResult;
+      }
+
+      const missions = historyResult.data;
+      const periodMissions = missions.filter((mission: any) => {
+        if (!mission.completedAt) return false;
+        const completedAt = mission.completedAt.toDate();
+        return completedAt >= period.startDate && completedAt <= period.endDate;
+      });
+
+      const analytics = {
+        totalMissions: periodMissions.length,
+        averageScore: periodMissions.length > 0 
+          ? periodMissions.reduce((sum: number, m: any) => sum + (m.results?.finalScore || 0), 0) / periodMissions.length
+          : 0,
+        totalTimeSpent: periodMissions.reduce((sum: number, m: any) => sum + (m.results?.totalTime || 0), 0),
+        trackBreakdown: this.calculateTrackBreakdown(periodMissions),
+        difficultyBreakdown: this.calculateDifficultyBreakdown(periodMissions),
+        trends: this.calculateTrends(periodMissions),
+        generatedAt: new Date()
+      };
+
+      return createSuccess(analytics);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate analytics'));
+    }
+  },
+
+  calculateTrackBreakdown(missions: any[]): any {
+    const breakdown = { exam: 0, course_tech: 0 };
+    missions.forEach((mission: any) => {
+      if (mission.track && breakdown.hasOwnProperty(mission.track)) {
+        breakdown[mission.track as keyof typeof breakdown]++;
+      }
+    });
+    return breakdown;
+  },
+
+  calculateDifficultyBreakdown(missions: any[]): any {
+    const breakdown = { beginner: 0, intermediate: 0, advanced: 0, expert: 0 };
+    missions.forEach((mission: any) => {
+      if (mission.difficulty && breakdown.hasOwnProperty(mission.difficulty)) {
+        breakdown[mission.difficulty as keyof typeof breakdown]++;
+      }
+    });
+    return breakdown;
+  },
+
+  calculateTrends(missions: any[]): any[] {
+    return missions
+      .filter((mission: any) => mission.completedAt && mission.results)
+      .sort((a: any, b: any) => a.completedAt.toDate().getTime() - b.completedAt.toDate().getTime())
+      .map((mission: any) => ({
+        date: mission.completedAt.toDate(),
+        score: mission.results?.finalScore || 0,
+        timeSpent: mission.results?.totalTime || 0
+      }));
+  },
+
+  clearMissionCache(userId: string): void {
+    // Clear relevant cache entries
+    if (firebaseService['cache']) {
+      firebaseService['cache'].delete(`users/${userId}/active-missions`);
+      firebaseService['cache'].delete(`users/${userId}/mission-history`);
+      firebaseService['cache'].delete(`users/${userId}/mission-templates`);
+    }
+  }
+};
+
+/**
+ * Enhanced micro-learning system operations
+ */
+export const microLearningFirebaseService = {
+  async saveSession(userId: string, session: any): Promise<Result<string>> {
+    const sessionId = doc(collection(db, `users/${userId}/micro-learning-sessions`)).id;
+    const sessionData = {
+      ...session,
+      id: sessionId,
+      createdAt: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date())
+    };
+
+    const result = await firebaseService.setDocument(
+      `users/${userId}/micro-learning-sessions`,
+      sessionId,
+      sessionData
+    );
+
+    return result.success ? createSuccess(sessionId) : result;
+  },
+
+  async getSessionHistory(
+    userId: string, 
+    limit: number = 20
+  ): Promise<Result<any[]>> {
+    return firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
+      orderBy: [{ field: 'createdAt', direction: 'desc' }],
+      limit,
+      useCache: true,
+      cacheTTL: 300000 // 5 minutes
+    });
+  },
+
+  async saveRecommendations(
+    userId: string, 
+    recommendations: any[]
+  ): Promise<Result<void>> {
+    const recommendationsData = {
+      recommendations,
+      generatedAt: Timestamp.fromDate(new Date()),
+      expiresAt: Timestamp.fromDate(new Date(Date.now() + 24 * 60 * 60 * 1000)) // 24 hours
+    };
+
+    return firebaseService.setDocument(
+      `users/${userId}/micro-learning`,
+      'recommendations',
+      recommendationsData
+    );
+  },
+
+  async getRecommendations(userId: string): Promise<Result<any[]>> {
+    const result = await firebaseService.getDocument(
+      `users/${userId}/micro-learning`,
+      'recommendations',
+      { useCache: true, cacheTTL: 600000 } // 10 minutes
+    );
+
+    if (!result.success || !result.data) {
+      return createSuccess([]);
+    }
+
+    const data = result.data as any;
+    
+    // Check if recommendations are expired
+    const now = new Date();
+    if (data.expiresAt) {
+      const expiresAt = data.expiresAt.toDate();
+      if (now > expiresAt) {
+        return createSuccess([]);
+      }
+    }
+
+    return createSuccess(data.recommendations || []);
+  },
+
+  async updateSessionProgress(
+    userId: string,
+    sessionId: string,
+    progress: any
+  ): Promise<Result<void>> {
+    return firebaseService.updateDocument(
+      `users/${userId}/micro-learning-sessions`,
+      sessionId,
+      { progress, updatedAt: Timestamp.fromDate(new Date()) }
+    );
+  },
+
+  async saveUserPreferences(
+    userId: string,
+    preferences: any
+  ): Promise<Result<void>> {
+    return firebaseService.setDocument(
+      `users/${userId}/micro-learning`,
+      'preferences',
+      {
+        ...preferences,
+        updatedAt: Timestamp.fromDate(new Date())
+      }
+    );
+  },
+
+  async getUserPreferences(userId: string): Promise<Result<any>> {
+    return firebaseService.getDocument(
+      `users/${userId}/micro-learning`,
+      'preferences',
+      { useCache: true, cacheTTL: 3600000 } // 1 hour
+    );
+  },
+
+  async getSessionAnalytics(userId: string, period: { startDate: Date; endDate: Date }): Promise<Result<any>> {
+    const sessionsResult = await firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
+      where: [
+        { field: 'createdAt', operator: '>=', value: Timestamp.fromDate(period.startDate) },
+        { field: 'createdAt', operator: '<=', value: Timestamp.fromDate(period.endDate) }
+      ],
+      orderBy: [{ field: 'createdAt', direction: 'desc' }]
+    });
+
+    if (!sessionsResult.success) return sessionsResult;
+
+    const sessions = sessionsResult.data;
+    const analytics = {
+      period,
+      totalSessions: sessions.length,
+      totalTimeSpent: sessions.reduce((sum: number, s: any) => sum + (s.duration || 0), 0),
+      averageAccuracy: sessions.length > 0 
+        ? sessions.reduce((sum: number, s: any) => sum + (s.progress?.accuracy || 0), 0) / sessions.length 
+        : 0,
+      trackBreakdown: {
+        exam: sessions.filter((s: any) => s.learningTrack === 'exam').length,
+        course_tech: sessions.filter((s: any) => s.learningTrack === 'course_tech').length
+      },
+      generatedAt: new Date()
+    };
+
+    return createSuccess(analytics);
   }
 };
 

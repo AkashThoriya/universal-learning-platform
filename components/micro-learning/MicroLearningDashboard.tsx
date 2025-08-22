@@ -81,67 +81,34 @@ export function MicroLearningDashboard({
       setIsLoading(true);
       setError(null);
 
-      // Simulate API call - replace with actual service calls
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Load personalized recommendations from Firebase
+      const { MicroLearningService } = await import('@/lib/micro-learning-service');
+      const recommendations = await MicroLearningService.generatePersonalizedRecommendations(activeUserId);
+      setRecommendations(recommendations);
 
-      // Mock data - replace with actual service integration
-      setRecommendations([
-        {
-          id: '1',
-          title: 'Advanced Data Structures',
-          description: 'Deep dive into trees, graphs, and hash tables for competitive programming',
-          track: 'exam',
-          duration: 15,
-          difficulty: 'advanced',
-          priority: 'high',
-          estimatedCompletion: '15 min',
-          subjectId: 'computer-science',
-          topicId: 'data-structures'
-        },
-        {
-          id: '2',
-          title: 'React Hooks Mastery',
-          description: 'Master useState, useEffect, and custom hooks with practical examples',
-          track: 'course_tech',
-          duration: 20,
-          difficulty: 'intermediate',
-          priority: 'high',
-          estimatedCompletion: '20 min',
-          subjectId: 'web-development',
-          topicId: 'react-hooks'
-        },
-        {
-          id: '3',
-          title: 'Algorithm Optimization',
-          description: 'Learn to optimize time and space complexity of common algorithms',
-          track: 'exam',
-          duration: 25,
-          difficulty: 'advanced',
-          priority: 'medium',
-          estimatedCompletion: '25 min',
-          subjectId: 'computer-science',
-          topicId: 'algorithms'
-        },
-        {
-          id: '4',
-          title: 'Database Design Fundamentals',
-          description: 'Master normalization, indexing, and query optimization',
-          track: 'course_tech',
-          duration: 18,
-          difficulty: 'intermediate',
-          priority: 'medium',
-          estimatedCompletion: '18 min',
-          subjectId: 'databases',
-          topicId: 'design-principles'
-        }
-      ]);
-
-      setWeeklyProgress({
-        sessionsCompleted: 8,
-        totalSessions: 12,
-        timeSpent: 180,
-        accuracyAverage: 85
+      // Load session history and calculate weekly progress
+      const sessionHistory = await MicroLearningService.getSessionHistory(activeUserId, 50);
+      
+      // Calculate weekly progress from actual session data
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      
+      const thisWeekSessions = sessionHistory.filter(session => {
+        const sessionDate = new Date(session.createdAt);
+        return sessionDate >= weekStart;
       });
+
+      const weeklyProgressData: WeeklyProgress = {
+        sessionsCompleted: thisWeekSessions.length,
+        totalSessions: 12, // User's weekly goal - get from preferences
+        timeSpent: thisWeekSessions.reduce((total, session) => total + session.duration, 0),
+        accuracyAverage: thisWeekSessions.length > 0 
+          ? thisWeekSessions.reduce((total, session) => total + (session.performance?.accuracy || 0), 0) / thisWeekSessions.length
+          : 0
+      };
+
+      setWeeklyProgress(weeklyProgressData);
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
     } finally {

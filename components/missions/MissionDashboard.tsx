@@ -73,8 +73,9 @@ export function MissionDashboard({
       setIsLoading(true);
       setError(null);
 
-      // Initialize mission service
+      // Initialize mission service and seed templates
       await missionService.initialize();
+      await missionService.seedUserTemplates(user.uid);
 
       // Load user progress
       const progressResult = await missionService.getUserProgress(user.uid);
@@ -93,117 +94,15 @@ export function MissionDashboard({
         setAnalytics(analyticsResult.data);
       }
 
-      // Load active missions (mock data for now)
-      setActiveMissions([
-        {
-          id: 'mission_1',
-          userId: user.uid,
-          templateId: 'exam_daily_mock_questions',
-          track: 'exam',
-          frequency: 'daily',
-          title: 'Daily Mock Questions',
-          description: 'Quick practice with 12 questions from recent patterns',
-          difficulty: 'intermediate',
-          estimatedDuration: 15,
-          content: { type: 'mock_questions' },
-          status: 'not_started',
-          scheduledAt: new Date(),
-          deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          progress: {
-            completionPercentage: 0,
-            currentStep: 0,
-            totalSteps: 12,
-            timeSpent: 0,
-            stepProgress: [],
-            submissions: [],
-            metrics: {
-              accuracy: 0,
-              speed: 0,
-              consistency: 0,
-              engagement: 0
-            }
-          },
-          personaOptimizations: {
-            persona: 'working_professional',
-            timeAdjustments: {
-              preferredDuration: 15,
-              maxDuration: 20,
-              breakIntervals: [10]
-            },
-            contentAdaptations: {
-              explanationLevel: 'brief',
-              exampleComplexity: 'realistic',
-              contextType: 'professional'
-            },
-            motivationStrategies: {
-              rewardTypes: ['progress'],
-              feedbackFrequency: 'end_of_mission',
-              challengePreference: 'steady'
-            },
-            progressVisualization: {
-              chartTypes: ['gauge'],
-              detailLevel: 'summary',
-              comparisons: ['self']
-            }
-          },
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: 'mission_2',
-          userId: user.uid,
-          templateId: 'tech_daily_coding_challenge',
-          track: 'course_tech',
-          frequency: 'daily',
-          title: 'Daily Coding Challenge',
-          description: 'Algorithm problem: Two Sum with optimized solution',
-          difficulty: 'intermediate',
-          estimatedDuration: 20,
-          content: { type: 'coding_challenge' },
-          status: 'in_progress',
-          scheduledAt: new Date(),
-          deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          progress: {
-            completionPercentage: 60,
-            currentStep: 2,
-            totalSteps: 3,
-            timeSpent: 12,
-            stepProgress: [],
-            submissions: [],
-            metrics: {
-              accuracy: 80,
-              speed: 85,
-              consistency: 75,
-              engagement: 90
-            }
-          },
-          personaOptimizations: {
-            persona: 'working_professional',
-            timeAdjustments: {
-              preferredDuration: 20,
-              maxDuration: 25,
-              breakIntervals: [15]
-            },
-            contentAdaptations: {
-              explanationLevel: 'brief',
-              exampleComplexity: 'realistic',
-              contextType: 'professional'
-            },
-            motivationStrategies: {
-              rewardTypes: ['progress'],
-              feedbackFrequency: 'end_of_mission',
-              challengePreference: 'steady'
-            },
-            progressVisualization: {
-              chartTypes: ['gauge'],
-              detailLevel: 'summary',
-              comparisons: ['self']
-            }
-          },
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      ]);
+      // Load active missions from Firebase
+      const activeMissionsResult = await missionService.getActiveMissions(user.uid);
+      
+      if (activeMissionsResult.success && activeMissionsResult.data) {
+        setActiveMissions(activeMissionsResult.data);
+      } else {
+        console.error('Failed to load active missions:', activeMissionsResult.error);
+        setActiveMissions([]);
+      }
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');

@@ -94,12 +94,25 @@ export function QuickSessionLauncher({
       setIsLoading(true);
       setError(null);
 
-      // Simulate API call for personalized sessions
-      await new Promise(resolve => setTimeout(resolve, 800));
-
-      // For now, use default sessions with some personalization
-      const personalizedSessions = [...defaultSessions].sort(() => Math.random() - 0.5);
-      setDisplaySessions(personalizedSessions);
+      // Load personalized recommendations from Firebase
+      const { MicroLearningService } = await import('@/lib/micro-learning-service');
+      const recommendations = await MicroLearningService.generatePersonalizedRecommendations(activeUserId);
+      
+      // Convert recommendations to quick session format
+      const personalizedSessions = recommendations.map(rec => ({
+        id: rec.id,
+        title: rec.title,
+        description: rec.description,
+        duration: rec.duration,
+        difficulty: rec.difficulty,
+        track: rec.track,
+        subjectId: rec.subjectId,
+        topicId: rec.topicId,
+        icon: rec.track === 'exam' ? '📚' : '💻',
+        color: rec.track === 'exam' ? 'blue' : 'green'
+      }));
+      
+      setDisplaySessions(personalizedSessions.length > 0 ? personalizedSessions : defaultSessions);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load personalized sessions');
       setDisplaySessions(defaultSessions);

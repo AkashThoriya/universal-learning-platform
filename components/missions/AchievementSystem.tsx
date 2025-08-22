@@ -34,6 +34,7 @@ import {
   Lock
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { achievementService } from '@/lib/achievement-service';
 import {
   type Achievement,
   type UserAchievement,
@@ -63,117 +64,35 @@ export function AchievementSystem({
   const [isLoading, setIsLoading] = useState(true);
   const [showNewAchievement, setShowNewAchievement] = useState(false);
 
-  // Mock data for achievements
+  // Load achievements and user progress from Firebase
   useEffect(() => {
-    const mockAchievements: Achievement[] = [
-      {
-        id: 'first_mission',
-        name: 'First Steps',
-        description: 'Complete your first mission',
-        category: 'completion',
-        track: 'both',
-        rarity: 'common',
-        points: 100,
-        requirements: [
-          {
-            type: 'missions_completed',
-            target: 1,
-            conditions: {}
-          }
-        ],
-        badge: {
-          iconUrl: '/badges/first-mission.png',
-          color: '#3B82F6'
-        },
-        personaVariations: {
-          student: {},
-          working_professional: {},
-          freelancer: {}
-        },
-        isActive: true,
-        createdAt: new Date()
-      },
-      {
-        id: 'streak_7',
-        name: 'Week Warrior',
-        description: 'Maintain a 7-day learning streak',
-        category: 'consistency',
-        track: 'both',
-        rarity: 'rare',
-        points: 250,
-        requirements: [
-          {
-            type: 'streak',
-            target: 7,
-            conditions: { consecutive: true }
-          }
-        ],
-        badge: {
-          iconUrl: '/badges/streak-7.png',
-          color: '#10B981'
-        },
-        personaVariations: {
-          student: {},
-          working_professional: {},
-          freelancer: {}
-        },
-        isActive: true,
-        createdAt: new Date()
-      },
-      {
-        id: 'perfect_score',
-        name: 'Perfectionist',
-        description: 'Achieve a perfect score on any mission',
-        category: 'performance',
-        track: 'both',
-        rarity: 'epic',
-        points: 500,
-        requirements: [
-          {
-            type: 'score_threshold',
-            target: 100,
-            conditions: {}
-          }
-        ],
-        badge: {
-          iconUrl: '/badges/perfect-score.png',
-          color: '#8B5CF6'
-        },
-        personaVariations: {
-          student: {},
-          working_professional: {},
-          freelancer: {}
-        },
-        isActive: true,
-        createdAt: new Date()
+    const loadAchievements = async () => {
+      if (!user?.uid) {
+        setIsLoading(false);
+        return;
       }
-    ];
 
-    const mockUserAchievements: UserAchievement[] = [
-      {
-        userId: user?.uid || '',
-        achievementId: 'first_mission',
-        progress: 1,
-        target: 1,
-        isUnlocked: true,
-        unlockedAt: new Date(),
-        isDisplayed: true,
-        requirementProgress: [
-          {
-            requirementIndex: 0,
-            currentValue: 1,
-            targetValue: 1,
-            isCompleted: true
-          }
-        ],
-        createdAt: new Date(),
-        updatedAt: new Date()
+      setIsLoading(true);
+      try {
+        // Load all achievements
+        const achievementsResult = await achievementService.getAchievements();
+        if (achievementsResult.success) {
+          setAchievements(achievementsResult.data);
+        }
+
+        // Load user's achievement progress
+        const userAchievementsResult = await achievementService.getUserAchievements(user.uid);
+        if (userAchievementsResult.success) {
+          setUserAchievements(userAchievementsResult.data);
+        }
+      } catch (error) {
+        console.error('Failed to load achievements:', error);
+      } finally {
+        setIsLoading(false);
       }
-    ];
+    };
 
-    setAchievements(mockAchievements);
-    setUserAchievements(mockUserAchievements);
-    setIsLoading(false);
+    loadAchievements();
   }, [user?.uid]);
 
   const getAchievementIcon = (achievement: Achievement) => {

@@ -37,7 +37,7 @@ export class MicroLearningService {
     requestedDuration?: number
   ): Promise<MicroLearningSession> {
     try {
-      // Get user persona data
+      // Get user persona data from Firebase
       const persona = await this.getUserPersona(userId);
       
       // Calculate persona-specific optimizations
@@ -76,9 +76,87 @@ export class MicroLearningService {
         }
       };
       
+      // Save session to Firebase
+      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const saveResult = await microLearningFirebaseService.saveSession(userId, session);
+      
+      if (!saveResult.success) {
+        const errorMessage = saveResult.error instanceof Error ? saveResult.error.message : saveResult.error || 'Failed to save session';
+        throw new Error(errorMessage);
+      }
+      
       return session;
     } catch (error) {
       throw new Error(`Failed to generate session: ${error}`);
+    }
+  }
+
+  /**
+   * Get session history for a user
+   */
+  static async getSessionHistory(userId: string, limit: number = 20): Promise<MicroLearningSession[]> {
+    try {
+      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await microLearningFirebaseService.getSessionHistory(userId, limit);
+      
+      if (!result.success) {
+        const errorMessage = result.error instanceof Error ? result.error.message : result.error || 'Failed to get session history';
+        throw new Error(errorMessage);
+      }
+      
+      return result.data as MicroLearningSession[];
+    } catch (error) {
+      throw new Error(`Failed to get session history: ${error}`);
+    }
+  }
+
+  /**
+   * Generate personalized recommendations
+   */
+  static async generatePersonalizedRecommendations(userId: string): Promise<any[]> {
+    try {
+      // Get user's learning history and preferences
+      const sessionHistory = await this.getSessionHistory(userId, 50);
+      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const preferencesResult = await microLearningFirebaseService.getUserPreferences(userId);
+      
+      // Get existing recommendations to check if they're still valid
+      const existingResult = await microLearningFirebaseService.getRecommendations(userId);
+      
+      if (existingResult.success && existingResult.data.length > 0) {
+        return existingResult.data;
+      }
+      
+      // Generate new recommendations based on user data
+      const recommendations = await this.generateRecommendationsFromHistory(userId, sessionHistory);
+      
+      // Save recommendations to Firebase
+      await microLearningFirebaseService.saveRecommendations(userId, recommendations);
+      
+      return recommendations;
+    } catch (error) {
+      throw new Error(`Failed to generate recommendations: ${error}`);
+    }
+  }
+
+  /**
+   * Update session progress
+   */
+  static async updateSessionProgress(
+    userId: string,
+    sessionId: string,
+    progress: any
+  ): Promise<void> {
+    try {
+      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await microLearningFirebaseService.updateSessionProgress(userId, sessionId, progress);
+      
+      if (!result.success) {
+        const errorMessage = result.error instanceof Error ? result.error.message : result.error || 'Failed to update session progress';
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      throw new Error(`Failed to update session progress: ${error}`);
     }
   }
 
@@ -401,14 +479,27 @@ export class MicroLearningService {
 
   // Placeholder methods for future implementation
   private static async getUserPersona(userId: string): Promise<UserPersona> {
-    // Mock implementation - replace with actual data fetching
+    try {
+      // Get user data from Firebase instead of mock
+      const { userService } = await import('@/lib/firebase-enhanced');
+      const result = await userService.get(userId);
+      
+      if (result.success && result.data) {
+        return result.data.persona || this.getDefaultPersona();
+      }
+      
+      return this.getDefaultPersona();
+    } catch (error) {
+      console.error('Failed to get user persona:', error);
+      return this.getDefaultPersona();
+    }
+  }
+
+  private static getDefaultPersona(): UserPersona {
     return {
       type: 'working_professional',
       workSchedule: {
-        workingHours: {
-          start: '09:00',
-          end: '18:00'
-        },
+        workingHours: { start: '09:00', end: '18:00' },
         workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         commuteTime: 60,
         flexibility: 'flexible',
@@ -423,6 +514,66 @@ export class MicroLearningService {
         skillGaps: ['advanced algorithms', 'system design']
       }
     };
+  }
+
+  private static async generateRecommendationsFromHistory(
+    userId: string, 
+    sessionHistory: MicroLearningSession[]
+  ): Promise<any[]> {
+    // Analyze user's learning patterns and generate recommendations
+    // For now, return mock recommendations - replace with actual recommendation algorithm
+    const mockRecommendations = [
+      {
+        id: '1',
+        title: 'Advanced Data Structures',
+        description: 'Deep dive into trees, graphs, and hash tables for competitive programming',
+        track: 'exam' as const,
+        duration: 15,
+        difficulty: 'advanced' as const,
+        priority: 'high' as const,
+        estimatedCompletion: '15 min',
+        subjectId: 'computer-science',
+        topicId: 'data-structures'
+      },
+      {
+        id: '2',
+        title: 'React Hooks Mastery',
+        description: 'Master useState, useEffect, and custom hooks with practical examples',
+        track: 'course_tech' as const,
+        duration: 20,
+        difficulty: 'intermediate' as const,
+        priority: 'high' as const,
+        estimatedCompletion: '20 min',
+        subjectId: 'web-development',
+        topicId: 'react-hooks'
+      },
+      {
+        id: '3',
+        title: 'Algorithm Optimization',
+        description: 'Learn to optimize time and space complexity of common algorithms',
+        track: 'exam' as const,
+        duration: 25,
+        difficulty: 'advanced' as const,
+        priority: 'medium' as const,
+        estimatedCompletion: '25 min',
+        subjectId: 'computer-science',
+        topicId: 'algorithms'
+      },
+      {
+        id: '4',
+        title: 'Database Design Fundamentals',
+        description: 'Master normalization, indexing, and query optimization',
+        track: 'course_tech' as const,
+        duration: 18,
+        difficulty: 'intermediate' as const,
+        priority: 'medium' as const,
+        estimatedCompletion: '18 min',
+        subjectId: 'databases',
+        topicId: 'design-principles'
+      }
+    ];
+    
+    return mockRecommendations;
   }
 
   private static async getTopicContent(topicId: string, learningTrack: 'exam' | 'course_tech'): Promise<any[]> {

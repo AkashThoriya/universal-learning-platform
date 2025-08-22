@@ -4,9 +4,10 @@
  * The central c  // State for data that hasn't been migrated to service layer yet
   const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
   const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
-  const [insights, setInsights] = useState<StudyInsight | null>(null);
+  const [insights, setInsights] = useState<StudyInsight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showDailyLogModal, setShowDailyLogModal] = useState(false);center for exam preparation strategy. Displays real-time
+  const [showDailyLogModal, setShowDailyLogModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);center for exam preparation strategy. Displays real-time
  * analytics, revision queue, performance trends, AI-generated insights, and
  * quick action buttons for daily activities.
  * 

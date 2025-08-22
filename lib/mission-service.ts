@@ -51,7 +51,6 @@ import { type UserPersonaType } from '@/types/exam';
  */
 export class MissionTemplateService {
   private static instance: MissionTemplateService;
-  private templates: Map<string, MissionTemplate> = new Map();
 
   static getInstance(): MissionTemplateService {
     if (!MissionTemplateService.instance) {
@@ -61,13 +60,30 @@ export class MissionTemplateService {
   }
 
   /**
-   * Initialize default mission templates
+   * Initialize default templates for a specific user
    */
   async initializeDefaultTemplates(): Promise<void> {
-    const defaultTemplates = this.getDefaultTemplates();
-    
-    for (const template of defaultTemplates) {
-      this.templates.set(template.id, template);
+    // This method is now user-specific and called per user
+    // Implementation moved to seedUserTemplates
+  }
+
+  /**
+   * Seed default templates for a user if they don't have any
+   */
+  async seedUserTemplates(userId: string): Promise<void> {
+    try {
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const existingTemplates = await missionFirebaseService.getTemplates(userId);
+      
+      if (existingTemplates.success && existingTemplates.data.length === 0) {
+        const defaultTemplates = this.getDefaultTemplates();
+        
+        for (const template of defaultTemplates) {
+          await missionFirebaseService.saveTemplate(userId, template);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to seed user templates:', error);
     }
   }
 
@@ -316,41 +332,81 @@ export class MissionTemplateService {
    * Get templates for specific track and frequency
    */
   async getTemplatesForTrack(
+    userId: string,
     track: LearningTrack, 
     frequency?: MissionFrequency,
     persona?: UserPersonaType
   ): Promise<MissionTemplate[]> {
-    const allTemplates = Array.from(this.templates.values());
-    
-    return allTemplates.filter(template => {
-      const trackMatch = template.track === track;
-      const frequencyMatch = !frequency || template.frequency === frequency;
-      const personaMatch = !persona || template.supportedPersonas.length === 0 || 
-                          template.supportedPersonas.includes(persona);
+    try {
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await missionFirebaseService.getTemplates(userId, track);
       
-      return trackMatch && frequencyMatch && personaMatch;
-    });
+      if (!result.success) {
+        throw new Error(result.error?.message || 'Failed to get templates');
+      }
+
+      let templates = result.data as MissionTemplate[];
+      
+      // Apply filters
+      if (frequency) {
+        templates = templates.filter(t => t.frequency === frequency);
+      }
+      
+      if (persona) {
+        templates = templates.filter(t => 
+          t.supportedPersonas.length === 0 || t.supportedPersonas.includes(persona)
+        );
+      }
+      
+      return templates;
+    } catch (error) {
+      console.error('Failed to get templates for track:', error);
+      return [];
+    }
   }
 
   /**
    * Get template by ID
    */
-  async getTemplate(templateId: string): Promise<MissionTemplate | null> {
-    return this.templates.get(templateId) || null;
+  async getTemplate(userId: string, templateId: string): Promise<MissionTemplate | null> {
+    try {
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await missionFirebaseService.getTemplates(userId);
+      
+      if (!result.success) return null;
+      
+      const templates = result.data as MissionTemplate[];
+      return templates.find(t => t.id === templateId) || null;
+    } catch (error) {
+      console.error('Failed to get template:', error);
+      return null;
+    }
   }
 
   /**
    * Add or update template
    */
-  async saveTemplate(template: MissionTemplate): Promise<MissionApiResponse<MissionTemplate>> {
+  async saveTemplate(
+    userId: string, 
+    template: MissionTemplate
+  ): Promise<MissionApiResponse<MissionTemplate>> {
     try {
-      this.templates.set(template.id, template);
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await missionFirebaseService.saveTemplate(userId, template);
       
-      return {
-        success: true,
-        data: template,
-        timestamp: new Date()
-      };
+      if (result.success) {
+        return {
+          success: true,
+          data: template,
+          timestamp: new Date()
+        };
+      } else {
+        return {
+          success: false,
+          error: result.error?.message || 'Failed to save template',
+          timestamp: new Date()
+        };
+      }
     } catch (error) {
       return {
         success: false,
@@ -386,8 +442,12 @@ export class MissionGenerationService {
     const startTime = Date.now();
     
     try {
-      // Get suitable templates
+      // Ensure user has templates seeded
+      await this.templateService.seedUserTemplates(request.userId);
+      
+      // Get suitable templates from Firebase
       const templates = await this.templateService.getTemplatesForTrack(
+        request.userId,
         request.track,
         request.frequency
       );
@@ -410,6 +470,14 @@ export class MissionGenerationService {
 
       // Generate mission content
       const mission = await this.createMissionFromTemplate(selectedTemplate, request);
+
+      // Save the generated mission to Firebase
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const saveResult = await missionFirebaseService.saveActiveMission(request.userId, mission);
+      
+      if (!saveResult.success) {
+        throw new Error(saveResult.error?.message || 'Failed to save generated mission');
+      }
 
       return {
         success: true,
@@ -693,14 +761,49 @@ export class MissionProgressService {
     progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
     try {
-      // In production, this would update the database
-      // For now, return mock success
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       
+      // Extract userId from mission ID or get it from context
+      // For now, we'll need to pass userId as parameter or get it from mission
+      // This is a design consideration for the mission ID structure
+      
+      // Temporary implementation - in production, include userId in method signature
+      throw new Error('UpdateProgress requires userId parameter - method signature needs update');
+      
+    } catch (error) {
       return {
-        success: true,
-        data: progress as MissionProgress,
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to update progress',
         timestamp: new Date()
       };
+    }
+  }
+
+  /**
+   * Update mission progress with userId
+   */
+  async updateProgressWithUser(
+    userId: string,
+    missionId: string, 
+    progress: Partial<MissionProgress>
+  ): Promise<MissionApiResponse<MissionProgress>> {
+    try {
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await missionFirebaseService.updateMissionProgress(userId, missionId, progress);
+      
+      if (result.success) {
+        return {
+          success: true,
+          data: progress as MissionProgress,
+          timestamp: new Date()
+        };
+      } else {
+        return {
+          success: false,
+          error: (result.error instanceof Error ? result.error.message : result.error) || 'Failed to update progress',
+          timestamp: new Date()
+        };
+      }
     } catch (error) {
       return {
         success: false,
@@ -718,14 +821,47 @@ export class MissionProgressService {
     finalSubmissions: any[]
   ): Promise<MissionApiResponse<MissionResults>> {
     try {
+      // Extract userId from mission ID or get it from context
+      // Temporary implementation - in production, include userId in method signature
+      throw new Error('CompleteMission requires userId parameter - method signature needs update');
+      
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to complete mission',
+        timestamp: new Date()
+      };
+    }
+  }
+
+  /**
+   * Complete mission with userId and generate results
+   */
+  async completeMissionWithUser(
+    userId: string,
+    missionId: string, 
+    finalSubmissions: any[]
+  ): Promise<MissionApiResponse<MissionResults>> {
+    try {
       // Calculate results based on submissions
       const results = await this.calculateMissionResults(missionId, finalSubmissions);
       
-      return {
-        success: true,
-        data: results,
-        timestamp: new Date()
-      };
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const completeResult = await missionFirebaseService.completeMission(userId, missionId, results);
+      
+      if (completeResult.success) {
+        return {
+          success: true,
+          data: results,
+          timestamp: new Date()
+        };
+      } else {
+        return {
+          success: false,
+          error: (completeResult.error instanceof Error ? completeResult.error.message : completeResult.error) || 'Failed to complete mission',
+          timestamp: new Date()
+        };
+      }
     } catch (error) {
       return {
         success: false,
@@ -1137,23 +1273,62 @@ export class MissionService {
     await this.templateService.initializeDefaultTemplates();
   }
 
-  // Expose all service methods
+  /**
+   * Seed default templates for a user
+   */
+  async seedUserTemplates(userId: string): Promise<void> {
+    await this.templateService.seedUserTemplates(userId);
+  }
+
+  /**
+   * Get active missions for a user
+   */
+  async getActiveMissions(userId: string): Promise<MissionApiResponse<Mission[]>> {
+    try {
+      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const result = await missionFirebaseService.getActiveMissions(userId);
+      
+      if (result.success) {
+        return {
+          success: true,
+          data: result.data as Mission[],
+          timestamp: new Date()
+        };
+      } else {
+        return {
+          success: false,
+          error: result.error?.message || 'Failed to get active missions',
+          timestamp: new Date()
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to get active missions',
+        timestamp: new Date()
+      };
+    }
+  }
+
+  // Expose all service methods with proper userId parameters
   async generateMission(request: MissionGenerationRequest): Promise<MissionGenerationResult> {
     return this.generationService.generateMission(request);
   }
 
   async updateMissionProgress(
+    userId: string,
     missionId: string, 
     progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
-    return this.progressService.updateProgress(missionId, progress);
+    return this.progressService.updateProgressWithUser(userId, missionId, progress);
   }
 
   async completeMission(
+    userId: string,
     missionId: string, 
     submissions: any[]
   ): Promise<MissionApiResponse<MissionResults>> {
-    return this.progressService.completeMission(missionId, submissions);
+    return this.progressService.completeMissionWithUser(userId, missionId, submissions);
   }
 
   async getUserProgress(userId: string): Promise<MissionApiResponse<UnifiedProgress>> {
@@ -1168,11 +1343,12 @@ export class MissionService {
   }
 
   async getTemplatesForTrack(
+    userId: string,
     track: LearningTrack, 
     frequency?: MissionFrequency,
     persona?: UserPersonaType
   ): Promise<MissionTemplate[]> {
-    return this.templateService.getTemplatesForTrack(track, frequency, persona);
+    return this.templateService.getTemplatesForTrack(userId, track, frequency, persona);
   }
 }
 

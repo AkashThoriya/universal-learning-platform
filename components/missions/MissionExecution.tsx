@@ -97,7 +97,9 @@ export function MissionExecution({
           }))
         };
 
-        await missionService.updateMissionProgress(mission.id, updatedProgress);
+        if (user?.uid) {
+          await missionService.updateMissionProgress(user.uid, mission.id, updatedProgress);
+        }
       };
 
       // Save every 30 seconds
@@ -192,7 +194,11 @@ export function MissionExecution({
       }));
 
       // Complete mission and get results
-      const result = await missionService.completeMission(mission.id, finalSubmissions);
+      if (!user?.uid) {
+        throw new Error('User not authenticated');
+      }
+      
+      const result = await missionService.completeMission(user.uid, mission.id, finalSubmissions);
       
       if (result.success && result.data && onComplete) {
         onComplete(result.data);
