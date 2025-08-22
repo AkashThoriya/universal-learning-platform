@@ -518,27 +518,18 @@ We welcome contributions! Please follow these steps:
 
 ### Phase 2 (Q2 2024)
 - [ ] Advanced spaced repetition with AI optimization
-- [ ] Mobile app (React Native)
 - [ ] Offline-first architecture
 - [ ] Advanced analytics dashboard
-- [ ] Study group collaboration features
-- [ ] Integration with popular test platforms
 
 ### Phase 3 (Q3 2024)
-- [ ] AI-powered study recommendations
-- [ ] Voice-based logging and notes
 - [ ] Advanced visualization and reporting
 - [ ] Exam-specific templates and strategies
 - [ ] Performance prediction algorithms
-- [ ] Integration with educational content providers
 
 ### Phase 4 (Q4 2024)
-- [ ] Mentor matching system
-- [ ] Live study sessions and webinars
-- [ ] Advanced gamification features
-- [ ] API for third-party integrations
-- [ ] White-label solutions for institutions
+- [ ] AI-powered study recommendations
 - [ ] Advanced AI tutoring system
+- [ ] Voice-based logging and notes
 
 ## Community
 
