@@ -149,7 +149,7 @@ export default function DashboardPage() {
           {/* Header */}
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">
-              Welcome back, {userData.displayName}
+              Welcome back, {userData.displayName || 'Strategist'}
             </h1>
             <p className="text-muted-foreground">Strategic command center for {userData.currentExam.name}</p>
           </div>

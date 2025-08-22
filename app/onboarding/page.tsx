@@ -182,7 +182,7 @@ export default function OnboardingPage() {
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Exam Strategy Engine</h1>
-          <p className="text-muted-foreground">Let's build your personalized strategic preparation system</p>
+          <p className="text-muted-foreground">Let's build your personalized strategic preparation system for competitive exam success</p>
         </div>
 
         <div className="mb-8">
@@ -258,6 +258,7 @@ export default function OnboardingPage() {
                       <Plus className="h-4 w-4" />
                       <span className="font-medium">Create Custom Exam</span>
                     </div>
+                    <p className="text-sm text-gray-600 mt-1">Perfect for state PSCs, specialized exams, or custom syllabi</p>
                   </div>
                 </div>
               </div>

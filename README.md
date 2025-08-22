@@ -2,9 +2,13 @@
 
 ## Project Overview
 
-**Vision**: A strategic operating system for competitive exam preparation that transforms unstructured studying into a data-driven, adaptive process using spaced repetition, precision analytics, and health-aware scheduling.
+**Vision**: A strategic operating system for competitive exam preparation that transforms unstructured studying into a data-driven, adaptive process using spaced repetition, precision analytics, and health-aware scheduling. The platform is **exam-agnostic**, making it powerful for any competitive test including IBPS, UPSC, GPSC, SSC, GATE, CAT, NEET, and more.
 
-The Exam Strategy Engine is **exam-agnostic**, making it powerful for any competitive test including IBPS, UPSC, GPSC, SSC, GATE, CAT, NEET, and more.
+## Live Demo
+
+🚀 **[Try the Live Demo](https://exam-strategy-engine.vercel.app)** 
+
+*Note: This is a development preview. Create an account to explore all features.*
 
 ## Core Philosophy
 
@@ -21,14 +25,16 @@ Moves beyond rote memorization by requiring users to create personal connections
 
 ## Technology Stack
 
-- **Next.js 15** (App Router) - Latest React features with stable routing
+- **Next.js 15.0.3** (App Router) - Latest React features with stable routing and performance optimizations
 - **TypeScript** - Type safety and comprehensive documentation
-- **Firebase Firestore** - Real-time NoSQL database
+- **Firebase Firestore** - Real-time NoSQL database with offline support
 - **Firebase Auth** - Authentication with email/password and Google sign-in
 - **Tailwind CSS** - Utility-first CSS framework
 - **shadcn/ui** - High-quality React components
-- **Recharts** - Data visualization and charts
+- **Recharts** - Interactive data visualization and charts
 - **Lucide React** - Beautiful icons
+- **React Hook Form** - Performant forms with easy validation
+- **Zod** - TypeScript-first schema validation
 
 ## Quick Start
 
@@ -42,7 +48,7 @@ Moves beyond rote memorization by requiring users to create personal connections
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/your-username/exam-strategy-engine.git
    cd exam-strategy-engine
    ```
 
@@ -60,7 +66,7 @@ Moves beyond rote memorization by requiring users to create personal connections
 
 4. **Configure environment variables**
    ```bash
-   cp .env.local.example .env.local
+   cp .env.local .env.local
    ```
    
    Fill in your Firebase configuration in `.env.local`:
@@ -71,6 +77,7 @@ Moves beyond rote memorization by requiring users to create personal connections
    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
    NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
    ```
 
 5. **Run the development server**
@@ -148,41 +155,49 @@ exam-strategy-engine/
 
 ## Core Features
 
-### 1. Universal Onboarding (`/onboarding`)
-- **Exam Selection**: Choose from pre-defined exams or create custom
-- **Syllabus Builder**: Interactive tree-view for organizing topics
-- **Tier Assignment**: Strategic prioritization system (Tier 1, 2, 3)
-- **Resource Management**: Track books, courses, and test series
+### 1. Universal Onboarding System (`/onboarding`)
+- **Smart Exam Selection**: Choose from 6+ pre-defined exams (UPSC, IBPS, SSC, GATE, CAT, etc.) or create custom exams
+- **Interactive Syllabus Builder**: Drag-and-drop interface for organizing topics with real-time preview
+- **Strategic Tier Assignment**: 3-tier prioritization system with customizable definitions
+- **Resource Integration**: Link books, courses, and test series to your preparation plan
+- **Progress Tracking Setup**: Configure spaced repetition intervals and daily study goals
 
-### 2. Strategic Dashboard (`/dashboard`)
-- **Revision Queue**: Smart spaced repetition system
-- **Performance Analytics**: Score trends and health correlations
-- **Daily Command Center**: Quick actions and status overview
-- **Intelligent Recommendations**: AI-powered study suggestions
+### 2. Strategic Command Dashboard (`/dashboard`)
+- **Intelligent Revision Queue**: Spaced repetition algorithm with priority-based sorting (overdue, due today, upcoming)
+- **Multi-dimensional Analytics**: Interactive charts showing score trends, health-performance correlations, and error patterns
+- **Real-time Metrics**: Days until exam, study streak, latest scores, total study hours
+- **AI-powered Insights**: Strategic recommendations based on performance patterns and health data
+- **Quick Action Center**: One-click access to daily logging, mock tests, and revision sessions
 
-### 3. Daily Logging (`/log/daily`)
-- **Health Tracking**: Energy, sleep hours, and sleep quality
-- **Study Time Logging**: Topic-wise time tracking
-- **Progress Updates**: Automatic mastery score calculations
-- **Streak Tracking**: Gamified consistency monitoring
+### 3. Comprehensive Daily Logging (`/log/daily`)
+- **Advanced Health Metrics**: Energy levels (1-10), sleep hours, sleep quality, stress levels, physical activity
+- **Multi-session Study Tracking**: Log multiple study sessions with topic-wise time allocation
+- **Study Method Analysis**: Track effectiveness of different study methods (reading, notes, practice, revision)
+- **Goals & Reflection System**: Daily targets with challenges and wins tracking
+- **Automatic Progress Updates**: Real-time mastery score calculations and streak monitoring
 
-### 4. Mock Test Analysis (`/log/mock`)
-- **Comprehensive Score Logging**: Multi-section test support
-- **Error Analysis Engine**: Categorize mistakes for targeted improvement
-- **Performance Trends**: Track improvement over time
-- **Strategic Insights**: Convert scores into actionable study plans
+### 4. Advanced Mock Test Analysis (`/log/mock`)
+- **Dynamic Score Entry**: Adapts to any exam structure with multi-section support
+- **4-Category Error Analysis**: Concept gaps, careless errors, intelligent guesses, time pressure
+- **Mental State Tracking**: Confidence, anxiety, and focus levels during tests
+- **Environment Logging**: Test location, time of day, and distraction factors
+- **Actionable Insights**: Generate specific improvement plans based on error patterns
+- **Historical Performance**: Track trends across multiple tests with predictive analytics
 
-### 5. Topic Deep Dive (`/syllabus/[topicId]`)
-- **Personal Context Editor**: Create meaningful connections
-- **Rich Note Taking**: Multi-media note support
-- **Spaced Repetition**: Intelligent revision scheduling
-- **Mastery Tracking**: Visual progress indicators
+### 5. Strategic Syllabus Management (`/syllabus`)
+- **Advanced Filtering System**: Filter by tier, mastery level, revision status, and search functionality
+- **Interactive Subject Accordions**: Expandable subject view with topic-level progress tracking
+- **Visual Progress Indicators**: Color-coded mastery scores and revision status
+- **Bulk Operations**: Mass tier assignment and revision marking
+- **Smart Sorting**: Multiple sorting options (alphabetical, mastery score, last studied)
 
-### 6. Syllabus Overview (`/syllabus`)
-- **Strategic Landscape View**: Complete preparation overview
-- **Advanced Filtering**: Multi-criteria topic filtering
-- **Bulk Operations**: Efficient syllabus management
-- **Progress Visualization**: Subject and topic-level insights
+### 6. Topic Deep Dive Pages (`/syllabus/[topicId]`)
+- **Tabbed Interface**: Separate sections for study notes, personal context, and current affairs
+- **Rich Text Editors**: Full-featured note-taking with formatting support
+- **Personal Context Creation**: Guided reflection prompts for deeper understanding
+- **Progress Visualization**: Detailed mastery tracking with revision history
+- **Current Affairs Integration**: Track topic-related news and updates
+- **Smart Revision Scheduling**: Automatic next revision date calculation
 
 ## Data Architecture
 
@@ -225,6 +240,36 @@ interface TopicProgress {
 }
 ```
 
+### Real-time Features
+
+- **Live Data Synchronization**: All changes sync instantly across devices
+- **Offline Support**: Continue studying even without internet connection
+- **Real-time Notifications**: Browser notifications for revision reminders
+- **Collaborative Features**: Share progress with study groups (coming soon)
+
+### Performance Optimizations
+
+- **Next.js 15 Features**: App Router with streaming, loading UI, and optimized builds
+- **Code Splitting**: Automatic route-based code splitting for faster page loads
+- **Image Optimization**: Next.js Image component with automatic WebP conversion
+- **Bundle Analysis**: Optimized package imports and tree shaking
+- **Caching Strategy**: Intelligent caching for Firebase queries and static assets
+
+### Security & Privacy
+
+- **Firestore Security Rules**: Row-level security ensuring users can only access their data
+- **Authentication Guards**: Protected routes with automatic redirects
+- **Input Validation**: Client and server-side validation using Zod schemas
+- **Data Encryption**: All data encrypted in transit and at rest
+- **Privacy-first Design**: No tracking, no ads, your data stays yours
+
+### Accessibility Features
+
+- **Keyboard Navigation**: Full keyboard support for all interactive elements
+- **Screen Reader Support**: Proper ARIA labels and semantic HTML
+- **High Contrast Mode**: Support for system-level accessibility preferences
+- **Responsive Design**: Optimized for all screen sizes and devices
+
 ## Development Workflow
 
 ### Running the Application
@@ -242,8 +287,8 @@ npm start
 # Run linting
 npm run lint
 
-# Run type checking
-npm run type-check
+# Analyze bundle size
+npm run analyze
 ```
 
 ### Code Style Guidelines
@@ -254,6 +299,8 @@ npm run type-check
 - Implement proper error boundaries
 - Add loading states for async operations
 - Write meaningful commit messages
+- Follow the established file organization patterns
+- Use proper TypeScript types for all Firebase operations
 
 ### Adding New Features
 
@@ -262,6 +309,7 @@ npm run type-check
 3. **Implement Pages**: Add pages in the `app/` directory
 4. **Add Database Logic**: Implement Firestore operations
 5. **Test Thoroughly**: Test on multiple devices and browsers
+6. **Update Documentation**: Keep README and code comments current
 
 ## Deployment
 
@@ -269,14 +317,20 @@ npm run type-check
 
 1. **Connect to Vercel**
    ```bash
-   npm install -g vercel
-   vercel
+   # Fork the repository and connect to Vercel
+   # Or use Vercel CLI
+   npx vercel
    ```
 
 2. **Set Environment Variables**
    - Go to your Vercel dashboard
    - Add all Firebase environment variables
    - Redeploy if necessary
+
+3. **Automatic Deployments**
+   - Push to main branch for production deployment
+   - Pull requests create preview deployments
+   - Environment variables are automatically applied
 
 ### Firebase Hosting
 
@@ -297,6 +351,18 @@ npm run type-check
    firebase deploy
    ```
 
+### Docker Deployment
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
 ## Environment Variables
 
 Required environment variables for the application:
@@ -312,6 +378,10 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 
 # Optional: Firebase Analytics
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+
+# Optional: Development
+NODE_ENV=development
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ## API Documentation
@@ -343,6 +413,23 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 - **Key Fields**: `scores`, `analysis`, `platform`, `stage`
 - **Operations**: Create new test entries, read for analytics
 
+### Utility Functions
+
+#### Firebase Utils (`/lib/firebase-utils.ts`)
+- **User Management**: `createUser`, `getUser`, `updateUser`
+- **Syllabus Operations**: `saveSyllabus`, `getSyllabus`
+- **Progress Tracking**: `updateTopicProgress`, `getTopicProgress`, `getAllProgress`
+- **Revision Queue**: `getRevisionQueue` with spaced repetition logic
+- **Daily Logging**: `saveDailyLog`, `getDailyLog`, `getRecentDailyLogs`
+- **Mock Test Analysis**: `saveMockTest`, `getMockTests`
+- **Analytics**: `generateStudyInsights` with AI-powered recommendations
+- **Real-time Subscriptions**: `subscribeToRevisionQueue`, `subscribeToUserStats`
+
+#### Exam Data (`/lib/exams-data.ts`)
+- **Pre-defined Exams**: UPSC, IBPS, SSC, GATE, CAT with complete syllabus
+- **Search Functions**: `getExamById`, `searchExams`, `getExamsByCategory`
+- **Category Management**: `getAllCategories` for filtering
+
 ## Troubleshooting
 
 ### Common Issues
@@ -351,27 +438,45 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
    - Verify environment variables are correct
    - Check Firebase project settings
    - Ensure Firestore is enabled
+   - Verify security rules are properly configured
 
 2. **Authentication Problems**
    - Verify Auth providers are enabled
    - Check domain authorization in Firebase
    - Clear browser cache and cookies
+   - Ensure environment variables are properly set
 
 3. **Build Errors**
-   - Run `npm run type-check` to identify TypeScript issues
+   - Check TypeScript errors with `npm run build`
    - Ensure all dependencies are installed
    - Check for missing environment variables
+   - Verify all imports are correct
 
 4. **Performance Issues**
    - Implement proper loading states
    - Use React.memo for expensive components
    - Optimize Firestore queries with indexes
+   - Check bundle size with `npm run analyze`
+
+5. **Data Sync Issues**
+   - Check internet connection
+   - Verify Firestore security rules
+   - Clear browser cache and localStorage
+   - Check Firebase console for quota limits
 
 ### Getting Help
 
-- Check the [Issues](link-to-issues) page for known problems
+- Check the [GitHub Issues](https://github.com/your-username/exam-strategy-engine/issues) page
 - Review Firebase documentation for database issues
 - Check Next.js documentation for routing problems
+- Join our [Discord Community](https://discord.gg/exam-strategy) for support
+
+### Performance Monitoring
+
+- **Lighthouse Scores**: Aim for 90+ in all categories
+- **Core Web Vitals**: Monitor LCP, FID, and CLS
+- **Bundle Analysis**: Regular bundle size monitoring
+- **Firebase Usage**: Monitor Firestore read/write operations
 
 ## Contributing
 
@@ -390,7 +495,64 @@ We welcome contributions! Please follow these steps:
 - Include proper error handling
 - Write meaningful commit messages
 - Test your changes thoroughly
+- Update documentation for new features
+- Follow the established component patterns
+- Use proper semantic HTML and accessibility features
 
+### Code Review Process
+
+1. **Automated Checks**: All PRs must pass TypeScript compilation and linting
+2. **Manual Review**: At least one maintainer review required
+3. **Testing**: Verify features work across different browsers and devices
+4. **Documentation**: Ensure README and code comments are updated
+
+## Roadmap
+
+### Phase 1 (Current) ✅
+- [x] Universal onboarding system
+- [x] Strategic dashboard with analytics
+- [x] Daily logging and health tracking
+- [x] Mock test analysis engine
+- [x] Syllabus management with progress tracking
+- [x] Real-time data synchronization
+
+### Phase 2 (Q2 2024)
+- [ ] Advanced spaced repetition with AI optimization
+- [ ] Mobile app (React Native)
+- [ ] Offline-first architecture
+- [ ] Advanced analytics dashboard
+- [ ] Study group collaboration features
+- [ ] Integration with popular test platforms
+
+### Phase 3 (Q3 2024)
+- [ ] AI-powered study recommendations
+- [ ] Voice-based logging and notes
+- [ ] Advanced visualization and reporting
+- [ ] Exam-specific templates and strategies
+- [ ] Performance prediction algorithms
+- [ ] Integration with educational content providers
+
+### Phase 4 (Q4 2024)
+- [ ] Mentor matching system
+- [ ] Live study sessions and webinars
+- [ ] Advanced gamification features
+- [ ] API for third-party integrations
+- [ ] White-label solutions for institutions
+- [ ] Advanced AI tutoring system
+
+## Community
+
+- **Discord**: [Join our community](https://discord.gg/exam-strategy)
+- **Twitter**: [@ExamStrategyEng](https://twitter.com/ExamStrategyEng)
+- **Blog**: [Latest updates and study tips](https://blog.examstrategy.dev)
+- **YouTube**: [Video tutorials and walkthroughs](https://youtube.com/@ExamStrategyEngine)
+
+## Support
+
+- **Documentation**: [Full documentation](https://docs.examstrategy.dev)
+- **FAQ**: [Frequently asked questions](https://examstrategy.dev/faq)
+- **Email Support**: support@examstrategy.dev
+- **Bug Reports**: [GitHub Issues](https://github.com/your-username/exam-strategy-engine/issues)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -402,9 +564,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Icons from [Lucide](https://lucide.dev/)
 - Charts powered by [Recharts](https://recharts.org/)
 - Backend by [Firebase](https://firebase.google.com/)
+- Deployed on [Vercel](https://vercel.com/)
+- Inspired by the principles of spaced repetition and evidence-based learning
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=your-username/exam-strategy-engine&type=Date)](https://star-history.com/#your-username/exam-strategy-engine&Date)
 ---
 
-**Happy Studying! 🚀**
+**Transform your exam preparation from chaotic to strategic! 🚀**
 
-Transform your exam preparation from chaotic to strategic with the Exam Strategy Engine.
+*Built with ❤️ for students who refuse to leave their success to chance.*

@@ -54,10 +54,10 @@ export default function LoginPage() {
         <div className="space-y-6 text-center md:text-left">
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              War Room
+              Exam Strategy Engine
             </h1>
             <p className="text-xl text-muted-foreground">
-              Your Strategic Command Center for IBPS SO IT Officer Success
+              Universal Strategic Platform for Competitive Exam Success
             </p>
           </div>
 
@@ -68,7 +68,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <h3 className="font-semibold">Strategic Planning</h3>
-                <p className="text-sm text-muted-foreground">Phase-wise roadmap tailored to your exam date</p>
+                <p className="text-sm text-muted-foreground">Tier-based prioritization with spaced repetition</p>
               </div>
             </div>
 
@@ -78,7 +78,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <h3 className="font-semibold">Progress Analytics</h3>
-                <p className="text-sm text-muted-foreground">Deep insights into your strengths and gaps</p>
+                <p className="text-sm text-muted-foreground">AI-powered insights and performance correlation</p>
               </div>
             </div>
 
@@ -87,8 +87,8 @@ export default function LoginPage() {
                 <Shield className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <h3 className="font-semibold">Banking Context</h3>
-                <p className="text-sm text-muted-foreground">Connect every topic to real banking scenarios</p>
+                <h3 className="font-semibold">Contextual Mastery</h3>
+                <p className="text-sm text-muted-foreground">Personal context creation for deeper understanding</p>
               </div>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function LoginPage() {
         {/* Right side - Login Form */}
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="space-y-2 text-center">
-            <CardTitle>Enter War Room</CardTitle>
+            <CardTitle>Enter Strategy Engine</CardTitle>
             <CardDescription>
               Access your strategic preparation dashboard
             </CardDescription>
@@ -133,7 +133,7 @@ export default function LoginPage() {
                     <p className="text-sm text-destructive">{error}</p>
                   )}
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Signing in...' : 'Enter War Room'}
+                    {loading ? 'Signing in...' : 'Enter Strategy Engine'}
                   </Button>
                 </form>
               </TabsContent>
