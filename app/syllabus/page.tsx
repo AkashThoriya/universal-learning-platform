@@ -127,12 +127,17 @@ export default function SyllabusPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
           <Navigation />
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="text-muted-foreground">Loading syllabus...</p>
+            <div className="text-center space-y-6">
+              <div className="relative">
+                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="relative glass rounded-2xl p-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading syllabus...</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -142,15 +147,22 @@ export default function SyllabusPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
         
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
           {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900">Strategic Syllabus Overview</h1>
-            <p className="text-muted-foreground">
-              Master your preparation with tier-based prioritization and progress tracking
+          <div className="text-center space-y-4">
+            <div className="inline-block">
+              <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
+                📚 Syllabus Management
+              </Badge>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gradient">
+              Strategic Syllabus Overview
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Manage your study priorities and track mastery progress
             </p>
           </div>
 

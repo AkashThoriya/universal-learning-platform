@@ -172,12 +172,17 @@ export default function DailyLogPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
           <Navigation />
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="text-muted-foreground">Loading daily log...</p>
+            <div className="text-center space-y-6">
+              <div className="relative">
+                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="relative glass rounded-2xl p-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Preparing your daily log...</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -187,30 +192,38 @@ export default function DailyLogPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
         
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex items-center justify-center space-x-2">
-              <Calendar className="h-8 w-8 text-blue-600" />
-              <h1 className="text-4xl font-bold text-gray-900">Daily Progress Log</h1>
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <div className="inline-block">
+              <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
+                📅 Daily Progress Tracking
+              </Badge>
             </div>
-            <p className="text-muted-foreground">
-              Track your daily study progress, health metrics, and reflections for {format(new Date(), 'PPPP')}
+            <div className="flex items-center justify-center space-x-3">
+              <Calendar className="h-8 w-8 text-primary animate-glow" />
+              <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Daily Progress Log</h1>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Track your journey for <span className="font-semibold">{format(new Date(), 'PPPP')}</span>
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Health Metrics */}
-            <Card>
+            <Card className="glass border-0 hover:scale-[1.02] transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Zap className="h-5 w-5 text-yellow-500" />
-                  <span>Health Metrics</span>
+                <CardTitle className="flex items-center space-x-3">
+                  <div className="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900/20">
+                    <Zap className="h-5 w-5 text-yellow-600" />
+                  </div>
+                  <span>Health & Wellness Metrics</span>
                 </CardTitle>
                 <CardDescription>
-                  Your physical and mental state affects study performance
+                  Your physical and mental state directly impacts study performance
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

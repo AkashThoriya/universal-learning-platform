@@ -1,7 +1,12 @@
 /**
  * @fileoverview Main Dashboard Page Component
  * 
- * The central command center for exam preparation strategy. Displays real-time
+ * The central c  // State for data that hasn't been migrated to service layer yet
+  const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
+  const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
+  const [insights, setInsights] = useState<StudyInsight | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showDailyLogModal, setShowDailyLogModal] = useState(false);center for exam preparation strategy. Displays real-time
  * analytics, revision queue, performance trends, AI-generated insights, and
  * quick action buttons for daily activities.
  * 
@@ -22,14 +27,20 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
-  getUser, 
+  userService, 
+  dailyLogService, 
+  progressService,
+  firebaseService 
+} from '@/lib/firebase-enhanced';
+import { 
   getRevisionQueue, 
   getMockTests, 
-  getRecentDailyLogs,
   generateStudyInsights,
   subscribeToRevisionQueue,
   subscribeToUserStats
 } from '@/lib/firebase-utils';
+import { useAsyncData, useDebouncedValue } from '@/hooks/enhanced-hooks';
+import { LoadingState } from '@/lib/types-utils';
 import AuthGuard from '@/components/AuthGuard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -63,71 +74,100 @@ import Navigation from '@/components/Navigation';
  */
 export default function DashboardPage() {
   const { user } = useAuth();
-  const [userData, setUserData] = useState<User | null>(null);
+  
+  // State for data that hasn't been migrated to service layer yet
   const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
   const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
-  const [dailyLogs, setDailyLogs] = useState<DailyLog[]>([]);
   const [insights, setInsights] = useState<StudyInsight[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showDailyLog, setShowDailyLog] = useState(false);
+  const [showDailyLogModal, setShowDailyLogModal] = useState(false);
+
+  // Enhanced data fetching using the new service layer
+  const {
+    data: userData,
+    isLoading: userLoading,
+    error: userError,
+    refetch: refetchUser
+  } = useAsyncData(
+    () => user ? userService.get(user.uid).then(result => result.success ? result.data : null) : Promise.resolve(null),
+    [user?.uid],
+    { immediate: !!user }
+  );
+
+  const {
+    data: dailyLogs,
+    isLoading: logsLoading,
+    refetch: refetchLogs
+  } = useAsyncData(
+    () => user ? dailyLogService.getLogs(user.uid, 14).then(result => result.success ? result.data : []) : Promise.resolve([]),
+    [user?.uid],
+    { immediate: !!user }
+  );
+
+  const {
+    data: userProgress,
+    isLoading: progressLoading,
+    refetch: refetchProgress
+  } = useAsyncData(
+    () => user ? progressService.getAllProgress(user.uid).then(result => result.success ? result.data : []) : Promise.resolve([]),
+    [user?.uid],
+    { immediate: !!user }
+  );
 
   /**
-   * Fetches all dashboard data in parallel and sets up real-time subscriptions
-   * Loads user data, mock tests, revision queue, daily logs, and AI insights
+   * Legacy data fetching for components not yet migrated to service layer
    */
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchLegacyData = async () => {
       if (!user) return;
 
       try {
-        // Fetch all dashboard data in parallel for better performance
-        const [userDoc, mockTestsData, revisionData, dailyLogsData, insightsData] = await Promise.all([
-          getUser(user.uid),
+        // Fetch data that hasn't been migrated to service layer yet
+        const [mockTestsData, revisionData, insightsData] = await Promise.all([
           getMockTests(user.uid, 10),
           getRevisionQueue(user.uid),
-          getRecentDailyLogs(user.uid, 14),
           generateStudyInsights(user.uid)
         ]);
 
-        setUserData(userDoc);
         setMockTests(mockTestsData);
         setRevisionQueue(revisionData);
-        setDailyLogs(dailyLogsData);
         setInsights(insightsData);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error('Error fetching legacy dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchLegacyData();
 
     // Set up real-time subscriptions for live data updates
     let unsubscribeRevision: (() => void) | undefined;
-    let unsubscribeUser: (() => void) | undefined;
 
     if (user) {
       unsubscribeRevision = subscribeToRevisionQueue(user.uid, setRevisionQueue);
-      unsubscribeUser = subscribeToUserStats(user.uid, setUserData);
     }
 
     // Cleanup subscriptions on component unmount
     return () => {
       unsubscribeRevision?.();
-      unsubscribeUser?.();
     };
   }, [user]);
 
   if (loading || !userData) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
           <Navigation />
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="text-muted-foreground">Loading your strategic dashboard...</p>
+            <div className="text-center space-y-6">
+              <div className="relative">
+                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="relative glass rounded-2xl p-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading your strategic dashboard...</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -149,12 +189,12 @@ export default function DashboardPage() {
     }));
 
   // Health correlation data
-  const healthData = dailyLogs.slice(0, 7).reverse().map((log, index) => ({
+  const healthData = dailyLogs ? dailyLogs.slice(0, 7).reverse().map((log: any, index: number) => ({
     day: format(log.date.toDate(), 'EEE'),
     energy: log.health.energy,
     sleep: log.health.sleepHours,
-    studyTime: log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0) / 60
-  }));
+    studyTime: log.studiedTopics.reduce((sum: number, session: any) => sum + session.minutes, 0) / 60
+  })) : [];
 
   // Error analysis from latest test
   const latestTest = mockTests[0];
@@ -185,19 +225,130 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
         
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
+          {/* Header Section */}
+          <div className="text-center space-y-4">
+            <div className="inline-block">
+              <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
+                🎯 Strategic Command Center
+              </Badge>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gradient">
               Welcome back, {userData.displayName || 'Strategist'}
             </h1>
-            <p className="text-muted-foreground">Strategic command center for {userData.currentExam.name}</p>
+            <p className="text-muted-foreground text-lg">
+              Your strategic journey for <span className="font-semibold">{userData.currentExam.name}</span>
+            </p>
           </div>
 
-          {/* Key Metrics */}
+          {/* Key Metrics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Exam Countdown */}
+            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium">Exam Countdown</CardTitle>
+                  <Calendar className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-gradient">{daysUntilExam}</div>
+                  <p className="text-xs text-muted-foreground">days remaining</p>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${Math.max(0, Math.min(100, ((365 - daysUntilExam) / 365) * 100))}%` 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Study Streak */}
+            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium">Study Streak</CardTitle>
+                  <Zap className="h-5 w-5 text-orange-500 group-hover:scale-110 transition-transform" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-orange-600">{userData.studyStreak || 0}</div>
+                  <p className="text-xs text-muted-foreground">consecutive days</p>
+                  <div className="flex space-x-1">
+                    {[...Array(7)].map((_, i) => (
+                      <div 
+                        key={i}
+                        className={`w-3 h-3 rounded-full ${
+                          i < (userData.studyStreak || 0) % 7 
+                            ? 'bg-orange-500' 
+                            : 'bg-muted'
+                        } transition-colors duration-300`}
+                      ></div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Revision Queue */}
+            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium">Revision Due</CardTitle>
+                  <Clock className="h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-blue-600">{revisionQueue.length}</div>
+                  <p className="text-xs text-muted-foreground">topics pending</p>
+                  {revisionQueue.length > 0 && (
+                    <Badge variant="outline" className="text-xs">
+                      Next: {revisionQueue[0]?.topicName}
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Latest Score */}
+            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm font-medium">Latest Score</CardTitle>
+                  <Target className="h-5 w-5 text-green-500 group-hover:scale-110 transition-transform" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {latestTest ? (
+                    <>
+                      <div className="text-3xl font-bold text-green-600">
+                        {Math.round((Object.values(latestTest.scores).reduce((sum, score) => sum + score, 0) / 
+                          Object.values(latestTest.maxScores).reduce((sum, score) => sum + score, 0)) * 100)}%
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {format(latestTest.date.toDate(), 'MMM dd')}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-3xl font-bold text-muted-foreground">--</div>
+                      <p className="text-xs text-muted-foreground">No tests yet</p>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -427,7 +578,7 @@ export default function DashboardPage() {
                 <Button 
                   className="w-full justify-start" 
                   variant="outline"
-                  onClick={() => setShowDailyLog(true)}
+                  onClick={() => setShowDailyLogModal(true)}
                 >
                   <Zap className="h-4 w-4 mr-2" />
                   Log Today's Progress
@@ -463,7 +614,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {insights.slice(0, 3).map((insight, index) => (
+                  {insights.slice(0, 3).map((insight: any, index: number) => (
                     <div
                       key={index}
                       className={`p-4 rounded-lg border-l-4 ${
@@ -477,7 +628,7 @@ export default function DashboardPage() {
                       <h4 className="font-semibold mb-2">{insight.title}</h4>
                       <p className="text-sm text-gray-700 mb-3">{insight.description}</p>
                       <div className="space-y-1">
-                        {insight.actionItems.slice(0, 2).map((action, actionIndex) => (
+                        {insight.actionItems.slice(0, 2).map((action: any, actionIndex: number) => (
                           <div key={actionIndex} className="flex items-center space-x-2 text-sm">
                             <CheckCircle className="h-3 w-3 text-green-600" />
                             <span>{action}</span>
@@ -493,8 +644,8 @@ export default function DashboardPage() {
         </div>
 
         <DailyLogModal 
-          isOpen={showDailyLog}
-          onClose={() => setShowDailyLog(false)}
+          isOpen={showDailyLogModal}
+          onClose={() => setShowDailyLogModal(false)}
         />
       </div>
     </AuthGuard>

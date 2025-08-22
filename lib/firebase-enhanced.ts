@@ -1,0 +1,478 @@
+/**
+ * @fileoverview Enhanced Firebase Service Layer Integration
+ * 
+ * Simplified service layer that integrates with existing Firebase utilities
+ * while adding performance monitoring, caching, and error handling.
+ * 
+ * @author Exam Strategy Engine Team
+ * @version 1.0.0
+ */
+
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  setDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  orderBy, 
+  limit, 
+  Timestamp,
+  writeBatch
+} from 'firebase/firestore';
+import { db } from './firebase';
+import { Result, createSuccess, createError, LoadingState } from './types-utils';
+import { serviceContainer, PerformanceMonitor, ConsoleLogger } from './service-layer';
+
+// ============================================================================
+// CACHE SERVICE
+// ============================================================================
+
+class CacheService {
+  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cleanupInterval: NodeJS.Timeout;
+
+  constructor() {
+    // Clean up expired entries every 5 minutes
+    this.cleanupInterval = setInterval(() => this.cleanup(), 5 * 60 * 1000);
+  }
+
+  set<T>(key: string, data: T, ttl: number = 300000): void {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl
+    });
+  }
+
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    const isExpired = Date.now() - entry.timestamp > entry.ttl;
+    if (isExpired) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.data;
+  }
+
+  delete(key: string): void {
+    this.cache.delete(key);
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+
+  private cleanup(): void {
+    const now = Date.now();
+    for (const [key, entry] of this.cache.entries()) {
+      if (now - entry.timestamp > entry.ttl) {
+        this.cache.delete(key);
+      }
+    }
+  }
+
+  destroy(): void {
+    clearInterval(this.cleanupInterval);
+    this.clear();
+  }
+}
+
+// ============================================================================
+// ENHANCED FIREBASE OPERATIONS
+// ============================================================================
+
+class FirebaseService {
+  private cache: CacheService;
+  private monitor: PerformanceMonitor;
+  private logger: ConsoleLogger;
+
+  constructor() {
+    this.cache = new CacheService();
+    this.monitor = new PerformanceMonitor();
+    this.logger = new ConsoleLogger('[Firebase]');
+  }
+
+  /**
+   * Enhanced document read with caching
+   */
+  async getDocument<T>(
+    collectionPath: string,
+    docId: string,
+    options: { useCache?: boolean; cacheTTL?: number } = {}
+  ): Promise<Result<T | null>> {
+    const { useCache = true, cacheTTL = 300000 } = options;
+    const cacheKey = `doc:${collectionPath}:${docId}`;
+
+    try {
+      // Check cache first
+      if (useCache) {
+        const cached = this.cache.get<T>(cacheKey);
+        if (cached) {
+          this.logger.debug(`Cache hit for ${cacheKey}`);
+          return createSuccess(cached);
+        }
+      }
+
+      // Fetch from Firestore with performance monitoring
+      const result = await this.monitor.measure(`getDocument:${collectionPath}:${docId}`, async () => {
+        const docRef = doc(db, collectionPath, docId);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+          return null;
+        }
+
+        return { id: docId, ...docSnap.data() } as T;
+      });
+
+      // Cache the result
+      if (useCache && result) {
+        this.cache.set(cacheKey, result, cacheTTL);
+      }
+
+      return createSuccess(result);
+    } catch (error) {
+      this.logger.error(`Error getting document ${collectionPath}/${docId}`, error as Error);
+      return createError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }
+
+  /**
+   * Enhanced document write with cache invalidation
+   */
+  async setDocument<T>(
+    collectionPath: string,
+    docId: string,
+    data: T,
+    options: { merge?: boolean; invalidateCache?: boolean } = {}
+  ): Promise<Result<void>> {
+    const { merge = false, invalidateCache = true } = options;
+
+    try {
+      await this.monitor.measure(`setDocument:${collectionPath}:${docId}`, async () => {
+        const docRef = doc(db, collectionPath, docId);
+        await setDoc(docRef, data as any, { merge });
+      });
+
+      // Invalidate cache
+      if (invalidateCache) {
+        const cacheKey = `doc:${collectionPath}:${docId}`;
+        this.cache.delete(cacheKey);
+      }
+
+      this.logger.debug(`Document set: ${collectionPath}/${docId}`);
+      return createSuccess(undefined);
+    } catch (error) {
+      this.logger.error(`Error setting document ${collectionPath}/${docId}`, error as Error);
+      return createError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }
+
+  /**
+   * Enhanced document update with cache invalidation
+   */
+  async updateDocument<T>(
+    collectionPath: string,
+    docId: string,
+    updates: Partial<T>,
+    options: { invalidateCache?: boolean } = {}
+  ): Promise<Result<void>> {
+    const { invalidateCache = true } = options;
+
+    try {
+      await this.monitor.measure(`updateDocument:${collectionPath}:${docId}`, async () => {
+        const docRef = doc(db, collectionPath, docId);
+        await updateDoc(docRef, {
+          ...updates,
+          updatedAt: Timestamp.fromDate(new Date())
+        });
+      });
+
+      // Invalidate cache
+      if (invalidateCache) {
+        const cacheKey = `doc:${collectionPath}:${docId}`;
+        this.cache.delete(cacheKey);
+      }
+
+      this.logger.debug(`Document updated: ${collectionPath}/${docId}`);
+      return createSuccess(undefined);
+    } catch (error) {
+      this.logger.error(`Error updating document ${collectionPath}/${docId}`, error as Error);
+      return createError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }
+
+  /**
+   * Enhanced collection query
+   */
+  async queryCollection<T>(
+    collectionPath: string,
+    options: {
+      where?: { field: string; operator: any; value: any }[];
+      orderBy?: { field: string; direction: 'asc' | 'desc' }[];
+      limit?: number;
+      useCache?: boolean;
+      cacheTTL?: number;
+    } = {}
+  ): Promise<Result<T[]>> {
+    const { 
+      where: whereConditions = [], 
+      orderBy: orderByConditions = [], 
+      limit: limitCount,
+      useCache = true,
+      cacheTTL = 180000 // 3 minutes for collections
+    } = options;
+
+    // Create cache key from query parameters
+    const cacheKey = `query:${collectionPath}:${JSON.stringify(options)}`;
+
+    try {
+      // Check cache
+      if (useCache) {
+        const cached = this.cache.get<T[]>(cacheKey);
+        if (cached) {
+          this.logger.debug(`Cache hit for query ${cacheKey}`);
+          return createSuccess(cached);
+        }
+      }
+
+      // Build and execute query
+      const result = await this.monitor.measure(`queryCollection:${collectionPath}`, async () => {
+        let q = query(collection(db, collectionPath));
+
+        // Add where conditions
+        for (const condition of whereConditions) {
+          q = query(q, where(condition.field, condition.operator, condition.value));
+        }
+
+        // Add order by conditions
+        for (const order of orderByConditions) {
+          q = query(q, orderBy(order.field, order.direction));
+        }
+
+        // Add limit
+        if (limitCount) {
+          q = query(q, limit(limitCount));
+        }
+
+        const querySnap = await getDocs(q);
+        const documents: T[] = [];
+
+        querySnap.forEach(doc => {
+          documents.push({ id: doc.id, ...doc.data() } as T);
+        });
+
+        return documents;
+      });
+
+      // Cache the result
+      if (useCache) {
+        this.cache.set(cacheKey, result, cacheTTL);
+      }
+
+      return createSuccess(result);
+    } catch (error) {
+      this.logger.error(`Error querying collection ${collectionPath}`, error as Error);
+      return createError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }
+
+  /**
+   * Batch operations with performance monitoring
+   */
+  async batchWrite(
+    operations: Array<{
+      type: 'set' | 'update' | 'delete';
+      path: string;
+      docId: string;
+      data?: any;
+    }>
+  ): Promise<Result<void>> {
+    try {
+      await this.monitor.measure(`batchWrite:${operations.length}ops`, async () => {
+        const batch = writeBatch(db);
+
+        for (const op of operations) {
+          const docRef = doc(db, op.path, op.docId);
+
+          switch (op.type) {
+            case 'set':
+              batch.set(docRef, op.data);
+              break;
+            case 'update':
+              batch.update(docRef, {
+                ...op.data,
+                updatedAt: Timestamp.fromDate(new Date())
+              });
+              break;
+            case 'delete':
+              batch.delete(docRef);
+              break;
+          }
+
+          // Invalidate cache for each operation
+          const cacheKey = `doc:${op.path}:${op.docId}`;
+          this.cache.delete(cacheKey);
+        }
+
+        await batch.commit();
+      });
+
+      this.logger.debug(`Batch write completed: ${operations.length} operations`);
+      return createSuccess(undefined);
+    } catch (error) {
+      this.logger.error('Error in batch write', error as Error);
+      return createError(error instanceof Error ? error : new Error('Unknown error'));
+    }
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getCacheStats(): { size: number; keys: string[] } {
+    const cache = (this.cache as any).cache;
+    return {
+      size: cache.size,
+      keys: Array.from(cache.keys())
+    };
+  }
+
+  /**
+   * Clear all caches
+   */
+  clearCache(): void {
+    this.cache.clear();
+    this.logger.debug('Cache cleared');
+  }
+}
+
+// ============================================================================
+// SERVICE INITIALIZATION
+// ============================================================================
+
+// Create singleton instance
+const firebaseService = new FirebaseService();
+
+// Register in service container
+serviceContainer.register('FirebaseService', firebaseService);
+serviceContainer.register('CacheService', firebaseService['cache']);
+
+// ============================================================================
+// CONVENIENCE FUNCTIONS (BACKWARD COMPATIBILITY)
+// ============================================================================
+
+/**
+ * Enhanced user operations
+ */
+export const userService = {
+  async create(userId: string, userData: any): Promise<Result<void>> {
+    const userDoc = {
+      ...userData,
+      createdAt: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date())
+    };
+    return firebaseService.setDocument('users', userId, userDoc);
+  },
+
+  async get(userId: string): Promise<Result<any | null>> {
+    return firebaseService.getDocument('users', userId);
+  },
+
+  async update(userId: string, updates: any): Promise<Result<void>> {
+    return firebaseService.updateDocument('users', userId, updates);
+  },
+
+  async getProgress(userId: string): Promise<Result<any[]>> {
+    return firebaseService.queryCollection(`users/${userId}/progress`, {
+      orderBy: [{ field: 'lastStudied', direction: 'desc' }],
+      limit: 100
+    });
+  }
+};
+
+/**
+ * Enhanced daily log operations
+ */
+export const dailyLogService = {
+  async create(userId: string, logData: any): Promise<Result<string>> {
+    const logId = doc(collection(db, `users/${userId}/dailyLogs`)).id;
+    const dailyLog = {
+      ...logData,
+      id: logId,
+      createdAt: Timestamp.fromDate(new Date())
+    };
+
+    const result = await firebaseService.setDocument(
+      `users/${userId}/dailyLogs`,
+      logId,
+      dailyLog
+    );
+
+    return result.success ? createSuccess(logId) : result;
+  },
+
+  async getLogs(userId: string, days: number = 30): Promise<Result<any[]>> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    return firebaseService.queryCollection(`users/${userId}/dailyLogs`, {
+      where: [{ field: 'date', operator: '>=', value: Timestamp.fromDate(startDate) }],
+      orderBy: [{ field: 'date', direction: 'desc' }],
+      limit: days
+    });
+  }
+};
+
+/**
+ * Enhanced progress tracking operations
+ */
+export const progressService = {
+  async updateTopic(
+    userId: string,
+    topicId: string,
+    progress: any
+  ): Promise<Result<void>> {
+    const progressData = {
+      ...progress,
+      topicId,
+      lastStudied: Timestamp.fromDate(new Date())
+    };
+
+    return firebaseService.setDocument(
+      `users/${userId}/progress`,
+      topicId,
+      progressData,
+      { merge: true }
+    );
+  },
+
+  async getTopic(userId: string, topicId: string): Promise<Result<any | null>> {
+    return firebaseService.getDocument(`users/${userId}/progress`, topicId);
+  },
+
+  async getAllProgress(userId: string): Promise<Result<any[]>> {
+    return firebaseService.queryCollection(`users/${userId}/progress`, {
+      orderBy: [{ field: 'lastStudied', direction: 'desc' }]
+    });
+  }
+};
+
+// ============================================================================
+// EXPORTS
+// ============================================================================
+
+export {
+  FirebaseService,
+  CacheService,
+  firebaseService
+};
+
+// Export the enhanced firebase service as default
+export default firebaseService;

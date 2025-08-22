@@ -2,14 +2,30 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, Home, BookOpen, BarChart3, Target, Settings, Calendar, TestTube } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { 
+  LogOut, 
+  Home, 
+  BookOpen, 
+  BarChart3, 
+  Target, 
+  Settings, 
+  Calendar, 
+  TestTube,
+  User,
+  Bell,
+  Menu,
+  X
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Navigation() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -19,48 +35,156 @@ export default function Navigation() {
   const isActive = (path: string) => pathname === path;
   const isActiveGroup = (paths: string[]) => paths.some(path => pathname.startsWith(path));
 
+  const navItems = [
+    {
+      href: '/dashboard',
+      label: 'Dashboard',
+      icon: Home,
+      isActive: isActive('/dashboard')
+    },
+    {
+      href: '/syllabus',
+      label: 'Syllabus',
+      icon: BookOpen,
+      isActive: isActive('/syllabus')
+    },
+    {
+      href: '/log/daily',
+      label: 'Daily Log',
+      icon: Calendar,
+      isActive: isActive('/log/daily')
+    },
+    {
+      href: '/log/mock',
+      label: 'Mock Tests',
+      icon: Target,
+      isActive: isActiveGroup(['/log/mock', '/test-logger'])
+    }
+  ];
+
   return (
-    <nav className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className="glass border-0 border-b border-white/20 sticky top-0 z-50 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
-            <Link href="/dashboard" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Exam Strategy Engine
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/dashboard" className="flex items-center space-x-2 group">
+              <div className="relative">
+                <Target className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-200" />
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              </div>
+              <span className="text-xl font-bold text-gradient hidden sm:block">
+                Exam Strategy Engine
+              </span>
             </Link>
-            
-            <div className="flex space-x-1">
-              <Link href="/dashboard">
-                <Button variant={isActive('/dashboard') ? 'default' : 'ghost'} size="sm">
-                  <Home className="h-4 w-4 mr-2" />
-                  Dashboard
-                </Button>
-              </Link>
-              <Link href="/syllabus">
-                <Button variant={isActive('/syllabus') ? 'default' : 'ghost'} size="sm">
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Syllabus
-                </Button>
-              </Link>
-              <Link href="/log/daily">
-                <Button variant={isActive('/log/daily') ? 'default' : 'ghost'} size="sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Daily Log
-                </Button>
-              </Link>
-              <Link href="/log/mock">
-                <Button variant={isActiveGroup(['/log/mock', '/test-logger']) ? 'default' : 'ghost'} size="sm">
-                  <Target className="h-4 w-4 mr-2" />
-                  Mock Tests
-                </Button>
-              </Link>
-            </div>
+          </div>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link key={item.href} href={item.href}>
+                  <Button 
+                    variant={item.isActive ? 'default' : 'ghost'} 
+                    size="sm"
+                    className={`
+                      relative transition-all duration-200 hover:scale-105
+                      ${item.isActive 
+                        ? 'gradient-primary text-white shadow-lg' 
+                        : 'hover:bg-white/10 hover:text-primary'
+                      }
+                    `}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {item.label}
+                    {item.isActive && (
+                      <div className="absolute inset-0 bg-white/20 rounded-md opacity-50"></div>
+                    )}
+                  </Button>
+                </Link>
+              );
+            })}
           </div>
 
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Exit
-          </Button>
+          {/* User Menu */}
+          <div className="flex items-center space-x-4">
+            {/* Notifications */}
+            <Button variant="ghost" size="sm" className="relative hover:bg-white/10">
+              <Bell className="h-5 w-5" />
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs"
+              >
+                3
+              </Badge>
+            </Button>
+            
+            {/* User Profile */}
+            <div className="flex items-center space-x-3">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-sm font-medium">{user?.displayName || 'User'}</span>
+                <span className="text-xs text-muted-foreground">Premium</span>
+              </div>
+              <div className="relative">
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                  {user?.displayName?.[0] || 'U'}
+                </div>
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-0 hover:opacity-20 transition-opacity duration-200"></div>
+              </div>
+            </div>
+
+            {/* Logout */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleLogout}
+              className="hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">Exit</span>
+            </Button>
+
+            {/* Mobile menu button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="md:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-white/20">
+            <div className="flex flex-col space-y-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button 
+                      variant={item.isActive ? 'default' : 'ghost'} 
+                      size="sm"
+                      className={`
+                        w-full justify-start transition-all duration-200
+                        ${item.isActive 
+                          ? 'gradient-primary text-white' 
+                          : 'hover:bg-white/10 hover:text-primary'
+                        }
+                      `}
+                    >
+                      <Icon className="h-4 w-4 mr-3" />
+                      {item.label}
+                    </Button>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

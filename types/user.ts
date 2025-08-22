@@ -8,6 +8,8 @@ export interface User {
   createdAt: Timestamp;
   onboardingComplete: boolean;
   currentPhase: string;
+  studyStreak?: number; // Added for dashboard
+  totalStudyHours?: number; // Added for dashboard
   resources: {
     mockPlatform: string;
     quantBook: string;
