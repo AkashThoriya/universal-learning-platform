@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -11,7 +11,11 @@ export const metadata: Metadata = {
   description: 'A strategic operating system for competitive exam preparation that transforms unstructured studying into a data-driven, adaptive process',
   keywords: 'exam preparation, competitive exams, UPSC, IBPS, SSC, GATE, CAT, study planner, mock tests, spaced repetition',
   authors: [{ name: 'Exam Strategy Engine Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({

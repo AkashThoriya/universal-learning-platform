@@ -1,5 +1,40 @@
+/**
+ * @fileoverview Predefined exam data with comprehensive syllabus structures
+ * 
+ * This module contains pre-populated exam data for major competitive exams in India
+ * including UPSC, IBPS, SSC, GATE, CAT, and others. Each exam includes complete
+ * syllabus structure with subjects, topics, and estimated study hours.
+ * 
+ * @author Exam Strategy Engine Team
+ * @version 1.0.0
+ */
+
 import { Exam } from '@/types/exam';
 
+/**
+ * Array of predefined exams with complete syllabus data
+ * Includes major competitive exams across different categories:
+ * - Civil Services: UPSC CSE, UPSC CDS, State PCS
+ * - Banking: IBPS PO, IBPS Clerk, SBI PO
+ * - Engineering: GATE, IES, State Engineering Services
+ * - Management: CAT, XAT, SNAP
+ * - Staff Selection: SSC CGL, SSC CHSL
+ * - Railway: RRB NTPC, Group D
+ * 
+ * @example
+ * ```typescript
+ * // Find a specific exam
+ * const upscExam = EXAMS_DATA.find(exam => exam.id === 'upsc_cse_prelims');
+ * 
+ * // Get all banking exams
+ * const bankingExams = EXAMS_DATA.filter(exam => exam.category === 'Banking');
+ * 
+ * // Calculate total estimated hours for an exam
+ * const totalHours = upscExam?.defaultSyllabus.reduce((sum, subject) => 
+ *   sum + (subject.estimatedHours || 0), 0
+ * );
+ * ```
+ */
 export const EXAMS_DATA: Exam[] = [
   {
     id: 'upsc_cse_prelims',
@@ -526,18 +561,79 @@ export const EXAMS_DATA: Exam[] = [
   }
 ];
 
+/**
+ * Retrieves a specific exam by its unique identifier
+ * 
+ * @param {string} examId - The unique exam ID to search for
+ * @returns {Exam | undefined} The exam object if found, undefined otherwise
+ * 
+ * @example
+ * ```typescript
+ * const upscExam = getExamById('upsc_cse_prelims');
+ * if (upscExam) {
+ *   console.log(`Found exam: ${upscExam.name}`);
+ *   console.log(`Total subjects: ${upscExam.defaultSyllabus.length}`);
+ * }
+ * ```
+ */
 export const getExamById = (examId: string): Exam | undefined => {
   return EXAMS_DATA.find(exam => exam.id === examId);
 };
 
+/**
+ * Retrieves all exams belonging to a specific category
+ * 
+ * @param {string} category - The category to filter by (e.g., 'Civil Services', 'Banking')
+ * @returns {Exam[]} Array of exams in the specified category
+ * 
+ * @example
+ * ```typescript
+ * const bankingExams = getExamsByCategory('Banking');
+ * console.log(`Found ${bankingExams.length} banking exams:`);
+ * bankingExams.forEach(exam => console.log(`- ${exam.name}`));
+ * ```
+ */
 export const getExamsByCategory = (category: string): Exam[] => {
   return EXAMS_DATA.filter(exam => exam.category === category);
 };
 
+/**
+ * Gets all unique exam categories available in the system
+ * 
+ * @returns {string[]} Array of unique category names
+ * 
+ * @example
+ * ```typescript
+ * const categories = getAllCategories();
+ * console.log('Available exam categories:');
+ * categories.forEach(category => console.log(`- ${category}`));
+ * ```
+ */
 export const getAllCategories = (): string[] => {
   return [...new Set(EXAMS_DATA.map(exam => exam.category))];
 };
 
+/**
+ * Searches for exams based on name, description, or category
+ * Performs case-insensitive search across multiple fields
+ * 
+ * @param {string} query - The search query string
+ * @returns {Exam[]} Array of exams matching the search criteria
+ * 
+ * @example
+ * ```typescript
+ * // Search for UPSC related exams
+ * const upscExams = searchExams('upsc');
+ * 
+ * // Search for banking exams
+ * const bankingExams = searchExams('bank');
+ * 
+ * // Search for preliminary exams
+ * const prelimsExams = searchExams('prelim');
+ * 
+ * console.log(`Found ${upscExams.length} UPSC exams`);
+ * ```
+ */
 export const searchExams = (query: string): Exam[] => {
   const lowercaseQuery = query.toLowerCase();
   return EXAMS_DATA.filter(exam => 

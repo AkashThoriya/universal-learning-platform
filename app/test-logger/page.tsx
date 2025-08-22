@@ -41,7 +41,7 @@ export default function TestLoggerPage() {
   const [quantConcepts, setQuantConcepts] = useState(0);
   const [quantCareless, setQuantCareless] = useState(0);
   const [quantGuesses, setQuantGuesses] = useState(0);
-  const [quantTime, setQuantTimePressure] = useState(0);
+  const [quantTimePressure, setQuantTimePressure] = useState(0);
   
   const [reasoningConcepts, setReasoningConcepts] = useState(0);
   const [reasoningCareless, setReasoningCareless] = useState(0);

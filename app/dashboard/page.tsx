@@ -1,3 +1,22 @@
+/**
+ * @fileoverview Main Dashboard Page Component
+ * 
+ * The central command center for exam preparation strategy. Displays real-time
+ * analytics, revision queue, performance trends, AI-generated insights, and
+ * quick action buttons for daily activities.
+ * 
+ * Features:
+ * - Real-time revision queue with spaced repetition
+ * - Performance analytics with interactive charts
+ * - Health-performance correlation insights
+ * - Study streak tracking and gamification
+ * - Quick access to daily logging and mock tests
+ * - AI-powered study recommendations
+ * 
+ * @author Exam Strategy Engine Team
+ * @version 1.0.0
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -23,6 +42,25 @@ import Link from 'next/link';
 import DailyLogModal from '@/components/DailyLogModal';
 import Navigation from '@/components/Navigation';
 
+/**
+ * Main Dashboard Page Component
+ * 
+ * Displays the strategic command center with:
+ * - User statistics and exam countdown
+ * - Spaced repetition revision queue
+ * - Performance analytics and trends
+ * - Health metrics correlation
+ * - AI-powered study insights
+ * - Quick action buttons for logging
+ * 
+ * @returns {JSX.Element} The dashboard page
+ * 
+ * @example
+ * ```typescript
+ * // This component is automatically rendered at /dashboard route
+ * // It requires authentication and shows comprehensive study analytics
+ * ```
+ */
 export default function DashboardPage() {
   const { user } = useAuth();
   const [userData, setUserData] = useState<User | null>(null);
@@ -33,12 +71,16 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [showDailyLog, setShowDailyLog] = useState(false);
 
+  /**
+   * Fetches all dashboard data in parallel and sets up real-time subscriptions
+   * Loads user data, mock tests, revision queue, daily logs, and AI insights
+   */
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
 
       try {
-        // Fetch all dashboard data in parallel
+        // Fetch all dashboard data in parallel for better performance
         const [userDoc, mockTestsData, revisionData, dailyLogsData, insightsData] = await Promise.all([
           getUser(user.uid),
           getMockTests(user.uid, 10),
@@ -61,7 +103,7 @@ export default function DashboardPage() {
 
     fetchData();
 
-    // Set up real-time subscriptions
+    // Set up real-time subscriptions for live data updates
     let unsubscribeRevision: (() => void) | undefined;
     let unsubscribeUser: (() => void) | undefined;
 
@@ -70,6 +112,7 @@ export default function DashboardPage() {
       unsubscribeUser = subscribeToUserStats(user.uid, setUserData);
     }
 
+    // Cleanup subscriptions on component unmount
     return () => {
       unsubscribeRevision?.();
       unsubscribeUser?.();
