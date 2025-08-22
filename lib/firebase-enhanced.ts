@@ -29,6 +29,83 @@ import { Result, createSuccess, createError, LoadingState } from './types-utils'
 import { serviceContainer, PerformanceMonitor, ConsoleLogger } from './service-layer';
 
 // ============================================================================
+// ENHANCED ERROR HANDLING & RETRY LOGIC
+// ============================================================================
+
+interface RetryOptions {
+  maxRetries: number;
+  baseDelay: number;
+  maxDelay: number;
+  backoffFactor: number;
+}
+
+class RetryService {
+  private static defaultOptions: RetryOptions = {
+    maxRetries: 3,
+    baseDelay: 1000,
+    maxDelay: 10000,
+    backoffFactor: 2
+  };
+
+  static async withRetry<T>(
+    operation: () => Promise<T>,
+    options: Partial<RetryOptions> = {}
+  ): Promise<T> {
+    const opts = { ...this.defaultOptions, ...options };
+    let lastError: Error;
+
+    for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
+        
+        // Don't retry on certain error types
+        if (this.isNonRetryableError(error)) {
+          throw error;
+        }
+
+        // Don't retry on last attempt
+        if (attempt === opts.maxRetries) {
+          break;
+        }
+
+        // Calculate delay with exponential backoff
+        const delay = Math.min(
+          opts.baseDelay * Math.pow(opts.backoffFactor, attempt),
+          opts.maxDelay
+        );
+
+        // Add jitter to prevent thundering herd
+        const jitteredDelay = delay + Math.random() * 1000;
+
+        if (process.env.NODE_ENV === 'development') {
+          console.warn(`Retry attempt ${attempt + 1}/${opts.maxRetries} after ${jitteredDelay}ms delay`);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, jitteredDelay));
+      }
+    }
+
+    throw lastError!;
+  }
+
+  private static isNonRetryableError(error: any): boolean {
+    // Don't retry on permission errors, invalid arguments, etc.
+    const nonRetryableCodes = [
+      'permission-denied',
+      'invalid-argument',
+      'not-found',
+      'already-exists',
+      'unauthenticated',
+      'failed-precondition'
+    ];
+
+    return error?.code && nonRetryableCodes.includes(error.code);
+  }
+}
+
+// ============================================================================
 // CACHE SERVICE
 // ============================================================================
 

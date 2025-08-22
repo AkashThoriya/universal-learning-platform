@@ -332,27 +332,41 @@ export default function EnhancedOnboardingPage() {
   // Final submission handler
   const handleComplete = useCallback(async () => {
     if (!user) {
-      console.error('User not authenticated');
+      form.setError('_form' as any, {
+        message: 'Authentication required. Please log in again.',
+        type: 'custom'
+      } as any);
       return;
     }
 
     setIsSubmitting(true);
     
     try {
-      // Validate entire form
+      // Validate entire form with enhanced error messages
       const isValid = await form.validate();
       if (!isValid) {
-        console.error('Form validation failed', form.errors);
+        const errorKeys = Object.keys(form.errors);
+        const errorMessage = errorKeys.length > 0 
+          ? `Please fix the following: ${errorKeys.join(', ')}`
+          : 'Please complete all required fields';
+        
+        form.setError('_form' as any, {
+          message: errorMessage,
+          type: 'validation',
+          path: '_form'
+        });
         return;
       }
 
-      // Prepare user data
+      // Enhanced user data preparation with validation
       const userData: Partial<UserType> = {
         email: user.email || '',
-        displayName: form.data.displayName,
+        displayName: form.data.displayName.trim(),
         currentExam: {
           id: form.data.selectedExamId,
-          name: form.data.isCustomExam ? (form.data.customExam.name || '') : selectedExam?.name || '',
+          name: form.data.isCustomExam 
+            ? (form.data.customExam.name?.trim() || '') 
+            : selectedExam?.name || '',
           targetDate: Timestamp.fromDate(new Date(form.data.examDate))
         },
         onboardingComplete: true,
@@ -375,29 +389,82 @@ export default function EnhancedOnboardingPage() {
           totalMockTests: 0,
           averageScore: 0,
           topicsCompleted: 0,
-          totalTopics: form.data.syllabus.reduce((sum: number, subject: SyllabusSubject) => sum + (subject.topics?.length || 0), 0)
-        }
+          totalTopics: form.data.syllabus.reduce((sum: number, subject: SyllabusSubject) => 
+            sum + (subject.topics?.length || 0), 0)
+        },
+        createdAt: Timestamp.fromDate(new Date())
       };
 
-      // Create user and save syllabus
-      await Promise.all([
+      // Validate syllabus data
+      if (!form.data.syllabus || form.data.syllabus.length === 0) {
+        throw new Error('At least one subject must be selected for your syllabus');
+      }
+
+      // Enhanced parallel operations with better error handling
+      const operations = await Promise.allSettled([
         createUser(user.uid, userData),
         saveSyllabus(user.uid, form.data.syllabus)
       ]);
 
-      // Clear persisted data
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('onboarding-progress');
-        localStorage.removeItem('onboarding-form-data');
+      // Check for operation failures
+      const failures = operations.filter((result, index) => {
+        if (result.status === 'rejected') {
+          console.error(`Operation ${index} failed:`, result.reason);
+          return true;
+        }
+        return false;
+      });
+
+      if (failures.length > 0) {
+        throw new Error('Failed to complete setup. Some data may not have been saved properly.');
       }
 
-      // Navigate to dashboard
-      router.push('/dashboard');
+      // Clear persisted data on successful completion
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.removeItem('onboarding-progress');
+          localStorage.removeItem('onboarding-form-data');
+        } catch (error) {
+          console.warn('Failed to clear localStorage:', error);
+        }
+      }
+
+      // Analytics tracking for successful onboarding
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Onboarding completed successfully:', {
+          userId: user.uid,
+          examType: form.data.selectedExamId,
+          isCustomExam: form.data.isCustomExam,
+          personaType: form.data.userPersona?.type,
+          syllabusCount: form.data.syllabus.length
+        });
+      }
+
+      // Navigate to dashboard with success indicator
+      const dashboardUrl = new URL('/dashboard', window.location.origin);
+      dashboardUrl.searchParams.set('onboarding', 'complete');
+      window.location.href = dashboardUrl.toString();
       
     } catch (error) {
       console.error('Error completing onboarding:', error);
+      
+      let errorMessage = 'Failed to complete setup. Please try again.';
+      
+      if (error instanceof Error) {
+        // Provide more specific error messages
+        if (error.message.includes('Firebase')) {
+          errorMessage = 'Connection error. Please check your internet connection and try again.';
+        } else if (error.message.includes('permission')) {
+          errorMessage = 'Permission denied. Please refresh the page and try again.';
+        } else if (error.message.includes('quota')) {
+          errorMessage = 'Service temporarily unavailable. Please try again in a few minutes.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       form.setError('_form' as any, {
-        message: 'Failed to complete setup. Please try again.',
+        message: errorMessage,
         type: 'server',
         path: '_form'
       });

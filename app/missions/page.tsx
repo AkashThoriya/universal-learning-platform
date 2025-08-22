@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import { MissionDashboard } from '@/components/missions/MissionDashboard';
 import { MissionExecution } from '@/components/missions/MissionExecution';
+import { MissionConfiguration } from '@/components/missions/MissionConfiguration';
 import { AchievementSystem } from '@/components/missions/AchievementSystem';
 import { ProgressVisualization } from '@/components/missions/ProgressVisualization';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,7 +38,7 @@ import {
   type Achievement
 } from '@/types/mission-system';
 
-type ViewMode = 'dashboard' | 'execution' | 'achievements' | 'progress';
+type ViewMode = 'dashboard' | 'configuration' | 'execution' | 'achievements' | 'progress';
 
 export default function MissionsPage() {
   const { user } = useAuth();
@@ -57,14 +58,20 @@ export default function MissionsPage() {
   };
 
   const handleMissionComplete = (results: MissionResults) => {
-    console.log('Mission completed with results:', results);
+    // Log mission completion for analytics
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Mission completed with results:', results);
+    }
     setActiveMission(null);
     setCurrentView('dashboard');
-    // Here you would typically update the user's progress, achievements, etc.
+    // TODO: Update user progress and achievements through service layer
   };
 
   const handleMissionPause = () => {
-    console.log('Mission paused');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Mission paused');
+    }
+    // TODO: Save mission state through service layer
   };
 
   const handleMissionExit = () => {
@@ -73,11 +80,16 @@ export default function MissionsPage() {
   };
 
   const handleAchievementClick = (achievement: Achievement) => {
-    console.log('Achievement clicked:', achievement);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Achievement clicked:', achievement);
+    }
+    // TODO: Implement achievement detail view
   };
 
   const getPageTitle = (): string => {
     switch (currentView) {
+      case 'configuration':
+        return 'Mission Configuration';
       case 'execution':
         return activeMission ? `${activeMission.title} - Mission in Progress` : 'Mission Execution';
       case 'achievements':
@@ -91,6 +103,8 @@ export default function MissionsPage() {
 
   const getPageDescription = (): string => {
     switch (currentView) {
+      case 'configuration':
+        return 'Customize your adaptive mission settings and preferences';
       case 'execution':
         return 'Complete your mission objectives and unlock rewards';
       case 'achievements':
@@ -140,11 +154,28 @@ export default function MissionsPage() {
     return (
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto"></div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-900">Loading Mission System</h3>
-              <p className="text-gray-600">Preparing your learning experience...</p>
+          <div className="text-center space-y-6 max-w-md mx-auto">
+            <div className="relative">
+              <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+              <Card className="relative border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+                <CardContent className="p-8">
+                  <div className="flex justify-center mb-6">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-blue-200 rounded-full animate-ping opacity-75"></div>
+                      <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-4">
+                        <Target className="h-8 w-8 text-white animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Initializing Mission System</h3>
+                  <p className="text-gray-600 mb-6">Preparing your strategic learning environment...</p>
+                  
+                  <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -187,6 +218,7 @@ export default function MissionsPage() {
             {currentView !== 'execution' && (
               <div className="flex flex-wrap gap-2 mb-6">
                 <NavButton mode="dashboard" icon={Target} label="Mission Hub" badge="3" />
+                <NavButton mode="configuration" icon={Settings} label="Configure" />
                 <NavButton mode="progress" icon={BarChart3} label="Analytics" />
                 <NavButton mode="achievements" icon={Trophy} label="Achievements" badge="2" />
                 {activeMission && (
@@ -201,6 +233,12 @@ export default function MissionsPage() {
             {currentView === 'dashboard' && (
               <MissionDashboard 
                 onMissionStart={handleMissionStart}
+                className="animate-in fade-in-50 duration-500"
+              />
+            )}
+
+            {currentView === 'configuration' && (
+              <MissionConfiguration 
                 className="animate-in fade-in-50 duration-500"
               />
             )}

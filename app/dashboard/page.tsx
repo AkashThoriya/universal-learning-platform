@@ -7,7 +7,8 @@
   const [insights, setInsights] = useState<StudyInsight[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDailyLogModal, setShowDailyLogModal] = useState(false);
-  const [error, setError] = useState<string | null>(null);center for exam preparation strategy. Displays real-time
+  const [error, setError] = useState<string | null>(null);
+  const [lastActivity, setLastActivity] = useState<Date>(new Date());center for exam preparation strategy. Displays real-time
  * analytics, revision queue, performance trends, AI-generated insights, and
  * quick action buttons for daily activities.
  * 
@@ -39,6 +40,15 @@ import {
 import { useAsyncData, useDebouncedValue } from '@/hooks/enhanced-hooks';
 import { LoadingState } from '@/lib/types-utils';
 import AuthGuard from '@/components/AuthGuard';
+import { ComponentErrorBoundary } from '@/components/error-handling/GlobalErrorBoundary';
+import { 
+  LoadingSpinner, 
+  CardSkeleton, 
+  ErrorDisplay, 
+  EmptyState,
+  ProgressiveLoader 
+} from '@/components/ui/loading-states';
+import { useScreenReader } from '@/lib/accessibility-utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +60,7 @@ import Link from 'next/link';
 import DailyLogModal from '@/components/DailyLogModal';
 import Navigation from '@/components/Navigation';
 import { QuickSessionLauncher } from '@/components/micro-learning';
+import AnalyticsWidget from '@/components/analytics/AnalyticsWidget';
 
 /**
  * Main Dashboard Page Component
@@ -161,12 +172,19 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
           <Navigation />
           <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-6">
+            <div className="text-center space-y-6 max-w-md">
               <div className="relative">
                 <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
-                <div className="relative glass rounded-2xl p-8">
+                <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Loading your strategic dashboard...</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Dashboard</h3>
+                  <p className="text-sm text-gray-600">Preparing your strategic learning environment...</p>
+                  <div className="mt-4 space-y-2">
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse" style={{ width: '75%' }}></div>
+                    </div>
+                    <p className="text-xs text-gray-500">Loading analytics and progress data</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -458,6 +476,9 @@ export default function DashboardPage() {
 
           {/* Analytics Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {/* Analytics Widget */}
+            <AnalyticsWidget className="xl:col-span-1" />
+
             {/* Score Trend Chart */}
             <Card className="xl:col-span-2">
               <CardHeader>

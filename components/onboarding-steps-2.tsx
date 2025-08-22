@@ -71,7 +71,7 @@ interface OnboardingFormData {
  * Syllabus Management Step
  */
 interface SyllabusManagementStepProps {
-  form: UseFormReturn<OnboardingFormData>;
+  form: UseFormReturn<any>;
   onUpdateSubjectTier: (subjectId: string, tier: 1 | 2 | 3) => void;
   onAddSubject: () => void;
   onRemoveSubject: (subjectId: string) => void;
@@ -117,7 +117,7 @@ export function SyllabusManagementStep({
   };
 
   const tierCounts = form.data.syllabus.reduce(
-    (acc, subject) => {
+    (acc: Record<number, number>, subject: any) => {
       acc[subject.tier] = (acc[subject.tier] || 0) + 1;
       return acc;
     },
@@ -317,7 +317,7 @@ export function SyllabusManagementStep({
  * Study Preferences Step
  */
 interface PreferencesStepProps {
-  form: UseFormReturn<OnboardingFormData>;
+  form: UseFormReturn<any>;
 }
 
 export function PreferencesStep({ form }: PreferencesStepProps) {
@@ -336,7 +336,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
   };
 
   const removeRevisionInterval = (days: number) => {
-    const newIntervals = form.data.preferences.revisionIntervals.filter(d => d !== days);
+    const newIntervals = form.data.preferences.revisionIntervals.filter((d: number) => d !== days);
     form.updateField('preferences', {
       ...form.data.preferences,
       revisionIntervals: newIntervals
@@ -463,7 +463,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
         <Label className="text-sm font-medium">Spaced Repetition Intervals (days)</Label>
         
         <div className="flex flex-wrap gap-2">
-          {form.data.preferences.revisionIntervals.map((days) => (
+          {form.data.preferences.revisionIntervals.map((days: number) => (
             <Badge
               key={days}
               variant="secondary"

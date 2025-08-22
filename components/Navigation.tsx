@@ -44,6 +44,13 @@ export default function Navigation() {
       isActive: isActive('/dashboard')
     },
     {
+      href: '/analytics',
+      label: 'Analytics',
+      icon: BarChart3,
+      isActive: isActive('/analytics'),
+      badge: 'New' // Highlight new feature
+    },
+    {
       href: '/missions',
       label: 'Missions',
       icon: Target,

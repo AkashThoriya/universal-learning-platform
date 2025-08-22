@@ -46,47 +46,76 @@ import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding
 import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetection';
 import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
 import { Timestamp } from 'firebase/firestore';
+import { logger } from '@/lib/logger';
 
 /**
- * Onboarding form data structure
+ * Onboarding form data structure with Zod validation
  */
-interface OnboardingFormData {
+const OnboardingFormSchema = z.object({
   // Step 1: Persona Detection
-  userPersona?: UserPersona;
+  userPersona: z.object({
+    type: z.enum(['student', 'working_professional', 'freelancer']),
+    confidence: z.number().min(0).max(1),
+    characteristics: z.array(z.string()),
+    preferredLearningStyle: z.enum(['visual', 'auditory', 'kinesthetic', 'reading_writing']).optional(),
+    timeAvailability: z.object({
+      hoursPerDay: z.number().min(0.5).max(12),
+      daysPerWeek: z.number().min(1).max(7),
+      preferredTimeSlots: z.array(z.enum(['morning', 'afternoon', 'evening', 'night'])),
+    }).optional(),
+  }).optional(),
   
   // Step 2: Personal Information
-  displayName: string;
-  selectedExamId: string;
-  examDate: string;
-  isCustomExam: boolean;
+  displayName: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters'),
+  selectedExamId: z.string().min(1, 'Please select an exam'),
+  examDate: z.string().min(1, 'Please select an exam date').refine((date) => {
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return selectedDate >= today;
+  }, 'Exam date must be in the future'),
+  isCustomExam: z.boolean(),
   
   // Step 3: Custom Exam Details (if applicable)
-  customExam: {
-    name?: string;
-    description?: string;
-    category?: string;
-  };
+  customExam: z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+    category: z.string().optional(),
+  }),
   
   // Step 4: Syllabus Configuration
-  syllabus: SyllabusSubject[];
+  syllabus: z.array(z.object({
+    subjectId: z.string(),
+    name: z.string(),
+    tier: z.number().min(1).max(3),
+    topics: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      completed: z.boolean().default(false),
+      priority: z.enum(['high', 'medium', 'low']).default('medium'),
+    })),
+    isCustom: z.boolean().default(false),
+  })).min(1, 'Please add at least one subject'),
   
   // Step 5: Study Preferences
-  preferences: {
-    dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
-    tierDefinitions: {
-      1: string;
-      2: string;
-      3: string;
-    };
-    revisionIntervals: number[];
-    notifications: {
-      revisionReminders: boolean;
-      dailyGoalReminders: boolean;
-      healthCheckReminders: boolean;
-    };
-  };
-}
+  preferences: z.object({
+    dailyStudyGoalMinutes: z.number().min(15, 'Minimum 15 minutes per day').max(720, 'Maximum 12 hours per day'),
+    preferredStudyTime: z.enum(['morning', 'afternoon', 'evening', 'night']),
+    tierDefinitions: z.object({
+      1: z.string().min(1, 'Tier 1 definition is required'),
+      2: z.string().min(1, 'Tier 2 definition is required'),
+      3: z.string().min(1, 'Tier 3 definition is required'),
+    }),
+    revisionIntervals: z.array(z.number().positive()).min(3, 'At least 3 revision intervals required'),
+    notifications: z.object({
+      revisionReminders: z.boolean(),
+      dailyGoalReminders: z.boolean(),
+      healthCheckReminders: z.boolean(),
+    }),
+  }),
+});
+
+type OnboardingFormData = z.infer<typeof OnboardingFormSchema>;
 
 /**
  * Validation schema for onboarding form
@@ -153,7 +182,9 @@ export default function EnhancedOnboardingPage() {
   // Initialize form data with sensible defaults
   const initialFormData: OnboardingFormData = {
     userPersona: {
-      type: 'student'
+      type: 'student',
+      confidence: 0.8,
+      characteristics: ['Dedicated to studies', 'Has structured time for learning']
     },
     displayName: user?.displayName || '',
     selectedExamId: '',
@@ -189,7 +220,7 @@ export default function EnhancedOnboardingPage() {
     storageKey: 'onboarding-progress',
     onStepChange: (current, previous) => {
       // Analytics tracking would go here
-      console.log(`Onboarding step changed: ${previous} → ${current}`);
+      logger.debug(`Onboarding step changed: ${previous} → ${current}`);
     }
   });
 
@@ -203,7 +234,7 @@ export default function EnhancedOnboardingPage() {
     validateOnBlur: true,
     onFormEvent: (event: string, data: any) => {
       // Analytics tracking would go here
-      console.log(`Form event: ${event}`, data);
+      logger.debug(`Form event: ${event}`, data);
     }
   });
 
@@ -220,7 +251,19 @@ export default function EnhancedOnboardingPage() {
       
       // Auto-populate syllabus for predefined exams
       if (exam && !form.data.isCustomExam) {
-        form.updateField('syllabus', exam.defaultSyllabus);
+        const convertedSyllabus = exam.defaultSyllabus.map(subject => ({
+          subjectId: subject.id,
+          name: subject.name,
+          tier: subject.tier,
+          topics: subject.topics.map(topic => ({
+            id: topic.id,
+            name: topic.name,
+            completed: false,
+            priority: 'medium' as const,
+          })),
+          isCustom: false,
+        }));
+        form.updateField('syllabus', convertedSyllabus);
       }
     } else {
       setSelectedExam(null);
@@ -249,7 +292,7 @@ export default function EnhancedOnboardingPage() {
       
       case 3:
         if (form.data.isCustomExam) {
-          return !!(form.data.customExam.name && form.data.customExam.name.length >= 2);
+          return !!(form.data.customExam?.name && form.data.customExam.name.length >= 2);
         }
         return true;
       
@@ -293,10 +336,22 @@ export default function EnhancedOnboardingPage() {
     } else {
       const exam = getExamById(examId);
       if (exam) {
+        const convertedSyllabus = exam.defaultSyllabus.map(subject => ({
+          subjectId: subject.id,
+          name: subject.name,
+          tier: subject.tier,
+          topics: subject.topics.map(topic => ({
+            id: topic.id,
+            name: topic.name,
+            completed: false,
+            priority: 'medium' as const,
+          })),
+          isCustom: false,
+        }));
         form.updateFields({
           selectedExamId: examId,
           isCustomExam: false,
-          syllabus: exam.defaultSyllabus
+          syllabus: convertedSyllabus
         });
       }
     }
@@ -304,8 +359,8 @@ export default function EnhancedOnboardingPage() {
 
   // Syllabus management functions
   const updateSubjectTier = useCallback((subjectId: string, tier: 1 | 2 | 3) => {
-    const updatedSyllabus = form.data.syllabus.map((subject: SyllabusSubject) =>
-      subject.id === subjectId ? { ...subject, tier } : subject
+    const updatedSyllabus = form.data.syllabus.map((subject) =>
+      subject.subjectId === subjectId ? { ...subject, tier } : subject
     );
     form.updateField('syllabus', updatedSyllabus);
   }, [form]);
@@ -313,26 +368,26 @@ export default function EnhancedOnboardingPage() {
   const addCustomSubject = useCallback(() => {
     const subjectName = prompt('Enter subject name:');
     if (subjectName?.trim()) {
-      const newSubject: SyllabusSubject = {
-        id: `custom_${Date.now()}`,
+      const newSubject = {
+        subjectId: `custom_${Date.now()}`,
         name: subjectName.trim(),
         tier: 2,
         topics: [],
-        estimatedHours: 50
+        isCustom: true
       };
       form.updateField('syllabus', [...form.data.syllabus, newSubject]);
     }
   }, [form]);
 
   const removeSubject = useCallback((subjectId: string) => {
-    const updatedSyllabus = form.data.syllabus.filter((s: SyllabusSubject) => s.id !== subjectId);
+    const updatedSyllabus = form.data.syllabus.filter((s) => s.subjectId !== subjectId);
     form.updateField('syllabus', updatedSyllabus);
   }, [form]);
 
   // Final submission handler
   const handleComplete = useCallback(async () => {
     if (!user) {
-      console.error('User not authenticated');
+      logger.error('User not authenticated during onboarding completion');
       return;
     }
 
@@ -342,7 +397,7 @@ export default function EnhancedOnboardingPage() {
       // Validate entire form
       const isValid = await form.validate();
       if (!isValid) {
-        console.error('Form validation failed', form.errors);
+        logger.warn('Form validation failed during onboarding completion', form.errors);
         return;
       }
 
@@ -352,7 +407,7 @@ export default function EnhancedOnboardingPage() {
         displayName: form.data.displayName,
         currentExam: {
           id: form.data.selectedExamId,
-          name: form.data.isCustomExam ? (form.data.customExam.name || '') : selectedExam?.name || '',
+          name: form.data.isCustomExam ? (form.data.customExam?.name || '') : selectedExam?.name || '',
           targetDate: Timestamp.fromDate(new Date(form.data.examDate))
         },
         onboardingComplete: true,
@@ -375,14 +430,26 @@ export default function EnhancedOnboardingPage() {
           totalMockTests: 0,
           averageScore: 0,
           topicsCompleted: 0,
-          totalTopics: form.data.syllabus.reduce((sum: number, subject: SyllabusSubject) => sum + (subject.topics?.length || 0), 0)
+          totalTopics: form.data.syllabus.reduce((sum: number, subject) => sum + (subject.topics?.length || 0), 0)
         }
       };
+
+      // Convert syllabus back to SyllabusSubject format for saving
+      const syllabusForSave: SyllabusSubject[] = form.data.syllabus.map(subject => ({
+        id: subject.subjectId,
+        name: subject.name,
+        tier: subject.tier as 1 | 2 | 3,
+        topics: subject.topics.map(topic => ({
+          id: topic.id,
+          name: topic.name,
+          subtopics: [],
+        }))
+      }));
 
       // Create user and save syllabus
       await Promise.all([
         createUser(user.uid, userData),
-        saveSyllabus(user.uid, form.data.syllabus)
+        saveSyllabus(user.uid, syllabusForSave)
       ]);
 
       // Clear persisted data
@@ -395,7 +462,7 @@ export default function EnhancedOnboardingPage() {
       router.push('/dashboard');
       
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      logger.error('Error completing onboarding process', error as Error);
       form.setError('_form' as any, {
         message: 'Failed to complete setup. Please try again.',
         type: 'server',

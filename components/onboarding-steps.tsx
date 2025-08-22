@@ -71,7 +71,7 @@ interface OnboardingFormData {
  * Personal Information & Exam Selection Step
  */
 interface PersonalInfoStepProps {
-  form: UseFormReturn<OnboardingFormData>;
+  form: UseFormReturn<any>;
   filteredExams: Exam[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -257,7 +257,7 @@ export function PersonalInfoStep({
  * Custom Exam Details Step
  */
 interface CustomExamStepProps {
-  form: UseFormReturn<OnboardingFormData>;
+  form: UseFormReturn<any>;
 }
 
 export function CustomExamStep({ form }: CustomExamStepProps) {
@@ -361,7 +361,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
  * Exam Review Step (for predefined exams)
  */
 interface ExamReviewStepProps {
-  form: UseFormReturn<OnboardingFormData>;
+  form: UseFormReturn<any>;
   selectedExam: Exam | null;
 }
 
