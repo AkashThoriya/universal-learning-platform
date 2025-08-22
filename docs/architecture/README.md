@@ -1,33 +1,37 @@
 # Architecture Documentation
-*System Design, Technical Specifications, and Infrastructure Planning*
+*System Design, Technical Specifications, and Dual-Persona Infrastructure Planning*
 
 ## Overview
-This directory contains comprehensive technical documentation for the Exam Strategy Engine architecture, covering system design, infrastructure planning, and technical specifications.
+This directory contains comprehensive technical documentation for the Exam Strategy Engine architecture, covering system design, infrastructure planning, and technical specifications. **Enhanced to support revolutionary dual-persona architecture serving both students and working professionals with adaptive intelligence.**
 
-## 📋 Document Structure
+## 📋 Document Structure (Enhanced for Dual-Persona Architecture)
 
-### **Infrastructure & Deployment**
+### **Dual-Persona Infrastructure & Deployment** ⭐ *Enhanced*
 | Document | Purpose | Status | Last Updated |
 |----------|---------|--------|--------------|
-| `next-config.md` | Next.js configuration and optimization | ⚠️ Pending | - |
-| `firebase-setup.md` | Firebase configuration and security rules | ⚠️ Pending | - |
-| `performance-optimization.md` | Performance monitoring and optimization | ⚠️ Pending | - |
-| `deployment-strategy.md` | CI/CD and deployment procedures | ⚠️ Pending | - |
+| `next-config.md` | Next.js configuration with persona-aware routing | ⚠️ Pending | - |
+| `firebase-setup.md` | Firebase config with dual-persona data structure | ⚠️ Pending | - |
+| `performance-optimization.md` | Performance monitoring for student/professional contexts | ⚠️ Pending | - |
+| `deployment-strategy.md` | CI/CD with dual-persona feature flags | ⚠️ Pending | - |
+| `persona-detection.md` | **NEW**: Automatic persona detection algorithms | 📋 Planned | - |
 
-### **System Architecture**
+### **Dual-Persona System Architecture** ⭐ *Enhanced*
 | Document | Purpose | Status | Last Updated |
 |----------|---------|--------|--------------|
-| `database-design.md` | Firestore schema and data modeling | ⚠️ Pending | - |
-| `api-specifications.md` | API endpoints and data flow | ⚠️ Pending | - |
-| `component-architecture.md` | React component organization | ⚠️ Pending | - |
-| `state-management.md` | Context API and state flow | ⚠️ Pending | - |
+| `database-design.md` | Firestore schema with persona-aware collections | ⚠️ Pending | - |
+| `api-specifications.md` | API endpoints with student/professional optimization | ⚠️ Pending | - |
+| `component-architecture.md` | React components with adaptive UI/UX | ⚠️ Pending | - |
+| `state-management.md` | Context API with dual-persona state management | ⚠️ Pending | - |
+| `career-integration.md` | **NEW**: Professional career context architecture | 📋 Planned | - |
+| `micro-learning-engine.md` | **NEW**: 15-30 minute session optimization | 📋 Planned | - |
 
-### **Security & Compliance**
+### **Security & Compliance (Professional-Enhanced)** ⭐ *Enhanced*
 | Document | Purpose | Status | Last Updated |
 |----------|---------|--------|--------------|
-| `security-guidelines.md` | Security best practices and protocols | ⚠️ Pending | - |
-| `privacy-compliance.md` | GDPR and privacy protection measures | ⚠️ Pending | - |
-| `authentication-design.md` | User authentication and authorization | ⚠️ Pending | - |
+| `security-guidelines.md` | Security with LinkedIn/workplace integrations | ⚠️ Pending | - |
+| `privacy-compliance.md` | GDPR + professional data protection | ⚠️ Pending | - |
+| `authentication-design.md` | Multi-provider auth (Google, LinkedIn, University) | ⚠️ Pending | - |
+| `professional-data-privacy.md` | **NEW**: Work schedule and career data protection | 📋 Planned | - |
 
 ### **Scalability Planning**
 | Document | Purpose | Status | Last Updated |
