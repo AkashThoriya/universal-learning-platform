@@ -15,7 +15,8 @@ import {
   User,
   Bell,
   Menu,
-  X
+  X,
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -43,6 +44,19 @@ export default function Navigation() {
       isActive: isActive('/dashboard')
     },
     {
+      href: '/missions',
+      label: 'Missions',
+      icon: Target,
+      isActive: isActiveGroup(['/missions']),
+      badge: '3' // Active missions count
+    },
+    {
+      href: '/micro-learning',
+      label: 'Micro-Learning',
+      icon: Zap,
+      isActive: isActive('/micro-learning')
+    },
+    {
       href: '/syllabus',
       label: 'Syllabus',
       icon: BookOpen,
@@ -57,7 +71,7 @@ export default function Navigation() {
     {
       href: '/log/mock',
       label: 'Mock Tests',
-      icon: Target,
+      icon: TestTube,
       isActive: isActiveGroup(['/log/mock', '/test-logger'])
     }
   ];
@@ -98,6 +112,14 @@ export default function Navigation() {
                   >
                     <Icon className="h-4 w-4 mr-2" />
                     {item.label}
+                    {item.badge && (
+                      <Badge 
+                        variant="secondary" 
+                        className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs bg-orange-500 text-white"
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
                     {item.isActive && (
                       <div className="absolute inset-0 bg-white/20 rounded-md opacity-50"></div>
                     )}
@@ -178,6 +200,14 @@ export default function Navigation() {
                     >
                       <Icon className="h-4 w-4 mr-3" />
                       {item.label}
+                      {item.badge && (
+                        <Badge 
+                          variant="secondary" 
+                          className="ml-auto h-5 w-5 p-0 flex items-center justify-center text-xs bg-orange-500 text-white"
+                        >
+                          {item.badge}
+                        </Badge>
+                      )}
                     </Button>
                   </Link>
                 );

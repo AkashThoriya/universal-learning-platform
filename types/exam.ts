@@ -195,6 +195,81 @@ export interface User {
 }
 
 /**
+ * User persona types for adaptive learning experience
+ * 
+ * @type UserPersonaType
+ */
+export type UserPersonaType = 'student' | 'working_professional' | 'freelancer';
+
+/**
+ * Career motivation types for working professionals
+ * 
+ * @type CareerMotivation
+ */
+export type CareerMotivation = 
+  | 'promotion' 
+  | 'salary_increase' 
+  | 'career_transition' 
+  | 'skill_relevance' 
+  | 'job_security'
+  | 'industry_change';
+
+/**
+ * Work schedule configuration for working professionals
+ * 
+ * @interface WorkSchedule
+ */
+export interface WorkSchedule {
+  /** Working hours start and end times (24-hour format, e.g., "09:00") */
+  workingHours: { 
+    start: string; 
+    end: string; 
+  };
+  /** Days of the week when user works */
+  workingDays: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
+  /** Daily commute time in minutes (both ways combined) */
+  commuteTime: number;
+  /** Work schedule flexibility */
+  flexibility: 'rigid' | 'flexible' | 'hybrid';
+  /** Lunch break duration in minutes */
+  lunchBreakDuration: number;
+}
+
+/**
+ * Career context for working professionals
+ * 
+ * @interface CareerContext
+ */
+export interface CareerContext {
+  /** Current job role/position */
+  currentRole: string;
+  /** Target role/position to achieve */
+  targetRole: string;
+  /** Industry sector */
+  industry: string;
+  /** Timeline urgency for career goals */
+  urgency: 'immediate' | 'short_term' | 'long_term'; // <6 months, 6-18 months, >18 months
+  /** Career motivations driving the learning */
+  motivation: CareerMotivation[];
+  /** Identified skill gaps to address */
+  skillGaps: string[];
+}
+
+/**
+ * User persona configuration for adaptive learning
+ * 
+ * @interface UserPersona
+ */
+export interface UserPersona {
+  /** Type of user persona */
+  type: UserPersonaType;
+  /** Work schedule (required for working professionals) */
+  workSchedule?: WorkSchedule;
+  /** Career context (required for working professionals) */
+  careerContext?: CareerContext;
+}
+
+/**
  * User's personalized settings for study preferences and system behavior
  * 
  * @interface UserSettings
@@ -209,7 +284,12 @@ export interface User {
  *     3: "Low Priority"
  *   },
  *   notifications: {...},
- *   preferences: {...}
+ *   preferences: {...},
+ *   userPersona: {
+ *     type: 'working_professional',
+ *     workSchedule: {...},
+ *     careerContext: {...}
+ *   }
  * };
  * ```
  */
@@ -245,6 +325,8 @@ export interface UserSettings {
     /** User's timezone */
     timezone: string;
   };
+  /** User persona for adaptive learning experience */
+  userPersona: UserPersona;
 }
 
 /**

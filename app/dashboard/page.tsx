@@ -48,6 +48,7 @@ import { format, differenceInDays } from 'date-fns';
 import Link from 'next/link';
 import DailyLogModal from '@/components/DailyLogModal';
 import Navigation from '@/components/Navigation';
+import { QuickSessionLauncher } from '@/components/micro-learning';
 
 /**
  * Main Dashboard Page Component
@@ -532,10 +533,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Health Correlation & Quick Actions */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Health Correlation Chart */}
             {healthData.length > 0 && (
-              <Card>
+              <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle>Health & Study Correlation</CardTitle>
                   <CardDescription>How your health affects study performance</CardDescription>
@@ -568,7 +569,7 @@ export default function DashboardPage() {
             )}
 
             {/* Quick Actions */}
-            <Card>
+            <Card className={healthData.length > 0 ? '' : 'lg:col-span-2'}>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
                 <CardDescription>Fast-track your preparation</CardDescription>
@@ -602,6 +603,16 @@ export default function DashboardPage() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Micro-Learning Quick Launcher */}
+            <QuickSessionLauncher
+              userId={user?.uid || ''}
+              onStartSession={(subjectId, topicId, track, duration) => {
+                // Navigate to micro-learning session
+                window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
+              }}
+              className="lg:col-span-1"
+            />
           </div>
 
           {/* Insights */}

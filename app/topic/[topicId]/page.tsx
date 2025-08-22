@@ -17,6 +17,7 @@ import { TopicProgress } from '@/types/exam';
 import Link from 'next/link';
 import { ArrowLeft, Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { QuickSessionLauncher } from '@/components/micro-learning';
 
 export default function TopicPage() {
   const { user } = useAuth();
@@ -318,6 +319,44 @@ export default function TopicPage() {
                   No current affairs notes yet. Add your first one above!
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Micro-Learning for this Topic */}
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="text-blue-900">Quick Learning Sessions</CardTitle>
+              <CardDescription className="text-blue-700">
+                Start focused learning sessions for this specific topic
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <QuickSessionLauncher
+                userId={user?.uid || ''}
+                sessions={[
+                  {
+                    title: `${topic?.name} - Quick Review`,
+                    description: `15-minute focused session on ${topic?.name} concepts`,
+                    subjectId: subjectId || '',
+                    topicId: topicId,
+                    track: 'exam' as const,
+                    duration: 15,
+                    difficulty: 'intermediate' as const
+                  },
+                  {
+                    title: `${topic?.name} - Practical Application`,
+                    description: `Apply ${topic?.name} in real banking scenarios`,
+                    subjectId: subjectId || '',
+                    topicId: topicId,
+                    track: 'course_tech' as const,
+                    duration: 20,
+                    difficulty: 'advanced' as const
+                  }
+                ]}
+                onStartSession={(subjectId, topicId, track, duration) => {
+                  window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
+                }}
+              />
             </CardContent>
           </Card>
         </div>

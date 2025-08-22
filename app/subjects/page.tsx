@@ -8,8 +8,12 @@ import { Button } from '@/components/ui/button';
 import { SUBJECTS_DATA } from '@/lib/subjects-data';
 import Link from 'next/link';
 import { BookOpen, Target, Zap, ChevronRight } from 'lucide-react';
+import { QuickSessionLauncher } from '@/components/micro-learning';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function SubjectsPage() {
+  const { user } = useAuth();
+  
   const getTierColor = (tier: number) => {
     switch (tier) {
       case 1: return 'bg-red-100 text-red-800';
@@ -37,6 +41,16 @@ export default function SubjectsPage() {
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">Study Arsenal</h1>
             <p className="text-muted-foreground">Master every topic with banking context and strategic insights</p>
+          </div>
+
+          {/* Quick Micro-Learning */}
+          <div className="max-w-2xl mx-auto">
+            <QuickSessionLauncher
+              userId={user?.uid || ''}
+              onStartSession={(subjectId, topicId, track, duration) => {
+                window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
+              }}
+            />
           </div>
 
           {/* Tier Overview */}

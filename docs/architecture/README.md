@@ -1,33 +1,103 @@
-# Architecture Documentation
-*System Design, Technical Specifications, and Dual-Persona Infrastructure Planning*
+# 🏗️ Architecture Documentation
+*System Design for Unified Dual-Track Learning Platform*
 
 ## Overview
-This directory contains comprehensive technical documentation for the Exam Strategy Engine architecture, covering system design, infrastructure planning, and technical specifications. **Enhanced to support revolutionary dual-persona architecture serving both students and working professionals with adaptive intelligence.**
+This directory contains technical documentation for the Exam Strategy Engine architecture. The system uses a **unified persona-aware approach** that serves both exam preparation and course/tech learning within a single intelligent platform.
 
-## 📋 Document Structure (Enhanced for Dual-Persona Architecture)
+## 🎯 **Core Architecture Principles**
 
-### **Dual-Persona Infrastructure & Deployment** ⭐ *Enhanced*
-| Document | Purpose | Status | Last Updated |
-|----------|---------|--------|--------------|
-| `next-config.md` | Next.js configuration with persona-aware routing | ⚠️ Pending | - |
-| `firebase-setup.md` | Firebase config with dual-persona data structure | ⚠️ Pending | - |
-| `performance-optimization.md` | Performance monitoring for student/professional contexts | ⚠️ Pending | - |
-| `deployment-strategy.md` | CI/CD with dual-persona feature flags | ⚠️ Pending | - |
-| `persona-detection.md` | **NEW**: Automatic persona detection algorithms | 📋 Planned | - |
+### **1. Unified Persona-Aware System**
+- Single codebase that intelligently adapts to user personas
+- Smart detection and adaptation rather than separate systems
+- Cross-track learning intelligence
 
-### **Dual-Persona System Architecture** ⭐ *Enhanced*
-| Document | Purpose | Status | Last Updated |
-|----------|---------|--------|--------------|
-| `database-design.md` | Firestore schema with persona-aware collections | ⚠️ Pending | - |
-| `api-specifications.md` | API endpoints with student/professional optimization | ⚠️ Pending | - |
-| `component-architecture.md` | React components with adaptive UI/UX | ⚠️ Pending | - |
-| `state-management.md` | Context API with dual-persona state management | ⚠️ Pending | - |
-| `career-integration.md` | **NEW**: Professional career context architecture | 📋 Planned | - |
-| `micro-learning-engine.md` | **NEW**: 15-30 minute session optimization | 📋 Planned | - |
+### **2. Dual Learning Track Support**
+- **📚 Exam Track**: Mock tests → Revision cycles → Main exam
+- **💻 Course/Tech Track**: Assignments → Projects → Skill certification
+- Unified progress tracking across both tracks
 
-### **Security & Compliance (Professional-Enhanced)** ⭐ *Enhanced*
-| Document | Purpose | Status | Last Updated |
-|----------|---------|--------|--------------|
+### **3. Intelligent Adaptation**
+- AI-powered persona detection and optimization
+- Context-aware UI/UX morphing
+- Smart scheduling based on work constraints
+
+## 📋 **Technical Stack**
+
+### **Frontend Architecture**
+```typescript
+// Next.js 15 + TypeScript
+- App Router for dynamic routing
+- Server Components for performance
+- Client Components for interactivity
+- Tailwind CSS + shadcn/ui for design system
+```
+
+### **Backend Architecture** 
+```typescript
+// Firebase Ecosystem
+- Firestore: Real-time database with persona-aware collections
+- Authentication: Multi-provider auth with session management
+- Functions: Serverless computing for AI/ML operations
+- Storage: File uploads and media management
+```
+
+### **State Management**
+```typescript
+// React Context + Custom Hooks
+- PersonaContext: User persona and preferences
+- LearningTrackContext: Current track and progress
+- SessionContext: Active learning session state
+```
+
+## 🎯 **Data Architecture**
+
+### **Persona-Aware Data Model**
+```typescript
+User {
+  id: string;
+  persona: UserPersona;
+  learningTracks: LearningTrack[];
+  progress: UnifiedProgress;
+  preferences: AdaptivePreferences;
+}
+
+LearningTrack {
+  type: 'exam' | 'course_tech';
+  validationPipeline: ExamValidation | CourseValidation;
+  currentSession?: MicroLearningSession;
+  progress: TrackProgress;
+}
+```
+
+### **Validation Pipelines**
+```typescript
+// Exam Track Validation
+ExamTrack: MockTests → RevisionCycles → MainExam
+
+// Course/Tech Track Validation  
+CourseTrack: Assignments → Projects → SkillCertification
+```
+
+## 🚀 **Future Architecture Enhancements**
+
+### **Phase 2: Advanced Intelligence**
+- Machine learning recommendation engine
+- Predictive analytics for success outcomes
+- Advanced persona profiling algorithms
+
+### **Phase 3: Collaboration Features**
+- Real-time collaborative learning
+- Peer review and mentorship systems
+- Social learning communities
+
+### **Phase 4: Enterprise Features**
+- Multi-tenant architecture
+- Advanced analytics dashboard
+- Integration APIs for external tools
+
+---
+
+*For implementation details, see `../02-IMPLEMENTATION-GUIDE.md`*
 | `security-guidelines.md` | Security with LinkedIn/workplace integrations | ⚠️ Pending | - |
 | `privacy-compliance.md` | GDPR + professional data protection | ⚠️ Pending | - |
 | `authentication-design.md` | Multi-provider auth (Google, LinkedIn, University) | ⚠️ Pending | - |

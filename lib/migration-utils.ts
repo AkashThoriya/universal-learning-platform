@@ -71,6 +71,9 @@ export function migrateLegacyUserData(legacyData: any): User {
         theme: 'system' as const,
         language: 'en',
         timezone: 'UTC'
+      },
+      userPersona: {
+        type: 'student' as const
       }
     },
     stats: {
@@ -298,6 +301,9 @@ export const mockServiceResponses = {
           theme: 'system' as const,
           language: 'en',
           timezone: 'UTC'
+        },
+        userPersona: {
+          type: 'student' as const
         }
       },
       stats: {
