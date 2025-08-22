@@ -531,19 +531,6 @@ We welcome contributions! Please follow these steps:
 - [ ] Advanced AI tutoring system
 - [ ] Voice-based logging and notes
 
-## Community
-
-- **Discord**: [Join our community](https://discord.gg/exam-strategy)
-- **Twitter**: [@ExamStrategyEng](https://twitter.com/ExamStrategyEng)
-- **Blog**: [Latest updates and study tips](https://blog.examstrategy.dev)
-- **YouTube**: [Video tutorials and walkthroughs](https://youtube.com/@ExamStrategyEngine)
-
-## Support
-
-- **Documentation**: [Full documentation](https://docs.examstrategy.dev)
-- **FAQ**: [Frequently asked questions](https://examstrategy.dev/faq)
-- **Email Support**: support@examstrategy.dev
-- **Bug Reports**: [GitHub Issues](https://github.com/your-username/exam-strategy-engine/issues)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
