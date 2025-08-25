@@ -1,20 +1,21 @@
 /**
  * @fileoverview Global Error Boundary Component
- * 
+ *
  * Provides application-wide error handling with detailed error reporting,
  * fallback UI, and automatic error recovery mechanisms.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 'use client';
 
-import React, { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
+import React, { Component, ReactNode } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Simple logger for error reporting
 const logger = {
@@ -33,7 +34,7 @@ const logger = {
     if (process.env.NODE_ENV === 'development') {
       console.info(message, data);
     }
-  },
+  }
 };
 
 // ============================================================================
@@ -104,7 +105,7 @@ class ErrorReporter {
       userId: context.userId || 'anonymous',
       sessionId: context.sessionId || 'unknown',
       buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION || 'unknown',
-      ...context,
+      ...context
     };
 
     try {
@@ -125,9 +126,9 @@ class ErrorReporter {
         await fetch(process.env.NEXT_PUBLIC_ERROR_REPORTING_ENDPOINT, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify(errorData),
+          body: JSON.stringify(errorData)
         });
       }
 
@@ -164,14 +165,14 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       errorInfo: null,
       errorId: null,
       retryCount: 0,
-      isReporting: false,
+      isReporting: false
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
-      error,
+      error
     };
   }
 
@@ -185,13 +186,13 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
     try {
       const errorId = await this.errorReporter.reportError(error, errorInfo, {
         level: this.props.level || 'global',
-        retryCount: this.state.retryCount,
+        retryCount: this.state.retryCount
       });
 
       this.setState({
         errorInfo,
         errorId,
-        isReporting: false,
+        isReporting: false
       });
 
       // Call custom error handler
@@ -213,10 +214,10 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       /Loading chunk/,
       /Failed to fetch/,
       /NetworkError/,
-      /TimeoutError/,
+      /TimeoutError/
     ];
 
-    return recoverablePatterns.some(pattern => 
+    return recoverablePatterns.some(pattern =>
       pattern.test(error.message) || pattern.test(error.name)
     );
   }
@@ -234,7 +235,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       errorInfo: null,
       errorId: null,
       retryCount: prevState.retryCount + 1,
-      isReporting: false,
+      isReporting: false
     }));
   };
 
@@ -324,7 +325,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button 
+                <Button
                   onClick={this.handleManualRetry}
                   disabled={this.state.isReporting}
                   className="flex items-center gap-2"
@@ -333,7 +334,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
                   Try Again
                 </Button>
 
-                <Button 
+                <Button
                   variant="outline"
                   onClick={this.handleGoHome}
                   className="flex items-center gap-2"
@@ -342,7 +343,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
                   Go to Dashboard
                 </Button>
 
-                <Button 
+                <Button
                   variant="outline"
                   onClick={this.handleReload}
                   className="flex items-center gap-2"
@@ -378,10 +379,10 @@ interface ComponentErrorBoundaryProps {
   onError?: (error: Error) => void;
 }
 
-export function ComponentErrorBoundary({ 
-  children, 
+export function ComponentErrorBoundary({
+  children,
   fallback,
-  onError 
+  onError
 }: ComponentErrorBoundaryProps) {
   return (
     <GlobalErrorBoundary

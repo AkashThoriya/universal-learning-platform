@@ -1,17 +1,18 @@
 /**
  * @fileoverview Enterprise-grade progress indicator components
- * 
+ *
  * Reusable progress indicators for multi-step flows, loading states,
  * and goal tracking. Designed with accessibility and customization
  * in mind following design system standards.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import React from 'react';
-import { cn } from '@/lib/utils';
 import { CheckCircle, Circle, Clock } from 'lucide-react';
+import React from 'react';
+
+import { cn } from '@/lib/utils';
 
 /**
  * Configuration for step progress indicator
@@ -35,13 +36,13 @@ interface StepProgressIndicatorProps {
 
 /**
  * Multi-step progress indicator component
- * 
+ *
  * Displays progress through a multi-step process with clear visual
  * indicators for completed, current, and upcoming steps.
- * 
+ *
  * @param {StepProgressIndicatorProps} props - Component props
  * @returns {JSX.Element} Step progress indicator
- * 
+ *
  * @example
  * ```typescript
  * <StepProgressIndicator
@@ -62,8 +63,8 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
   className
 }) => {
   const defaultGetStepStatus = (step: number, current: number) => {
-    if (step < current) return 'completed';
-    if (step === current) return 'current';
+    if (step < current) { return 'completed'; }
+    if (step === current) { return 'current'; }
     return 'upcoming';
   };
 
@@ -71,7 +72,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
 
   const getStepIcon = (step: number) => {
     const status = stepStatus(step, currentStep);
-    
+
     switch (status) {
       case 'completed':
         return <CheckCircle className="h-6 w-6 text-green-600" />;
@@ -84,41 +85,41 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
 
   const getStepClasses = (step: number) => {
     const status = stepStatus(step, currentStep);
-    const baseClasses = "flex items-center justify-center rounded-full border-2 transition-colors";
-    
+    const baseClasses = 'flex items-center justify-center rounded-full border-2 transition-colors';
+
     switch (status) {
       case 'completed':
-        return cn(baseClasses, "border-green-600 bg-green-50");
+        return cn(baseClasses, 'border-green-600 bg-green-50');
       case 'current':
-        return cn(baseClasses, "border-blue-600 bg-blue-50");
+        return cn(baseClasses, 'border-blue-600 bg-blue-50');
       default:
-        return cn(baseClasses, "border-gray-300 bg-gray-50");
+        return cn(baseClasses, 'border-gray-300 bg-gray-50');
     }
   };
 
   const getConnectorClasses = (step: number) => {
     const isCompleted = stepStatus(step, currentStep) === 'completed';
     return cn(
-      "flex-1 h-0.5 transition-colors",
-      isCompleted ? "bg-green-600" : "bg-gray-300"
+      'flex-1 h-0.5 transition-colors',
+      isCompleted ? 'bg-green-600' : 'bg-gray-300'
     );
   };
 
   if (compact) {
     return (
-      <div className={cn("flex items-center space-x-2", className)}>
+      <div className={cn('flex items-center space-x-2', className)}>
         <div className="flex items-center space-x-1">
           {Array.from({ length: totalSteps }, (_, index) => {
             const step = index + 1;
             const status = stepStatus(step, currentStep);
-            
+
             return (
               <div
                 key={step}
                 className={cn(
-                  "h-2 w-8 rounded-full transition-colors",
-                  status === 'completed' ? "bg-green-600" :
-                  status === 'current' ? "bg-blue-600" : "bg-gray-300"
+                  'h-2 w-8 rounded-full transition-colors',
+                  status === 'completed' ? 'bg-green-600' :
+                  status === 'current' ? 'bg-blue-600' : 'bg-gray-300'
                 )}
               />
             );
@@ -132,7 +133,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
   }
 
   return (
-    <div className={cn("w-full", className)} role="progressbar" aria-valuenow={currentStep} aria-valuemax={totalSteps}>
+    <div className={cn('w-full', className)} role="progressbar" aria-valuenow={currentStep} aria-valuemax={totalSteps}>
       <div className="flex items-center justify-between">
         {Array.from({ length: totalSteps }, (_, index) => {
           const step = index + 1;
@@ -146,8 +147,8 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
                 <div className={getStepClasses(step)}>
                   {showStepNumbers && !['completed'].includes(status) ? (
                     <span className={cn(
-                      "text-sm font-semibold",
-                      status === 'current' ? "text-blue-600" : "text-gray-400"
+                      'text-sm font-semibold',
+                      status === 'current' ? 'text-blue-600' : 'text-gray-400'
                     )}>
                       {step}
                     </span>
@@ -157,15 +158,15 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
                 </div>
                 <div className="text-center">
                   <div className={cn(
-                    "text-sm font-medium",
-                    status === 'completed' ? "text-green-600" :
-                    status === 'current' ? "text-blue-600" : "text-gray-400"
+                    'text-sm font-medium',
+                    status === 'completed' ? 'text-green-600' :
+                    status === 'current' ? 'text-blue-600' : 'text-gray-400'
                   )}>
                     {label}
                   </div>
                 </div>
               </div>
-              
+
               {!isLast && (
                 <div className={getConnectorClasses(step)} />
               )}
@@ -199,13 +200,13 @@ interface CircularProgressProps {
 
 /**
  * Circular progress indicator component
- * 
+ *
  * Displays progress as a circular indicator with customizable
  * size, color, and text display options.
- * 
+ *
  * @param {CircularProgressProps} props - Component props
  * @returns {JSX.Element} Circular progress indicator
- * 
+ *
  * @example
  * ```typescript
  * <CircularProgress
@@ -249,8 +250,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   const displayText = customText || (showPercentage ? `${Math.round(value)}%` : '');
 
   return (
-    <div 
-      className={cn("relative inline-flex items-center justify-center", className)}
+    <div
+      className={cn('relative inline-flex items-center justify-center', className)}
       style={{ width: config.diameter, height: config.diameter }}
     >
       <svg
@@ -281,10 +282,10 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           className="transition-all duration-500 ease-out"
         />
       </svg>
-      
+
       {displayText && (
         <div className={cn(
-          "absolute inset-0 flex items-center justify-center font-semibold",
+          'absolute inset-0 flex items-center justify-center font-semibold',
           config.fontSize,
           colors.text
         )}>
@@ -315,13 +316,13 @@ interface LinearProgressProps {
 
 /**
  * Linear progress bar component
- * 
+ *
  * Displays progress as a horizontal bar with customizable
  * styling and animation options.
- * 
+ *
  * @param {LinearProgressProps} props - Component props
  * @returns {JSX.Element} Linear progress bar
- * 
+ *
  * @example
  * ```typescript
  * <LinearProgress
@@ -356,23 +357,23 @@ export const LinearProgress: React.FC<LinearProgressProps> = ({
   };
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn('w-full', className)}>
       {showPercentage && (
         <div className="flex justify-between text-sm text-gray-600 mb-1">
           <span>Progress</span>
           <span>{Math.round(value)}%</span>
         </div>
       )}
-      
+
       <div className={cn(
-        "w-full bg-gray-200 rounded-full overflow-hidden",
+        'w-full bg-gray-200 rounded-full overflow-hidden',
         heightConfig[height]
       )}>
         <div
           className={cn(
-            "h-full rounded-full transition-all duration-500 ease-out",
+            'h-full rounded-full transition-all duration-500 ease-out',
             colorConfig[color],
-            animated && "animate-pulse"
+            animated && 'animate-pulse'
           )}
           style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
         />

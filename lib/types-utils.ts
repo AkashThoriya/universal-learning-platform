@@ -1,9 +1,9 @@
 /**
  * @fileoverview Enhanced TypeScript Utilities for Scalability
- * 
+ *
  * Advanced type utilities, type guards, and generic helpers to improve
  * type safety and developer experience across the application.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -11,7 +11,7 @@
 /**
  * Generic result type for operations that can succeed or fail
  */
-export type Result<T, E = Error> = 
+export type Result<T, E = Error> =
   | { success: true; data: T; error?: never }
   | { success: false; data?: never; error: E };
 
@@ -138,9 +138,9 @@ export function safeJsonParse<T>(
     }
     return { success: true, data: parsed };
   } catch (error) {
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Invalid JSON' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Invalid JSON'
     };
   }
 }
@@ -183,7 +183,7 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
@@ -198,7 +198,7 @@ export function throttle<T extends (...args: any[]) => any>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args);
@@ -215,11 +215,11 @@ export const storage = {
   get<T>(key: string, validator?: (value: unknown) => value is T): T | null {
     try {
       const item = localStorage.getItem(key);
-      if (!item) return null;
-      
+      if (!item) { return null; }
+
       const parsed = JSON.parse(item);
-      if (validator && !validator(parsed)) return null;
-      
+      if (validator && !validator(parsed)) { return null; }
+
       return parsed;
     } catch {
       return null;
@@ -256,7 +256,7 @@ export const arrayUtils = {
     const seen = new Set<K>();
     return array.filter(item => {
       const key = keyFn(item);
-      if (seen.has(key)) return false;
+      if (seen.has(key)) { return false; }
       seen.add(key);
       return true;
     });
@@ -266,12 +266,12 @@ export const arrayUtils = {
    * Group array items by a key function
    */
   groupBy<T, K extends string | number>(
-    array: T[], 
+    array: T[],
     keyFn: (item: T) => K
   ): Record<K, T[]> {
     return array.reduce((groups, item) => {
       const key = keyFn(item);
-      if (!groups[key]) groups[key] = [];
+      if (!groups[key]) { groups[key] = []; }
       groups[key].push(item);
       return groups;
     }, {} as Record<K, T[]>);
@@ -281,16 +281,16 @@ export const arrayUtils = {
    * Sort array by multiple criteria
    */
   sortBy<T>(
-    array: T[], 
+    array: T[],
     ...criteria: ((item: T) => any)[]
   ): T[] {
     return [...array].sort((a, b) => {
       for (const criterion of criteria) {
         const valueA = criterion(a);
         const valueB = criterion(b);
-        
-        if (valueA < valueB) return -1;
-        if (valueA > valueB) return 1;
+
+        if (valueA < valueB) { return -1; }
+        if (valueA > valueB) { return 1; }
       }
       return 0;
     });
@@ -311,17 +311,17 @@ export interface ValidationResult {
 }
 
 export function validateValue<T>(
-  value: T, 
+  value: T,
   rules: ValidationRule<T>[]
 ): ValidationResult {
   const errors: string[] = [];
-  
+
   for (const rule of rules) {
     if (!rule.validate(value)) {
       errors.push(rule.message);
     }
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors

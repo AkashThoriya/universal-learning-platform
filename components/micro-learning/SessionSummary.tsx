@@ -1,23 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { 
-  BookOpen, 
-  Code, 
-  Clock, 
-  Target, 
-  TrendingUp, 
+import {
+  BookOpen,
+  Code,
+  Clock,
+  Target,
+  TrendingUp,
   Star,
-  Calendar,
   Brain,
   Home,
   ArrowRight,
   Loader2
 } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { type SessionPerformance, type MicroLearningSession } from '@/types/micro-learning';
 
 interface SessionSummaryProps {
@@ -29,10 +29,10 @@ interface SessionSummaryProps {
   error?: string | null;
 }
 
-export function SessionSummary({ 
-  performance, 
-  session, 
-  onContinueLearning, 
+export function SessionSummary({
+  performance,
+  session,
+  onContinueLearning,
   onReturnToDashboard,
   isLoading = false,
   error = null
@@ -40,16 +40,16 @@ export function SessionSummary({
   const [isNavigating, setIsNavigating] = useState(false);
 
   const getPerformanceColor = (score: number): string => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score >= 80) { return 'text-green-600'; }
+    if (score >= 60) { return 'text-yellow-600'; }
     return 'text-red-600';
   };
 
   const getPerformanceLevel = (score: number): string => {
-    if (score >= 90) return 'Excellent';
-    if (score >= 80) return 'Very Good';
-    if (score >= 70) return 'Good';
-    if (score >= 60) return 'Fair';
+    if (score >= 90) { return 'Excellent'; }
+    if (score >= 80) { return 'Very Good'; }
+    if (score >= 70) { return 'Good'; }
+    if (score >= 60) { return 'Fair'; }
     return 'Needs Improvement';
   };
 
@@ -124,15 +124,15 @@ export function SessionSummary({
           <CardContent>
             <p className="text-red-700 mb-4">{error}</p>
             <div className="flex gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleReturnToDashboard}
                 className="border-red-300 text-red-700 hover:bg-red-100"
               >
                 <Home className="h-4 w-4 mr-2" />
                 Return to Dashboard
               </Button>
-              <Button 
+              <Button
                 onClick={() => window.location.reload()}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
@@ -295,7 +295,7 @@ export function SessionSummary({
                   </div>
                   <Progress value={trackMetrics.examReadinessScore} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Mock Test Score</span>
@@ -321,7 +321,7 @@ export function SessionSummary({
                   </div>
                   <Progress value={trackMetrics.projectProgressPercentage} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-sm">Portfolio Quality</span>
@@ -353,7 +353,7 @@ export function SessionSummary({
             <div className="space-y-2">
               {performance.areasForImprovement.map((area, index) => (
                 <div key={index} className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full" />
                   <span className="text-yellow-800">{area}</span>
                 </div>
               ))}

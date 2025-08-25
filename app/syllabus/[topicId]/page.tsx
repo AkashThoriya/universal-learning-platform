@@ -1,43 +1,44 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { getTopicProgress, updateTopicProgress, getSyllabus } from '@/lib/firebase-utils';
-import AuthGuard from '@/components/AuthGuard';
-import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
-import { TopicProgress, SyllabusSubject } from '@/types/exam';
-import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  BookOpen, 
-  Save, 
-  CheckCircle, 
-  Clock, 
-  TrendingUp, 
+import { format } from 'date-fns';
+import { Timestamp } from 'firebase/firestore';
+import {
+  ArrowLeft,
+  BookOpen,
+  Save,
+  CheckCircle,
+  Clock,
+  TrendingUp,
   FileText,
   Lightbulb,
   Calendar,
   Plus
 } from 'lucide-react';
-import { format } from 'date-fns';
-import { Timestamp } from 'firebase/firestore';
+import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+import AuthGuard from '@/components/AuthGuard';
+import Navigation from '@/components/Navigation';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { getTopicProgress, updateTopicProgress, getSyllabus } from '@/lib/firebase-utils';
+import { TopicProgress, SyllabusSubject } from '@/types/exam';
+
 
 export default function TopicDetailPage() {
   const { user } = useAuth();
   const params = useParams();
   const searchParams = useSearchParams();
-  const router = useRouter();
   const { toast } = useToast();
-  
+
   const topicId = params.topicId as string;
   const subjectId = searchParams.get('subject');
 
@@ -55,16 +56,16 @@ export default function TopicDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user || !topicId) return;
+      if (!user || !topicId) { return; }
 
       try {
         const [progressData, syllabusData] = await Promise.all([
           getTopicProgress(user.uid, topicId),
           getSyllabus(user.uid)
         ]);
-        
+
         setSyllabus(syllabusData);
-        
+
         if (progressData) {
           setTopicProgress(progressData);
           setUserNotes(progressData.userNotes || '');
@@ -72,7 +73,7 @@ export default function TopicDetailPage() {
         } else {
           // Create initial progress if it doesn't exist
           const initialProgress: Partial<TopicProgress> = {
-            topicId: topicId,
+            topicId,
             subjectId: subjectId || '',
             masteryScore: 0,
             lastRevised: Timestamp.now(),
@@ -86,16 +87,16 @@ export default function TopicDetailPage() {
             importance: 3,
             lastScoreImprovement: 0
           };
-          
+
           await updateTopicProgress(user.uid, topicId, initialProgress);
           setTopicProgress(initialProgress as TopicProgress);
         }
       } catch (error) {
         console.error('Error fetching topic data:', error);
         toast({
-          title: "Error",
-          description: "Failed to load topic data. Please try again.",
-          variant: "destructive"
+          title: 'Error',
+          description: 'Failed to load topic data. Please try again.',
+          variant: 'destructive'
         });
       } finally {
         setLoading(false);
@@ -106,7 +107,7 @@ export default function TopicDetailPage() {
   }, [user, topicId, subjectId, toast]);
 
   const handleSave = async () => {
-    if (!user || !topicProgress) return;
+    if (!user || !topicProgress) { return; }
 
     setSaving(true);
     try {
@@ -117,19 +118,19 @@ export default function TopicDetailPage() {
       };
 
       await updateTopicProgress(user.uid, topicId, updates);
-      
+
       setTopicProgress(prev => prev ? { ...prev, ...updates } : null);
-      
+
       toast({
-        title: "Saved Successfully",
-        description: "Your notes and context have been saved.",
+        title: 'Saved Successfully',
+        description: 'Your notes and context have been saved.'
       });
     } catch (error) {
       console.error('Error saving progress:', error);
       toast({
-        title: "Save Failed",
-        description: "Failed to save your changes. Please try again.",
-        variant: "destructive"
+        title: 'Save Failed',
+        description: 'Failed to save your changes. Please try again.',
+        variant: 'destructive'
       });
     } finally {
       setSaving(false);
@@ -137,7 +138,7 @@ export default function TopicDetailPage() {
   };
 
   const handleMarkRevised = async () => {
-    if (!user || !topicProgress) return;
+    if (!user || !topicProgress) { return; }
 
     try {
       const updates = {
@@ -147,41 +148,41 @@ export default function TopicDetailPage() {
       };
 
       await updateTopicProgress(user.uid, topicId, updates);
-      
+
       setTopicProgress(prev => prev ? { ...prev, ...updates } : null);
-      
+
       toast({
-        title: "Marked as Revised",
-        description: "Topic marked as revised. Mastery score increased!",
+        title: 'Marked as Revised',
+        description: 'Topic marked as revised. Mastery score increased!'
       });
     } catch (error) {
       console.error('Error marking as revised:', error);
       toast({
-        title: "Error",
-        description: "Failed to mark as revised. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to mark as revised. Please try again.',
+        variant: 'destructive'
       });
     }
   };
 
   const addCurrentAffair = async () => {
-    if (!user || !topicProgress || !newCurrentAffair.trim()) return;
+    if (!user || !topicProgress || !newCurrentAffair.trim()) { return; }
 
     try {
       // Note: This would need to be implemented in the TopicProgress interface
       // For now, we'll just show a toast
       setNewCurrentAffair('');
-      
+
       toast({
-        title: "Current Affair Added",
-        description: "Your current affair note has been saved.",
+        title: 'Current Affair Added',
+        description: 'Your current affair note has been saved.'
       });
     } catch (error) {
       console.error('Error adding current affair:', error);
       toast({
-        title: "Error",
-        description: "Failed to add current affair. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to add current affair. Please try again.',
+        variant: 'destructive'
       });
     }
   };
@@ -193,7 +194,7 @@ export default function TopicDetailPage() {
           <Navigation />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
               <p className="text-muted-foreground">Loading topic details...</p>
             </div>
           </div>
@@ -222,8 +223,8 @@ export default function TopicDetailPage() {
   }
 
   const getMasteryColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 50) return 'text-yellow-600';
+    if (score >= 80) { return 'text-green-600'; }
+    if (score >= 50) { return 'text-yellow-600'; }
     return 'text-red-600';
   };
 
@@ -240,7 +241,7 @@ export default function TopicDetailPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-5xl mx-auto p-6 space-y-6">
           {/* Navigation */}
           <div className="flex items-center space-x-4">
@@ -268,7 +269,7 @@ export default function TopicDetailPage() {
                     </Badge>
                   </div>
                 </div>
-                
+
                 <div className="text-right space-y-2">
                   <div className="flex items-center space-x-2">
                     <TrendingUp className="h-5 w-5 text-blue-600" />
@@ -279,7 +280,7 @@ export default function TopicDetailPage() {
                   <p className="text-sm text-muted-foreground">Mastery Score</p>
                 </div>
               </div>
-              
+
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-muted-foreground">Progress</span>
@@ -303,15 +304,15 @@ export default function TopicDetailPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-8 w-8 text-green-600" />
                   <div>
                     <p className="text-lg font-bold">
-                      {topicProgress.lastRevised ? 
-                        format(topicProgress.lastRevised.toDate(), 'MMM dd') : 
+                      {topicProgress.lastRevised ?
+                        format(topicProgress.lastRevised.toDate(), 'MMM dd') :
                         'Never'
                       }
                     </p>
@@ -320,7 +321,7 @@ export default function TopicDetailPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
@@ -334,7 +335,7 @@ export default function TopicDetailPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
@@ -406,7 +407,7 @@ export default function TopicDetailPage() {
                         <li>• What memory aids or mnemonics help you remember this?</li>
                       </ul>
                     </div>
-                    
+
                     <Textarea
                       value={personalContext}
                       onChange={(e) => setPersonalContext(e.target.value)}
@@ -434,7 +435,7 @@ export default function TopicDetailPage() {
                       placeholder="Add a current affairs note or recent update..."
                       className="flex-1"
                     />
-                    <Button 
+                    <Button
                       onClick={addCurrentAffair}
                       disabled={!newCurrentAffair.trim()}
                     >

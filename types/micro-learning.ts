@@ -1,18 +1,18 @@
 /**
  * @fileoverview Micro-Learning System Type Definitions
- * 
+ *
  * This file contains TypeScript interfaces for the dual-track micro-learning system
  * that supports both exam preparation and course/tech learning with persona-aware adaptations.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { UserPersona } from './exam';
+import { UserPersona as _UserPersona } from './exam';
 
 /**
  * Represents a micro-learning session that adapts to user persona and learning track
- * 
+ *
  * @interface MicroLearningSession
  * @example
  * ```typescript
@@ -66,7 +66,7 @@ export interface MicroLearningSession {
 
 /**
  * Validation method for exam-focused learning sessions
- * 
+ *
  * @interface ExamValidation
  */
 export interface ExamValidation {
@@ -86,7 +86,7 @@ export interface ExamValidation {
 
 /**
  * Validation method for course/tech learning sessions
- * 
+ *
  * @interface CourseValidation
  */
 export interface CourseValidation {
@@ -104,7 +104,7 @@ export interface CourseValidation {
 
 /**
  * Individual assignment task within a course/tech session
- * 
+ *
  * @interface AssignmentTask
  */
 export interface AssignmentTask {
@@ -128,7 +128,7 @@ export interface AssignmentTask {
 
 /**
  * Project component for hands-on learning in course/tech sessions
- * 
+ *
  * @interface ProjectComponent
  */
 export interface ProjectComponent {
@@ -150,7 +150,7 @@ export interface ProjectComponent {
 
 /**
  * Completion criteria for course/tech sessions
- * 
+ *
  * @interface CompletionCriteria
  */
 export interface CompletionCriteria {
@@ -168,7 +168,7 @@ export interface CompletionCriteria {
 
 /**
  * Code quality standards for technical assessments
- * 
+ *
  * @interface CodeQualityStandards
  */
 export interface CodeQualityStandards {
@@ -184,7 +184,7 @@ export interface CodeQualityStandards {
 
 /**
  * Performance benchmarks for code assessments
- * 
+ *
  * @interface PerformanceBenchmarks
  */
 export interface PerformanceBenchmarks {
@@ -198,7 +198,7 @@ export interface PerformanceBenchmarks {
 
 /**
  * Persona-specific optimizations for micro-learning sessions
- * 
+ *
  * @interface PersonaOptimizations
  */
 export interface PersonaOptimizations {
@@ -222,7 +222,7 @@ export interface PersonaOptimizations {
 
 /**
  * Individual content item within a micro-learning session
- * 
+ *
  * @interface MicroContent
  */
 export interface MicroContent {
@@ -246,7 +246,7 @@ export interface MicroContent {
 
 /**
  * Persona-specific content adaptations
- * 
+ *
  * @interface PersonaAdaptations
  */
 export interface PersonaAdaptations {
@@ -260,7 +260,7 @@ export interface PersonaAdaptations {
 
 /**
  * Content adaptation for a specific persona
- * 
+ *
  * @interface ContentAdaptation
  */
 export interface ContentAdaptation {
@@ -278,7 +278,7 @@ export interface ContentAdaptation {
 
 /**
  * Additional learning resources
- * 
+ *
  * @interface AdditionalResource
  */
 export interface AdditionalResource {
@@ -296,7 +296,7 @@ export interface AdditionalResource {
 
 /**
  * Content metadata for analytics and optimization
- * 
+ *
  * @interface ContentMetadata
  */
 export interface ContentMetadata {
@@ -318,7 +318,7 @@ export interface ContentMetadata {
 
 /**
  * Content engagement metrics
- * 
+ *
  * @interface EngagementMetrics
  */
 export interface EngagementMetrics {
@@ -334,7 +334,7 @@ export interface EngagementMetrics {
 
 /**
  * Interactive elements within content
- * 
+ *
  * @interface ContentInteraction
  */
 export interface ContentInteraction {
@@ -356,7 +356,7 @@ export interface ContentInteraction {
 
 /**
  * Session performance tracking and analytics
- * 
+ *
  * @interface SessionPerformance
  */
 export interface SessionPerformance {
@@ -380,7 +380,7 @@ export interface SessionPerformance {
 
 /**
  * Performance metrics specific to exam track sessions
- * 
+ *
  * @interface ExamTrackMetrics
  */
 export interface ExamTrackMetrics {
@@ -400,7 +400,7 @@ export interface ExamTrackMetrics {
 
 /**
  * Performance metrics specific to course/tech track sessions
- * 
+ *
  * @interface CourseTrackMetrics
  */
 export interface CourseTrackMetrics {
@@ -420,7 +420,7 @@ export interface CourseTrackMetrics {
 
 /**
  * Code quality assessment metrics
- * 
+ *
  * @interface CodeQualityMetrics
  */
 export interface CodeQualityMetrics {
@@ -438,7 +438,7 @@ export interface CodeQualityMetrics {
 
 /**
  * Interaction analytics for session optimization
- * 
+ *
  * @interface InteractionAnalytics
  */
 export interface InteractionAnalytics {
@@ -456,7 +456,7 @@ export interface InteractionAnalytics {
 
 /**
  * Session metadata for tracking and analytics
- * 
+ *
  * @interface SessionMetadata
  */
 export interface SessionMetadata {
@@ -476,7 +476,7 @@ export interface SessionMetadata {
 
 /**
  * Learning recommendation based on session performance
- * 
+ *
  * @interface LearningRecommendation
  */
 export interface LearningRecommendation {
@@ -498,7 +498,7 @@ export interface LearningRecommendation {
 
 /**
  * Recommended action for learning optimization
- * 
+ *
  * @interface RecommendedAction
  */
 export interface RecommendedAction {

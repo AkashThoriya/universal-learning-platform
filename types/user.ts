@@ -3,7 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 /**
  * @deprecated Use User from '@/types/exam' instead. This interface is kept for backward compatibility.
  * Migration: Import { User } from '@/types/exam'
- * 
+ *
  * This legacy User interface will be removed in a future version.
  * Please migrate to the comprehensive User type from types/exam.ts
  */
@@ -33,7 +33,7 @@ export interface LegacyUser {
  * Re-export the comprehensive User type from exam.ts as the standard
  * This ensures all code uses the same User interface
  */
-export type { 
+export type {
   User,
   UserSettings,
   UserStats,

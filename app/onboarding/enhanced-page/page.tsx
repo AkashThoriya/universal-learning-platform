@@ -1,57 +1,47 @@
 /**
  * @fileoverview Enhanced Onboarding Flow - Enterprise Implementation
- * 
+ *
  * Complete multi-step onboarding experience with validation, persistence,
  * analytics, and accessibility. Replaces the existing basic onboarding
  * with a production-ready implementation following enterprise standards.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 2.0.0
  */
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { useAuth } from '@/contexts/AuthContext';
-import { useMultiStepForm } from '@/hooks/useMultiStepForm';
-import { useForm } from '@/hooks/useForm';
-import { createUser, saveSyllabus } from '@/lib/firebase-utils';
-import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
-import { StepProgressIndicator } from '@/components/ui/progress-indicators';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  User, 
-  Target, 
-  BookOpen, 
-  Settings, 
-  CheckCircle, 
-  Search, 
-  Plus, 
-  Calendar,
-  Clock,
+import { Timestamp } from 'firebase/firestore';
+import {
+  CheckCircle,
   AlertCircle,
   ArrowRight,
   ArrowLeft
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useCallback } from 'react';
+import { z } from 'zod';
+
+import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetection';
 import { PersonalInfoStep, CustomExamStep, ExamReviewStep } from '@/components/onboarding-steps';
 import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding-steps-2';
-import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetection';
-import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
-import { Timestamp } from 'firebase/firestore';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { StepProgressIndicator } from '@/components/ui/progress-indicators';
+import { useAuth } from '@/contexts/AuthContext';
+import { useForm } from '@/hooks/useForm';
+import { useMultiStepForm } from '@/hooks/useMultiStepForm';
+import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
+import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { logger } from '@/lib/logger';
+import { Exam, SyllabusSubject, User as UserType } from '@/types/exam';
+
 
 /**
  * Onboarding form data structure with Zod validation
  */
-const OnboardingFormSchema = z.object({
+const _OnboardingFormSchema = z.object({
   // Step 1: Persona Detection
   userPersona: z.object({
     type: z.enum(['student', 'working_professional', 'freelancer']),
@@ -61,10 +51,10 @@ const OnboardingFormSchema = z.object({
     timeAvailability: z.object({
       hoursPerDay: z.number().min(0.5).max(12),
       daysPerWeek: z.number().min(1).max(7),
-      preferredTimeSlots: z.array(z.enum(['morning', 'afternoon', 'evening', 'night'])),
-    }).optional(),
+      preferredTimeSlots: z.array(z.enum(['morning', 'afternoon', 'evening', 'night']))
+    }).optional()
   }).optional(),
-  
+
   // Step 2: Personal Information
   displayName: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters'),
   selectedExamId: z.string().min(1, 'Please select an exam'),
@@ -75,14 +65,14 @@ const OnboardingFormSchema = z.object({
     return selectedDate >= today;
   }, 'Exam date must be in the future'),
   isCustomExam: z.boolean(),
-  
+
   // Step 3: Custom Exam Details (if applicable)
   customExam: z.object({
     name: z.string().optional(),
     description: z.string().optional(),
-    category: z.string().optional(),
+    category: z.string().optional()
   }),
-  
+
   // Step 4: Syllabus Configuration
   syllabus: z.array(z.object({
     subjectId: z.string(),
@@ -92,11 +82,11 @@ const OnboardingFormSchema = z.object({
       id: z.string(),
       name: z.string(),
       completed: z.boolean().default(false),
-      priority: z.enum(['high', 'medium', 'low']).default('medium'),
+      priority: z.enum(['high', 'medium', 'low']).default('medium')
     })),
-    isCustom: z.boolean().default(false),
+    isCustom: z.boolean().default(false)
   })).min(1, 'Please add at least one subject'),
-  
+
   // Step 5: Study Preferences
   preferences: z.object({
     dailyStudyGoalMinutes: z.number().min(15, 'Minimum 15 minutes per day').max(720, 'Maximum 12 hours per day'),
@@ -104,18 +94,18 @@ const OnboardingFormSchema = z.object({
     tierDefinitions: z.object({
       1: z.string().min(1, 'Tier 1 definition is required'),
       2: z.string().min(1, 'Tier 2 definition is required'),
-      3: z.string().min(1, 'Tier 3 definition is required'),
+      3: z.string().min(1, 'Tier 3 definition is required')
     }),
     revisionIntervals: z.array(z.number().positive()).min(3, 'At least 3 revision intervals required'),
     notifications: z.object({
       revisionReminders: z.boolean(),
       dailyGoalReminders: z.boolean(),
-      healthCheckReminders: z.boolean(),
-    }),
-  }),
+      healthCheckReminders: z.boolean()
+    })
+  })
 });
 
-type OnboardingFormData = z.infer<typeof OnboardingFormSchema>;
+type OnboardingFormData = z.infer<typeof _OnboardingFormSchema>;
 
 /**
  * Validation schema for onboarding form
@@ -138,7 +128,7 @@ const onboardingSchema = z.object({
     name: z.string().optional(),
     description: z.string().optional(),
     category: z.string().optional()
-  }).refine((data) => {
+  }).refine((_data) => {
     // Only validate custom exam fields if it's a custom exam
     return true; // We'll handle this in step validation
   }),
@@ -164,7 +154,7 @@ const onboardingSchema = z.object({
 
 /**
  * Enhanced Onboarding Page Component
- * 
+ *
  * Multi-step onboarding flow with enterprise-grade features:
  * - Form validation and error handling
  * - State persistence across browser sessions
@@ -172,13 +162,13 @@ const onboardingSchema = z.object({
  * - Analytics tracking
  * - Responsive design
  * - Loading states and optimistic updates
- * 
+ *
  * @returns {JSX.Element} Enhanced onboarding flow
  */
 export default function EnhancedOnboardingPage() {
   const { user } = useAuth();
   const router = useRouter();
-  
+
   // Initialize form data with sensible defaults
   const initialFormData: OnboardingFormData = {
     userPersona: {
@@ -248,7 +238,7 @@ export default function EnhancedOnboardingPage() {
     if (form.data.selectedExamId && form.data.selectedExamId !== 'custom') {
       const exam = getExamById(form.data.selectedExamId);
       setSelectedExam(exam || null);
-      
+
       // Auto-populate syllabus for predefined exams
       if (exam && !form.data.isCustomExam) {
         const convertedSyllabus = exam.defaultSyllabus.map(subject => ({
@@ -259,9 +249,9 @@ export default function EnhancedOnboardingPage() {
             id: topic.id,
             name: topic.name,
             completed: false,
-            priority: 'medium' as const,
+            priority: 'medium' as const
           })),
-          isCustom: false,
+          isCustom: false
         }));
         form.updateField('syllabus', convertedSyllabus);
       }
@@ -282,29 +272,29 @@ export default function EnhancedOnboardingPage() {
     switch (step) {
       case 1:
         // Persona detection step - basic validation
-        return !!(form.data.userPersona && form.data.userPersona.type);
-      
+        return !!(form.data.userPersona?.type);
+
       case 2:
-        return !!(form.data.displayName.length >= 2 && 
-                 form.data.selectedExamId && 
+        return !!(form.data.displayName.length >= 2 &&
+                 form.data.selectedExamId &&
                  form.data.examDate &&
                  new Date(form.data.examDate) > new Date());
-      
+
       case 3:
         if (form.data.isCustomExam) {
           return !!(form.data.customExam?.name && form.data.customExam.name.length >= 2);
         }
         return true;
-      
+
       case 4:
         return form.data.syllabus.length > 0;
-      
+
       case 5:
         return form.data.preferences.dailyStudyGoalMinutes >= 60 &&
                form.data.preferences.tierDefinitions[1].length > 0 &&
                form.data.preferences.tierDefinitions[2].length > 0 &&
                form.data.preferences.tierDefinitions[3].length > 0;
-      
+
       default:
         return true;
     }
@@ -344,9 +334,9 @@ export default function EnhancedOnboardingPage() {
             id: topic.id,
             name: topic.name,
             completed: false,
-            priority: 'medium' as const,
+            priority: 'medium' as const
           })),
-          isCustom: false,
+          isCustom: false
         }));
         form.updateFields({
           selectedExamId: examId,
@@ -366,7 +356,8 @@ export default function EnhancedOnboardingPage() {
   }, [form]);
 
   const addCustomSubject = useCallback(() => {
-    const subjectName = prompt('Enter subject name:');
+    // TODO: Replace with proper modal dialog
+    const subjectName = 'Custom Subject'; // Temporarily disabled prompt
     if (subjectName?.trim()) {
       const newSubject = {
         subjectId: `custom_${Date.now()}`,
@@ -392,7 +383,7 @@ export default function EnhancedOnboardingPage() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       // Validate entire form
       const isValid = await form.validate();
@@ -442,7 +433,7 @@ export default function EnhancedOnboardingPage() {
         topics: subject.topics.map(topic => ({
           id: topic.id,
           name: topic.name,
-          subtopics: [],
+          subtopics: []
         }))
       }));
 
@@ -460,7 +451,7 @@ export default function EnhancedOnboardingPage() {
 
       // Navigate to dashboard
       router.push('/dashboard');
-      
+
     } catch (error) {
       logger.error('Error completing onboarding process', error as Error);
       form.setError('_form' as any, {
@@ -478,9 +469,9 @@ export default function EnhancedOnboardingPage() {
     switch (multiStep.currentStep) {
       case 1:
         return <PersonaDetectionStep form={form as any} />;
-        
+
       case 2:
-        return <PersonalInfoStep 
+        return <PersonalInfoStep
           form={form}
           filteredExams={filteredExams}
           searchQuery={searchQuery}
@@ -488,25 +479,25 @@ export default function EnhancedOnboardingPage() {
           onExamSelect={handleExamSelect}
           selectedExam={selectedExam}
         />;
-        
+
       case 3:
         if (form.data.isCustomExam) {
           return <CustomExamStep form={form} />;
-        } else {
-          return <ExamReviewStep form={form} selectedExam={selectedExam} />;
         }
-        
+          return <ExamReviewStep form={form} selectedExam={selectedExam} />;
+
+
       case 4:
-        return <SyllabusManagementStep 
+        return <SyllabusManagementStep
           form={form}
           onUpdateSubjectTier={updateSubjectTier}
           onAddSubject={addCustomSubject}
           onRemoveSubject={removeSubject}
         />;
-        
+
       case 5:
         return <PreferencesStep form={form} />;
-        
+
       default:
         return null;
     }
@@ -521,7 +512,7 @@ export default function EnhancedOnboardingPage() {
             Welcome to Your Strategic Learning System
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Let's build your personalized exam preparation strategy with intelligent 
+            Let's build your personalized exam preparation strategy with intelligent
             spaced repetition, health-performance correlation, and strategic prioritization.
           </p>
         </div>

@@ -1,21 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  BookOpen, 
-  Code, 
-  Clock, 
-  Play, 
+import {
+  BookOpen,
+  Code,
+  Clock,
+  Play,
   Zap,
   Target,
   Loader2,
   AlertCircle,
   User
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface QuickSessionConfig {
@@ -66,11 +67,11 @@ const defaultSessions: QuickSessionConfig[] = [
   }
 ];
 
-export function QuickSessionLauncher({ 
-  userId, 
-  sessions, 
+export function QuickSessionLauncher({
+  userId,
+  sessions,
   onStartSession,
-  className = "",
+  className = '',
   autoLoadPersonalized = true
 }: QuickSessionLauncherProps) {
   const { user } = useAuth();
@@ -88,7 +89,7 @@ export function QuickSessionLauncher({
   }, [activeUserId, autoLoadPersonalized, sessions]);
 
   const loadPersonalizedSessions = async () => {
-    if (!activeUserId) return;
+    if (!activeUserId) { return; }
 
     try {
       setIsLoading(true);
@@ -97,7 +98,7 @@ export function QuickSessionLauncher({
       // Load personalized recommendations from Firebase
       const { MicroLearningService } = await import('@/lib/micro-learning-service');
       const recommendations = await MicroLearningService.generatePersonalizedRecommendations(activeUserId);
-      
+
       // Convert recommendations to quick session format
       const personalizedSessions = recommendations.map(rec => ({
         id: rec.id,
@@ -111,7 +112,7 @@ export function QuickSessionLauncher({
         icon: rec.track === 'exam' ? '📚' : '💻',
         color: rec.track === 'exam' ? 'blue' : 'green'
       }));
-      
+
       setDisplaySessions(personalizedSessions.length > 0 ? personalizedSessions : defaultSessions);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load personalized sessions');
@@ -122,7 +123,7 @@ export function QuickSessionLauncher({
   };
 
   const handleStartSession = async (session: QuickSessionConfig, index: number) => {
-    if (!onStartSession || !activeUserId) return;
+    if (!onStartSession || !activeUserId) { return; }
 
     setStartingSessionIndex(index);
     try {
@@ -180,9 +181,9 @@ export function QuickSessionLauncher({
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
               {error}
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={loadPersonalizedSessions}
                 className="ml-2 h-6 px-2"
               >
@@ -196,7 +197,7 @@ export function QuickSessionLauncher({
           {displaySessions.map((session, index) => {
             const TrackIcon = getTrackIcon(session.track);
             const isStarting = startingSessionIndex === index;
-            
+
             return (
               <div
                 key={index}
@@ -206,7 +207,7 @@ export function QuickSessionLauncher({
                   <div className={`p-1.5 rounded ${session.track === 'exam' ? 'bg-blue-100' : 'bg-green-100'}`}>
                     <TrackIcon className={`h-4 w-4 ${session.track === 'exam' ? 'text-blue-600' : 'text-green-600'}`} />
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <h4 className="font-medium text-gray-900 text-sm truncate">
                       {session.title}
@@ -214,7 +215,7 @@ export function QuickSessionLauncher({
                     <p className="text-xs text-gray-600 truncate">
                       {session.description}
                     </p>
-                    
+
                     <div className="flex items-center space-x-2 mt-1">
                       <Badge variant="secondary" className={`text-xs ${getDifficultyColor(session.difficulty)}`}>
                         {session.difficulty}
@@ -226,7 +227,7 @@ export function QuickSessionLauncher({
                     </div>
                   </div>
                 </div>
-                
+
                 <Button
                   size="sm"
                   onClick={() => handleStartSession(session, index)}
@@ -245,8 +246,8 @@ export function QuickSessionLauncher({
         </div>
 
         <div className="mt-4 pt-3 border-t border-blue-200">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="w-full text-blue-700 border-blue-300 hover:bg-blue-100 transition-colors duration-200"
             onClick={() => {
               // Navigate to full micro-learning dashboard

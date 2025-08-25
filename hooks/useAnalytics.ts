@@ -1,22 +1,23 @@
 /**
  * @fileoverview Analytics Tracking Hooks - Enterprise Implementation
- * 
+ *
  * Custom React hooks for seamless analytics tracking across the application.
  * Provides automatic event tracking, performance monitoring, and user
  * behavior analysis with minimal integration overhead.
- * 
+ *
  * Features:
  * - Automatic event tracking with context awareness
  * - Performance monitoring and timing analysis
  * - Cross-track learning pattern detection
  * - Real-time analytics data synchronization
  * - Error tracking and recovery analytics
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 import { useEffect, useCallback, useRef } from 'react';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { intelligentAnalyticsService, AnalyticsEventType, AnalyticsEventData } from '@/lib/intelligent-analytics-service';
 import { logger } from '@/lib/logger';

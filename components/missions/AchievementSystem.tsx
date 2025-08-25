@@ -1,15 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
   Trophy,
   Star,
   Award,
@@ -22,22 +13,27 @@ import {
   Lock,
   Flame,
   Calendar,
-  Clock,
   BookOpen,
   Code,
   Users,
-  Gift,
   Sparkles,
-  Filter,
   Search,
   SortAsc,
   SortDesc,
-  Eye,
   X,
   AlertCircle,
   Loader2,
   RefreshCw
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { achievementService } from '@/lib/achievement-service';
 import {
@@ -58,9 +54,9 @@ interface AchievementWithProgress extends Achievement {
   unlockedAt?: Date;
 }
 
-export function AchievementSystem({ 
-  className = '', 
-  onAchievementClick 
+export function AchievementSystem({
+  className = '',
+  onAchievementClick
 }: AchievementSystemProps) {
   const { user } = useAuth();
   const [achievements, setAchievements] = useState<AchievementWithProgress[]>([]);
@@ -86,7 +82,7 @@ export function AchievementSystem({
   }, [user?.uid]);
 
   const loadAchievements = async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     try {
       setIsLoading(true);
@@ -115,15 +111,24 @@ export function AchievementSystem({
       // Combine achievements with user progress
       const achievementsWithProgress: AchievementWithProgress[] = allAchievements.map(achievement => {
         const userAchievement = userAchievements.find(ua => ua.achievementId === achievement.id);
-        
-        return {
+
+        const result: AchievementWithProgress = {
           ...achievement,
-          userAchievement,
-          isUnlocked: userAchievement?.isUnlocked || false,
-          progress: userAchievement?.progress || 0,
-          target: userAchievement?.target || 100,
-          unlockedAt: userAchievement?.unlockedAt
+          isUnlocked: userAchievement?.isUnlocked ?? false,
+          progress: userAchievement?.progress ?? 0,
+          target: userAchievement?.target ?? 100
         };
+
+        // Only set optional properties if they exist
+        if (userAchievement) {
+          result.userAchievement = userAchievement;
+        }
+
+        if (userAchievement?.unlockedAt) {
+          result.unlockedAt = userAchievement.unlockedAt;
+        }
+
+        return result;
       });
 
       setAchievements(achievementsWithProgress);
@@ -185,7 +190,7 @@ export function AchievementSystem({
       'time_investor': '⏰',
       'excellence_achiever': '🏆'
     };
-    
+
     return iconMap[achievement.id] || '🏅';
   };
 
@@ -197,12 +202,12 @@ export function AchievementSystem({
       const matchesSearch = achievement.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            achievement.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesUnlocked = !showOnlyUnlocked || achievement.isUnlocked;
-      
+
       return matchesCategory && matchesTrack && matchesRarity && matchesSearch && matchesUnlocked;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'name':
           comparison = a.name.localeCompare(b.name);
@@ -223,7 +228,7 @@ export function AchievementSystem({
           }
           break;
       }
-      
+
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
@@ -272,9 +277,9 @@ export function AchievementSystem({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mb-4">{error}</AlertDescription>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={loadAchievements}
             className="gap-2"
           >
@@ -370,7 +375,7 @@ export function AchievementSystem({
                   />
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Button
                   variant={showOnlyUnlocked ? 'default' : 'outline'}
@@ -379,7 +384,7 @@ export function AchievementSystem({
                 >
                   {showOnlyUnlocked ? 'All' : 'Unlocked Only'}
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
@@ -389,7 +394,7 @@ export function AchievementSystem({
                 </Button>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-40">
@@ -403,7 +408,7 @@ export function AchievementSystem({
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={selectedTrack} onValueChange={setSelectedTrack}>
                 <SelectTrigger className="w-36">
                   <SelectValue />
@@ -411,14 +416,14 @@ export function AchievementSystem({
                 <SelectContent>
                   {tracks.map(track => (
                     <SelectItem key={track} value={track}>
-                      {track === 'all' ? 'All Tracks' : 
+                      {track === 'all' ? 'All Tracks' :
                        track === 'both' ? 'Both Tracks' :
                        track === 'exam' ? 'Exam Track' : 'Tech Track'}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={selectedRarity} onValueChange={setSelectedRarity}>
                 <SelectTrigger className="w-36">
                   <SelectValue />
@@ -431,7 +436,7 @@ export function AchievementSystem({
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
                 <SelectTrigger className="w-36">
                   <SelectValue />
@@ -455,13 +460,13 @@ export function AchievementSystem({
           const TrackIcon = getTrackIcon(achievement.track);
           const RarityIcon = getRarityIcon(achievement.rarity);
           const achievementIcon = getAchievementIcon(achievement);
-          
+
           return (
-            <Card 
+            <Card
               key={achievement.id}
               className={`relative cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                achievement.isUnlocked 
-                  ? 'bg-gradient-to-br from-white to-gray-50 border-2 border-green-200' 
+                achievement.isUnlocked
+                  ? 'bg-gradient-to-br from-white to-gray-50 border-2 border-green-200'
                   : 'bg-gray-50 opacity-75'
               }`}
               onClick={() => handleAchievementClick(achievement)}
@@ -469,7 +474,7 @@ export function AchievementSystem({
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div 
+                    <div
                       className={`text-3xl p-3 rounded-lg ${
                         achievement.isUnlocked ? 'bg-gradient-to-br from-yellow-50 to-orange-50' : 'bg-gray-100'
                       }`}
@@ -489,7 +494,7 @@ export function AchievementSystem({
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col items-center space-y-1">
                     {achievement.isUnlocked ? (
                       <CheckCircle className="h-6 w-6 text-green-600" />
@@ -503,23 +508,23 @@ export function AchievementSystem({
                   </div>
                 </div>
               </CardHeader>
-              
+
               <CardContent>
                 <p className="text-gray-600 text-sm mb-4">{achievement.description}</p>
-                
+
                 {!achievement.isUnlocked && (
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Progress</span>
                       <span>{achievement.progress} / {achievement.target}</span>
                     </div>
-                    <Progress 
-                      value={(achievement.progress / achievement.target) * 100} 
+                    <Progress
+                      value={(achievement.progress / achievement.target) * 100}
                       className="h-2"
                     />
                   </div>
                 )}
-                
+
                 {achievement.isUnlocked && achievement.unlockedAt && (
                   <div className="flex items-center space-x-2 text-sm text-green-600">
                     <Calendar className="h-3 w-3" />
@@ -527,7 +532,7 @@ export function AchievementSystem({
                   </div>
                 )}
               </CardContent>
-              
+
               {achievement.isUnlocked && (
                 <div className="absolute top-2 right-2">
                   <div className="bg-green-100 rounded-full p-1">
@@ -566,18 +571,18 @@ export function AchievementSystem({
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            
+
             <div className="text-center mb-6">
-              <div 
+              <div
                 className={`text-6xl p-4 rounded-lg inline-block mb-4 ${
-                  selectedAchievement.isUnlocked 
-                    ? 'bg-gradient-to-br from-yellow-50 to-orange-50' 
+                  selectedAchievement.isUnlocked
+                    ? 'bg-gradient-to-br from-yellow-50 to-orange-50'
                     : 'bg-gray-100'
                 }`}
               >
                 {getAchievementIcon(selectedAchievement)}
               </div>
-              
+
               <div className="space-y-2">
                 <Badge className={`${getRarityColor(selectedAchievement.rarity)}`}>
                   {selectedAchievement.rarity}
@@ -588,7 +593,7 @@ export function AchievementSystem({
                 </div>
               </div>
             </div>
-            
+
             {selectedAchievement.isUnlocked ? (
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-2 text-green-600 mb-2">
@@ -607,8 +612,8 @@ export function AchievementSystem({
                   <span>Progress</span>
                   <span>{selectedAchievement.progress} / {selectedAchievement.target}</span>
                 </div>
-                <Progress 
-                  value={(selectedAchievement.progress / selectedAchievement.target) * 100} 
+                <Progress
+                  value={(selectedAchievement.progress / selectedAchievement.target) * 100}
                   className="h-3"
                 />
                 <p className="text-sm text-gray-600 text-center">

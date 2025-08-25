@@ -1,45 +1,49 @@
 /**
  * @fileoverview Enhanced Firebase Service Layer Integration
- * 
+ *
  * Simplified service layer that integrates with existing Firebase utilities
  * while adding performance monitoring, caching, and error handling.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
   Timestamp,
   writeBatch,
-  onSnapshot
+  onSnapshot as _onSnapshot
 } from 'firebase/firestore';
+
 import { db } from './firebase';
-import { Result, createSuccess, createError, LoadingState } from './types-utils';
 import { serviceContainer, PerformanceMonitor, ConsoleLogger } from './service-layer';
+import { Result, createSuccess, createError, LoadingState as _LoadingState } from './types-utils';
 
 // ============================================================================
 // ENHANCED ERROR HANDLING & RETRY LOGIC
 // ============================================================================
 
-interface RetryOptions {
+/*
+interface _RetryOptions {
   maxRetries: number;
   baseDelay: number;
   maxDelay: number;
   backoffFactor: number;
 }
+*/
 
-class RetryService {
+/*
+class _RetryService {
   private static defaultOptions: RetryOptions = {
     maxRetries: 3,
     baseDelay: 1000,
@@ -59,7 +63,7 @@ class RetryService {
         return await operation();
       } catch (error) {
         lastError = error as Error;
-        
+
         // Don't retry on certain error types
         if (this.isNonRetryableError(error)) {
           throw error;
@@ -104,6 +108,7 @@ class RetryService {
     return error?.code && nonRetryableCodes.includes(error.code);
   }
 }
+*/
 
 // ============================================================================
 // CACHE SERVICE
@@ -118,7 +123,7 @@ class CacheService {
     this.cleanupInterval = setInterval(() => this.cleanup(), 5 * 60 * 1000);
   }
 
-  set<T>(key: string, data: T, ttl: number = 300000): void {
+  set<T>(key: string, data: T, ttl = 300000): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -128,7 +133,7 @@ class CacheService {
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) { return null; }
 
     const isExpired = Date.now() - entry.timestamp > entry.ttl;
     if (isExpired) {
@@ -167,7 +172,7 @@ class CacheService {
 // ============================================================================
 
 class FirebaseService {
-  private cache: CacheService;
+  public cache: CacheService;
   private monitor: PerformanceMonitor;
   private logger: ConsoleLogger;
 
@@ -202,7 +207,7 @@ class FirebaseService {
       const result = await this.monitor.measure(`getDocument:${collectionPath}:${docId}`, async () => {
         const docRef = doc(db, collectionPath, docId);
         const docSnap = await getDoc(docRef);
-        
+
         if (!docSnap.exists()) {
           return null;
         }
@@ -330,9 +335,9 @@ class FirebaseService {
       cacheTTL?: number;
     } = {}
   ): Promise<Result<T[]>> {
-    const { 
-      where: whereConditions = [], 
-      orderBy: orderByConditions = [], 
+    const {
+      where: whereConditions = [],
+      orderBy: orderByConditions = [],
       limit: limitCount,
       useCache = true,
       cacheTTL = 180000 // 3 minutes for collections
@@ -445,7 +450,7 @@ class FirebaseService {
    * Get cache statistics
    */
   getCacheStats(): { size: number; keys: string[] } {
-    const cache = (this.cache as any).cache;
+    const { cache } = (this.cache as any);
     return {
       size: cache.size,
       keys: Array.from(cache.keys())
@@ -470,7 +475,7 @@ const firebaseService = new FirebaseService();
 
 // Register in service container
 serviceContainer.register('FirebaseService', firebaseService);
-serviceContainer.register('CacheService', firebaseService['cache']);
+serviceContainer.register('CacheService', firebaseService.cache);
 
 // ============================================================================
 // CONVENIENCE FUNCTIONS (BACKWARD COMPATIBILITY)
@@ -516,8 +521,8 @@ export const userService = {
 
   async getStats(userId: string): Promise<Result<any | null>> {
     const userResult = await this.get(userId);
-    if (!userResult.success) return userResult;
-    
+    if (!userResult.success) { return userResult; }
+
     return createSuccess(userResult.data?.stats || null);
   }
 };
@@ -543,7 +548,7 @@ export const dailyLogService = {
     return result.success ? createSuccess(logId) : result;
   },
 
-  async getLogs(userId: string, days: number = 30): Promise<Result<any[]>> {
+  async getLogs(userId: string, days = 30): Promise<Result<any[]>> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
@@ -590,7 +595,7 @@ export const progressService = {
 };
 
 /**
- * Enhanced revision queue operations  
+ * Enhanced revision queue operations
  */
 export const revisionService = {
   async getQueue(userId: string): Promise<Result<any[]>> {
@@ -643,7 +648,7 @@ export const mockTestService = {
     return result.success ? createSuccess(testId) : result;
   },
 
-  async getTests(userId: string, limit: number = 10): Promise<Result<any[]>> {
+  async getTests(userId: string, limit = 10): Promise<Result<any[]>> {
     return firebaseService.queryCollection(`users/${userId}/logs_mocks`, {
       orderBy: [{ field: 'date', direction: 'desc' }],
       limit
@@ -659,7 +664,7 @@ export const mockTestService = {
  * Enhanced insights service
  */
 export const insightsService = {
-  async generate(userId: string): Promise<Result<any[]>> {
+  async generate(_userId: string): Promise<Result<any[]>> {
     // This would implement the generateStudyInsights logic
     // For now, return empty array as placeholder
     return createSuccess([]);
@@ -694,11 +699,11 @@ export const missionFirebaseService = {
         useCache: true,
         cacheTTL: 600000 // 10 minutes
       };
-      
+
       if (track) {
         options.where = [{ field: 'track', operator: '==', value: track }];
       }
-      
+
       return firebaseService.queryCollection(`users/${userId}/mission-templates`, options);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get templates'));
@@ -741,8 +746,8 @@ export const missionFirebaseService = {
   },
 
   async updateMissionProgress(
-    userId: string, 
-    missionId: string, 
+    userId: string,
+    missionId: string,
     progress: any
   ): Promise<Result<void>> {
     try {
@@ -750,10 +755,10 @@ export const missionFirebaseService = {
       return firebaseService.updateDocument(
         `users/${userId}/active-missions`,
         missionId,
-        { 
-          progress, 
-          status, 
-          updatedAt: Timestamp.fromDate(new Date()) 
+        {
+          progress,
+          status,
+          updatedAt: Timestamp.fromDate(new Date())
         }
       );
     } catch (error) {
@@ -762,8 +767,8 @@ export const missionFirebaseService = {
   },
 
   async completeMission(
-    userId: string, 
-    missionId: string, 
+    userId: string,
+    missionId: string,
     results: any
   ): Promise<Result<void>> {
     try {
@@ -796,19 +801,19 @@ export const missionFirebaseService = {
       ];
 
       const result = await firebaseService.batchWrite(operations);
-      
+
       if (result.success) {
         // Clear relevant cache entries
         this.clearMissionCache(userId);
       }
-      
+
       return result;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to complete mission'));
     }
   },
 
-  async getMissionHistory(userId: string, limit: number = 20): Promise<Result<any[]>> {
+  async getMissionHistory(userId: string, limit = 20): Promise<Result<any[]>> {
     try {
       return firebaseService.queryCollection(`users/${userId}/mission-history`, {
         orderBy: [{ field: 'completedAt', direction: 'desc' }],
@@ -827,11 +832,11 @@ export const missionFirebaseService = {
         `users/${userId}/active-missions`,
         missionId
       );
-      
+
       if (result.success) {
         this.clearMissionCache(userId);
       }
-      
+
       return result;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to delete mission'));
@@ -844,21 +849,21 @@ export const missionFirebaseService = {
   ): Promise<Result<any>> {
     try {
       const historyResult = await this.getMissionHistory(userId, 100);
-      
+
       if (!historyResult.success) {
         return historyResult;
       }
 
       const missions = historyResult.data;
       const periodMissions = missions.filter((mission: any) => {
-        if (!mission.completedAt) return false;
+        if (!mission.completedAt) { return false; }
         const completedAt = mission.completedAt.toDate();
         return completedAt >= period.startDate && completedAt <= period.endDate;
       });
 
       const analytics = {
         totalMissions: periodMissions.length,
-        averageScore: periodMissions.length > 0 
+        averageScore: periodMissions.length > 0
           ? periodMissions.reduce((sum: number, m: any) => sum + (m.results?.finalScore || 0), 0) / periodMissions.length
           : 0,
         totalTimeSpent: periodMissions.reduce((sum: number, m: any) => sum + (m.results?.totalTime || 0), 0),
@@ -907,10 +912,10 @@ export const missionFirebaseService = {
 
   clearMissionCache(userId: string): void {
     // Clear relevant cache entries
-    if (firebaseService['cache']) {
-      firebaseService['cache'].delete(`users/${userId}/active-missions`);
-      firebaseService['cache'].delete(`users/${userId}/mission-history`);
-      firebaseService['cache'].delete(`users/${userId}/mission-templates`);
+    if (firebaseService.cache) {
+      firebaseService.cache.delete(`users/${userId}/active-missions`);
+      firebaseService.cache.delete(`users/${userId}/mission-history`);
+      firebaseService.cache.delete(`users/${userId}/mission-templates`);
     }
   }
 };
@@ -938,8 +943,8 @@ export const microLearningFirebaseService = {
   },
 
   async getSessionHistory(
-    userId: string, 
-    limit: number = 20
+    userId: string,
+    limit = 20
   ): Promise<Result<any[]>> {
     return firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
       orderBy: [{ field: 'createdAt', direction: 'desc' }],
@@ -950,7 +955,7 @@ export const microLearningFirebaseService = {
   },
 
   async saveRecommendations(
-    userId: string, 
+    userId: string,
     recommendations: any[]
   ): Promise<Result<void>> {
     const recommendationsData = {
@@ -978,7 +983,7 @@ export const microLearningFirebaseService = {
     }
 
     const data = result.data as any;
-    
+
     // Check if recommendations are expired
     const now = new Date();
     if (data.expiresAt) {
@@ -1034,15 +1039,15 @@ export const microLearningFirebaseService = {
       orderBy: [{ field: 'createdAt', direction: 'desc' }]
     });
 
-    if (!sessionsResult.success) return sessionsResult;
+    if (!sessionsResult.success) { return sessionsResult; }
 
     const sessions = sessionsResult.data;
     const analytics = {
       period,
       totalSessions: sessions.length,
       totalTimeSpent: sessions.reduce((sum: number, s: any) => sum + (s.duration || 0), 0),
-      averageAccuracy: sessions.length > 0 
-        ? sessions.reduce((sum: number, s: any) => sum + (s.progress?.accuracy || 0), 0) / sessions.length 
+      averageAccuracy: sessions.length > 0
+        ? sessions.reduce((sum: number, s: any) => sum + (s.progress?.accuracy || 0), 0) / sessions.length
         : 0,
       trackBreakdown: {
         exam: sessions.filter((s: any) => s.learningTrack === 'exam').length,

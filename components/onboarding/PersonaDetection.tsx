@@ -1,43 +1,40 @@
 /**
  * @fileoverview Persona Detection Onboarding Component
- * 
+ *
  * Comprehensive persona detection step for the onboarding flow.
  * Captures user type, work schedule, and career context for adaptive learning.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 'use client';
 
-import React, { useState } from 'react';
-import { UseFormReturn } from '@/hooks/useForm';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  User, 
-  Briefcase, 
-  Clock, 
-  Target, 
-  MapPin,
+import {
+  User,
+  Briefcase,
+  Target,
   TrendingUp,
-  AlertCircle,
   Info,
-  CheckCircle,
   Plus,
   Minus
 } from 'lucide-react';
-import { UserPersonaType, CareerMotivation } from '@/types/exam';
+import React, { useState } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
+import { UseFormReturn } from '@/hooks/useForm';
 import { PersonaAwareGoalSetting } from '@/lib/persona-aware-goals';
+import { UserPersonaType, CareerMotivation } from '@/types/exam';
 
 /**
  * Form data structure for persona detection step
@@ -79,15 +76,15 @@ interface PersonaDetectionStepProps {
  */
 export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  
+
   // Get current persona type from form
   const currentPersona = form.data.userPersona?.type;
-  
+
   // Helper function to update nested persona fields
   const updatePersonaField = (field: string, value: any) => {
     const keys = field.split('.');
     const updatedPersona = { ...form.data.userPersona };
-    
+
     if (keys.length === 2) {
       // userPersona.type
       if (keys[1] === 'type') {
@@ -97,36 +94,64 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       // userPersona.workSchedule.field or userPersona.careerContext.field
       const section = keys[1] as 'workSchedule' | 'careerContext';
       const fieldName = keys[2];
-      
+
       if (section === 'workSchedule') {
-        updatedPersona.workSchedule = {
+        const baseWorkSchedule = {
           workingHours: { start: '09:00', end: '17:00' },
-          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[],
           commuteTime: 60,
-          flexibility: 'rigid',
+          flexibility: 'rigid' as const,
           lunchBreakDuration: 60,
-          ...updatedPersona.workSchedule,
-          [fieldName]: value
+          ...updatedPersona.workSchedule
         };
+
+        if (fieldName === 'workingHours') {
+          baseWorkSchedule.workingHours = value;
+        } else if (fieldName === 'workingDays') {
+          baseWorkSchedule.workingDays = value;
+        } else if (fieldName === 'commuteTime') {
+          baseWorkSchedule.commuteTime = value;
+        } else if (fieldName === 'flexibility') {
+          baseWorkSchedule.flexibility = value;
+        } else if (fieldName === 'lunchBreakDuration') {
+          baseWorkSchedule.lunchBreakDuration = value;
+        }
+
+        updatedPersona.workSchedule = baseWorkSchedule;
       } else if (section === 'careerContext') {
-        updatedPersona.careerContext = {
+        const baseCareerContext = {
           currentRole: '',
           targetRole: '',
           industry: '',
-          urgency: 'short_term',
-          motivation: [],
-          skillGaps: [],
-          ...updatedPersona.careerContext,
-          [fieldName]: value
+          urgency: 'short_term' as const,
+          motivation: [] as CareerMotivation[],
+          skillGaps: [] as string[],
+          ...updatedPersona.careerContext
         };
+
+        if (fieldName === 'currentRole') {
+          baseCareerContext.currentRole = value;
+        } else if (fieldName === 'targetRole') {
+          baseCareerContext.targetRole = value;
+        } else if (fieldName === 'industry') {
+          baseCareerContext.industry = value;
+        } else if (fieldName === 'urgency') {
+          baseCareerContext.urgency = value;
+        } else if (fieldName === 'motivation') {
+          baseCareerContext.motivation = value;
+        } else if (fieldName === 'skillGaps') {
+          baseCareerContext.skillGaps = value;
+        }
+
+        updatedPersona.careerContext = baseCareerContext;
       }
     } else if (keys.length === 4) {
       // userPersona.workSchedule.workingHours.start/end - handled by specific components
     }
-    
+
     form.updateField('userPersona', updatedPersona);
   };
-  
+
   // Helper function to update preferences
   const updatePreferenceField = (field: string, value: any) => {
     const updatedPreferences = { ...form.data.preferences };
@@ -137,14 +162,6 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       updatedPreferences.preferredStudyTime = value;
     }
     form.updateField('preferences', updatedPreferences);
-  };
-  
-  // Calculate recommended study goal based on persona
-  const getRecommendedGoal = () => {
-    if (form.data.userPersona) {
-      return PersonaAwareGoalSetting.calculateRealisticStudyGoal(form.data.userPersona);
-    }
-    return 480; // Default 8 hours
   };
 
   return (
@@ -158,7 +175,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
           This helps us create the perfect study plan for your lifestyle and goals
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         {/* Persona Selection */}
         <div className="space-y-4">
@@ -169,11 +186,10 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
               updatePersonaField('userPersona.type', value);
               // Reset work schedule and career context when changing persona
               if (value !== 'working_professional') {
-                const updatedPersona = { 
-                  type: value,
-                  workSchedule: undefined,
-                  careerContext: undefined
+                const updatedPersona: { type: UserPersonaType; workSchedule?: any; careerContext?: any } = {
+                  type: value
                 };
+                // Don't set optional properties to undefined, just omit them
                 form.updateField('userPersona', updatedPersona);
               }
               // Update recommended study goal
@@ -200,7 +216,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 </div>
               </div>
             </div>
-            
+
             {/* Working Professional Option */}
             <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
               <RadioGroupItem value="working_professional" id="working_professional" />
@@ -221,7 +237,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 </div>
               </div>
             </div>
-            
+
             {/* Freelancer Option */}
             <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
               <RadioGroupItem value="freelancer" id="freelancer" />
@@ -249,7 +265,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         {currentPersona === 'working_professional' && (
           <WorkScheduleInput form={form} />
         )}
-        
+
         {/* Career Context for Working Professionals */}
         {currentPersona === 'working_professional' && (
           <CareerContextInput form={form} />
@@ -257,8 +273,8 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
         {/* Study Goal Recommendation */}
         {currentPersona && (
-          <StudyGoalRecommendation 
-            form={form} 
+          <StudyGoalRecommendation
+            form={form}
             persona={form.data.userPersona}
           />
         )}
@@ -274,7 +290,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
             Advanced Options
             {showAdvancedOptions ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           </Button>
-          
+
           {showAdvancedOptions && (
             <div className="mt-4 space-y-4">
               <PreferredStudyTimeInput form={form} />
@@ -304,7 +320,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
   const updateWorkSchedule = (field: string, value: any) => {
     const updatedPersona = { ...form.data.userPersona };
     const keys = field.split('.');
-    
+
     // Initialize workSchedule if it doesn't exist
     if (!updatedPersona.workSchedule) {
       updatedPersona.workSchedule = {
@@ -315,10 +331,19 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         lunchBreakDuration: 60
       };
     }
-    
+
     if (keys.length === 2) {
       // workSchedule.field
-      (updatedPersona.workSchedule as any)[keys[1]] = value;
+      const fieldName = keys[1];
+      if (fieldName === 'commuteTime') {
+        updatedPersona.workSchedule.commuteTime = value;
+      } else if (fieldName === 'flexibility') {
+        updatedPersona.workSchedule.flexibility = value;
+      } else if (fieldName === 'lunchBreakDuration') {
+        updatedPersona.workSchedule.lunchBreakDuration = value;
+      } else if (fieldName === 'workingDays') {
+        updatedPersona.workSchedule.workingDays = value;
+      }
     } else if (keys.length === 3 && keys[1] === 'workingHours') {
       // workSchedule.workingHours.start/end
       const currentWorkingHours = updatedPersona.workSchedule.workingHours;
@@ -340,7 +365,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         };
       }
     }
-    
+
     form.updateField('userPersona', updatedPersona);
   };
 
@@ -355,7 +380,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
           Help us understand your work commitments to optimize your study plan
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Working Hours */}
         <div className="grid grid-cols-2 gap-4">
@@ -422,9 +447,9 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         {/* Flexibility */}
         <div className="space-y-2">
           <Label>Work Schedule Flexibility</Label>
-          <Select 
+          <Select
             value={form.data.userPersona?.workSchedule?.flexibility || 'rigid'}
-            onValueChange={(value: 'rigid' | 'flexible' | 'hybrid') => 
+            onValueChange={(value: 'rigid' | 'flexible' | 'hybrid') =>
               updateWorkSchedule('workSchedule.flexibility', value)
             }
           >
@@ -442,9 +467,9 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         {/* Lunch Break */}
         <div className="space-y-2">
           <Label>Lunch Break Duration</Label>
-          <Select 
+          <Select
             value={String(form.data.userPersona?.workSchedule?.lunchBreakDuration || 60)}
-            onValueChange={(value) => 
+            onValueChange={(value) =>
               updateWorkSchedule('workSchedule.lunchBreakDuration', parseInt(value))
             }
           >
@@ -480,7 +505,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
   // Helper function to update career context fields
   const updateCareerContext = (field: string, value: any) => {
     const updatedPersona = { ...form.data.userPersona };
-    
+
     // Initialize careerContext if it doesn't exist
     if (!updatedPersona.careerContext) {
       updatedPersona.careerContext = {
@@ -492,13 +517,26 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
         skillGaps: []
       };
     }
-    
+
     const keys = field.split('.');
     if (keys.length === 2) {
       // careerContext.field
-      (updatedPersona.careerContext as any)[keys[1]] = value;
+      const fieldName = keys[1];
+      if (fieldName === 'currentRole') {
+        updatedPersona.careerContext.currentRole = value;
+      } else if (fieldName === 'targetRole') {
+        updatedPersona.careerContext.targetRole = value;
+      } else if (fieldName === 'industry') {
+        updatedPersona.careerContext.industry = value;
+      } else if (fieldName === 'urgency') {
+        updatedPersona.careerContext.urgency = value;
+      } else if (fieldName === 'motivation') {
+        updatedPersona.careerContext.motivation = value;
+      } else if (fieldName === 'skillGaps') {
+        updatedPersona.careerContext.skillGaps = value;
+      }
     }
-    
+
     form.updateField('userPersona', updatedPersona);
   };
 
@@ -513,7 +551,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           Understanding your career context helps us prioritize relevant learning
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Current and Target Roles */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -550,7 +588,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Label>Timeline for Career Goals</Label>
           <RadioGroup
             value={form.data.userPersona?.careerContext?.urgency || 'short_term'}
-            onValueChange={(value: 'immediate' | 'short_term' | 'long_term') => 
+            onValueChange={(value: 'immediate' | 'short_term' | 'long_term') =>
               updateCareerContext('careerContext.urgency', value)
             }
             className="grid grid-cols-1 gap-2"
@@ -629,9 +667,9 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
 /**
  * Study goal recommendation component
  */
-function StudyGoalRecommendation({ form, persona }: { 
-  form: UseFormReturn<PersonaFormData>; 
-  persona: any; 
+function StudyGoalRecommendation({ form, persona }: {
+  form: UseFormReturn<PersonaFormData>;
+  persona: any;
 }) {
   const recommendations = PersonaAwareGoalSetting.getStudyTimeRecommendations(persona);
 
@@ -658,7 +696,7 @@ function StudyGoalRecommendation({ form, persona }: {
           Based on your lifestyle, here's what we recommend
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Current Goal */}
         <div className="space-y-2">
@@ -733,9 +771,9 @@ function PreferredStudyTimeInput({ form }: PersonaDetectionStepProps) {
   return (
     <div className="space-y-2">
       <Label>Preferred Study Time</Label>
-      <Select 
+      <Select
         value={form.data.preferences?.preferredStudyTime || 'morning'}
-        onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') => 
+        onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') =>
           updatePreference('preferences.preferredStudyTime', value)
         }
       >

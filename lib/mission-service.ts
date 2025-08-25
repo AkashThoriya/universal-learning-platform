@@ -1,46 +1,46 @@
 /**
  * @fileoverview Mission System Service Layer
- * 
+ *
  * Comprehensive service layer for Week 4-5 Adaptive Mission System.
  * Handles mission generation, scheduling, progress tracking, and achievements.
- * 
+ *
  * Features:
  * - Persona-aware mission generation
  * - Adaptive difficulty adjustment
  * - Cross-track progress synchronization
  * - Achievement system management
  * - Analytics and insights generation
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
+import { type UserPersonaType } from '@/types/exam';
 import {
   type Mission,
   type MissionTemplate,
-  type MissionCycleConfig,
+  type MissionCycleConfig as _MissionCycleConfig,
   type MissionGenerationRequest,
   type MissionGenerationResult,
-  type MissionSchedulingRequest,
-  type MissionSchedulingResult,
+  type MissionSchedulingRequest as _MissionSchedulingRequest,
+  type MissionSchedulingResult as _MissionSchedulingResult,
   type UnifiedProgress,
-  type Achievement,
-  type UserAchievement,
+  type Achievement as _Achievement,
+  type UserAchievement as _UserAchievement,
   type MissionAnalytics,
   type MissionApiResponse,
-  type PaginatedMissionResponse,
-  type MissionPaginationOptions,
+  type PaginatedMissionResponse as _PaginatedMissionResponse,
+  type MissionPaginationOptions as _MissionPaginationOptions,
   type LearningTrack,
   type MissionFrequency,
-  type MissionDifficulty,
-  type MissionStatus,
+  type MissionDifficulty as _MissionDifficulty,
+  type MissionStatus as _MissionStatus,
   type PersonaMissionOptimizations,
   type ExamMissionContent,
   type TechMissionContent,
   type MissionResults,
   type MissionProgress
 } from '@/types/mission-system';
-import { type UserPersonaType } from '@/types/exam';
 
 // =====================================================
 // MISSION TEMPLATES SERVICE
@@ -74,10 +74,10 @@ export class MissionTemplateService {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const existingTemplates = await missionFirebaseService.getTemplates(userId);
-      
+
       if (existingTemplates.success && existingTemplates.data.length === 0) {
         const defaultTemplates = this.getDefaultTemplates();
-        
+
         for (const template of defaultTemplates) {
           await missionFirebaseService.saveTemplate(userId, template);
         }
@@ -333,31 +333,31 @@ export class MissionTemplateService {
    */
   async getTemplatesForTrack(
     userId: string,
-    track: LearningTrack, 
+    track: LearningTrack,
     frequency?: MissionFrequency,
     persona?: UserPersonaType
   ): Promise<MissionTemplate[]> {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await missionFirebaseService.getTemplates(userId, track);
-      
+
       if (!result.success) {
         throw new Error(result.error?.message || 'Failed to get templates');
       }
 
       let templates = result.data as MissionTemplate[];
-      
+
       // Apply filters
       if (frequency) {
         templates = templates.filter(t => t.frequency === frequency);
       }
-      
+
       if (persona) {
-        templates = templates.filter(t => 
+        templates = templates.filter(t =>
           t.supportedPersonas.length === 0 || t.supportedPersonas.includes(persona)
         );
       }
-      
+
       return templates;
     } catch (error) {
       console.error('Failed to get templates for track:', error);
@@ -372,9 +372,9 @@ export class MissionTemplateService {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await missionFirebaseService.getTemplates(userId);
-      
-      if (!result.success) return null;
-      
+
+      if (!result.success) { return null; }
+
       const templates = result.data as MissionTemplate[];
       return templates.find(t => t.id === templateId) || null;
     } catch (error) {
@@ -387,26 +387,26 @@ export class MissionTemplateService {
    * Add or update template
    */
   async saveTemplate(
-    userId: string, 
+    userId: string,
     template: MissionTemplate
   ): Promise<MissionApiResponse<MissionTemplate>> {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await missionFirebaseService.saveTemplate(userId, template);
-      
+
       if (result.success) {
         return {
           success: true,
           data: template,
           timestamp: new Date()
         };
-      } else {
+      }
         return {
           success: false,
           error: result.error?.message || 'Failed to save template',
           timestamp: new Date()
         };
-      }
+
     } catch (error) {
       return {
         success: false,
@@ -440,11 +440,11 @@ export class MissionGenerationService {
    */
   async generateMission(request: MissionGenerationRequest): Promise<MissionGenerationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Ensure user has templates seeded
       await this.templateService.seedUserTemplates(request.userId);
-      
+
       // Get suitable templates from Firebase
       const templates = await this.templateService.getTemplatesForTrack(
         request.userId,
@@ -474,7 +474,7 @@ export class MissionGenerationService {
       // Save the generated mission to Firebase
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const saveResult = await missionFirebaseService.saveActiveMission(request.userId, mission);
-      
+
       if (!saveResult.success) {
         throw new Error(saveResult.error?.message || 'Failed to save generated mission');
       }
@@ -507,13 +507,13 @@ export class MissionGenerationService {
    * Select the best template for the user
    */
   private async selectBestTemplate(
-    templates: MissionTemplate[], 
+    templates: MissionTemplate[],
     request: MissionGenerationRequest
   ): Promise<MissionTemplate> {
     // For now, use simple selection logic
     // In production, this would consider user performance history,
     // preference patterns, and adaptive difficulty algorithms
-    
+
     const filteredTemplates = templates.filter(template => {
       if (request.difficulty && !template.supportedDifficulties.includes(request.difficulty)) {
         return false;
@@ -521,14 +521,20 @@ export class MissionGenerationService {
       return true;
     });
 
-    return filteredTemplates[0] || templates[0];
+    const selectedTemplate = filteredTemplates[0] || templates[0];
+    
+    if (!selectedTemplate) {
+      throw new Error('No suitable templates available for mission generation');
+    }
+    
+    return selectedTemplate;
   }
 
   /**
    * Create mission instance from template
    */
   private async createMissionFromTemplate(
-    template: MissionTemplate, 
+    template: MissionTemplate,
     request: MissionGenerationRequest
   ): Promise<Mission> {
     const now = new Date();
@@ -583,8 +589,8 @@ export class MissionGenerationService {
    * Generate mission content based on template
    */
   private async generateMissionContent(
-    template: MissionTemplate, 
-    request: MissionGenerationRequest
+    template: MissionTemplate,
+    _request: MissionGenerationRequest
   ): Promise<any> {
     // Mock content generation - in production this would:
     // 1. Query question/problem databases
@@ -602,7 +608,7 @@ export class MissionGenerationService {
           instructions: `Complete this ${template.name} within ${template.estimatedDuration} minutes`
         }
       };
-    } else {
+    }
       return {
         type: template.contentStructure.type,
         techContent: {
@@ -622,14 +628,14 @@ export class MissionGenerationService {
           resources: []
         }
       };
-    }
+
   }
 
   /**
    * Calculate mission deadline
    */
   private calculateDeadline(frequency: MissionFrequency, customDeadline?: Date): Date {
-    if (customDeadline) return customDeadline;
+    if (customDeadline) { return customDeadline; }
 
     const now = new Date();
     switch (frequency) {
@@ -757,19 +763,19 @@ export class MissionProgressService {
    * Update mission progress
    */
   async updateProgress(
-    missionId: string, 
-    progress: Partial<MissionProgress>
+    _missionId: string,
+    _progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
-      
+      // const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+
       // Extract userId from mission ID or get it from context
       // For now, we'll need to pass userId as parameter or get it from mission
       // This is a design consideration for the mission ID structure
-      
+
       // Temporary implementation - in production, include userId in method signature
       throw new Error('UpdateProgress requires userId parameter - method signature needs update');
-      
+
     } catch (error) {
       return {
         success: false,
@@ -784,26 +790,26 @@ export class MissionProgressService {
    */
   async updateProgressWithUser(
     userId: string,
-    missionId: string, 
+    missionId: string,
     progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await missionFirebaseService.updateMissionProgress(userId, missionId, progress);
-      
+
       if (result.success) {
         return {
           success: true,
           data: progress as MissionProgress,
           timestamp: new Date()
         };
-      } else {
+      }
         return {
           success: false,
           error: (result.error instanceof Error ? result.error.message : result.error) || 'Failed to update progress',
           timestamp: new Date()
         };
-      }
+
     } catch (error) {
       return {
         success: false,
@@ -817,14 +823,14 @@ export class MissionProgressService {
    * Complete mission and generate results
    */
   async completeMission(
-    missionId: string, 
-    finalSubmissions: any[]
+    _missionId: string,
+    _finalSubmissions: any[]
   ): Promise<MissionApiResponse<MissionResults>> {
     try {
       // Extract userId from mission ID or get it from context
       // Temporary implementation - in production, include userId in method signature
       throw new Error('CompleteMission requires userId parameter - method signature needs update');
-      
+
     } catch (error) {
       return {
         success: false,
@@ -839,29 +845,29 @@ export class MissionProgressService {
    */
   async completeMissionWithUser(
     userId: string,
-    missionId: string, 
+    missionId: string,
     finalSubmissions: any[]
   ): Promise<MissionApiResponse<MissionResults>> {
     try {
       // Calculate results based on submissions
       const results = await this.calculateMissionResults(missionId, finalSubmissions);
-      
+
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const completeResult = await missionFirebaseService.completeMission(userId, missionId, results);
-      
+
       if (completeResult.success) {
         return {
           success: true,
           data: results,
           timestamp: new Date()
         };
-      } else {
+      }
         return {
           success: false,
           error: (completeResult.error instanceof Error ? completeResult.error.message : completeResult.error) || 'Failed to complete mission',
           timestamp: new Date()
         };
-      }
+
     } catch (error) {
       return {
         success: false,
@@ -875,8 +881,8 @@ export class MissionProgressService {
    * Calculate mission results
    */
   private async calculateMissionResults(
-    missionId: string, 
-    submissions: any[]
+    _missionId: string,
+    _submissions: any[]
   ): Promise<MissionResults> {
     // Mock calculation - in production this would:
     // 1. Grade submissions against correct answers/criteria
@@ -1061,9 +1067,9 @@ export class UnifiedProgressService {
    * Update unified progress after mission completion
    */
   async updateProgress(
-    userId: string, 
-    missionResults: MissionResults, 
-    track: LearningTrack
+    userId: string,
+    _missionResults: MissionResults,
+    _track: LearningTrack
   ): Promise<MissionApiResponse<UnifiedProgress>> {
     try {
       // In production, this would:
@@ -1105,7 +1111,7 @@ export class MissionAnalyticsService {
    * Generate analytics for user's mission performance
    */
   async generateAnalytics(
-    userId: string, 
+    userId: string,
     period: { startDate: Date; endDate: Date }
   ): Promise<MissionApiResponse<MissionAnalytics>> {
     try {
@@ -1252,7 +1258,7 @@ export class MissionAnalyticsService {
  */
 export class MissionService {
   private static instance: MissionService;
-  
+
   private templateService = MissionTemplateService.getInstance();
   private generationService = MissionGenerationService.getInstance();
   private progressService = MissionProgressService.getInstance();
@@ -1287,20 +1293,20 @@ export class MissionService {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await missionFirebaseService.getActiveMissions(userId);
-      
+
       if (result.success) {
         return {
           success: true,
           data: result.data as Mission[],
           timestamp: new Date()
         };
-      } else {
+      }
         return {
           success: false,
           error: result.error?.message || 'Failed to get active missions',
           timestamp: new Date()
         };
-      }
+
     } catch (error) {
       return {
         success: false,
@@ -1317,7 +1323,7 @@ export class MissionService {
 
   async updateMissionProgress(
     userId: string,
-    missionId: string, 
+    missionId: string,
     progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
     return this.progressService.updateProgressWithUser(userId, missionId, progress);
@@ -1325,7 +1331,7 @@ export class MissionService {
 
   async completeMission(
     userId: string,
-    missionId: string, 
+    missionId: string,
     submissions: any[]
   ): Promise<MissionApiResponse<MissionResults>> {
     return this.progressService.completeMissionWithUser(userId, missionId, submissions);
@@ -1336,7 +1342,7 @@ export class MissionService {
   }
 
   async generateAnalytics(
-    userId: string, 
+    userId: string,
     period: { startDate: Date; endDate: Date }
   ): Promise<MissionApiResponse<MissionAnalytics>> {
     return this.analyticsService.generateAnalytics(userId, period);
@@ -1344,7 +1350,7 @@ export class MissionService {
 
   async getTemplatesForTrack(
     userId: string,
-    track: LearningTrack, 
+    track: LearningTrack,
     frequency?: MissionFrequency,
     persona?: UserPersonaType
   ): Promise<MissionTemplate[]> {

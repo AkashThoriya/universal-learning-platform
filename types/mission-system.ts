@@ -1,21 +1,22 @@
 /**
  * @fileoverview Mission System Type Definitions
- * 
+ *
  * Comprehensive type definitions for the Week 4-5 Adaptive Mission System.
  * Supports both exam and course/tech tracks with persona-aware adaptations.
- * 
+ *
  * Features:
  * - Dual-track mission support (exam + course/tech)
  * - User-configurable mission cycles and duration
  * - Unified progress tracking across learning tracks
  * - Persona-aware achievement system
  * - Adaptive difficulty and content generation
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { type UserPersona, type UserPersonaType } from './exam';
+import { User as _User } from './user';
+import { UserPersona as _UserPersona, UserPersonaType } from './exam';
 
 // =====================================================
 // CORE MISSION TYPES

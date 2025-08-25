@@ -1,9 +1,9 @@
 /**
  * @fileoverview Production-Ready Logging Service
- * 
+ *
  * Centralized logging system that replaces console statements with
  * proper production logging, error reporting, and debugging tools.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -34,14 +34,15 @@ class Logger {
     context?: Record<string, any>,
     error?: Error
   ): LogEntry {
+    const userId = this.getCurrentUserId();
     return {
       level,
       message,
       timestamp: new Date().toISOString(),
-      context,
-      error,
+      ...(context !== undefined && { context }),
+      ...(error !== undefined && { error }),
       sessionId: this.sessionId,
-      userId: this.getCurrentUserId()
+      ...(userId !== undefined && { userId })
     };
   }
 
@@ -59,8 +60,8 @@ class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    if (this.isDevelopment) return true;
-    
+    if (this.isDevelopment) { return true; }
+
     // In production, only log warn and error
     return level === 'warn' || level === 'error';
   }
@@ -69,13 +70,13 @@ class Logger {
     const { level, message, timestamp, context, userId } = entry;
     const userInfo = userId ? ` [User: ${userId}]` : '';
     const contextInfo = context ? ` [Context: ${JSON.stringify(context)}]` : '';
-    
+
     return `[${timestamp}] ${level.toUpperCase()}${userInfo}: ${message}${contextInfo}`;
   }
 
   private outputLog(entry: LogEntry): void {
     const formattedMessage = this.formatMessage(entry);
-    
+
     switch (entry.level) {
       case 'debug':
         console.debug(formattedMessage, entry.context);
@@ -98,7 +99,7 @@ class Logger {
       try {
         // TODO: Implement external error reporting (Sentry, LogRocket, etc.)
         // await this.sendToErrorReporting(entry);
-      } catch (error) {
+      } catch (_error) {
         // Silently fail external reporting to avoid infinite loops
       }
     }
@@ -108,8 +109,8 @@ class Logger {
    * Log debug information (development only)
    */
   debug(message: string, context?: Record<string, any>): void {
-    if (!this.shouldLog('debug')) return;
-    
+    if (!this.shouldLog('debug')) { return; }
+
     const entry = this.createLogEntry('debug', message, context);
     this.outputLog(entry);
   }
@@ -118,8 +119,8 @@ class Logger {
    * Log general information
    */
   info(message: string, context?: Record<string, any>): void {
-    if (!this.shouldLog('info')) return;
-    
+    if (!this.shouldLog('info')) { return; }
+
     const entry = this.createLogEntry('info', message, context);
     this.outputLog(entry);
   }
@@ -128,8 +129,8 @@ class Logger {
    * Log warnings
    */
   warn(message: string, context?: Record<string, any>): void {
-    if (!this.shouldLog('warn')) return;
-    
+    if (!this.shouldLog('warn')) { return; }
+
     const entry = this.createLogEntry('warn', message, context);
     this.outputLog(entry);
     this.reportToExternalService(entry);
@@ -139,11 +140,11 @@ class Logger {
    * Log errors
    */
   error(message: string, error?: Error | Record<string, any>): void {
-    if (!this.shouldLog('error')) return;
-    
+    if (!this.shouldLog('error')) { return; }
+
     const errorObj = error instanceof Error ? error : undefined;
     const context = error instanceof Error ? undefined : error;
-    
+
     const entry = this.createLogEntry('error', message, context, errorObj);
     this.outputLog(entry);
     this.reportToExternalService(entry);
@@ -156,7 +157,7 @@ class Logger {
     if (this.isDevelopment) {
       this.debug(`Track Event: ${event}`, properties);
     }
-    
+
     // TODO: Implement analytics tracking
     // await this.sendToAnalytics(event, properties);
   }
@@ -166,7 +167,7 @@ class Logger {
    */
   perf(operation: string, duration: number, context?: Record<string, any>): void {
     const message = `Performance: ${operation} took ${duration}ms`;
-    
+
     if (duration > 1000) {
       this.warn(message, context);
     } else {

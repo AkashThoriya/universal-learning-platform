@@ -1,16 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Clock, 
-  Play, 
-  Pause, 
-  Check, 
-  ArrowRight, 
+import {
+  Clock,
+  Play,
+  Pause,
+  Check,
+  ArrowRight,
   ArrowLeft,
   BookOpen,
   Code,
@@ -20,10 +15,15 @@ import {
   Trophy,
   AlertTriangle
 } from 'lucide-react';
-import { type MicroLearningSession, type SessionPerformance } from '@/types/micro-learning';
-import { MicroLearningService } from '@/lib/micro-learning-service';
+import React, { useState, useEffect } from 'react';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAuth } from '@/contexts/AuthContext';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { MicroLearningService } from '@/lib/micro-learning-service';
+import { type MicroLearningSession, type SessionPerformance } from '@/types/micro-learning';
 
 interface MicroLearningSessionProps {
   userId: string;
@@ -48,7 +48,7 @@ export function MicroLearningSession({
   const [currentContentIndex, setCurrentContentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
@@ -117,7 +117,7 @@ export function MicroLearningSession({
     try {
       setLoading(true);
       setError(null);
-      
+
       const newSession = await MicroLearningService.generateSession(
         userId,
         subjectId,
@@ -125,7 +125,7 @@ export function MicroLearningSession({
         learningTrack,
         requestedDuration
       );
-      
+
       setSession(newSession);
       setLoading(false);
     } catch (error) {
@@ -165,7 +165,7 @@ export function MicroLearningSession({
     if (session && startTime) {
       const endTime = new Date();
       const totalTimeSpent = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-      
+
       const performance: SessionPerformance = {
         accuracy: calculateAccuracy(),
         timeSpent: totalTimeSpent,
@@ -173,7 +173,7 @@ export function MicroLearningSession({
         conceptsLearned: session.content.map(c => c.id),
         skillsDeveloped: session.learningTrack === 'course_tech' ? [topicId] : [],
         areasForImprovement: identifyAreasForImprovement(),
-        trackSpecificMetrics: session.learningTrack === 'exam' 
+        trackSpecificMetrics: session.learningTrack === 'exam'
           ? {
               mockTestScore: 85,
               revisionEffectiveness: 90,
@@ -198,40 +198,40 @@ export function MicroLearningSession({
   const calculateAccuracy = (): number => {
     // Calculate based on quiz answers and interactions
     const totalQuestions = Object.keys(answers).length;
-    if (totalQuestions === 0) return 100; // No questions means perfect conceptual understanding
-    
+    if (totalQuestions === 0) { return 100; } // No questions means perfect conceptual understanding
+
     const correctAnswers = Object.values(answers).filter(answer => answer.correct).length;
     return Math.round((correctAnswers / totalQuestions) * 100);
   };
 
   const calculateEngagementScore = (): number => {
     // Calculate based on interaction patterns and time spent
-    if (!session || !startTime) return 0;
-    
+    if (!session || !startTime) { return 0; }
+
     const expectedTime = session.duration * 60; // Convert to seconds
     const actualTime = timeSpent;
     const timeRatio = Math.min(actualTime / expectedTime, 2); // Cap at 2x expected time
-    
+
     // Higher engagement if close to expected time
     const timeScore = Math.max(0, 100 - Math.abs(timeRatio - 1) * 50);
-    
+
     // Interaction score based on content engagement
     const interactionScore = Math.min(currentContentIndex / session.content.length * 100, 100);
-    
+
     return Math.round((timeScore + interactionScore) / 2);
   };
 
   const identifyAreasForImprovement = (): string[] => {
     const areas: string[] = [];
-    
+
     if (calculateAccuracy() < 70) {
       areas.push('Content comprehension');
     }
-    
+
     if (timeSpent > (session?.duration || 15) * 60 * 1.5) {
       areas.push('Learning pace');
     }
-    
+
     return areas;
   };
 
@@ -240,8 +240,8 @@ export function MicroLearningSession({
   };
 
   const getPersonaIcon = () => {
-    if (!session) return User;
-    
+    if (!session) { return User; }
+
     switch (session.personaOptimizations.motivationalFraming) {
       case 'academic': return BookOpen;
       case 'career': return Target;
@@ -263,17 +263,17 @@ export function MicroLearningSession({
           <div className="animate-pulse space-y-6">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
               </div>
             </div>
             <div className="text-center space-y-3">
-              <div className="h-6 bg-gray-200 rounded w-2/3 mx-auto"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+              <div className="h-6 bg-gray-200 rounded w-2/3 mx-auto" />
+              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto" />
             </div>
             <div className="space-y-3">
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+              <div className="h-4 bg-gray-200 rounded w-1/2" />
             </div>
           </div>
         </CardContent>
@@ -294,14 +294,14 @@ export function MicroLearningSession({
               <p className="text-red-700 max-w-md mx-auto">{error}</p>
             </div>
             <div className="flex justify-center space-x-3">
-              <Button 
-                onClick={loadSession} 
+              <Button
+                onClick={loadSession}
                 className="bg-red-600 hover:bg-red-700 text-white"
               >
                 Try Again
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => window.history.back()}
                 className="border-red-300 text-red-700 hover:bg-red-50"
               >
@@ -361,7 +361,7 @@ export function MicroLearningSession({
             </div>
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <Progress value={progress} className="w-full h-2" />
           <div className="flex justify-between text-xs text-gray-500">
@@ -377,11 +377,11 @@ export function MicroLearningSession({
             <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
               <Play className="h-8 w-8 text-blue-600" />
             </div>
-            
+
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-gray-800">Ready to start learning?</h3>
               <p className="text-gray-600 max-w-md mx-auto">
-                This session is optimized for your {session.personaOptimizations.motivationalFraming} learning style 
+                This session is optimized for your {session.personaOptimizations.motivationalFraming} learning style
                 and will adapt to your pace and preferences.
               </p>
             </div>
@@ -404,8 +404,8 @@ export function MicroLearningSession({
               </div>
             </div>
 
-            <Button 
-              onClick={startSession} 
+            <Button
+              onClick={startSession}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
               size="lg"
             >
@@ -475,13 +475,13 @@ export function MicroLearningSession({
                 <ArrowLeft className="h-4 w-4" />
                 <span>Previous</span>
               </Button>
-              
+
               <div className="text-sm text-gray-500">
                 Estimated time: {Math.round((currentContent?.estimatedTime || 0) / 60)} min
               </div>
-              
-              <Button 
-                onClick={nextContent} 
+
+              <Button
+                onClick={nextContent}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white flex items-center space-x-2"
               >
                 {currentContentIndex === session.content.length - 1 ? (

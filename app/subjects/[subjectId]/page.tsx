@@ -1,19 +1,20 @@
 'use client';
 
+import { ArrowLeft, BookOpen, ExternalLink, ChevronRight, Building2 } from 'lucide-react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
+
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SUBJECTS_DATA } from '@/lib/subjects-data';
-import Link from 'next/link';
-import { ArrowLeft, BookOpen, ExternalLink, ChevronRight, Building2 } from 'lucide-react';
 
 export default function SubjectPage() {
   const params = useParams();
   const subjectId = params.subjectId as string;
-  
+
   const subject = SUBJECTS_DATA.find(s => s.subjectId === subjectId);
 
   if (!subject) {
@@ -53,7 +54,7 @@ export default function SubjectPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-5xl mx-auto p-6 space-y-6">
           <div className="flex items-center space-x-4">
             <Link href="/subjects">

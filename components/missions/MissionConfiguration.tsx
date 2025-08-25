@@ -1,44 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  Clock,
-  Calendar,
-  Settings,
   BookOpen,
   Code,
-  Bell,
   Target,
-  Zap,
   Save,
   RotateCcw,
   Info,
-  Play,
-  Pause,
   CheckCircle,
   AlertCircle,
   Loader2,
-  Plus,
-  Trash2
+  Plus
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { missionService } from '@/lib/mission-service';
 import {
@@ -113,7 +98,6 @@ export function MissionConfiguration({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [generatingTrack, setGeneratingTrack] = useState<LearningTrack | null>(null);
   const [activeTab, setActiveTab] = useState('exam');
 
@@ -124,7 +108,7 @@ export function MissionConfiguration({
   }, [user?.uid]);
 
   const loadExistingConfigurations = async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     try {
       setIsLoading(true);
@@ -133,7 +117,7 @@ export function MissionConfiguration({
       // Load existing configurations from Firebase
       // For now, use default configurations
       // In production, this would fetch from user's config collection
-      
+
       setIsLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load configurations');
@@ -142,7 +126,7 @@ export function MissionConfiguration({
   };
 
   const handleSaveConfiguration = async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     try {
       setIsSaving(true);
@@ -152,12 +136,11 @@ export function MissionConfiguration({
 
       // Create exam track configuration
       if (examConfig.enabled) {
-        configurations.push({
+        const examMissionConfig: MissionCycleConfig = {
           id: `exam_config_${user.uid}`,
           userId: user.uid,
           track: 'exam',
           frequency: examConfig.frequency,
-          customFrequencyDays: examConfig.customFrequencyDays,
           durationSettings: examConfig.durationSettings,
           preferredDifficulty: examConfig.preferredDifficulty,
           adaptiveDifficulty: examConfig.adaptiveDifficulty,
@@ -168,17 +151,23 @@ export function MissionConfiguration({
           maxMissionsPerDay: examConfig.maxMissionsPerDay,
           createdAt: new Date(),
           updatedAt: new Date()
-        });
+        };
+
+        // Only set customFrequencyDays if it has a value
+        if (examConfig.customFrequencyDays !== undefined) {
+          examMissionConfig.customFrequencyDays = examConfig.customFrequencyDays;
+        }
+
+        configurations.push(examMissionConfig);
       }
 
       // Create tech track configuration
       if (techConfig.enabled) {
-        configurations.push({
+        const techMissionConfig: MissionCycleConfig = {
           id: `tech_config_${user.uid}`,
           userId: user.uid,
           track: 'course_tech',
           frequency: techConfig.frequency,
-          customFrequencyDays: techConfig.customFrequencyDays,
           durationSettings: techConfig.durationSettings,
           preferredDifficulty: techConfig.preferredDifficulty,
           adaptiveDifficulty: techConfig.adaptiveDifficulty,
@@ -189,14 +178,21 @@ export function MissionConfiguration({
           maxMissionsPerDay: techConfig.maxMissionsPerDay,
           createdAt: new Date(),
           updatedAt: new Date()
-        });
+        };
+
+        // Only set customFrequencyDays if it has a value
+        if (techConfig.customFrequencyDays !== undefined) {
+          techMissionConfig.customFrequencyDays = techConfig.customFrequencyDays;
+        }
+
+        configurations.push(techMissionConfig);
       }
 
       // Save configurations to Firebase
       // In production, save to user's mission-configurations collection
-      
+
       setSuccessMessage('Mission configurations saved successfully!');
-      
+
       if (onConfigurationSave) {
         onConfigurationSave(configurations);
       }
@@ -212,7 +208,7 @@ export function MissionConfiguration({
   };
 
   const handleGenerateMission = async (track: LearningTrack) => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     try {
       setGeneratingTrack(track);
@@ -222,7 +218,6 @@ export function MissionConfiguration({
         userId: user.uid,
         track,
         frequency: config.frequency,
-        difficulty: config.adaptiveDifficulty ? undefined : config.preferredDifficulty,
         durationOverride: config.frequency === 'custom' ? config.customDuration || 30 : config.durationSettings[config.frequency],
         forceRegeneration: false,
         schedulingOptions: {
@@ -231,12 +226,16 @@ export function MissionConfiguration({
         }
       };
 
+      // Only set difficulty if not using adaptive difficulty
+      if (!config.adaptiveDifficulty) {
+        request.difficulty = config.preferredDifficulty;
+      }
+
       const result = await missionService.generateMission(request);
 
       if (result.success && result.mission) {
         setSuccessMessage(`New ${track} mission generated successfully!`);
-        setShowGenerateDialog(false);
-        
+
         if (onGenerateMission) {
           onGenerateMission(request);
         }
@@ -271,7 +270,7 @@ export function MissionConfiguration({
     const activeDays = config.activeDays.includes(day)
       ? config.activeDays.filter(d => d !== day)
       : [...config.activeDays, day].sort();
-    
+
     updateTrackConfig(track, { activeDays });
   };
 
@@ -297,7 +296,7 @@ export function MissionConfiguration({
                   Enable {trackName} Missions
                 </Label>
                 <p className="text-sm text-gray-600 mt-1">
-                  {track === 'exam' 
+                  {track === 'exam'
                     ? 'Generate daily mock questions, weekly revision cycles, and monthly full tests'
                     : 'Generate daily coding challenges, weekly assignments, and monthly projects'
                   }
@@ -325,8 +324,8 @@ export function MissionConfiguration({
                     <Label>Mission Frequency</Label>
                     <Select
                       value={config.frequency}
-                      onValueChange={(frequency) => updateTrackConfig(track, { 
-                        frequency: frequency as MissionFrequency 
+                      onValueChange={(frequency) => updateTrackConfig(track, {
+                        frequency: frequency as MissionFrequency
                       })}
                     >
                       <SelectTrigger>
@@ -345,8 +344,8 @@ export function MissionConfiguration({
                     <Label>Preferred Difficulty</Label>
                     <Select
                       value={config.preferredDifficulty}
-                      onValueChange={(difficulty) => updateTrackConfig(track, { 
-                        preferredDifficulty: difficulty as MissionDifficulty 
+                      onValueChange={(difficulty) => updateTrackConfig(track, {
+                        preferredDifficulty: difficulty as MissionDifficulty
                       })}
                       disabled={config.adaptiveDifficulty}
                     >
@@ -371,8 +370,8 @@ export function MissionConfiguration({
                       min="1"
                       max="30"
                       value={config.customFrequencyDays || 7}
-                      onChange={(e) => updateTrackConfig(track, { 
-                        customFrequencyDays: parseInt(e.target.value) || 7 
+                      onChange={(e) => updateTrackConfig(track, {
+                        customFrequencyDays: parseInt(e.target.value) || 7
                       })}
                       placeholder="Number of days between missions"
                     />
@@ -410,9 +409,13 @@ export function MissionConfiguration({
                     </div>
                     <Slider
                       value={[config.durationSettings.daily]}
-                      onValueChange={([value]) => updateTrackConfig(track, {
-                        durationSettings: { ...config.durationSettings, daily: value }
-                      })}
+                      onValueChange={([value]) => {
+                        if (value !== undefined) {
+                          updateTrackConfig(track, {
+                            durationSettings: { ...config.durationSettings, daily: value }
+                          });
+                        }
+                      }}
                       max={60}
                       min={5}
                       step={5}
@@ -427,9 +430,13 @@ export function MissionConfiguration({
                     </div>
                     <Slider
                       value={[config.durationSettings.weekly]}
-                      onValueChange={([value]) => updateTrackConfig(track, {
-                        durationSettings: { ...config.durationSettings, weekly: value }
-                      })}
+                      onValueChange={([value]) => {
+                        if (value !== undefined) {
+                          updateTrackConfig(track, {
+                            durationSettings: { ...config.durationSettings, weekly: value }
+                          });
+                        }
+                      }}
                       max={180}
                       min={30}
                       step={15}
@@ -444,9 +451,13 @@ export function MissionConfiguration({
                     </div>
                     <Slider
                       value={[config.durationSettings.monthly]}
-                      onValueChange={([value]) => updateTrackConfig(track, {
-                        durationSettings: { ...config.durationSettings, monthly: value }
-                      })}
+                      onValueChange={([value]) => {
+                        if (value !== undefined) {
+                          updateTrackConfig(track, {
+                            durationSettings: { ...config.durationSettings, monthly: value }
+                          });
+                        }
+                      }}
                       max={300}
                       min={60}
                       step={30}
@@ -496,7 +507,11 @@ export function MissionConfiguration({
                   </div>
                   <Slider
                     value={[config.maxMissionsPerDay]}
-                    onValueChange={([value]) => updateTrackConfig(track, { maxMissionsPerDay: value })}
+                    onValueChange={([value]) => {
+                      if (value !== undefined) {
+                        updateTrackConfig(track, { maxMissionsPerDay: value });
+                      }
+                    }}
                     max={5}
                     min={1}
                     step={1}
@@ -556,8 +571,8 @@ export function MissionConfiguration({
                   onClick={() => handleGenerateMission(track)}
                   disabled={!!generatingTrack}
                   className={`w-full gap-2 bg-gradient-to-r ${
-                    track === 'exam' 
-                      ? 'from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700' 
+                    track === 'exam'
+                      ? 'from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
                       : 'from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
                   } text-white`}
                 >

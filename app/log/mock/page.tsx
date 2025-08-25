@@ -1,22 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Timestamp } from 'firebase/firestore';
+import { Target, BarChart3, Clock, MessageSquare, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { saveMockTest, getUser } from '@/lib/firebase-utils';
-import { getExamById } from '@/lib/exams-data';
+import { useState, useEffect } from 'react';
+
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Target, BarChart3, Clock, MessageSquare, AlertTriangle } from 'lucide-react';
-import { MockTestLog, User, Exam, TopicPerformance } from '@/types/exam';
-import { Timestamp } from 'firebase/firestore';
-import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { getExamById } from '@/lib/exams-data';
+import { saveMockTest, getUser } from '@/lib/firebase-utils';
+import { MockTestLog, User, Exam } from '@/types/exam';
+
 
 export default function MockTestLogPage() {
   const { user } = useAuth();
@@ -24,29 +25,29 @@ export default function MockTestLogPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // User and exam data
   const [userData, setUserData] = useState<User | null>(null);
   const [examData, setExamData] = useState<Exam | null>(null);
-  
+
   // Test details
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [platform, setPlatform] = useState('');
   const [testName, setTestName] = useState('');
   const [stage, setStage] = useState('');
   const [type, setType] = useState<'full_length' | 'sectional' | 'topic_wise' | 'previous_year'>('full_length');
-  
+
   // Scores and timing
   const [scores, setScores] = useState<Record<string, number>>({});
   const [maxScores, setMaxScores] = useState<Record<string, number>>({});
   const [timeTaken, setTimeTaken] = useState<Record<string, number>>({});
-  
+
   // Error analysis
   const [conceptGaps, setConceptGaps] = useState(0);
   const [carelessErrors, setCarelessErrors] = useState(0);
   const [intelligentGuesses, setIntelligentGuesses] = useState(0);
   const [timePressures, setTimePressures] = useState(0);
-  
+
   // Mental state and environment
   const [confidence, setConfidence] = useState<1 | 2 | 3 | 4 | 5>(3);
   const [anxiety, setAnxiety] = useState<1 | 2 | 3 | 4 | 5>(3);
@@ -54,41 +55,43 @@ export default function MockTestLogPage() {
   const [location, setLocation] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning');
   const [distractions, setDistractions] = useState<string[]>([]);
-  
+
   // Feedback and action items
   const [feedback, setFeedback] = useState('');
   const [actionItems, setActionItems] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
-      
+      if (!user) { return; }
+
       try {
         const userDoc = await getUser(user.uid);
         setUserData(userDoc);
-        
+
         if (userDoc?.currentExam.id) {
           const exam = getExamById(userDoc.currentExam.id);
           setExamData(exam || null);
-          
+
           // Initialize scores and max scores based on exam structure
           if (exam && exam.stages.length > 0) {
             const firstStage = exam.stages[0];
-            setStage(firstStage.id);
-            
-            const initialScores: Record<string, number> = {};
-            const initialMaxScores: Record<string, number> = {};
-            const initialTimeTaken: Record<string, number> = {};
-            
-            firstStage.sections.forEach(section => {
-              initialScores[section.id] = 0;
-              initialMaxScores[section.id] = section.maxMarks;
-              initialTimeTaken[section.id] = 0;
-            });
-            
-            setScores(initialScores);
-            setMaxScores(initialMaxScores);
-            setTimeTaken(initialTimeTaken);
+            if (firstStage) {
+              setStage(firstStage.id);
+
+              const initialScores: Record<string, number> = {};
+              const initialMaxScores: Record<string, number> = {};
+              const initialTimeTaken: Record<string, number> = {};
+
+              firstStage.sections.forEach(section => {
+                initialScores[section.id] = 0;
+                initialMaxScores[section.id] = section.maxMarks;
+                initialTimeTaken[section.id] = 0;
+              });
+
+              setScores(initialScores);
+              setMaxScores(initialMaxScores);
+              setTimeTaken(initialTimeTaken);
+            }
           }
         }
       } catch (error) {
@@ -124,24 +127,27 @@ export default function MockTestLogPage() {
   };
 
   const addDistraction = () => {
-    const distraction = prompt('What was distracting during the test?');
+    // TODO: Replace with proper modal dialog
+    const distraction = 'Test distraction'; // Temporarily disabled prompt
     if (distraction) {
       setDistractions(prev => [...prev, distraction]);
     }
   };
 
   const addActionItem = () => {
-    const action = prompt('What specific action will you take based on this test?');
+    // TODO: Replace with proper modal dialog
+    const action = 'Action item'; // Temporarily disabled prompt
     if (action) {
       setActionItems(prev => [...prev, action]);
     }
   };
 
   const handleSubmit = async () => {
-    if (!user || !userData || !examData) return;
+    if (!user || !userData || !examData) { return; }
 
     if (!validateErrorAnalysis()) {
-      alert(`Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`);
+      // TODO: Replace with proper toast notification
+      console.warn(`Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`);
       return;
     }
 
@@ -149,7 +155,7 @@ export default function MockTestLogPage() {
     try {
       const testData: MockTestLog = {
         id: `test_${Date.now()}`,
-        date: Timestamp.fromDate(new Date(date)),
+        date: Timestamp.fromDate(new Date(date || new Date())),
         platform,
         testName,
         stage,
@@ -200,7 +206,7 @@ export default function MockTestLogPage() {
           <Navigation />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
               <p className="text-muted-foreground">Loading mock test logger...</p>
             </div>
           </div>
@@ -234,7 +240,7 @@ export default function MockTestLogPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
-        
+
         <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
@@ -291,7 +297,7 @@ export default function MockTestLogPage() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Test Name</label>
                   <Input
@@ -317,7 +323,7 @@ export default function MockTestLogPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Test Type</label>
                     <Select value={type} onValueChange={(value: any) => setType(value)}>
@@ -334,8 +340,8 @@ export default function MockTestLogPage() {
                   </div>
                 </div>
 
-                <Button 
-                  onClick={() => setStep(2)} 
+                <Button
+                  onClick={() => setStep(2)}
                   className="w-full"
                   disabled={!platform || !testName || !stage}
                 >
@@ -356,8 +362,8 @@ export default function MockTestLogPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {currentStage.sections.map(section => (
-                  <div key={section.id} className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-3">{section.name}</h4>
+                  <div key={section?.id} className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-semibold mb-3">{section?.name}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Score</label>
@@ -365,44 +371,47 @@ export default function MockTestLogPage() {
                           <Input
                             type="number"
                             min="0"
-                            max={section.maxMarks}
-                            value={scores[section.id] || 0}
-                            onChange={(e) => setScores(prev => ({
+                            max={section?.maxMarks}
+                            value={section?.id ? (scores[section.id] || 0) : 0}
+                            onChange={(e) => section?.id && setScores(prev => ({
                               ...prev,
                               [section.id]: Number(e.target.value)
                             }))}
                           />
-                          <span className="text-sm text-gray-500">/ {section.maxMarks}</span>
+                          <span className="text-sm text-gray-500">/ {section?.maxMarks}</span>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Time Taken (minutes)</label>
                         <Input
                           type="number"
                           min="0"
-                          max={section.maxTime}
-                          value={timeTaken[section.id] || 0}
-                          onChange={(e) => setTimeTaken(prev => ({
+                          max={section?.maxTime}
+                          value={section?.id ? (timeTaken[section.id] || 0) : 0}
+                          onChange={(e) => section?.id && setTimeTaken(prev => ({
                             ...prev,
                             [section.id]: Number(e.target.value)
                           }))}
                         />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Accuracy</label>
                         <div className="text-lg font-semibold text-blue-600">
-                          {maxScores[section.id] > 0 
-                            ? Math.round(((scores[section.id] || 0) / maxScores[section.id]) * 100)
-                            : 0
-                          }%
+                          {(() => {
+                            if (!section?.id) { return '0%'; }
+                            const sectionId = section.id;
+                            return maxScores[sectionId] && maxScores[sectionId] > 0
+                              ? `${Math.round(((scores[sectionId] || 0) / maxScores[sectionId]) * 100) }%`
+                              : '0%';
+                          })()}
                         </div>
                       </div>
                     </div>
                   </div>
                 ))}
-                
+
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div>
@@ -481,7 +490,7 @@ export default function MockTestLogPage() {
                       className="border-red-200 focus:border-red-400"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-orange-700">Careless Errors</label>
                     <Input
@@ -493,7 +502,7 @@ export default function MockTestLogPage() {
                       className="border-orange-200 focus:border-orange-400"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-blue-700">Lucky Guesses</label>
                     <Input
@@ -505,7 +514,7 @@ export default function MockTestLogPage() {
                       className="border-blue-200 focus:border-blue-400"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-purple-700">Time Pressure</label>
                     <Input
@@ -527,12 +536,12 @@ export default function MockTestLogPage() {
                     </span>
                   </div>
                   <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                    <div 
+                    <div
                       className={`h-2 rounded-full transition-all ${
                         validateErrorAnalysis() ? 'bg-green-500' : 'bg-blue-500'
                       }`}
-                      style={{ 
-                        width: `${Math.min(100, ((conceptGaps + carelessErrors + intelligentGuesses + timePressures) / getTotalErrors()) * 100)}%` 
+                      style={{
+                        width: `${Math.min(100, ((conceptGaps + carelessErrors + intelligentGuesses + timePressures) / getTotalErrors()) * 100)}%`
                       }}
                     />
                   </div>
@@ -542,8 +551,8 @@ export default function MockTestLogPage() {
                   <Button variant="outline" onClick={() => setStep(2)} className="w-full">
                     Back
                   </Button>
-                  <Button 
-                    onClick={() => setStep(4)} 
+                  <Button
+                    onClick={() => setStep(4)}
                     className="w-full"
                     disabled={!validateErrorAnalysis()}
                   >
@@ -586,7 +595,7 @@ export default function MockTestLogPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Anxiety (1-5)</label>
                       <Select
@@ -605,7 +614,7 @@ export default function MockTestLogPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Focus (1-5)</label>
                       <Select
@@ -639,7 +648,7 @@ export default function MockTestLogPage() {
                         onChange={(e) => setLocation(e.target.value)}
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Time of Day</label>
                       <Select value={timeOfDay} onValueChange={(value: any) => setTimeOfDay(value)}>
@@ -655,7 +664,7 @@ export default function MockTestLogPage() {
                       </Select>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label className="text-sm font-medium">Distractions</label>
@@ -679,7 +688,7 @@ export default function MockTestLogPage() {
                 {/* Reflection */}
                 <div className="space-y-4">
                   <h4 className="font-semibold">Reflection & Action Plan</h4>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Overall Feedback</label>
                     <Textarea
@@ -689,7 +698,7 @@ export default function MockTestLogPage() {
                       rows={4}
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label className="text-sm font-medium">Action Items</label>
@@ -717,7 +726,7 @@ export default function MockTestLogPage() {
                   <Button onClick={handleSubmit} disabled={saving} className="w-full">
                     {saving ? (
                       <div className="flex items-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                         <span>Saving Analysis...</span>
                       </div>
                     ) : (

@@ -1,35 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
+import {
   TrendingUp,
   TrendingDown,
   Minus,
   Calendar,
-  Clock,
   Target,
   BookOpen,
   Code,
   Brain,
   Zap,
-  Award,
-  ChevronRight,
-  BarChart3,
-  PieChart,
   Activity,
   Timer,
   CheckCircle,
   AlertCircle,
-  Users,
   Star,
   Flame,
   Trophy
 } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, /* TabsContent, */ TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   type UnifiedProgress,
@@ -44,14 +38,14 @@ interface ProgressVisualizationProps {
   className?: string;
 }
 
-export function ProgressVisualization({ 
-  userProgress, 
-  recentMissions = [],
+export function ProgressVisualization({
+  userProgress,
+  // recentMissions = [], // Commented out unused parameter
   className = ''
 }: ProgressVisualizationProps) {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
-  const [selectedTrack, setSelectedTrack] = useState<'both' | 'exam' | 'course_tech'>('both');
+  const [_selectedTrack, _setSelectedTrack] = useState<'both' | 'exam' | 'course_tech'>('both'); // Prefixed with _ to indicate unused
 
   // Mock data for demonstration
   const mockProgress: UnifiedProgress = userProgress || {
@@ -240,7 +234,7 @@ export function ProgressVisualization({
 
   const TrackProgressCard = ({ trackData, trackType }: { trackData: TrackProgress; trackType: 'exam' | 'course_tech' }) => {
     const TrackIcon = getTrackIcon(trackType);
-    
+
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -321,7 +315,7 @@ export function ProgressVisualization({
   };
 
   const PeriodSummaryCard = () => {
-    if (!periodData) return null;
+    if (!periodData) { return null; }
 
     return (
       <Card>
@@ -333,9 +327,9 @@ export function ProgressVisualization({
             </div>
             <div className="flex items-center space-x-1">
               {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className={`h-4 w-4 ${i < periodData.periodRating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
+                <Star
+                  key={i}
+                  className={`h-4 w-4 ${i < periodData.periodRating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                 />
               ))}
             </div>
@@ -497,11 +491,11 @@ export function ProgressVisualization({
             </div>
             <div className="text-center">
               <div className="text-3xl mb-2">
-                {mockProgress.overallProgress.consistencyRating >= 0.8 ? '🔥' : 
+                {mockProgress.overallProgress.consistencyRating >= 0.8 ? '🔥' :
                  mockProgress.overallProgress.consistencyRating >= 0.6 ? '⚡' : '💫'}
               </div>
               <div className="text-sm text-gray-600">
-                {mockProgress.overallProgress.consistencyRating >= 0.8 ? 'Excellent' : 
+                {mockProgress.overallProgress.consistencyRating >= 0.8 ? 'Excellent' :
                  mockProgress.overallProgress.consistencyRating >= 0.6 ? 'Good' : 'Improving'}
               </div>
             </div>

@@ -1,18 +1,19 @@
 /**
  * @fileoverview Enterprise Loading States and Skeleton Components
- * 
+ *
  * Comprehensive loading state components that provide excellent UX
  * during data fetching and processing. Includes skeleton screens,
  * progressive loading indicators, and accessible loading feedback.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 2.0.0
  */
 
+import { Loader2, RefreshCw, AlertCircle, CheckCircle, Clock, WifiOff } from 'lucide-react';
 import React from 'react';
-import { Loader2, RefreshCw, AlertCircle, CheckCircle, Clock, Wifi, WifiOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 // ============================================================================
@@ -22,8 +23,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 /**
  * Advanced loading spinner with multiple variants and sizes
  */
-export function LoadingSpinner({ 
-  size = 'medium', 
+export function LoadingSpinner({
+  size = 'medium',
   color = 'primary',
   message = 'Loading...',
   className = '',
@@ -64,12 +65,12 @@ export function LoadingSpinner({
 /**
  * Gradient loading spinner for premium experience
  */
-export function GradientSpinner({ 
+export function GradientSpinner({
   size = 'large',
-  className = '' 
-}: { 
-  size?: 'medium' | 'large'; 
-  className?: string; 
+  className = ''
+}: {
+  size?: 'medium' | 'large';
+  className?: string;
 }) {
   const sizeClasses = {
     medium: 'h-8 w-8',
@@ -79,7 +80,7 @@ export function GradientSpinner({
   return (
     <div className={`relative ${sizeClasses[size]} ${className}`}>
       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 animate-spin">
-        <div className="absolute inset-1 rounded-full bg-white"></div>
+        <div className="absolute inset-1 rounded-full bg-white" />
       </div>
     </div>
   );
@@ -88,12 +89,12 @@ export function GradientSpinner({
 /**
  * Full-page loading overlay with enhanced design
  */
-export function PageLoadingOverlay({ 
+export function PageLoadingOverlay({
   message = 'Loading...',
   submessage = 'Please wait while we prepare your content',
   showProgress = false,
   progress = 0
-}: { 
+}: {
   message?: string;
   submessage?: string;
   showProgress?: boolean;
@@ -105,11 +106,11 @@ export function PageLoadingOverlay({
         <div className="text-center space-y-6">
           <div className="flex justify-center">
             <div className="relative">
-              <div className="absolute inset-0 blur-xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+              <div className="absolute inset-0 blur-xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
               <GradientSpinner size="large" />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-gray-900">{message}</h3>
             <p className="text-sm text-gray-600">{submessage}</p>
@@ -118,10 +119,10 @@ export function PageLoadingOverlay({
           {showProgress && (
             <div className="space-y-2">
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                ></div>
+                 />
               </div>
               <p className="text-xs text-gray-500">{Math.round(progress)}% complete</p>
             </div>
@@ -139,7 +140,7 @@ export function PageLoadingOverlay({
 /**
  * Advanced skeleton with shimmer effect
  */
-export function Skeleton({ 
+export function Skeleton({
   className = '',
   width = 'w-full',
   height = 'h-4',
@@ -153,13 +154,13 @@ export function Skeleton({
   shimmer?: boolean;
 }) {
   return (
-    <div 
+    <div
       className={`bg-gray-200 ${shimmer ? 'animate-pulse' : ''} ${width} ${height} ${rounded} ${className}`}
       role="progressbar"
       aria-label="Loading content"
     >
       {shimmer && (
-        <div className="h-full w-full bg-gradient-to-r from-transparent via-white/60 to-transparent animate-[shimmer_2s_infinite] bg-[length:200%_100%]"></div>
+        <div className="h-full w-full bg-gradient-to-r from-transparent via-white/60 to-transparent animate-[shimmer_2s_infinite] bg-[length:200%_100%]" />
       )}
     </div>
   );
@@ -243,21 +244,21 @@ export function MissionCardSkeleton() {
           <div className="flex-1">
             <div className="flex items-start space-x-4">
               <Skeleton width="w-12" height="h-12" rounded="rounded-lg" />
-              
+
               <div className="flex-1 space-y-3">
                 <div className="flex items-center space-x-3">
                   <Skeleton height="h-5" width="w-48" />
                   <Skeleton height="h-6" width="w-20" rounded="rounded-full" />
                 </div>
-                
+
                 <Skeleton height="h-4" width="w-full" />
-                
+
                 <div className="flex items-center space-x-3">
                   <Skeleton height="h-4" width="w-16" />
                   <Skeleton height="h-5" width="w-12" rounded="rounded-full" />
                   <Skeleton height="h-5" width="w-16" rounded="rounded-full" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <Skeleton height="h-3" width="w-16" />
@@ -268,7 +269,7 @@ export function MissionCardSkeleton() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
             <div className="text-right space-y-1">
               <Skeleton height="h-3" width="w-16" />
@@ -314,7 +315,7 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
           <Skeleton key={i} height="h-4" width="w-20" />
         ))}
       </div>
-      
+
       {/* Rows */}
       {Array.from({ length: rows }).map((_, rowIndex) => (
         <div key={rowIndex} className={`grid grid-cols-${columns} gap-4 p-4 border-b border-gray-100 last:border-b-0`}>
@@ -401,7 +402,7 @@ export function ErrorDisplay({
       <div className="rounded-full bg-red-100 p-4 mb-6">
         <AlertCircle className="h-8 w-8 text-red-600" />
       </div>
-      
+
       <h3 className="text-xl font-semibold text-gray-900 mb-3">{title}</h3>
       <p className="text-gray-600 mb-6">{errorMessage}</p>
 
@@ -445,7 +446,7 @@ export function EmptyState({
   message?: string;
   actionLabel?: string;
   onAction?: () => void;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<any>;
   variant?: 'default' | 'compact';
 }) {
   if (variant === 'compact') {
@@ -486,12 +487,12 @@ export function EmptyState({
 /**
  * Success animation component
  */
-export function SuccessAnimation({ 
-  message = "Success!",
-  className = '' 
-}: { 
-  message?: string; 
-  className?: string; 
+export function SuccessAnimation({
+  message = 'Success!',
+  className = ''
+}: {
+  message?: string;
+  className?: string;
 }) {
   return (
     <div className={`text-center space-y-4 ${className}`}>
@@ -508,14 +509,14 @@ export function SuccessAnimation({
 /**
  * Connectivity indicator
  */
-export function ConnectivityIndicator({ 
-  isOnline, 
-  className = '' 
-}: { 
-  isOnline: boolean; 
-  className?: string; 
+export function ConnectivityIndicator({
+  isOnline,
+  className = ''
+}: {
+  isOnline: boolean;
+  className?: string;
 }) {
-  if (isOnline) return null;
+  if (isOnline) { return null; }
 
   return (
     <Alert className={`border-yellow-200 bg-yellow-50 ${className}`}>
@@ -554,13 +555,13 @@ export function ProgressiveLoader({
         </h3>
         <p className="text-gray-600">Please wait while we prepare everything for you</p>
       </div>
-      
+
       <div className="space-y-2">
         <div className="w-full bg-gray-200 rounded-full h-3">
-          <div 
+          <div
             className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-700 ease-out"
             style={{ width: `${progress}%` }}
-          ></div>
+           />
         </div>
         <div className="flex justify-between text-sm text-gray-500">
           <span>Step {currentStage + 1} of {stages.length}</span>
@@ -601,7 +602,7 @@ export function SmartLoading({
 
   React.useEffect(() => {
     let timeout: NodeJS.Timeout;
-    
+
     if (isLoading) {
       timeout = setTimeout(() => {
         setShowLoading(true);
@@ -620,7 +621,7 @@ export function SmartLoading({
   if (error) {
     return (
       <div className={className}>
-        {errorComponent || <ErrorDisplay error={error} onRetry={onRetry} />}
+        {errorComponent || <ErrorDisplay error={error} {...(onRetry && { onRetry })} />}
       </div>
     );
   }
@@ -671,11 +672,11 @@ export function LoadingTrigger({
 
   React.useEffect(() => {
     const trigger = triggerRef.current;
-    if (!trigger) return;
+    if (!trigger) { return; }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !isLoading) {
+        if (entries[0]?.isIntersecting && !isLoading) {
           onIntersect();
         }
       },

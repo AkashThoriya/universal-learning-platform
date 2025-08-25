@@ -2,17 +2,17 @@ import { Timestamp } from 'firebase/firestore';
 
 /**
  * @fileoverview Core type definitions for the Exam Strategy Engine
- * 
+ *
  * This file contains all TypeScript interfaces and types used throughout the application.
  * It defines the data models for exams, users, progress tracking, and all related entities.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 /**
  * Represents a competitive exam with all its stages, sections, and default syllabus
- * 
+ *
  * @interface Exam
  * @example
  * ```typescript
@@ -43,7 +43,7 @@ export interface Exam {
 
 /**
  * Represents a single stage within an exam (e.g., Prelims, Mains, Interview)
- * 
+ *
  * @interface ExamStage
  * @example
  * ```typescript
@@ -71,7 +71,7 @@ export interface ExamStage {
 
 /**
  * Represents a section within an exam stage (e.g., General Studies Paper I, CSAT)
- * 
+ *
  * @interface ExamSection
  * @example
  * ```typescript
@@ -99,7 +99,7 @@ export interface ExamSection {
 
 /**
  * Represents a subject within the syllabus with topics and tier priority
- * 
+ *
  * @interface SyllabusSubject
  * @example
  * ```typescript
@@ -127,7 +127,7 @@ export interface SyllabusSubject {
 
 /**
  * Represents an individual topic within a subject
- * 
+ *
  * @interface SyllabusTopic
  * @example
  * ```typescript
@@ -152,7 +152,7 @@ export interface SyllabusTopic {
 
 /**
  * Represents a user in the system with their profile, settings, and current exam
- * 
+ *
  * @interface User
  * @example
  * ```typescript
@@ -196,34 +196,34 @@ export interface User {
 
 /**
  * User persona types for adaptive learning experience
- * 
+ *
  * @type UserPersonaType
  */
 export type UserPersonaType = 'student' | 'working_professional' | 'freelancer';
 
 /**
  * Career motivation types for working professionals
- * 
+ *
  * @type CareerMotivation
  */
-export type CareerMotivation = 
-  | 'promotion' 
-  | 'salary_increase' 
-  | 'career_transition' 
-  | 'skill_relevance' 
+export type CareerMotivation =
+  | 'promotion'
+  | 'salary_increase'
+  | 'career_transition'
+  | 'skill_relevance'
   | 'job_security'
   | 'industry_change';
 
 /**
  * Work schedule configuration for working professionals
- * 
+ *
  * @interface WorkSchedule
  */
 export interface WorkSchedule {
   /** Working hours start and end times (24-hour format, e.g., "09:00") */
-  workingHours: { 
-    start: string; 
-    end: string; 
+  workingHours: {
+    start: string;
+    end: string;
   };
   /** Days of the week when user works */
   workingDays: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
@@ -237,7 +237,7 @@ export interface WorkSchedule {
 
 /**
  * Career context for working professionals
- * 
+ *
  * @interface CareerContext
  */
 export interface CareerContext {
@@ -257,7 +257,7 @@ export interface CareerContext {
 
 /**
  * User persona configuration for adaptive learning
- * 
+ *
  * @interface UserPersona
  */
 export interface UserPersona {
@@ -271,7 +271,7 @@ export interface UserPersona {
 
 /**
  * User's personalized settings for study preferences and system behavior
- * 
+ *
  * @interface UserSettings
  * @example
  * ```typescript
@@ -280,7 +280,7 @@ export interface UserPersona {
  *   dailyStudyGoalMinutes: 480,
  *   tierDefinition: {
  *     1: "High Priority",
- *     2: "Medium Priority", 
+ *     2: "Medium Priority",
  *     3: "Low Priority"
  *   },
  *   notifications: {...},
@@ -331,7 +331,7 @@ export interface UserSettings {
 
 /**
  * User's cumulative study statistics and achievements
- * 
+ *
  * @interface UserStats
  * @example
  * ```typescript
@@ -365,7 +365,7 @@ export interface UserStats {
 
 /**
  * Progress tracking for individual topics with spaced repetition and mastery scoring
- * 
+ *
  * @interface TopicProgress
  * @example
  * ```typescript
@@ -425,7 +425,7 @@ export interface TopicProgress {
 
 /**
  * Daily log entry capturing study activities, health metrics, and reflection
- * 
+ *
  * @interface DailyLog
  * @example
  * ```typescript
@@ -475,7 +475,7 @@ export interface DailyLog {
 
 /**
  * Health and wellness metrics tracked daily
- * 
+ *
  * @interface HealthMetrics
  * @example
  * ```typescript
@@ -506,7 +506,7 @@ export interface HealthMetrics {
 
 /**
  * Individual study session for a specific topic
- * 
+ *
  * @interface StudySession
  * @example
  * ```typescript
@@ -537,7 +537,7 @@ export interface StudySession {
 
 /**
  * Comprehensive mock test log with detailed analysis and performance tracking
- * 
+ *
  * @interface MockTestLog
  * @example
  * ```typescript
@@ -609,7 +609,7 @@ export interface MockTestLog {
 
 /**
  * Detailed analysis of test performance across different error categories
- * 
+ *
  * @interface TestAnalysis
  * @example
  * ```typescript
@@ -652,7 +652,7 @@ export interface TestAnalysis {
 
 /**
  * Performance analysis for individual topics within a test
- * 
+ *
  * @interface TopicPerformance
  * @example
  * ```typescript
@@ -691,7 +691,7 @@ export interface TopicPerformance {
 
 /**
  * Performance trend data for tracking progress over time
- * 
+ *
  * @interface PerformanceTrend
  * @example
  * ```typescript
@@ -725,7 +725,7 @@ export interface PerformanceTrend {
 
 /**
  * AI-generated study insights and recommendations based on performance patterns
- * 
+ *
  * @interface StudyInsight
  * @example
  * ```typescript
@@ -759,7 +759,7 @@ export interface StudyInsight {
 
 /**
  * Item in the spaced repetition revision queue
- * 
+ *
  * @interface RevisionItem
  * @example
  * ```typescript
@@ -804,7 +804,7 @@ export interface RevisionItem {
 
 /**
  * Achievement system for gamifying the study process
- * 
+ *
  * @interface Achievement
  * @example
  * ```typescript
@@ -844,7 +844,7 @@ export interface Achievement {
 
 /**
  * Study streak tracking for motivation and consistency
- * 
+ *
  * @interface StudyStreak
  * @example
  * ```typescript

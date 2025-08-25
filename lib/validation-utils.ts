@@ -1,16 +1,31 @@
 /**
  * @fileoverview Input Validation and Sanitization Utilities
- * 
+ *
  * Provides comprehensive input validation, sanitization, and security measures
  * for user inputs across the application. Includes XSS prevention, SQL injection
  * protection, and data format validation.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 import { z } from 'zod';
-import DOMPurify from 'isomorphic-dompurify';
+
+// Create DOMPurify instance for server-side usage
+const createDOMPurify = () => {
+  if (typeof window !== 'undefined') {
+    // Client-side
+    return DOMPurify;
+  } else {
+    // Server-side
+    const { window } = new JSDOM('');
+    return DOMPurify(window);
+  }
+};
+
+const purify = createDOMPurify();
 
 // ============================================================================
 // INPUT SANITIZATION
@@ -20,10 +35,10 @@ import DOMPurify from 'isomorphic-dompurify';
  * Sanitize HTML content to prevent XSS attacks
  */
 export function sanitizeHtml(input: string): string {
-  return DOMPurify.sanitize(input, {
+  return purify.sanitize(input, {
     ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'u', 'br', 'p', 'ul', 'ol', 'li'],
     ALLOWED_ATTR: [],
-    KEEP_CONTENT: true,
+    KEEP_CONTENT: true
   });
 }
 
@@ -129,7 +144,7 @@ export const ValidationSchemas = {
 
   confidenceLevel: z.number()
     .min(1, 'Confidence level must be at least 1')
-    .max(10, 'Confidence level cannot exceed 10'),
+    .max(10, 'Confidence level cannot exceed 10')
 };
 
 // ============================================================================
@@ -148,7 +163,7 @@ export function validateFormData<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map(err => 
+      const errors = error.errors.map(err =>
         `${err.path.join('.')}: ${err.message}`
       );
       return { success: false, errors };
@@ -171,7 +186,7 @@ export function sanitizeObject(obj: Record<string, any>): Record<string, any> {
     } else if (typeof value === 'boolean') {
       sanitized[key] = value;
     } else if (Array.isArray(value)) {
-      sanitized[key] = value.map(item => 
+      sanitized[key] = value.map(item =>
         typeof item === 'object' ? sanitizeObject(item) : sanitizeText(String(item))
       );
     } else if (value && typeof value === 'object') {
@@ -205,7 +220,7 @@ export function containsMaliciousContent(input: string): boolean {
     /<object/gi,
     /<embed/gi,
     /document\.cookie/gi,
-    /document\.write/gi,
+    /document\.write/gi
   ];
 
   return maliciousPatterns.some(pattern => pattern.test(input));
@@ -227,7 +242,7 @@ export function validateFileUpload(file: File): { valid: boolean; error?: string
     'image/gif',
     'image/webp',
     'application/pdf',
-    'text/plain',
+    'text/plain'
   ];
 
   if (!allowedTypes.includes(file.type)) {
@@ -252,7 +267,7 @@ export function validateFileUpload(file: File): { valid: boolean; error?: string
 class ClientRateLimiter {
   private attempts = new Map<string, { count: number; resetTime: number }>();
 
-  isAllowed(key: string, maxAttempts: number = 5, windowMs: number = 300000): boolean {
+  isAllowed(key: string, maxAttempts = 5, windowMs = 300000): boolean {
     const now = Date.now();
     const attempt = this.attempts.get(key);
 

@@ -1,20 +1,20 @@
 /**
  * @fileoverview Enhanced React Hooks for Scalable Architecture
- * 
+ *
  * Custom hooks that provide reusable state management, data fetching,
  * and business logic patterns. Optimized for performance and type safety.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { Result, AsyncResult, LoadingState, debounce, throttle } from '../lib/types-utils';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { /* Result, AsyncResult, */ LoadingState, /* debounce, */ throttle } from '../lib/types-utils'; // Commented out unused imports
 
 /**
  * Enhanced async data fetching hook with caching and error handling
  */
-export function useAsyncData<T, E = Error>(
+export function useAsyncData<T>(
   fetchFn: () => Promise<T>,
   deps: React.DependencyList = [],
   options: {
@@ -47,28 +47,28 @@ export function useAsyncData<T, E = Error>(
   } = options;
 
   const getCachedData = useCallback((): T | null => {
-    if (!cacheKey) return null;
-    
+    if (!cacheKey) { return null; }
+
     const cached = cache.current.get(cacheKey);
-    if (!cached) return null;
-    
+    if (!cached) { return null; }
+
     const isExpired = Date.now() - cached.timestamp > cacheTime;
     if (isExpired) {
       cache.current.delete(cacheKey);
       return null;
     }
-    
+
     return cached.data;
   }, [cacheKey, cacheTime]);
 
   const setCachedData = useCallback((data: T): void => {
-    if (!cacheKey) return;
+    if (!cacheKey) { return; }
     cache.current.set(cacheKey, { data, timestamp: Date.now() });
   }, [cacheKey]);
 
   const executeWithRetry = useCallback(async (
     fn: () => Promise<T>,
-    attempt: number = 1
+    attempt = 1
   ): Promise<T> => {
     try {
       return await fn();
@@ -106,10 +106,10 @@ export function useAsyncData<T, E = Error>(
       setState({ isLoading: false, data, error: null });
     } catch (error) {
       if (error instanceof Error && error.name !== 'AbortError') {
-        setState({ 
-          isLoading: false, 
-          data: null, 
-          error: error.message 
+        setState({
+          isLoading: false,
+          data: null,
+          error: error.message
         });
       }
     }
@@ -119,14 +119,14 @@ export function useAsyncData<T, E = Error>(
     if (abortController.current) {
       abortController.current.abort();
     }
-    
+
     retryTimeouts.current.forEach(clearTimeout);
     retryTimeouts.current = [];
-    
+
     if (cacheKey) {
       cache.current.delete(cacheKey);
     }
-    
+
     setState({ isLoading: false, data: null, error: null });
   }, [cacheKey]);
 
@@ -195,11 +195,11 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
-      if (!item) return initialValue;
-      
+      if (!item) { return initialValue; }
+
       const parsed = JSON.parse(item);
-      if (validator && !validator(parsed)) return initialValue;
-      
+      if (validator && !validator(parsed)) { return initialValue; }
+
       return parsed;
     } catch {
       return initialValue;
@@ -233,11 +233,11 @@ export function useLocalStorage<T>(
  */
 export function usePrevious<T>(value: T): T | undefined {
   const ref = useRef<T>();
-  
+
   useEffect(() => {
     ref.current = value;
   });
-  
+
   return ref.current;
 }
 
@@ -245,7 +245,7 @@ export function usePrevious<T>(value: T): T | undefined {
  * Boolean toggle hook
  */
 export function useToggle(
-  initialValue: boolean = false
+  initialValue = false
 ): [boolean, () => void, (value?: boolean) => void] {
   const [value, setValue] = useState(initialValue);
 
@@ -264,7 +264,7 @@ export function useToggle(
  * Counter hook with min/max bounds
  */
 export function useCounter(
-  initialValue: number = 0,
+  initialValue = 0,
   options: { min?: number; max?: number; step?: number } = {}
 ): {
   count: number;
@@ -296,8 +296,8 @@ export function useCounter(
 
   const set = useCallback((value: number) => {
     let newValue = value;
-    if (min !== undefined) newValue = Math.max(newValue, min);
-    if (max !== undefined) newValue = Math.min(newValue, max);
+    if (min !== undefined) { newValue = Math.max(newValue, min); }
+    if (max !== undefined) { newValue = Math.min(newValue, max); }
     setCount(newValue);
   }, [min, max]);
 
@@ -462,7 +462,7 @@ export function useValidation<T extends Record<string, any>>(
   }, [initialValues]);
 
   const isValid = useMemo(() => {
-    return Object.values(errors).every(fieldErrors => 
+    return Object.values(errors).every(fieldErrors =>
       !fieldErrors || fieldErrors.length === 0
     );
   }, [errors]);
@@ -489,11 +489,13 @@ export function useIntersectionObserver(
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) { return; }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
+        if (entry) {
+          setIsIntersecting(entry.isIntersecting);
+        }
       },
       options
     );

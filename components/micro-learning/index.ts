@@ -1,6 +1,6 @@
 /**
  * Micro-Learning Components
- * 
+ *
  * A comprehensive suite of components for the Dual-Track Micro-Learning System
  * supporting both exam preparation and course/tech learning tracks with
  * persona-aware optimizations.

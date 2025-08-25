@@ -1,6 +1,6 @@
 /**
  * @fileoverview Main Dashboard Page Component
- * 
+ *
  * The central c  // State for data that hasn't been migrated to service layer yet
   const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
   const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
@@ -11,7 +11,7 @@
   const [lastActivity, setLastActivity] = useState<Date>(new Date());center for exam preparation strategy. Displays real-time
  * analytics, revision queue, performance trends, AI-generated insights, and
  * quick action buttons for daily activities.
- * 
+ *
  * Features:
  * - Real-time revision queue with spaced repetition
  * - Performance analytics with interactive charts
@@ -19,52 +19,75 @@
  * - Study streak tracking and gamification
  * - Quick access to daily logging and mock tests
  * - AI-powered study recommendations
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 'use client';
 
+import { format, differenceInDays } from 'date-fns';
+import { Calendar, Target, TrendingUp, Brain, Zap, Clock, BookOpen, Plus, AlertTriangle, CheckCircle, Timer } from 'lucide-react';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+
+import AnalyticsWidget from '@/components/analytics/AnalyticsWidget';
+import AuthGuard from '@/components/AuthGuard';
+import DailyLogModal from '@/components/DailyLogModal';
+import { QuickSessionLauncher } from '@/components/micro-learning';
+import Navigation from '@/components/Navigation';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  userService, 
-  dailyLogService, 
-  progressService,
+import { useAsyncData } from '@/hooks/enhanced-hooks';
+import {
+  userService,
+  dailyLogService,
   revisionService,
   mockTestService,
-  insightsService,
-  firebaseService 
+  insightsService
 } from '@/lib/firebase-enhanced';
-import { useAsyncData, useDebouncedValue } from '@/hooks/enhanced-hooks';
-import { LoadingState } from '@/lib/types-utils';
-import AuthGuard from '@/components/AuthGuard';
-import { ComponentErrorBoundary } from '@/components/error-handling/GlobalErrorBoundary';
-import { 
-  LoadingSpinner, 
-  CardSkeleton, 
-  ErrorDisplay, 
-  EmptyState,
-  ProgressiveLoader 
-} from '@/components/ui/loading-states';
-import { useScreenReader } from '@/lib/accessibility-utils';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { Calendar, Target, TrendingUp, Brain, Zap, Clock, BookOpen, Plus, AlertTriangle, CheckCircle, Timer } from 'lucide-react';
-import { User, MockTestLog, RevisionItem, StudyInsight, DailyLog } from '@/types/exam';
-import { format, differenceInDays } from 'date-fns';
-import Link from 'next/link';
-import DailyLogModal from '@/components/DailyLogModal';
-import Navigation from '@/components/Navigation';
-import { QuickSessionLauncher } from '@/components/micro-learning';
-import AnalyticsWidget from '@/components/analytics/AnalyticsWidget';
+import { MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
+
+
+// Constants
+const DAYS_UNTIL_EXAM = 14;
+const DAYS_IN_WEEK = 7;
+const DAYS_IN_YEAR = 365;
+const MINUTES_IN_HOUR = 60;
+const CHART_COLUMNS = 6;
+const RECENT_ITEMS_LIMIT = 3;
+
+// Helper functions
+const getInsightClasses = (type: string) => {
+  const baseClasses = 'p-4 rounded-lg border-l-4';
+  switch (type) {
+    case 'warning':
+      return `${baseClasses} border-yellow-400 bg-yellow-50`;
+    case 'recommendation':
+      return `${baseClasses} border-blue-400 bg-blue-50`;
+    default:
+      return `${baseClasses} border-green-400 bg-green-50`;
+  }
+};
+
+// Type definitions for component data
+interface DailyLogItem {
+  date: { toDate: () => Date };
+  health: {
+    energy: number;
+    sleepHours: number;
+  };
+  studiedTopics: Array<{
+    minutes: number;
+  }>;
+}
 
 /**
  * Main Dashboard Page Component
- * 
+ *
  * Displays the strategic command center with:
  * - User statistics and exam countdown
  * - Spaced repetition revision queue
@@ -72,9 +95,9 @@ import AnalyticsWidget from '@/components/analytics/AnalyticsWidget';
  * - Health metrics correlation
  * - AI-powered study insights
  * - Quick action buttons for logging
- * 
+ *
  * @returns {JSX.Element} The dashboard page
- * 
+ *
  * @example
  * ```typescript
  * // This component is automatically rendered at /dashboard route
@@ -83,7 +106,7 @@ import AnalyticsWidget from '@/components/analytics/AnalyticsWidget';
  */
 export default function DashboardPage() {
   const { user } = useAuth();
-  
+
   // State for data that hasn't been migrated to service layer yet
   const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
   const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
@@ -93,32 +116,21 @@ export default function DashboardPage() {
 
   // Enhanced data fetching using the new service layer
   const {
-    data: userData,
-    isLoading: userLoading,
-    error: userError,
-    refetch: refetchUser
+    data: userData
   } = useAsyncData(
-    () => user ? userService.get(user.uid).then(result => result.success ? result.data : null) : Promise.resolve(null),
+    () => user
+      ? userService.get(user.uid).then(result => result.success ? result.data : null)
+      : Promise.resolve(null),
     [user?.uid],
     { immediate: !!user }
   );
 
   const {
-    data: dailyLogs,
-    isLoading: logsLoading,
-    refetch: refetchLogs
+    data: dailyLogs
   } = useAsyncData(
-    () => user ? dailyLogService.getLogs(user.uid, 14).then(result => result.success ? result.data : []) : Promise.resolve([]),
-    [user?.uid],
-    { immediate: !!user }
-  );
-
-  const {
-    data: userProgress,
-    isLoading: progressLoading,
-    refetch: refetchProgress
-  } = useAsyncData(
-    () => user ? progressService.getAllProgress(user.uid).then(result => result.success ? result.data : []) : Promise.resolve([]),
+    () => user
+      ? dailyLogService.getLogs(user.uid, DAYS_UNTIL_EXAM).then(result => result.success ? result.data : [])
+      : Promise.resolve([]),
     [user?.uid],
     { immediate: !!user }
   );
@@ -128,7 +140,7 @@ export default function DashboardPage() {
    */
   useEffect(() => {
     const fetchLegacyData = async () => {
-      if (!user) return;
+      if (!user) { return; }
 
       try {
         // Fetch data using the new service layer
@@ -139,9 +151,9 @@ export default function DashboardPage() {
         ]);
 
         // Process results and set state
-        if (mockTestsResult.success) setMockTests(mockTestsResult.data || []);
-        if (revisionResult.success) setRevisionQueue(revisionResult.data || []);
-        if (insightsResult.success) setInsights(insightsResult.data || []);
+        if (mockTestsResult.success) { setMockTests(mockTestsResult.data ?? []); }
+        if (revisionResult.success) { setRevisionQueue(revisionResult.data ?? []); }
+        if (insightsResult.success) { setInsights(insightsResult.data ?? []); }
       } catch (error) {
         console.error('Error fetching legacy dashboard data:', error);
       } finally {
@@ -174,14 +186,14 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-6 max-w-md">
               <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
                 <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Dashboard</h3>
                   <p className="text-sm text-gray-600">Preparing your strategic learning environment...</p>
                   <div className="mt-4 space-y-2">
                     <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse" style={{ width: '75%' }}></div>
+                      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse" style={{ width: '75%' }} />
                     </div>
                     <p className="text-xs text-gray-500">Loading analytics and progress data</p>
                   </div>
@@ -195,7 +207,7 @@ export default function DashboardPage() {
   }
 
   const daysUntilExam = differenceInDays(userData.currentExam.targetDate.toDate(), new Date());
-  
+
   // Prepare chart data
   const chartData = mockTests
     .slice()
@@ -204,15 +216,18 @@ export default function DashboardPage() {
       test: `Test ${index + 1}`,
       score: Object.values(test.scores).reduce((sum, score) => sum + score, 0),
       maxScore: Object.values(test.maxScores).reduce((sum, score) => sum + score, 0),
-      date: format(test.date.toDate(), 'MMM dd'),
+      date: format(test.date.toDate(), 'MMM dd')
     }));
 
   // Health correlation data
-  const healthData = dailyLogs ? dailyLogs.slice(0, 7).reverse().map((log: any, index: number) => ({
+  const healthData = dailyLogs ? dailyLogs.slice(0, DAYS_IN_WEEK).reverse().map((log: DailyLogItem) => ({
     day: format(log.date.toDate(), 'EEE'),
     energy: log.health.energy,
     sleep: log.health.sleepHours,
-    studyTime: log.studiedTopics.reduce((sum: number, session: any) => sum + session.minutes, 0) / 60
+    studyTime: log.studiedTopics.reduce(
+      (sum: number, session: { minutes: number }) => sum + session.minutes,
+      0
+    ) / MINUTES_IN_HOUR
   })) : [];
 
   // Error analysis from latest test
@@ -246,7 +261,7 @@ export default function DashboardPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
-        
+
         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
           {/* Header Section */}
           <div className="text-center space-y-4">
@@ -256,7 +271,7 @@ export default function DashboardPage() {
               </Badge>
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-gradient">
-              Welcome back, {userData.displayName || 'Strategist'}
+              Welcome back, {userData.displayName ?? 'Strategist'}
             </h1>
             <p className="text-muted-foreground text-lg">
               Your strategic journey for <span className="font-semibold">{userData.currentExam.name}</span>
@@ -278,12 +293,12 @@ export default function DashboardPage() {
                   <div className="text-3xl font-bold text-gradient">{daysUntilExam}</div>
                   <p className="text-xs text-muted-foreground">days remaining</p>
                   <div className="w-full bg-muted rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
-                      style={{ 
-                        width: `${Math.max(0, Math.min(100, ((365 - daysUntilExam) / 365) * 100))}%` 
+                      style={{
+                        width: `${Math.max(0, Math.min(100, ((DAYS_IN_YEAR - daysUntilExam) / DAYS_IN_YEAR) * 100))}%`
                       }}
-                    ></div>
+                     />
                   </div>
                 </div>
               </CardContent>
@@ -299,18 +314,18 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="text-3xl font-bold text-orange-600">{userData.studyStreak || 0}</div>
+                  <div className="text-3xl font-bold text-orange-600">{userData.studyStreak ?? 0}</div>
                   <p className="text-xs text-muted-foreground">consecutive days</p>
                   <div className="flex space-x-1">
-                    {[...Array(7)].map((_, i) => (
-                      <div 
+                    {[...Array(DAYS_IN_WEEK)].map((_, i) => (
+                      <div
                         key={i}
                         className={`w-3 h-3 rounded-full ${
-                          i < (userData.studyStreak || 0) % 7 
-                            ? 'bg-orange-500' 
+                          i < (userData.studyStreak ?? 0) % DAYS_IN_WEEK
+                            ? 'bg-orange-500'
                             : 'bg-muted'
                         } transition-colors duration-300`}
-                      ></div>
+                       />
                     ))}
                   </div>
                 </div>
@@ -351,7 +366,7 @@ export default function DashboardPage() {
                   {latestTest ? (
                     <>
                       <div className="text-3xl font-bold text-green-600">
-                        {Math.round((Object.values(latestTest.scores).reduce((sum, score) => sum + score, 0) / 
+                        {Math.round((Object.values(latestTest.scores).reduce((sum, score) => sum + score, 0) /
                           Object.values(latestTest.maxScores).reduce((sum, score) => sum + score, 0)) * 100)}%
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -400,7 +415,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold">
-                  {mockTests.length > 0 
+                  {mockTests.length > 0 && mockTests[0]?.scores && mockTests[0]?.maxScores
                     ? `${Math.round((Object.values(mockTests[0].scores).reduce((sum, score) => sum + score, 0) / Object.values(mockTests[0].maxScores).reduce((sum, score) => sum + score, 0)) * 100)}%`
                     : 'N/A'
                   }
@@ -440,7 +455,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {revisionQueue.slice(0, 6).map(item => (
+                  {revisionQueue.slice(0, CHART_COLUMNS).map(item => (
                     <div
                       key={item.topicId}
                       className={`p-3 rounded-lg border ${getPriorityColor(item.priority)}`}
@@ -461,7 +476,7 @@ export default function DashboardPage() {
                     </div>
                   ))}
                 </div>
-                {revisionQueue.length > 6 && (
+                {revisionQueue.length > CHART_COLUMNS && (
                   <div className="mt-4 text-center">
                     <Link href="/syllabus">
                       <Button variant="outline">
@@ -493,10 +508,10 @@ export default function DashboardPage() {
                       <XAxis dataKey="test" />
                       <YAxis />
                       <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="score" 
-                        stroke="#3b82f6" 
+                      <Line
+                        type="monotone"
+                        dataKey="score"
+                        stroke="#3b82f6"
                         strokeWidth={2}
                         dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
                       />
@@ -539,8 +554,8 @@ export default function DashboardPage() {
                     {errorData.map((item, index) => (
                       <div key={index} className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-2">
-                          <div 
-                            className="w-3 h-3 rounded-full" 
+                          <div
+                            className="w-3 h-3 rounded-full"
                             style={{ backgroundColor: item.color }}
                           />
                           <span>{item.name}</span>
@@ -570,17 +585,17 @@ export default function DashboardPage() {
                       <XAxis dataKey="day" />
                       <YAxis />
                       <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="energy" 
-                        stroke="#22c55e" 
+                      <Line
+                        type="monotone"
+                        dataKey="energy"
+                        stroke="#22c55e"
                         strokeWidth={2}
                         name="Energy Level"
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="studyTime" 
-                        stroke="#3b82f6" 
+                      <Line
+                        type="monotone"
+                        dataKey="studyTime"
+                        stroke="#3b82f6"
                         strokeWidth={2}
                         name="Study Hours"
                       />
@@ -597,8 +612,8 @@ export default function DashboardPage() {
                 <CardDescription>Fast-track your preparation</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button 
-                  className="w-full justify-start" 
+                <Button
+                  className="w-full justify-start"
                   variant="outline"
                   onClick={() => setShowDailyLogModal(true)}
                 >
@@ -628,7 +643,7 @@ export default function DashboardPage() {
 
             {/* Micro-Learning Quick Launcher */}
             <QuickSessionLauncher
-              userId={user?.uid || ''}
+              userId={user?.uid ?? ''}
               onStartSession={(subjectId, topicId, track, duration) => {
                 // Navigate to micro-learning session
                 window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
@@ -646,21 +661,15 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {insights.slice(0, 3).map((insight: any, index: number) => (
+                  {insights.slice(0, RECENT_ITEMS_LIMIT).map((insight: StudyInsight, index: number) => (
                     <div
                       key={index}
-                      className={`p-4 rounded-lg border-l-4 ${
-                        insight.type === 'warning' 
-                          ? 'border-yellow-400 bg-yellow-50' 
-                          : insight.type === 'recommendation'
-                          ? 'border-blue-400 bg-blue-50'
-                          : 'border-green-400 bg-green-50'
-                      }`}
+                      className={getInsightClasses(insight.type)}
                     >
                       <h4 className="font-semibold mb-2">{insight.title}</h4>
                       <p className="text-sm text-gray-700 mb-3">{insight.description}</p>
                       <div className="space-y-1">
-                        {insight.actionItems.slice(0, 2).map((action: any, actionIndex: number) => (
+                        {insight.actionItems.slice(0, 2).map((action: string, actionIndex: number) => (
                           <div key={actionIndex} className="flex items-center space-x-2 text-sm">
                             <CheckCircle className="h-3 w-3 text-green-600" />
                             <span>{action}</span>
@@ -675,7 +684,7 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <DailyLogModal 
+        <DailyLogModal
           isOpen={showDailyLogModal}
           onClose={() => setShowDailyLogModal(false)}
         />

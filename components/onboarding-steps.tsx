@@ -1,44 +1,40 @@
 /**
  * @fileoverview Onboarding Step Components
- * 
+ *
  * Individual step components for the enhanced onboarding flow.
  * Each component follows enterprise patterns with proper type safety,
  * accessibility, and UX best practices.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import React, { useState } from 'react';
-import { UseFormReturn } from '@/hooks/useForm';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  User, 
-  Search, 
-  Calendar, 
-  BookOpen, 
-  Plus, 
-  Trash2, 
-  Settings,
-  Clock,
-  Bell,
-  Target,
+import {
+  User,
+  Search,
+  Calendar,
+  Plus,
   AlertCircle,
   CheckCircle,
   Info
 } from 'lucide-react';
-import { Exam, SyllabusSubject } from '@/types/exam';
+import React, { useState } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { UseFormReturn } from '@/hooks/useForm';
+import { Exam, SyllabusSubject as _SyllabusSubject } from '@/types/exam';
 
 /**
  * Props for onboarding form data
  */
+/*
 interface OnboardingFormData {
   displayName: string;
   selectedExamId: string;
@@ -66,6 +62,7 @@ interface OnboardingFormData {
     };
   };
 }
+*/
 
 /**
  * Personal Information & Exam Selection Step
@@ -127,7 +124,7 @@ export function PersonalInfoStep({
       {/* Exam Search */}
       <div className="space-y-4">
         <Label className="text-sm font-medium">Target Exam *</Label>
-        
+
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
@@ -243,7 +240,7 @@ export function PersonalInfoStep({
             <strong>{selectedExam.name}</strong> - {selectedExam.description}
             <br />
             <span className="text-sm">
-              Syllabus: {selectedExam.defaultSyllabus.length} subjects • 
+              Syllabus: {selectedExam.defaultSyllabus.length} subjects •
               Estimated study time: {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours || 0), 0)} hours
             </span>
           </AlertDescription>
@@ -282,9 +279,9 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           <Input
             id="customExamName"
             value={form.data.customExam.name}
-            onChange={(e) => form.updateField('customExam', { 
-              ...form.data.customExam, 
-              name: e.target.value 
+            onChange={(e) => form.updateField('customExam', {
+              ...form.data.customExam,
+              name: e.target.value
             })}
             onBlur={() => form.markFieldTouched('customExam')}
             placeholder="e.g., State Public Service Commission"
@@ -305,9 +302,9 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Select
             value={form.data.customExam.category}
-            onValueChange={(value) => form.updateField('customExam', { 
-              ...form.data.customExam, 
-              category: value 
+            onValueChange={(value) => form.updateField('customExam', {
+              ...form.data.customExam,
+              category: value
             })}
           >
             <SelectTrigger>
@@ -336,9 +333,9 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           <Textarea
             id="customExamDescription"
             value={form.data.customExam.description}
-            onChange={(e) => form.updateField('customExam', { 
-              ...form.data.customExam, 
-              description: e.target.value 
+            onChange={(e) => form.updateField('customExam', {
+              ...form.data.customExam,
+              description: e.target.value
             })}
             placeholder="Brief description of the exam pattern, difficulty level, and selection process..."
             rows={4}
@@ -349,7 +346,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
       <Alert className="border-amber-200 bg-amber-50">
         <Info className="h-4 w-4 text-amber-600" />
         <AlertDescription className="text-amber-800">
-          <strong>Note:</strong> You'll be able to add and customize subjects in the next step. 
+          <strong>Note:</strong> You'll be able to add and customize subjects in the next step.
           Our system will help you structure your syllabus effectively.
         </AlertDescription>
       </Alert>
@@ -366,10 +363,10 @@ interface ExamReviewStepProps {
 }
 
 export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
-  if (!selectedExam) return null;
+  if (!selectedExam) { return null; }
 
   const totalHours = selectedExam.defaultSyllabus.reduce((sum, subject) => sum + (subject.estimatedHours || 0), 0);
-  const daysUntilExam = form.data.examDate ? 
+  const daysUntilExam = form.data.examDate ?
     Math.max(0, Math.ceil((new Date(form.data.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0;
 
   return (
@@ -388,7 +385,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
         <h3 className="text-xl font-bold text-blue-900 mb-2">{selectedExam.name}</h3>
         <p className="text-blue-700 mb-4">{selectedExam.description}</p>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{selectedExam.defaultSyllabus.length}</div>
@@ -422,12 +419,12 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
           <AlertDescription className={daysUntilExam < 30 ? 'text-red-800' : 'text-green-800'}>
             {daysUntilExam < 30 ? (
               <>
-                <strong>Intensive preparation needed!</strong> With only {daysUntilExam} days left, 
+                <strong>Intensive preparation needed!</strong> With only {daysUntilExam} days left,
                 you'll need approximately {Math.round(totalHours / daysUntilExam * 10) / 10} hours of focused study daily.
               </>
             ) : (
               <>
-                <strong>Good preparation time!</strong> With {daysUntilExam} days available, 
+                <strong>Good preparation time!</strong> With {daysUntilExam} days available,
                 {Math.round(totalHours / daysUntilExam * 10) / 10} hours daily will give you comprehensive coverage.
               </>
             )}

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 /**
  * @fileoverview Accessibility Utilities and Components
- * 
+ *
  * Comprehensive accessibility utilities to ensure WCAG 2.1 AA compliance
  * throughout the application. Includes focus management, screen reader
  * support, keyboard navigation, and accessibility testing helpers.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -20,19 +20,19 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 /**
  * Focus trap hook for modals and dialogs
  */
-export function useFocusTrap(isActive: boolean = true) {
+export function useFocusTrap(isActive = true) {
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) return;
+    if (!isActive || !containerRef.current) { return; }
 
     const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    ) as NodeListOf<HTMLElement>;
+    );
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
     // Focus first element when trap activates
     if (firstElement) {
@@ -40,7 +40,7 @@ export function useFocusTrap(isActive: boolean = true) {
     }
 
     const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab') { return; }
 
       if (e.shiftKey) {
         // Shift + Tab
@@ -100,10 +100,10 @@ export function SkipToContent({ targetId }: { targetId: string }) {
 /**
  * Live region for screen reader announcements
  */
-export function LiveRegion({ 
-  children, 
+export function LiveRegion({
+  children,
   politeness = 'polite' as 'polite' | 'assertive',
-  atomic = false 
+  atomic = false
 }: {
   children: React.ReactNode;
   politeness?: 'polite' | 'assertive';
@@ -127,7 +127,7 @@ export function LiveRegion({
 export function useScreenReader() {
   const [announcement, setAnnouncement] = useState('');
 
-  const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
+  const announce = useCallback((message: string, _priority: 'polite' | 'assertive' = 'polite') => {
     setAnnouncement(''); // Clear first to ensure re-announcement
     setTimeout(() => setAnnouncement(message), 100);
   }, []);
@@ -175,7 +175,7 @@ export function AccessibleButton({
   };
 
   const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
-  
+
   const variantClasses = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
@@ -209,12 +209,12 @@ export function AccessibleButton({
 /**
  * Keyboard navigation for lists
  */
-export function useKeyboardNavigation(itemCount: number, isActive: boolean = true) {
+export function useKeyboardNavigation(itemCount: number, isActive = true) {
   const [activeIndex, setActiveIndex] = useState(0);
   const listRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!isActive || !listRef.current) return;
+    if (!isActive || !listRef.current) { return; }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -291,14 +291,14 @@ export function AccessibleFormField({
 
   return (
     <div className="space-y-1">
-      <label 
+      <label
         htmlFor={id}
         className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}
       >
         {label}
         {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
       </label>
-      
+
       <input
         id={id}
         type={type}
@@ -311,19 +311,19 @@ export function AccessibleFormField({
         aria-describedby={describedBy || undefined}
         aria-invalid={error ? 'true' : 'false'}
         className={`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
-          error 
-            ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+          error
+            ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
             : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         } ${disabled ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}`}
         {...props}
       />
-      
+
       {helpText && (
         <p id={helpId} className="text-sm text-gray-500">
           {helpText}
         </p>
       )}
-      
+
       {error && (
         <p id={errorId} className="text-sm text-red-600" role="alert">
           {error}
@@ -349,19 +349,24 @@ export function getContrastRatio(color1: string, color2: string): number {
     const r = parseInt(hex.substr(0, 2), 16) / 255;
     const g = parseInt(hex.substr(2, 2), 16) / 255;
     const b = parseInt(hex.substr(4, 2), 16) / 255;
-    
+
     const sRGB = [r, g, b].map(c => {
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    
-    return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
+
+    // Ensure sRGB array has exactly 3 elements
+    if (sRGB.length !== 3 || sRGB.some(val => val === undefined)) {
+      return 0; // Return fallback luminance
+    }
+
+    return 0.2126 * sRGB[0]! + 0.7152 * sRGB[1]! + 0.0722 * sRGB[2]!;
   };
 
   const l1 = getLuminance(color1);
   const l2 = getLuminance(color2);
   const lighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
-  
+
   return (lighter + 0.05) / (darker + 0.05);
 }
 
@@ -395,7 +400,7 @@ export function useReducedMotion(): boolean {
  */
 export function AccessibilityChecker({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return;
+    if (process.env.NODE_ENV !== 'development') { return; }
 
     // Check for missing alt text on images
     const images = document.querySelectorAll('img:not([alt])');
@@ -409,7 +414,7 @@ export function AccessibilityChecker({ children }: { children: React.ReactNode }
       const id = input.getAttribute('id');
       return !id || !document.querySelector(`label[for="${id}"]`);
     });
-    
+
     if (unlabeledInputs.length > 0) {
       console.warn('Accessibility: Found inputs without proper labels:', unlabeledInputs);
     }

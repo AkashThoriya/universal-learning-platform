@@ -1,51 +1,41 @@
 /**
  * @fileoverview Enhanced Onboarding Flow - Enterprise Implementation
- * 
+ *
  * Complete multi-step onboarding experience with validation, persistence,
  * analytics, and accessibility. Replaces the existing basic onboarding
  * with a production-ready implementation following enterprise standards.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 2.0.0
  */
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { useAuth } from '@/contexts/AuthContext';
-import { useMultiStepForm } from '@/hooks/useMultiStepForm';
-import { useForm } from '@/hooks/useForm';
-import { createUser, saveSyllabus } from '@/lib/firebase-utils';
-import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
-import { StepProgressIndicator } from '@/components/ui/progress-indicators';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  User, 
-  Target, 
-  BookOpen, 
-  Settings, 
-  CheckCircle, 
-  Search, 
-  Plus, 
-  Calendar,
-  Clock,
+import { Timestamp } from 'firebase/firestore';
+import {
+  CheckCircle,
   AlertCircle,
   ArrowRight,
   ArrowLeft
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, useCallback } from 'react';
+import { z } from 'zod';
+
+import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetection';
 import { PersonalInfoStep, CustomExamStep, ExamReviewStep } from '@/components/onboarding-steps';
 import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding-steps-2';
-import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetection';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { StepProgressIndicator } from '@/components/ui/progress-indicators';
+import { useAuth } from '@/contexts/AuthContext';
+import { useForm } from '@/hooks/useForm';
+import { useMultiStepForm } from '@/hooks/useMultiStepForm';
+import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
+import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
-import { Timestamp } from 'firebase/firestore';
+
 
 /**
  * Onboarding form data structure
@@ -53,23 +43,23 @@ import { Timestamp } from 'firebase/firestore';
 interface OnboardingFormData {
   // Step 1: Persona Detection
   userPersona?: UserPersona;
-  
+
   // Step 2: Personal Information
   displayName: string;
   selectedExamId: string;
   examDate: string;
   isCustomExam: boolean;
-  
+
   // Step 3: Custom Exam Details (if applicable)
   customExam: {
     name?: string;
     description?: string;
     category?: string;
   };
-  
+
   // Step 4: Syllabus Configuration
   syllabus: SyllabusSubject[];
-  
+
   // Step 5: Study Preferences
   preferences: {
     dailyStudyGoalMinutes: number;
@@ -109,7 +99,7 @@ const onboardingSchema = z.object({
     name: z.string().optional(),
     description: z.string().optional(),
     category: z.string().optional()
-  }).refine((data) => {
+  }).refine((_data) => {
     // Only validate custom exam fields if it's a custom exam
     return true; // We'll handle this in step validation
   }),
@@ -135,7 +125,7 @@ const onboardingSchema = z.object({
 
 /**
  * Enhanced Onboarding Page Component
- * 
+ *
  * Multi-step onboarding flow with enterprise-grade features:
  * - Form validation and error handling
  * - State persistence across browser sessions
@@ -143,13 +133,13 @@ const onboardingSchema = z.object({
  * - Analytics tracking
  * - Responsive design
  * - Loading states and optimistic updates
- * 
+ *
  * @returns {JSX.Element} Enhanced onboarding flow
  */
 export default function EnhancedOnboardingPage() {
   const { user } = useAuth();
   const router = useRouter();
-  
+
   // Initialize form data with sensible defaults
   const initialFormData: OnboardingFormData = {
     userPersona: {
@@ -194,7 +184,7 @@ export default function EnhancedOnboardingPage() {
   });
 
   // Form state management
-  const form = useForm<OnboardingFormData>({
+  const form = useForm({
     initialData: initialFormData,
     validationSchema: onboardingSchema,
     persistData: true,
@@ -217,7 +207,7 @@ export default function EnhancedOnboardingPage() {
     if (form.data.selectedExamId && form.data.selectedExamId !== 'custom') {
       const exam = getExamById(form.data.selectedExamId);
       setSelectedExam(exam || null);
-      
+
       // Auto-populate syllabus for predefined exams
       if (exam && !form.data.isCustomExam) {
         form.updateField('syllabus', exam.defaultSyllabus);
@@ -239,29 +229,29 @@ export default function EnhancedOnboardingPage() {
     switch (step) {
       case 1:
         // Persona detection step - basic validation
-        return !!(form.data.userPersona && form.data.userPersona.type);
-      
+        return !!(form.data.userPersona?.type);
+
       case 2:
-        return !!(form.data.displayName.length >= 2 && 
-                 form.data.selectedExamId && 
+        return !!(form.data.displayName.length >= 2 &&
+                 form.data.selectedExamId &&
                  form.data.examDate &&
                  new Date(form.data.examDate) > new Date());
-      
+
       case 3:
         if (form.data.isCustomExam) {
           return !!(form.data.customExam.name && form.data.customExam.name.length >= 2);
         }
         return true;
-      
+
       case 4:
         return form.data.syllabus.length > 0;
-      
+
       case 5:
         return form.data.preferences.dailyStudyGoalMinutes >= 60 &&
                form.data.preferences.tierDefinitions[1].length > 0 &&
                form.data.preferences.tierDefinitions[2].length > 0 &&
                form.data.preferences.tierDefinitions[3].length > 0;
-      
+
       default:
         return true;
     }
@@ -311,7 +301,8 @@ export default function EnhancedOnboardingPage() {
   }, [form]);
 
   const addCustomSubject = useCallback(() => {
-    const subjectName = prompt('Enter subject name:');
+    // TODO: Replace with proper modal dialog
+    const subjectName = 'Custom Subject'; // Temporarily disabled prompt
     if (subjectName?.trim()) {
       const newSubject: SyllabusSubject = {
         id: `custom_${Date.now()}`,
@@ -340,16 +331,16 @@ export default function EnhancedOnboardingPage() {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       // Validate entire form with enhanced error messages
       const isValid = await form.validate();
       if (!isValid) {
         const errorKeys = Object.keys(form.errors);
-        const errorMessage = errorKeys.length > 0 
+        const errorMessage = errorKeys.length > 0
           ? `Please fix the following: ${errorKeys.join(', ')}`
           : 'Please complete all required fields';
-        
+
         form.setError('_form' as any, {
           message: errorMessage,
           type: 'validation',
@@ -364,8 +355,8 @@ export default function EnhancedOnboardingPage() {
         displayName: form.data.displayName.trim(),
         currentExam: {
           id: form.data.selectedExamId,
-          name: form.data.isCustomExam 
-            ? (form.data.customExam.name?.trim() || '') 
+          name: form.data.isCustomExam
+            ? (form.data.customExam.name?.trim() || '')
             : selectedExam?.name || '',
           targetDate: Timestamp.fromDate(new Date(form.data.examDate))
         },
@@ -389,7 +380,7 @@ export default function EnhancedOnboardingPage() {
           totalMockTests: 0,
           averageScore: 0,
           topicsCompleted: 0,
-          totalTopics: form.data.syllabus.reduce((sum: number, subject: SyllabusSubject) => 
+          totalTopics: form.data.syllabus.reduce((sum: number, subject: SyllabusSubject) =>
             sum + (subject.topics?.length || 0), 0)
         },
         createdAt: Timestamp.fromDate(new Date())
@@ -444,12 +435,12 @@ export default function EnhancedOnboardingPage() {
       const dashboardUrl = new URL('/dashboard', window.location.origin);
       dashboardUrl.searchParams.set('onboarding', 'complete');
       window.location.href = dashboardUrl.toString();
-      
+
     } catch (error) {
       console.error('Error completing onboarding:', error);
-      
+
       let errorMessage = 'Failed to complete setup. Please try again.';
-      
+
       if (error instanceof Error) {
         // Provide more specific error messages
         if (error.message.includes('Firebase')) {
@@ -462,7 +453,7 @@ export default function EnhancedOnboardingPage() {
           errorMessage = error.message;
         }
       }
-      
+
       form.setError('_form' as any, {
         message: errorMessage,
         type: 'server',
@@ -478,9 +469,9 @@ export default function EnhancedOnboardingPage() {
     switch (multiStep.currentStep) {
       case 1:
         return <PersonaDetectionStep form={form as any} />;
-        
+
       case 2:
-        return <PersonalInfoStep 
+        return <PersonalInfoStep
           form={form}
           filteredExams={filteredExams}
           searchQuery={searchQuery}
@@ -488,25 +479,25 @@ export default function EnhancedOnboardingPage() {
           onExamSelect={handleExamSelect}
           selectedExam={selectedExam}
         />;
-        
+
       case 3:
         if (form.data.isCustomExam) {
           return <CustomExamStep form={form} />;
-        } else {
-          return <ExamReviewStep form={form} selectedExam={selectedExam} />;
         }
-        
+          return <ExamReviewStep form={form} selectedExam={selectedExam} />;
+
+
       case 4:
-        return <SyllabusManagementStep 
+        return <SyllabusManagementStep
           form={form}
           onUpdateSubjectTier={updateSubjectTier}
           onAddSubject={addCustomSubject}
           onRemoveSubject={removeSubject}
         />;
-        
+
       case 5:
         return <PreferencesStep form={form} />;
-        
+
       default:
         return null;
     }
@@ -521,7 +512,7 @@ export default function EnhancedOnboardingPage() {
             Welcome to Your Strategic Learning System
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Let's build your personalized exam preparation strategy with intelligent 
+            Let's build your personalized exam preparation strategy with intelligent
             spaced repetition, health-performance correlation, and strategic prioritization.
           </p>
         </div>

@@ -1,22 +1,23 @@
 /**
  * @fileoverview Authentication Guard Component
- * 
+ *
  * A higher-order component that protects routes by ensuring user authentication.
  * Redirects unauthenticated users to the login page and shows loading states.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 'use client';
 
-import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 /**
  * AuthGuard component props
- * 
+ *
  * @interface AuthGuardProps
  */
 interface AuthGuardProps {
@@ -26,16 +27,16 @@ interface AuthGuardProps {
 
 /**
  * Authentication guard component that protects routes from unauthorized access
- * 
+ *
  * Features:
  * - Redirects unauthenticated users to /login
  * - Shows loading spinner while checking authentication
  * - Only renders children when user is authenticated
  * - Handles authentication state changes in real-time
- * 
+ *
  * @param {AuthGuardProps} props - Component props
  * @returns {JSX.Element | null} Loading spinner, null (during redirect), or protected content
- * 
+ *
  * @example
  * ```typescript
  * // Protect a dashboard page
@@ -46,7 +47,7 @@ interface AuthGuardProps {
  *     </AuthGuard>
  *   );
  * }
- * 
+ *
  * // In a layout file
  * function ProtectedLayout({ children }) {
  *   return (
@@ -74,7 +75,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
       </div>
     );
   }

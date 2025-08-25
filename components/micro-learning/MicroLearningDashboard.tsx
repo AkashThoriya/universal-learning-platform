@@ -1,17 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  BookOpen, 
-  Code, 
-  Clock, 
-  Play, 
-  Target,
+import {
+  BookOpen,
+  Code,
+  Clock,
+  Play,
   TrendingUp,
   Brain,
   Calendar,
@@ -22,8 +15,14 @@ import {
   AlertCircle,
   RefreshCw
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { type MicroLearningSession } from '@/types/micro-learning';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SessionRecommendation {
@@ -53,9 +52,9 @@ interface MicroLearningDashboardProps {
   className?: string;
 }
 
-export function MicroLearningDashboard({ 
-  userId, 
-  onStartSession, 
+export function MicroLearningDashboard({
+  userId,
+  onStartSession,
   onViewProgress,
   className = ''
 }: MicroLearningDashboardProps) {
@@ -88,11 +87,11 @@ export function MicroLearningDashboard({
 
       // Load session history and calculate weekly progress
       const sessionHistory = await MicroLearningService.getSessionHistory(activeUserId, 50);
-      
+
       // Calculate weekly progress from actual session data
       const weekStart = new Date();
       weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      
+
       const thisWeekSessions = sessionHistory.filter(session => {
         const sessionDate = new Date(session.createdAt);
         return sessionDate >= weekStart;
@@ -102,7 +101,7 @@ export function MicroLearningDashboard({
         sessionsCompleted: thisWeekSessions.length,
         totalSessions: 12, // User's weekly goal - get from preferences
         timeSpent: thisWeekSessions.reduce((total, session) => total + session.duration, 0),
-        accuracyAverage: thisWeekSessions.length > 0 
+        accuracyAverage: thisWeekSessions.length > 0
           ? thisWeekSessions.reduce((total, session) => total + (session.performance?.accuracy || 0), 0) / thisWeekSessions.length
           : 0
       };
@@ -121,14 +120,14 @@ export function MicroLearningDashboard({
   }, [activeUserId]);
 
   const handleStartSession = async (recommendation: SessionRecommendation) => {
-    if (!onStartSession) return;
-    
+    if (!onStartSession) { return; }
+
     setIsStartingSession(recommendation.id);
     try {
       await onStartSession(
-        recommendation.subjectId, 
-        recommendation.topicId, 
-        recommendation.track, 
+        recommendation.subjectId,
+        recommendation.topicId,
+        recommendation.track,
         recommendation.duration
       );
     } catch (error) {
@@ -175,9 +174,9 @@ export function MicroLearningDashboard({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mb-4">{error}</AlertDescription>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={loadDashboardData}
             className="gap-2"
           >
@@ -247,9 +246,9 @@ export function MicroLearningDashboard({
                   {weeklyProgress.sessionsCompleted}
                 </div>
                 <div className="text-sm text-blue-600">Sessions Completed</div>
-                <Progress 
-                  value={(weeklyProgress.sessionsCompleted / weeklyProgress.totalSessions) * 100} 
-                  className="mt-2 h-2" 
+                <Progress
+                  value={(weeklyProgress.sessionsCompleted / weeklyProgress.totalSessions) * 100}
+                  className="mt-2 h-2"
                 />
               </div>
               <div className="text-center">
@@ -318,7 +317,7 @@ export function MicroLearningDashboard({
           <div className="grid gap-4">
             {filteredRecommendations.map((session) => {
               const TrackIcon = getTrackIcon(session.track);
-              
+
               return (
                 <Card key={session.id} className="hover:shadow-md transition-shadow duration-200">
                   <CardContent className="p-6">
@@ -331,7 +330,7 @@ export function MicroLearningDashboard({
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-900 text-lg">{session.title}</h3>
                             <p className="text-gray-600 mt-1">{session.description}</p>
-                            
+
                             <div className="flex flex-wrap items-center gap-2 mt-3">
                               <Badge className={getPriorityColor(session.priority)}>
                                 {session.priority} priority
@@ -347,7 +346,7 @@ export function MicroLearningDashboard({
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-3">
                         <div className="text-right text-sm text-gray-500">
                           <div>Est. completion</div>

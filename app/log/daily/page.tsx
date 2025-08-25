@@ -1,38 +1,40 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { format } from 'date-fns';
+import { Timestamp } from 'firebase/firestore';
+import { Zap, Moon, Star, Plus, X, Save, Calendar } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase-utils';
+import { useState, useEffect } from 'react';
+
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
-import { Zap, Moon, Star, Plus, X, Save, Calendar } from 'lucide-react';
-import { DailyLog, SyllabusSubject, StudySession } from '@/types/exam';
-import { Timestamp } from 'firebase/firestore';
-import { format } from 'date-fns';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase-utils';
+import { DailyLog, StudySession } from '@/types/exam';
+
 
 export default function DailyLogPage() {
   const { user } = useAuth();
   const router = useRouter();
-  
+
   // Health metrics
   const [energyLevel, setEnergyLevel] = useState([7]);
   const [sleepHours, setSleepHours] = useState(7);
   const [sleepQuality, setSleepQuality] = useState([7]);
   const [stressLevel, setStressLevel] = useState([5]);
   const [physicalActivity, setPhysicalActivity] = useState(30);
-  
+
   // Study sessions
   const [studySessions, setStudySessions] = useState<StudySession[]>([]);
   const [availableTopics, setAvailableTopics] = useState<{ id: string; name: string; subject: string }[]>([]);
-  
+
   // Goals and reflection
   const [targetMinutes, setTargetMinutes] = useState(480);
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5>(3);
@@ -40,14 +42,14 @@ export default function DailyLogPage() {
   const [note, setNote] = useState('');
   const [challenges, setChallenges] = useState<string[]>([]);
   const [wins, setWins] = useState<string[]>([]);
-  
+
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
-      
+      if (!user) { return; }
+
       setLoading(true);
       try {
         // Fetch topics
@@ -64,7 +66,7 @@ export default function DailyLogPage() {
         // Check if today's log already exists
         const today = format(new Date(), 'yyyy-MM-dd');
         const existingLog = await getDailyLog(user.uid, today);
-        
+
         if (existingLog) {
           // Pre-populate form with existing data
           setEnergyLevel([existingLog.health.energy]);
@@ -102,7 +104,7 @@ export default function DailyLogPage() {
   };
 
   const updateStudySession = (index: number, updates: Partial<StudySession>) => {
-    setStudySessions(prev => prev.map((session, i) => 
+    setStudySessions(prev => prev.map((session, i) =>
       i === index ? { ...session, ...updates } : session
     ));
   };
@@ -112,14 +114,16 @@ export default function DailyLogPage() {
   };
 
   const addChallenge = () => {
-    const challenge = prompt('What made studying difficult today?');
+    // TODO: Replace with proper modal dialog
+    const challenge = 'Study challenge'; // Temporarily disabled prompt
     if (challenge) {
       setChallenges(prev => [...prev, challenge]);
     }
   };
 
   const addWin = () => {
-    const win = prompt('What went well today?');
+    // TODO: Replace with proper modal dialog
+    const win = 'Study win'; // Temporarily disabled prompt
     if (win) {
       setWins(prev => [...prev, win]);
     }
@@ -131,7 +135,7 @@ export default function DailyLogPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) { return; }
 
     setSaving(true);
     try {
@@ -140,10 +144,10 @@ export default function DailyLogPage() {
         id: today,
         date: Timestamp.now(),
         health: {
-          energy: energyLevel[0],
+          energy: energyLevel[0] ?? 5,
           sleepHours,
-          sleepQuality: sleepQuality[0],
-          stressLevel: stressLevel[0],
+          sleepQuality: sleepQuality[0] ?? 5,
+          stressLevel: stressLevel[0] ?? 5,
           physicalActivity,
           screenTime: 0
         },
@@ -177,9 +181,9 @@ export default function DailyLogPage() {
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-6">
               <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
                 <div className="relative glass rounded-2xl p-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
                   <p className="text-muted-foreground">Preparing your daily log...</p>
                 </div>
               </div>
@@ -194,7 +198,7 @@ export default function DailyLogPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
-        
+
         <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
@@ -257,7 +261,7 @@ export default function DailyLogPage() {
                       onChange={(e) => setSleepHours(Number(e.target.value))}
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Physical Activity (min)</label>
                     <Input
@@ -288,7 +292,7 @@ export default function DailyLogPage() {
                       className="w-full"
                     />
                   </div>
-                  
+
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="text-sm font-medium">Stress Level</label>
@@ -335,7 +339,7 @@ export default function DailyLogPage() {
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Topic</label>
@@ -366,7 +370,7 @@ export default function DailyLogPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Minutes</label>
                         <Input
@@ -378,7 +382,7 @@ export default function DailyLogPage() {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Method</label>
@@ -398,7 +402,7 @@ export default function DailyLogPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Effectiveness (1-5)</label>
                         <Input
@@ -409,7 +413,7 @@ export default function DailyLogPage() {
                           onChange={(e) => updateStudySession(index, { effectiveness: Number(e.target.value) as 1 | 2 | 3 | 4 | 5 })}
                         />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Distractions</label>
                         <Input
@@ -423,21 +427,21 @@ export default function DailyLogPage() {
                     </div>
                   </div>
                 ))}
-                
+
                 {studySessions.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     <p>No study sessions logged yet.</p>
                     <p className="text-sm">Click "Add Session" to start tracking your study time.</p>
                   </div>
                 )}
-                
+
                 {studySessions.length > 0 && (
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-blue-800">
                         Total study time: <strong>{Math.floor(getTotalStudyMinutes() / 60)}h {getTotalStudyMinutes() % 60}m</strong>
                       </p>
-                      <Badge 
+                      <Badge
                         className={getTotalStudyMinutes() >= targetMinutes ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}
                       >
                         {getTotalStudyMinutes() >= targetMinutes ? 'Goal Achieved!' : `${targetMinutes - getTotalStudyMinutes()}m to goal`}
@@ -466,7 +470,7 @@ export default function DailyLogPage() {
                       onChange={(e) => setTargetMinutes(Number(e.target.value))}
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Mood (1-5)</label>
                     <Select
@@ -485,7 +489,7 @@ export default function DailyLogPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Productivity (1-5)</label>
                     <Select
@@ -505,7 +509,7 @@ export default function DailyLogPage() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -528,7 +532,7 @@ export default function DailyLogPage() {
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <label className="text-sm font-medium">Wins</label>
@@ -566,22 +570,22 @@ export default function DailyLogPage() {
 
             {/* Submit Button */}
             <div className="flex space-x-4">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => router.push('/dashboard')}
                 className="w-full"
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={saving}
                 className="w-full"
               >
                 {saving ? (
                   <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                     <span>Saving...</span>
                   </div>
                 ) : (

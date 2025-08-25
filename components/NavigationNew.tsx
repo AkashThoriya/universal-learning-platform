@@ -217,7 +217,7 @@ export default function Navigation() {
             {/* User Profile */}
             <div className="flex items-center space-x-2">
               <div className="hidden md:block text-right">
-                <p className="text-sm font-medium">{user?.displayName ?? 'User'}</p>
+                <p className="text-sm font-medium">{user?.displayName || 'User'}</p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
               <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full">

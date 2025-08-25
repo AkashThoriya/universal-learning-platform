@@ -1,22 +1,23 @@
 /**
  * @fileoverview Achievement System Service Layer
- * 
+ *
  * Production-ready achievement management system with Firebase integration.
  * Handles achievement definitions, user achievement tracking, and progress updates.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { firebaseService } from './firebase-enhanced';
-import { Result, createSuccess, createError } from './types-utils';
+import { type UserPersonaType } from '@/types/exam';
 import {
   type Achievement,
   type UserAchievement,
   type MissionResults,
   type UnifiedProgress
 } from '@/types/mission-system';
-import { type UserPersonaType } from '@/types/exam';
+
+import { firebaseService } from './firebase-enhanced';
+import { Result, createSuccess, createError } from './types-utils';
 
 type AchievementCategory = Achievement['category'];
 
@@ -78,30 +79,30 @@ export class AchievementService {
    * Check and unlock achievements after mission completion
    */
   async checkMissionAchievements(
-    userId: string, 
+    userId: string,
     missionResults: MissionResults,
     userProgress: UnifiedProgress
   ): Promise<Result<UserAchievement[]>> {
     try {
       const achievementsResult = await this.getAchievements();
-      if (!achievementsResult.success) return achievementsResult;
+      if (!achievementsResult.success) { return achievementsResult; }
 
       const allAchievements = achievementsResult.data;
       const userAchievementsResult = await this.getUserAchievements(userId);
-      if (!userAchievementsResult.success) return userAchievementsResult;
+      if (!userAchievementsResult.success) { return userAchievementsResult; }
 
       const unlockedAchievementIds = userAchievementsResult.data
         .filter(ua => ua.isUnlocked)
         .map(ua => ua.achievementId);
-      
+
       const newlyUnlocked: UserAchievement[] = [];
 
       for (const achievement of allAchievements) {
-        if (unlockedAchievementIds.includes(achievement.id)) continue;
+        if (unlockedAchievementIds.includes(achievement.id)) { continue; }
 
         const isUnlocked = this.checkAchievementRequirements(
-          achievement, 
-          userProgress, 
+          achievement,
+          userProgress,
           missionResults
         );
 
@@ -153,7 +154,7 @@ export class AchievementService {
           achievementId,
           { isDisplayed: true }
         );
-        
+
         if (!updateResult.success) {
           return updateResult;
         }
@@ -169,7 +170,7 @@ export class AchievementService {
    * Get achievement progress for display
    */
   async getAchievementProgress(
-    userId: string, 
+    userId: string,
     achievementId: string
   ): Promise<Result<{ achievement: Achievement; userAchievement: UserAchievement | null }>> {
     try {
@@ -189,7 +190,7 @@ export class AchievementService {
         `users/${userId}/achievements`,
         achievementId
       );
-      
+
       const userAchievement = userAchievementResult.success ? userAchievementResult.data : null;
 
       return createSuccess({ achievement, userAchievement });
@@ -238,11 +239,11 @@ export class AchievementService {
           const examSkills = userProgress.trackProgress.exam.masteredSkills;
           const techSkills = userProgress.trackProgress.course_tech.masteredSkills;
           const allMasteredSkills = [...examSkills, ...techSkills];
-          
-          const hasMasteredSkills = requiredSkills.every(skill => 
+
+          const hasMasteredSkills = requiredSkills.every(skill =>
             allMasteredSkills.includes(skill)
           );
-          
+
           if (!hasMasteredSkills) {
             return false;
           }
@@ -272,14 +273,14 @@ export class AchievementService {
   async initializeSystemAchievements(): Promise<Result<void>> {
     try {
       const defaultAchievements = this.getDefaultAchievements();
-      
+
       for (const achievement of defaultAchievements) {
         const saveResult = await firebaseService.setDocument(
           'achievements',
           achievement.id,
           achievement
         );
-        
+
         if (!saveResult.success) {
           return saveResult;
         }

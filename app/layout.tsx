@@ -1,9 +1,10 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { Toaster } from '@/components/ui/toaster';
+
 import GlobalErrorBoundary from '@/components/error-handling/GlobalErrorBoundary';
+import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { SkipToContent, AccessibilityChecker } from '@/lib/accessibility-utils';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     'UPSC preparation',
     'IBPS banking exams',
     'SSC exams',
-    'GATE preparation', 
+    'GATE preparation',
     'CAT coaching',
     'study planner',
     'mock tests',
@@ -37,11 +38,11 @@ export const metadata: Metadata = {
   formatDetection: {
     email: false,
     address: false,
-    telephone: false,
+    telephone: false
   },
   metadataBase: new URL('https://examstrategyengine.com'),
   alternates: {
-    canonical: '/',
+    canonical: '/'
   },
   openGraph: {
     type: 'website',
@@ -55,16 +56,16 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Exam Strategy Engine - Strategic Exam Preparation Platform',
-      },
-    ],
+        alt: 'Exam Strategy Engine - Strategic Exam Preparation Platform'
+      }
+    ]
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Exam Strategy Engine - Universal Exam Preparation Platform',
     description: 'Transform your exam preparation with AI-powered adaptive learning, strategic planning, and data-driven insights.',
     images: ['/twitter-image.png'],
-    creator: '@examstrategyengine',
+    creator: '@examstrategyengine'
   },
   robots: {
     index: true,
@@ -74,23 +75,23 @@ export const metadata: Metadata = {
       follow: true,
       'max-video-preview': -1,
       'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
+      'max-snippet': -1
+    }
   },
   verification: {
     google: 'your-google-verification-code',
     yandex: 'your-yandex-verification-code',
-    yahoo: 'your-yahoo-verification-code',
-  },
+    yahoo: 'your-yahoo-verification-code'
+  }
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
-  initialScale: 1,
+  initialScale: 1
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

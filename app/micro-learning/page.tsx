@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { MicroLearningSession, SessionSummary, MicroLearningDashboard } from '@/components/micro-learning';
-import { type SessionPerformance } from '@/types/micro-learning';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+
+import { MicroLearningSession, SessionSummary, MicroLearningDashboard } from '@/components/micro-learning';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { type SessionPerformance } from '@/types/micro-learning';
 
 type ViewState = 'dashboard' | 'session' | 'summary';
 
@@ -15,7 +16,7 @@ interface SessionConfig {
   subjectId: string;
   topicId: string;
   learningTrack: 'exam' | 'course_tech';
-  duration?: number;
+  duration?: number | undefined;
 }
 
 function MicroLearningContent() {
@@ -28,6 +29,29 @@ function MicroLearningContent() {
 
   // Get authenticated user ID - ensure user is authenticated
   const userId = user?.uid;
+
+  // Check for auto-start parameters from URL
+  useEffect(() => {
+    if (!userId) { return; } // Don't process if user not authenticated
+
+    const autoStart = searchParams.get('auto');
+    const subject = searchParams.get('subject');
+    const topic = searchParams.get('topic');
+    const track = searchParams.get('track') as 'exam' | 'course_tech' | null;
+    const duration = searchParams.get('duration');
+
+    if (autoStart === 'true' && subject && topic && track) {
+      const parsedDuration = duration ? parseInt(duration) : undefined;
+      setSessionConfig({
+        userId,
+        subjectId: subject,
+        topicId: topic,
+        learningTrack: track,
+        ...(parsedDuration !== undefined && { duration: parsedDuration })
+      });
+      setCurrentView('session');
+    }
+  }, [searchParams, userId]); // Add userId to dependency array
 
   // Show authentication required if no user
   if (!user) {
@@ -44,42 +68,20 @@ function MicroLearningContent() {
     );
   }
 
-  // Check for auto-start parameters from URL
-  useEffect(() => {
-    if (!userId) return; // Don't process if user not authenticated
-    
-    const autoStart = searchParams.get('auto');
-    const subject = searchParams.get('subject');
-    const topic = searchParams.get('topic');
-    const track = searchParams.get('track') as 'exam' | 'course_tech' | null;
-    const duration = searchParams.get('duration');
-
-    if (autoStart === 'true' && subject && topic && track) {
-      setSessionConfig({
-        userId,
-        subjectId: subject,
-        topicId: topic,
-        learningTrack: track,
-        duration: duration ? parseInt(duration) : undefined
-      });
-      setCurrentView('session');
-    }
-  }, [searchParams, userId]); // Add userId to dependency array
-
   const handleStartSession = (
-    subjectId: string, 
-    topicId: string, 
-    track: 'exam' | 'course_tech', 
-    duration?: number
+    subjectId: string,
+    topicId: string,
+    track: 'exam' | 'course_tech',
+    duration?: number | undefined
   ) => {
-    if (!userId) return; // Safety check
-    
+    if (!userId) { return; } // Safety check
+
     setSessionConfig({
       userId,
       subjectId,
       topicId,
       learningTrack: track,
-      duration
+      ...(duration !== undefined && { duration })
     });
     setCurrentView('session');
   };
@@ -92,8 +94,8 @@ function MicroLearningContent() {
 
   const handleSessionError = (error: Error) => {
     console.error('Session error:', error);
-    // In a real app, you'd show a proper error notification
-    alert(`Session error: ${error.message}`);
+    // TODO: Replace with proper toast notification
+    console.warn(`Session error: ${error.message}`);
     setCurrentView('dashboard');
   };
 
@@ -133,7 +135,7 @@ function MicroLearningContent() {
         )}
 
         {/* Main Content */}
-        {currentView === 'dashboard' && (
+        {currentView === 'dashboard' && userId && (
           <MicroLearningDashboard
             userId={userId}
             onStartSession={handleStartSession}
@@ -147,7 +149,7 @@ function MicroLearningContent() {
             subjectId={sessionConfig.subjectId}
             topicId={sessionConfig.topicId}
             learningTrack={sessionConfig.learningTrack}
-            requestedDuration={sessionConfig.duration}
+            requestedDuration={sessionConfig.duration ?? 15}
             onComplete={handleSessionComplete}
             onError={handleSessionError}
           />
@@ -171,8 +173,8 @@ export default function MicroLearningPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
         <div className="animate-pulse text-center">
-          <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-4"></div>
-          <div className="h-4 w-32 bg-gray-200 rounded mx-auto"></div>
+          <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-4" />
+          <div className="h-4 w-32 bg-gray-200 rounded mx-auto" />
         </div>
       </div>
     }>

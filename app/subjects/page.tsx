@@ -1,19 +1,20 @@
 'use client';
 
+import { BookOpen, Target, Zap, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+
 import AuthGuard from '@/components/AuthGuard';
+import { QuickSessionLauncher } from '@/components/micro-learning';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { SUBJECTS_DATA } from '@/lib/subjects-data';
-import Link from 'next/link';
-import { BookOpen, Target, Zap, ChevronRight } from 'lucide-react';
-import { QuickSessionLauncher } from '@/components/micro-learning';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { SUBJECTS_DATA } from '@/lib/subjects-data';
 
 export default function SubjectsPage() {
   const { user } = useAuth();
-  
+
   const getTierColor = (tier: number) => {
     switch (tier) {
       case 1: return 'bg-red-100 text-red-800';
@@ -36,7 +37,7 @@ export default function SubjectsPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-6xl mx-auto p-6 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">Study Arsenal</h1>
@@ -85,7 +86,7 @@ export default function SubjectsPage() {
                 <h2 className="text-2xl font-bold text-gray-900 border-b pb-2">
                   Tier {tier}: {getTierLabel(tier)}
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {SUBJECTS_DATA
                     .filter(subject => subject.tier === tier)
@@ -116,7 +117,7 @@ export default function SubjectsPage() {
                                 </Badge>
                               )}
                             </div>
-                            
+
                             <Link href={`/subjects/${subject.subjectId}`}>
                               <Button className="w-full mt-3 group">
                                 <span>Explore Topics</span>

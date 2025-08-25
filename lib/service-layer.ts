@@ -1,15 +1,17 @@
 /**
  * @fileoverview Enhanced Service Layer Architecture
- * 
+ *
  * Provides a scalable service layer pattern for managing business logic,
  * data operations, and cross-cutting concerns. Implements repository pattern
  * and dependency injection for better testability and maintainability.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { Result, AsyncResult, LoadingState, PaginationState } from './types-utils';
+import { Result, createSuccess as _createSuccess, createError as _createError, LoadingState as _LoadingState, PaginationState as _PaginationState } from './types-utils';
+
+type AsyncResult<T> = Promise<Result<T>>;
 
 /**
  * Base service interface for common operations
@@ -46,7 +48,7 @@ export interface ServiceConfig {
 /**
  * Event types for service operations
  */
-export type ServiceEvent = 
+export type ServiceEvent =
   | 'before_create'
   | 'after_create'
   | 'before_update'
@@ -99,18 +101,18 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
   /**
    * Get cached data if available and valid
    */
-  protected getFromCache<U>(key: string, maxAge: number = 300000): U | null {
-    if (!this.config.cacheEnabled) return null;
-    
+  protected getFromCache<U>(key: string, maxAge = 300000): U | null {
+    if (!this.config.cacheEnabled) { return null; }
+
     const cached = this.cache.get(key);
-    if (!cached) return null;
-    
+    if (!cached) { return null; }
+
     const age = Date.now() - cached.timestamp;
     if (age > maxAge) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return cached.data;
   }
 
@@ -118,8 +120,8 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
    * Store data in cache
    */
   protected setCache(key: string, data: any): void {
-    if (!this.config.cacheEnabled) return;
-    
+    if (!this.config.cacheEnabled) { return; }
+
     this.cache.set(key, {
       data,
       timestamp: Date.now()
@@ -134,7 +136,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
     attempts: number = this.config.retryAttempts || 3
   ): Promise<U> {
     let lastError: Error;
-    
+
     for (let i = 0; i < attempts; i++) {
       try {
         return await operation();
@@ -146,7 +148,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
         }
       }
     }
-    
+
     throw lastError!;
   }
 
@@ -299,7 +301,7 @@ export interface Logger {
  * Console logger implementation
  */
 export class ConsoleLogger implements Logger {
-  constructor(private prefix: string = '[Service]') {}
+  constructor(private prefix = '[Service]') {}
 
   debug(message: string, ...args: any[]): void {
     console.debug(`${this.prefix} ${message}`, ...args);
@@ -343,19 +345,19 @@ export class PerformanceMonitor {
   measure<T>(label: string, operation: () => Promise<T>): Promise<T>;
   measure<T>(label: string, operation: () => T | Promise<T>): T | Promise<T> {
     this.start(label);
-    
+
     const result = operation();
-    
+
     if (result instanceof Promise) {
       return result.finally(() => {
         const duration = this.end(label);
         console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
       });
-    } else {
+    }
       const duration = this.end(label);
       console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
       return result;
-    }
+
   }
 }
 

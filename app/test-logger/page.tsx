@@ -1,18 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { Target, BarChart3, Clock, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Target, BarChart3, Clock, MessageSquare } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { db } from '@/lib/firebase';
+
 
 export default function TestLoggerPage() {
   const { user } = useAuth();
@@ -24,46 +27,46 @@ export default function TestLoggerPage() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [platform, setPlatform] = useState('');
   const [type, setType] = useState('');
-  
+
   // Scores
   const [quantScore, setQuantScore] = useState(0);
   const [reasoningScore, setReasoningScore] = useState(0);
   const [englishScore, setEnglishScore] = useState(0);
   const [pkScore, setPkScore] = useState(0);
-  
+
   // Time taken (in minutes)
   const [quantTime, setQuantTime] = useState(0);
   const [reasoningTime, setReasoningTime] = useState(0);
   const [englishTime, setEnglishTime] = useState(0);
   const [pkTime, setPkTime] = useState(0);
-  
+
   // Error analysis
   const [quantConcepts, setQuantConcepts] = useState(0);
   const [quantCareless, setQuantCareless] = useState(0);
   const [quantGuesses, setQuantGuesses] = useState(0);
   const [quantTimePressure, setQuantTimePressure] = useState(0);
-  
+
   const [reasoningConcepts, setReasoningConcepts] = useState(0);
   const [reasoningCareless, setReasoningCareless] = useState(0);
   const [reasoningGuesses, setReasoningGuesses] = useState(0);
   const [reasoningTimePressure, setReasoningTimePressure] = useState(0);
-  
+
   const [englishConcepts, setEnglishConcepts] = useState(0);
   const [englishCareless, setEnglishCareless] = useState(0);
   const [englishGuesses, setEnglishGuesses] = useState(0);
   const [englishTimePressure, setEnglishTimePressure] = useState(0);
-  
+
   const [pkConcepts, setPkConcepts] = useState(0);
   const [pkCareless, setPkCareless] = useState(0);
   const [pkGuesses, setPkGuesses] = useState(0);
   const [pkTimePressure, setPkTimePressure] = useState(0);
-  
+
   const [feedback, setFeedback] = useState('');
 
   const getTotalScore = () => quantScore + reasoningScore + englishScore + pkScore;
   const getTotalErrors = (section: 'quant' | 'reasoning' | 'english' | 'pk') => {
     const maxScore = 50;
-    const actualScore = section === 'quant' ? quantScore : 
+    const actualScore = section === 'quant' ? quantScore :
                       section === 'reasoning' ? reasoningScore :
                       section === 'english' ? englishScore : pkScore;
     return maxScore - actualScore;
@@ -74,7 +77,7 @@ export default function TestLoggerPage() {
       { name: 'Quant', errors: getTotalErrors('quant'), analysis: quantConcepts + quantCareless + quantGuesses + quantTime },
       { name: 'Reasoning', errors: getTotalErrors('reasoning'), analysis: reasoningConcepts + reasoningCareless + reasoningGuesses + reasoningTimePressure },
       { name: 'English', errors: getTotalErrors('english'), analysis: englishConcepts + englishCareless + englishGuesses + englishTimePressure },
-      { name: 'PK', errors: getTotalErrors('pk'), analysis: pkConcepts + pkCareless + pkGuesses + pkTimePressure },
+      { name: 'PK', errors: getTotalErrors('pk'), analysis: pkConcepts + pkCareless + pkGuesses + pkTimePressure }
     ];
 
     for (const section of sections) {
@@ -86,18 +89,19 @@ export default function TestLoggerPage() {
   };
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user) { return; }
 
     const validationError = validateErrorAnalysis();
     if (validationError) {
-      alert(validationError);
+      // TODO: Replace with proper toast notification
+      console.warn(validationError);
       return;
     }
 
     setLoading(true);
     try {
       const testData = {
-        date: Timestamp.fromDate(new Date(date)),
+        date: Timestamp.fromDate(new Date(date!)),
         platform,
         type,
         scores: {
@@ -105,21 +109,21 @@ export default function TestLoggerPage() {
           reasoning: reasoningScore,
           english: englishScore,
           pk: pkScore,
-          total: getTotalScore(),
+          total: getTotalScore()
         },
         timeTaken: {
           quant: quantTime,
           reasoning: reasoningTime,
           english: englishTime,
-          pk: pkTime,
+          pk: pkTime
         },
         analysis: {
           conceptGaps: quantConcepts + reasoningConcepts + englishConcepts + pkConcepts,
           carelessErrors: quantCareless + reasoningCareless + englishCareless + pkCareless,
           intelligentGuesses: quantGuesses + reasoningGuesses + englishGuesses + pkGuesses,
-          timePressures: quantTime + reasoningTimePressure + englishTimePressure + pkTimePressure,
+          timePressures: quantTime + reasoningTimePressure + englishTimePressure + pkTimePressure
         },
-        feedback,
+        feedback
       };
 
       await addDoc(collection(db, 'users', user.uid, 'mockTests'), testData);
@@ -135,7 +139,7 @@ export default function TestLoggerPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-4xl mx-auto p-6 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">Test Logger</h1>
@@ -188,8 +192,8 @@ export default function TestLoggerPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button 
-                  onClick={() => setStep(2)} 
+                <Button
+                  onClick={() => setStep(2)}
                   className="w-full"
                   disabled={!platform || !type}
                 >
@@ -211,7 +215,7 @@ export default function TestLoggerPage() {
                   { label: 'Quantitative Aptitude', score: quantScore, setScore: setQuantScore, time: quantTime, setTime: setQuantTime },
                   { label: 'Reasoning', score: reasoningScore, setScore: setReasoningScore, time: reasoningTime, setTime: setReasoningTime },
                   { label: 'English', score: englishScore, setScore: setEnglishScore, time: englishTime, setTime: setEnglishTime },
-                  { label: 'Professional Knowledge', score: pkScore, setScore: setPkScore, time: pkTime, setTime: setPkTime },
+                  { label: 'Professional Knowledge', score: pkScore, setScore: setPkScore, time: pkTime, setTime: setPkTime }
                 ].map((section, index) => (
                   <div key={index} className="bg-gray-50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-3">{section.label}</h4>
@@ -238,7 +242,7 @@ export default function TestLoggerPage() {
                     </div>
                   </div>
                 ))}
-                
+
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-blue-900">Total Score: {getTotalScore()}/200</h4>
                 </div>
@@ -266,38 +270,38 @@ export default function TestLoggerPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {[
-                  { 
-                    label: 'Quantitative Aptitude', 
+                  {
+                    label: 'Quantitative Aptitude',
                     totalErrors: getTotalErrors('quant'),
                     concepts: quantConcepts, setConcepts: setQuantConcepts,
                     careless: quantCareless, setCareless: setQuantCareless,
                     guesses: quantGuesses, setGuesses: setQuantGuesses,
-                    timePressure: quantTime, setTimePressure: setQuantTimePressure
+                    timePressure: quantTimePressure, setTimePressure: setQuantTimePressure
                   },
-                  { 
-                    label: 'Reasoning', 
+                  {
+                    label: 'Reasoning',
                     totalErrors: getTotalErrors('reasoning'),
                     concepts: reasoningConcepts, setConcepts: setReasoningConcepts,
                     careless: reasoningCareless, setCareless: setReasoningCareless,
                     guesses: reasoningGuesses, setGuesses: setReasoningGuesses,
                     timePressure: reasoningTimePressure, setTimePressure: setReasoningTimePressure
                   },
-                  { 
-                    label: 'English', 
+                  {
+                    label: 'English',
                     totalErrors: getTotalErrors('english'),
                     concepts: englishConcepts, setConcepts: setEnglishConcepts,
                     careless: englishCareless, setCareless: setEnglishCareless,
                     guesses: englishGuesses, setGuesses: setEnglishGuesses,
                     timePressure: englishTimePressure, setTimePressure: setEnglishTimePressure
                   },
-                  { 
-                    label: 'Professional Knowledge', 
+                  {
+                    label: 'Professional Knowledge',
                     totalErrors: getTotalErrors('pk'),
                     concepts: pkConcepts, setConcepts: setPkConcepts,
                     careless: pkCareless, setCareless: setPkCareless,
                     guesses: pkGuesses, setGuesses: setPkGuesses,
                     timePressure: pkTimePressure, setTimePressure: setPkTimePressure
-                  },
+                  }
                 ].map((section, index) => (
                   <div key={index} className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-3">

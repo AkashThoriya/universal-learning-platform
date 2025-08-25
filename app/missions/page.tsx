@@ -1,47 +1,42 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import AuthGuard from '@/components/AuthGuard';
-import { MissionDashboard } from '@/components/missions/MissionDashboard';
-import { MissionExecution } from '@/components/missions/MissionExecution';
-import { MissionConfiguration } from '@/components/missions/MissionConfiguration';
-import { AchievementSystem } from '@/components/missions/AchievementSystem';
-import { ProgressVisualization } from '@/components/missions/ProgressVisualization';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
+import {
   Target,
   Trophy,
   BarChart3,
   Settings,
   Play,
-  Pause,
   Home,
   BookOpen,
   Code,
   Brain,
   Zap,
   Calendar,
-  Clock,
   Users,
   Flame,
   Star,
   Award
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+
+import AuthGuard from '@/components/AuthGuard';
+import { AchievementSystem } from '@/components/missions/AchievementSystem';
+import { MissionConfiguration } from '@/components/missions/MissionConfiguration';
+import { MissionDashboard } from '@/components/missions/MissionDashboard';
+import { MissionExecution } from '@/components/missions/MissionExecution';
+import { ProgressVisualization } from '@/components/missions/ProgressVisualization';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   type Mission,
   type MissionResults,
-  type UnifiedProgress,
   type Achievement
 } from '@/types/mission-system';
 
 type ViewMode = 'dashboard' | 'configuration' | 'execution' | 'achievements' | 'progress';
 
 export default function MissionsPage() {
-  const { user } = useAuth();
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
   const [activeMission, setActiveMission] = useState<Mission | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +55,8 @@ export default function MissionsPage() {
   const handleMissionComplete = (results: MissionResults) => {
     // Log mission completion for analytics
     if (process.env.NODE_ENV === 'development') {
-      console.log('Mission completed with results:', results);
+      // eslint-disable-next-line no-console
+      console.info('Mission completed with results:', results);
     }
     setActiveMission(null);
     setCurrentView('dashboard');
@@ -69,7 +65,8 @@ export default function MissionsPage() {
 
   const handleMissionPause = () => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Mission paused');
+      // eslint-disable-next-line no-console
+      console.info('Mission paused');
     }
     // TODO: Save mission state through service layer
   };
@@ -81,7 +78,8 @@ export default function MissionsPage() {
 
   const handleAchievementClick = (achievement: Achievement) => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Achievement clicked:', achievement);
+      // eslint-disable-next-line no-console
+      console.info('Achievement clicked:', achievement);
     }
     // TODO: Implement achievement detail view
   };
@@ -116,23 +114,23 @@ export default function MissionsPage() {
     }
   };
 
-  const NavButton = ({ 
-    mode, 
-    icon: Icon, 
-    label, 
-    badge 
-  }: { 
-    mode: ViewMode; 
-    icon: React.ComponentType<any>; 
-    label: string; 
-    badge?: string 
+  const NavButton = ({
+    mode,
+    icon: Icon,
+    label,
+    badge
+  }: {
+    mode: ViewMode;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    label: string;
+    badge?: string
   }) => (
     <Button
       variant={currentView === mode ? 'default' : 'ghost'}
       onClick={() => setCurrentView(mode)}
       className={`relative transition-all duration-200 ${
-        currentView === mode 
-          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
+        currentView === mode
+          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
           : 'hover:bg-gray-100'
       }`}
       disabled={mode === 'execution' && !activeMission}
@@ -140,8 +138,8 @@ export default function MissionsPage() {
       <Icon className="h-4 w-4 mr-2" />
       {label}
       {badge && (
-        <Badge 
-          variant="secondary" 
+        <Badge
+          variant="secondary"
           className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs bg-orange-500 text-white"
         >
           {badge}
@@ -156,23 +154,23 @@ export default function MissionsPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
           <div className="text-center space-y-6 max-w-md mx-auto">
             <div className="relative">
-              <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+              <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
               <Card className="relative border-0 bg-white/80 backdrop-blur-sm shadow-xl">
                 <CardContent className="p-8">
                   <div className="flex justify-center mb-6">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-blue-200 rounded-full animate-ping opacity-75"></div>
+                      <div className="absolute inset-0 bg-blue-200 rounded-full animate-ping opacity-75" />
                       <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full p-4">
                         <Target className="h-8 w-8 text-white animate-pulse" />
                       </div>
                     </div>
                   </div>
-                  
+
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Initializing Mission System</h3>
                   <p className="text-gray-600 mb-6">Preparing your strategic learning environment...</p>
-                  
+
                   <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent" />
                   </div>
                 </CardContent>
               </Card>
@@ -199,7 +197,7 @@ export default function MissionsPage() {
                   <p className="text-gray-600 mt-1">{getPageDescription()}</p>
                 </div>
               </div>
-              
+
               {currentView !== 'execution' && (
                 <div className="flex items-center space-x-3">
                   <Badge variant="outline" className="text-sm">
@@ -231,14 +229,14 @@ export default function MissionsPage() {
           {/* Content */}
           <div className="space-y-6">
             {currentView === 'dashboard' && (
-              <MissionDashboard 
+              <MissionDashboard
                 onMissionStart={handleMissionStart}
                 className="animate-in fade-in-50 duration-500"
               />
             )}
 
             {currentView === 'configuration' && (
-              <MissionConfiguration 
+              <MissionConfiguration
                 className="animate-in fade-in-50 duration-500"
               />
             )}
@@ -265,14 +263,14 @@ export default function MissionsPage() {
             )}
 
             {currentView === 'achievements' && (
-              <AchievementSystem 
+              <AchievementSystem
                 onAchievementClick={handleAchievementClick}
                 className="animate-in fade-in-50 duration-500"
               />
             )}
 
             {currentView === 'progress' && (
-              <ProgressVisualization 
+              <ProgressVisualization
                 className="animate-in fade-in-50 duration-500"
               />
             )}
@@ -288,7 +286,7 @@ export default function MissionsPage() {
                   <div className="text-blue-100 text-sm">Missions Completed</div>
                 </CardContent>
               </Card>
-              
+
               <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
                 <CardContent className="p-4 text-center">
                   <Flame className="h-8 w-8 mx-auto mb-2" />
@@ -296,7 +294,7 @@ export default function MissionsPage() {
                   <div className="text-green-100 text-sm">Day Streak</div>
                 </CardContent>
               </Card>
-              
+
               <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
                 <CardContent className="p-4 text-center">
                   <Star className="h-8 w-8 mx-auto mb-2" />
@@ -304,7 +302,7 @@ export default function MissionsPage() {
                   <div className="text-purple-100 text-sm">Average Score</div>
                 </CardContent>
               </Card>
-              
+
               <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
                 <CardContent className="p-4 text-center">
                   <Award className="h-8 w-8 mx-auto mb-2" />
@@ -328,13 +326,15 @@ export default function MissionsPage() {
                       Welcome to the Adaptive Mission System!
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      Your personalized dual-track learning system combines exam preparation and technical skills development. 
-                      Each mission is adapted to your learning style and current proficiency level.
+                      Your personalized dual-track learning system combines exam preparation and technical
+                      skills development. Each mission is adapted to your learning style and current proficiency level.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center space-x-3">
                         <BookOpen className="h-5 w-5 text-blue-600" />
-                        <span className="text-sm text-gray-700">📚 Exam Track: Daily mock tests, weekly revision, monthly assessments</span>
+                        <span className="text-sm text-gray-700">
+                          📚 Exam Track: Daily mock tests, weekly revision, monthly assessments
+                        </span>
                       </div>
                       <div className="flex items-center space-x-3">
                         <Code className="h-5 w-5 text-green-600" />

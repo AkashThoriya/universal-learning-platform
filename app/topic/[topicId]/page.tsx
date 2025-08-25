@@ -1,23 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { format } from 'date-fns';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { ArrowLeft, Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
 import AuthGuard from '@/components/AuthGuard';
+import { QuickSessionLauncher } from '@/components/micro-learning';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/contexts/AuthContext';
+import { db } from '@/lib/firebase';
 import { SUBJECTS_DATA } from '@/lib/subjects-data';
 import { TopicProgress } from '@/types/exam';
-import Link from 'next/link';
-import { ArrowLeft, Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import { QuickSessionLauncher } from '@/components/micro-learning';
 
 export default function TopicPage() {
   const { user } = useAuth();
@@ -39,7 +40,7 @@ export default function TopicPage() {
 
   useEffect(() => {
     const fetchProgress = async () => {
-      if (!user || !topicId) return;
+      if (!user || !topicId) { return; }
 
       try {
         const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
@@ -52,7 +53,7 @@ export default function TopicPage() {
           // Create initial progress document
           const initialProgress: TopicProgress = {
             id: topicId,
-            topicId: topicId,
+            topicId,
             subjectId: '', // Will be populated when syllabus data is available
             masteryScore: 0,
             lastRevised: Timestamp.now(),
@@ -66,7 +67,7 @@ export default function TopicPage() {
             difficulty: 3,
             importance: 3,
             lastScoreImprovement: 0,
-            currentAffairs: [],
+            currentAffairs: []
           };
           setUserProgress(initialProgress);
         }
@@ -81,7 +82,7 @@ export default function TopicPage() {
   }, [user, topicId]);
 
   const handleSave = async () => {
-    if (!user || !userProgress) return;
+    if (!user || !userProgress) { return; }
 
     setSaving(true);
     try {
@@ -89,7 +90,7 @@ export default function TopicPage() {
         ...userProgress,
         userNotes,
         userBankingContext,
-        lastRevised: Timestamp.now(),
+        lastRevised: Timestamp.now()
       };
 
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
@@ -102,16 +103,16 @@ export default function TopicPage() {
   };
 
   const handleAddCurrentAffair = async () => {
-    if (!user || !userProgress || !newCurrentAffair.trim()) return;
+    if (!user || !userProgress || !newCurrentAffair.trim()) { return; }
 
     const newAffair = {
       date: Timestamp.now(),
-      note: newCurrentAffair.trim(),
+      note: newCurrentAffair.trim()
     };
 
     const updatedProgress = {
       ...userProgress,
-      currentAffairs: [...(userProgress.currentAffairs || []), newAffair],
+      currentAffairs: [...(userProgress.currentAffairs || []), newAffair]
     };
 
     try {
@@ -124,12 +125,12 @@ export default function TopicPage() {
   };
 
   const handleMarkRevised = async () => {
-    if (!user || !userProgress) return;
+    if (!user || !userProgress) { return; }
 
     const updatedProgress = {
       ...userProgress,
       lastRevised: Timestamp.now(),
-      masteryScore: Math.min(userProgress.masteryScore + 10, 100),
+      masteryScore: Math.min(userProgress.masteryScore + 10, 100)
     };
 
     try {
@@ -144,7 +145,7 @@ export default function TopicPage() {
     return (
       <AuthGuard>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       </AuthGuard>
     );
@@ -169,7 +170,7 @@ export default function TopicPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-4xl mx-auto p-6 space-y-6">
           <div className="flex items-center space-x-4">
             <Link href={`/subjects/${subjectId}`}>
@@ -187,10 +188,10 @@ export default function TopicPage() {
               <div className="flex items-center justify-center space-x-3">
                 <Badge variant="outline">{subject.name}</Badge>
                 {userProgress && (
-                  <Badge 
+                  <Badge
                     className={
-                      userProgress.masteryScore >= 80 
-                        ? 'bg-green-100 text-green-800' 
+                      userProgress.masteryScore >= 80
+                        ? 'bg-green-100 text-green-800'
                         : userProgress.masteryScore >= 50
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-red-100 text-red-800'
@@ -223,7 +224,7 @@ export default function TopicPage() {
               <div className="bg-white p-4 rounded-lg border border-yellow-200">
                 <p className="text-gray-700 leading-relaxed">{topic.bankingContext}</p>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium text-yellow-900">
                   Your Personal Banking Context Notes
@@ -290,7 +291,7 @@ export default function TopicPage() {
                   placeholder="Add a current affairs note..."
                   className="flex-1"
                 />
-                <Button 
+                <Button
                   onClick={handleAddCurrentAffair}
                   disabled={!newCurrentAffair.trim()}
                 >
@@ -338,7 +339,7 @@ export default function TopicPage() {
                     title: `${topic?.name} - Quick Review`,
                     description: `15-minute focused session on ${topic?.name} concepts`,
                     subjectId: subjectId || '',
-                    topicId: topicId,
+                    topicId,
                     track: 'exam' as const,
                     duration: 15,
                     difficulty: 'intermediate' as const
@@ -347,7 +348,7 @@ export default function TopicPage() {
                     title: `${topic?.name} - Practical Application`,
                     description: `Apply ${topic?.name} in real banking scenarios`,
                     subjectId: subjectId || '',
-                    topicId: topicId,
+                    topicId,
                     track: 'course_tech' as const,
                     duration: 20,
                     difficulty: 'advanced' as const

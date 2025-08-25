@@ -1,26 +1,37 @@
 /**
- * @fileoverview Scalable React Component Patterns
- * 
+ * @filimport {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+  // forwardRef, // Commented out unused import
+  ComponentProps,
+  ReactNodealable React Component Patterns
+ *
  * High-performance, reusable component patterns that follow enterprise
  * architecture principles. Includes composition patterns, render props,
  * and higher-order components for maximum flexibility.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import React, { 
-  createContext, 
-  useContext, 
-  useState, 
-  useCallback, 
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
   useMemo,
   ReactNode,
   ComponentType,
   HTMLAttributes,
-  forwardRef,
+  forwardRef as _forwardRef,
   RefObject
 } from 'react';
+
 import { LoadingState } from '../../lib/types-utils';
 import { cn } from '../../lib/utils';
 
@@ -59,10 +70,10 @@ function createDataProvider<T>() {
         const data = await fetchData();
         setState({ data, isLoading: false, error: null });
       } catch (error) {
-        setState((prev: LoadingState<T>) => ({ 
-          ...prev, 
-          isLoading: false, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        setState((prev: LoadingState<T>) => ({
+          ...prev,
+          isLoading: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
         }));
       }
     }, [fetchData]);
@@ -112,10 +123,10 @@ interface ModalContextValue {
 const ModalContext = createContext<ModalContextValue | undefined>(undefined);
 
 const Modal = {
-  Root: ({ 
-    children, 
-    isOpen, 
-    onClose 
+  Root: ({
+    children,
+    isOpen,
+    onClose
   }: {
     children: ReactNode;
     isOpen: boolean;
@@ -123,12 +134,12 @@ const Modal = {
   }) => {
     const value = useMemo(() => ({ isOpen, onClose }), [isOpen, onClose]);
 
-    if (!isOpen) return null;
+    if (!isOpen) { return null; }
 
     return (
       <ModalContext.Provider value={value}>
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm"
             onClick={onClose}
           />
@@ -140,15 +151,15 @@ const Modal = {
     );
   },
 
-  Content: ({ 
-    children, 
+  Content: ({
+    children,
     className,
-    ...props 
+    ...props
   }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div 
+      <div
         className={cn(
-          "glass-card rounded-2xl p-6 shadow-2xl",
+          'glass-card rounded-2xl p-6 shadow-2xl',
           className
         )}
         {...props}
@@ -158,14 +169,14 @@ const Modal = {
     );
   },
 
-  Header: ({ 
-    children, 
+  Header: ({
+    children,
     className,
-    ...props 
+    ...props
   }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div 
-        className={cn("mb-4 border-b border-white/10 pb-4", className)}
+      <div
+        className={cn('mb-4 border-b border-white/10 pb-4', className)}
         {...props}
       >
         {children}
@@ -173,14 +184,14 @@ const Modal = {
     );
   },
 
-  Title: ({ 
-    children, 
+  Title: ({
+    children,
     className,
-    ...props 
+    ...props
   }: HTMLAttributes<HTMLHeadingElement>) => {
     return (
-      <h2 
-        className={cn("text-xl font-semibold text-white", className)}
+      <h2
+        className={cn('text-xl font-semibold text-white', className)}
         {...props}
       >
         {children}
@@ -188,14 +199,14 @@ const Modal = {
     );
   },
 
-  Body: ({ 
-    children, 
+  Body: ({
+    children,
     className,
-    ...props 
+    ...props
   }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div 
-        className={cn("text-gray-100", className)}
+      <div
+        className={cn('text-gray-100', className)}
         {...props}
       >
         {children}
@@ -203,14 +214,14 @@ const Modal = {
     );
   },
 
-  Footer: ({ 
-    children, 
+  Footer: ({
+    children,
     className,
-    ...props 
+    ...props
   }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div 
-        className={cn("mt-6 flex justify-end gap-3 border-t border-white/10 pt-4", className)}
+      <div
+        className={cn('mt-6 flex justify-end gap-3 border-t border-white/10 pt-4', className)}
         {...props}
       >
         {children}
@@ -218,18 +229,18 @@ const Modal = {
     );
   },
 
-  CloseButton: ({ 
-    children = "Close",
+  CloseButton: ({
+    children = 'Close',
     className,
-    ...props 
+    ...props
   }: HTMLAttributes<HTMLButtonElement> & { children?: ReactNode }) => {
     const modal = useContext(ModalContext);
-    if (!modal) throw new Error('Modal.CloseButton must be used within Modal.Root');
+    if (!modal) { throw new Error('Modal.CloseButton must be used within Modal.Root'); }
 
     return (
       <button
         className={cn(
-          "rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20",
+          'rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20',
           className
         )}
         onClick={modal.onClose}
@@ -254,10 +265,10 @@ interface AsyncOperationProps<T> {
   immediate?: boolean;
 }
 
-function AsyncOperation<T>({ 
-  operation, 
-  children, 
-  immediate = false 
+function AsyncOperation<T>({
+  operation,
+  children,
+  immediate = false
 }: AsyncOperationProps<T>) {
   const [state, setState] = useState<LoadingState<T>>({
     data: null,
@@ -310,11 +321,13 @@ const IntersectionObserver: React.FC<IntersectionObserverProps> = ({
 
   React.useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) { return; }
 
     const observer = new window.IntersectionObserver(
       ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
+        if (entry) {
+          setIsIntersecting(entry.isIntersecting);
+        }
       },
       { threshold, rootMargin }
     );
@@ -342,10 +355,10 @@ function withLoading<P extends object>(
   WrappedComponent: ComponentType<P>
 ): ComponentType<P & WithLoadingProps> {
   const WithLoadingComponent = (props: P & WithLoadingProps) => {
-    const { 
-      isLoading = false, 
-      loadingComponent = <div>Loading...</div>, 
-      ...restProps 
+    const {
+      isLoading = false,
+      loadingComponent = <div>Loading...</div>,
+      ...restProps
     } = props;
 
     if (isLoading) {
@@ -356,7 +369,7 @@ function withLoading<P extends object>(
   };
 
   WithLoadingComponent.displayName = `withLoading(${WrappedComponent.displayName || WrappedComponent.name})`;
-  
+
   return WithLoadingComponent;
 }
 
@@ -374,7 +387,7 @@ function withErrorBoundary<P extends object>(
 ): ComponentType<P> {
   class WithErrorBoundaryComponent extends React.Component<P, WithErrorBoundaryState> {
     static displayName = `withErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`;
-    
+
     constructor(props: P) {
       super(props);
       this.state = { hasError: false, error: null };
@@ -397,7 +410,7 @@ function withErrorBoundary<P extends object>(
         if (ErrorComponent) {
           return <ErrorComponent error={this.state.error} reset={this.reset} />;
         }
-        
+
         return (
           <div className="glass-card rounded-lg p-6 text-center">
             <h2 className="mb-2 text-lg font-semibold text-red-400">
@@ -419,7 +432,7 @@ function withErrorBoundary<P extends object>(
       return <WrappedComponent {...this.props} />;
     }
   }
-  
+
   return WithErrorBoundaryComponent;
 }
 
@@ -436,7 +449,7 @@ function withAuth<P extends object>(
 ): ComponentType<P & WithAuthProps> {
   const WithAuthComponent = (props: P & WithAuthProps) => {
     const { fallback = <div>Access denied</div>, ...restProps } = props;
-    
+
     if (!checkAuth()) {
       return <>{fallback}</>;
     }
@@ -445,7 +458,7 @@ function withAuth<P extends object>(
   };
 
   WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name})`;
-  
+
   return WithAuthComponent;
 }
 
@@ -538,24 +551,24 @@ const ConditionalWrapper: React.FC<ConditionalWrapperProps> = ({
 export {
   // Factory functions
   createDataProvider,
-  
+
   // Compound components
   Modal,
-  
+
   // Render prop components
   AsyncOperation,
   IntersectionObserver,
-  
+
   // Higher-order components
   withLoading,
   withErrorBoundary,
   withAuth,
-  
+
   // Utility components
   LazyLoad,
   FadeIn,
   ConditionalWrapper,
-  
+
   // Types
   type DataProviderContextValue,
   type ModalContextValue,

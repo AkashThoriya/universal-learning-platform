@@ -1,10 +1,10 @@
 /**
  * @fileoverview Real-time Analytics Processing Service
- * 
+ *
  * Advanced analytics processing engine that provides real-time data
  * aggregation, pattern recognition, and intelligent insights generation
  * across exam and course learning tracks.
- * 
+ *
  * Features:
  * - Real-time data aggregation and processing
  * - Machine learning pattern recognition
@@ -12,25 +12,26 @@
  * - Cross-track learning analysis
  * - Performance prediction algorithms
  * - Weak area identification and tracking
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 import { Timestamp } from 'firebase/firestore';
-import { intelligentAnalyticsService, AnalyticsEvent, PerformanceAnalytics, WeakArea, AdaptiveRecommendation } from '@/lib/intelligent-analytics-service';
+
+import { intelligentAnalyticsService as _intelligentAnalyticsService, PerformanceAnalytics as _PerformanceAnalytics, WeakArea as _WeakArea, AdaptiveRecommendation as _AdaptiveRecommendation, AnalyticsEvent } from '@/lib/intelligent-analytics-service';
 import { logger } from '@/lib/logger';
 
 // ============================================================================
 // DATA PROCESSING INTERFACES
 // ============================================================================
 
-interface ProcessingResult<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  processingTime: number;
-}
+// interface ProcessingResult<T> {
+//   success: boolean;
+//   data?: T;
+//   error?: string;
+//   processingTime: number;
+// }
 
 interface LearningPattern {
   patternId: string;
@@ -86,10 +87,10 @@ export class RealTimeAnalyticsProcessor {
 
     // Initialize pattern recognition models
     this.initializePatternModels();
-    
+
     // Initialize prediction models
     this.initializePredictionModels();
-    
+
     logger.info('Real-time analytics processor initialized');
   }
 
@@ -160,7 +161,7 @@ export class RealTimeAnalyticsProcessor {
    */
   async queueEvent(event: AnalyticsEvent): Promise<void> {
     this.processingQueue.push(event);
-    
+
     // Process immediately if queue is getting large
     if (this.processingQueue.length > 50) {
       await this.processEventQueue();
@@ -209,7 +210,10 @@ export class RealTimeAnalyticsProcessor {
       if (!acc[event.userId]) {
         acc[event.userId] = [];
       }
-      acc[event.userId].push(event);
+      const userEvents = acc[event.userId];
+      if (userEvents) {
+        userEvents.push(event);
+      }
       return acc;
     }, {} as Record<string, AnalyticsEvent[]>);
   }
@@ -221,16 +225,16 @@ export class RealTimeAnalyticsProcessor {
     try {
       // Analyze patterns
       const patterns = await this.analyzePatterns(userId, events);
-      
+
       // Generate insights
       const insights = await this.generateInsights(userId, events, patterns);
-      
+
       // Update predictions
       await this.updatePredictions(userId, events);
-      
+
       // Detect anomalies
       const anomalies = await this.detectAnomalies(userId, events);
-      
+
       // Store processed results
       await this.storeProcessedResults(userId, {
         patterns,
@@ -252,7 +256,7 @@ export class RealTimeAnalyticsProcessor {
   /**
    * Analyze learning patterns from events
    */
-  private async analyzePatterns(userId: string, events: AnalyticsEvent[]): Promise<LearningPattern[]> {
+  private async analyzePatterns(_userId: string, events: AnalyticsEvent[]): Promise<LearningPattern[]> {
     const detectedPatterns: LearningPattern[] = [];
 
     try {
@@ -289,7 +293,7 @@ export class RealTimeAnalyticsProcessor {
     if (testCompletions.length >= 3) {
       const scores = testCompletions.map(e => e.data.score || 0);
       const trend = this.calculateTrend(scores);
-      
+
       if (trend > 0.1) {
         patterns.push({
           patternId: `${Date.now()}_exam_improvement`,
@@ -325,7 +329,7 @@ export class RealTimeAnalyticsProcessor {
     if (assignments.length >= 2) {
       const completionRates = assignments.map(e => e.data.completionRate || 0);
       const avgCompletionRate = completionRates.reduce((a, b) => a + b, 0) / completionRates.length;
-      
+
       if (avgCompletionRate > 0.85) {
         patterns.push({
           patternId: `${Date.now()}_course_excellence`,
@@ -350,9 +354,9 @@ export class RealTimeAnalyticsProcessor {
     // Analyze skill transfer events
     const transferEvents = events.filter(e => e.eventType === 'learning_transfer_identified');
     if (transferEvents.length > 0) {
-      const avgEffectiveness = transferEvents.reduce((sum, event) => 
+      const avgEffectiveness = transferEvents.reduce((sum, event) =>
         sum + (event.data.effectivenessRating || 0), 0) / transferEvents.length;
-      
+
       if (avgEffectiveness > 0.7) {
         patterns.push({
           patternId: `${Date.now()}_cross_transfer`,
@@ -376,8 +380,8 @@ export class RealTimeAnalyticsProcessor {
    * Generate actionable insights from events and patterns
    */
   private async generateInsights(
-    userId: string, 
-    events: AnalyticsEvent[], 
+    _userId: string,
+    events: AnalyticsEvent[],
     patterns: LearningPattern[]
   ): Promise<InsightData[]> {
     const insights: InsightData[] = [];
@@ -410,7 +414,7 @@ export class RealTimeAnalyticsProcessor {
     const insights: InsightData[] = [];
 
     // Analyze recent performance trends
-    const recentEvents = events.filter(e => 
+    const recentEvents = events.filter(e =>
       e.timestamp.toMillis() > Date.now() - (7 * 24 * 60 * 60 * 1000) // Last 7 days
     );
 
@@ -463,7 +467,7 @@ export class RealTimeAnalyticsProcessor {
       .map(e => ({ time: e.data.timeSpent!, score: e.data.score! }));
 
     if (timeSpentData.length >= 3) {
-      const avgEfficiency = timeSpentData.reduce((sum, data) => 
+      const avgEfficiency = timeSpentData.reduce((sum, data) =>
         sum + (data.score / data.time), 0) / timeSpentData.length;
 
       if (avgEfficiency < 0.1) { // Low efficiency threshold
@@ -505,10 +509,10 @@ export class RealTimeAnalyticsProcessor {
     try {
       // Update exam success prediction
       await this.updateExamSuccessPrediction(userId, events);
-      
+
       // Update skill mastery predictions
       await this.updateSkillMasteryPredictions(userId, events);
-      
+
       // Update completion time predictions
       await this.updateCompletionTimePredictions(userId, events);
     } catch (error) {
@@ -518,7 +522,7 @@ export class RealTimeAnalyticsProcessor {
 
   private async updateExamSuccessPrediction(userId: string, events: AnalyticsEvent[]): Promise<void> {
     const examModel = this.models.get('exam_success_predictor');
-    if (!examModel) return;
+    if (!examModel) { return; }
 
     const examEvents = events.filter(e => e.category === 'exam');
     const testScores = examEvents
@@ -528,27 +532,27 @@ export class RealTimeAnalyticsProcessor {
     if (testScores.length >= 2) {
       const avgScore = testScores.reduce((a, b) => a + b, 0) / testScores.length;
       const trend = this.calculateTrend(testScores);
-      
+
       // Simple prediction algorithm (in production, use ML models)
       const baseProbability = Math.min(95, avgScore);
       const trendAdjustment = trend * 10;
       const successProbability = Math.max(0, Math.min(100, baseProbability + trendAdjustment));
-      
+
       examModel.predictions[userId] = successProbability;
     }
   }
 
   private async updateSkillMasteryPredictions(userId: string, events: AnalyticsEvent[]): Promise<void> {
     const skillModel = this.models.get('skill_mastery_predictor');
-    if (!skillModel) return;
+    if (!skillModel) { return; }
 
     const courseEvents = events.filter(e => e.category === 'course_tech');
     const skillEvents = courseEvents.filter(e => e.eventType === 'skill_practice_session');
 
     const skillProgress = skillEvents.reduce((acc, event) => {
-      const skillId = event.data.skillId;
-      if (!skillId) return acc;
-      
+      const { skillId } = event.data;
+      if (!skillId) { return acc; }
+
       if (!acc[skillId]) {
         acc[skillId] = [];
       }
@@ -560,7 +564,7 @@ export class RealTimeAnalyticsProcessor {
       if (progressData.length >= 2) {
         const avgProgress = progressData.reduce((a, b) => a + b, 0) / progressData.length;
         const trend = this.calculateTrend(progressData);
-        
+
         // Predict mastery level
         const masteryPrediction = Math.min(100, avgProgress + (trend * 20));
         skillModel.predictions[`${userId}_${skillId}`] = masteryPrediction;
@@ -568,7 +572,7 @@ export class RealTimeAnalyticsProcessor {
     });
   }
 
-  private async updateCompletionTimePredictions(userId: string, events: AnalyticsEvent[]): Promise<void> {
+  private async updateCompletionTimePredictions(_userId: string, _events: AnalyticsEvent[]): Promise<void> {
     // Implementation for completion time predictions
     // This would analyze historical completion times and predict future ones
   }
@@ -580,7 +584,7 @@ export class RealTimeAnalyticsProcessor {
   /**
    * Detect anomalies in user behavior and performance
    */
-  private async detectAnomalies(userId: string, events: AnalyticsEvent[]): Promise<any[]> {
+  private async detectAnomalies(_userId: string, events: AnalyticsEvent[]): Promise<any[]> {
     const anomalies: any[] = [];
 
     try {
@@ -609,7 +613,7 @@ export class RealTimeAnalyticsProcessor {
       const recentScore = scores[scores.length - 1];
       const avgPreviousScores = scores.slice(0, -1).reduce((a, b) => a + b, 0) / (scores.length - 1);
 
-      if (recentScore < avgPreviousScores * 0.7) { // 30% drop
+      if (recentScore !== undefined && recentScore < avgPreviousScores * 0.7) { // 30% drop
         anomalies.push({
           type: 'performance_drop',
           severity: 'high',
@@ -626,12 +630,12 @@ export class RealTimeAnalyticsProcessor {
     const anomalies: any[] = [];
 
     // Detect sudden activity changes
-    const recentEvents = events.filter(e => 
+    const recentEvents = events.filter(e =>
       e.timestamp.toMillis() > Date.now() - (24 * 60 * 60 * 1000) // Last 24 hours
     );
 
-    const previousEvents = events.filter(e => 
-      e.timestamp.toMillis() > Date.now() - (48 * 60 * 60 * 1000) && 
+    const previousEvents = events.filter(e =>
+      e.timestamp.toMillis() > Date.now() - (48 * 60 * 60 * 1000) &&
       e.timestamp.toMillis() <= Date.now() - (24 * 60 * 60 * 1000)
     );
 
@@ -655,14 +659,14 @@ export class RealTimeAnalyticsProcessor {
    * Calculate trend from array of values
    */
   private calculateTrend(values: number[]): number {
-    if (values.length < 2) return 0;
-    
+    if (values.length < 2) { return 0; }
+
     const n = values.length;
     const sumX = (n * (n - 1)) / 2;
     const sumY = values.reduce((a, b) => a + b, 0);
     const sumXY = values.reduce((sum, value, index) => sum + (index * value), 0);
     const sumXX = (n * (n - 1) * (2 * n - 1)) / 6;
-    
+
     const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     return slope / (sumY / n); // Normalize by average
   }
@@ -686,10 +690,10 @@ export class RealTimeAnalyticsProcessor {
   /**
    * Get current insights for a user
    */
-  async getUserInsights(userId: string): Promise<InsightData[]> {
+  async getUserInsights(_userId: string): Promise<InsightData[]> {
     const userInsights = Array.from(this.insights.values())
       .filter(insight => insight.expiresAt.toMillis() > Date.now());
-    
+
     return userInsights.sort((a, b) => {
       const impactWeight = { high: 3, medium: 2, low: 1 };
       return impactWeight[b.impact] - impactWeight[a.impact];
@@ -699,7 +703,7 @@ export class RealTimeAnalyticsProcessor {
   /**
    * Get current patterns for a user
    */
-  async getUserPatterns(userId: string): Promise<LearningPattern[]> {
+  async getUserPatterns(_userId: string): Promise<LearningPattern[]> {
     return Array.from(this.patterns.values())
       .sort((a, b) => b.confidence - a.confidence);
   }
@@ -709,7 +713,7 @@ export class RealTimeAnalyticsProcessor {
    */
   async getUserPredictions(userId: string): Promise<Record<string, number>> {
     const predictions: Record<string, number> = {};
-    
+
     this.models.forEach(model => {
       const userPredictions = Object.entries(model.predictions)
         .filter(([key]) => key.startsWith(userId))
@@ -717,10 +721,10 @@ export class RealTimeAnalyticsProcessor {
           acc[key] = value;
           return acc;
         }, {} as Record<string, number>);
-      
+
       Object.assign(predictions, userPredictions);
     });
-    
+
     return predictions;
   }
 }

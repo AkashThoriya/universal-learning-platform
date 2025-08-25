@@ -1,12 +1,12 @@
-"use client"
+'use client';
 
 /**
  * @fileoverview Analytics Dashboard - Enterprise UI/UX Implementation
- * 
+ *
  * Comprehensive analytics dashboard providing real-time insights across
  * exam and course learning tracks with interactive visualizations,
  * performance metrics, and adaptive recommendations.
- * 
+ *
  * Features:
  * - Real-time performance tracking with live updates
  * - Interactive charts and data visualizations
@@ -14,71 +14,59 @@
  * - Weak area identification with improvement suggestions
  * - Predictive analytics and success forecasting
  * - Responsive design optimized for all devices
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
+import {
+  TrendingUp,
+  TrendingDown,
+  Target,
+  Brain,
+  Code,
+  Lightbulb,
+  AlertTriangle,
+  Clock,
+  BarChart3,
+  PieChart,
+  RefreshCw,
+  Download,
+  Share,
+  Zap,
+  Activity
+} from 'lucide-react';
 import React, { useState, useEffect, useMemo } from 'react';
+import {
+  LineChart,
+  Line,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { intelligentAnalyticsService, PerformanceAnalytics, WeakArea, AdaptiveRecommendation } from '@/lib/intelligent-analytics-service';
 import { logger } from '@/lib/logger';
 
 // UI Components
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Skeleton } from '@/components/ui/skeleton';
 
 // Icons
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Target, 
-  Brain, 
-  BookOpen, 
-  Code, 
-  Lightbulb,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Award,
-  BarChart3,
-  PieChart,
-  Activity,
-  Zap,
-  Users,
-  Calendar,
-  ArrowRight,
-  RefreshCw,
-  Filter,
-  Download,
-  Share
-} from 'lucide-react';
 
 // Chart Components (using recharts for enterprise-grade visualizations)
-import { 
-  LineChart, 
-  Line, 
-  AreaChart,
-  Area,
-  BarChart, 
-  Bar, 
-  PieChart as RechartsPieChart, 
-  Pie,
-  Cell, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer,
-  RadialBarChart,
-  RadialBar
-} from 'recharts';
 
 // ============================================================================
 // ANALYTICS DASHBOARD INTERFACE
@@ -121,7 +109,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   // ============================================================================
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     let unsubscribe: (() => void) | null = null;
 
@@ -182,7 +170,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   // ============================================================================
 
   const chartData = useMemo(() => {
-    if (!state.analytics) return null;
+    if (!state.analytics) { return null; }
 
     const { trends } = state.analytics;
     const timeRangeData = state.selectedTimeRange === '7d' ? trends.daily.slice(-7) :
@@ -206,10 +194,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   }, [state.analytics, state.selectedTimeRange]);
 
   const performanceMetrics = useMemo(() => {
-    if (!state.analytics) return null;
+    if (!state.analytics) { return null; }
 
     const { examPerformance, coursePerformance, predictions } = state.analytics;
-    
+
     return {
       examSuccess: {
         current: examPerformance.averageScore,
@@ -234,10 +222,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   // ============================================================================
 
   const handleRefreshData = async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     setState(prev => ({ ...prev, isLoading: true }));
-    
+
     try {
       const analytics = await intelligentAnalyticsService.getPerformanceAnalytics(user.uid);
       setState(prev => ({
@@ -246,7 +234,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         isLoading: false,
         lastUpdated: new Date()
       }));
-    } catch (error) {
+    } catch (_error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -273,7 +261,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           </div>
           <Skeleton className="h-10 w-32" />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
@@ -287,7 +275,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
             </Card>
           ))}
         </div>
-        
+
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-48" />
@@ -308,9 +296,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           <AlertTitle>Analytics Error</AlertTitle>
           <AlertDescription>
             {state.error}
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="mt-2"
               onClick={handleRefreshData}
             >
@@ -353,7 +341,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
             Comprehensive insights across your exam and course learning journey
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -364,12 +352,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
             <RefreshCw className={`h-4 w-4 mr-2 ${state.isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
-          
+
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
             Export
           </Button>
-          
+
           <Button variant="outline" size="sm">
             <Share className="h-4 w-4 mr-2" />
             Share
@@ -387,8 +375,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
             size="sm"
             onClick={() => handleTimeRangeChange(range)}
           >
-            {range === '7d' ? '7 Days' : 
-             range === '30d' ? '30 Days' : 
+            {range === '7d' ? '7 Days' :
+             range === '30d' ? '30 Days' :
              range === '90d' ? '90 Days' : '1 Year'}
           </Button>
         ))}
@@ -405,7 +393,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           icon={<Target className="h-4 w-4" />}
           color="blue"
         />
-        
+
         <PerformanceMetricCard
           title="Course Progress"
           value={performanceMetrics?.courseSuccess.current || 0}
@@ -415,7 +403,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           icon={<Code className="h-4 w-4" />}
           color="green"
         />
-        
+
         <PerformanceMetricCard
           title="Learning Efficiency"
           value={performanceMetrics?.efficiency.current || 0}
@@ -425,7 +413,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           icon={<Zap className="h-4 w-4" />}
           color="orange"
         />
-        
+
         <PerformanceMetricCard
           title="Cross-Track Benefits"
           value={state.analytics.crossTrackInsights.crossTrackBenefits.length}
@@ -514,11 +502,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         <TabsContent value="efficiency">
           <EfficiencyAnalytics analytics={state.analytics} />
         </TabsContent>
-        
+
         <TabsContent value="progress">
           <ProgressAnalytics analytics={state.analytics} />
         </TabsContent>
-        
+
         <TabsContent value="predictions">
           <PredictiveAnalytics analytics={state.analytics} />
         </TabsContent>
@@ -721,7 +709,7 @@ const WeakAreasSection: React.FC<WeakAreasSectionProps> = ({ weakAreas }) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {weakAreas.slice(0, 5).map((area, index) => (
+          {weakAreas.slice(0, 5).map((area, _index) => (
             <div key={area.topicId} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
               <div>
                 <div className="font-medium">{area.topicName}</div>
@@ -761,7 +749,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({ recomme
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {recommendations.slice(0, 3).map((recommendation, index) => (
+          {recommendations.slice(0, 3).map((recommendation, _index) => (
             <div key={recommendation.id} className="p-3 bg-yellow-50 rounded-lg">
               <div className="flex items-start justify-between">
                 <div className="flex-1">

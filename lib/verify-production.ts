@@ -1,9 +1,9 @@
 /**
  * @fileoverview Production Readiness Verification Script
- * 
+ *
  * This script verifies the current implementation against enterprise
  * standards and identifies actual production-blocking issues.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */

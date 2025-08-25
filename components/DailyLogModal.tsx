@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { format } from 'date-fns';
+import { Timestamp } from 'firebase/firestore';
+import { Zap, Moon, Star, Plus, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveDailyLog, getSyllabus } from '@/lib/firebase-utils';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Zap, Moon, Star, Plus, X } from 'lucide-react';
-import { format } from 'date-fns';
-import { DailyLog, SyllabusSubject, StudySession } from '@/types/exam';
-import { Timestamp } from 'firebase/firestore';
-import { useEffect } from 'react';
+import { DailyLog, StudySession } from '@/types/exam';
+
 
 interface DailyLogModalProps {
   isOpen: boolean;
@@ -23,18 +24,18 @@ interface DailyLogModalProps {
 
 export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   const { user } = useAuth();
-  
+
   // Health metrics
   const [energyLevel, setEnergyLevel] = useState([7]);
   const [sleepHours, setSleepHours] = useState(7);
   const [sleepQuality, setSleepQuality] = useState([7]);
   const [stressLevel, setStressLevel] = useState([5]);
   const [physicalActivity, setPhysicalActivity] = useState(30);
-  
+
   // Study sessions
   const [studySessions, setStudySessions] = useState<StudySession[]>([]);
   const [availableTopics, setAvailableTopics] = useState<{ id: string; name: string; subject: string }[]>([]);
-  
+
   // Goals and reflection
   const [targetMinutes, setTargetMinutes] = useState(480); // 8 hours default
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5>(3);
@@ -42,13 +43,13 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   const [note, setNote] = useState('');
   const [challenges, setChallenges] = useState<string[]>([]);
   const [wins, setWins] = useState<string[]>([]);
-  
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchTopics = async () => {
-      if (!user) return;
-      
+      if (!user) { return; }
+
       try {
         const syllabus = await getSyllabus(user.uid);
         const topics = syllabus.flatMap(subject =>
@@ -81,7 +82,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   };
 
   const updateStudySession = (index: number, updates: Partial<StudySession>) => {
-    setStudySessions(prev => prev.map((session, i) => 
+    setStudySessions(prev => prev.map((session, i) =>
       i === index ? { ...session, ...updates } : session
     ));
   };
@@ -91,14 +92,16 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   };
 
   const addChallenge = () => {
-    const challenge = prompt('What made studying difficult today?');
+    // TODO: Replace with proper modal dialog
+    const challenge = 'Study challenge'; // Temporarily disabled prompt
     if (challenge) {
       setChallenges(prev => [...prev, challenge]);
     }
   };
 
   const addWin = () => {
-    const win = prompt('What went well today?');
+    // TODO: Replace with proper modal dialog
+    const win = 'Study win'; // Temporarily disabled prompt
     if (win) {
       setWins(prev => [...prev, win]);
     }
@@ -110,7 +113,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) { return; }
 
     setLoading(true);
     try {
@@ -119,10 +122,10 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
         id: today,
         date: Timestamp.now(),
         health: {
-          energy: energyLevel[0],
+          energy: energyLevel[0] || 1,
           sleepHours,
-          sleepQuality: sleepQuality[0],
-          stressLevel: stressLevel[0],
+          sleepQuality: sleepQuality[0] || 1,
+          stressLevel: stressLevel[0] || 1,
           physicalActivity,
           screenTime: 0 // Could be added later
         },
@@ -141,7 +144,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
 
       await saveDailyLog(user.uid, logData);
       onClose();
-      
+
       // Reset form
       setStudySessions([]);
       setChallenges([]);
@@ -166,12 +169,12 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
             Log your daily study progress, health metrics, and reflections
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Health Metrics */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Health Metrics</h3>
-            
+
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium">Energy Level</label>
@@ -202,7 +205,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                   onChange={(e) => setSleepHours(Number(e.target.value))}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Physical Activity (min)</label>
                 <Input
@@ -233,7 +236,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                   className="w-full"
                 />
               </div>
-              
+
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Stress Level</label>
@@ -260,7 +263,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 Add Session
               </Button>
             </div>
-            
+
             {studySessions.map((session, index) => (
               <div key={index} className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
@@ -274,7 +277,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Topic</label>
@@ -305,7 +308,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Minutes</label>
                     <Input
@@ -317,7 +320,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                     />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Method</label>
@@ -337,7 +340,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Effectiveness (1-5)</label>
                     <Input
@@ -351,7 +354,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 </div>
               </div>
             ))}
-            
+
             {studySessions.length > 0 && (
               <div className="bg-blue-50 p-3 rounded-lg">
                 <p className="text-sm text-blue-800">
@@ -364,7 +367,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
           {/* Goals and Reflection */}
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">Goals & Reflection</h3>
-            
+
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Daily Goal (min)</label>
@@ -376,7 +379,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                   onChange={(e) => setTargetMinutes(Number(e.target.value))}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Mood (1-5)</label>
                 <Input
@@ -387,7 +390,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                   onChange={(e) => setMood(Number(e.target.value) as 1 | 2 | 3 | 4 | 5)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-medium">Productivity (1-5)</label>
                 <Input
@@ -399,7 +402,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 />
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -416,7 +419,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                   ))}
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium">Wins</label>

@@ -1,15 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { 
+import {
   Play,
   Pause,
   SkipForward,
@@ -23,16 +14,23 @@ import {
   Code,
   Lightbulb,
   Timer,
-  Brain,
-  Zap,
   Home
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { missionService } from '@/lib/mission-service';
 import {
   type Mission,
   type MissionProgress,
-  type MissionSubmission,
   type MissionResults,
   type ExamQuestion,
   type TechChallenge
@@ -46,10 +44,10 @@ interface MissionExecutionProps {
   className?: string;
 }
 
-export function MissionExecution({ 
-  mission, 
-  onComplete, 
-  onPause, 
+export function MissionExecution({
+  mission,
+  onComplete,
+  onPause,
   onExit,
   className = ''
 }: MissionExecutionProps) {
@@ -61,13 +59,14 @@ export function MissionExecution({
   const [submissions, setSubmissions] = useState<Record<number, any>>({});
   const [currentAnswer, setCurrentAnswer] = useState<string>('');
   const [showExplanation, setShowExplanation] = useState(false);
-  const [progress, setProgress] = useState<MissionProgress>(mission.progress);
+  // const [progress, setProgress] = useState<MissionProgress>(mission.progress);
+  const [_progress] = useState<MissionProgress>(mission.progress); // Prefixed with _ to indicate unused
   const [error, setError] = useState<string | null>(null);
 
   // Timer management
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    
+
     if (isActive && !isPaused) {
       interval = setInterval(() => {
         setTimeSpent(prev => prev + 1);
@@ -75,7 +74,7 @@ export function MissionExecution({
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) { clearInterval(interval); }
     };
   }, [isActive, isPaused]);
 
@@ -106,6 +105,9 @@ export function MissionExecution({
       const saveInterval = setInterval(saveProgress, 30000);
       return () => clearInterval(saveInterval);
     }
+    
+    // Ensure all code paths return a value
+    return undefined;
   }, [mission.id, currentStep, timeSpent, submissions, isActive, user?.uid]);
 
   const startMission = () => {
@@ -115,7 +117,7 @@ export function MissionExecution({
 
   const pauseMission = () => {
     setIsPaused(true);
-    if (onPause) onPause();
+    if (onPause) { onPause(); }
   };
 
   const resumeMission = () => {
@@ -182,7 +184,7 @@ export function MissionExecution({
   const completeMission = async () => {
     try {
       setIsActive(false);
-      
+
       // Prepare final submissions
       const finalSubmissions = Object.entries(submissions).map(([stepIndex, answer]) => ({
         id: `sub_${stepIndex}_${Date.now()}`,
@@ -197,9 +199,9 @@ export function MissionExecution({
       if (!user?.uid) {
         throw new Error('User not authenticated');
       }
-      
+
       const result = await missionService.completeMission(user.uid, mission.id, finalSubmissions);
-      
+
       if (result.success && result.data && onComplete) {
         onComplete(result.data);
       }
@@ -246,7 +248,7 @@ export function MissionExecution({
       } else if (event.key === 'Enter' && currentAnswer) {
         nextStep();
       } else if (event.key === 'Escape') {
-        if (onExit) onExit();
+        if (onExit) { onExit(); }
       }
     };
 
@@ -363,7 +365,7 @@ export function MissionExecution({
                   You have {mission.estimatedDuration} minutes to complete this {mission.track} mission.
                 </p>
               </div>
-              
+
               <div className="space-y-4 max-w-md mx-auto">
                 <Button
                   onClick={startMission}
@@ -373,10 +375,10 @@ export function MissionExecution({
                   <Play className="h-5 w-5 mr-2" />
                   Start Mission
                 </Button>
-                
+
                 <div className="text-sm text-gray-500">
-                  <p>Tips: Use <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Space</kbd> to play/pause, 
-                  <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">←→</kbd> to navigate, 
+                  <p>Tips: Use <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Space</kbd> to play/pause,
+                  <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">←→</kbd> to navigate,
                   <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd> to exit</p>
                 </div>
               </div>
@@ -389,7 +391,7 @@ export function MissionExecution({
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Mission Paused</h3>
                 <p className="text-gray-600">Take your time. Resume when you're ready.</p>
               </div>
-              
+
               <div className="space-y-4 max-w-md mx-auto">
                 <Button
                   onClick={resumeMission}
@@ -399,7 +401,7 @@ export function MissionExecution({
                   <Play className="h-5 w-5 mr-2" />
                   Resume Mission
                 </Button>
-                
+
                 <Button
                   onClick={onExit}
                   variant="outline"
@@ -416,7 +418,7 @@ export function MissionExecution({
               {/* Exam Content */}
               {mission.track === 'exam' && (() => {
                 const question = getCurrentQuestion();
-                if (!question) return <div>No question available</div>;
+                if (!question) { return <div>No question available</div>; }
 
                 return (
                   <div className="space-y-6">
@@ -429,13 +431,13 @@ export function MissionExecution({
                         <Badge variant="outline">{question.topic}</Badge>
                       </div>
                     </div>
-                    
+
                     <div className="bg-gray-50 p-6 rounded-lg">
                       <p className="text-gray-900 text-lg leading-relaxed">
                         {question.question}
                       </p>
                     </div>
-                    
+
                     {question.type === 'multiple_choice' && question.options && (
                       <div className="space-y-3">
                         <RadioGroup value={currentAnswer} onValueChange={handleAnswer}>
@@ -450,7 +452,7 @@ export function MissionExecution({
                         </RadioGroup>
                       </div>
                     )}
-                    
+
                     {(question.type === 'short_answer' || question.type === 'essay') && (
                       <div className="space-y-2">
                         <Label htmlFor="answer">Your Answer</Label>
@@ -463,7 +465,7 @@ export function MissionExecution({
                         />
                       </div>
                     )}
-                    
+
                     {showExplanation && question.explanation && (
                       <Alert>
                         <Lightbulb className="h-4 w-4" />
@@ -479,7 +481,7 @@ export function MissionExecution({
               {/* Tech Content */}
               {mission.track === 'course_tech' && (() => {
                 const challenge = getCurrentChallenge();
-                if (!challenge) return <div>No challenge available</div>;
+                if (!challenge) { return <div>No challenge available</div>; }
 
                 return (
                   <div className="space-y-6">
@@ -487,14 +489,14 @@ export function MissionExecution({
                       <h3 className="text-lg font-semibold">{challenge.title}</h3>
                       <Badge variant="secondary">{challenge.type}</Badge>
                     </div>
-                    
+
                     <div className="bg-gray-50 p-6 rounded-lg">
                       <h4 className="font-medium mb-3">Problem Statement</h4>
                       <p className="text-gray-900 leading-relaxed">
                         {challenge.problemStatement}
                       </p>
                     </div>
-                    
+
                     {challenge.examples.length > 0 && (
                       <div className="space-y-4">
                         <h4 className="font-medium">Examples</h4>
@@ -524,7 +526,7 @@ export function MissionExecution({
                         ))}
                       </div>
                     )}
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="code">Your Solution</Label>
                       <Textarea
@@ -536,7 +538,7 @@ export function MissionExecution({
                         className="font-mono text-sm"
                       />
                     </div>
-                    
+
                     {challenge.hints.length > 0 && (
                       <div className="space-y-2">
                         <h4 className="font-medium">Hints</h4>
@@ -571,7 +573,7 @@ export function MissionExecution({
                   <ArrowLeft className="h-4 w-4" />
                   Previous
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   onClick={pauseMission}
@@ -580,7 +582,7 @@ export function MissionExecution({
                   <Pause className="h-4 w-4" />
                   Pause
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   onClick={skipStep}
@@ -590,7 +592,7 @@ export function MissionExecution({
                   Skip
                 </Button>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 {!showExplanation && mission.track === 'exam' && (
                   <Button
@@ -602,7 +604,7 @@ export function MissionExecution({
                     Show Hint
                   </Button>
                 )}
-                
+
                 <Button
                   onClick={nextStep}
                   disabled={!currentAnswer && currentAnswer !== ''}

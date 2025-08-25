@@ -1,21 +1,21 @@
 /**
  * @fileoverview Migration Utilities and Examples
- * 
+ *
  * Utilities and examples for working with the standardized type system
  * and enhanced service layer. Follow these patterns for future development.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 2.0.0 (August 2025)
  */
 
-import { User, TopicProgress, MockTestLog, DailyLog } from '@/types/exam';
-import { 
-  userService, 
-  progressService, 
-  mockTestService, 
-  dailyLogService 
+import {
+  userService,
+  progressService,
+  mockTestService,
+  dailyLogService as _dailyLogService
 } from '@/lib/firebase-enhanced';
 import { Result } from '@/lib/types-utils';
+import { User, TopicProgress as _TopicProgress, MockTestLog, DailyLog as _DailyLog } from '@/types/exam';
 
 // ============================================================================
 // TYPE MIGRATION UTILITIES
@@ -137,7 +137,7 @@ export async function progressTrackingExample(userId: string, topicId: string) {
   try {
     // 1. Get current progress
     const progressResult = await progressService.getTopic(userId, topicId);
-    
+
     if (!progressResult.success) {
       console.error('Failed to fetch progress:', progressResult.error);
       return;
@@ -207,7 +207,7 @@ export async function mockTestAnalysisExample(userId: string) {
     };
 
     const createResult = await mockTestService.create(userId, mockTestData);
-    
+
     if (!createResult.success) {
       console.error('Failed to create mock test:', createResult.error);
       return;
@@ -217,7 +217,7 @@ export async function mockTestAnalysisExample(userId: string) {
 
     // 2. Fetch recent mock tests for analysis
     const testsResult = await mockTestService.getTests(userId, 5);
-    
+
     if (!testsResult.success) {
       console.error('Failed to fetch recent tests:', testsResult.error);
       return;
@@ -256,8 +256,8 @@ export async function errorHandlingExample(userId: string) {
   // Pattern 2: Chained operations with error propagation
   const chainedResult = await userService.get(userId)
     .then(async (userResult) => {
-      if (!userResult.success) return userResult;
-      
+      if (!userResult.success) { return userResult; }
+
       // Use the user data for next operation
       return progressService.getAllProgress(userId);
     });

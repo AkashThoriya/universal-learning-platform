@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import React from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -29,7 +30,7 @@ interface ErrorFallbackProps {
  */
 function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallbackProps) {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl border-red-200">
@@ -46,7 +47,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
             <p className="text-gray-600 mb-4">
               We encountered an unexpected error. Our team has been notified and is working on a fix.
             </p>
-            
+
             {isDevelopment && (
               <Alert variant="destructive" className="text-left">
                 <AlertTriangle className="h-4 w-4" />
@@ -54,13 +55,13 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
                   <strong>Development Error:</strong>
                   <pre className="mt-2 text-xs overflow-auto max-h-32">
                     {error.message}
-                    {error.stack && '\n\nStack trace:\n' + error.stack}
+                    {error.stack && `\n\nStack trace:\n${ error.stack}`}
                   </pre>
                 </AlertDescription>
               </Alert>
             )}
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
               onClick={resetError}
@@ -70,7 +71,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
               <RefreshCw className="w-4 h-4" />
               Try Again
             </Button>
-            
+
             <Button
               onClick={onNavigateHome || (() => window.location.href = '/')}
               variant="outline"
@@ -80,7 +81,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
               Go Home
             </Button>
           </div>
-          
+
           <div className="text-center text-sm text-gray-500">
             <p>If this problem persists, please contact support.</p>
           </div>
@@ -141,7 +142,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   render() {
     if (this.state.hasError && this.state.error) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback;
-      
+
       return (
         <FallbackComponent
           error={this.state.error}
@@ -158,12 +159,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
  * Hook for functional components to handle errors
  */
 export function useErrorHandler() {
-  return React.useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
+  return React.useCallback((error: Error, _errorInfo?: React.ErrorInfo) => {
     console.error('Error caught by useErrorHandler:', error);
-    
+
     // In production, send to error reporting service
     // Example: Sentry.captureException(error, { extra: errorInfo });
-    
+
     // You could also set global error state here
     // Example: dispatch({ type: 'SET_GLOBAL_ERROR', error });
   }, []);
@@ -172,11 +173,11 @@ export function useErrorHandler() {
 /**
  * Simple error fallback for specific components
  */
-export function SimpleErrorFallback({ 
-  error, 
-  resetError, 
-  title = "Something went wrong",
-  description = "Please try again or contact support if the problem persists."
+export function SimpleErrorFallback({
+  error,
+  resetError,
+  title = 'Something went wrong',
+  description = 'Please try again or contact support if the problem persists.'
 }: {
   error: Error;
   resetError: () => void;
@@ -192,17 +193,17 @@ export function SimpleErrorFallback({
             <h4 className="font-medium">{title}</h4>
             <p className="text-sm mt-1">{description}</p>
           </div>
-          
+
           {process.env.NODE_ENV === 'development' && (
             <details className="text-xs">
               <summary className="cursor-pointer font-medium">Error Details (Development)</summary>
               <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-32">
                 {error.message}
-                {error.stack && '\n\n' + error.stack}
+                {error.stack && `\n\n${ error.stack}`}
               </pre>
             </details>
           )}
-          
+
           <Button
             onClick={resetError}
             size="sm"
@@ -221,11 +222,11 @@ export function SimpleErrorFallback({
 /**
  * Wrapper component for individual features
  */
-export function FeatureErrorBoundary({ 
-  children, 
+export function FeatureErrorBoundary({
+  children,
   featureName,
   fallbackMessage
-}: { 
+}: {
   children: React.ReactNode;
   featureName: string;
   fallbackMessage?: string;

@@ -1,10 +1,10 @@
 /**
  * @fileoverview Multi-step form hook for complex flows with state management
- * 
+ *
  * Enterprise-grade hook for managing multi-step forms with navigation,
  * validation, persistence, and analytics. Follows React patterns used
  * in top product companies.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -13,7 +13,7 @@ import { useState, useCallback, useMemo } from 'react';
 
 /**
  * Configuration for multi-step form behavior
- * 
+ *
  * @interface MultiStepFormConfig
  */
 interface MultiStepFormConfig {
@@ -33,7 +33,7 @@ interface MultiStepFormConfig {
 
 /**
  * Return type for the multi-step form hook
- * 
+ *
  * @interface UseMultiStepFormReturn
  */
 interface UseMultiStepFormReturn {
@@ -61,14 +61,14 @@ interface UseMultiStepFormReturn {
 
 /**
  * Multi-step form management hook with enterprise features
- * 
+ *
  * Provides state management, navigation, persistence, and analytics
  * for complex multi-step forms. Used throughout the application
  * for onboarding, data entry, and complex workflows.
- * 
+ *
  * @param {MultiStepFormConfig} config - Configuration object
  * @returns {UseMultiStepFormReturn} Hook interface
- * 
+ *
  * @example
  * ```typescript
  * function OnboardingForm() {
@@ -77,19 +77,19 @@ interface UseMultiStepFormReturn {
  *     persistState: true,
  *     storageKey: 'onboarding-progress',
  *     onStepChange: (current, previous) => {
- *       analytics.track('onboarding_step_change', { 
- *         current_step: current, 
- *         previous_step: previous 
+ *       analytics.track('onboarding_step_change', {
+ *         current_step: current,
+ *         previous_step: previous
  *       });
  *     }
  *   });
- * 
+ *
  *   return (
  *     <div>
  *       <ProgressIndicator progress={form.progress} />
  *       {form.currentStep === 1 && <PersonalInfoStep />}
  *       {form.currentStep === 2 && <ExamSelectionStep />}
- *       <Navigation 
+ *       <Navigation
  *         onNext={form.goToNext}
  *         onPrevious={form.goToPrevious}
  *         canGoBack={!form.isFirstStep}
@@ -131,10 +131,10 @@ export const useMultiStepForm = (config: MultiStepFormConfig): UseMultiStepFormR
     if (persistState && typeof window !== 'undefined') {
       localStorage.setItem(storageKey, newStep.toString());
     }
-    
+
     // Call analytics callback
     onStepChange?.(newStep, previousStep);
-    
+
     setCurrentStep(newStep);
   }, [persistState, storageKey, onStepChange]);
 
@@ -182,7 +182,7 @@ export const useMultiStepForm = (config: MultiStepFormConfig): UseMultiStepFormR
 
   const reset = useCallback(() => {
     updateStep(1, currentStep);
-    
+
     // Clear localStorage if persistence is enabled
     if (persistState && typeof window !== 'undefined') {
       localStorage.removeItem(storageKey);
@@ -190,8 +190,8 @@ export const useMultiStepForm = (config: MultiStepFormConfig): UseMultiStepFormR
   }, [currentStep, persistState, storageKey, updateStep]);
 
   const getStepStatus = useCallback((step: number): 'completed' | 'current' | 'upcoming' => {
-    if (step < currentStep) return 'completed';
-    if (step === currentStep) return 'current';
+    if (step < currentStep) { return 'completed'; }
+    if (step === currentStep) { return 'current'; }
     return 'upcoming';
   }, [currentStep]);
 
@@ -211,7 +211,7 @@ export const useMultiStepForm = (config: MultiStepFormConfig): UseMultiStepFormR
 
 /**
  * Hook for managing form validation across multiple steps
- * 
+ *
  * @interface UseFormValidationConfig
  */
 interface UseFormValidationConfig<T = any> {
@@ -223,10 +223,10 @@ interface UseFormValidationConfig<T = any> {
 
 /**
  * Form validation hook for multi-step forms
- * 
+ *
  * @param {UseFormValidationConfig} config - Validation configuration
  * @returns {Object} Validation interface
- * 
+ *
  * @example
  * ```typescript
  * const validation = useFormValidation({
@@ -237,7 +237,7 @@ interface UseFormValidationConfig<T = any> {
  *   },
  *   formData: onboardingData
  * });
- * 
+ *
  * const canProceed = validation.isStepValid(currentStep);
  * ```
  */
@@ -262,12 +262,12 @@ export const useFormValidation = <T = any>(config: UseFormValidationConfig<T>) =
 
   const validateAllSteps = useCallback(async (): Promise<Record<number, boolean>> => {
     const results: Record<number, boolean> = {};
-    
+
     for (const step of Object.keys(validationSchemas)) {
       const stepNumber = parseInt(step, 10);
       results[stepNumber] = await isStepValid(stepNumber);
     }
-    
+
     return results;
   }, [validationSchemas, isStepValid]);
 

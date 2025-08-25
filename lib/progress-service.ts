@@ -1,15 +1,13 @@
 /**
  * @fileoverview User Progress Service Layer
- * 
+ *
  * Production-ready progress tracking system with Firebase integration.
  * Handles unified progress tracking across exam and tech learning tracks.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { firebaseService } from './firebase-enhanced';
-import { Result, createSuccess, createError } from './types-utils';
 import {
   type UnifiedProgress,
   type TrackProgress,
@@ -17,6 +15,9 @@ import {
   type Mission,
   type MissionResults
 } from '@/types/mission-system';
+
+import { firebaseService } from './firebase-enhanced';
+import { Result, createSuccess, createError } from './types-utils';
 
 /**
  * Progress service for tracking and aggregating user learning progress
@@ -38,7 +39,7 @@ export class ProgressService {
     try {
       // Get existing progress or create default
       const progressResult = await firebaseService.getDocument<UnifiedProgress>('userProgress', userId);
-      
+
       if (progressResult.success && progressResult.data) {
         return createSuccess(progressResult.data);
       }
@@ -46,7 +47,7 @@ export class ProgressService {
       // Create default progress if not exists
       const defaultProgress = this.createDefaultProgress(userId);
       const saveResult = await firebaseService.setDocument('userProgress', userId, defaultProgress);
-      
+
       if (!saveResult.success) {
         return saveResult;
       }
@@ -67,29 +68,29 @@ export class ProgressService {
   ): Promise<Result<UnifiedProgress>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) return progressResult;
+      if (!progressResult.success) { return progressResult; }
 
       const progress = progressResult.data;
 
       // Update overall progress
       progress.overallProgress.totalMissionsCompleted += 1;
       progress.overallProgress.totalTimeInvested += results.totalTime;
-      
+
       // Recalculate average score
       const totalScoreWeight = progress.overallProgress.totalMissionsCompleted;
-      progress.overallProgress.averageScore = 
+      progress.overallProgress.averageScore =
         ((progress.overallProgress.averageScore * (totalScoreWeight - 1)) + results.percentage) / totalScoreWeight;
 
       // Update track-specific progress
-      const trackProgress = mission.track === 'exam' 
-        ? progress.trackProgress.exam 
+      const trackProgress = mission.track === 'exam'
+        ? progress.trackProgress.exam
         : progress.trackProgress.course_tech;
 
       trackProgress.missionsCompleted += 1;
       trackProgress.timeInvested += results.totalTime;
-      
+
       // Recalculate track average score
-      trackProgress.averageScore = 
+      trackProgress.averageScore =
         ((trackProgress.averageScore * (trackProgress.missionsCompleted - 1)) + results.percentage) / trackProgress.missionsCompleted;
 
       // Update proficiency based on recent performance
@@ -104,8 +105,8 @@ export class ProgressService {
       // Save updated progress
       progress.updatedAt = new Date();
       const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
-      
-      if (!saveResult.success) return saveResult;
+
+      if (!saveResult.success) { return saveResult; }
 
       return createSuccess(progress);
     } catch (error) {
@@ -119,12 +120,17 @@ export class ProgressService {
   async getWeeklySummary(userId: string): Promise<Result<PeriodSummary | null>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) return progressResult;
+      if (!progressResult.success) { return progressResult; }
 
       const progress = progressResult.data;
       const weeklyData = progress.periodSummaries.weekly;
-      
-      return createSuccess(weeklyData.length > 0 ? weeklyData[0] : null);
+
+      if (!weeklyData || weeklyData.length === 0) {
+        return createSuccess(null);
+      }
+
+      const firstWeekly = weeklyData[0];
+      return createSuccess(firstWeekly || null);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get weekly summary'));
     }
@@ -136,12 +142,17 @@ export class ProgressService {
   async getMonthlySummary(userId: string): Promise<Result<PeriodSummary | null>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) return progressResult;
+      if (!progressResult.success) { return progressResult; }
 
       const progress = progressResult.data;
       const monthlyData = progress.periodSummaries.monthly;
-      
-      return createSuccess(monthlyData.length > 0 ? monthlyData[0] : null);
+
+      if (!monthlyData || monthlyData.length === 0) {
+        return createSuccess(null);
+      }
+
+      const firstMonthly = monthlyData[0];
+      return createSuccess(firstMonthly || null);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get monthly summary'));
     }
@@ -158,17 +169,17 @@ export class ProgressService {
   ): Promise<Result<void>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) return progressResult;
+      if (!progressResult.success) { return progressResult; }
 
       const progress = progressResult.data;
-      const trackProgress = track === 'exam' 
-        ? progress.trackProgress.exam 
+      const trackProgress = track === 'exam'
+        ? progress.trackProgress.exam
         : progress.trackProgress.course_tech;
 
       // Add to mastered skills if proficiency is high enough
       if (proficiency >= 80 && !trackProgress.masteredSkills.includes(skill)) {
         trackProgress.masteredSkills.push(skill);
-        
+
         // Remove from skills in progress
         trackProgress.skillsInProgress = trackProgress.skillsInProgress.filter(s => s !== skill);
       } else if (proficiency >= 40 && !trackProgress.skillsInProgress.includes(skill)) {
@@ -178,7 +189,7 @@ export class ProgressService {
       // Save updated progress
       progress.updatedAt = new Date();
       const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
-      
+
       return saveResult;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to update skill mastery'));
@@ -192,7 +203,7 @@ export class ProgressService {
     const now = new Date();
     const weekStart = new Date(now);
     weekStart.setDate(now.getDate() - now.getDay());
-    
+
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     return {
@@ -290,7 +301,7 @@ export class ProgressService {
     // Update difficulty progression
     const currentLevel = trackProgress.proficiencyLevel;
     trackProgress.difficultyProgression.current = currentLevel as any;
-    
+
     if (averageScore >= 85 && missionsCompleted >= 5) {
       const levels = ['beginner', 'intermediate', 'advanced', 'expert'];
       const currentIndex = levels.indexOf(currentLevel);
@@ -306,11 +317,11 @@ export class ProgressService {
    */
   private updateConsistencyRating(progress: UnifiedProgress): void {
     const { totalMissionsCompleted, currentStreak } = progress.overallProgress;
-    
+
     // Calculate consistency based on streak and total missions
     const streakScore = Math.min(currentStreak / 30, 1); // Max streak contribution
     const volumeScore = Math.min(totalMissionsCompleted / 100, 1); // Max volume contribution
-    
+
     progress.overallProgress.consistencyRating = (streakScore * 0.6) + (volumeScore * 0.4);
   }
 
@@ -321,7 +332,7 @@ export class ProgressService {
     // This would typically check if user completed a mission today
     // For now, we'll increment streak on mission completion
     progress.overallProgress.currentStreak += 1;
-    
+
     if (progress.overallProgress.currentStreak > progress.overallProgress.longestStreak) {
       progress.overallProgress.longestStreak = progress.overallProgress.currentStreak;
     }

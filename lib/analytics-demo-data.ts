@@ -1,35 +1,37 @@
 /**
  * @fileoverview Analytics Demo Data Service
- * 
+ *
  * Service to generate realistic demo data for analytics dashboard
  * demonstration purposes. Creates meaningful sample data that
  * showcases the full capabilities of the intelligent analytics system.
- * 
+ *
  * Features:
  * - Realistic exam performance data with trends
  * - Course learning progress simulation
  * - Cross-track skill transfer examples
  * - Weak area identification patterns
  * - Predictive analytics sample data
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 import { Timestamp } from 'firebase/firestore';
-import { 
-  PerformanceAnalytics, 
-  WeakArea, 
-  AdaptiveRecommendation, 
-  LearningTransfer, 
-  SkillSynergy, 
-  CrossTrackBenefit,
-  PerformanceTrend,
-  SkillMasteryPrediction,
-  StudyPlanRecommendation,
-  RiskFactor,
-  RecommendedAction,
-  ActionResource
+
+/* eslint-disable import/no-cycle */
+import {
+  PerformanceAnalytics,
+  WeakArea,
+  AdaptiveRecommendation,
+  LearningTransfer as _LearningTransfer,
+  SkillSynergy as _SkillSynergy,
+  CrossTrackBenefit as _CrossTrackBenefit,
+  PerformanceTrend as _PerformanceTrend,
+  SkillMasteryPrediction as _SkillMasteryPrediction,
+  StudyPlanRecommendation as _StudyPlanRecommendation,
+  RiskFactor as _RiskFactor,
+  RecommendedAction as _RecommendedAction,
+  ActionResource as _ActionResource
 } from '@/lib/intelligent-analytics-service';
 
 // ============================================================================
@@ -38,9 +40,9 @@ import {
 
 export class AnalyticsDemoDataService {
   private static instance: AnalyticsDemoDataService;
-  
+
   private constructor() {}
-  
+
   public static getInstance(): AnalyticsDemoDataService {
     if (!AnalyticsDemoDataService.instance) {
       AnalyticsDemoDataService.instance = new AnalyticsDemoDataService();
@@ -429,7 +431,7 @@ export class AnalyticsDemoDataService {
   private generatePerformanceTrends(): PerformanceAnalytics['trends'] {
     const now = Date.now();
     const dayInMs = 24 * 60 * 60 * 1000;
-    
+
     return {
       daily: Array.from({ length: 30 }, (_, i) => ({
         date: Timestamp.fromMillis(now - (29 - i) * dayInMs),

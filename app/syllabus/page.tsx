@@ -1,19 +1,21 @@
 'use client';
 
+import { BookOpen, Target, Filter, Search, ChevronRight, Clock, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { getSyllabus, getAllProgress } from '@/lib/firebase-utils';
+
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, Target, Filter, Search, ChevronRight, Clock, TrendingUp } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/contexts/AuthContext';
+import { getSyllabus, getAllProgress } from '@/lib/firebase-utils';
 import { SyllabusSubject, TopicProgress } from '@/types/exam';
-import Link from 'next/link';
+
 
 export default function SyllabusPage() {
   const { user } = useAuth();
@@ -27,14 +29,14 @@ export default function SyllabusPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!user) { return; }
 
       try {
         const [syllabusData, progressData] = await Promise.all([
           getSyllabus(user.uid),
           getAllProgress(user.uid)
         ]);
-        
+
         setSyllabus(syllabusData);
         setProgress(progressData);
       } catch (error) {
@@ -64,16 +66,16 @@ export default function SyllabusPage() {
   const getSubjectMastery = (subject: SyllabusSubject) => {
     const topicProgresses = subject.topics.map(topic => getTopicProgress(topic.id));
     const validProgresses = topicProgresses.filter(p => p !== undefined);
-    
-    if (validProgresses.length === 0) return 0;
-    
+
+    if (validProgresses.length === 0) { return 0; }
+
     const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore || 0), 0);
     return Math.round(totalMastery / validProgresses.length);
   };
 
   const filteredSyllabus = syllabus.filter(subject => {
     // Search filter
-    const matchesSearch = searchQuery === '' || 
+    const matchesSearch = searchQuery === '' ||
       subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       subject.topics.some(topic => topic.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -119,8 +121,8 @@ export default function SyllabusPage() {
   };
 
   const getMasteryColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 50) return 'text-yellow-600';
+    if (score >= 80) { return 'text-green-600'; }
+    if (score >= 50) { return 'text-yellow-600'; }
     return 'text-red-600';
   };
 
@@ -132,9 +134,9 @@ export default function SyllabusPage() {
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-6">
               <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
                 <div className="relative glass rounded-2xl p-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
                   <p className="text-muted-foreground">Loading syllabus...</p>
                 </div>
               </div>
@@ -149,7 +151,7 @@ export default function SyllabusPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
-        
+
         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
@@ -188,7 +190,7 @@ export default function SyllabusPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Filter by Tier</label>
                   <Select value={tierFilter} onValueChange={setTierFilter}>
@@ -203,7 +205,7 @@ export default function SyllabusPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Filter by Mastery</label>
                   <Select value={masteryFilter} onValueChange={setMasteryFilter}>
@@ -218,11 +220,11 @@ export default function SyllabusPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Quick Actions</label>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full"
                     onClick={() => {
                       setSearchQuery('');
@@ -250,7 +252,7 @@ export default function SyllabusPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
@@ -264,7 +266,7 @@ export default function SyllabusPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
@@ -272,7 +274,7 @@ export default function SyllabusPage() {
                   <div>
                     <p className="text-2xl font-bold">
                       {Math.round(
-                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / 
+                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) /
                         (syllabus.length || 1)
                       )}%
                     </p>
@@ -281,7 +283,7 @@ export default function SyllabusPage() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
@@ -307,19 +309,19 @@ export default function SyllabusPage() {
             {filteredSyllabus.map(subject => {
               const subjectMastery = getSubjectMastery(subject);
               const isExpanded = expandedSubjects.has(subject.id);
-              
+
               return (
                 <Card key={subject.id} className="overflow-hidden">
-                  <CardHeader 
+                  <CardHeader
                     className="cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => toggleSubjectExpansion(subject.id)}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <ChevronRight 
+                        <ChevronRight
                           className={`h-5 w-5 transition-transform ${
                             isExpanded ? 'rotate-90' : ''
-                          }`} 
+                          }`}
                         />
                         <div>
                           <CardTitle className="text-xl">{subject.name}</CardTitle>
@@ -328,7 +330,7 @@ export default function SyllabusPage() {
                           </CardDescription>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
                           <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>
@@ -341,7 +343,7 @@ export default function SyllabusPage() {
                         </Badge>
                       </div>
                     </div>
-                    
+
                     <div className="mt-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm text-muted-foreground">Subject Progress</span>
@@ -350,17 +352,17 @@ export default function SyllabusPage() {
                       <Progress value={subjectMastery} className="h-2" />
                     </div>
                   </CardHeader>
-                  
+
                   {isExpanded && (
                     <CardContent className="pt-0">
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         {subject.topics.map(topic => {
                           const topicProgress = getTopicProgress(topic.id);
                           const masteryScore = topicProgress?.masteryScore || 0;
-                          
+
                           return (
-                            <Link 
-                              key={topic.id} 
+                            <Link
+                              key={topic.id}
                               href={`/syllabus/${topic.id}?subject=${subject.id}`}
                             >
                               <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
@@ -371,16 +373,16 @@ export default function SyllabusPage() {
                                         {topic.name}
                                       </h4>
                                     </div>
-                                    
+
                                     <div className="flex items-center justify-between">
                                       <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
                                         {masteryScore}% mastery
                                       </span>
                                       <ChevronRight className="h-4 w-4 text-gray-400" />
                                     </div>
-                                    
+
                                     <Progress value={masteryScore} className="h-1" />
-                                    
+
                                     {topicProgress?.lastRevised && (
                                       <p className="text-xs text-muted-foreground">
                                         Last studied: {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}

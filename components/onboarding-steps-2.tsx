@@ -1,30 +1,17 @@
 /**
  * @fileoverview Onboarding Step Components - Part 2
- * 
+ *
  * Syllabus Management and Preferences step components for the enhanced onboarding flow.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import React, { useState } from 'react';
-import { UseFormReturn } from '@/hooks/useForm';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { 
-  BookOpen, 
-  Plus, 
-  Trash2, 
+import {
+  BookOpen,
+  Plus,
+  Trash2,
   Settings,
-  Clock,
   Bell,
   Target,
   AlertCircle,
@@ -34,11 +21,24 @@ import {
   Save,
   X
 } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { UseFormReturn } from '@/hooks/useForm';
 import { SyllabusSubject } from '@/types/exam';
 
 /**
  * Props for onboarding form data
  */
+/*
 interface OnboardingFormData {
   displayName: string;
   selectedExamId: string;
@@ -66,6 +66,7 @@ interface OnboardingFormData {
     };
   };
 }
+*/
 
 /**
  * Syllabus Management Step
@@ -141,21 +142,21 @@ export function SyllabusManagementStep({
         <h4 className="font-semibold mb-3">Priority Tiers</h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
+            <div className="w-4 h-4 bg-red-500 rounded" />
             <div>
               <div className="font-medium text-sm">Tier 1 - High Priority</div>
               <div className="text-xs text-gray-600">Core topics, high weightage</div>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+            <div className="w-4 h-4 bg-yellow-500 rounded" />
             <div>
               <div className="font-medium text-sm">Tier 2 - Medium Priority</div>
               <div className="text-xs text-gray-600">Important but manageable</div>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-500 rounded"></div>
+            <div className="w-4 h-4 bg-green-500 rounded" />
             <div>
               <div className="font-medium text-sm">Tier 3 - Low Priority</div>
               <div className="text-xs text-gray-600">Time permitting topics</div>
@@ -215,8 +216,8 @@ export function SyllabusManagementStep({
                         className="flex-1"
                         autoFocus
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') saveSubjectName(subject.id);
-                          if (e.key === 'Escape') cancelEditing();
+                          if (e.key === 'Enter') { saveSubjectName(subject.id); }
+                          if (e.key === 'Escape') { cancelEditing(); }
                         }}
                       />
                       <Button
@@ -305,7 +306,7 @@ export function SyllabusManagementStep({
       <Alert className="border-blue-200 bg-blue-50">
         <Info className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects 
+          <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects
           for optimal time allocation and maximum score potential.
         </AlertDescription>
       </Alert>
@@ -368,7 +369,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
             </span>
             <Target className="h-5 w-5 text-indigo-600" />
           </div>
-          
+
           <Slider
             value={[form.data.preferences.dailyStudyGoalMinutes]}
             onValueChange={([value]) => form.updateField('preferences', {
@@ -380,7 +381,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
             step={30}
             className="w-full"
           />
-          
+
           <div className="flex justify-between text-xs text-gray-600 mt-2">
             <span>1h</span>
             <span>6h</span>
@@ -394,7 +395,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
         <Label className="text-sm font-medium">Preferred Study Time</Label>
         <Select
           value={form.data.preferences.preferredStudyTime}
-          onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') => 
+          onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') =>
             form.updateField('preferences', {
               ...form.data.preferences,
               preferredStudyTime: value
@@ -436,7 +437,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       {/* Tier Definitions */}
       <div className="space-y-4">
         <Label className="text-sm font-medium">Customize Tier Definitions</Label>
-        
+
         {[1, 2, 3].map((tier) => (
           <div key={tier} className="space-y-2">
             <Label className="text-xs font-medium text-gray-600">
@@ -461,7 +462,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       {/* Revision Intervals */}
       <div className="space-y-4">
         <Label className="text-sm font-medium">Spaced Repetition Intervals (days)</Label>
-        
+
         <div className="flex flex-wrap gap-2">
           {form.data.preferences.revisionIntervals.map((days: number) => (
             <Badge
@@ -512,7 +513,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       {/* Notifications */}
       <div className="space-y-4">
         <Label className="text-sm font-medium">Notification Preferences</Label>
-        
+
         <div className="space-y-3">
           {[
             {
@@ -558,7 +559,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       <Alert className="border-green-200 bg-green-50">
         <CheckCircle className="h-4 w-4 text-green-600" />
         <AlertDescription className="text-green-800">
-          <strong>Setup Complete!</strong> Your personalized strategy engine is ready. 
+          <strong>Setup Complete!</strong> Your personalized strategy engine is ready.
           You can modify these settings anytime from your dashboard.
         </AlertDescription>
       </Alert>

@@ -1,14 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Calendar,
+import {
   Clock,
   Target,
   TrendingUp,
@@ -25,6 +17,14 @@ import {
   RefreshCw,
   Filter
 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { missionService } from '@/lib/mission-service';
 import {
@@ -33,7 +33,7 @@ import {
   type MissionAnalytics,
   type LearningTrack,
   type MissionStatus,
-  type MissionFrequency
+  // type MissionFrequency // Commented out unused type
 } from '@/types/mission-system';
 
 interface MissionDashboardProps {
@@ -43,8 +43,8 @@ interface MissionDashboardProps {
   onConfigureMissions?: () => void;
 }
 
-export function MissionDashboard({ 
-  className = '', 
+export function MissionDashboard({
+  className = '',
   onMissionStart,
   onViewProgress,
   onConfigureMissions
@@ -67,7 +67,7 @@ export function MissionDashboard({
   }, [user?.uid]);
 
   const loadDashboardData = async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     try {
       setIsLoading(true);
@@ -96,7 +96,7 @@ export function MissionDashboard({
 
       // Load active missions from Firebase
       const activeMissionsResult = await missionService.getActiveMissions(user.uid);
-      
+
       if (activeMissionsResult.success && activeMissionsResult.data) {
         setActiveMissions(activeMissionsResult.data);
       } else {
@@ -154,7 +154,7 @@ export function MissionDashboard({
     return track === 'exam' ? 'text-blue-600 bg-blue-50' : 'text-green-600 bg-green-50';
   };
 
-  const filteredMissions = activeMissions.filter(mission => 
+  const filteredMissions = activeMissions.filter(mission =>
     selectedTrack === 'all' || mission.track === selectedTrack
   );
 
@@ -189,9 +189,9 @@ export function MissionDashboard({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mb-4">{error}</AlertDescription>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={loadDashboardData}
             className="gap-2"
           >
@@ -488,7 +488,7 @@ export function MissionDashboard({
                           <div className={`p-2 rounded-lg ${getTrackColor(mission.track)}`}>
                             <TrackIcon className="h-5 w-5" />
                           </div>
-                          
+
                           <div className="flex-1">
                             <div className="flex items-center space-x-3 mb-2">
                               <h3 className="font-semibold text-gray-900 text-lg">{mission.title}</h3>
@@ -497,9 +497,9 @@ export function MissionDashboard({
                                 {mission.status.replace('_', ' ')}
                               </Badge>
                             </div>
-                            
+
                             <p className="text-gray-600 mb-3">{mission.description}</p>
-                            
+
                             <div className="flex flex-wrap items-center gap-3">
                               <div className="flex items-center space-x-1 text-sm text-gray-500">
                                 <Clock className="h-3 w-3" />
@@ -512,7 +512,7 @@ export function MissionDashboard({
                                 {mission.frequency}
                               </Badge>
                             </div>
-                            
+
                             {mission.status === 'in_progress' && (
                               <div className="mt-3">
                                 <div className="flex justify-between text-sm mb-1">
@@ -525,7 +525,7 @@ export function MissionDashboard({
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-3">
                         <div className="text-right text-sm text-gray-500">
                           <div>Deadline</div>
@@ -569,12 +569,12 @@ export function MissionDashboard({
                 <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Missions</h3>
                 <p className="text-gray-600 mb-4">
-                  {selectedTrack === 'all' 
+                  {selectedTrack === 'all'
                     ? 'You have no active missions at the moment.'
                     : `No active missions for ${selectedTrack === 'exam' ? 'exam' : 'tech'} track.`
                   }
                 </p>
-                <Button 
+                <Button
                   onClick={onConfigureMissions}
                   className="gap-2"
                 >

@@ -1,21 +1,21 @@
 /**
  * @fileoverview Enterprise-Grade Production Readiness Checker
- * 
+ *
  * Comprehensive validation system that ensures every component,
  * page, and feature meets enterprise standards for production deployment.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
 import { logger } from './logger';
 
-interface ValidationResult {
-  passed: boolean;
-  issues: string[];
-  recommendations: string[];
-  score: number;
-}
+// interface ValidationResult {
+//   passed: boolean;
+//   issues: string[];
+//   recommendations: string[];
+//   score: number;
+// }
 
 interface ComponentValidation {
   hasErrorBoundary: boolean;
@@ -29,7 +29,7 @@ interface ComponentValidation {
 }
 
 class ProductionReadinessChecker {
-  private validationResults: Map<string, ValidationResult> = new Map();
+  // private validationResults: Map<string, ValidationResult> = new Map();
 
   /**
    * Validate a single component for production readiness
@@ -240,7 +240,7 @@ class ProductionReadinessChecker {
       }
     });
 
-    const overallScore = scores.length > 0 
+    const overallScore = scores.length > 0
       ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
       : 0;
 
@@ -284,7 +284,7 @@ class ProductionReadinessChecker {
 
     // Log validation results
     logger.info('🎯 Production Readiness Score:', { score: report.overallScore });
-    
+
     if (report.criticalIssues.length > 0) {
       logger.warn('🚨 Critical Issues Found:', { issues: report.criticalIssues });
     } else {

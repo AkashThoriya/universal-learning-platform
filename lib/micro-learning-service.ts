@@ -1,31 +1,32 @@
 /**
  * @fileoverview Dual-Track Micro-Learning Service
- * 
+ *
  * Generates personalized micro-learning sessions that adapt to user persona,
  * learning track (exam vs course/tech), and individual constraints.
  * Implements intelligent content adaptation and scheduling optimization.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { 
-  MicroLearningSession, 
-  PersonaOptimizations, 
-  MicroContent, 
-  ExamValidation, 
+import { UserPersona } from '@/types/exam';
+import {
+  MicroLearningSession,
+  PersonaOptimizations,
+  MicroContent,
+  ExamValidation,
   CourseValidation,
   LearningRecommendation,
   SessionPerformance
 } from '@/types/micro-learning';
-import { UserPersona } from '@/types/exam';
-import { PersonaAwareGoalSetting } from './persona-aware-goals';
+
+import { PersonaAwareGoalSetting as _PersonaAwareGoalSetting } from './persona-aware-goals';
 
 /**
  * Service for managing dual-track micro-learning sessions
  */
 export class MicroLearningService {
-  
+
   /**
    * Generate a personalized micro-learning session
    */
@@ -39,22 +40,22 @@ export class MicroLearningService {
     try {
       // Get user persona data from Firebase
       const persona = await this.getUserPersona(userId);
-      
+
       // Calculate persona-specific optimizations
       const optimizations = this.calculatePersonaOptimizations(persona, requestedDuration);
-      
+
       // Get base content for the topic
       const baseContent = await this.getTopicContent(topicId, learningTrack);
-      
+
       // Adapt content for persona
       const adaptedContent = this.adaptContentForPersona(baseContent, persona, learningTrack);
-      
+
       // Generate appropriate validation method
       const validationMethod = await this.generateValidationMethod(learningTrack, subjectId, topicId, persona);
-      
+
       // Calculate optimal difficulty based on user history
       const difficulty = await this.calculateOptimalDifficulty(userId, topicId);
-      
+
       const session: MicroLearningSession = {
         id: this.generateSessionId(),
         userId,
@@ -75,16 +76,16 @@ export class MicroLearningService {
           interruptionCount: 0
         }
       };
-      
+
       // Save session to Firebase
       const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
       const saveResult = await microLearningFirebaseService.saveSession(userId, session);
-      
+
       if (!saveResult.success) {
         const errorMessage = saveResult.error instanceof Error ? saveResult.error.message : saveResult.error || 'Failed to save session';
         throw new Error(errorMessage);
       }
-      
+
       return session;
     } catch (error) {
       throw new Error(`Failed to generate session: ${error}`);
@@ -94,16 +95,16 @@ export class MicroLearningService {
   /**
    * Get session history for a user
    */
-  static async getSessionHistory(userId: string, limit: number = 20): Promise<MicroLearningSession[]> {
+  static async getSessionHistory(userId: string, limit = 20): Promise<MicroLearningSession[]> {
     try {
       const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await microLearningFirebaseService.getSessionHistory(userId, limit);
-      
+
       if (!result.success) {
         const errorMessage = result.error instanceof Error ? result.error.message : result.error || 'Failed to get session history';
         throw new Error(errorMessage);
       }
-      
+
       return result.data as MicroLearningSession[];
     } catch (error) {
       throw new Error(`Failed to get session history: ${error}`);
@@ -118,21 +119,21 @@ export class MicroLearningService {
       // Get user's learning history and preferences
       const sessionHistory = await this.getSessionHistory(userId, 50);
       const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
-      const preferencesResult = await microLearningFirebaseService.getUserPreferences(userId);
-      
+      // const _preferencesResult = await microLearningFirebaseService.getUserPreferences(userId);
+
       // Get existing recommendations to check if they're still valid
       const existingResult = await microLearningFirebaseService.getRecommendations(userId);
-      
+
       if (existingResult.success && existingResult.data.length > 0) {
         return existingResult.data;
       }
-      
+
       // Generate new recommendations based on user data
       const recommendations = await this.generateRecommendationsFromHistory(userId, sessionHistory);
-      
+
       // Save recommendations to Firebase
       await microLearningFirebaseService.saveRecommendations(userId, recommendations);
-      
+
       return recommendations;
     } catch (error) {
       throw new Error(`Failed to generate recommendations: ${error}`);
@@ -150,7 +151,7 @@ export class MicroLearningService {
     try {
       const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
       const result = await microLearningFirebaseService.updateSessionProgress(userId, sessionId, progress);
-      
+
       if (!result.success) {
         const errorMessage = result.error instanceof Error ? result.error.message : result.error || 'Failed to update session progress';
         throw new Error(errorMessage);
@@ -179,11 +180,11 @@ export class MicroLearningService {
           notificationStyle: 'standard',
           uiDensity: 'comfortable'
         };
-      
+
       case 'working_professional':
-        const workSchedule = persona.workSchedule;
+        const { workSchedule } = persona;
         const hasLimitedTime = workSchedule ? workSchedule.flexibility === 'rigid' : true;
-        
+
         return {
           sessionLength: requestedDuration || (hasLimitedTime ? 7 : 12),
           breakReminders: true,
@@ -194,7 +195,7 @@ export class MicroLearningService {
           notificationStyle: 'minimal',
           uiDensity: 'compact'
         };
-      
+
       case 'freelancer':
         return {
           sessionLength: requestedDuration || 10,
@@ -206,7 +207,7 @@ export class MicroLearningService {
           notificationStyle: 'comprehensive',
           uiDensity: 'comfortable'
         };
-      
+
       default:
         return {
           sessionLength: requestedDuration || 10,
@@ -251,16 +252,16 @@ export class MicroLearningService {
    * Generate persona-specific content adaptations
    */
   private static generatePersonaAdaptations(
-    content: any, 
-    persona: UserPersona, 
+    content: any,
+    persona: UserPersona,
     learningTrack: 'exam' | 'course_tech'
   ) {
     const adaptations: any = {};
-    
+
     // Student adaptations - academic focus
     adaptations.student = {
       examples: this.generateAcademicExamples(content.topic, learningTrack),
-      motivation: learningTrack === 'exam' 
+      motivation: learningTrack === 'exam'
         ? `Master this concept for exam success!`
         : `Build strong foundations for your academic journey!`,
       applicationContext: learningTrack === 'exam'
@@ -269,7 +270,7 @@ export class MicroLearningService {
       validationMethod: learningTrack === 'exam' ? 'quiz' : 'assignment',
       additionalResources: this.generateStudentResources(content.topic, learningTrack)
     };
-    
+
     // Professional adaptations - career focus
     adaptations.working_professional = {
       examples: this.generateProfessionalExamples(content.topic, persona.careerContext, learningTrack),
@@ -282,7 +283,7 @@ export class MicroLearningService {
       validationMethod: learningTrack === 'exam' ? 'practice' : 'project',
       additionalResources: this.generateProfessionalResources(content.topic, learningTrack)
     };
-    
+
     // Freelancer adaptations - business/skill focus
     adaptations.freelancer = {
       examples: this.generateFreelancerExamples(content.topic, learningTrack),
@@ -295,7 +296,7 @@ export class MicroLearningService {
       validationMethod: learningTrack === 'exam' ? 'practice' : 'project',
       additionalResources: this.generateFreelancerResources(content.topic, learningTrack)
     };
-    
+
     return adaptations;
   }
 
@@ -316,7 +317,7 @@ export class MicroLearningService {
         targetExam: subjectId,
         examStage: 'prelims'
       };
-    } else {
+    }
       return {
         type: 'course_tech',
         assignmentTasks: await this.generateAssignmentTasks(topicId, persona),
@@ -334,7 +335,7 @@ export class MicroLearningService {
           }
         }
       };
-    }
+
   }
 
   /**
@@ -345,37 +346,37 @@ export class MicroLearningService {
       const persona = await this.getUserPersona(userId);
       const now = new Date();
       const suggestions: Date[] = [];
-      
+
       switch (persona.type) {
         case 'student':
           suggestions.push(
             new Date(now.getTime() + 2 * 60 * 60 * 1000),
             this.getNextDayTime(8, 0),
             this.getNextDayTime(14, 0),
-            this.getNextDayTime(19, 0),
+            this.getNextDayTime(19, 0)
           );
           break;
-        
+
         case 'working_professional':
           suggestions.push(
             this.getNextDayTime(7, 0),
             this.getNextDayTime(12, 30),
             this.getNextDayTime(18, 30),
-            this.getNextWeekendTime(9, 0),
+            this.getNextWeekendTime(9, 0)
           );
           break;
-        
+
         case 'freelancer':
           suggestions.push(
             new Date(now.getTime() + 30 * 60 * 1000),
             new Date(now.getTime() + 3 * 60 * 60 * 1000),
             this.getNextDayTime(10, 0),
             this.getNextDayTime(15, 0),
-            this.getNextDayTime(20, 0),
+            this.getNextDayTime(20, 0)
           );
           break;
       }
-      
+
       return suggestions;
     } catch (error) {
       throw new Error(`Failed to suggest session times: ${error}`);
@@ -390,7 +391,7 @@ export class MicroLearningService {
     persona: UserPersona
   ): LearningRecommendation[] {
     const recommendations: LearningRecommendation[] = [];
-    
+
     // Performance-based recommendations
     if (sessionPerformance.accuracy < 70) {
       recommendations.push({
@@ -411,7 +412,7 @@ export class MicroLearningService {
         expectedBenefit: 'Improved understanding and confidence'
       });
     }
-    
+
     // Persona-specific recommendations
     if (persona.type === 'working_professional' && sessionPerformance.timeSpent > 900) {
       recommendations.push({
@@ -431,7 +432,7 @@ export class MicroLearningService {
         expectedBenefit: 'Improved focus and retention'
       });
     }
-    
+
     return recommendations;
   }
 
@@ -456,19 +457,19 @@ export class MicroLearningService {
   }
 
   private static selectOptimalSessionType(
-    persona: UserPersona, 
+    persona: UserPersona,
     learningTrack: 'exam' | 'course_tech',
-    topicId: string
+    _topicId: string
   ): MicroLearningSession['sessionType'] {
     if (learningTrack === 'exam') {
       return persona.type === 'student' ? 'concept' : 'practice';
-    } else {
-      return persona.type === 'freelancer' ? 'project' : 'assignment';
     }
+      return persona.type === 'freelancer' ? 'project' : 'assignment';
+
   }
 
   private static selectContentType(
-    content: any, 
+    content: any,
     learningTrack: 'exam' | 'course_tech'
   ): MicroContent['type'] {
     if (learningTrack === 'course_tech') {
@@ -483,11 +484,11 @@ export class MicroLearningService {
       // Get user data from Firebase instead of mock
       const { userService } = await import('@/lib/firebase-enhanced');
       const result = await userService.get(userId);
-      
+
       if (result.success && result.data) {
         return result.data.persona || this.getDefaultPersona();
       }
-      
+
       return this.getDefaultPersona();
     } catch (error) {
       console.error('Failed to get user persona:', error);
@@ -517,8 +518,8 @@ export class MicroLearningService {
   }
 
   private static async generateRecommendationsFromHistory(
-    userId: string, 
-    sessionHistory: MicroLearningSession[]
+    _userId: string,
+    _sessionHistory: MicroLearningSession[]
   ): Promise<any[]> {
     // Analyze user's learning patterns and generate recommendations
     // For now, return mock recommendations - replace with actual recommendation algorithm
@@ -572,7 +573,7 @@ export class MicroLearningService {
         topicId: 'design-principles'
       }
     ];
-    
+
     return mockRecommendations;
   }
 
@@ -599,13 +600,13 @@ export class MicroLearningService {
     ];
   }
 
-  private static async calculateOptimalDifficulty(userId: string, topicId: string): Promise<'easy' | 'medium' | 'hard'> {
+  private static async calculateOptimalDifficulty(_userId: string, _topicId: string): Promise<'easy' | 'medium' | 'hard'> {
     // Mock implementation - replace with actual difficulty calculation
     return 'medium';
   }
 
   private static generateAcademicExamples(topic: string, learningTrack: 'exam' | 'course_tech'): string[] {
-    return learningTrack === 'exam' 
+    return learningTrack === 'exam'
       ? [`${topic} question from previous year papers`, `Common ${topic} problems in competitive exams`]
       : [`${topic} in academic research`, `${topic} applications in coursework`];
   }
@@ -623,7 +624,7 @@ export class MicroLearningService {
       : [`${topic} for client projects`, `${topic} skills marketplace demand`];
   }
 
-  private static generateStudentResources(topic: string, learningTrack: 'exam' | 'course_tech') {
+  private static generateStudentResources(topic: string, _learningTrack: 'exam' | 'course_tech') {
     return [
       {
         type: 'article' as const,
@@ -635,7 +636,7 @@ export class MicroLearningService {
     ];
   }
 
-  private static generateProfessionalResources(topic: string, learningTrack: 'exam' | 'course_tech') {
+  private static generateProfessionalResources(topic: string, _learningTrack: 'exam' | 'course_tech') {
     return [
       {
         type: 'documentation' as const,
@@ -647,7 +648,7 @@ export class MicroLearningService {
     ];
   }
 
-  private static generateFreelancerResources(topic: string, learningTrack: 'exam' | 'course_tech') {
+  private static generateFreelancerResources(topic: string, _learningTrack: 'exam' | 'course_tech') {
     return [
       {
         type: 'tutorial' as const,

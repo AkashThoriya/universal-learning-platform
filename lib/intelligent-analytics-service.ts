@@ -1,10 +1,10 @@
 /**
  * @fileoverview Intelligent Analytics Service - Enterprise Implementation
- * 
+ *
  * Comprehensive analytics system providing deep insights across exam and course
  * learning tracks with real-time data processing, predictive analytics, and
  * cross-track pattern recognition.
- * 
+ *
  * Features:
  * - Real-time performance tracking and analysis
  * - Cross-track learning pattern recognition
@@ -12,17 +12,21 @@
  * - Weak area identification and improvement recommendations
  * - Historical data analysis with time-series insights
  * - Firebase real-time synchronization with offline support
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { Timestamp, collection, doc, onSnapshot, query, where, orderBy, limit, startAfter, getDocs, writeBatch, increment } from 'firebase/firestore';
-import { firebaseService } from './firebase-enhanced';
-import { db } from './firebase';
-import { logger } from './logger';
+import { Timestamp, collection, doc, onSnapshot, query, where, orderBy, limit, startAfter as _startAfter, getDocs, writeBatch, increment as _increment } from 'firebase/firestore';
+
 import { UserPersona } from '@/types/exam';
+
+/* eslint-disable import/no-cycle */
 import { analyticsDemoService } from './analytics-demo-data';
+import { db } from './firebase';
+import { firebaseService } from './firebase-enhanced';
+import { logger } from './logger';
+
 
 // ============================================================================
 // ANALYTICS DATA INTERFACES
@@ -44,18 +48,18 @@ export interface AnalyticsEvent {
 /**
  * Analytics event types
  */
-export type AnalyticsEventType = 
+export type AnalyticsEventType =
   // Exam Analytics Events
   | 'mock_test_started' | 'mock_test_completed' | 'mock_test_abandoned'
   | 'question_answered' | 'question_skipped' | 'question_flagged'
   | 'revision_session_started' | 'revision_session_completed'
   | 'weak_area_identified' | 'improvement_achieved'
-  
+
   // Course/Tech Analytics Events
   | 'assignment_started' | 'assignment_completed' | 'assignment_submitted'
   | 'project_created' | 'project_milestone_reached' | 'project_completed'
   | 'skill_practice_session' | 'code_execution' | 'debugging_session'
-  
+
   // Cross-Track Events
   | 'track_switched' | 'cross_skill_applied' | 'learning_transfer_identified'
   | 'adaptive_recommendation_accepted' | 'persona_adaptation_triggered';
@@ -69,25 +73,25 @@ export interface AnalyticsEventData {
   accuracy?: number;
   timeSpent?: number;
   difficulty?: 'easy' | 'medium' | 'hard';
-  
+
   // Content identification
   topicId?: string;
   subjectId?: string;
   questionId?: string;
   projectId?: string;
   assignmentId?: string;
-  
+
   // Behavioral data
   attempts?: number;
   hintsUsed?: number;
   resourcesAccessed?: string[];
   studyMethod?: string;
-  
+
   // Cross-track data
   transferredFrom?: 'exam' | 'course_tech';
   skillsApplied?: string[];
   improvementAreas?: string[];
-  
+
   // Custom data (extensible)
   [key: string]: any;
 }
@@ -125,7 +129,7 @@ export interface PerformanceAnalytics {
     revisionEffectiveness: number;
     predictedExamScore: number;
   };
-  
+
   // Course/Tech Performance
   coursePerformance: {
     totalAssignments: number;
@@ -135,7 +139,7 @@ export interface PerformanceAnalytics {
     codingEfficiency: number;
     problemSolvingScore: number;
   };
-  
+
   // Cross-Track Insights
   crossTrackInsights: {
     learningTransfer: LearningTransfer[];
@@ -143,14 +147,14 @@ export interface PerformanceAnalytics {
     adaptiveRecommendations: AdaptiveRecommendation[];
     crossTrackBenefits: CrossTrackBenefit[];
   };
-  
+
   // Time-Series Data
   trends: {
     daily: PerformanceTrend[];
     weekly: PerformanceTrend[];
     monthly: PerformanceTrend[];
   };
-  
+
   // Predictive Analytics
   predictions: {
     examSuccessProbability: number;
@@ -332,7 +336,7 @@ export interface RiskFactor {
 
 /**
  * Intelligent Analytics Service
- * 
+ *
  * Provides comprehensive analytics capabilities including:
  * - Real-time event tracking and processing
  * - Performance analysis and insights generation
@@ -343,12 +347,12 @@ export interface RiskFactor {
 export class IntelligentAnalyticsService {
   private readonly COLLECTION_EVENTS = 'analytics_events';
   private readonly COLLECTION_PERFORMANCE = 'analytics_performance';
-  private readonly COLLECTION_INSIGHTS = 'analytics_insights';
-  
+  // private readonly _COLLECTION_INSIGHTS = 'analytics_insights';
+
   private eventBuffer: AnalyticsEvent[] = [];
   private readonly BUFFER_SIZE = 10;
   private readonly BUFFER_TIMEOUT = 5000; // 5 seconds
-  
+
   constructor() {
     this.startBufferFlush();
   }
@@ -380,7 +384,7 @@ export class IntelligentAnalyticsService {
 
       // Add to buffer for batch processing
       this.eventBuffer.push(event);
-      
+
       // Flush if buffer is full
       if (this.eventBuffer.length >= this.BUFFER_SIZE) {
         await this.flushEventBuffer();
@@ -540,9 +544,9 @@ export class IntelligentAnalyticsService {
       const crossTrackWeaknesses = await this.analyzeCrossTrackWeaknesses(userId);
 
       const allWeakAreas = [...examWeakAreas, ...courseWeakAreas, ...crossTrackWeaknesses];
-      
+
       // Sort by weakness score and improvement potential
-      return allWeakAreas.sort((a, b) => 
+      return allWeakAreas.sort((a, b) =>
         (b.weaknessScore * b.improvementPotential) - (a.weaknessScore * a.improvementPotential)
       );
     } catch (error) {
@@ -558,7 +562,7 @@ export class IntelligentAnalyticsService {
     try {
       // Use demo recommendations for demonstration
       const demoRecommendations = analyticsDemoService.generateDemoRecommendations();
-      
+
       if (weakAreas.length === 0) {
         return demoRecommendations;
       }
@@ -589,11 +593,11 @@ export class IntelligentAnalyticsService {
   async analyzeLearningTransfer(userId: string): Promise<LearningTransfer[]> {
     try {
       const events = await this.getUserEvents(userId, 'cross_track');
-      const transfers: LearningTransfer[] = [];
+      // const _transfers: LearningTransfer[] = [];
 
       // Analyze transfer patterns from events
-      const transferEvents = events.filter(event => 
-        event.eventType === 'learning_transfer_identified' || 
+      const transferEvents = events.filter(event =>
+        event.eventType === 'learning_transfer_identified' ||
         event.eventType === 'cross_skill_applied'
       );
 
@@ -602,7 +606,7 @@ export class IntelligentAnalyticsService {
 
       for (const event of transferEvents) {
         const key = `${event.data.transferredFrom}-${event.data.skillsApplied?.join(',')}`;
-        
+
         if (transferMap.has(key)) {
           const existing = transferMap.get(key)!;
           existing.frequency++;
@@ -692,7 +696,7 @@ export class IntelligentAnalyticsService {
     // Get user persona and learning context
     const userResult = await firebaseService.getDocument('users', userId);
     const userData = userResult.success ? userResult.data : null;
-    
+
     return {
       persona: (userData as any)?.persona || { type: 'student' },
       deviceType: this.detectDeviceType(),
@@ -708,17 +712,17 @@ export class IntelligentAnalyticsService {
   }
 
   private detectDeviceType(): 'mobile' | 'tablet' | 'desktop' {
-    if (typeof window === 'undefined') return 'desktop';
-    
+    if (typeof window === 'undefined') { return 'desktop'; }
+
     const width = window.innerWidth;
-    if (width < 768) return 'mobile';
-    if (width < 1024) return 'tablet';
+    if (width < 768) { return 'mobile'; }
+    if (width < 1024) { return 'tablet'; }
     return 'desktop';
   }
 
   private getSessionId(): string {
-    if (typeof window === 'undefined') return 'server_session';
-    
+    if (typeof window === 'undefined') { return 'server_session'; }
+
     let sessionId = sessionStorage.getItem('analytics_session_id');
     if (!sessionId) {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -736,7 +740,7 @@ export class IntelligentAnalyticsService {
   }
 
   private async flushEventBuffer(): Promise<void> {
-    if (this.eventBuffer.length === 0) return;
+    if (this.eventBuffer.length === 0) { return; }
 
     try {
       const batch = writeBatch(db);
@@ -778,7 +782,7 @@ export class IntelligentAnalyticsService {
   }
 
   // Placeholder implementations for complex analytics methods
-  private async getExamPerformance(userId: string): Promise<PerformanceAnalytics['examPerformance']> {
+  private async getExamPerformance(_userId: string): Promise<PerformanceAnalytics['examPerformance']> {
     // Implementation would analyze exam-related events and generate performance metrics
     return {
       totalMockTests: 0,
@@ -791,7 +795,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  private async getCoursePerformance(userId: string): Promise<PerformanceAnalytics['coursePerformance']> {
+  private async getCoursePerformance(_userId: string): Promise<PerformanceAnalytics['coursePerformance']> {
     // Implementation would analyze course-related events and generate performance metrics
     return {
       totalAssignments: 0,
@@ -803,7 +807,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  private async getCrossTrackInsights(userId: string): Promise<PerformanceAnalytics['crossTrackInsights']> {
+  private async getCrossTrackInsights(_userId: string): Promise<PerformanceAnalytics['crossTrackInsights']> {
     // Implementation would analyze cross-track patterns and generate insights
     return {
       learningTransfer: [],
@@ -813,7 +817,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  private async getPerformanceTrends(userId: string): Promise<PerformanceAnalytics['trends']> {
+  private async getPerformanceTrends(_userId: string): Promise<PerformanceAnalytics['trends']> {
     // Implementation would generate time-series performance data
     return {
       daily: [],
@@ -823,21 +827,21 @@ export class IntelligentAnalyticsService {
   }
 
   // Additional placeholder methods would be implemented here...
-  private async analyzeExamWeaknesses(userId: string): Promise<WeakArea[]> { return []; }
-  private async analyzeCourseWeaknesses(userId: string): Promise<WeakArea[]> { return []; }
-  private async analyzeCrossTrackWeaknesses(userId: string): Promise<WeakArea[]> { return []; }
-  private async generateImprovementRecommendation(userId: string, weakArea: WeakArea): Promise<AdaptiveRecommendation> {
+  private async analyzeExamWeaknesses(_userId: string): Promise<WeakArea[]> { return []; }
+  private async analyzeCourseWeaknesses(_userId: string): Promise<WeakArea[]> { return []; }
+  private async analyzeCrossTrackWeaknesses(_userId: string): Promise<WeakArea[]> { return []; }
+  private async generateImprovementRecommendation(_userId: string, _weakArea: WeakArea): Promise<AdaptiveRecommendation> {
     return {} as AdaptiveRecommendation;
   }
-  private calculateTransferEffectiveness(existing: LearningTransfer, event: AnalyticsEvent): number { return 0; }
-  private createLearningTransfer(event: AnalyticsEvent): LearningTransfer { return {} as LearningTransfer; }
-  private async getExamSkills(userId: string): Promise<string[]> { return []; }
-  private async getTechSkills(userId: string): Promise<string[]> { return []; }
-  private calculateSkillSynergy(examSkill: string, techSkill: string): SkillSynergy { return {} as SkillSynergy; }
-  private async predictExamSuccess(userId: string): Promise<number> { return 0; }
-  private async predictSkillMastery(userId: string): Promise<SkillMasteryPrediction[]> { return []; }
-  private async generateOptimalStudyPlan(userId: string): Promise<StudyPlanRecommendation[]> { return []; }
-  private async identifyRiskFactors(userId: string): Promise<RiskFactor[]> { return []; }
+  private calculateTransferEffectiveness(_existing: LearningTransfer, _event: AnalyticsEvent): number { return 0; }
+  private createLearningTransfer(_event: AnalyticsEvent): LearningTransfer { return {} as LearningTransfer; }
+  private async getExamSkills(_userId: string): Promise<string[]> { return []; }
+  private async getTechSkills(_userId: string): Promise<string[]> { return []; }
+  private calculateSkillSynergy(_examSkill: string, _techSkill: string): SkillSynergy { return {} as SkillSynergy; }
+  private async predictExamSuccess(_userId: string): Promise<number> { return 0; }
+  private async predictSkillMastery(_userId: string): Promise<SkillMasteryPrediction[]> { return []; }
+  private async generateOptimalStudyPlan(_userId: string): Promise<StudyPlanRecommendation[]> { return []; }
+  private async identifyRiskFactors(_userId: string): Promise<RiskFactor[]> { return []; }
 }
 
 // Export singleton instance

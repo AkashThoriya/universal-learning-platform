@@ -1,9 +1,9 @@
 /**
  * @fileoverview Performance Optimization Utilities
- * 
+ *
  * Comprehensive performance optimization tools including memoization,
  * virtualization helpers, bundle optimization, and performance monitoring.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -50,14 +50,14 @@ function shallowEqual(prevProps: Record<string, any>, nextProps: Record<string, 
  * Deep comparison for complex objects (use sparingly)
  */
 function deepEqual(a: any, b: any): boolean {
-  if (a === b) return true;
+  if (a === b) { return true; }
 
-  if (a == null || b == null) return false;
+  if (a == null || b == null) { return false; }
 
   if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
+    if (a.length !== b.length) { return false; }
     for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) return false;
+      if (!deepEqual(a[i], b[i])) { return false; }
     }
     return true;
   }
@@ -65,12 +65,12 @@ function deepEqual(a: any, b: any): boolean {
   if (typeof a === 'object' && typeof b === 'object') {
     const keysA = Object.keys(a);
     const keysB = Object.keys(b);
-    
-    if (keysA.length !== keysB.length) return false;
-    
+
+    if (keysA.length !== keysB.length) { return false; }
+
     for (const key of keysA) {
-      if (!keysB.includes(key)) return false;
-      if (!deepEqual(a[key], b[key])) return false;
+      if (!keysB.includes(key)) { return false; }
+      if (!deepEqual(a[key], b[key])) { return false; }
     }
     return true;
   }
@@ -94,11 +94,11 @@ function createLazyComponent<T extends React.ComponentType<any>>(
   } = {}
 ) {
   const LazyComponent = lazy(importFn);
-  
-  const { 
+
+  const {
     fallback: Fallback = () => <div>Loading...</div>,
     errorFallback: ErrorFallback,
-    preload = false 
+    preload = false
   } = options;
 
   if (preload) {
@@ -134,7 +134,7 @@ function createLazyComponent<T extends React.ComponentType<any>>(
  * Simple error boundary for lazy components
  */
 class ErrorBoundary extends React.Component<
-  { 
+  {
     children: React.ReactNode;
     fallback: React.ComponentType<{ error: Error; retry: () => void }>;
   },
@@ -243,20 +243,25 @@ function VirtualList<T>({
       onScroll={handleScroll}
     >
       <div style={{ height: totalHeight, position: 'relative' }}>
-        {visibleItems.map(({ index, offsetTop }) => (
-          <div
-            key={index}
-            style={{
-              position: 'absolute',
-              top: offsetTop,
-              height: itemHeight,
-              left: 0,
-              right: 0
-            }}
-          >
-            {renderItem(items[index], index)}
-          </div>
-        ))}
+        {visibleItems.map(({ index, offsetTop }) => {
+          const item = items[index];
+          if (!item) return null;
+          
+          return (
+            <div
+              key={index}
+              style={{
+                position: 'absolute',
+                top: offsetTop,
+                height: itemHeight,
+                left: 0,
+                right: 0
+              }}
+            >
+              {renderItem(item, index)}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -275,10 +280,10 @@ interface ProfilerProps {
   onRender?: (id: string, phase: string, actualDuration: number) => void;
 }
 
-const Profiler: React.FC<ProfilerProps> = ({ 
-  id, 
-  children, 
-  onRender 
+const Profiler: React.FC<ProfilerProps> = ({
+  id,
+  children,
+  onRender
 }) => {
   const handleRender = useCallback((
     id: string,
@@ -321,7 +326,7 @@ function useStableCallback<T extends (...args: any[]) => any>(
   callback: T
 ): T {
   const ref = React.useRef<T>(callback);
-  
+
   React.useLayoutEffect(() => {
     ref.current = callback;
   });
@@ -340,11 +345,11 @@ function useExpensiveValue<T>(
     const start = performance.now();
     const result = computeFn();
     const end = performance.now();
-    
+
     if (process.env.NODE_ENV === 'development' && end - start > 16) {
       console.warn(`Expensive computation took ${end - start}ms`);
     }
-    
+
     return result;
   }, deps);
 }
@@ -379,19 +384,19 @@ function useDebouncedExpensiveOperation<T>(
  */
 async function dynamicImport<T>(
   importFn: () => Promise<T>,
-  retries: number = 3
+  retries = 3
 ): Promise<T> {
   for (let i = 0; i < retries; i++) {
     try {
       return await importFn();
     } catch (error) {
-      if (i === retries - 1) throw error;
-      
+      if (i === retries - 1) { throw error; }
+
       // Wait before retry
       await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
     }
   }
-  
+
   throw new Error('Dynamic import failed after retries');
 }
 
@@ -403,7 +408,7 @@ function preloadResources(resources: string[]): void {
     const link = document.createElement('link');
     link.rel = 'preload';
     link.href = resource;
-    
+
     if (resource.endsWith('.js')) {
       link.as = 'script';
     } else if (resource.endsWith('.css')) {
@@ -411,7 +416,7 @@ function preloadResources(resources: string[]): void {
     } else if (resource.match(/\.(jpg|jpeg|png|webp|svg)$/)) {
       link.as = 'image';
     }
-    
+
     document.head.appendChild(link);
   });
 }
@@ -444,7 +449,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [error, setError] = React.useState(false);
-  
+
   const handleLoad = useCallback(() => {
     setIsLoaded(true);
   }, []);
@@ -494,26 +499,26 @@ export {
   smartMemo,
   shallowEqual,
   deepEqual,
-  
+
   // Lazy loading
   createLazyComponent,
-  
+
   // Virtualization
   useVirtualization,
   VirtualList,
-  
+
   // Performance monitoring
   Profiler,
-  
+
   // Optimization hooks
   useStableCallback,
   useExpensiveValue,
   useDebouncedExpensiveOperation,
-  
+
   // Bundle optimization
   dynamicImport,
   preloadResources,
-  
+
   // Image optimization
   OptimizedImage
 };

@@ -1,57 +1,57 @@
-"use client"
+'use client';
 
 /**
  * @fileoverview Analytics Widget - Dashboard Integration
- * 
+ *
  * Compact analytics widget for the main dashboard that provides
  * key performance insights and quick access to detailed analytics.
- * 
+ *
  * Features:
  * - Real-time performance metrics summary
  * - Quick insights and recommendations
  * - Cross-track learning highlights
  * - Interactive charts and progress indicators
  * - Deep-link to full analytics dashboard
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { intelligentAnalyticsService, PerformanceAnalytics } from '@/lib/intelligent-analytics-service';
-import { logger } from '@/lib/logger';
-
-// UI Components
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
-
-// Icons
-import { 
-  BarChart3, 
-  TrendingUp, 
-  TrendingDown, 
-  Target, 
-  Brain, 
-  Clock, 
+import {
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  Target,
+  Brain,
+  Clock,
   Award,
   ArrowRight,
   Activity,
   Zap
 } from 'lucide-react';
-
-// Chart Components
-import { 
-  LineChart, 
-  Line, 
+import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
+import {
+  LineChart,
+  Line,
   ResponsiveContainer,
   Tooltip
 } from 'recharts';
 
-import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/contexts/AuthContext';
+import { intelligentAnalyticsService, PerformanceAnalytics } from '@/lib/intelligent-analytics-service';
+import { logger } from '@/lib/logger';
+
+// UI Components
+
+// Icons
+
+// Chart Components
 
 // ============================================================================
 // ANALYTICS WIDGET COMPONENT
@@ -72,7 +72,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
   // ============================================================================
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) { return; }
 
     const loadAnalyticsSummary = async () => {
       try {
@@ -99,7 +99,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
   // ============================================================================
 
   const summaryMetrics = React.useMemo(() => {
-    if (!analytics) return null;
+    if (!analytics) { return null; }
 
     return {
       examPerformance: {
@@ -217,9 +217,9 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
                 </div>
               )}
             </div>
-            <Progress 
-              value={summaryMetrics?.examPerformance.current || 0} 
-              className="h-2" 
+            <Progress
+              value={summaryMetrics?.examPerformance.current || 0}
+              className="h-2"
             />
           </div>
 
@@ -236,9 +236,9 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
                 {summaryMetrics?.learningEfficiency.crossTrackBenefits} insights
               </Badge>
             </div>
-            <Progress 
-              value={summaryMetrics?.learningEfficiency.current || 0} 
-              className="h-2" 
+            <Progress
+              value={summaryMetrics?.learningEfficiency.current || 0}
+              className="h-2"
             />
           </div>
         </div>
@@ -253,14 +253,14 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
             <div className="h-16">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={summaryMetrics.recentTrends}>
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="#3b82f6" 
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#3b82f6"
                     strokeWidth={2}
                     dot={false}
                   />
-                  <Tooltip 
+                  <Tooltip
                     labelFormatter={(label) => `Date: ${label}`}
                     formatter={(value) => [`${value}%`, 'Performance']}
                   />
@@ -276,7 +276,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
             <Brain className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium">Quick Insights</span>
           </div>
-          
+
           <div className="space-y-2">
             {analytics.crossTrackInsights.learningTransfer.length > 0 && (
               <div className="p-3 bg-green-50 rounded-lg border border-green-200">
