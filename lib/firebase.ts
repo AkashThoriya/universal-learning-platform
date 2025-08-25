@@ -10,8 +10,8 @@
 
 import { getAnalytics, Analytics } from 'firebase/analytics';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth, connectAuthEmulator } from 'firebase/auth';
-import { getFirestore, Firestore, connectFirestoreEmulator, enableNetwork, disableNetwork, doc, getDoc } from 'firebase/firestore';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore, enableNetwork, disableNetwork, doc, getDoc } from 'firebase/firestore';
 
 // ============================================================================
 // ENVIRONMENT VALIDATION
@@ -28,36 +28,47 @@ interface FirebaseConfig {
 }
 
 const validateFirebaseConfig = (): FirebaseConfig => {
+  // Get environment variables with fallback values for development
+  const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  const messagingSenderId = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
+  const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+  const measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+
+  // Validate required environment variables
   const requiredEnvVars = [
-    'NEXT_PUBLIC_FIREBASE_API_KEY',
-    'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN',
-    'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
-    'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
-    'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-    'NEXT_PUBLIC_FIREBASE_APP_ID'
+    { name: 'NEXT_PUBLIC_FIREBASE_API_KEY', value: apiKey },
+    { name: 'NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', value: authDomain },
+    { name: 'NEXT_PUBLIC_FIREBASE_PROJECT_ID', value: projectId },
+    { name: 'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', value: storageBucket },
+    { name: 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID', value: messagingSenderId },
+    { name: 'NEXT_PUBLIC_FIREBASE_APP_ID', value: appId }
   ];
 
-  const missing = requiredEnvVars.filter(varName => !process.env[varName]);
+  const missing = requiredEnvVars.filter(envVar => !envVar.value);
 
   if (missing.length > 0) {
+    console.error('Missing Firebase environment variables:', missing.map(v => v.name));
     throw new Error(
-      `Missing required Firebase environment variables: ${missing.join(', ')}. ` +
+      `Missing required Firebase environment variables: ${missing.map(v => v.name).join(', ')}. ` +
       'Please check your .env.local file.'
     );
   }
 
   const config: FirebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!
+    apiKey: apiKey!,
+    authDomain: authDomain!,
+    projectId: projectId!,
+    storageBucket: storageBucket!,
+    messagingSenderId: messagingSenderId!,
+    appId: appId!
   };
 
   // Only add measurementId if it exists
-  if (process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID) {
-    config.measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
+  if (measurementId) {
+    config.measurementId = measurementId;
   }
 
   return config;
@@ -95,7 +106,9 @@ try {
     }
   }
 
-  // Development emulator connections
+  // Development emulator connections - DISABLED for production use
+  // Uncomment the lines below if you want to use Firebase emulators in development
+  /*
   if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
     try {
       // Connect to emulators if available
@@ -111,6 +124,7 @@ try {
       console.info('Using production Firebase services');
     }
   }
+  */
 
 } catch (error) {
   console.error('Firebase initialization failed:', error);

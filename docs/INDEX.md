@@ -13,11 +13,10 @@ This documentation provides comprehensive information about the Exam Strategy En
 ### Project Status & Quality
 - **[PROJECT-STATUS.md](./PROJECT-STATUS.md)** - Current development status and progress tracking
 - **[COMPLETION-REPORT.md](./COMPLETION-REPORT.md)** - Milestone completion and delivery status
-- **[QUALITY-ASSURANCE.md](./QUALITY-ASSURANCE.md)** - Code quality metrics and testing standards
-- **[PRODUCTION-READINESS.md](./PRODUCTION-READINESS.md)** - Production deployment readiness assessment
 
 ### Technical Specifications
 - **[UI-COMPONENTS.md](./UI-COMPONENTS.md)** - User interface components and design patterns
+- **[PWA-IMPLEMENTATION.md](./PWA-IMPLEMENTATION.md)** - Progressive Web App implementation guide and documentation
 - **[README.md](./README.md)** - Project setup and getting started guide
 
 ## Quick Navigation
@@ -27,15 +26,15 @@ This documentation provides comprehensive information about the Exam Strategy En
 2. Follow [IMPLEMENTATION-GUIDE.md](./IMPLEMENTATION-GUIDE.md) for development setup
 3. Review [DATABASE-ARCHITECTURE.md](./DATABASE-ARCHITECTURE.md) for data patterns
 4. Check [UI-COMPONENTS.md](./UI-COMPONENTS.md) for UI implementation
+5. Read [PWA-IMPLEMENTATION.md](./PWA-IMPLEMENTATION.md) for PWA features and deployment
 
 ### For Project Managers
 1. Review [PROJECT-STATUS.md](./PROJECT-STATUS.md) for current progress
 2. Check [COMPLETION-REPORT.md](./COMPLETION-REPORT.md) for milestone tracking
-3. Review [PRODUCTION-READINESS.md](./PRODUCTION-READINESS.md) for deployment status
 
-### For Quality Assurance
-1. Review [QUALITY-ASSURANCE.md](./QUALITY-ASSURANCE.md) for testing standards
-2. Check [PRODUCTION-READINESS.md](./PRODUCTION-READINESS.md) for release criteria
+### For Deployment & Production
+1. Follow [PWA-IMPLEMENTATION.md](./PWA-IMPLEMENTATION.md) for production deployment
+2. Check PWA readiness and testing procedures
 
 ## Contributing
 

@@ -245,7 +245,9 @@ function VirtualList<T>({
       <div style={{ height: totalHeight, position: 'relative' }}>
         {visibleItems.map(({ index, offsetTop }) => {
           const item = items[index];
-          if (!item) return null;
+          if (!item) {
+            return null;
+          }
           
           return (
             <div
