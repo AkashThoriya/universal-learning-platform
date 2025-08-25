@@ -16,7 +16,7 @@ import {
   type UnifiedProgress
 } from '@/types/mission-system';
 
-import { firebaseService } from './firebase-enhanced';
+import { firebaseService } from './firebase-services';
 import { Result, createSuccess, createError } from './types-utils';
 
 type AchievementCategory = Achievement['category'];

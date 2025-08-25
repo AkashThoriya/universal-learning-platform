@@ -1,7 +1,7 @@
 /**
  * @fileoverview Firebase Configuration and Initialization
  *
- * Enhanced Firebase configuration with proper error handling,
+ * Firebase configuration with proper error handling,
  * environment validation, and offline capabilities.
  *
  * @author Exam Strategy Engine Team

@@ -72,7 +72,7 @@ export class MissionTemplateService {
    */
   async seedUserTemplates(userId: string): Promise<void> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const existingTemplates = await missionFirebaseService.getTemplates(userId);
 
       if (existingTemplates.success && existingTemplates.data.length === 0) {
@@ -338,7 +338,7 @@ export class MissionTemplateService {
     persona?: UserPersonaType
   ): Promise<MissionTemplate[]> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.getTemplates(userId, track);
 
       if (!result.success) {
@@ -370,7 +370,7 @@ export class MissionTemplateService {
    */
   async getTemplate(userId: string, templateId: string): Promise<MissionTemplate | null> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.getTemplates(userId);
 
       if (!result.success) { return null; }
@@ -391,7 +391,7 @@ export class MissionTemplateService {
     template: MissionTemplate
   ): Promise<MissionApiResponse<MissionTemplate>> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.saveTemplate(userId, template);
 
       if (result.success) {
@@ -472,7 +472,7 @@ export class MissionGenerationService {
       const mission = await this.createMissionFromTemplate(selectedTemplate, request);
 
       // Save the generated mission to Firebase
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const saveResult = await missionFirebaseService.saveActiveMission(request.userId, mission);
 
       if (!saveResult.success) {
@@ -767,7 +767,7 @@ export class MissionProgressService {
     _progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
     try {
-      // const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      // const { missionFirebaseService } = await import('@/lib/firebase-services');
 
       // Extract userId from mission ID or get it from context
       // For now, we'll need to pass userId as parameter or get it from mission
@@ -794,7 +794,7 @@ export class MissionProgressService {
     progress: Partial<MissionProgress>
   ): Promise<MissionApiResponse<MissionProgress>> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.updateMissionProgress(userId, missionId, progress);
 
       if (result.success) {
@@ -852,7 +852,7 @@ export class MissionProgressService {
       // Calculate results based on submissions
       const results = await this.calculateMissionResults(missionId, finalSubmissions);
 
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const completeResult = await missionFirebaseService.completeMission(userId, missionId, results);
 
       if (completeResult.success) {
@@ -1291,7 +1291,7 @@ export class MissionService {
    */
   async getActiveMissions(userId: string): Promise<MissionApiResponse<Mission[]>> {
     try {
-      const { missionFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.getActiveMissions(userId);
 
       if (result.success) {

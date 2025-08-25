@@ -78,7 +78,7 @@ export class MicroLearningService {
       };
 
       // Save session to Firebase
-      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { microLearningFirebaseService } = await import('@/lib/firebase-services');
       const saveResult = await microLearningFirebaseService.saveSession(userId, session);
 
       if (!saveResult.success) {
@@ -97,7 +97,7 @@ export class MicroLearningService {
    */
   static async getSessionHistory(userId: string, limit = 20): Promise<MicroLearningSession[]> {
     try {
-      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { microLearningFirebaseService } = await import('@/lib/firebase-services');
       const result = await microLearningFirebaseService.getSessionHistory(userId, limit);
 
       if (!result.success) {
@@ -118,7 +118,7 @@ export class MicroLearningService {
     try {
       // Get user's learning history and preferences
       const sessionHistory = await this.getSessionHistory(userId, 50);
-      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { microLearningFirebaseService } = await import('@/lib/firebase-services');
       // const _preferencesResult = await microLearningFirebaseService.getUserPreferences(userId);
 
       // Get existing recommendations to check if they're still valid
@@ -149,7 +149,7 @@ export class MicroLearningService {
     progress: any
   ): Promise<void> {
     try {
-      const { microLearningFirebaseService } = await import('@/lib/firebase-enhanced');
+      const { microLearningFirebaseService } = await import('@/lib/firebase-services');
       const result = await microLearningFirebaseService.updateSessionProgress(userId, sessionId, progress);
 
       if (!result.success) {
@@ -482,7 +482,7 @@ export class MicroLearningService {
   private static async getUserPersona(userId: string): Promise<UserPersona> {
     try {
       // Get user data from Firebase instead of mock
-      const { userService } = await import('@/lib/firebase-enhanced');
+      const { userService } = await import('@/lib/firebase-services');
       const result = await userService.get(userId);
 
       if (result.success && result.data) {

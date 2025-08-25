@@ -1,14 +1,7 @@
 /**
- * @fileoverview Main Dashboard Page Component
+ * @fileoverview Main Dashboard Page Component - Refactored with Database Abstraction Layer
  *
- * The central c  // State for data that hasn't been migrated to service layer yet
-  const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
-  const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
-  const [insights, setInsights] = useState<StudyInsight[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showDailyLogModal, setShowDailyLogModal] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [lastActivity, setLastActivity] = useState<Date>(new Date());center for exam preparation strategy. Displays real-time
+ * The central command center for exam preparation strategy. Displays real-time
  * analytics, revision queue, performance trends, AI-generated insights, and
  * quick action buttons for daily activities.
  *
@@ -21,16 +14,15 @@
  * - AI-powered study recommendations
  *
  * @author Exam Strategy Engine Team
- * @version 1.0.0
+ * @version 2.0.0 - Refactored with Database Abstraction Layer
  */
 
 'use client';
 
-import { format, differenceInDays } from 'date-fns';
-import { Calendar, Target, TrendingUp, Brain, Zap, Clock, BookOpen, Plus, AlertTriangle, CheckCircle, Timer } from 'lucide-react';
+import { format } from 'date-fns';
+import { Target, Brain, Zap, Clock, BookOpen, Plus, AlertTriangle, Timer } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useState, useEffect, useCallback } from 'react';
 
 import AnalyticsWidget from '@/components/analytics/AnalyticsWidget';
 import AuthGuard from '@/components/AuthGuard';
@@ -41,23 +33,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { useAsyncData } from '@/hooks/enhanced-hooks';
-import {
-  userService,
-  dailyLogService,
-  revisionService,
-  mockTestService,
-  insightsService
-} from '@/lib/firebase-enhanced';
-import { MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
 
+// Use new database abstraction layer
+import {
+  enhancedDatabaseService,
+  RepositoryFactory,
+  UserRepository,
+  ProgressRepository,
+  MissionRepository,
+  AnalyticsRepository
+} from '@/lib/database';
+import { RealtimeSubscription } from '@/lib/database/interfaces';
+import {
+  User,
+  Progress,
+  Mission,
+  AnalyticsEvent
+} from '@/lib/database/repositories';
 
 // Constants
-const DAYS_UNTIL_EXAM = 14;
-const DAYS_IN_WEEK = 7;
-const DAYS_IN_YEAR = 365;
-const MINUTES_IN_HOUR = 60;
-const CHART_COLUMNS = 6;
 const RECENT_ITEMS_LIMIT = 3;
 
 // Helper functions
@@ -73,16 +67,23 @@ const getInsightClasses = (type: string) => {
   }
 };
 
-// Type definitions for component data
-interface DailyLogItem {
-  date: { toDate: () => Date };
-  health: {
-    energy: number;
-    sleepHours: number;
-  };
-  studiedTopics: Array<{
-    minutes: number;
-  }>;
+// Type definitions for dashboard data
+interface DashboardData {
+  user: User | null;
+  progress: Progress[];
+  activeMissions: Mission[];
+  recentAnalytics: AnalyticsEvent[];
+  studyStreak: number;
+  totalStudyTime: number;
+  completionRate: number;
+}
+
+interface StudyInsight {
+  id: string;
+  type: 'warning' | 'recommendation' | 'success';
+  title: string;
+  description: string;
+  createdAt: Date;
 }
 
 /**
@@ -90,115 +91,350 @@ interface DailyLogItem {
  *
  * Displays the strategic command center with:
  * - User statistics and exam countdown
- * - Spaced repetition revision queue
+ * - Active missions and progress tracking
  * - Performance analytics and trends
- * - Health metrics correlation
  * - AI-powered study insights
  * - Quick action buttons for logging
  *
  * @returns {JSX.Element} The dashboard page
- *
- * @example
- * ```typescript
- * // This component is automatically rendered at /dashboard route
- * // It requires authentication and shows comprehensive study analytics
- * ```
  */
 export default function DashboardPage() {
   const { user } = useAuth();
 
-  // State for data that hasn't been migrated to service layer yet
-  const [mockTests, setMockTests] = useState<MockTestLog[]>([]);
-  const [revisionQueue, setRevisionQueue] = useState<RevisionItem[]>([]);
+  // Repository instances
+  const [repositories, setRepositories] = useState<{
+    userRepo: UserRepository;
+    progressRepo: ProgressRepository;
+    missionRepo: MissionRepository;
+    analyticsRepo: AnalyticsRepository;
+  } | null>(null);
+
+  // Dashboard state
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    user: null,
+    progress: [],
+    activeMissions: [],
+    recentAnalytics: [],
+    studyStreak: 0,
+    totalStudyTime: 0,
+    completionRate: 0
+  });
+
   const [insights, setInsights] = useState<StudyInsight[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showDailyLogModal, setShowDailyLogModal] = useState(false);
 
-  // Enhanced data fetching using the new service layer
-  const {
-    data: userData
-  } = useAsyncData(
-    () => user
-      ? userService.get(user.uid).then(result => result.success ? result.data : null)
-      : Promise.resolve(null),
-    [user?.uid],
-    { immediate: !!user }
-  );
-
-  const {
-    data: dailyLogs
-  } = useAsyncData(
-    () => user
-      ? dailyLogService.getLogs(user.uid, DAYS_UNTIL_EXAM).then(result => result.success ? result.data : [])
-      : Promise.resolve([]),
-    [user?.uid],
-    { immediate: !!user }
-  );
+  // Real-time subscriptions
+  const [, setSubscriptions] = useState<RealtimeSubscription[]>([]);
 
   /**
-   * Legacy data fetching for components not yet migrated to service layer
+   * Initialize repository instances
    */
   useEffect(() => {
-    const fetchLegacyData = async () => {
-      if (!user) { return; }
+    const factory = new RepositoryFactory(enhancedDatabaseService.getProvider());
 
-      try {
-        // Fetch data using the new service layer
-        const [mockTestsResult, revisionResult, insightsResult] = await Promise.all([
-          mockTestService.getTests(user.uid, 10),
-          revisionService.getQueue(user.uid),
-          insightsService.generate(user.uid)
-        ]);
+    setRepositories({
+      userRepo: factory.createUserRepository(),
+      progressRepo: factory.createProgressRepository(),
+      missionRepo: factory.createMissionRepository(),
+      analyticsRepo: factory.createAnalyticsRepository()
+    });
+  }, []);
 
-        // Process results and set state
-        if (mockTestsResult.success) { setMockTests(mockTestsResult.data ?? []); }
-        if (revisionResult.success) { setRevisionQueue(revisionResult.data ?? []); }
-        if (insightsResult.success) { setInsights(insightsResult.data ?? []); }
-      } catch (error) {
-        console.error('Error fetching legacy dashboard data:', error);
-      } finally {
-        setLoading(false);
+  /**
+   * Fetch dashboard data with proper error handling
+   */
+  const fetchDashboardData = useCallback(async () => {
+    if (!user || !repositories) { return; }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch all dashboard data in parallel
+      const [
+        userResult,
+        progressResult,
+        missionsResult,
+        analyticsResult
+      ] = await Promise.all([
+        repositories.userRepo.findById(user.uid),
+        repositories.progressRepo.findByUser(user.uid),
+        repositories.missionRepo.findActiveMissions(user.uid),
+        repositories.analyticsRepo.findByUser(user.uid, 100)
+      ]);
+
+      // Handle user data
+      if (!userResult.success) {
+        throw new Error(userResult.error || 'Failed to fetch user data');
       }
-    };
 
-    fetchLegacyData();
+      // Handle progress data
+      if (!progressResult.success) {
+        console.warn('Failed to fetch progress data:', progressResult.error);
+      }
 
-    // Set up real-time subscriptions for live data updates
-    // TODO: Implement real-time subscriptions in the new service layer
-    // let unsubscribeRevision: (() => void) | undefined;
+      // Handle missions data
+      if (!missionsResult.success) {
+        console.warn('Failed to fetch missions data:', missionsResult.error);
+      }
 
-    // if (user) {
-    //   unsubscribeRevision = subscribeToRevisionQueue(user.uid, setRevisionQueue);
-    // }
+      // Handle analytics data
+      if (!analyticsResult.success) {
+        console.warn('Failed to fetch analytics data:', analyticsResult.error);
+      }
 
-    // Cleanup subscriptions on component unmount
+      // Calculate derived metrics
+      const progress = progressResult.data || [];
+      const studyStreak = calculateStudyStreak(analyticsResult.data || []);
+      const totalStudyTime = calculateTotalStudyTime(progress);
+      const completionRate = calculateCompletionRate(progress);
+
+      setDashboardData({
+        user: userResult.data || null,
+        progress,
+        activeMissions: missionsResult.data || [],
+        recentAnalytics: analyticsResult.data || [],
+        studyStreak,
+        totalStudyTime,
+        completionRate
+      });
+
+      // Generate AI insights based on data
+      generateInsights(progress, missionsResult.data || [], analyticsResult.data || []);
+
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch dashboard data';
+      setError(message);
+      console.error('Dashboard data fetch error:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, repositories]);
+
+  /**
+   * Set up real-time subscriptions for live updates
+   */
+  useEffect(() => {
+    if (!user || !repositories) { return; }
+
+    const newSubscriptions: RealtimeSubscription[] = [];
+
+    // Subscribe to user progress updates
+    const progressSubscription = repositories.progressRepo.subscribe(
+      (updatedProgress) => {
+        setDashboardData(prev => ({
+          ...prev,
+          progress: updatedProgress,
+          totalStudyTime: calculateTotalStudyTime(updatedProgress),
+          completionRate: calculateCompletionRate(updatedProgress)
+        }));
+      },
+      { where: [{ field: 'userId', operator: 'eq', value: user.uid }] }
+    );
+
+    // Subscribe to active missions updates
+    const missionsSubscription = repositories.missionRepo.subscribe(
+      (updatedMissions) => {
+        setDashboardData(prev => ({
+          ...prev,
+          activeMissions: updatedMissions
+        }));
+      },
+      {
+        where: [
+          { field: 'userId', operator: 'eq', value: user.uid },
+          { field: 'status', operator: 'eq', value: 'active' }
+        ]
+      }
+    );
+
+    newSubscriptions.push(progressSubscription, missionsSubscription);
+    setSubscriptions(newSubscriptions);
+
+    // Cleanup subscriptions on unmount
     return () => {
-      // TODO: Add cleanup for real-time subscriptions
-      // unsubscribeRevision?.();
+      newSubscriptions.forEach(sub => sub.unsubscribe());
     };
-  }, [user]);
+  }, [user, repositories]);
 
-  if (loading || !userData) {
+  /**
+   * Initial data fetch
+   */
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
+
+  /**
+   * Calculate study streak from analytics events
+   */
+  const calculateStudyStreak = (analytics: AnalyticsEvent[]): number => {
+    const studyEvents = analytics.filter(event =>
+      event.eventType === 'study_session_completed'
+    );
+
+    if (studyEvents.length === 0) { return 0; }
+
+    let streak = 0;
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    while (true) {
+      const dayEvents = studyEvents.filter(event => {
+        const eventDate = new Date(event.timestamp);
+        eventDate.setHours(0, 0, 0, 0);
+        return eventDate.getTime() === currentDate.getTime();
+      });
+
+      if (dayEvents.length === 0) { break; }
+
+      streak++;
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+
+    return streak;
+  };
+
+  /**
+   * Calculate total study time from progress data
+   */
+  const calculateTotalStudyTime = (progress: Progress[]): number => {
+    return progress.reduce((total, item) => total + item.totalTimeSpent, 0);
+  };
+
+  /**
+   * Calculate overall completion rate
+   */
+  const calculateCompletionRate = (progress: Progress[]): number => {
+    if (progress.length === 0) { return 0; }
+
+    const totalCompletion = progress.reduce((sum, item) => sum + item.completionPercentage, 0);
+    return Math.round(totalCompletion / progress.length);
+  };
+
+  /**
+   * Generate AI-powered insights based on user data
+   */
+  const generateInsights = (
+    progress: Progress[],
+    missions: Mission[],
+    analytics: AnalyticsEvent[]
+  ) => {
+    const newInsights: StudyInsight[] = [];
+
+    // Analyze study consistency
+    const recentStudyEvents = analytics.filter(event =>
+      event.eventType === 'study_session_completed' &&
+      new Date(event.timestamp) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    );
+
+    if (recentStudyEvents.length < 3) {
+      newInsights.push({
+        id: 'consistency-warning',
+        type: 'warning',
+        title: 'Low Study Consistency',
+        description: 'You have less than 3 study sessions this week. Try to maintain daily consistency for better retention.',
+        createdAt: new Date()
+      });
+    }
+
+    // Analyze mission progress
+    const overdueMissions = missions.filter(mission =>
+      new Date(mission.targetDate) < new Date() && mission.status === 'active'
+    );
+
+    if (overdueMissions.length > 0) {
+      newInsights.push({
+        id: 'overdue-missions',
+        type: 'warning',
+        title: `${overdueMissions.length} Overdue Mission(s)`,
+        description: 'Some of your missions have passed their target dates. Consider adjusting timelines or breaking them into smaller tasks.',
+        createdAt: new Date()
+      });
+    }
+
+    // Analyze subject balance
+    const subjectProgress = progress.reduce((acc, item) => {
+      acc[item.subjectId] = (acc[item.subjectId] || 0) + item.completionPercentage;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const subjects = Object.keys(subjectProgress);
+    if (subjects.length > 1) {
+      const avgCompletion = Object.values(subjectProgress).reduce((a, b) => a + b, 0) / subjects.length;
+      const imbalanced = subjects.filter(subject => {
+        const subjectValue = subjectProgress[subject];
+        return subjectValue !== undefined && Math.abs(subjectValue - avgCompletion) > 20;
+      });
+
+      if (imbalanced.length > 0) {
+        newInsights.push({
+          id: 'subject-imbalance',
+          type: 'recommendation',
+          title: 'Subject Imbalance Detected',
+          description: 'Some subjects are lagging behind others. Consider allocating more time to weaker areas.',
+          createdAt: new Date()
+        });
+      }
+    }
+
+    // Positive reinforcement for good performance
+    if (dashboardData.studyStreak >= 7) {
+      newInsights.push({
+        id: 'streak-achievement',
+        type: 'success',
+        title: 'Amazing Study Streak!',
+        description: `You've maintained a ${dashboardData.studyStreak}-day study streak. Keep up the excellent work!`,
+        createdAt: new Date()
+      });
+    }
+
+    setInsights(newInsights);
+  };
+
+  /**
+   * Record analytics event for user interaction
+   */
+  const recordAnalyticsEvent = async (eventType: string, eventData: Record<string, any>) => {
+    if (!user || !repositories) { return; }
+
+    try {
+      await repositories.analyticsRepo.recordEvent(
+        user.uid,
+        eventType,
+        eventData,
+        `session-${Date.now()}`
+      );
+    } catch (error) {
+      console.error('Failed to record analytics event:', error);
+    }
+  };
+
+  /**
+   * Handle daily log modal actions
+   */
+  const handleDailyLogOpen = () => {
+    setShowDailyLogModal(true);
+    recordAnalyticsEvent('daily_log_opened', { timestamp: new Date() });
+  };
+
+  const handleDailyLogClose = () => {
+    setShowDailyLogModal(false);
+    // Refresh dashboard data after logging
+    fetchDashboardData();
+  };
+
+  // Loading state
+  if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-6 max-w-md">
-              <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-                <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Loading Dashboard</h3>
-                  <p className="text-sm text-gray-600">Preparing your strategic learning environment...</p>
-                  <div className="mt-4 space-y-2">
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-pulse" style={{ width: '75%' }} />
-                    </div>
-                    <p className="text-xs text-gray-500">Loading analytics and progress data</p>
-                  </div>
-                </div>
-              </div>
+          <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4" />
+              <p className="text-gray-600">Loading your dashboard...</p>
             </div>
           </div>
         </div>
@@ -206,487 +442,244 @@ export default function DashboardPage() {
     );
   }
 
-  const daysUntilExam = differenceInDays(userData.currentExam.targetDate.toDate(), new Date());
+  // Error state
+  if (error) {
+    return (
+      <AuthGuard>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+          <Navigation />
+          <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+            <div className="text-center">
+              <AlertTriangle className="h-16 w-16 text-red-600 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to Load Dashboard</h2>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <Button onClick={fetchDashboardData}>Try Again</Button>
+            </div>
+          </div>
+        </div>
+      </AuthGuard>
+    );
+  }
 
-  // Prepare chart data
-  const chartData = mockTests
-    .slice()
-    .reverse()
-    .map((test, index) => ({
-      test: `Test ${index + 1}`,
-      score: Object.values(test.scores).reduce((sum, score) => sum + score, 0),
-      maxScore: Object.values(test.maxScores).reduce((sum, score) => sum + score, 0),
-      date: format(test.date.toDate(), 'MMM dd')
-    }));
-
-  // Health correlation data
-  const healthData = dailyLogs ? dailyLogs.slice(0, DAYS_IN_WEEK).reverse().map((log: DailyLogItem) => ({
-    day: format(log.date.toDate(), 'EEE'),
-    energy: log.health.energy,
-    sleep: log.health.sleepHours,
-    studyTime: log.studiedTopics.reduce(
-      (sum: number, session: { minutes: number }) => sum + session.minutes,
-      0
-    ) / MINUTES_IN_HOUR
-  })) : [];
-
-  // Error analysis from latest test
-  const latestTest = mockTests[0];
-  const errorData = latestTest ? [
-    { name: 'Concept Gaps', value: latestTest.analysis.conceptGaps, color: '#ef4444' },
-    { name: 'Careless Errors', value: latestTest.analysis.carelessErrors, color: '#f97316' },
-    { name: 'Time Pressure', value: latestTest.analysis.timePressures, color: '#eab308' },
-    { name: 'Lucky Guesses', value: latestTest.analysis.intelligentGuesses, color: '#22c55e' }
-  ].filter(item => item.value > 0) : [];
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'overdue': return 'bg-red-100 text-red-800 border-red-200';
-      case 'due_today': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'due_soon': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case 'overdue': return <AlertTriangle className="h-4 w-4" />;
-      case 'due_today': return <Timer className="h-4 w-4" />;
-      case 'due_soon': return <Clock className="h-4 w-4" />;
-      default: return <CheckCircle className="h-4 w-4" />;
-    }
-  };
+  const { user: userData, activeMissions, studyStreak, totalStudyTime, completionRate } = dashboardData;
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
 
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
-          {/* Header Section */}
-          <div className="text-center space-y-4">
-            <div className="inline-block">
-              <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
-                🎯 Strategic Command Center
-              </Badge>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gradient">
-              Welcome back, {userData.displayName ?? 'Strategist'}
+        <main className="container mx-auto px-4 py-8">
+          {/* Welcome Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome back, {userData?.name || 'Student'}! 👋
             </h1>
-            <p className="text-muted-foreground text-lg">
-              Your strategic journey for <span className="font-semibold">{userData.currentExam.name}</span>
+            <p className="text-gray-600">
+              Ready to tackle your study goals? Let's make today count!
             </p>
           </div>
 
-          {/* Key Metrics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Exam Countdown */}
-            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Exam Countdown</CardTitle>
-                  <Calendar className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-gradient">{daysUntilExam}</div>
-                  <p className="text-xs text-muted-foreground">days remaining</p>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
-                      style={{
-                        width: `${Math.max(0, Math.min(100, ((DAYS_IN_YEAR - daysUntilExam) / DAYS_IN_YEAR) * 100))}%`
-                      }}
-                     />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
+          {/* Quick Stats Row */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {/* Study Streak */}
-            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-3">
+            <Card>
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Study Streak</CardTitle>
-                  <Zap className="h-5 w-5 text-orange-500 group-hover:scale-110 transition-transform" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-orange-600">{userData.studyStreak ?? 0}</div>
-                  <p className="text-xs text-muted-foreground">consecutive days</p>
-                  <div className="flex space-x-1">
-                    {[...Array(DAYS_IN_WEEK)].map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-3 h-3 rounded-full ${
-                          i < (userData.studyStreak ?? 0) % DAYS_IN_WEEK
-                            ? 'bg-orange-500'
-                            : 'bg-muted'
-                        } transition-colors duration-300`}
-                       />
-                    ))}
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Study Streak</p>
+                    <p className="text-2xl font-bold text-orange-600">{studyStreak} days</p>
                   </div>
+                  <Zap className="h-8 w-8 text-orange-600" />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Revision Queue */}
-            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-3">
+            {/* Total Study Time */}
+            <Card>
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Revision Due</CardTitle>
-                  <Clock className="h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-blue-600">{revisionQueue.length}</div>
-                  <p className="text-xs text-muted-foreground">topics pending</p>
-                  {revisionQueue.length > 0 && (
-                    <Badge variant="outline" className="text-xs">
-                      Next: {revisionQueue[0]?.topicName}
-                    </Badge>
-                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Total Study Time</p>
+                    <p className="text-2xl font-bold text-blue-600">
+                      {Math.round(totalStudyTime / 60)}h
+                    </p>
+                  </div>
+                  <Clock className="h-8 w-8 text-blue-600" />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Latest Score */}
-            <Card className="glass border-0 hover:scale-105 transition-all duration-300 group">
-              <CardHeader className="pb-3">
+            {/* Overall Progress */}
+            <Card>
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium">Latest Score</CardTitle>
-                  <Target className="h-5 w-5 text-green-500 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Overall Progress</p>
+                    <p className="text-2xl font-bold text-green-600">{completionRate}%</p>
+                  </div>
+                  <Target className="h-8 w-8 text-green-600" />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {latestTest ? (
-                    <>
-                      <div className="text-3xl font-bold text-green-600">
-                        {Math.round((Object.values(latestTest.scores).reduce((sum, score) => sum + score, 0) /
-                          Object.values(latestTest.maxScores).reduce((sum, score) => sum + score, 0)) * 100)}%
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {format(latestTest.date.toDate(), 'MMM dd')}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <div className="text-3xl font-bold text-muted-foreground">--</div>
-                      <p className="text-xs text-muted-foreground">No tests yet</p>
-                    </>
-                  )}
+              </CardContent>
+            </Card>
+
+            {/* Active Missions */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Active Missions</p>
+                    <p className="text-2xl font-bold text-purple-600">{activeMissions.length}</p>
+                  </div>
+                  <BookOpen className="h-8 w-8 text-purple-600" />
                 </div>
               </CardContent>
             </Card>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Days Until Exam</CardTitle>
-                <Calendar className="h-4 w-4 opacity-90" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{daysUntilExam}</div>
-                <p className="text-xs opacity-90">
-                  {format(userData.currentExam.targetDate.toDate(), 'PPP')}
-                </p>
-              </CardContent>
-            </Card>
 
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Study Streak</CardTitle>
-                <Target className="h-4 w-4 opacity-90" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{userData.stats.currentStreak}</div>
-                <p className="text-xs opacity-90">Days consistent</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Latest Score</CardTitle>
-                <TrendingUp className="h-4 w-4 opacity-90" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">
-                  {mockTests.length > 0 && mockTests[0]?.scores && mockTests[0]?.maxScores
-                    ? `${Math.round((Object.values(mockTests[0].scores).reduce((sum, score) => sum + score, 0) / Object.values(mockTests[0].maxScores).reduce((sum, score) => sum + score, 0)) * 100)}%`
-                    : 'N/A'
-                  }
-                </div>
-                <p className="text-xs opacity-90">
-                  {mockTests.length > 0 ? 'Latest test score' : 'No tests yet'}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Total Study Hours</CardTitle>
-                <Zap className="h-4 w-4 opacity-90" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{Math.round(userData.stats.totalStudyHours)}</div>
-                <p className="text-xs opacity-90">Hours invested</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Revision Queue - Most Important */}
-          {revisionQueue.length > 0 && (
-            <Card className="border-orange-200 bg-orange-50">
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            {/* Active Missions */}
+            <Card className="lg:col-span-2">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Brain className="h-5 w-5 text-orange-600" />
-                    <CardTitle className="text-orange-900">Revision Queue</CardTitle>
-                  </div>
-                  <Badge variant="secondary">{revisionQueue.length} topics due</Badge>
-                </div>
-                <CardDescription className="text-orange-700">
-                  Topics that need your attention based on spaced repetition algorithm
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Active Missions
+                </CardTitle>
+                <CardDescription>
+                  Your current study missions and their progress
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {revisionQueue.slice(0, CHART_COLUMNS).map(item => (
-                    <div
-                      key={item.topicId}
-                      className={`p-3 rounded-lg border ${getPriorityColor(item.priority)}`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          {getPriorityIcon(item.priority)}
-                          <span className="font-medium text-sm">{item.topicName}</span>
-                        </div>
-                        <Badge variant="outline" className="text-xs">
-                          Tier {item.tier}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between text-xs">
-                        <span>{item.subjectName}</span>
-                        <span>{item.masteryScore}% mastery</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                {revisionQueue.length > CHART_COLUMNS && (
-                  <div className="mt-4 text-center">
-                    <Link href="/syllabus">
-                      <Button variant="outline">
-                        View All {revisionQueue.length} Topics
-                      </Button>
+                {activeMissions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 mb-4">No active missions yet</p>
+                    <Link href="/missions">
+                      <Button>Create Your First Mission</Button>
                     </Link>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Analytics Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* Analytics Widget */}
-            <AnalyticsWidget className="xl:col-span-1" />
-
-            {/* Score Trend Chart */}
-            <Card className="xl:col-span-2">
-              <CardHeader>
-                <CardTitle>Score Progression</CardTitle>
-                <CardDescription>Your mock test performance over time</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {chartData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="test" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="score"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                        dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
                 ) : (
-                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    No test data yet. Take your first mock test to see progress.
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Error Analysis */}
-            {errorData.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Latest Test Analysis</CardTitle>
-                  <CardDescription>Error breakdown from your most recent test</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <PieChart>
-                      <Pie
-                        data={errorData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={40}
-                        outerRadius={80}
-                        dataKey="value"
-                      >
-                        {errorData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="mt-4 space-y-2">
-                    {errorData.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center space-x-2">
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: item.color }}
-                          />
-                          <span>{item.name}</span>
+                  <div className="space-y-4">
+                    {activeMissions.slice(0, RECENT_ITEMS_LIMIT).map((mission) => (
+                      <div key={mission.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-semibold">{mission.title}</h3>
+                          <Badge variant={new Date(mission.targetDate) < new Date() ? 'destructive' : 'default'}>
+                            {format(new Date(mission.targetDate), 'MMM dd')}
+                          </Badge>
                         </div>
-                        <span className="font-medium">{item.value}</span>
+                        <p className="text-sm text-gray-600 mb-3">{mission.description}</p>
+
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Progress</span>
+                            <span>{mission.progress}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${mission.progress}%` }}
+                             />
+                          </div>
+                        </div>
                       </div>
                     ))}
+
+                    {activeMissions.length > RECENT_ITEMS_LIMIT && (
+                      <div className="text-center pt-4">
+                        <Link href="/missions">
+                          <Button variant="outline">View All Missions</Button>
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Health Correlation & Quick Actions */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Health Correlation Chart */}
-            {healthData.length > 0 && (
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle>Health & Study Correlation</CardTitle>
-                  <CardDescription>How your health affects study performance</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <LineChart data={healthData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="day" />
-                      <YAxis />
-                      <Tooltip />
-                      <Line
-                        type="monotone"
-                        dataKey="energy"
-                        stroke="#22c55e"
-                        strokeWidth={2}
-                        name="Energy Level"
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="studyTime"
-                        stroke="#3b82f6"
-                        strokeWidth={2}
-                        name="Study Hours"
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Quick Actions */}
-            <Card className={healthData.length > 0 ? '' : 'lg:col-span-2'}>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>Fast-track your preparation</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  className="w-full justify-start"
-                  variant="outline"
-                  onClick={() => setShowDailyLogModal(true)}
-                >
-                  <Zap className="h-4 w-4 mr-2" />
-                  Log Today's Progress
-                </Button>
-                <Link href="/log/mock">
-                  <Button className="w-full justify-start" variant="outline">
-                    <Plus className="h-4 w-4 mr-2" />
-                    New Mock Test
-                  </Button>
-                </Link>
-                <Link href="/subjects">
-                  <Button className="w-full justify-start" variant="outline">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Browse Syllabus
-                  </Button>
-                </Link>
-                {revisionQueue.length > 0 && (
-                  <Button className="w-full justify-start" variant="outline">
-                    <Brain className="h-4 w-4 mr-2" />
-                    Start Revision Session
-                  </Button>
                 )}
               </CardContent>
             </Card>
 
-            {/* Micro-Learning Quick Launcher */}
-            <QuickSessionLauncher
-              userId={user?.uid ?? ''}
-              onStartSession={(subjectId, topicId, track, duration) => {
-                // Navigate to micro-learning session
-                window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
-              }}
-              className="lg:col-span-1"
-            />
-          </div>
-
-          {/* Insights */}
-          {insights.length > 0 && (
+            {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Strategic Insights</CardTitle>
-                <CardDescription>AI-powered recommendations based on your data</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Quick Actions
+                </CardTitle>
+                <CardDescription>
+                  Log your daily progress and activities
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  onClick={handleDailyLogOpen}
+                  className="w-full"
+                  size="lg"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Daily Log
+                </Button>
+
+                <Link href="/log/mock">
+                  <Button variant="outline" className="w-full" size="lg">
+                    <Timer className="h-4 w-4 mr-2" />
+                    Mock Test
+                  </Button>
+                </Link>
+
+                <Link href="/micro-learning">
+                  <Button variant="outline" className="w-full" size="lg">
+                    <Brain className="h-4 w-4 mr-2" />
+                    Quick Session
+                  </Button>
+                </Link>
+
+                <Link href="/syllabus">
+                  <Button variant="outline" className="w-full" size="lg">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Study Topics
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* AI Insights */}
+          {insights.length > 0 && (
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5" />
+                  AI Study Insights
+                </CardTitle>
+                <CardDescription>
+                  Personalized recommendations based on your study patterns
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {insights.slice(0, RECENT_ITEMS_LIMIT).map((insight: StudyInsight, index: number) => (
-                    <div
-                      key={index}
-                      className={getInsightClasses(insight.type)}
-                    >
+                  {insights.map((insight) => (
+                    <div key={insight.id} className={getInsightClasses(insight.type)}>
                       <h4 className="font-semibold mb-2">{insight.title}</h4>
-                      <p className="text-sm text-gray-700 mb-3">{insight.description}</p>
-                      <div className="space-y-1">
-                        {insight.actionItems.slice(0, 2).map((action: string, actionIndex: number) => (
-                          <div key={actionIndex} className="flex items-center space-x-2 text-sm">
-                            <CheckCircle className="h-3 w-3 text-green-600" />
-                            <span>{action}</span>
-                          </div>
-                        ))}
-                      </div>
+                      <p className="text-sm">{insight.description}</p>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
           )}
-        </div>
 
+          {/* Analytics Widget */}
+          <AnalyticsWidget />
+
+          {/* Micro Learning Quick Launcher */}
+          <div className="mt-8">
+            <QuickSessionLauncher />
+          </div>
+        </main>
+
+        {/* Daily Log Modal */}
         <DailyLogModal
           isOpen={showDailyLogModal}
-          onClose={() => setShowDailyLogModal(false)}
+          onClose={handleDailyLogClose}
         />
       </div>
     </AuthGuard>

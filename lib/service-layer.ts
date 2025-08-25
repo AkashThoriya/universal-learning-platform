@@ -1,5 +1,5 @@
 /**
- * @fileoverview Enhanced Service Layer Architecture
+ * @fileoverview Service Layer Architecture
  *
  * Provides a scalable service layer pattern for managing business logic,
  * data operations, and cross-cutting concerns. Implements repository pattern

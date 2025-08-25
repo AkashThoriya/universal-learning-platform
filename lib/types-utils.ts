@@ -1,5 +1,5 @@
 /**
- * @fileoverview Enhanced TypeScript Utilities for Scalability
+ * @fileoverview TypeScript Utilities for Scalability
  *
  * Advanced type utilities, type guards, and generic helpers to improve
  * type safety and developer experience across the application.

@@ -24,7 +24,7 @@ import { UserPersona } from '@/types/exam';
 /* eslint-disable import/no-cycle */
 import { analyticsDemoService } from './analytics-demo-data';
 import { db } from './firebase';
-import { firebaseService } from './firebase-enhanced';
+import { firebaseService } from './firebase-services';
 import { logger } from './logger';
 
 
