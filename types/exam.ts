@@ -123,6 +123,8 @@ export interface SyllabusSubject {
   topics: SyllabusTopic[];
   /** Estimated study time for this subject in hours (optional) */
   estimatedHours?: number;
+  /** Whether this is a custom subject added by the user (optional) */
+  isCustom?: boolean;
 }
 
 /**
@@ -184,14 +186,48 @@ export interface User {
     /** Target exam date */
     targetDate: Timestamp;
   };
+  /** Selected exam ID during onboarding */
+  selectedExamId?: string;
+  /** Target exam date during onboarding */
+  examDate?: Timestamp;
   /** Whether the user has completed the onboarding process */
-  onboardingComplete: boolean;
+  onboardingComplete?: boolean;
+  /** Whether onboarding has been completed (legacy field) */
+  onboardingCompleted?: boolean;
+  /** Whether this is a custom exam */
+  isCustomExam?: boolean;
+  /** Custom exam details if applicable */
+  customExam?: {
+    name?: string | undefined;
+    description?: string | undefined;
+    category?: string | undefined;
+  } | undefined;
+  /** User persona information */
+  userPersona?: UserPersona;
+  /** User preferences for studying */
+  preferences?: {
+    dailyStudyGoalMinutes: number;
+    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    tierDefinitions: {
+      1: string;
+      2: string;
+      3: string;
+    };
+    revisionIntervals: number[];
+    notifications: {
+      revisionReminders: boolean;
+      dailyGoalReminders: boolean;
+      healthCheckReminders: boolean;
+    };
+  };
   /** Timestamp when the user account was created */
-  createdAt: Timestamp;
+  createdAt?: Timestamp;
+  /** Timestamp when the user account was last updated */
+  updatedAt?: Timestamp;
   /** User's personalized settings and preferences */
-  settings: UserSettings;
+  settings?: UserSettings;
   /** User's study statistics and achievements */
-  stats: UserStats;
+  stats?: UserStats;
 }
 
 /**

@@ -1,12 +1,11 @@
 /**
- * @fileoverview Enhanced Onboarding Flow - Enterprise Implementation
+ * @fileoverview Onboarding Setup Flow - Streamlined Implementation
  *
- * Complete multi-step onboarding experience with validation, persistence,
- * analytics, and accessibility. Replaces the existing basic onboarding
- * with a production-ready implementation following enterprise standards.
+ * A complete, user-friendly onboarding experience with intuitive navigation,
+ * clear progress indication, and optimized UI/UX for exam preparation setup.
  *
  * @author Exam Strategy Engine Team
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 'use client';
@@ -22,20 +21,18 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
 import { z } from 'zod';
 
-import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetection';
-import { PersonalInfoStep, CustomExamStep, ExamReviewStep } from '@/components/onboarding-steps';
+import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetectionCompact';
+import { PersonalInfoStep } from '@/components/onboarding/PersonalInfoStepCompact';
 import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding-steps-2';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { StepProgressIndicator } from '@/components/ui/progress-indicators';
 import { useAuth } from '@/contexts/AuthContext';
 import { useForm } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
-
 
 /**
  * Onboarding form data structure
@@ -100,7 +97,6 @@ const onboardingSchema = z.object({
     description: z.string().optional(),
     category: z.string().optional()
   }).refine((_data) => {
-    // Only validate custom exam fields if it's a custom exam
     return true; // We'll handle this in step validation
   }),
   syllabus: z.array(z.any()).min(1, 'At least one subject is required'),
@@ -124,19 +120,9 @@ const onboardingSchema = z.object({
 });
 
 /**
- * Enhanced Onboarding Page Component
- *
- * Multi-step onboarding flow with enterprise-grade features:
- * - Form validation and error handling
- * - State persistence across browser sessions
- * - Accessibility compliance
- * - Analytics tracking
- * - Responsive design
- * - Loading states and optimistic updates
- *
- * @returns {JSX.Element} Enhanced onboarding flow
+ * Enhanced Onboarding Setup Page Component
  */
-export default function EnhancedOnboardingPage() {
+export default function OnboardingSetupPage() {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -163,7 +149,7 @@ export default function EnhancedOnboardingPage() {
         2: 'Medium Priority - Important Topics',
         3: 'Low Priority - Additional Topics'
       },
-      revisionIntervals: [1, 3, 7, 16, 35], // Spaced repetition intervals in days
+      revisionIntervals: [1, 3, 7, 16, 35],
       notifications: {
         revisionReminders: true,
         dailyGoalReminders: true,
@@ -174,11 +160,10 @@ export default function EnhancedOnboardingPage() {
 
   // Multi-step form management
   const multiStep = useMultiStepForm({
-    totalSteps: 5, // Updated from 4 to 5 to include persona detection
+    totalSteps: 4, // Updated to 4 steps (persona + exam + syllabus + preferences)
     persistState: true,
     storageKey: 'onboarding-progress',
     onStepChange: (current, previous) => {
-      // Analytics tracking would go here
       console.log(`Onboarding step changed: ${previous} → ${current}`);
     }
   });
@@ -192,7 +177,6 @@ export default function EnhancedOnboardingPage() {
     validateOnChange: false,
     validateOnBlur: true,
     onFormEvent: (event: string, data: any) => {
-      // Analytics tracking would go here
       console.log(`Form event: ${event}`, data);
     }
   });
@@ -228,7 +212,6 @@ export default function EnhancedOnboardingPage() {
   const validateStep = useCallback(async (step: number): Promise<boolean> => {
     switch (step) {
       case 1:
-        // Persona detection step - basic validation
         return !!(form.data.userPersona?.type);
 
       case 2:
@@ -238,15 +221,9 @@ export default function EnhancedOnboardingPage() {
                  new Date(form.data.examDate) > new Date());
 
       case 3:
-        if (form.data.isCustomExam) {
-          return !!(form.data.customExam.name && form.data.customExam.name.length >= 2);
-        }
-        return true;
-
-      case 4:
         return form.data.syllabus.length > 0;
 
-      case 5:
+      case 4:
         return form.data.preferences.dailyStudyGoalMinutes >= 60 &&
                form.data.preferences.tierDefinitions[1].length > 0 &&
                form.data.preferences.tierDefinitions[2].length > 0 &&
@@ -263,7 +240,6 @@ export default function EnhancedOnboardingPage() {
     if (isValid) {
       multiStep.goToNext();
     } else {
-      // Show validation errors
       await form.validate();
     }
   }, [multiStep, validateStep, form]);
@@ -301,116 +277,72 @@ export default function EnhancedOnboardingPage() {
   }, [form]);
 
   const addCustomSubject = useCallback(() => {
-    // TODO: Replace with proper modal dialog
-    const subjectName = 'Custom Subject'; // Temporarily disabled prompt
-    if (subjectName?.trim()) {
-      const newSubject: SyllabusSubject = {
-        id: `custom_${Date.now()}`,
-        name: subjectName.trim(),
-        tier: 2,
-        topics: [],
-        estimatedHours: 50
-      };
-      form.updateField('syllabus', [...form.data.syllabus, newSubject]);
-    }
+    // This will be handled by a modal or inline input in the component
+    // For now, we'll add a placeholder subject that can be edited
+    const newSubject: SyllabusSubject = {
+      id: `custom-${Date.now()}`,
+      name: 'New Subject',
+      tier: 2,
+      topics: [],
+      isCustom: true
+    };
+    form.updateField('syllabus', [...form.data.syllabus, newSubject]);
   }, [form]);
 
   const removeSubject = useCallback((subjectId: string) => {
-    const updatedSyllabus = form.data.syllabus.filter((s: SyllabusSubject) => s.id !== subjectId);
+    const updatedSyllabus = form.data.syllabus.filter(
+      (subject: SyllabusSubject) => subject.id !== subjectId
+    );
     form.updateField('syllabus', updatedSyllabus);
   }, [form]);
 
-  // Final submission handler
+  // Complete onboarding handler
   const handleComplete = useCallback(async () => {
     if (!user) {
       form.setError('_form' as any, {
-        message: 'Authentication required. Please log in again.',
-        type: 'custom'
-      } as any);
+        message: 'You must be logged in to complete setup.',
+        type: 'server',
+        path: '_form'
+      });
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Validate entire form with enhanced error messages
-      const isValid = await form.validate();
-      if (!isValid) {
-        const errorKeys = Object.keys(form.errors);
-        const errorMessage = errorKeys.length > 0
-          ? `Please fix the following: ${errorKeys.join(', ')}`
-          : 'Please complete all required fields';
-
-        form.setError('_form' as any, {
-          message: errorMessage,
-          type: 'validation',
-          path: '_form'
-        });
-        return;
+      // Final validation
+      await form.validate();
+      if (Object.keys(form.errors).length > 0) {
+        throw new Error('Please fix the errors in the form before proceeding.');
       }
 
-      // Enhanced user data preparation with validation
+      // Prepare user data
       const userData: Partial<UserType> = {
-        email: user.email || '',
-        displayName: form.data.displayName.trim(),
-        currentExam: {
-          id: form.data.selectedExamId,
-          name: form.data.isCustomExam
-            ? (form.data.customExam.name?.trim() || '')
-            : selectedExam?.name || '',
-          targetDate: Timestamp.fromDate(new Date(form.data.examDate))
-        },
-        onboardingComplete: true,
-        settings: {
-          userPersona: form.data.userPersona || { type: 'student' },
-          revisionIntervals: form.data.preferences.revisionIntervals,
-          dailyStudyGoalMinutes: form.data.preferences.dailyStudyGoalMinutes,
-          tierDefinition: form.data.preferences.tierDefinitions,
-          notifications: form.data.preferences.notifications,
-          preferences: {
-            theme: 'system',
-            language: 'en',
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-          }
-        },
-        stats: {
-          totalStudyHours: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          totalMockTests: 0,
-          averageScore: 0,
-          topicsCompleted: 0,
-          totalTopics: form.data.syllabus.reduce((sum: number, subject: SyllabusSubject) =>
-            sum + (subject.topics?.length || 0), 0)
-        },
-        createdAt: Timestamp.fromDate(new Date())
+        displayName: form.data.displayName,
+        selectedExamId: form.data.selectedExamId,
+        examDate: Timestamp.fromDate(new Date(form.data.examDate)),
+        onboardingCompleted: true,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        userPersona: form.data.userPersona,
+        preferences: form.data.preferences,
+        isCustomExam: form.data.isCustomExam,
+        customExam: form.data.isCustomExam ? form.data.customExam : undefined
       };
 
-      // Validate syllabus data
-      if (!form.data.syllabus || form.data.syllabus.length === 0) {
-        throw new Error('At least one subject must be selected for your syllabus');
-      }
-
-      // Enhanced parallel operations with better error handling
+      // Save data concurrently for better performance
       const operations = await Promise.allSettled([
         createUser(user.uid, userData),
         saveSyllabus(user.uid, form.data.syllabus)
       ]);
 
-      // Check for operation failures
-      const failures = operations.filter((result, index) => {
-        if (result.status === 'rejected') {
-          console.error(`Operation ${index} failed:`, result.reason);
-          return true;
-        }
-        return false;
-      });
-
+      // Check for failures
+      const failures = operations.filter((result) => result.status === 'rejected');
       if (failures.length > 0) {
         throw new Error('Failed to complete setup. Some data may not have been saved properly.');
       }
 
-      // Clear persisted data on successful completion
+      // Clear persisted data
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem('onboarding-progress');
@@ -420,18 +352,7 @@ export default function EnhancedOnboardingPage() {
         }
       }
 
-      // Analytics tracking for successful onboarding
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Onboarding completed successfully:', {
-          userId: user.uid,
-          examType: form.data.selectedExamId,
-          isCustomExam: form.data.isCustomExam,
-          personaType: form.data.userPersona?.type,
-          syllabusCount: form.data.syllabus.length
-        });
-      }
-
-      // Navigate to dashboard with success indicator
+      // Navigate to dashboard
       const dashboardUrl = new URL('/dashboard', window.location.origin);
       dashboardUrl.searchParams.set('onboarding', 'complete');
       window.location.href = dashboardUrl.toString();
@@ -442,7 +363,6 @@ export default function EnhancedOnboardingPage() {
       let errorMessage = 'Failed to complete setup. Please try again.';
 
       if (error instanceof Error) {
-        // Provide more specific error messages
         if (error.message.includes('Firebase')) {
           errorMessage = 'Connection error. Please check your internet connection and try again.';
         } else if (error.message.includes('permission')) {
@@ -462,7 +382,7 @@ export default function EnhancedOnboardingPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [user, form, selectedExam, router]);
+  }, [user, form, router]);
 
   // Render step content
   const renderStepContent = () => {
@@ -471,23 +391,18 @@ export default function EnhancedOnboardingPage() {
         return <PersonaDetectionStep form={form as any} />;
 
       case 2:
-        return <PersonalInfoStep
-          form={form}
-          filteredExams={filteredExams}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          onExamSelect={handleExamSelect}
-          selectedExam={selectedExam}
-        />;
+        return (
+          <PersonalInfoStep
+            form={form}
+            filteredExams={filteredExams}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onExamSelect={handleExamSelect}
+            selectedExam={selectedExam}
+          />
+        );
 
       case 3:
-        if (form.data.isCustomExam) {
-          return <CustomExamStep form={form} />;
-        }
-          return <ExamReviewStep form={form} selectedExam={selectedExam} />;
-
-
-      case 4:
         return <SyllabusManagementStep
           form={form}
           onUpdateSubjectTier={updateSubjectTier}
@@ -495,7 +410,7 @@ export default function EnhancedOnboardingPage() {
           onRemoveSubject={removeSubject}
         />;
 
-      case 5:
+      case 4:
         return <PreferencesStep form={form} />;
 
       default:
@@ -504,35 +419,61 @@ export default function EnhancedOnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome to Your Strategic Learning System
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Let's build your personalized exam preparation strategy with intelligent
-            spaced repetition, health-performance correlation, and strategic prioritization.
-          </p>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="mb-8">
-          <StepProgressIndicator
-            currentStep={multiStep.currentStep}
-            totalSteps={multiStep.totalSteps}
-            stepLabels={[
-              'Personal Info & Exam Selection',
-              form.data.isCustomExam ? 'Custom Exam Details' : 'Exam Review',
-              'Syllabus Management',
-              'Study Preferences'
-            ]}
-            className="mb-4"
-          />
-          <div className="text-center text-sm text-gray-600">
-            Step {multiStep.currentStep} of {multiStep.totalSteps} • {Math.round(multiStep.progress)}% complete
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      {/* Responsive Progress Indicator */}
+      
+      {/* Mobile: Bottom floating pill */}
+      <div className="md:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/95 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-4 h-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+              <span className="text-xs font-bold text-white">{multiStep.currentStep}</span>
+            </div>
+            <div className="w-20 h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                style={{ width: `${((multiStep.currentStep - 1) / (multiStep.totalSteps - 1)) * 100}%` }}
+              />
+            </div>
+            <span className="text-xs font-medium text-gray-700">{multiStep.currentStep}/{multiStep.totalSteps}</span>
           </div>
+        </div>
+      </div>
+
+      {/* Desktop: Top right floating pill */}
+      <div className="hidden md:block fixed top-4 right-4 z-50">
+        <div className="bg-white/95 backdrop-blur-sm rounded-full px-5 py-3 shadow-lg border border-gray-200">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+                <span className="text-xs font-bold text-white">{multiStep.currentStep}</span>
+              </div>
+              <span className="text-sm font-medium text-gray-700">Step {multiStep.currentStep} of {multiStep.totalSteps}</span>
+            </div>
+            <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
+                style={{ width: `${((multiStep.currentStep - 1) / (multiStep.totalSteps - 1)) * 100}%` }}
+              />
+            </div>
+            <span className="text-sm text-gray-500">{Math.round(((multiStep.currentStep - 1) / (multiStep.totalSteps - 1)) * 100)}%</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto py-6 px-4 pb-20 md:pb-8">
+        {/* Header - More Compact */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Welcome to Your
+            </span>
+            <br />
+            Strategic Learning Journey
+          </h1>
+          <p className="text-gray-600 max-w-xl mx-auto text-sm md:text-base">
+            Let's personalize your exam preparation
+          </p>
         </div>
 
         {/* Form Errors */}
@@ -545,51 +486,56 @@ export default function EnhancedOnboardingPage() {
           </Alert>
         )}
 
-        {/* Step Content */}
-        <Card className="mb-8">
-          {renderStepContent()}
+        {/* Step Content - Optimized for viewport */}
+        <Card className="mb-6 shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <div className="p-4 md:p-6">
+            {renderStepContent()}
+          </div>
         </Card>
 
-        {/* Navigation */}
+        {/* Navigation - Mobile Optimized */}
         <div className="flex justify-between items-center">
           <Button
             variant="outline"
             onClick={handlePrevious}
             disabled={multiStep.isFirstStep}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 px-3 md:px-4 py-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Previous</span>
+            <span className="hidden sm:inline">Previous</span>
           </Button>
 
-          <div className="text-sm text-gray-500">
-            Use keyboard: ← → to navigate
+          <div className="hidden lg:flex items-center text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+            <span>Use ← → keys</span>
           </div>
 
           {multiStep.isLastStep ? (
             <Button
               onClick={handleComplete}
               disabled={isSubmitting}
-              className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+              className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 px-3 md:px-4 py-2"
             >
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  <span>Setting up...</span>
+                  <span className="hidden sm:inline">Setting up...</span>
+                  <span className="sm:hidden">Setup...</span>
                 </>
               ) : (
                 <>
                   <CheckCircle className="h-4 w-4" />
-                  <span>Launch Strategy Engine</span>
+                  <span className="hidden sm:inline">Complete Setup</span>
+                  <span className="sm:hidden">Complete</span>
                 </>
               )}
             </Button>
           ) : (
             <Button
               onClick={handleNext}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-3 md:px-4 py-2"
             >
-              <span>Continue</span>
+              <span className="hidden sm:inline">Continue</span>
+              <span className="sm:hidden">Next</span>
               <ArrowRight className="h-4 w-4" />
             </Button>
           )}
