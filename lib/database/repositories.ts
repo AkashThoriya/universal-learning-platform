@@ -236,25 +236,24 @@ export class ProgressRepository extends BaseRepository<Progress> {
       // Update existing progress
       const progressId = existingResult.data[0].id;
       return this.update(progressId, { ...updates, updatedAt: new Date() });
-    } else {
-      // Create new progress record
-      const newProgress: Omit<Progress, 'id'> = {
-        userId,
-        subjectId,
-        completionPercentage: updates.completionPercentage || 0,
-        lastStudied: updates.lastStudied || new Date(),
-        streakDays: updates.streakDays || 0,
-        totalTimeSpent: updates.totalTimeSpent || 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      const createResult = await this.create(newProgress);
-      return {
-        success: createResult.success,
-        error: createResult.error || 'Failed to create progress record',
-        metadata: createResult.metadata || { queryTime: 0, cached: false },
-      };
     }
+    // Create new progress record
+    const newProgress: Omit<Progress, 'id'> = {
+      userId,
+      subjectId,
+      completionPercentage: updates.completionPercentage || 0,
+      lastStudied: updates.lastStudied || new Date(),
+      streakDays: updates.streakDays || 0,
+      totalTimeSpent: updates.totalTimeSpent || 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const createResult = await this.create(newProgress);
+    return {
+      success: createResult.success,
+      error: createResult.error || 'Failed to create progress record',
+      metadata: createResult.metadata || { queryTime: 0, cached: false },
+    };
   }
 }
 

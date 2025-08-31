@@ -12,12 +12,6 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { usePWAInstall } from '@/hooks/usePWAInstall';
 import {
   X,
   Download,
@@ -32,6 +26,13 @@ import {
   Plus,
   MoreHorizontal,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 interface PWAInstallBannerProps {
   variant?: 'banner' | 'modal' | 'inline';

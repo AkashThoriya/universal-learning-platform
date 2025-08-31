@@ -690,7 +690,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-red-500 rounded-full" />
                     Challenges
                   </label>
                   <Button
@@ -747,7 +747,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                       className="flex items-start justify-between bg-red-50 border border-red-200 p-3 rounded-lg group hover:bg-red-100 transition-colors"
                     >
                       <div className="flex items-start gap-2 flex-1">
-                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0" />
                         <span className="text-sm text-red-800 leading-relaxed">{challenge}</span>
                       </div>
                       <Button
@@ -784,7 +784,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-green-500 rounded-full" />
                     Wins & Achievements
                   </label>
                   <Button

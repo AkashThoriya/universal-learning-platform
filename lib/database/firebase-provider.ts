@@ -29,6 +29,7 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '../firebase';
+
 import {
   DatabaseProvider,
   DatabaseResult,
@@ -374,7 +375,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       }
 
       const snapshot = await getCountFromServer(q);
-      const count = snapshot.data().count;
+      const { count } = snapshot.data();
 
       const queryTime = Date.now() - startTime;
       this.cache.recordQueryTime(collectionName, queryTime);

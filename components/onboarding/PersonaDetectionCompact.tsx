@@ -26,7 +26,7 @@ import {
   ArrowRight,
   Info,
 } from 'lucide-react';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -136,29 +136,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const [showPersonaDetails, setShowPersonaDetails] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // Enhanced auto-advance with validation
-  useEffect(() => {
-    if (selectedPersona && currentSubStep === 1) {
-      // Validate selection
-      setValidationErrors([]);
-
-      // Track analytics
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'persona_selected', {
-          persona_type: selectedPersona,
-          step: 'persona_detection',
-        });
-      }
-
-      const timer = setTimeout(() => {
-        setCurrentSubStep(2);
-      }, 1000); // Slightly longer for better UX
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [selectedPersona, currentSubStep]);
-
-  // Enhanced persona selection with validation
+  // Enhanced persona selection with improved UX
   const handlePersonaSelect = useCallback(
     (personaType: UserPersonaType) => {
       setSelectedPersona(personaType);
@@ -176,11 +154,6 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         });
       }
 
-      // Auto-advance after a short delay for better UX
-      setTimeout(() => {
-        setCurrentSubStep(2);
-      }, 800);
-
       // Analytics
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'persona_selected', {
@@ -191,6 +164,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
     },
     [form]
   );
+
+  // Manual proceed to next step
+  const handleProceedToNextStep = useCallback(() => {
+    if (selectedPersona) {
+      setCurrentSubStep(2);
+    }
+  }, [selectedPersona]);
 
   // Enhanced study goal change with validation
   const handleStudyGoalChange = useCallback(
@@ -295,7 +275,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
             {currentSubStep === 1 ? (
               <div className="space-y-4">
-                {/* Persona Cards */}
+                {/* Persona Cards with improved interaction */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {PERSONA_OPTIONS.map(persona => {
                     const Icon = persona.icon;
@@ -304,15 +284,20 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     return (
                       <Card
                         key={persona.id}
-                        className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-2 group ${
+                        className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-2 group relative ${
                           isSelected
-                            ? 'border-blue-500 shadow-lg transform scale-105 ring-2 ring-blue-200'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-blue-500 shadow-lg transform scale-105 ring-blue-200 bg-blue-50'
+                            : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
                         }`}
-                        onClick={() => handlePersonaSelect(persona.id)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handlePersonaSelect(persona.id);
+                        }}
                         onKeyDown={e => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
+                            e.stopPropagation();
                             handlePersonaSelect(persona.id);
                           }
                         }}
@@ -320,56 +305,97 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                         role="button"
                         aria-pressed={isSelected}
                         aria-describedby={`persona-${persona.id}-desc`}
+                        aria-label={`Select ${persona.title} persona`}
                       >
-                        <CardContent className="p-6 text-center">
-                          <div
-                            className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${persona.bgColor} group-hover:scale-110 transition-transform`}
-                          >
-                            <Icon className={`h-8 w-8 ${persona.textColor}`} aria-hidden="true" />
-                          </div>
-                          <h3 className="font-semibold text-gray-900 mb-2">{persona.title}</h3>
-                          <p id={`persona-${persona.id}-desc`} className="text-sm text-gray-600 mb-3">
-                            {persona.description}
-                          </p>
-                          <div className="space-y-2">
-                            <Badge variant="secondary" className="text-xs">
-                              ~{persona.defaultHours}h/day recommended
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-xs text-blue-600 hover:text-blue-800"
-                              onClick={e => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                setShowPersonaDetails(showPersonaDetails === persona.id ? null : persona.id);
-                              }}
-                              onMouseEnter={e => e.stopPropagation()}
-                              onMouseLeave={e => e.stopPropagation()}
-                            >
-                              <Info className="h-3 w-3 mr-1" />
-                              {showPersonaDetails === persona.id ? 'Hide details' : 'Learn more'}
-                            </Button>
-                          </div>
-
+                        <CardContent className="p-6 text-center relative">
+                          {/* Selection indicator */}
                           {isSelected && (
-                            <div className="mt-3 animate-in slide-in-from-bottom">
-                              <Check className="h-6 w-6 text-green-600 mx-auto" />
+                            <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 animate-in zoom-in-50">
+                              <Check className="h-4 w-4" />
                             </div>
                           )}
+
+                          <div
+                            className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
+                              isSelected 
+                                ? `${persona.bgColor} scale-110 ring-4 ring-blue-200` 
+                                : `${persona.bgColor} group-hover:scale-110`
+                            }`}
+                          >
+                            <Icon className={`h-8 w-8 ${persona.textColor} transition-transform duration-300`} aria-hidden="true" />
+                          </div>
+                          
+                          <h3 className={`font-semibold mb-2 transition-colors ${
+                            isSelected ? 'text-blue-700' : 'text-gray-900'
+                          }`}>
+                            {persona.title}
+                          </h3>
+                          
+                          <p id={`persona-${persona.id}-desc`} className={`text-sm mb-3 transition-colors ${
+                            isSelected ? 'text-blue-600' : 'text-gray-600'
+                          }`}>
+                            {persona.description}
+                          </p>
+                          
+                          <div className="space-y-2">
+                            <Badge 
+                              variant={isSelected ? "default" : "secondary"} 
+                              className={`text-xs ${
+                                isSelected ? 'bg-blue-600 text-white' : ''
+                              }`}
+                            >
+                              ~{persona.defaultHours}h/day recommended
+                            </Badge>
+                            
+                            <div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className={`text-xs transition-colors ${
+                                  isSelected 
+                                    ? 'text-blue-700 hover:text-blue-800 hover:bg-blue-100' 
+                                    : 'text-blue-600 hover:text-blue-800'
+                                }`}
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  setShowPersonaDetails(showPersonaDetails === persona.id ? null : persona.id);
+                                }}
+                                onKeyDown={e => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    setShowPersonaDetails(showPersonaDetails === persona.id ? null : persona.id);
+                                  }
+                                }}
+                              >
+                                <Info className="h-3 w-3 mr-1" />
+                                {showPersonaDetails === persona.id ? 'Hide details' : 'Learn more'}
+                              </Button>
+                            </div>
+                          </div>
                         </CardContent>
                       </Card>
                     );
                   })}
                 </div>
 
-                {/* Persona Details Modal/Expandable */}
+                {/* Continue button - only show when persona is selected */}
+                {selectedPersona && (
+                  <div className="flex justify-center mt-6 animate-in slide-in-from-bottom">
+                    <Button
+                      onClick={handleProceedToNextStep}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Continue with {PERSONA_OPTIONS.find(p => p.id === selectedPersona)?.title}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </div>
+                )}
+
+                {/* Persona Details Expandable Section */}
                 {showPersonaDetails && (
-                  <Card
-                    className="border-blue-200 bg-blue-50/50 mt-4"
-                    onMouseEnter={e => e.stopPropagation()}
-                    onMouseLeave={e => e.stopPropagation()}
-                  >
+                  <Card className="border-blue-200 bg-blue-50/50 mt-4">
                     <CardContent className="p-4">
                       {(() => {
                         const persona = PERSONA_OPTIONS.find(p => p.id === showPersonaDetails);
@@ -387,12 +413,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={e => {
+                                onClick={(e) => {
                                   e.stopPropagation();
                                   e.preventDefault();
                                   setShowPersonaDetails(null);
                                 }}
                                 className="hover:bg-blue-100"
+                                aria-label="Close details"
                               >
                                 ×
                               </Button>
@@ -401,7 +428,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                               <div>
-                                <h5 className="font-medium text-green-700 mb-1">Advantages:</h5>
+                                <h5 className="font-medium text-green-700 mb-1">✓ Advantages:</h5>
                                 <ul className="list-disc list-inside space-y-1 text-green-600">
                                   {persona.benefits.map((benefit, index) => (
                                     <li key={index}>{benefit}</li>
@@ -409,7 +436,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                                 </ul>
                               </div>
                               <div>
-                                <h5 className="font-medium text-amber-700 mb-1">Considerations:</h5>
+                                <h5 className="font-medium text-amber-700 mb-1">⚠ Considerations:</h5>
                                 <ul className="list-disc list-inside space-y-1 text-amber-600">
                                   {persona.challenges.map((challenge, index) => (
                                     <li key={index}>{challenge}</li>
@@ -472,20 +499,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
             </div>
 
             {currentSubStep === 2 ? (
-              <div
-                className="space-y-6 cursor-pointer"
-                onClick={e => {
-                  // Make the entire card area clickable for better UX
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('.slider-area') && !target.closest('button')) {
-                    // Focus on the slider for accessibility
-                    const slider = e.currentTarget.querySelector('input[type="range"]') as HTMLInputElement;
-                    if (slider) {
-                      slider.focus();
-                    }
-                  }
-                }}
-              >
+              <div className="space-y-6">
                 <div className="text-center space-y-3">
                   <div className="text-4xl font-bold text-blue-600 mb-2">
                     {currentStudyHours} hour{currentStudyHours !== 1 ? 's' : ''}
@@ -499,7 +513,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                   </p>
                 </div>
 
-                <div className="px-4 space-y-4 slider-area">
+                <div className="px-4 space-y-4">
                   <div className="relative">
                     <Slider
                       value={[currentStudyHours]}
@@ -517,59 +531,50 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     </div>
                   </div>
 
-                  {/* Study hours recommendations */}
+                  {/* Study hours recommendations - improved click handling */}
                   <div className="grid grid-cols-3 gap-3 text-xs">
-                    <div
-                      className={`p-2 rounded text-center cursor-pointer transition-all hover:scale-105 ${
+                    <button
+                      type="button"
+                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:scale-105 border-2 ${
                         currentStudyHours <= 2
-                          ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-yellow-100 text-yellow-800 border-yellow-300 ring-2 ring-yellow-200'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleStudyGoalChange([1.5]);
-                      }}
+                      onClick={() => handleStudyGoalChange([1.5])}
                     >
                       <div className="font-medium">1-2h</div>
                       <div>Maintenance</div>
-                    </div>
-                    <div
-                      className={`p-2 rounded text-center cursor-pointer transition-all hover:scale-105 ${
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:scale-105 border-2 ${
                         currentStudyHours > 2 && currentStudyHours <= 6
-                          ? 'bg-green-100 text-green-800 ring-2 ring-green-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-green-100 text-green-800 border-green-300 ring-2 ring-green-200'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleStudyGoalChange([4]);
-                      }}
+                      onClick={() => handleStudyGoalChange([4])}
                     >
                       <div className="font-medium">3-6h</div>
                       <div>Optimal</div>
-                    </div>
-                    <div
-                      className={`p-2 rounded text-center cursor-pointer transition-all hover:scale-105 ${
+                    </button>
+                    <button
+                      type="button"
+                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:scale-105 border-2 ${
                         currentStudyHours > 6
-                          ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-300'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-blue-100 text-blue-800 border-blue-300 ring-2 ring-blue-200'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200 hover:border-gray-300'
                       }`}
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleStudyGoalChange([8]);
-                      }}
+                      onClick={() => handleStudyGoalChange([8])}
                     >
                       <div className="font-medium">7-12h</div>
                       <div>Intensive</div>
-                    </div>
+                    </button>
                   </div>
                 </div>
 
                 <div className="flex justify-center">
                   <Button
-                    onClick={e => {
-                      e.stopPropagation();
-                      setCurrentSubStep(3);
-                    }}
+                    onClick={() => setCurrentSubStep(3)}
                     className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6"
                   >
                     Continue
@@ -620,31 +625,50 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     key={timeSlot.id}
                     className={`cursor-pointer transition-all duration-300 hover:shadow-md border-2 group ${
                       selectedTimeSlot === timeSlot.id
-                        ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-200 transform scale-105'
+                        : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
                     }`}
-                    onClick={() => handleStudyTimeChange(timeSlot.id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleStudyTimeChange(timeSlot.id);
+                    }}
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
+                        e.stopPropagation();
                         handleStudyTimeChange(timeSlot.id);
                       }
                     }}
                     tabIndex={0}
                     role="button"
                     aria-pressed={selectedTimeSlot === timeSlot.id}
+                    aria-label={`Select ${timeSlot.label} study time`}
                   >
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl mb-2">{timeSlot.icon}</div>
-                      <h3 className="font-medium text-gray-900 mb-1">{timeSlot.label}</h3>
-                      <p className="text-xs text-gray-600 mb-2">{timeSlot.time}</p>
-                      <p className="text-xs text-gray-500">{timeSlot.description}</p>
-
+                    <CardContent className="p-4 text-center relative">
+                      {/* Selection indicator */}
                       {selectedTimeSlot === timeSlot.id && (
-                        <div className="mt-2">
-                          <Check className="h-4 w-4 text-blue-600 mx-auto" />
+                        <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 animate-in zoom-in-50">
+                          <Check className="h-3 w-3" />
                         </div>
                       )}
+
+                      <div className="text-2xl mb-2">{timeSlot.icon}</div>
+                      <h3 className={`font-medium mb-1 transition-colors ${
+                        selectedTimeSlot === timeSlot.id ? 'text-blue-700' : 'text-gray-900'
+                      }`}>
+                        {timeSlot.label}
+                      </h3>
+                      <p className={`text-xs mb-2 transition-colors ${
+                        selectedTimeSlot === timeSlot.id ? 'text-blue-600' : 'text-gray-600'
+                      }`}>
+                        {timeSlot.time}
+                      </p>
+                      <p className={`text-xs transition-colors ${
+                        selectedTimeSlot === timeSlot.id ? 'text-blue-500' : 'text-gray-500'
+                      }`}>
+                        {timeSlot.description}
+                      </p>
                     </CardContent>
                   </Card>
                 ))}

@@ -3,10 +3,10 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 
 import GlobalErrorBoundary from '@/components/error-handling/GlobalErrorBoundary';
+import PWAInstallBanner from '@/components/PWAInstallBanner';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { SkipToContent, AccessibilityChecker } from '@/lib/accessibility-utils';
-import PWAInstallBanner from '@/components/PWAInstallBanner';
 
 const inter = Inter({ subsets: ['latin'] });
 

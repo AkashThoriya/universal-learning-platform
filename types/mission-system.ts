@@ -15,8 +15,8 @@
  * @version 1.0.0
  */
 
-import { User as _User } from './user';
 import { UserPersona as _UserPersona, UserPersonaType } from './exam';
+import { User as _User } from './user';
 
 // =====================================================
 // CORE MISSION TYPES

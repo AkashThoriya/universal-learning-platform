@@ -7,11 +7,6 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import {
   WifiOff,
   RefreshCw,
@@ -23,6 +18,12 @@ import {
   AlertCircle,
   Activity,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function OfflinePage() {
   const [isOnline, setIsOnline] = useState(false);

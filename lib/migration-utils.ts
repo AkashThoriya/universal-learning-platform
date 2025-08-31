@@ -224,8 +224,14 @@ export async function mockTestAnalysisExample(userId: string) {
     const recentTests = testsResult.data || [];
     const averageScore =
       recentTests.reduce((sum, test: any) => {
-        const totalScore = (Object.values(test.scores) as number[]).reduce((s: number, score: number) => s + score, 0);
-        const maxScore = (Object.values(test.maxScores) as number[]).reduce((s: number, score: number) => s + score, 0);
+        const totalScore = Object.values(test.scores as Record<string, number>).reduce(
+          (s: number, score: number) => s + score,
+          0
+        );
+        const maxScore = Object.values(test.maxScores as Record<string, number>).reduce(
+          (s: number, score: number) => s + score,
+          0
+        );
         return sum + (totalScore / maxScore) * 100;
       }, 0) / recentTests.length;
 

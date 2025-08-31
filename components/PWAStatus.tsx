@@ -13,12 +13,6 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
 import {
   CheckCircle,
   XCircle,
@@ -36,6 +30,13 @@ import {
   Shield,
   Info,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 interface PWAFeature {
   name: string;
@@ -319,9 +320,8 @@ export function PWAStatus() {
       return <CheckCircle className="h-4 w-4 text-green-600" />;
     } else if (feature.importance === 'critical') {
       return <XCircle className="h-4 w-4 text-red-600" />;
-    } else {
-      return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
     }
+    return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
   };
 
   const getOverallScore = (): number => {

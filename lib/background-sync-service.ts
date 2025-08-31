@@ -10,8 +10,9 @@
  * @version 1.0.0
  */
 
-import { db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, collection, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
+
+import { db } from '@/lib/firebase';
 
 export interface SyncData {
   id: string;

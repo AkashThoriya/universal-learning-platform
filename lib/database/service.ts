@@ -10,8 +10,8 @@
  */
 
 import { DatabaseService, DatabaseConfigHelper } from './factory';
-import { RepositoryFactory } from './repositories';
 import { DatabaseProvider } from './interfaces';
+import { RepositoryFactory } from './repositories';
 
 /**
  * Main database service that maintains compatibility with existing code
@@ -345,9 +345,8 @@ export class OfflineSyncManager {
     if (result.success) {
       this.syncQueue = [];
       return { synced: operations.length, errors: [] };
-    } else {
-      return { synced: 0, errors: [result.error || 'Unknown error'] };
     }
+    return { synced: 0, errors: [result.error || 'Unknown error'] };
   }
 
   getPendingOperationsCount(): number {

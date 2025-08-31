@@ -137,9 +137,9 @@ export default function HomePage() {
             </Badge>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
-              Master Any Exam with{' '}
-              <span className="text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-gradient">
-                AI-Powered Strategy
+              <span className="block mb-2">Master Any Exam</span>
+              <span className="block text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-gradient">
+                with AI-Powered Strategy
               </span>
             </h1>
 
@@ -598,19 +598,22 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Free Platform Section */}
-        <section className="py-20 sm:py-24 px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
-          <div className="max-w-4xl mx-auto text-center">
+        {/* Free Platform Section - Seamless continuation */}
+        <section className="py-20 sm:py-24 px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-800 relative overflow-hidden">
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 bg-grid-slate-100/20 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/10" />
+          
+          <div className="max-w-4xl mx-auto text-center relative z-10">
             <Badge
               variant="secondary"
-              className="mb-6 px-4 sm:px-6 py-2 sm:py-3 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-sm sm:text-base"
+              className="mb-6 px-4 sm:px-6 py-2 sm:py-3 bg-white/90 text-blue-800 border-blue-300 dark:bg-gray-800/90 dark:text-blue-200 dark:border-blue-700 text-sm sm:text-base backdrop-blur-sm"
             >
               <Star className="h-4 w-4 mr-2" />
               100% Free Forever
             </Badge>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
               Premium Features,{' '}
-              <span className="text-gradient bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="text-gradient bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Zero Cost
               </span>
             </h2>
@@ -637,7 +640,7 @@ export default function HomePage() {
                     }`}
                   >
                     <CardContent className="p-4 sm:p-6 text-center">
-                      <feature.icon className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mx-auto mb-3" />
+                      <feature.icon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mx-auto mb-3" />
                       <h3 className="font-semibold mb-2 text-sm sm:text-base">{feature.title}</h3>
                       <p className="text-xs sm:text-sm text-muted-foreground">{feature.desc}</p>
                     </CardContent>
@@ -646,8 +649,8 @@ export default function HomePage() {
               })}
             </div>
 
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-green-200 dark:border-green-800 mx-4">
-              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-green-800 dark:text-green-200">🎯 Our Mission</h3>
+            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-blue-200/50 dark:border-blue-800/50 mx-4 shadow-lg">
+              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-blue-800 dark:text-blue-200">🎯 Our Mission</h3>
               <p className="text-base sm:text-lg text-muted-foreground">
                 To democratize exam preparation by providing world-class tools and insights to every student, regardless
                 of their economic background. Your success is our success.
@@ -656,17 +659,17 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Enhanced Final CTA Section */}
+        {/* Enhanced Final CTA Section - Natural Flow */}
         <section className="py-20 sm:py-24 px-6 lg:px-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600">
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
+          {/* Seamless gradient evolution from previous section */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900">
+            <div className="absolute inset-0 bg-grid-slate-100/30 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/20" />
           </div>
 
-          <div className="max-w-5xl mx-auto text-center relative z-10 text-white px-4">
+          <div className="max-w-5xl mx-auto text-center relative z-10 px-4">
             <Badge
               variant="secondary"
-              className="mb-6 sm:mb-8 px-4 sm:px-6 py-2 sm:py-3 bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm sm:text-base"
+              className="mb-6 sm:mb-8 px-4 sm:px-6 py-2 sm:py-3 bg-white/80 backdrop-blur-sm border border-purple-200 text-sm sm:text-base"
             >
               <Sparkles className="h-4 w-4 mr-2" />
               Your Success Journey Starts Now
@@ -674,13 +677,13 @@ export default function HomePage() {
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 leading-tight">
               Ready to{' '}
-              <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+              <span className="text-gradient bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 Transform
               </span>{' '}
               Your Future?
             </h2>
 
-            <p className="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-12 opacity-90 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
               Join the revolution in exam preparation. Experience the power of strategic learning, backed by AI insights
               and proven methodologies.
             </p>
@@ -689,7 +692,7 @@ export default function HomePage() {
               <Link href="/login">
                 <Button
                   size="lg"
-                  className="bg-white text-gray-900 hover:bg-gray-100 border-0 shadow-2xl hover:scale-105 transition-all duration-300 px-8 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-bold"
+                  className="gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-8 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-bold hover:scale-105"
                 >
                   <Rocket className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
                   Start Your Journey Free
@@ -700,21 +703,21 @@ export default function HomePage() {
 
             {/* Enhanced trust indicators */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto mb-6 sm:mb-8">
-              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-300" />
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                 <span className="font-medium text-sm sm:text-base">No Credit Card Required</span>
               </div>
-              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-300" />
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                 <span className="font-medium text-sm sm:text-base">100% Free Forever</span>
               </div>
-              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 sm:col-span-2 lg:col-span-1">
-                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-300" />
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm sm:col-span-2 lg:col-span-1">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                 <span className="font-medium text-sm sm:text-base">Instant Access</span>
               </div>
             </div>
 
-            <p className="text-xs sm:text-sm opacity-70">
+            <p className="text-xs sm:text-sm text-muted-foreground opacity-70">
               Join 25,000+ students who are already on their path to success
             </p>
           </div>

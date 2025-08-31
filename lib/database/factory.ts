@@ -8,8 +8,8 @@
  * @version 1.0.0
  */
 
-import { DatabaseProvider, DatabaseFactory, DatabaseConfig } from './interfaces';
 import { FirebaseDatabaseProvider } from './firebase-provider';
+import { DatabaseProvider, DatabaseFactory, DatabaseConfig } from './interfaces';
 
 /**
  * Configuration validation utilities
