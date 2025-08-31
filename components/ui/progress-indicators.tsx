@@ -60,11 +60,15 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
   getStepStatus,
   showStepNumbers = true,
   compact = false,
-  className
+  className,
 }) => {
   const defaultGetStepStatus = (step: number, current: number) => {
-    if (step < current) { return 'completed'; }
-    if (step === current) { return 'current'; }
+    if (step < current) {
+      return 'completed';
+    }
+    if (step === current) {
+      return 'current';
+    }
     return 'upcoming';
   };
 
@@ -99,10 +103,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
 
   const getConnectorClasses = (step: number) => {
     const isCompleted = stepStatus(step, currentStep) === 'completed';
-    return cn(
-      'flex-1 h-0.5 transition-colors',
-      isCompleted ? 'bg-green-600' : 'bg-gray-300'
-    );
+    return cn('flex-1 h-0.5 transition-colors', isCompleted ? 'bg-green-600' : 'bg-gray-300');
   };
 
   if (compact) {
@@ -118,8 +119,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
                 key={step}
                 className={cn(
                   'h-2 w-8 rounded-full transition-colors',
-                  status === 'completed' ? 'bg-green-600' :
-                  status === 'current' ? 'bg-blue-600' : 'bg-gray-300'
+                  status === 'completed' ? 'bg-green-600' : status === 'current' ? 'bg-blue-600' : 'bg-gray-300'
                 )}
               />
             );
@@ -146,10 +146,9 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
               <div className="flex flex-col items-center space-y-2">
                 <div className={getStepClasses(step)}>
                   {showStepNumbers && !['completed'].includes(status) ? (
-                    <span className={cn(
-                      'text-sm font-semibold',
-                      status === 'current' ? 'text-blue-600' : 'text-gray-400'
-                    )}>
+                    <span
+                      className={cn('text-sm font-semibold', status === 'current' ? 'text-blue-600' : 'text-gray-400')}
+                    >
                       {step}
                     </span>
                   ) : (
@@ -157,19 +156,22 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
                   )}
                 </div>
                 <div className="text-center">
-                  <div className={cn(
-                    'text-sm font-medium',
-                    status === 'completed' ? 'text-green-600' :
-                    status === 'current' ? 'text-blue-600' : 'text-gray-400'
-                  )}>
+                  <div
+                    className={cn(
+                      'text-sm font-medium',
+                      status === 'completed'
+                        ? 'text-green-600'
+                        : status === 'current'
+                          ? 'text-blue-600'
+                          : 'text-gray-400'
+                    )}
+                  >
                     {label}
                   </div>
                 </div>
               </div>
 
-              {!isLast && (
-                <div className={getConnectorClasses(step)} />
-              )}
+              {!isLast && <div className={getConnectorClasses(step)} />}
             </React.Fragment>
           );
         })}
@@ -224,13 +226,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   customText,
   color = 'blue',
   strokeWidth = 8,
-  className
+  className,
 }) => {
   const sizeConfig = {
     sm: { diameter: 60, fontSize: 'text-xs' },
     md: { diameter: 80, fontSize: 'text-sm' },
     lg: { diameter: 120, fontSize: 'text-base' },
-    xl: { diameter: 160, fontSize: 'text-lg' }
+    xl: { diameter: 160, fontSize: 'text-lg' },
   };
 
   const colorConfig = {
@@ -238,7 +240,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     green: { stroke: '#10B981', text: 'text-green-600' },
     yellow: { stroke: '#F59E0B', text: 'text-yellow-600' },
     red: { stroke: '#EF4444', text: 'text-red-600' },
-    purple: { stroke: '#8B5CF6', text: 'text-purple-600' }
+    purple: { stroke: '#8B5CF6', text: 'text-purple-600' },
   };
 
   const config = sizeConfig[size];
@@ -254,11 +256,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       className={cn('relative inline-flex items-center justify-center', className)}
       style={{ width: config.diameter, height: config.diameter }}
     >
-      <svg
-        width={config.diameter}
-        height={config.diameter}
-        className="transform -rotate-90"
-      >
+      <svg width={config.diameter} height={config.diameter} className="transform -rotate-90">
         {/* Background circle */}
         <circle
           cx={config.diameter / 2}
@@ -284,11 +282,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       </svg>
 
       {displayText && (
-        <div className={cn(
-          'absolute inset-0 flex items-center justify-center font-semibold',
-          config.fontSize,
-          colors.text
-        )}>
+        <div
+          className={cn(
+            'absolute inset-0 flex items-center justify-center font-semibold',
+            config.fontSize,
+            colors.text
+          )}
+        >
           {displayText}
         </div>
       )}
@@ -340,12 +340,12 @@ export const LinearProgress: React.FC<LinearProgressProps> = ({
   height = 'md',
   color = 'blue',
   animated = false,
-  className
+  className,
 }) => {
   const heightConfig = {
     sm: 'h-2',
     md: 'h-3',
-    lg: 'h-4'
+    lg: 'h-4',
   };
 
   const colorConfig = {
@@ -353,7 +353,7 @@ export const LinearProgress: React.FC<LinearProgressProps> = ({
     green: 'bg-green-600',
     yellow: 'bg-yellow-600',
     red: 'bg-red-600',
-    purple: 'bg-purple-600'
+    purple: 'bg-purple-600',
   };
 
   return (
@@ -365,10 +365,7 @@ export const LinearProgress: React.FC<LinearProgressProps> = ({
         </div>
       )}
 
-      <div className={cn(
-        'w-full bg-gray-200 rounded-full overflow-hidden',
-        heightConfig[height]
-      )}>
+      <div className={cn('w-full bg-gray-200 rounded-full overflow-hidden', heightConfig[height])}>
         <div
           className={cn(
             'h-full rounded-full transition-all duration-500 ease-out',

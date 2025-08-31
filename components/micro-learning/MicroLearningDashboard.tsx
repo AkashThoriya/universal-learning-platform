@@ -13,7 +13,7 @@ import {
   Award,
   Loader2,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -56,7 +56,7 @@ export function MicroLearningDashboard({
   userId,
   onStartSession,
   onViewProgress,
-  className = ''
+  className = '',
 }: MicroLearningDashboardProps) {
   const { user } = useAuth();
   const [trackFilter, setTrackFilter] = useState<'all' | 'exam' | 'course_tech'>('all');
@@ -101,13 +101,14 @@ export function MicroLearningDashboard({
         sessionsCompleted: thisWeekSessions.length,
         totalSessions: 12, // User's weekly goal - get from preferences
         timeSpent: thisWeekSessions.reduce((total, session) => total + session.duration, 0),
-        accuracyAverage: thisWeekSessions.length > 0
-          ? thisWeekSessions.reduce((total, session) => total + (session.performance?.accuracy || 0), 0) / thisWeekSessions.length
-          : 0
+        accuracyAverage:
+          thisWeekSessions.length > 0
+            ? thisWeekSessions.reduce((total, session) => total + (session.performance?.accuracy || 0), 0) /
+              thisWeekSessions.length
+            : 0,
       };
 
       setWeeklyProgress(weeklyProgressData);
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
     } finally {
@@ -120,7 +121,9 @@ export function MicroLearningDashboard({
   }, [activeUserId]);
 
   const handleStartSession = async (recommendation: SessionRecommendation) => {
-    if (!onStartSession) { return; }
+    if (!onStartSession) {
+      return;
+    }
 
     setIsStartingSession(recommendation.id);
     try {
@@ -148,9 +151,7 @@ export function MicroLearningDashboard({
       <div className={`w-full max-w-6xl mx-auto ${className}`}>
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Please log in to access your micro-learning dashboard.
-          </AlertDescription>
+          <AlertDescription>Please log in to access your micro-learning dashboard.</AlertDescription>
         </Alert>
       </div>
     );
@@ -174,12 +175,7 @@ export function MicroLearningDashboard({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mb-4">{error}</AlertDescription>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadDashboardData}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={loadDashboardData} className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
@@ -190,19 +186,27 @@ export function MicroLearningDashboard({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return 'bg-blue-100 text-blue-800';
-      case 'intermediate': return 'bg-purple-100 text-purple-800';
-      case 'advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'beginner':
+        return 'bg-blue-100 text-blue-800';
+      case 'intermediate':
+        return 'bg-purple-100 text-purple-800';
+      case 'advanced':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -242,9 +246,7 @@ export function MicroLearningDashboard({
           <CardContent>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-800">
-                  {weeklyProgress.sessionsCompleted}
-                </div>
+                <div className="text-2xl font-bold text-blue-800">{weeklyProgress.sessionsCompleted}</div>
                 <div className="text-sm text-blue-600">Sessions Completed</div>
                 <Progress
                   value={(weeklyProgress.sessionsCompleted / weeklyProgress.totalSessions) * 100}
@@ -258,9 +260,7 @@ export function MicroLearningDashboard({
                 <div className="text-sm text-blue-600">Time Invested</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-800">
-                  {weeklyProgress.accuracyAverage}%
-                </div>
+                <div className="text-2xl font-bold text-blue-800">{weeklyProgress.accuracyAverage}%</div>
                 <div className="text-sm text-blue-600">Avg. Accuracy</div>
               </div>
               <div className="text-center">
@@ -315,7 +315,7 @@ export function MicroLearningDashboard({
 
           {/* Session Recommendations */}
           <div className="grid gap-4">
-            {filteredRecommendations.map((session) => {
+            {filteredRecommendations.map(session => {
               const TrackIcon = getTrackIcon(session.track);
 
               return (
@@ -324,17 +324,19 @@ export function MicroLearningDashboard({
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-start space-x-3">
-                          <div className={`p-2 rounded-lg ${session.track === 'exam' ? 'bg-blue-100' : 'bg-green-100'}`}>
-                            <TrackIcon className={`h-5 w-5 ${session.track === 'exam' ? 'text-blue-600' : 'text-green-600'}`} />
+                          <div
+                            className={`p-2 rounded-lg ${session.track === 'exam' ? 'bg-blue-100' : 'bg-green-100'}`}
+                          >
+                            <TrackIcon
+                              className={`h-5 w-5 ${session.track === 'exam' ? 'text-blue-600' : 'text-green-600'}`}
+                            />
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold text-gray-900 text-lg">{session.title}</h3>
                             <p className="text-gray-600 mt-1">{session.description}</p>
 
                             <div className="flex flex-wrap items-center gap-2 mt-3">
-                              <Badge className={getPriorityColor(session.priority)}>
-                                {session.priority} priority
-                              </Badge>
+                              <Badge className={getPriorityColor(session.priority)}>{session.priority} priority</Badge>
                               <Badge variant="secondary" className={getDifficultyColor(session.difficulty)}>
                                 {session.difficulty}
                               </Badge>

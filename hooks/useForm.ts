@@ -87,9 +87,7 @@ export interface UseFormReturn<T> {
  * @param config Form configuration options
  * @returns Form state and management functions
  */
-export function useForm<T extends Record<string, any>>(
-  config: UseFormConfig<T>
-): UseFormReturn<T> {
+export function useForm<T extends Record<string, any>>(config: UseFormConfig<T>): UseFormReturn<T> {
   const {
     initialData,
     validationSchema,
@@ -98,7 +96,7 @@ export function useForm<T extends Record<string, any>>(
     validateOnChange = false,
     validateOnBlur = true,
     debounceMs = 300,
-    onFormEvent
+    onFormEvent,
   } = config;
 
   // State management
@@ -142,56 +140,61 @@ export function useForm<T extends Record<string, any>>(
   }, [data, persistData, storageKey, onFormEvent]);
 
   // Field validation function
-  const validateField = useCallback(async (field: keyof T): Promise<boolean> => {
-    if (!validationSchema) { return true; }
-
-    try {
-      // Validate the entire object, but only report errors for this field
-      await validationSchema.parseAsync(data);
-
-      // Clear any existing error for this field
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field as string];
-        return newErrors;
-      });
-
-      onFormEvent?.('validation_success', { field, value: data[field] });
-      return true;
-
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldError = error.errors.find(e => e.path.includes(field as string));
-        if (fieldError) {
-          const errorObj: FieldError = {
-            message: fieldError.message,
-            type: 'validation',
-            path: fieldError.path.join('.')
-          };
-
-          setErrors(prev => ({
-            ...prev,
-            [field as string]: errorObj
-          }));
-
-          onFormEvent?.('validation_error', { field, error: errorObj });
-          return false;
-        }
+  const validateField = useCallback(
+    async (field: keyof T): Promise<boolean> => {
+      if (!validationSchema) {
+        return true;
       }
-      return true; // If no error for this specific field, consider it valid
-    }
-  }, [data, validationSchema, onFormEvent]);
+
+      try {
+        // Validate the entire object, but only report errors for this field
+        await validationSchema.parseAsync(data);
+
+        // Clear any existing error for this field
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[field as string];
+          return newErrors;
+        });
+
+        onFormEvent?.('validation_success', { field, value: data[field] });
+        return true;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          const fieldError = error.errors.find(e => e.path.includes(field as string));
+          if (fieldError) {
+            const errorObj: FieldError = {
+              message: fieldError.message,
+              type: 'validation',
+              path: fieldError.path.join('.'),
+            };
+
+            setErrors(prev => ({
+              ...prev,
+              [field as string]: errorObj,
+            }));
+
+            onFormEvent?.('validation_error', { field, error: errorObj });
+            return false;
+          }
+        }
+        return true; // If no error for this specific field, consider it valid
+      }
+    },
+    [data, validationSchema, onFormEvent]
+  );
 
   // Full form validation
   const validate = useCallback(async (): Promise<boolean> => {
-    if (!validationSchema) { return true; }
+    if (!validationSchema) {
+      return true;
+    }
 
     try {
       await validationSchema.parseAsync(data);
       setErrors({});
       onFormEvent?.('validation_success', data);
       return true;
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, FieldError> = {};
@@ -201,7 +204,7 @@ export function useForm<T extends Record<string, any>>(
           newErrors[field] = {
             message: err.message,
             type: 'validation',
-            path: field
+            path: field,
           };
         });
 
@@ -213,43 +216,49 @@ export function useForm<T extends Record<string, any>>(
   }, [data, validationSchema, onFormEvent]);
 
   // Update single field
-  const updateField = useCallback(<K extends keyof T>(field: K, value: T[K]) => {
-    setDataState(prev => ({ ...prev, [field]: value }));
-    onFormEvent?.('field_change', { field, value });
-
-    // Debounced validation for change events
-    if (validateOnChange) {
-      if (debounceRef.current[field as string]) {
-        clearTimeout(debounceRef.current[field as string]);
-      }
-
-      debounceRef.current[field as string] = setTimeout(() => {
-        validateField(field);
-      }, debounceMs);
-    }
-  }, [validateOnChange, debounceMs, validateField, onFormEvent]);
-
-  // Update multiple fields
-  const updateFields = useCallback((updates: Partial<T>) => {
-    setDataState(prev => ({ ...prev, ...updates }));
-
-    Object.entries(updates).forEach(([field, value]) => {
+  const updateField = useCallback(
+    <K extends keyof T>(field: K, value: T[K]) => {
+      setDataState(prev => ({ ...prev, [field]: value }));
       onFormEvent?.('field_change', { field, value });
-    });
 
-    if (validateOnChange) {
-      // Validate all updated fields
-      Object.keys(updates).forEach(field => {
-        if (debounceRef.current[field]) {
-          clearTimeout(debounceRef.current[field]);
+      // Debounced validation for change events
+      if (validateOnChange) {
+        if (debounceRef.current[field as string]) {
+          clearTimeout(debounceRef.current[field as string]);
         }
 
-        debounceRef.current[field] = setTimeout(() => {
-          validateField(field as keyof T);
+        debounceRef.current[field as string] = setTimeout(() => {
+          validateField(field);
         }, debounceMs);
+      }
+    },
+    [validateOnChange, debounceMs, validateField, onFormEvent]
+  );
+
+  // Update multiple fields
+  const updateFields = useCallback(
+    (updates: Partial<T>) => {
+      setDataState(prev => ({ ...prev, ...updates }));
+
+      Object.entries(updates).forEach(([field, value]) => {
+        onFormEvent?.('field_change', { field, value });
       });
-    }
-  }, [validateOnChange, debounceMs, validateField, onFormEvent]);
+
+      if (validateOnChange) {
+        // Validate all updated fields
+        Object.keys(updates).forEach(field => {
+          if (debounceRef.current[field]) {
+            clearTimeout(debounceRef.current[field]);
+          }
+
+          debounceRef.current[field] = setTimeout(() => {
+            validateField(field as keyof T);
+          }, debounceMs);
+        });
+      }
+    },
+    [validateOnChange, debounceMs, validateField, onFormEvent]
+  );
 
   // Error management
   const setError = useCallback((field: keyof T, error: FieldError) => {
@@ -269,18 +278,24 @@ export function useForm<T extends Record<string, any>>(
   }, []);
 
   // Field touch management
-  const markFieldTouched = useCallback((field: keyof T) => {
-    setTouchedFields(prev => new Set([...prev, field as string]));
-    onFormEvent?.('field_blur', { field });
+  const markFieldTouched = useCallback(
+    (field: keyof T) => {
+      setTouchedFields(prev => new Set([...prev, field as string]));
+      onFormEvent?.('field_blur', { field });
 
-    if (validateOnBlur) {
-      validateField(field);
-    }
-  }, [validateOnBlur, validateField, onFormEvent]);
+      if (validateOnBlur) {
+        validateField(field);
+      }
+    },
+    [validateOnBlur, validateField, onFormEvent]
+  );
 
-  const isFieldTouched = useCallback((field: keyof T) => {
-    return touchedFields.has(field as string);
-  }, [touchedFields]);
+  const isFieldTouched = useCallback(
+    (field: keyof T) => {
+      return touchedFields.has(field as string);
+    },
+    [touchedFields]
+  );
 
   // Form operations
   const reset = useCallback(() => {
@@ -307,7 +322,9 @@ export function useForm<T extends Record<string, any>>(
   useEffect(() => {
     return () => {
       Object.values(debounceRef.current).forEach(timer => {
-        if (timer) { clearTimeout(timer); }
+        if (timer) {
+          clearTimeout(timer);
+        }
       });
     };
   }, []);
@@ -333,6 +350,6 @@ export function useForm<T extends Record<string, any>>(
 
     setSubmitting,
     markFieldTouched,
-    isFieldTouched
+    isFieldTouched,
   };
 }

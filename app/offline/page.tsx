@@ -1,6 +1,6 @@
 /**
  * @fileoverview Offline Page for PWA
- * 
+ *
  * Provides a friendly offline experience when users lose internet connection
  * while navigating the app. Includes offline study features and sync status.
  */
@@ -21,7 +21,7 @@ import {
   Smartphone,
   CheckCircle,
   AlertCircle,
-  Activity
+  Activity,
 } from 'lucide-react';
 
 export default function OfflinePage() {
@@ -53,7 +53,7 @@ export default function OfflinePage() {
 
   const handleRetry = () => {
     setRetryCount(prev => prev + 1);
-    
+
     if (navigator.onLine) {
       window.location.reload();
     } else {
@@ -73,28 +73,28 @@ export default function OfflinePage() {
   const offlineFeatures = [
     {
       icon: BookOpen,
-      title: "Cached Content",
-      description: "Access previously viewed study materials and notes",
-      available: true
+      title: 'Cached Content',
+      description: 'Access previously viewed study materials and notes',
+      available: true,
     },
     {
       icon: Clock,
-      title: "Study Timer",
-      description: "Continue timing your study sessions offline",
-      available: true
+      title: 'Study Timer',
+      description: 'Continue timing your study sessions offline',
+      available: true,
     },
     {
       icon: Trophy,
-      title: "Progress Tracking",
+      title: 'Progress Tracking',
       description: "Your progress will sync when you're back online",
-      available: true
+      available: true,
     },
     {
       icon: Activity,
-      title: "Analytics",
-      description: "View cached performance data and insights",
-      available: true
-    }
+      title: 'Analytics',
+      description: 'View cached performance data and insights',
+      available: true,
+    },
   ];
 
   if (isOnline) {
@@ -104,9 +104,7 @@ export default function OfflinePage() {
           <CardHeader className="text-center">
             <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
             <CardTitle className="text-green-900">Back Online!</CardTitle>
-            <CardDescription>
-              Your connection has been restored
-            </CardDescription>
+            <CardDescription>Your connection has been restored</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={handleGoHome} className="w-full">
@@ -129,7 +127,7 @@ export default function OfflinePage() {
               <AlertCircle className="h-4 w-4 text-white" />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-slate-900">You're Offline</h1>
             <p className="text-slate-600 max-w-md mx-auto">
@@ -154,32 +152,22 @@ export default function OfflinePage() {
               <Smartphone className="h-5 w-5" />
               Available Offline Features
             </CardTitle>
-            <CardDescription>
-              These features work without an internet connection
-            </CardDescription>
+            <CardDescription>These features work without an internet connection</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {offlineFeatures.map((feature, index) => {
                 const IconComponent = feature.icon;
                 return (
-                  <div 
-                    key={index}
-                    className="flex items-start gap-3 p-4 rounded-lg border bg-white/50"
-                  >
+                  <div key={index} className="flex items-start gap-3 p-4 rounded-lg border bg-white/50">
                     <div className="flex-shrink-0">
-                      <IconComponent className={`h-6 w-6 ${
-                        feature.available ? 'text-green-600' : 'text-slate-400'
-                      }`} />
+                      <IconComponent className={`h-6 w-6 ${feature.available ? 'text-green-600' : 'text-slate-400'}`} />
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <h3 className="font-medium text-slate-900">{feature.title}</h3>
-                        <Badge 
-                          variant={feature.available ? "default" : "secondary"}
-                          className="text-xs"
-                        >
-                          {feature.available ? "Available" : "Unavailable"}
+                        <Badge variant={feature.available ? 'default' : 'secondary'} className="text-xs">
+                          {feature.available ? 'Available' : 'Unavailable'}
                         </Badge>
                       </div>
                       <p className="text-sm text-slate-600">{feature.description}</p>
@@ -193,20 +181,12 @@ export default function OfflinePage() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-          <Button 
-            onClick={handleRetry}
-            className="flex items-center gap-2"
-            disabled={retryCount >= 5}
-          >
+          <Button onClick={handleRetry} className="flex items-center gap-2" disabled={retryCount >= 5}>
             <RefreshCw className="h-4 w-4" />
             {retryCount >= 5 ? 'Max Retries Reached' : 'Try Again'}
           </Button>
-          
-          <Button 
-            variant="outline"
-            onClick={handleGoHome}
-            className="flex items-center gap-2"
-          >
+
+          <Button variant="outline" onClick={handleGoHome} className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             Browse Offline
           </Button>
@@ -232,9 +212,7 @@ export default function OfflinePage() {
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-slate-600">
-                Study timers and local features continue to work normally
-              </p>
+              <p className="text-sm text-slate-600">Study timers and local features continue to work normally</p>
             </div>
           </CardContent>
         </Card>

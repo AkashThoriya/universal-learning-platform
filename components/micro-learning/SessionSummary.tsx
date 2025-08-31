@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  BookOpen,
-  Code,
-  Clock,
-  Target,
-  TrendingUp,
-  Star,
-  Brain,
-  Home,
-  ArrowRight,
-  Loader2
-} from 'lucide-react';
+import { BookOpen, Code, Clock, Target, TrendingUp, Star, Brain, Home, ArrowRight, Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -35,21 +24,33 @@ export function SessionSummary({
   onContinueLearning,
   onReturnToDashboard,
   isLoading = false,
-  error = null
+  error = null,
 }: SessionSummaryProps) {
   const [isNavigating, setIsNavigating] = useState(false);
 
   const getPerformanceColor = (score: number): string => {
-    if (score >= 80) { return 'text-green-600'; }
-    if (score >= 60) { return 'text-yellow-600'; }
+    if (score >= 80) {
+      return 'text-green-600';
+    }
+    if (score >= 60) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
   const getPerformanceLevel = (score: number): string => {
-    if (score >= 90) { return 'Excellent'; }
-    if (score >= 80) { return 'Very Good'; }
-    if (score >= 70) { return 'Good'; }
-    if (score >= 60) { return 'Fair'; }
+    if (score >= 90) {
+      return 'Excellent';
+    }
+    if (score >= 80) {
+      return 'Very Good';
+    }
+    if (score >= 70) {
+      return 'Good';
+    }
+    if (score >= 60) {
+      return 'Fair';
+    }
     return 'Needs Improvement';
   };
 
@@ -132,10 +133,7 @@ export function SessionSummary({
                 <Home className="h-4 w-4 mr-2" />
                 Return to Dashboard
               </Button>
-              <Button
-                onClick={() => window.location.reload()}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
+              <Button onClick={() => window.location.reload()} className="bg-red-600 hover:bg-red-700 text-white">
                 Try Again
               </Button>
             </div>
@@ -156,11 +154,10 @@ export function SessionSummary({
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-4">
             <Star className="h-8 w-8 text-green-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-green-800">
-            Session Complete! 🎉
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-green-800">Session Complete! 🎉</CardTitle>
           <p className="text-green-700 mt-2">
-            Well done! You've completed your {session.duration}-minute {isExamTrack ? 'exam prep' : 'tech learning'} session.
+            Well done! You've completed your {session.duration}-minute {isExamTrack ? 'exam prep' : 'tech learning'}{' '}
+            session.
           </p>
         </CardHeader>
       </Card>
@@ -178,9 +175,7 @@ export function SessionSummary({
                 <div className={`text-2xl font-bold ${getPerformanceColor(performance.accuracy)}`}>
                   {performance.accuracy}%
                 </div>
-                <p className="text-sm text-gray-500">
-                  {getPerformanceLevel(performance.accuracy)}
-                </p>
+                <p className="text-sm text-gray-500">{getPerformanceLevel(performance.accuracy)}</p>
               </div>
             </div>
           </CardContent>
@@ -197,9 +192,7 @@ export function SessionSummary({
                 <div className={`text-2xl font-bold ${getPerformanceColor(performance.engagementScore)}`}>
                   {performance.engagementScore}%
                 </div>
-                <p className="text-sm text-gray-500">
-                  {getPerformanceLevel(performance.engagementScore)}
-                </p>
+                <p className="text-sm text-gray-500">{getPerformanceLevel(performance.engagementScore)}</p>
               </div>
             </div>
           </CardContent>
@@ -213,12 +206,8 @@ export function SessionSummary({
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800">Time Spent</h3>
-                <div className="text-2xl font-bold text-gray-800">
-                  {formatTime(performance.timeSpent)}
-                </div>
-                <p className="text-sm text-gray-500">
-                  Target: {session.duration}m
-                </p>
+                <div className="text-2xl font-bold text-gray-800">{formatTime(performance.timeSpent)}</div>
+                <p className="text-sm text-gray-500">Target: {session.duration}m</p>
               </div>
             </div>
           </CardContent>
@@ -371,11 +360,7 @@ export function SessionSummary({
             size="lg"
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-200 transform hover:scale-105"
           >
-            {isNavigating ? (
-              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-            ) : (
-              <ArrowRight className="h-5 w-5 mr-2" />
-            )}
+            {isNavigating ? <Loader2 className="h-5 w-5 mr-2 animate-spin" /> : <ArrowRight className="h-5 w-5 mr-2" />}
             Continue Learning
           </Button>
         )}
@@ -395,7 +380,10 @@ export function SessionSummary({
 
       {/* Keyboard shortcuts hint */}
       <div className="text-center text-sm text-gray-500 mt-4">
-        <p>Keyboard shortcuts: <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Ctrl+Enter</kbd> to continue learning, <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd> to return to dashboard</p>
+        <p>
+          Keyboard shortcuts: <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Ctrl+Enter</kbd> to continue
+          learning, <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">Esc</kbd> to return to dashboard
+        </p>
       </div>
     </div>
   );

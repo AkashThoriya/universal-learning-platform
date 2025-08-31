@@ -23,7 +23,7 @@ import {
   Menu,
   X,
   Zap,
-  type LucideIcon
+  type LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -33,7 +33,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-
 
 interface NavItem {
   href: string;
@@ -73,7 +72,7 @@ export default function Navigation() {
       label: 'Dashboard',
       icon: Home,
       isActive: isActive('/dashboard'),
-      description: 'Overview and quick actions'
+      description: 'Overview and quick actions',
     },
     {
       href: '/analytics',
@@ -81,7 +80,7 @@ export default function Navigation() {
       icon: BarChart3,
       isActive: isActive('/analytics'),
       badge: 'New',
-      description: 'Performance insights and trends'
+      description: 'Performance insights and trends',
     },
     {
       href: '/missions',
@@ -89,36 +88,36 @@ export default function Navigation() {
       icon: Target,
       isActive: isActiveGroup(['/missions']),
       badge: 3,
-      description: 'Daily and weekly goals'
+      description: 'Daily and weekly goals',
     },
     {
       href: '/micro-learning',
       label: 'Micro-Learning',
       icon: Zap,
       isActive: isActive('/micro-learning'),
-      description: 'Quick learning sessions'
+      description: 'Quick learning sessions',
     },
     {
       href: '/syllabus',
       label: 'Syllabus',
       icon: BookOpen,
       isActive: isActive('/syllabus'),
-      description: 'Study material and topics'
+      description: 'Study material and topics',
     },
     {
       href: '/log/daily',
       label: 'Daily Log',
       icon: Calendar,
       isActive: isActive('/log/daily'),
-      description: 'Track daily progress'
+      description: 'Track daily progress',
     },
     {
       href: '/log/mock',
       label: 'Mock Tests',
       icon: TestTube,
       isActive: isActiveGroup(['/log/mock', '/test-logger']),
-      description: 'Practice tests and assessments'
-    }
+      description: 'Practice tests and assessments',
+    },
   ];
 
   const renderNavItem = ({ href, label, icon: Icon, isActive, badge, description }: NavItem) => (
@@ -133,16 +132,12 @@ export default function Navigation() {
       )}
       aria-label={`${label}: ${description}`}
     >
-      <Icon className={cn(
-        'h-5 w-5 transition-transform duration-200',
-        isActive ? 'text-primary' : 'group-hover:scale-110'
-      )} />
+      <Icon
+        className={cn('h-5 w-5 transition-transform duration-200', isActive ? 'text-primary' : 'group-hover:scale-110')}
+      />
       <span className="font-medium">{label}</span>
       {badge && (
-        <Badge
-          variant={typeof badge === 'number' ? 'default' : 'secondary'}
-          className="h-5 px-1.5 text-xs"
-        >
+        <Badge variant={typeof badge === 'number' ? 'default' : 'secondary'} className="h-5 px-1.5 text-xs">
           {badge}
         </Badge>
       )}
@@ -168,9 +163,7 @@ export default function Navigation() {
                 <Target className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-200" />
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
               </div>
-              <span className="text-xl font-bold text-gradient hidden sm:block">
-                Exam Strategy Engine
-              </span>
+              <span className="text-xl font-bold text-gradient hidden sm:block">Exam Strategy Engine</span>
             </Link>
           </div>
 
@@ -183,9 +176,7 @@ export default function Navigation() {
                   size="sm"
                   className={cn(
                     'relative transition-all duration-200 hover:scale-105',
-                    item.isActive
-                      ? 'gradient-primary text-white shadow-lg'
-                      : 'hover:bg-white/10 hover:text-primary'
+                    item.isActive ? 'gradient-primary text-white shadow-lg' : 'hover:bg-white/10 hover:text-primary'
                   )}
                 >
                   <item.icon className="h-4 w-4 mr-2" />
@@ -198,9 +189,7 @@ export default function Navigation() {
                       {item.badge}
                     </Badge>
                   )}
-                  {item.isActive && (
-                    <div className="absolute inset-0 bg-white/20 rounded-md opacity-50" />
-                  )}
+                  {item.isActive && <div className="absolute inset-0 bg-white/20 rounded-md opacity-50" />}
                 </Button>
               </Link>
             ))}
@@ -256,11 +245,7 @@ export default function Navigation() {
 
             {/* Mobile user actions */}
             <div className="pt-4 mt-4 border-t border-white/10 space-y-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start"
-              >
+              <Button variant="ghost" size="sm" className="w-full justify-start">
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
               </Button>

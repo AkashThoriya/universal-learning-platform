@@ -28,7 +28,7 @@ export function LoadingSpinner({
   color = 'primary',
   message = 'Loading...',
   className = '',
-  showMessage = true
+  showMessage = true,
 }: {
   size?: 'small' | 'medium' | 'large' | 'xl';
   color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
@@ -40,7 +40,7 @@ export function LoadingSpinner({
     small: 'h-4 w-4',
     medium: 'h-6 w-6',
     large: 'h-8 w-8',
-    xl: 'h-12 w-12'
+    xl: 'h-12 w-12',
   };
 
   const colorClasses = {
@@ -48,15 +48,13 @@ export function LoadingSpinner({
     secondary: 'text-gray-600',
     success: 'text-green-600',
     warning: 'text-yellow-600',
-    danger: 'text-red-600'
+    danger: 'text-red-600',
   };
 
   return (
     <div className={`flex items-center justify-center space-x-3 ${className}`} role="status" aria-live="polite">
       <Loader2 className={`animate-spin ${sizeClasses[size]} ${colorClasses[color]}`} />
-      {showMessage && message && (
-        <span className="text-sm text-gray-600 animate-pulse font-medium">{message}</span>
-      )}
+      {showMessage && message && <span className="text-sm text-gray-600 animate-pulse font-medium">{message}</span>}
       <span className="sr-only">{message}</span>
     </div>
   );
@@ -65,16 +63,10 @@ export function LoadingSpinner({
 /**
  * Gradient loading spinner for premium experience
  */
-export function GradientSpinner({
-  size = 'large',
-  className = ''
-}: {
-  size?: 'medium' | 'large';
-  className?: string;
-}) {
+export function GradientSpinner({ size = 'large', className = '' }: { size?: 'medium' | 'large'; className?: string }) {
   const sizeClasses = {
     medium: 'h-8 w-8',
-    large: 'h-12 w-12'
+    large: 'h-12 w-12',
   };
 
   return (
@@ -93,7 +85,7 @@ export function PageLoadingOverlay({
   message = 'Loading...',
   submessage = 'Please wait while we prepare your content',
   showProgress = false,
-  progress = 0
+  progress = 0,
 }: {
   message?: string;
   submessage?: string;
@@ -122,7 +114,7 @@ export function PageLoadingOverlay({
                 <div
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                 />
+                />
               </div>
               <p className="text-xs text-gray-500">{Math.round(progress)}% complete</p>
             </div>
@@ -145,7 +137,7 @@ export function Skeleton({
   width = 'w-full',
   height = 'h-4',
   rounded = 'rounded',
-  shimmer = true
+  shimmer = true,
 }: {
   className?: string;
   width?: string;
@@ -343,7 +335,7 @@ export function ErrorDisplay({
   onGoHome,
   showRetry = true,
   showDetails = false,
-  variant = 'default'
+  variant = 'default',
 }: {
   title?: string;
   message?: string;
@@ -363,12 +355,7 @@ export function ErrorDisplay({
         <AlertDescription className="text-red-800 flex items-center justify-between">
           <span>{errorMessage}</span>
           {showRetry && onRetry && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onRetry}
-              className="ml-2 h-6 px-2 text-xs hover:bg-red-100"
-            >
+            <Button variant="outline" size="sm" onClick={onRetry} className="ml-2 h-6 px-2 text-xs hover:bg-red-100">
               <RefreshCw className="h-3 w-3 mr-1" />
               Retry
             </Button>
@@ -408,9 +395,7 @@ export function ErrorDisplay({
 
       {showDetails && error && typeof error !== 'string' && (
         <Alert className="text-left mb-6 max-w-sm">
-          <AlertDescription className="font-mono text-xs break-all">
-            {error.stack}
-          </AlertDescription>
+          <AlertDescription className="font-mono text-xs break-all">{error.stack}</AlertDescription>
         </Alert>
       )}
 
@@ -440,7 +425,7 @@ export function EmptyState({
   actionLabel,
   onAction,
   icon: Icon = Clock,
-  variant = 'default'
+  variant = 'default',
 }: {
   title?: string;
   message?: string;
@@ -487,13 +472,7 @@ export function EmptyState({
 /**
  * Success animation component
  */
-export function SuccessAnimation({
-  message = 'Success!',
-  className = ''
-}: {
-  message?: string;
-  className?: string;
-}) {
+export function SuccessAnimation({ message = 'Success!', className = '' }: { message?: string; className?: string }) {
   return (
     <div className={`text-center space-y-4 ${className}`}>
       <div className="flex justify-center">
@@ -509,14 +488,10 @@ export function SuccessAnimation({
 /**
  * Connectivity indicator
  */
-export function ConnectivityIndicator({
-  isOnline,
-  className = ''
-}: {
-  isOnline: boolean;
-  className?: string;
-}) {
-  if (isOnline) { return null; }
+export function ConnectivityIndicator({ isOnline, className = '' }: { isOnline: boolean; className?: string }) {
+  if (isOnline) {
+    return null;
+  }
 
   return (
     <Alert className={`border-yellow-200 bg-yellow-50 ${className}`}>
@@ -538,7 +513,7 @@ export function ConnectivityIndicator({
 export function ProgressiveLoader({
   stages,
   currentStage,
-  className = ''
+  className = '',
 }: {
   stages: string[];
   currentStage: number;
@@ -550,9 +525,7 @@ export function ProgressiveLoader({
     <div className={`space-y-6 ${className}`}>
       <div className="text-center">
         <GradientSpinner size="large" className="mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          {stages[currentStage] || 'Loading...'}
-        </h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">{stages[currentStage] || 'Loading...'}</h3>
         <p className="text-gray-600">Please wait while we prepare everything for you</p>
       </div>
 
@@ -561,10 +534,12 @@ export function ProgressiveLoader({
           <div
             className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-700 ease-out"
             style={{ width: `${progress}%` }}
-           />
+          />
         </div>
         <div className="flex justify-between text-sm text-gray-500">
-          <span>Step {currentStage + 1} of {stages.length}</span>
+          <span>
+            Step {currentStage + 1} of {stages.length}
+          </span>
           <span>{Math.round(progress)}%</span>
         </div>
       </div>
@@ -585,7 +560,7 @@ export function SmartLoading({
   emptyComponent,
   onRetry,
   className = '',
-  loadingDelay = 200
+  loadingDelay = 200,
 }: {
   isLoading: boolean;
   error?: Error | string | null;
@@ -620,18 +595,12 @@ export function SmartLoading({
 
   if (error) {
     return (
-      <div className={className}>
-        {errorComponent || <ErrorDisplay error={error} {...(onRetry && { onRetry })} />}
-      </div>
+      <div className={className}>{errorComponent || <ErrorDisplay error={error} {...(onRetry && { onRetry })} />}</div>
     );
   }
 
   if (isLoading && showLoading) {
-    return (
-      <div className={className}>
-        {loadingComponent || <LoadingSpinner size="large" />}
-      </div>
-    );
+    return <div className={className}>{loadingComponent || <LoadingSpinner size="large" />}</div>;
   }
 
   if (isLoading) {
@@ -641,12 +610,7 @@ export function SmartLoading({
   if (isEmpty) {
     return (
       <div className={className}>
-        {emptyComponent || (
-          <EmptyState
-            title="No data available"
-            message="There's nothing to show here yet."
-          />
-        )}
+        {emptyComponent || <EmptyState title="No data available" message="There's nothing to show here yet." />}
       </div>
     );
   }
@@ -661,7 +625,7 @@ export function LoadingTrigger({
   onIntersect,
   isLoading = false,
   threshold = 0.1,
-  className = ''
+  className = '',
 }: {
   onIntersect: () => void;
   isLoading?: boolean;
@@ -672,10 +636,12 @@ export function LoadingTrigger({
 
   React.useEffect(() => {
     const trigger = triggerRef.current;
-    if (!trigger) { return; }
+    if (!trigger) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0]?.isIntersecting && !isLoading) {
           onIntersect();
         }
@@ -692,9 +658,7 @@ export function LoadingTrigger({
 
   return (
     <div ref={triggerRef} className={`py-4 ${className}`}>
-      {isLoading && (
-        <LoadingSpinner message="Loading more..." className="justify-center" />
-      )}
+      {isLoading && <LoadingSpinner message="Loading more..." className="justify-center" />}
     </div>
   );
 }

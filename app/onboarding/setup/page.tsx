@@ -25,7 +25,7 @@ import {
   HelpCircle,
   Eye,
   Loader2,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { z } from 'zod';
@@ -36,7 +36,14 @@ import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/contexts/AuthContext';
 import { useForm } from '@/hooks/useForm';
@@ -90,50 +97,57 @@ interface OnboardingFormData {
  * Enhanced validation schema with detailed error messages
  */
 const onboardingSchema = z.object({
-  userPersona: z.object({
-    type: z.enum(['student', 'working_professional', 'freelancer'], {
-      required_error: 'Please select your profile type'
+  userPersona: z
+    .object({
+      type: z.enum(['student', 'working_professional', 'freelancer'], {
+        required_error: 'Please select your profile type',
+      }),
     })
-  }).optional(),
-  displayName: z.string()
+    .optional(),
+  displayName: z
+    .string()
     .min(2, 'Name must be at least 2 characters long')
     .max(50, 'Name must be less than 50 characters')
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
   selectedExamId: z.string().min(1, 'Please select an exam'),
-  examDate: z.string()
+  examDate: z
+    .string()
     .min(1, 'Exam date is required')
-    .refine((date) => {
+    .refine(date => {
       const examDate = new Date(date);
       const today = new Date();
       const minDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
       return examDate >= minDate;
     }, 'Exam date must be at least 7 days from today'),
   isCustomExam: z.boolean(),
-  customExam: z.object({
-    name: z.string().optional(),
-    description: z.string().optional(),
-    category: z.string().optional()
-  }).refine(() => {
-    return true; // Custom validation in component
-  }),
+  customExam: z
+    .object({
+      name: z.string().optional(),
+      description: z.string().optional(),
+      category: z.string().optional(),
+    })
+    .refine(() => {
+      return true; // Custom validation in component
+    }),
   syllabus: z.array(z.any()).min(1, 'At least one subject is required').max(20, 'Maximum 20 subjects allowed'),
   preferences: z.object({
-    dailyStudyGoalMinutes: z.number()
+    dailyStudyGoalMinutes: z
+      .number()
       .min(60, 'Minimum study goal is 1 hour (60 minutes)')
       .max(720, 'Maximum study goal is 12 hours (720 minutes)'),
     preferredStudyTime: z.enum(['morning', 'afternoon', 'evening', 'night']),
     tierDefinitions: z.object({
       1: z.string().min(3, 'Tier 1 definition must be at least 3 characters'),
       2: z.string().min(3, 'Tier 2 definition must be at least 3 characters'),
-      3: z.string().min(3, 'Tier 3 definition must be at least 3 characters')
+      3: z.string().min(3, 'Tier 3 definition must be at least 3 characters'),
     }),
     revisionIntervals: z.array(z.number().min(1).max(365)).min(3, 'At least 3 revision intervals required'),
     notifications: z.object({
       revisionReminders: z.boolean(),
       dailyGoalReminders: z.boolean(),
-      healthCheckReminders: z.boolean()
-    })
-  })
+      healthCheckReminders: z.boolean(),
+    }),
+  }),
 });
 
 /**
@@ -145,29 +159,29 @@ const STEP_INFO = [
     description: 'Tell us about yourself to personalize your experience',
     helpText: 'This helps us customize study recommendations based on your lifestyle and schedule.',
     icon: '👤',
-    estimatedTime: '2 minutes'
+    estimatedTime: '2 minutes',
   },
   {
     title: 'Exam Selection',
     description: 'Choose your target exam and set your timeline',
-    helpText: 'Select the exam you\'re preparing for and when you plan to take it.',
+    helpText: "Select the exam you're preparing for and when you plan to take it.",
     icon: '📚',
-    estimatedTime: '3 minutes'
+    estimatedTime: '3 minutes',
   },
   {
     title: 'Syllabus Organization',
     description: 'Organize your subjects by priority levels',
     helpText: 'Arrange subjects into tiers to focus your study time effectively.',
     icon: '📋',
-    estimatedTime: '5 minutes'
+    estimatedTime: '5 minutes',
   },
   {
     title: 'Study Preferences',
     description: 'Customize your study schedule and notifications',
     helpText: 'Set up your daily goals and how you want to be reminded.',
     icon: '⚙️',
-    estimatedTime: '3 minutes'
-  }
+    estimatedTime: '3 minutes',
+  },
 ];
 
 /**
@@ -202,10 +216,10 @@ export default function OnboardingSetupPage() {
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -215,7 +229,7 @@ export default function OnboardingSetupPage() {
   // Initialize form data with enhanced defaults
   const initialFormData: OnboardingFormData = {
     userPersona: {
-      type: 'student'
+      type: 'student',
     },
     displayName: user?.displayName || '',
     selectedExamId: '',
@@ -224,7 +238,7 @@ export default function OnboardingSetupPage() {
     customExam: {
       name: '',
       description: '',
-      category: 'Custom'
+      category: 'Custom',
     },
     syllabus: [],
     preferences: {
@@ -233,15 +247,15 @@ export default function OnboardingSetupPage() {
       tierDefinitions: {
         1: 'High Priority - Core Topics (Must Master)',
         2: 'Medium Priority - Important Topics (Should Know)',
-        3: 'Low Priority - Additional Topics (Good to Know)'
+        3: 'Low Priority - Additional Topics (Good to Know)',
       },
       revisionIntervals: [1, 3, 7, 16, 35],
       notifications: {
         revisionReminders: true,
         dailyGoalReminders: true,
-        healthCheckReminders: true
-      }
-    }
+        healthCheckReminders: true,
+      },
+    },
   };
 
   // Enhanced multi-step form management with analytics
@@ -255,18 +269,18 @@ export default function OnboardingSetupPage() {
         (window as any).gtag('event', 'onboarding_step_change', {
           current_step: current,
           previous_step: previous,
-          user_type: form.data.userPersona?.type || 'unknown'
+          user_type: form.data.userPersona?.type || 'unknown',
         });
       }
-      
+
       // Accessibility announcement
       announceStepChange(current);
-      
+
       // Focus management
       setTimeout(() => {
         stepContentRef.current?.focus();
       }, 100);
-    }
+    },
   });
 
   // Enhanced form state management with auto-save
@@ -283,16 +297,16 @@ export default function OnboardingSetupPage() {
         setAutoSaveStatus('saving');
         setTimeout(() => setAutoSaveStatus('saved'), 1000);
       }
-      
+
       // Analytics for form events
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'onboarding_form_event', {
           event_type: event,
           step: multiStep.currentStep,
-          field: data.field || 'unknown'
+          field: data.field || 'unknown',
         });
       }
-    }
+    },
   });
 
   // Load selected exam when exam ID changes
@@ -311,68 +325,74 @@ export default function OnboardingSetupPage() {
   }, [form.data.selectedExamId, form.data.isCustomExam]);
 
   // Filter exams based on search query
-  const filteredExams = EXAMS_DATA.filter(exam =>
-    exam.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    exam.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    exam.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredExams = EXAMS_DATA.filter(
+    exam =>
+      exam.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exam.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exam.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Enhanced step validation with detailed feedback
-  const validateStep = useCallback(async (step: number): Promise<boolean> => {
-    const errors: Record<string, string> = {};
+  const validateStep = useCallback(
+    async (step: number): Promise<boolean> => {
+      const errors: Record<string, string> = {};
 
-    switch (step) {
-      case 1:
-        if (!form.data.userPersona?.type) {
-          errors.persona = 'Please select your profile type';
-        }
-        break;
-
-      case 2:
-        if (form.data.displayName.length < 2) {
-          errors.displayName = 'Name must be at least 2 characters';
-        }
-        if (!form.data.selectedExamId) {
-          errors.exam = 'Please select an exam';
-        }
-        if (!form.data.examDate) {
-          errors.examDate = 'Please set your exam date';
-        } else {
-          const examDate = new Date(form.data.examDate);
-          const minDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-          if (examDate < minDate) {
-            errors.examDate = 'Exam date must be at least 7 days from today';
+      switch (step) {
+        case 1:
+          if (!form.data.userPersona?.type) {
+            errors.persona = 'Please select your profile type';
           }
-        }
-        if (form.data.isCustomExam && !form.data.customExam.name) {
-          errors.customExam = 'Please enter a name for your custom exam';
-        }
-        break;
+          break;
 
-      case 3:
-        if (form.data.syllabus.length === 0) {
-          errors.syllabus = 'Please add at least one subject';
-        }
-        break;
+        case 2:
+          if (form.data.displayName.length < 2) {
+            errors.displayName = 'Name must be at least 2 characters';
+          }
+          if (!form.data.selectedExamId) {
+            errors.exam = 'Please select an exam';
+          }
+          if (!form.data.examDate) {
+            errors.examDate = 'Please set your exam date';
+          } else {
+            const examDate = new Date(form.data.examDate);
+            const minDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+            if (examDate < minDate) {
+              errors.examDate = 'Exam date must be at least 7 days from today';
+            }
+          }
+          if (form.data.isCustomExam && !form.data.customExam.name) {
+            errors.customExam = 'Please enter a name for your custom exam';
+          }
+          break;
 
-      case 4:
-        if (form.data.preferences.dailyStudyGoalMinutes < 60) {
-          errors.studyGoal = 'Daily study goal must be at least 1 hour';
-        }
-        if (!form.data.preferences.tierDefinitions[1] || 
-            !form.data.preferences.tierDefinitions[2] || 
-            !form.data.preferences.tierDefinitions[3]) {
-          errors.tierDefinitions = 'Please define all three tiers';
-        }
-        break;
+        case 3:
+          if (form.data.syllabus.length === 0) {
+            errors.syllabus = 'Please add at least one subject';
+          }
+          break;
 
-      default:
-        return true;
-    }
+        case 4:
+          if (form.data.preferences.dailyStudyGoalMinutes < 60) {
+            errors.studyGoal = 'Daily study goal must be at least 1 hour';
+          }
+          if (
+            !form.data.preferences.tierDefinitions[1] ||
+            !form.data.preferences.tierDefinitions[2] ||
+            !form.data.preferences.tierDefinitions[3]
+          ) {
+            errors.tierDefinitions = 'Please define all three tiers';
+          }
+          break;
 
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  }, [form.data]);
+        default:
+          return true;
+      }
+
+      setValidationErrors(errors);
+      return Object.keys(errors).length === 0;
+    },
+    [form.data]
+  );
 
   // Enhanced navigation handlers with accessibility
   const handleNext = useCallback(async () => {
@@ -394,40 +414,46 @@ export default function OnboardingSetupPage() {
   }, [multiStep]);
 
   // Exam selection handler with analytics
-  const handleExamSelect = useCallback((examId: string) => {
-    if (examId === 'custom') {
-      form.updateFields({
-        selectedExamId: 'custom',
-        isCustomExam: true,
-        syllabus: []
-      });
-    } else {
-      const exam = getExamById(examId);
-      if (exam) {
+  const handleExamSelect = useCallback(
+    (examId: string) => {
+      if (examId === 'custom') {
         form.updateFields({
-          selectedExamId: examId,
-          isCustomExam: false,
-          syllabus: exam.defaultSyllabus
+          selectedExamId: 'custom',
+          isCustomExam: true,
+          syllabus: [],
+        });
+      } else {
+        const exam = getExamById(examId);
+        if (exam) {
+          form.updateFields({
+            selectedExamId: examId,
+            isCustomExam: false,
+            syllabus: exam.defaultSyllabus,
+          });
+        }
+      }
+
+      // Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'exam_selected', {
+          exam_id: examId,
+          is_custom: examId === 'custom',
         });
       }
-    }
-
-    // Analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'exam_selected', {
-        exam_id: examId,
-        is_custom: examId === 'custom'
-      });
-    }
-  }, [form]);
+    },
+    [form]
+  );
 
   // Syllabus management functions
-  const updateSubjectTier = useCallback((subjectId: string, tier: 1 | 2 | 3) => {
-    const updatedSyllabus = form.data.syllabus.map((subject: SyllabusSubject) =>
-      subject.id === subjectId ? { ...subject, tier } : subject
-    );
-    form.updateField('syllabus', updatedSyllabus);
-  }, [form]);
+  const updateSubjectTier = useCallback(
+    (subjectId: string, tier: 1 | 2 | 3) => {
+      const updatedSyllabus = form.data.syllabus.map((subject: SyllabusSubject) =>
+        subject.id === subjectId ? { ...subject, tier } : subject
+      );
+      form.updateField('syllabus', updatedSyllabus);
+    },
+    [form]
+  );
 
   const addCustomSubject = useCallback(() => {
     const newSubject: SyllabusSubject = {
@@ -435,17 +461,18 @@ export default function OnboardingSetupPage() {
       name: 'New Subject',
       tier: 2,
       topics: [],
-      isCustom: true
+      isCustom: true,
     };
     form.updateField('syllabus', [...form.data.syllabus, newSubject]);
   }, [form]);
 
-  const removeSubject = useCallback((subjectId: string) => {
-    const updatedSyllabus = form.data.syllabus.filter(
-      (subject: SyllabusSubject) => subject.id !== subjectId
-    );
-    form.updateField('syllabus', updatedSyllabus);
-  }, [form]);
+  const removeSubject = useCallback(
+    (subjectId: string) => {
+      const updatedSyllabus = form.data.syllabus.filter((subject: SyllabusSubject) => subject.id !== subjectId);
+      form.updateField('syllabus', updatedSyllabus);
+    },
+    [form]
+  );
 
   // Enhanced completion handler with error recovery
   const handleComplete = useCallback(async () => {
@@ -453,7 +480,7 @@ export default function OnboardingSetupPage() {
       form.setError('_form' as any, {
         message: 'You must be logged in to complete setup.',
         type: 'server',
-        path: '_form'
+        path: '_form',
       });
       return;
     }
@@ -478,25 +505,25 @@ export default function OnboardingSetupPage() {
         ...(form.data.userPersona && { userPersona: form.data.userPersona }),
         preferences: form.data.preferences,
         isCustomExam: form.data.isCustomExam,
-        customExam: form.data.isCustomExam ? form.data.customExam : undefined
+        customExam: form.data.isCustomExam ? form.data.customExam : undefined,
       };
 
       // Save data with retry logic
       let retryCount = 0;
       const maxRetries = 3;
-      
+
       while (retryCount < maxRetries) {
         try {
           const operations = await Promise.allSettled([
             createUser(user.uid, userData),
-            saveSyllabus(user.uid, form.data.syllabus)
+            saveSyllabus(user.uid, form.data.syllabus),
           ]);
 
-          const failures = operations.filter((result) => result.status === 'rejected');
+          const failures = operations.filter(result => result.status === 'rejected');
           if (failures.length > 0) {
             throw new Error('Failed to save some data');
           }
-          
+
           break; // Success, exit retry loop
         } catch (error) {
           retryCount++;
@@ -512,7 +539,7 @@ export default function OnboardingSetupPage() {
         (window as any).gtag('event', 'onboarding_completed', {
           user_type: form.data.userPersona?.type,
           exam_type: form.data.isCustomExam ? 'custom' : 'predefined',
-          total_subjects: form.data.syllabus.length
+          total_subjects: form.data.syllabus.length,
         });
       }
 
@@ -531,7 +558,6 @@ export default function OnboardingSetupPage() {
       dashboardUrl.searchParams.set('onboarding', 'complete');
       dashboardUrl.searchParams.set('welcome', 'true');
       window.location.href = dashboardUrl.toString();
-
     } catch (error) {
       console.error('Error completing onboarding:', error);
 
@@ -552,7 +578,7 @@ export default function OnboardingSetupPage() {
       form.setError('_form' as any, {
         message: errorMessage,
         type: 'server',
-        path: '_form'
+        path: '_form',
       });
 
       setAutoSaveStatus('error');
@@ -614,12 +640,14 @@ export default function OnboardingSetupPage() {
           );
 
         case 3:
-          return <SyllabusManagementStep
-            form={form}
-            onUpdateSubjectTier={updateSubjectTier}
-            onAddSubject={addCustomSubject}
-            onRemoveSubject={removeSubject}
-          />;
+          return (
+            <SyllabusManagementStep
+              form={form}
+              onUpdateSubjectTier={updateSubjectTier}
+              onAddSubject={addCustomSubject}
+              onRemoveSubject={removeSubject}
+            />
+          );
 
         case 4:
           return <PreferencesStep form={form} />;
@@ -638,11 +666,7 @@ export default function OnboardingSetupPage() {
         <div className="text-center py-8">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
           <p className="text-red-600">An error occurred. Please refresh the page and try again.</p>
-          <Button 
-            variant="outline" 
-            onClick={() => window.location.reload()}
-            className="mt-4"
-          >
+          <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh Page
           </Button>
@@ -666,12 +690,7 @@ export default function OnboardingSetupPage() {
     <TooltipProvider>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         {/* Accessibility announcements */}
-        <div 
-          ref={announceRef}
-          className="sr-only"
-          aria-live="polite"
-          aria-atomic="true"
-        />
+        <div ref={announceRef} className="sr-only" aria-live="polite" aria-atomic="true" />
 
         {/* Online/Offline Status */}
         {!isOnline && (
@@ -691,11 +710,10 @@ export default function OnboardingSetupPage() {
               <div className="flex items-center space-x-3">
                 <div className="text-2xl">{STEP_INFO[multiStep.currentStep - 1]?.icon}</div>
                 <div>
-                  <h2 className="font-semibold text-gray-900">
-                    {STEP_INFO[multiStep.currentStep - 1]?.title}
-                  </h2>
+                  <h2 className="font-semibold text-gray-900">{STEP_INFO[multiStep.currentStep - 1]?.title}</h2>
                   <p className="text-sm text-gray-600">
-                    Step {multiStep.currentStep} of {multiStep.totalSteps} • {STEP_INFO[multiStep.currentStep - 1]?.estimatedTime}
+                    Step {multiStep.currentStep} of {multiStep.totalSteps} •{' '}
+                    {STEP_INFO[multiStep.currentStep - 1]?.estimatedTime}
                   </p>
                 </div>
               </div>
@@ -727,12 +745,7 @@ export default function OnboardingSetupPage() {
                 {/* Help Button */}
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowHelp(true)}
-                      className="p-2"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => setShowHelp(true)} className="p-2">
                       <HelpCircle className="h-4 w-4" />
                       <span className="sr-only">Get help</span>
                     </Button>
@@ -745,7 +758,7 @@ export default function OnboardingSetupPage() {
                 {/* Progress */}
                 <div className="flex items-center space-x-3">
                   <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
                       style={{ width: `${multiStep.progress}%` }}
                     />
@@ -763,9 +776,7 @@ export default function OnboardingSetupPage() {
           {form.errors._form && (
             <Alert className="mb-6 border-red-200 bg-red-50">
               <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">
-                {form.errors._form.message}
-              </AlertDescription>
+              <AlertDescription className="text-red-800">{form.errors._form.message}</AlertDescription>
             </Alert>
           )}
 
@@ -778,7 +789,9 @@ export default function OnboardingSetupPage() {
                   <p className="font-medium">Please fix the following errors:</p>
                   <ul className="list-disc list-inside space-y-1">
                     {Object.values(validationErrors).map((error, index) => (
-                      <li key={index} className="text-sm">{error}</li>
+                      <li key={index} className="text-sm">
+                        {error}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -788,11 +801,7 @@ export default function OnboardingSetupPage() {
 
           {/* Step Content */}
           <Card className="mb-6 shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-            <CardContent 
-              ref={stepContentRef}
-              className="p-6"
-              tabIndex={-1}
-            >
+            <CardContent ref={stepContentRef} className="p-6" tabIndex={-1}>
               {renderStepContent()}
             </CardContent>
           </Card>
@@ -812,11 +821,7 @@ export default function OnboardingSetupPage() {
             <div className="flex items-center space-x-4">
               {/* Preview Button */}
               {multiStep.currentStep === 4 && (
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowPreview(true)}
-                  className="flex items-center space-x-2"
-                >
+                <Button variant="ghost" onClick={() => setShowPreview(true)} className="flex items-center space-x-2">
                   <Eye className="h-4 w-4" />
                   <span>Preview Setup</span>
                 </Button>
@@ -866,9 +871,7 @@ export default function OnboardingSetupPage() {
                 <HelpCircle className="h-5 w-5 text-blue-600" />
                 <span>Step Help</span>
               </DialogTitle>
-              <DialogDescription>
-                {STEP_INFO[multiStep.currentStep - 1]?.helpText}
-              </DialogDescription>
+              <DialogDescription>{STEP_INFO[multiStep.currentStep - 1]?.helpText}</DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button onClick={() => setShowHelp(false)}>Got it</Button>
@@ -881,20 +884,26 @@ export default function OnboardingSetupPage() {
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Setup Preview</DialogTitle>
-              <DialogDescription>
-                Review your configuration before completing setup
-              </DialogDescription>
+              <DialogDescription>Review your configuration before completing setup</DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-6">
               {/* Personal Info */}
               <div>
                 <h3 className="font-semibold mb-2">Personal Information</h3>
                 <div className="bg-gray-50 p-3 rounded-lg space-y-1">
-                  <p><strong>Name:</strong> {form.data.displayName}</p>
-                  <p><strong>Profile:</strong> {form.data.userPersona?.type.replace('_', ' ')}</p>
-                  <p><strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}</p>
-                  <p><strong>Exam Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}</p>
+                  <p>
+                    <strong>Name:</strong> {form.data.displayName}
+                  </p>
+                  <p>
+                    <strong>Profile:</strong> {form.data.userPersona?.type.replace('_', ' ')}
+                  </p>
+                  <p>
+                    <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
+                  </p>
+                  <p>
+                    <strong>Exam Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
 
@@ -904,22 +913,43 @@ export default function OnboardingSetupPage() {
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="font-medium text-red-600">Tier 1 ({form.data.syllabus.filter(s => s.tier === 1).length})</p>
-                      {form.data.syllabus.filter(s => s.tier === 1).slice(0, 3).map(s => (
-                        <p key={s.id} className="text-gray-600">{s.name}</p>
-                      ))}
+                      <p className="font-medium text-red-600">
+                        Tier 1 ({form.data.syllabus.filter(s => s.tier === 1).length})
+                      </p>
+                      {form.data.syllabus
+                        .filter(s => s.tier === 1)
+                        .slice(0, 3)
+                        .map(s => (
+                          <p key={s.id} className="text-gray-600">
+                            {s.name}
+                          </p>
+                        ))}
                     </div>
                     <div>
-                      <p className="font-medium text-yellow-600">Tier 2 ({form.data.syllabus.filter(s => s.tier === 2).length})</p>
-                      {form.data.syllabus.filter(s => s.tier === 2).slice(0, 3).map(s => (
-                        <p key={s.id} className="text-gray-600">{s.name}</p>
-                      ))}
+                      <p className="font-medium text-yellow-600">
+                        Tier 2 ({form.data.syllabus.filter(s => s.tier === 2).length})
+                      </p>
+                      {form.data.syllabus
+                        .filter(s => s.tier === 2)
+                        .slice(0, 3)
+                        .map(s => (
+                          <p key={s.id} className="text-gray-600">
+                            {s.name}
+                          </p>
+                        ))}
                     </div>
                     <div>
-                      <p className="font-medium text-green-600">Tier 3 ({form.data.syllabus.filter(s => s.tier === 3).length})</p>
-                      {form.data.syllabus.filter(s => s.tier === 3).slice(0, 3).map(s => (
-                        <p key={s.id} className="text-gray-600">{s.name}</p>
-                      ))}
+                      <p className="font-medium text-green-600">
+                        Tier 3 ({form.data.syllabus.filter(s => s.tier === 3).length})
+                      </p>
+                      {form.data.syllabus
+                        .filter(s => s.tier === 3)
+                        .slice(0, 3)
+                        .map(s => (
+                          <p key={s.id} className="text-gray-600">
+                            {s.name}
+                          </p>
+                        ))}
                     </div>
                   </div>
                 </div>
@@ -929,9 +959,16 @@ export default function OnboardingSetupPage() {
               <div>
                 <h3 className="font-semibold mb-2">Study Preferences</h3>
                 <div className="bg-gray-50 p-3 rounded-lg space-y-1">
-                  <p><strong>Daily Goal:</strong> {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h {form.data.preferences.dailyStudyGoalMinutes % 60}m</p>
-                  <p><strong>Preferred Time:</strong> {form.data.preferences.preferredStudyTime}</p>
-                  <p><strong>Revision Intervals:</strong> {form.data.preferences.revisionIntervals.join(', ')} days</p>
+                  <p>
+                    <strong>Daily Goal:</strong> {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
+                    {form.data.preferences.dailyStudyGoalMinutes % 60}m
+                  </p>
+                  <p>
+                    <strong>Preferred Time:</strong> {form.data.preferences.preferredStudyTime}
+                  </p>
+                  <p>
+                    <strong>Revision Intervals:</strong> {form.data.preferences.revisionIntervals.join(', ')} days
+                  </p>
                 </div>
               </div>
             </div>

@@ -28,12 +28,7 @@ class Logger {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private createLogEntry(
-    level: LogLevel,
-    message: string,
-    context?: Record<string, any>,
-    error?: Error
-  ): LogEntry {
+  private createLogEntry(level: LogLevel, message: string, context?: Record<string, any>, error?: Error): LogEntry {
     const userId = this.getCurrentUserId();
     return {
       level,
@@ -42,7 +37,7 @@ class Logger {
       ...(context !== undefined && { context }),
       ...(error !== undefined && { error }),
       sessionId: this.sessionId,
-      ...(userId !== undefined && { userId })
+      ...(userId !== undefined && { userId }),
     };
   }
 
@@ -60,7 +55,9 @@ class Logger {
   }
 
   private shouldLog(level: LogLevel): boolean {
-    if (this.isDevelopment) { return true; }
+    if (this.isDevelopment) {
+      return true;
+    }
 
     // In production, only log warn and error
     return level === 'warn' || level === 'error';
@@ -109,7 +106,9 @@ class Logger {
    * Log debug information (development only)
    */
   debug(message: string, context?: Record<string, any>): void {
-    if (!this.shouldLog('debug')) { return; }
+    if (!this.shouldLog('debug')) {
+      return;
+    }
 
     const entry = this.createLogEntry('debug', message, context);
     this.outputLog(entry);
@@ -119,7 +118,9 @@ class Logger {
    * Log general information
    */
   info(message: string, context?: Record<string, any>): void {
-    if (!this.shouldLog('info')) { return; }
+    if (!this.shouldLog('info')) {
+      return;
+    }
 
     const entry = this.createLogEntry('info', message, context);
     this.outputLog(entry);
@@ -129,7 +130,9 @@ class Logger {
    * Log warnings
    */
   warn(message: string, context?: Record<string, any>): void {
-    if (!this.shouldLog('warn')) { return; }
+    if (!this.shouldLog('warn')) {
+      return;
+    }
 
     const entry = this.createLogEntry('warn', message, context);
     this.outputLog(entry);
@@ -140,7 +143,9 @@ class Logger {
    * Log errors
    */
   error(message: string, error?: Error | Record<string, any>): void {
-    if (!this.shouldLog('error')) { return; }
+    if (!this.shouldLog('error')) {
+      return;
+    }
 
     const errorObj = error instanceof Error ? error : undefined;
     const context = error instanceof Error ? undefined : error;

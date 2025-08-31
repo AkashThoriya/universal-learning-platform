@@ -14,7 +14,6 @@ import { UserPersona, WorkSchedule } from '@/types/exam';
  * Persona-aware goal setting utilities
  */
 export class PersonaAwareGoalSetting {
-
   /**
    * Calculate realistic daily study goal based on user persona
    *
@@ -73,8 +72,7 @@ export class PersonaAwareGoalSetting {
    * @returns Available minutes for study on weekends
    */
   private static calculateWeekendAvailability(schedule: WorkSchedule): number {
-    const isWeekendWorker = schedule.workingDays.includes('saturday') ||
-                           schedule.workingDays.includes('sunday');
+    const isWeekendWorker = schedule.workingDays.includes('saturday') || schedule.workingDays.includes('sunday');
 
     if (isWeekendWorker) {
       // If works on weekends, reduce availability
@@ -133,9 +131,9 @@ export class PersonaAwareGoalSetting {
           tips: [
             'Take regular breaks to maintain focus',
             'Use deep work blocks for complex topics',
-            'Schedule lighter topics during low-energy periods'
+            'Schedule lighter topics during low-energy periods',
           ],
-          timeSlots: ['Morning (6-12)', 'Afternoon (2-6)', 'Evening (7-11)']
+          timeSlots: ['Morning (6-12)', 'Afternoon (2-6)', 'Evening (7-11)'],
         };
 
       case 'working_professional':
@@ -147,9 +145,9 @@ export class PersonaAwareGoalSetting {
             'Utilize commute time for audio learning',
             'Use lunch breaks for quick reviews',
             'Focus on high-impact topics during limited time',
-            'Dedicate weekends for intensive study sessions'
+            'Dedicate weekends for intensive study sessions',
           ],
-          timeSlots: this.getWorkingProfessionalTimeSlots(persona.workSchedule)
+          timeSlots: this.getWorkingProfessionalTimeSlots(persona.workSchedule),
         };
 
       case 'freelancer':
@@ -161,9 +159,9 @@ export class PersonaAwareGoalSetting {
             'Block time slots like client work',
             'Use project gaps for study sessions',
             'Maintain consistent daily study routine',
-            'Track time to ensure progress'
+            'Track time to ensure progress',
           ],
-          timeSlots: ['Early Morning', 'Mid-day Break', 'Evening Wind-down']
+          timeSlots: ['Early Morning', 'Mid-day Break', 'Evening Wind-down'],
         };
 
       default:
@@ -172,7 +170,7 @@ export class PersonaAwareGoalSetting {
           minGoal: 60,
           maxGoal: 480,
           tips: ['Start with small, consistent goals', 'Build study habits gradually'],
-          timeSlots: ['Morning', 'Evening']
+          timeSlots: ['Morning', 'Evening'],
         };
     }
   }
@@ -209,8 +207,8 @@ export class PersonaAwareGoalSetting {
     }
 
     // Weekend intensive
-    const isWeekendWorker = workSchedule.workingDays.includes('saturday') ||
-                           workSchedule.workingDays.includes('sunday');
+    const isWeekendWorker =
+      workSchedule.workingDays.includes('saturday') || workSchedule.workingDays.includes('sunday');
     if (!isWeekendWorker) {
       slots.push('Weekend Intensive Sessions');
     }

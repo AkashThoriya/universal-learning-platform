@@ -31,7 +31,7 @@ import {
   StudyPlanRecommendation as _StudyPlanRecommendation,
   RiskFactor as _RiskFactor,
   RecommendedAction as _RecommendedAction,
-  ActionResource as _ActionResource
+  ActionResource as _ActionResource,
 } from '@/lib/intelligent-analytics-service';
 
 // ============================================================================
@@ -59,7 +59,7 @@ export class AnalyticsDemoDataService {
       coursePerformance: this.generateCoursePerformance(),
       crossTrackInsights: this.generateCrossTrackInsights(),
       trends: this.generatePerformanceTrends(),
-      predictions: this.generatePredictions()
+      predictions: this.generatePredictions(),
     };
   }
 
@@ -89,15 +89,15 @@ export class AnalyticsDemoDataService {
                 title: 'Khan Academy - Limits Introduction',
                 url: 'https://example.com/limits',
                 duration: 25,
-                difficulty: 'beginner'
+                difficulty: 'beginner',
               },
               {
                 type: 'practice',
                 title: 'Calculus Limit Practice Problems',
                 duration: 90,
-                difficulty: 'intermediate'
-              }
-            ]
+                difficulty: 'intermediate',
+              },
+            ],
           },
           {
             actionType: 'review_concepts',
@@ -110,13 +110,13 @@ export class AnalyticsDemoDataService {
                 type: 'article',
                 title: 'Understanding Limits Conceptually',
                 duration: 15,
-                difficulty: 'beginner'
-              }
-            ]
-          }
+                difficulty: 'beginner',
+              },
+            ],
+          },
         ],
         lastImprovement: null,
-        trendDirection: 'declining'
+        trendDirection: 'declining',
       },
       {
         topicId: 'data_structures_trees',
@@ -138,13 +138,13 @@ export class AnalyticsDemoDataService {
                 type: 'practice',
                 title: 'LeetCode Tree Problems',
                 duration: 120,
-                difficulty: 'advanced'
-              }
-            ]
-          }
+                difficulty: 'advanced',
+              },
+            ],
+          },
         ],
         lastImprovement: Timestamp.fromMillis(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        trendDirection: 'improving'
+        trendDirection: 'improving',
       },
       {
         topicId: 'physics_mechanics',
@@ -161,12 +161,12 @@ export class AnalyticsDemoDataService {
             estimatedTime: 90,
             difficulty: 'medium',
             expectedImpact: 70,
-            resources: []
-          }
+            resources: [],
+          },
         ],
         lastImprovement: Timestamp.fromMillis(Date.now() - 3 * 24 * 60 * 60 * 1000),
-        trendDirection: 'stable'
-      }
+        trendDirection: 'stable',
+      },
     ];
   }
 
@@ -187,14 +187,10 @@ export class AnalyticsDemoDataService {
           'Create flashcards for key formulas',
           'Practice problems without looking at solutions first',
           'Explain concepts out loud after each study session',
-          'Test yourself weekly on previously covered topics'
+          'Test yourself weekly on previously covered topics',
         ],
-        trackingMetrics: [
-          'Problem-solving accuracy',
-          'Time to recall formulas',
-          'Mock test improvement rate'
-        ],
-        validUntil: Timestamp.fromMillis(Date.now() + 14 * 24 * 60 * 60 * 1000)
+        trackingMetrics: ['Problem-solving accuracy', 'Time to recall formulas', 'Mock test improvement rate'],
+        validUntil: Timestamp.fromMillis(Date.now() + 14 * 24 * 60 * 60 * 1000),
       },
       {
         id: 'rec_2',
@@ -208,14 +204,10 @@ export class AnalyticsDemoDataService {
           'Break physics problems into smaller sub-problems',
           'Define variables and constraints clearly',
           'Use algorithmic thinking for solution steps',
-          'Validate answers using dimensional analysis'
+          'Validate answers using dimensional analysis',
         ],
-        trackingMetrics: [
-          'Physics problem completion time',
-          'Solution accuracy rate',
-          'Confidence in approach'
-        ],
-        validUntil: Timestamp.fromMillis(Date.now() + 21 * 24 * 60 * 60 * 1000)
+        trackingMetrics: ['Physics problem completion time', 'Solution accuracy rate', 'Confidence in approach'],
+        validUntil: Timestamp.fromMillis(Date.now() + 21 * 24 * 60 * 60 * 1000),
       },
       {
         id: 'rec_3',
@@ -229,15 +221,11 @@ export class AnalyticsDemoDataService {
           'Schedule calculus and advanced topics for 9-11 AM',
           'Use afternoon for revision and practice problems',
           'Reserve evenings for lighter subjects',
-          'Track energy levels and adjust accordingly'
+          'Track energy levels and adjust accordingly',
         ],
-        trackingMetrics: [
-          'Session completion rate',
-          'Problem accuracy by time of day',
-          'Perceived difficulty ratings'
-        ],
-        validUntil: Timestamp.fromMillis(Date.now() + 30 * 24 * 60 * 60 * 1000)
-      }
+        trackingMetrics: ['Session completion rate', 'Problem accuracy by time of day', 'Perceived difficulty ratings'],
+        validUntil: Timestamp.fromMillis(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
     ];
   }
 
@@ -251,14 +239,9 @@ export class AnalyticsDemoDataService {
       averageScore: 73.5,
       scoreImprovement: 12.3,
       weakAreas: this.generateDemoWeakAreas(),
-      strongAreas: [
-        'Algebra Fundamentals',
-        'Basic Programming Concepts',
-        'English Comprehension',
-        'Logical Reasoning'
-      ],
+      strongAreas: ['Algebra Fundamentals', 'Basic Programming Concepts', 'English Comprehension', 'Logical Reasoning'],
       revisionEffectiveness: 78,
-      predictedExamScore: 82.5
+      predictedExamScore: 82.5,
     };
   }
 
@@ -278,7 +261,7 @@ export class AnalyticsDemoDataService {
           conceptualUnderstanding: 88,
           practicalApplication: 82,
           lastPracticed: Timestamp.fromMillis(Date.now() - 2 * 24 * 60 * 60 * 1000),
-          improvementRate: 2.3
+          improvementRate: 2.3,
         },
         {
           skillId: 'react_components',
@@ -290,7 +273,7 @@ export class AnalyticsDemoDataService {
           conceptualUnderstanding: 80,
           practicalApplication: 72,
           lastPracticed: Timestamp.fromMillis(Date.now() - 1 * 24 * 60 * 60 * 1000),
-          improvementRate: 3.1
+          improvementRate: 3.1,
         },
         {
           skillId: 'algorithm_design',
@@ -302,11 +285,11 @@ export class AnalyticsDemoDataService {
           conceptualUnderstanding: 75,
           practicalApplication: 61,
           lastPracticed: Timestamp.fromMillis(Date.now() - 3 * 24 * 60 * 60 * 1000),
-          improvementRate: 1.8
-        }
+          improvementRate: 1.8,
+        },
       ],
       codingEfficiency: 82,
-      problemSolvingScore: 79
+      problemSolvingScore: 79,
     };
   }
 
@@ -324,20 +307,20 @@ export class AnalyticsDemoDataService {
               description: 'Applied debugging methodology to solve physics word problems',
               context: 'Physics mechanics problems',
               outcome: 'Improved accuracy from 65% to 82%',
-              effectivenessRating: 85
+              effectivenessRating: 85,
             },
             {
               description: 'Used algorithmic thinking for mathematics proofs',
               context: 'Calculus theorem proofs',
               outcome: 'Reduced solution time by 35%',
-              effectivenessRating: 90
-            }
+              effectivenessRating: 90,
+            },
           ],
           potentialApplications: [
             'Apply to chemistry stoichiometry problems',
             'Use for complex mathematics word problems',
-            'Apply systematic approach to essay writing'
-          ]
+            'Apply systematic approach to essay writing',
+          ],
         },
         {
           fromTrack: 'exam',
@@ -350,15 +333,15 @@ export class AnalyticsDemoDataService {
               description: 'Applied mathematical pattern recognition to identify code optimization opportunities',
               context: 'JavaScript performance optimization',
               outcome: 'Improved code efficiency by 28%',
-              effectivenessRating: 82
-            }
+              effectivenessRating: 82,
+            },
           ],
           potentialApplications: [
             'Design pattern recognition in software architecture',
             'Bug pattern identification in debugging',
-            'User behavior pattern analysis'
-          ]
-        }
+            'User behavior pattern analysis',
+          ],
+        },
       ],
       skillSynergy: [
         {
@@ -368,14 +351,14 @@ export class AnalyticsDemoDataService {
           practicalApplications: [
             'Optimize recursive algorithms using mathematical principles',
             'Apply calculus concepts to machine learning algorithms',
-            'Use statistical analysis for code performance metrics'
+            'Use statistical analysis for code performance metrics',
           ],
           careerBenefit: 'Strong foundation for data science and machine learning roles',
           reinforcementOpportunities: [
             'Practice LeetCode problems with mathematical components',
             'Implement mathematical algorithms from scratch',
-            'Analyze algorithm performance using calculus concepts'
-          ]
+            'Analyze algorithm performance using calculus concepts',
+          ],
         },
         {
           examSkill: 'Logical Reasoning',
@@ -384,15 +367,15 @@ export class AnalyticsDemoDataService {
           practicalApplications: [
             'Systematic debugging using logical deduction',
             'Design test cases using logical principles',
-            'Code review using structured reasoning'
+            'Code review using structured reasoning',
           ],
           careerBenefit: 'Enhanced problem-solving capabilities in software development',
           reinforcementOpportunities: [
             'Practice debugging challenges',
             'Participate in code review sessions',
-            'Solve logic puzzles regularly'
-          ]
-        }
+            'Solve logic puzzles regularly',
+          ],
+        },
       ],
       adaptiveRecommendations: this.generateDemoRecommendations(),
       crossTrackBenefits: [
@@ -402,13 +385,13 @@ export class AnalyticsDemoDataService {
           measuredImpact: 23,
           examples: [
             'Programming logic helps with mathematical proofs (save 2 hours/week)',
-            'Mathematical thinking improves algorithm design (save 1.5 hours/week)'
+            'Mathematical thinking improves algorithm design (save 1.5 hours/week)',
           ],
           recommendedActions: [
             'Identify more opportunities for skill transfer',
             'Create study sessions that combine both tracks',
-            'Document successful transfer techniques'
-          ]
+            'Document successful transfer techniques',
+          ],
         },
         {
           benefitType: 'skill_reinforcement',
@@ -416,15 +399,15 @@ export class AnalyticsDemoDataService {
           measuredImpact: 35,
           examples: [
             'Calculus concepts strengthen understanding of machine learning algorithms',
-            'Physics problem-solving improves systematic debugging approach'
+            'Physics problem-solving improves systematic debugging approach',
           ],
           recommendedActions: [
             'Explicitly connect concepts between tracks',
             'Practice applying skills across domains',
-            'Create concept maps showing connections'
-          ]
-        }
-      ]
+            'Create concept maps showing connections',
+          ],
+        },
+      ],
     };
   }
 
@@ -441,7 +424,7 @@ export class AnalyticsDemoDataService {
         efficiency: 70 + Math.sin(i * 0.2) * 15,
         mood: 7 + Math.sin(i * 0.1) * 2,
         challenges: i % 7 === 0 ? ['Time management'] : [],
-        achievements: i % 5 === 0 ? ['Completed practice set'] : []
+        achievements: i % 5 === 0 ? ['Completed practice set'] : [],
       })),
       weekly: Array.from({ length: 12 }, (_, i) => ({
         date: Timestamp.fromMillis(now - (11 - i) * 7 * dayInMs),
@@ -451,7 +434,7 @@ export class AnalyticsDemoDataService {
         efficiency: 65 + i * 1.2,
         mood: 6.5 + Math.sin(i * 0.2) * 1.5,
         challenges: [],
-        achievements: []
+        achievements: [],
       })),
       monthly: Array.from({ length: 6 }, (_, i) => ({
         date: Timestamp.fromMillis(now - (5 - i) * 30 * dayInMs),
@@ -461,8 +444,8 @@ export class AnalyticsDemoDataService {
         efficiency: 60 + i * 4,
         mood: 6 + i * 0.3,
         challenges: [],
-        achievements: []
-      }))
+        achievements: [],
+      })),
     };
   }
 
@@ -476,7 +459,7 @@ export class AnalyticsDemoDataService {
           predictedLevel: 95,
           timeToMastery: 14,
           confidence: 89,
-          requiredEffort: '2 hours/day focused practice'
+          requiredEffort: '2 hours/day focused practice',
         },
         {
           skillId: 'calculus_advanced',
@@ -484,7 +467,7 @@ export class AnalyticsDemoDataService {
           predictedLevel: 85,
           timeToMastery: 28,
           confidence: 76,
-          requiredEffort: '1.5 hours/day with emphasis on problem-solving'
+          requiredEffort: '1.5 hours/day with emphasis on problem-solving',
         },
         {
           skillId: 'algorithm_design',
@@ -492,29 +475,25 @@ export class AnalyticsDemoDataService {
           predictedLevel: 82,
           timeToMastery: 21,
           confidence: 82,
-          requiredEffort: '3 hours/week on LeetCode + theory review'
-        }
+          requiredEffort: '3 hours/week on LeetCode + theory review',
+        },
       ],
       optimalStudyPlan: [
         {
           phase: 'Foundation Strengthening',
           duration: 14,
           focusAreas: ['Calculus Fundamentals', 'JavaScript ES6+', 'Problem-Solving Patterns'],
-          dailyGoals: [
-            'Complete 5 calculus problems',
-            'Practice 1 JavaScript concept',
-            'Solve 2 algorithmic problems'
-          ],
+          dailyGoals: ['Complete 5 calculus problems', 'Practice 1 JavaScript concept', 'Solve 2 algorithmic problems'],
           milestones: [
             'Score 80%+ on calculus practice test',
             'Complete JavaScript fundamentals project',
-            'Solve 50 easy-medium algorithm problems'
+            'Solve 50 easy-medium algorithm problems',
           ],
           successMetrics: [
             'Weekly quiz scores above 85%',
             'Concept explanation without references',
-            'Implementation speed improvement'
-          ]
+            'Implementation speed improvement',
+          ],
         },
         {
           phase: 'Advanced Integration',
@@ -523,19 +502,19 @@ export class AnalyticsDemoDataService {
           dailyGoals: [
             'Tackle advanced calculus applications',
             'Build React components',
-            'Practice hard algorithm problems'
+            'Practice hard algorithm problems',
           ],
           milestones: [
             'Complete calculus optimization problems',
             'Build full-stack application',
-            'Solve dynamic programming challenges'
+            'Solve dynamic programming challenges',
           ],
           successMetrics: [
             'Mock exam scores above 85%',
             'Code review approval rate > 90%',
-            'Algorithm efficiency improvements'
-          ]
-        }
+            'Algorithm efficiency improvements',
+          ],
+        },
       ],
       riskFactors: [
         {
@@ -545,13 +524,13 @@ export class AnalyticsDemoDataService {
           mitigationStrategies: [
             'Set specific daily study times',
             'Use calendar blocking for study sessions',
-            'Create accountability with study partner'
+            'Create accountability with study partner',
           ],
           earlyWarningSignals: [
             'Missing 2+ study sessions per week',
             'Declining weekly practice hours',
-            'Postponing scheduled reviews'
-          ]
+            'Postponing scheduled reviews',
+          ],
         },
         {
           factor: 'Weak Areas Accumulation',
@@ -560,15 +539,15 @@ export class AnalyticsDemoDataService {
           mitigationStrategies: [
             'Address weak areas immediately',
             'Increase practice frequency for challenging topics',
-            'Seek help from mentors or tutors'
+            'Seek help from mentors or tutors',
           ],
           earlyWarningSignals: [
             'Repeated mistakes in same topics',
             'Avoiding challenging problems',
-            'Declining confidence in weak subjects'
-          ]
-        }
-      ]
+            'Declining confidence in weak subjects',
+          ],
+        },
+      ],
     };
   }
 }

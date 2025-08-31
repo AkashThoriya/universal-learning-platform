@@ -38,7 +38,7 @@ export function sanitizeHtml(input: string): string {
   return purify.sanitize(input, {
     ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'u', 'br', 'p', 'ul', 'ol', 'li'],
     ALLOWED_ATTR: [],
-    KEEP_CONTENT: true
+    KEEP_CONTENT: true,
   });
 }
 
@@ -81,28 +81,24 @@ export function sanitizeNumber(input: string | number): number | null {
  */
 export const ValidationSchemas = {
   // User input validation
-  displayName: z.string()
+  displayName: z
+    .string()
     .min(2, 'Name must be at least 2 characters')
     .max(50, 'Name must be less than 50 characters')
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
 
-  email: z.string()
-    .email('Please enter a valid email address')
-    .max(254, 'Email address is too long'),
+  email: z.string().email('Please enter a valid email address').max(254, 'Email address is too long'),
 
   // Study-related validation
-  studyGoalMinutes: z.number()
-    .min(15, 'Minimum study goal is 15 minutes')
-    .max(720, 'Maximum study goal is 12 hours'),
+  studyGoalMinutes: z.number().min(15, 'Minimum study goal is 15 minutes').max(720, 'Maximum study goal is 12 hours'),
 
-  score: z.number()
-    .min(0, 'Score cannot be negative')
-    .max(100, 'Score cannot exceed 100'),
+  score: z.number().min(0, 'Score cannot be negative').max(100, 'Score cannot exceed 100'),
 
   // Date validation
-  examDate: z.string()
+  examDate: z
+    .string()
     .min(1, 'Please select an exam date')
-    .refine((date) => {
+    .refine(date => {
       const selectedDate = new Date(date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -110,26 +106,25 @@ export const ValidationSchemas = {
     }, 'Exam date must be in the future'),
 
   // Content validation
-  subjectName: z.string()
+  subjectName: z
+    .string()
     .min(2, 'Subject name must be at least 2 characters')
     .max(100, 'Subject name must be less than 100 characters')
     .regex(/^[a-zA-Z0-9\s\-&()]+$/, 'Subject name contains invalid characters'),
 
-  topicName: z.string()
+  topicName: z
+    .string()
     .min(2, 'Topic name must be at least 2 characters')
     .max(200, 'Topic name must be less than 200 characters'),
 
   // User notes and descriptions
-  description: z.string()
-    .max(1000, 'Description must be less than 1000 characters')
-    .optional(),
+  description: z.string().max(1000, 'Description must be less than 1000 characters').optional(),
 
-  notes: z.string()
-    .max(2000, 'Notes must be less than 2000 characters')
-    .optional(),
+  notes: z.string().max(2000, 'Notes must be less than 2000 characters').optional(),
 
   // Mission and learning validation
-  missionName: z.string()
+  missionName: z
+    .string()
     .min(3, 'Mission name must be at least 3 characters')
     .max(100, 'Mission name must be less than 100 characters'),
 
@@ -138,13 +133,15 @@ export const ValidationSchemas = {
   frequency: z.enum(['daily', 'weekly', 'monthly', 'custom']),
 
   // Progress and analytics
-  completionPercentage: z.number()
+  completionPercentage: z
+    .number()
     .min(0, 'Completion percentage cannot be negative')
     .max(100, 'Completion percentage cannot exceed 100'),
 
-  confidenceLevel: z.number()
+  confidenceLevel: z
+    .number()
     .min(1, 'Confidence level must be at least 1')
-    .max(10, 'Confidence level cannot exceed 10')
+    .max(10, 'Confidence level cannot exceed 10'),
 };
 
 // ============================================================================
@@ -163,9 +160,7 @@ export function validateFormData<T>(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errors = error.errors.map(err =>
-        `${err.path.join('.')}: ${err.message}`
-      );
+      const errors = error.errors.map(err => `${err.path.join('.')}: ${err.message}`);
       return { success: false, errors };
     }
     return { success: false, errors: ['Validation failed'] };
@@ -220,7 +215,7 @@ export function containsMaliciousContent(input: string): boolean {
     /<object/gi,
     /<embed/gi,
     /document\.cookie/gi,
-    /document\.write/gi
+    /document\.write/gi,
   ];
 
   return maliciousPatterns.some(pattern => pattern.test(input));
@@ -236,14 +231,7 @@ export function validateFileUpload(file: File): { valid: boolean; error?: string
   }
 
   // Check file type
-  const allowedTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/webp',
-    'application/pdf',
-    'text/plain'
-  ];
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 'text/plain'];
 
   if (!allowedTypes.includes(file.type)) {
     return { valid: false, error: 'File type not allowed' };

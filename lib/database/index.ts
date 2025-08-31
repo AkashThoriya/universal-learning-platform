@@ -1,10 +1,10 @@
 /**
  * @fileoverview Database Abstraction Layer - Main Export
- * 
+ *
  * Main entry point for the database abstraction layer that provides
  * a unified interface for database operations while maintaining
  * backward compatibility with the existing Firebase implementation.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */

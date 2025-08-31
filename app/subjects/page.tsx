@@ -17,19 +17,27 @@ export default function SubjectsPage() {
 
   const getTierColor = (tier: number) => {
     switch (tier) {
-      case 1: return 'bg-red-100 text-red-800';
-      case 2: return 'bg-blue-100 text-blue-800';
-      case 3: return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 1:
+        return 'bg-red-100 text-red-800';
+      case 2:
+        return 'bg-blue-100 text-blue-800';
+      case 3:
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTierLabel = (tier: number) => {
     switch (tier) {
-      case 1: return 'High Priority';
-      case 2: return 'Professional Knowledge';
-      case 3: return 'Advanced Topics';
-      default: return 'Standard';
+      case 1:
+        return 'High Priority';
+      case 2:
+        return 'Professional Knowledge';
+      case 3:
+        return 'Advanced Topics';
+      default:
+        return 'Standard';
     }
   };
 
@@ -88,46 +96,40 @@ export default function SubjectsPage() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {SUBJECTS_DATA
-                    .filter(subject => subject.tier === tier)
-                    .map(subject => (
-                      <Card key={subject.subjectId} className="hover:shadow-lg transition-shadow">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-lg">{subject.name}</CardTitle>
-                            <Badge className={getTierColor(subject.tier)}>
-                              {getTierLabel(subject.tier)}
-                            </Badge>
+                  {SUBJECTS_DATA.filter(subject => subject.tier === tier).map(subject => (
+                    <Card key={subject.subjectId} className="hover:shadow-lg transition-shadow">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-lg">{subject.name}</CardTitle>
+                          <Badge className={getTierColor(subject.tier)}>{getTierLabel(subject.tier)}</Badge>
+                        </div>
+                        <CardDescription>{subject.topics.length} topics to master</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex flex-wrap gap-2">
+                            {subject.topics.slice(0, 3).map(topic => (
+                              <Badge key={topic.id} variant="outline" className="text-xs">
+                                {topic.name}
+                              </Badge>
+                            ))}
+                            {subject.topics.length > 3 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{subject.topics.length - 3} more
+                              </Badge>
+                            )}
                           </div>
-                          <CardDescription>
-                            {subject.topics.length} topics to master
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            <div className="flex flex-wrap gap-2">
-                              {subject.topics.slice(0, 3).map(topic => (
-                                <Badge key={topic.id} variant="outline" className="text-xs">
-                                  {topic.name}
-                                </Badge>
-                              ))}
-                              {subject.topics.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{subject.topics.length - 3} more
-                                </Badge>
-                              )}
-                            </div>
 
-                            <Link href={`/subjects/${subject.subjectId}`}>
-                              <Button className="w-full mt-3 group">
-                                <span>Explore Topics</span>
-                                <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                              </Button>
-                            </Link>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          <Link href={`/subjects/${subject.subjectId}`}>
+                            <Button className="w-full mt-3 group">
+                              <span>Explore Topics</span>
+                              <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </div>
             ))}

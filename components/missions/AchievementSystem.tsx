@@ -23,7 +23,7 @@ import {
   X,
   AlertCircle,
   Loader2,
-  RefreshCw
+  RefreshCw,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -36,10 +36,7 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { achievementService } from '@/lib/achievement-service';
-import {
-  type Achievement,
-  type UserAchievement
-} from '@/types/mission-system';
+import { type Achievement, type UserAchievement } from '@/types/mission-system';
 
 interface AchievementSystemProps {
   className?: string;
@@ -54,10 +51,7 @@ interface AchievementWithProgress extends Achievement {
   unlockedAt?: Date;
 }
 
-export function AchievementSystem({
-  className = '',
-  onAchievementClick
-}: AchievementSystemProps) {
+export function AchievementSystem({ className = '', onAchievementClick }: AchievementSystemProps) {
   const { user } = useAuth();
   const [achievements, setAchievements] = useState<AchievementWithProgress[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -82,7 +76,9 @@ export function AchievementSystem({
   }, [user?.uid]);
 
   const loadAchievements = async () => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -94,7 +90,7 @@ export function AchievementSystem({
       // Get all achievements and user progress
       const [achievementsResult, userAchievementsResult] = await Promise.all([
         achievementService.getAchievements(),
-        achievementService.getUserAchievements(user.uid)
+        achievementService.getUserAchievements(user.uid),
       ]);
 
       if (!achievementsResult.success) {
@@ -116,7 +112,7 @@ export function AchievementSystem({
           ...achievement,
           isUnlocked: userAchievement?.isUnlocked ?? false,
           progress: userAchievement?.progress ?? 0,
-          target: userAchievement?.target ?? 100
+          target: userAchievement?.target ?? 100,
         };
 
         // Only set optional properties if they exist
@@ -141,54 +137,76 @@ export function AchievementSystem({
 
   const getRarityColor = (rarity: Achievement['rarity']): string => {
     switch (rarity) {
-      case 'common': return 'text-gray-600 bg-gray-50 border-gray-200';
-      case 'uncommon': return 'text-green-600 bg-green-50 border-green-200';
-      case 'rare': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'epic': return 'text-purple-600 bg-purple-50 border-purple-200';
-      case 'legendary': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'common':
+        return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'uncommon':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'rare':
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'epic':
+        return 'text-purple-600 bg-purple-50 border-purple-200';
+      case 'legendary':
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
   const getRarityIcon = (rarity: Achievement['rarity']) => {
     switch (rarity) {
-      case 'common': return Medal;
-      case 'uncommon': return Award;
-      case 'rare': return Trophy;
-      case 'epic': return Crown;
-      case 'legendary': return Star;
-      default: return Medal;
+      case 'common':
+        return Medal;
+      case 'uncommon':
+        return Award;
+      case 'rare':
+        return Trophy;
+      case 'epic':
+        return Crown;
+      case 'legendary':
+        return Star;
+      default:
+        return Medal;
     }
   };
 
   const getCategoryIcon = (category: Achievement['category']) => {
     switch (category) {
-      case 'completion': return Target;
-      case 'performance': return TrendingUp;
-      case 'consistency': return Flame;
-      case 'skill': return Zap;
-      case 'milestone': return Trophy;
-      case 'social': return Users;
-      default: return Award;
+      case 'completion':
+        return Target;
+      case 'performance':
+        return TrendingUp;
+      case 'consistency':
+        return Flame;
+      case 'skill':
+        return Zap;
+      case 'milestone':
+        return Trophy;
+      case 'social':
+        return Users;
+      default:
+        return Award;
     }
   };
 
   const getTrackIcon = (track: Achievement['track']) => {
     switch (track) {
-      case 'exam': return BookOpen;
-      case 'course_tech': return Code;
-      default: return Target;
+      case 'exam':
+        return BookOpen;
+      case 'course_tech':
+        return Code;
+      default:
+        return Target;
     }
   };
 
   const getAchievementIcon = (achievement: Achievement): string => {
     // Map achievement IDs to emojis
     const iconMap: Record<string, string> = {
-      'first_mission': '🎯',
-      'streak_7': '🔥',
-      'perfectionist': '⭐',
-      'time_investor': '⏰',
-      'excellence_achiever': '🏆'
+      first_mission: '🎯',
+      streak_7: '🔥',
+      perfectionist: '⭐',
+      time_investor: '⏰',
+      excellence_achiever: '🏆',
     };
 
     return iconMap[achievement.id] || '🏅';
@@ -199,8 +217,9 @@ export function AchievementSystem({
       const matchesCategory = selectedCategory === 'all' || achievement.category === selectedCategory;
       const matchesTrack = selectedTrack === 'all' || achievement.track === selectedTrack;
       const matchesRarity = selectedRarity === 'all' || achievement.rarity === selectedRarity;
-      const matchesSearch = achievement.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           achievement.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch =
+        achievement.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        achievement.description.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesUnlocked = !showOnlyUnlocked || achievement.isUnlocked;
 
       return matchesCategory && matchesTrack && matchesRarity && matchesSearch && matchesUnlocked;
@@ -232,9 +251,7 @@ export function AchievementSystem({
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
-  const totalPoints = achievements
-    .filter(a => a.isUnlocked)
-    .reduce((sum, a) => sum + a.points, 0);
+  const totalPoints = achievements.filter(a => a.isUnlocked).reduce((sum, a) => sum + a.points, 0);
 
   const unlockedCount = achievements.filter(a => a.isUnlocked).length;
   const totalCount = achievements.length;
@@ -251,9 +268,7 @@ export function AchievementSystem({
       <div className={`w-full max-w-6xl mx-auto ${className}`}>
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Please log in to view your achievements.
-          </AlertDescription>
+          <AlertDescription>Please log in to view your achievements.</AlertDescription>
         </Alert>
       </div>
     );
@@ -277,12 +292,7 @@ export function AchievementSystem({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mb-4">{error}</AlertDescription>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadAchievements}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={loadAchievements} className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
@@ -371,7 +381,7 @@ export function AchievementSystem({
                     placeholder="Search achievements..."
                     className="pl-10"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
@@ -416,9 +426,13 @@ export function AchievementSystem({
                 <SelectContent>
                   {tracks.map(track => (
                     <SelectItem key={track} value={track}>
-                      {track === 'all' ? 'All Tracks' :
-                       track === 'both' ? 'Both Tracks' :
-                       track === 'exam' ? 'Exam Track' : 'Tech Track'}
+                      {track === 'all'
+                        ? 'All Tracks'
+                        : track === 'both'
+                          ? 'Both Tracks'
+                          : track === 'exam'
+                            ? 'Exam Track'
+                            : 'Tech Track'}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -437,7 +451,7 @@ export function AchievementSystem({
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={(value) => setSortBy(value as any)}>
+              <Select value={sortBy} onValueChange={value => setSortBy(value as any)}>
                 <SelectTrigger className="w-36">
                   <SelectValue />
                 </SelectTrigger>
@@ -455,7 +469,7 @@ export function AchievementSystem({
 
       {/* Achievements Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredAndSortedAchievements.map((achievement) => {
+        {filteredAndSortedAchievements.map(achievement => {
           const CategoryIcon = getCategoryIcon(achievement.category);
           const TrackIcon = getTrackIcon(achievement.track);
           const RarityIcon = getRarityIcon(achievement.rarity);
@@ -516,12 +530,11 @@ export function AchievementSystem({
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Progress</span>
-                      <span>{achievement.progress} / {achievement.target}</span>
+                      <span>
+                        {achievement.progress} / {achievement.target}
+                      </span>
                     </div>
-                    <Progress
-                      value={(achievement.progress / achievement.target) * 100}
-                      className="h-2"
-                    />
+                    <Progress value={(achievement.progress / achievement.target) * 100} className="h-2" />
                   </div>
                 )}
 
@@ -550,9 +563,7 @@ export function AchievementSystem({
           <CardContent className="p-12 text-center">
             <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No achievements found</h3>
-            <p className="text-gray-600">
-              Try adjusting your filters or search terms to find achievements.
-            </p>
+            <p className="text-gray-600">Try adjusting your filters or search terms to find achievements.</p>
           </CardContent>
         </Card>
       )}
@@ -563,11 +574,7 @@ export function AchievementSystem({
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold">{selectedAchievement.name}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedAchievement(null)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setSelectedAchievement(null)}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -575,22 +582,16 @@ export function AchievementSystem({
             <div className="text-center mb-6">
               <div
                 className={`text-6xl p-4 rounded-lg inline-block mb-4 ${
-                  selectedAchievement.isUnlocked
-                    ? 'bg-gradient-to-br from-yellow-50 to-orange-50'
-                    : 'bg-gray-100'
+                  selectedAchievement.isUnlocked ? 'bg-gradient-to-br from-yellow-50 to-orange-50' : 'bg-gray-100'
                 }`}
               >
                 {getAchievementIcon(selectedAchievement)}
               </div>
 
               <div className="space-y-2">
-                <Badge className={`${getRarityColor(selectedAchievement.rarity)}`}>
-                  {selectedAchievement.rarity}
-                </Badge>
+                <Badge className={`${getRarityColor(selectedAchievement.rarity)}`}>{selectedAchievement.rarity}</Badge>
                 <p className="text-gray-600">{selectedAchievement.description}</p>
-                <div className="text-2xl font-bold text-blue-600">
-                  {selectedAchievement.points} Points
-                </div>
+                <div className="text-2xl font-bold text-blue-600">{selectedAchievement.points} Points</div>
               </div>
             </div>
 
@@ -610,12 +611,11 @@ export function AchievementSystem({
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span>Progress</span>
-                  <span>{selectedAchievement.progress} / {selectedAchievement.target}</span>
+                  <span>
+                    {selectedAchievement.progress} / {selectedAchievement.target}
+                  </span>
                 </div>
-                <Progress
-                  value={(selectedAchievement.progress / selectedAchievement.target) * 100}
-                  className="h-3"
-                />
+                <Progress value={(selectedAchievement.progress / selectedAchievement.target) * 100} className="h-3" />
                 <p className="text-sm text-gray-600 text-center">
                   {selectedAchievement.target - selectedAchievement.progress} more to unlock
                 </p>

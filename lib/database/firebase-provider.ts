@@ -1,9 +1,9 @@
 /**
  * @fileoverview Firebase Database Provider Implementation
- * 
+ *
  * Implements the DatabaseProvider interface for Firebase Firestore,
  * providing a standardized API while maintaining Firebase-specific optimizations.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -25,7 +25,7 @@ import {
   onSnapshot,
   enableNetwork,
   disableNetwork,
-  getCountFromServer
+  getCountFromServer,
 } from 'firebase/firestore';
 
 import { db } from '../firebase';
@@ -40,7 +40,7 @@ import {
   OfflineOptions,
   QueryMetrics,
   SyncResult,
-  ConnectionStatus
+  ConnectionStatus,
 } from './interfaces';
 
 /**
@@ -53,12 +53,12 @@ class DatabaseCacheService {
 
   set<T>(key: string, data: T, options: CacheOptions = {}): void {
     const { ttl = 300000, tags = [] } = options;
-    
+
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
       ttl,
-      tags
+      tags,
     });
 
     // Update tag index
@@ -109,7 +109,7 @@ class DatabaseCacheService {
       this.queryMetrics.set(collection, []);
     }
     this.queryMetrics.get(collection)!.push(time);
-    
+
     // Keep only last 100 queries per collection
     const times = this.queryMetrics.get(collection)!;
     if (times.length > 100) {
@@ -143,22 +143,18 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     this.cache = new DatabaseCacheService();
   }
 
-  async create<T>(
-    collectionName: string,
-    data: Omit<T, 'id'>,
-    options?: { id?: string }
-  ): Promise<DatabaseResult<T>> {
+  async create<T>(collectionName: string, data: Omit<T, 'id'>, options?: { id?: string }): Promise<DatabaseResult<T>> {
     const startTime = Date.now();
-    
+
     try {
       const docId = options?.id || doc(collection(db, collectionName)).id;
       const docRef = doc(db, collectionName, docId);
-      
+
       const createData = {
         ...data,
         id: docId,
         createdAt: Timestamp.fromDate(new Date()),
-        updatedAt: Timestamp.fromDate(new Date())
+        updatedAt: Timestamp.fromDate(new Date()),
       } as T;
 
       await setDoc(docRef, createData as any);
@@ -172,22 +168,18 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       return {
         success: true,
         data: createData,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
 
-  async read<T>(
-    collectionName: string,
-    id: string,
-    options?: CacheOptions
-  ): Promise<DatabaseResult<T | null>> {
+  async read<T>(collectionName: string, id: string, options?: CacheOptions): Promise<DatabaseResult<T | null>> {
     const cacheKey = `doc:${collectionName}:${id}`;
     const startTime = Date.now();
 
@@ -197,7 +189,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       return {
         success: true,
         data: cached,
-        metadata: { queryTime: 0, cached: true }
+        metadata: { queryTime: 0, cached: true },
       };
     }
 
@@ -212,7 +204,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
         return {
           success: true,
           data: null,
-          metadata: { queryTime, cached: false }
+          metadata: { queryTime, cached: false },
         };
       }
 
@@ -222,35 +214,31 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       const { ttl = 300000, tags = [] } = options || {};
       this.cache.set(cacheKey, data, {
         ttl,
-        tags: [...tags, `collection:${collectionName}`, `doc:${collectionName}:${id}`]
+        tags: [...tags, `collection:${collectionName}`, `doc:${collectionName}:${id}`],
       });
 
       return {
         success: true,
         data,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
 
-  async update<T>(
-    collectionName: string,
-    id: string,
-    updates: Partial<T>
-  ): Promise<DatabaseResult<void>> {
+  async update<T>(collectionName: string, id: string, updates: Partial<T>): Promise<DatabaseResult<void>> {
     const startTime = Date.now();
 
     try {
       const docRef = doc(db, collectionName, id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: Timestamp.fromDate(new Date())
+        updatedAt: Timestamp.fromDate(new Date()),
       } as any);
 
       // Invalidate caches
@@ -262,13 +250,13 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
 
       return {
         success: true,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
@@ -289,21 +277,18 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
 
       return {
         success: true,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
 
-  async query<T>(
-    collectionName: string,
-    options?: QueryOptions & CacheOptions
-  ): Promise<DatabaseResult<T[]>> {
+  async query<T>(collectionName: string, options?: QueryOptions & CacheOptions): Promise<DatabaseResult<T[]>> {
     const cacheKey = `query:${collectionName}:${JSON.stringify(options)}`;
     const startTime = Date.now();
 
@@ -313,7 +298,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       return {
         success: true,
         data: cached,
-        metadata: { queryTime: 0, cached: true }
+        metadata: { queryTime: 0, cached: true },
       };
     }
 
@@ -353,7 +338,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       const { ttl = 180000, tags = [] } = options || {};
       this.cache.set(cacheKey, documents, {
         ttl,
-        tags: [...tags, `collection:${collectionName}`]
+        tags: [...tags, `collection:${collectionName}`],
       });
 
       // Log slow queries
@@ -364,21 +349,18 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       return {
         success: true,
         data: documents,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
 
-  async count(
-    collectionName: string,
-    options?: Pick<QueryOptions, 'where'>
-  ): Promise<DatabaseResult<number>> {
+  async count(collectionName: string, options?: Pick<QueryOptions, 'where'>): Promise<DatabaseResult<number>> {
     const startTime = Date.now();
 
     try {
@@ -400,13 +382,13 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       return {
         success: true,
         data: count,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
@@ -426,13 +408,13 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
               ...operation.data,
               id: operation.id,
               createdAt: Timestamp.fromDate(new Date()),
-              updatedAt: Timestamp.fromDate(new Date())
+              updatedAt: Timestamp.fromDate(new Date()),
             });
             break;
           case 'update':
             batch.update(docRef, {
               ...operation.data,
-              updatedAt: Timestamp.fromDate(new Date())
+              updatedAt: Timestamp.fromDate(new Date()),
             });
             break;
           case 'delete':
@@ -453,13 +435,13 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
 
       return {
         success: true,
-        metadata: { queryTime, cached: false }
+        metadata: { queryTime, cached: false },
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
-        metadata: { queryTime: Date.now() - startTime }
+        metadata: { queryTime: Date.now() - startTime },
       };
     }
   }
@@ -489,21 +471,21 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     }
 
     let paused = false;
-    
+
     const unsubscribe = onSnapshot(
       q,
-      (snapshot) => {
+      snapshot => {
         if (paused) {
           return;
         }
-        
+
         const documents: T[] = [];
         snapshot.forEach(docSnap => {
           documents.push({ id: docSnap.id, ...docSnap.data() } as T);
         });
         callback(documents);
       },
-      (error) => {
+      error => {
         if (options?.errorCallback) {
           options.errorCallback(error);
         } else {
@@ -519,8 +501,12 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
         unsubscribe();
         this.activeSubscriptions.delete(unsubscribe);
       },
-      pause: () => { paused = true; },
-      resume: () => { paused = false; }
+      pause: () => {
+        paused = true;
+      },
+      resume: () => {
+        paused = false;
+      },
     };
   }
 
@@ -535,18 +521,18 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
 
     const unsubscribe = onSnapshot(
       docRef,
-      (docSnap) => {
+      docSnap => {
         if (paused) {
           return;
         }
-        
+
         if (docSnap.exists()) {
           callback({ id, ...docSnap.data() } as T);
         } else {
           callback(null);
         }
       },
-      (error) => {
+      error => {
         if (options?.errorCallback) {
           options.errorCallback(error);
         } else {
@@ -562,8 +548,12 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
         unsubscribe();
         this.activeSubscriptions.delete(unsubscribe);
       },
-      pause: () => { paused = true; },
-      resume: () => { paused = false; }
+      pause: () => {
+        paused = true;
+      },
+      resume: () => {
+        paused = false;
+      },
     };
   }
 
@@ -571,10 +561,10 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     // Firebase automatically handles indexing
     // This is a no-op for Firebase but maintains interface consistency
     console.log(`Firebase auto-optimization enabled for ${collectionName} with fields:`, fields);
-    
+
     return {
       success: true,
-      metadata: { queryTime: 0, cached: false }
+      metadata: { queryTime: 0, cached: false },
     };
   }
 
@@ -583,19 +573,19 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     _timeRange?: { start: Date; end: Date }
   ): Promise<DatabaseResult<QueryMetrics>> {
     const metrics = this.cache.getQueryMetrics(collectionName);
-    
+
     // In a real implementation, this would query Firebase performance APIs
     const queryMetrics: QueryMetrics = {
       averageQueryTime: metrics.average,
       totalQueries: metrics.count,
       slowQueries: [], // Would be populated from logs
-      cacheHitRate: 0.75 // Placeholder - would calculate from cache stats
+      cacheHitRate: 0.75, // Placeholder - would calculate from cache stats
     };
 
     return {
       success: true,
       data: queryMetrics,
-      metadata: { queryTime: 0, cached: true }
+      metadata: { queryTime: 0, cached: true },
     };
   }
 
@@ -618,15 +608,15 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     // Firebase handles sync automatically
     // This would typically force a sync operation
     await enableNetwork(db);
-    
+
     return {
       success: true,
       data: {
         syncedDocuments: 0, // Would be populated from Firebase sync status
         conflicts: [],
-        errors: []
+        errors: [],
       },
-      metadata: { queryTime: 0, cached: false }
+      metadata: { queryTime: 0, cached: false },
     };
   }
 
@@ -638,7 +628,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     // Cleanup subscriptions
     this.activeSubscriptions.forEach(unsubscribe => unsubscribe());
     this.activeSubscriptions.clear();
-    
+
     await disableNetwork(db);
   }
 
@@ -651,22 +641,22 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       connected: this.isConnected(),
       provider: 'firebase',
       lastConnected: new Date(),
-      offline: this.isOfflineEnabled
+      offline: this.isOfflineEnabled,
     };
   }
 
   private mapOperator(operator: WhereCondition['operator']): any {
     const operatorMap = {
-      'eq': '==',
-      'ne': '!=',
-      'gt': '>',
-      'gte': '>=',
-      'lt': '<',
-      'lte': '<=',
-      'in': 'in',
-      'notIn': 'not-in',
-      'contains': 'array-contains',
-      'startsWith': '>=' // Firestore doesn't have startsWith, this is a workaround
+      eq: '==',
+      ne: '!=',
+      gt: '>',
+      gte: '>=',
+      lt: '<',
+      lte: '<=',
+      in: 'in',
+      notIn: 'not-in',
+      contains: 'array-contains',
+      startsWith: '>=', // Firestore doesn't have startsWith, this is a workaround
     };
 
     return operatorMap[operator] || '==';

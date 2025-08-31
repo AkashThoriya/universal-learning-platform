@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "next/core-web-vitals"
-  ],
+  "extends": ["next/core-web-vitals", "prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -11,7 +9,7 @@
     },
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "react-hooks", "jsx-a11y", "import"],
+  "plugins": ["@typescript-eslint", "react-hooks", "jsx-a11y", "import", "prettier"],
   "rules": {
     // React & JSX Best Practices
     "react/no-unescaped-entities": "off",
@@ -33,35 +31,41 @@
     "react/jsx-curly-brace-presence": ["warn", { "props": "never", "children": "never" }],
     "react/jsx-no-target-blank": "error",
     "react/jsx-pascal-case": "error",
-    
+
     // React Hooks Best Practices
     "react-hooks/exhaustive-deps": "warn",
     "react-hooks/rules-of-hooks": "error",
-    
+
     // TypeScript Best Practices
-    "@typescript-eslint/no-unused-vars": ["error", { 
-      "argsIgnorePattern": "^_", 
-      "varsIgnorePattern": "^_",
-      "caughtErrorsIgnorePattern": "^_"
-    }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/prefer-optional-chain": "warn",
     "@typescript-eslint/prefer-nullish-coalescing": "warn",
     "@typescript-eslint/no-unnecessary-type-assertion": "warn",
     "@typescript-eslint/no-inferrable-types": "warn",
-    "@typescript-eslint/ban-ts-comment": ["warn", {
-      "ts-expect-error": "allow-with-description",
-      "ts-ignore": "allow-with-description",
-      "ts-nocheck": "allow-with-description",
-      "ts-check": false
-    }],
+    "@typescript-eslint/ban-ts-comment": [
+      "warn",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": "allow-with-description",
+        "ts-nocheck": "allow-with-description",
+        "ts-check": false
+      }
+    ],
     "@typescript-eslint/prefer-as-const": "warn",
     "@typescript-eslint/no-array-constructor": "error",
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/no-empty-interface": "warn",
     "@typescript-eslint/no-var-requires": "error",
-    
+
     // Import/Export Best Practices
     "import/no-anonymous-default-export": "warn",
     "import/no-duplicates": "error",
@@ -73,19 +77,12 @@
     "import/order": [
       "warn",
       {
-        "groups": [
-          "builtin",
-          "external", 
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
         "newlines-between": "always",
         "alphabetize": { "order": "asc", "caseInsensitive": true }
       }
     ],
-    
+
     // General Code Quality & Best Practices
     "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
     "no-debugger": "error",
@@ -102,12 +99,18 @@
     "no-else-return": "warn",
     "consistent-return": "warn",
     "array-callback-return": "error",
-    "no-magic-numbers": ["warn", { 
-      "ignore": [0, 1, -1, 2, 10, 100, 1000], 
-      "ignoreArrayIndexes": true,
-      "ignoreDefaultValues": true,
-      "detectObjects": false
-    }],
+    "no-magic-numbers": [
+      "warn",
+      {
+        "ignore": [
+          0, 1, -1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 20, 24, 25, 30, 36, 48, 50, 60, 100, 120, 200, 300, 360,
+          480, 720, 1000, 1024, 2000
+        ],
+        "ignoreArrayIndexes": true,
+        "ignoreDefaultValues": true,
+        "detectObjects": false
+      }
+    ],
     "eqeqeq": ["error", "always", { "null": "ignore" }],
     "curly": ["error", "all"],
     "dot-notation": "warn",
@@ -115,7 +118,7 @@
     "no-unneeded-ternary": "warn",
     "no-nested-ternary": "warn",
     "prefer-arrow-callback": "warn",
-    
+
     // Performance & Optimization
     "no-await-in-loop": "warn",
     "no-inner-declarations": "error",
@@ -126,7 +129,7 @@
     "no-useless-escape": "warn",
     "no-regex-spaces": "error",
     "no-empty": ["error", { "allowEmptyCatch": true }],
-    
+
     // Security Best Practices
     "no-eval": "error",
     "no-implied-eval": "error",
@@ -137,7 +140,7 @@
     "no-new-require": "error",
     "no-caller": "error",
     "no-extend-native": "error",
-    
+
     // Accessibility (a11y) Rules
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-has-content": "error",
@@ -159,7 +162,7 @@
     "jsx-a11y/tabindex-no-positive": "warn",
     "jsx-a11y/no-distracting-elements": "error",
     "jsx-a11y/no-access-key": "warn",
-    
+
     // Next.js Specific Rules
     "@next/next/no-img-element": "warn",
     "@next/next/no-html-link-for-pages": "error",
@@ -173,25 +176,21 @@
     "@next/next/no-unwanted-polyfillio": "error",
     "@next/next/no-document-import-in-page": "error",
     "@next/next/no-script-component-in-head": "error",
-    
-    // Code Style & Formatting
-    "semi": ["error", "always"],
-    "quotes": ["warn", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
-    "comma-dangle": ["warn", "never"],
-    "max-len": ["warn", { 
-      "code": 120, 
-      "ignoreStrings": true, 
-      "ignoreUrls": true, 
-      "ignoreComments": true,
-      "ignoreTemplateLiterals": true,
-      "ignoreRegExpLiterals": true
-    }],
-    "no-trailing-spaces": "warn",
-    "no-multiple-empty-lines": ["warn", { "max": 2, "maxEOF": 1, "maxBOF": 0 }],
-    "eol-last": "warn",
-    "object-curly-spacing": ["warn", "always"],
-    "array-bracket-spacing": ["warn", "never"],
-    "comma-spacing": ["warn", { "before": false, "after": true }],
+
+    // Code Style & Formatting (Prettier Integration)
+    "prettier/prettier": "warn",
+
+    // Disabled formatting rules (Prettier handles these)
+    "semi": "off",
+    "quotes": "off",
+    "comma-dangle": "off",
+    "max-len": "off",
+    "no-trailing-spaces": "off",
+    "no-multiple-empty-lines": "off",
+    "eol-last": "off",
+    "object-curly-spacing": "off",
+    "array-bracket-spacing": "off",
+    "comma-spacing": "off",
     "key-spacing": ["warn", { "beforeColon": false, "afterColon": true }],
     "space-before-blocks": "warn",
     "keyword-spacing": "warn",
@@ -257,14 +256,5 @@
       }
     }
   ],
-  "ignorePatterns": [
-    "node_modules/",
-    ".next/",
-    "out/",
-    "dist/",
-    "build/",
-    "coverage/",
-    "*.min.js",
-    "*.bundle.js"
-  ]
+  "ignorePatterns": ["node_modules/", ".next/", "out/", "dist/", "build/", "coverage/", "*.min.js", "*.bundle.js"]
 }

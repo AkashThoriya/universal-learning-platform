@@ -12,7 +12,7 @@ import {
   FileText,
   Lightbulb,
   Calendar,
-  Plus
+  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -31,7 +31,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getTopicProgress, updateTopicProgress, getSyllabus } from '@/lib/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
-
 
 export default function TopicDetailPage() {
   const { user } = useAuth();
@@ -56,12 +55,14 @@ export default function TopicDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user || !topicId) { return; }
+      if (!user || !topicId) {
+        return;
+      }
 
       try {
         const [progressData, syllabusData] = await Promise.all([
           getTopicProgress(user.uid, topicId),
-          getSyllabus(user.uid)
+          getSyllabus(user.uid),
         ]);
 
         setSyllabus(syllabusData);
@@ -85,7 +86,7 @@ export default function TopicDetailPage() {
             tags: [],
             difficulty: 3,
             importance: 3,
-            lastScoreImprovement: 0
+            lastScoreImprovement: 0,
           };
 
           await updateTopicProgress(user.uid, topicId, initialProgress);
@@ -96,7 +97,7 @@ export default function TopicDetailPage() {
         toast({
           title: 'Error',
           description: 'Failed to load topic data. Please try again.',
-          variant: 'destructive'
+          variant: 'destructive',
         });
       } finally {
         setLoading(false);
@@ -107,30 +108,32 @@ export default function TopicDetailPage() {
   }, [user, topicId, subjectId, toast]);
 
   const handleSave = async () => {
-    if (!user || !topicProgress) { return; }
+    if (!user || !topicProgress) {
+      return;
+    }
 
     setSaving(true);
     try {
       const updates = {
         userNotes,
         personalContext,
-        lastRevised: Timestamp.now()
+        lastRevised: Timestamp.now(),
       };
 
       await updateTopicProgress(user.uid, topicId, updates);
 
-      setTopicProgress(prev => prev ? { ...prev, ...updates } : null);
+      setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
 
       toast({
         title: 'Saved Successfully',
-        description: 'Your notes and context have been saved.'
+        description: 'Your notes and context have been saved.',
       });
     } catch (error) {
       console.error('Error saving progress:', error);
       toast({
         title: 'Save Failed',
         description: 'Failed to save your changes. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     } finally {
       setSaving(false);
@@ -138,35 +141,39 @@ export default function TopicDetailPage() {
   };
 
   const handleMarkRevised = async () => {
-    if (!user || !topicProgress) { return; }
+    if (!user || !topicProgress) {
+      return;
+    }
 
     try {
       const updates = {
         lastRevised: Timestamp.now(),
         revisionCount: topicProgress.revisionCount + 1,
-        masteryScore: Math.min(topicProgress.masteryScore + 5, 100)
+        masteryScore: Math.min(topicProgress.masteryScore + 5, 100),
       };
 
       await updateTopicProgress(user.uid, topicId, updates);
 
-      setTopicProgress(prev => prev ? { ...prev, ...updates } : null);
+      setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
 
       toast({
         title: 'Marked as Revised',
-        description: 'Topic marked as revised. Mastery score increased!'
+        description: 'Topic marked as revised. Mastery score increased!',
       });
     } catch (error) {
       console.error('Error marking as revised:', error);
       toast({
         title: 'Error',
         description: 'Failed to mark as revised. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   };
 
   const addCurrentAffair = async () => {
-    if (!user || !topicProgress || !newCurrentAffair.trim()) { return; }
+    if (!user || !topicProgress || !newCurrentAffair.trim()) {
+      return;
+    }
 
     try {
       // Note: This would need to be implemented in the TopicProgress interface
@@ -175,14 +182,14 @@ export default function TopicDetailPage() {
 
       toast({
         title: 'Current Affair Added',
-        description: 'Your current affair note has been saved.'
+        description: 'Your current affair note has been saved.',
       });
     } catch (error) {
       console.error('Error adding current affair:', error);
       toast({
         title: 'Error',
         description: 'Failed to add current affair. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   };
@@ -223,17 +230,25 @@ export default function TopicDetailPage() {
   }
 
   const getMasteryColor = (score: number) => {
-    if (score >= 80) { return 'text-green-600'; }
-    if (score >= 50) { return 'text-yellow-600'; }
+    if (score >= 80) {
+      return 'text-green-600';
+    }
+    if (score >= 50) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
   const getTierColor = (tier: number) => {
     switch (tier) {
-      case 1: return 'bg-red-100 text-red-800 border-red-200';
-      case 2: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 3: return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 1:
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 2:
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 3:
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -264,9 +279,7 @@ export default function TopicDetailPage() {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Badge variant="outline">{subject.name}</Badge>
-                    <Badge className={getTierColor(subject.tier)}>
-                      Tier {subject.tier}
-                    </Badge>
+                    <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
                   </div>
                 </div>
 
@@ -311,10 +324,7 @@ export default function TopicDetailPage() {
                   <Calendar className="h-8 w-8 text-green-600" />
                   <div>
                     <p className="text-lg font-bold">
-                      {topicProgress.lastRevised ?
-                        format(topicProgress.lastRevised.toDate(), 'MMM dd') :
-                        'Never'
-                      }
+                      {topicProgress.lastRevised ? format(topicProgress.lastRevised.toDate(), 'MMM dd') : 'Never'}
                     </p>
                     <p className="text-sm text-muted-foreground">Last Revised</p>
                   </div>
@@ -327,9 +337,7 @@ export default function TopicDetailPage() {
                 <div className="flex items-center space-x-2">
                   <FileText className="h-8 w-8 text-purple-600" />
                   <div>
-                    <p className="text-2xl font-bold">
-                      {Math.round(topicProgress.totalStudyTime / 60) || 0}h
-                    </p>
+                    <p className="text-2xl font-bold">{Math.round(topicProgress.totalStudyTime / 60) || 0}h</p>
                     <p className="text-sm text-muted-foreground">Study Time</p>
                   </div>
                 </div>
@@ -341,9 +349,7 @@ export default function TopicDetailPage() {
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="h-8 w-8 text-orange-600" />
                   <div>
-                    <p className="text-2xl font-bold">
-                      {topicProgress.difficulty}/5
-                    </p>
+                    <p className="text-2xl font-bold">{topicProgress.difficulty}/5</p>
                     <p className="text-sm text-muted-foreground">Difficulty</p>
                   </div>
                 </div>
@@ -379,7 +385,7 @@ export default function TopicDetailPage() {
                 <CardContent>
                   <Textarea
                     value={userNotes}
-                    onChange={(e) => setUserNotes(e.target.value)}
+                    onChange={e => setUserNotes(e.target.value)}
                     placeholder="Add your study notes here... Include key concepts, formulas, important points, practice questions, etc."
                     rows={12}
                     className="mb-4"
@@ -393,7 +399,8 @@ export default function TopicDetailPage() {
                 <CardHeader>
                   <CardTitle>Personal Context</CardTitle>
                   <CardDescription>
-                    Create meaningful connections - Why is this topic important? How does it relate to your exam and real-world applications?
+                    Create meaningful connections - Why is this topic important? How does it relate to your exam and
+                    real-world applications?
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -410,7 +417,7 @@ export default function TopicDetailPage() {
 
                     <Textarea
                       value={personalContext}
-                      onChange={(e) => setPersonalContext(e.target.value)}
+                      onChange={e => setPersonalContext(e.target.value)}
                       placeholder="Create your personal context here... Answer the reflection prompts above to build deeper understanding."
                       rows={10}
                     />
@@ -423,22 +430,17 @@ export default function TopicDetailPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Current Affairs & Updates</CardTitle>
-                  <CardDescription>
-                    Track recent developments, news, and updates related to this topic
-                  </CardDescription>
+                  <CardDescription>Track recent developments, news, and updates related to this topic</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex space-x-2">
                     <Input
                       value={newCurrentAffair}
-                      onChange={(e) => setNewCurrentAffair(e.target.value)}
+                      onChange={e => setNewCurrentAffair(e.target.value)}
                       placeholder="Add a current affairs note or recent update..."
                       className="flex-1"
                     />
-                    <Button
-                      onClick={addCurrentAffair}
-                      disabled={!newCurrentAffair.trim()}
-                    >
+                    <Button onClick={addCurrentAffair} disabled={!newCurrentAffair.trim()}>
                       <Plus className="h-4 w-4 mr-2" />
                       Add
                     </Button>

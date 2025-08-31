@@ -1,17 +1,18 @@
 /**
  * @fileoverview Push Notification Service for Exam Strategy Engine
- * 
+ *
  * Handles push notification subscription, sending, and management:
  * - VAPID key configuration
  * - Subscription management
  * - Notification templates for study reminders
  * - Smart scheduling based on user preferences
- * 
+ *
  * @version 1.0.0
  */
 
-import { db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+
+import { db } from '@/lib/firebase';
 
 // VAPID Configuration (used by server-side push service)
 export const VAPID_KEYS = {
@@ -88,10 +89,14 @@ class PushNotificationService {
 
   async unsubscribeUser(userId: string): Promise<boolean> {
     try {
-      await setDoc(doc(db, 'push_subscriptions', userId), {
-        isActive: false,
-        unsubscribedAt: new Date(),
-      }, { merge: true });
+      await setDoc(
+        doc(db, 'push_subscriptions', userId),
+        {
+          isActive: false,
+          unsubscribedAt: new Date(),
+        },
+        { merge: true }
+      );
 
       return true;
     } catch (error) {
@@ -103,11 +108,11 @@ class PushNotificationService {
   async getUserSubscription(userId: string): Promise<PushSubscription | null> {
     try {
       const subscriptionDoc = await getDoc(doc(db, 'push_subscriptions', userId));
-      
+
       if (subscriptionDoc.exists() && subscriptionDoc.data().isActive) {
         return subscriptionDoc.data().subscription;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Failed to get user subscription:', error);
@@ -122,7 +127,7 @@ class PushNotificationService {
   async sendNotification(userId: string, payload: NotificationPayload): Promise<boolean> {
     try {
       const subscription = await this.getUserSubscription(userId);
-      
+
       if (!subscription) {
         console.log('No active subscription found for user:', userId);
         return false;
@@ -131,10 +136,10 @@ class PushNotificationService {
       // In a real implementation, this would use a server-side push service
       // For now, we'll simulate the notification
       console.log('Sending notification to user:', userId, payload);
-      
+
       // Store notification in Firestore for tracking
       await this.logNotification(userId, payload);
-      
+
       return true;
     } catch (error) {
       console.error('Failed to send notification:', error);
@@ -144,14 +149,14 @@ class PushNotificationService {
 
   async sendBulkNotifications(userIds: string[], payload: NotificationPayload): Promise<number> {
     let successCount = 0;
-    
-    const promises = userIds.map(async (userId) => {
+
+    const promises = userIds.map(async userId => {
       const success = await this.sendNotification(userId, payload);
       if (success) {
         successCount++;
       }
     });
-    
+
     await Promise.all(promises);
     return successCount;
   }
@@ -183,13 +188,11 @@ class PushNotificationService {
         where('type', '==', type),
         where('status', '==', 'scheduled')
       );
-      
+
       const querySnapshot = await getDocs(q);
-      
-      const promises = querySnapshot.docs.map(doc => 
-        setDoc(doc.ref, { status: 'cancelled' }, { merge: true })
-      );
-      
+
+      const promises = querySnapshot.docs.map(doc => setDoc(doc.ref, { status: 'cancelled' }, { merge: true }));
+
       await Promise.all(promises);
       return true;
     } catch (error) {
@@ -204,10 +207,10 @@ class PushNotificationService {
 
   createDailyGoalReminder(userName: string, goalProgress: number): NotificationPayload {
     const isLate = goalProgress < 50;
-    
+
     return {
-      title: isLate ? "Don't give up!" : "Keep it up!",
-      body: isLate 
+      title: isLate ? "Don't give up!" : 'Keep it up!',
+      body: isLate
         ? `Hi ${userName}, you're ${100 - goalProgress}% away from your daily goal. A quick session can make a difference!`
         : `Great progress ${userName}! You're ${goalProgress}% towards your daily goal.`,
       icon: '/icons/icon-192x192.png',
@@ -215,57 +218,57 @@ class PushNotificationService {
       data: {
         type: 'daily_goal',
         url: '/dashboard',
-        progress: goalProgress
+        progress: goalProgress,
       },
       actions: [
         {
           action: 'study',
           title: 'Start Studying',
-          icon: '/icons/action-study.png'
+          icon: '/icons/action-study.png',
         },
         {
           action: 'later',
           title: 'Remind Later',
-          icon: '/icons/action-later.png'
-        }
+          icon: '/icons/action-later.png',
+        },
       ],
       tag: 'daily-goal',
-      vibrate: [100, 50, 100]
+      vibrate: [100, 50, 100],
     };
   }
 
   createMissionDeadlineReminder(missionTitle: string, hoursLeft: number): NotificationPayload {
     return {
-      title: "Mission Deadline Approaching",
+      title: 'Mission Deadline Approaching',
       body: `"${missionTitle}" is due in ${hoursLeft} hours. Complete it to maintain your streak!`,
       icon: '/icons/icon-192x192.png',
       badge: '/icons/badge-72x72.png',
       data: {
         type: 'mission_deadline',
         url: '/missions',
-        hoursLeft
+        hoursLeft,
       },
       actions: [
         {
           action: 'complete',
           title: 'Complete Mission',
-          icon: '/icons/action-mission.png'
+          icon: '/icons/action-mission.png',
         },
         {
           action: 'postpone',
           title: 'Postpone',
-          icon: '/icons/action-postpone.png'
-        }
+          icon: '/icons/action-postpone.png',
+        },
       ],
       tag: 'mission-deadline',
       requireInteraction: true,
-      vibrate: [200, 100, 200]
+      vibrate: [200, 100, 200],
     };
   }
 
   createStreakRiskReminder(currentStreak: number): NotificationPayload {
     return {
-      title: "Streak at Risk! 🔥",
+      title: 'Streak at Risk! 🔥',
       body: `Your ${currentStreak}-day study streak is at risk! Study for just 10 minutes to keep it alive.`,
       icon: '/icons/icon-192x192.png',
       badge: '/icons/badge-72x72.png',
@@ -273,51 +276,51 @@ class PushNotificationService {
       data: {
         type: 'streak_risk',
         url: '/micro-learning',
-        streak: currentStreak
+        streak: currentStreak,
       },
       actions: [
         {
           action: 'quick_study',
           title: '10 Min Study',
-          icon: '/icons/action-quick.png'
+          icon: '/icons/action-quick.png',
         },
         {
           action: 'dismiss',
           title: 'Dismiss',
-          icon: '/icons/action-dismiss.png'
-        }
+          icon: '/icons/action-dismiss.png',
+        },
       ],
       tag: 'streak-risk',
       requireInteraction: true,
-      vibrate: [300, 100, 300, 100, 300]
+      vibrate: [300, 100, 300, 100, 300],
     };
   }
 
   createMicroLearningReminder(subject: string): NotificationPayload {
     return {
-      title: "Quick Learning Break",
+      title: 'Quick Learning Break',
       body: `Ready for a 5-minute ${subject} session? Perfect for a quick study break!`,
       icon: '/icons/icon-192x192.png',
       badge: '/icons/badge-72x72.png',
       data: {
         type: 'micro_learning',
         url: '/micro-learning',
-        subject
+        subject,
       },
       actions: [
         {
           action: 'start',
           title: 'Start Session',
-          icon: '/icons/action-start.png'
+          icon: '/icons/action-start.png',
         },
         {
           action: 'snooze',
           title: 'Snooze 30min',
-          icon: '/icons/action-snooze.png'
-        }
+          icon: '/icons/action-snooze.png',
+        },
       ],
       tag: 'micro-learning',
-      vibrate: [100, 50, 100]
+      vibrate: [100, 50, 100],
     };
   }
 
@@ -331,23 +334,23 @@ class PushNotificationService {
       data: {
         type: 'achievement',
         url: '/dashboard',
-        achievement
+        achievement,
       },
       actions: [
         {
           action: 'view',
           title: 'View Achievement',
-          icon: '/icons/action-view.png'
+          icon: '/icons/action-view.png',
         },
         {
           action: 'share',
           title: 'Share',
-          icon: '/icons/action-share.png'
-        }
+          icon: '/icons/action-share.png',
+        },
       ],
       tag: 'achievement',
       requireInteraction: false,
-      vibrate: [200, 100, 200, 100, 200]
+      vibrate: [200, 100, 200, 100, 200],
     };
   }
 
@@ -355,32 +358,35 @@ class PushNotificationService {
   // SMART SCHEDULING
   // ============================================================================
 
-  async scheduleSmartReminders(userId: string, preferences: {
-    studyTime: 'morning' | 'afternoon' | 'evening';
-    timezone: string;
-    frequency: 'low' | 'medium' | 'high';
-    types: string[];
-  }): Promise<boolean> {
+  async scheduleSmartReminders(
+    userId: string,
+    preferences: {
+      studyTime: 'morning' | 'afternoon' | 'evening';
+      timezone: string;
+      frequency: 'low' | 'medium' | 'high';
+      types: string[];
+    }
+  ): Promise<boolean> {
     try {
       const baseTime = this.getPreferredStudyTime(preferences.studyTime);
       const reminderIntervals = this.getReminderIntervals(preferences.frequency);
-      
+
       // Schedule different types of reminders
       for (const type of preferences.types) {
         for (const interval of reminderIntervals) {
           const scheduledTime = new Date(baseTime.getTime() + interval);
-          
+
           await this.scheduleStudyReminder({
             userId,
             type: type as any,
             scheduledTime,
             title: this.getDefaultTitle(type),
             body: this.getDefaultBody(type),
-            data: { automated: true }
+            data: { automated: true },
           });
         }
       }
-      
+
       return true;
     } catch (error) {
       console.error('Failed to schedule smart reminders:', error);
@@ -396,9 +402,9 @@ class PushNotificationService {
     if (typeof window === 'undefined') {
       return 'server';
     }
-    
-    const userAgent = window.navigator.userAgent;
-    
+
+    const { userAgent } = window.navigator;
+
     if (/iPad|iPhone|iPod/.test(userAgent)) {
       return 'ios';
     }
@@ -411,7 +417,7 @@ class PushNotificationService {
     if (/Mac/.test(userAgent)) {
       return 'mac';
     }
-    
+
     return 'unknown';
   }
 
@@ -431,7 +437,7 @@ class PushNotificationService {
   private getPreferredStudyTime(studyTime: string): Date {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     switch (studyTime) {
       case 'morning':
         return new Date(today.getTime() + 8 * 60 * 60 * 1000); // 8 AM
@@ -446,7 +452,7 @@ class PushNotificationService {
 
   private getReminderIntervals(frequency: string): number[] {
     const hour = 60 * 60 * 1000;
-    
+
     switch (frequency) {
       case 'high':
         return [0, 2 * hour, 6 * hour, 12 * hour]; // 4 times a day

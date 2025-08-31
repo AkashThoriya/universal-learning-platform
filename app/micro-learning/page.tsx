@@ -32,7 +32,9 @@ function MicroLearningContent() {
 
   // Check for auto-start parameters from URL
   useEffect(() => {
-    if (!userId) { return; } // Don't process if user not authenticated
+    if (!userId) {
+      return;
+    } // Don't process if user not authenticated
 
     const autoStart = searchParams.get('auto');
     const subject = searchParams.get('subject');
@@ -47,7 +49,7 @@ function MicroLearningContent() {
         subjectId: subject,
         topicId: topic,
         learningTrack: track,
-        ...(parsedDuration !== undefined && { duration: parsedDuration })
+        ...(parsedDuration !== undefined && { duration: parsedDuration }),
       });
       setCurrentView('session');
     }
@@ -60,9 +62,7 @@ function MicroLearningContent() {
         <div className="text-center space-y-4 max-w-md">
           <h2 className="text-2xl font-bold text-gray-900">Authentication Required</h2>
           <p className="text-gray-600">Please log in to access micro-learning sessions.</p>
-          <Button onClick={() => window.location.href = '/login'}>
-            Go to Login
-          </Button>
+          <Button onClick={() => (window.location.href = '/login')}>Go to Login</Button>
         </div>
       </div>
     );
@@ -74,14 +74,16 @@ function MicroLearningContent() {
     track: 'exam' | 'course_tech',
     duration?: number | undefined
   ) => {
-    if (!userId) { return; } // Safety check
+    if (!userId) {
+      return;
+    } // Safety check
 
     setSessionConfig({
       userId,
       subjectId,
       topicId,
       learningTrack: track,
-      ...(duration !== undefined && { duration })
+      ...(duration !== undefined && { duration }),
     });
     setCurrentView('session');
   };
@@ -170,14 +172,16 @@ function MicroLearningContent() {
 
 export default function MicroLearningPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
-        <div className="animate-pulse text-center">
-          <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-4" />
-          <div className="h-4 w-32 bg-gray-200 rounded mx-auto" />
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
+          <div className="animate-pulse text-center">
+            <div className="h-8 w-48 bg-gray-200 rounded mx-auto mb-4" />
+            <div className="h-4 w-32 bg-gray-200 rounded mx-auto" />
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <MicroLearningContent />
     </Suspense>
   );

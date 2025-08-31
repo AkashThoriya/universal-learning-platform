@@ -648,11 +648,14 @@ export interface Achievement {
     animation?: 'glow' | 'pulse' | 'rotate' | 'bounce';
   };
   /** Persona-specific variations */
-  personaVariations: Record<UserPersonaType, {
-    name?: string;
-    description?: string;
-    requirements?: Partial<AchievementRequirement>[];
-  }>;
+  personaVariations: Record<
+    UserPersonaType,
+    {
+      name?: string;
+      description?: string;
+      requirements?: Partial<AchievementRequirement>[];
+    }
+  >;
   /** Whether achievement is currently active */
   isActive: boolean;
   /** Created timestamp */

@@ -16,7 +16,7 @@ import {
   AlertCircle,
   Star,
   Flame,
-  Trophy
+  Trophy,
 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -25,12 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, /* TabsContent, */ TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import {
-  type UnifiedProgress,
-  type TrackProgress,
-  type PeriodSummary,
-  type Mission
-} from '@/types/mission-system';
+import { type UnifiedProgress, type TrackProgress, type PeriodSummary, type Mission } from '@/types/mission-system';
 
 interface ProgressVisualizationProps {
   userProgress?: UnifiedProgress;
@@ -41,7 +36,7 @@ interface ProgressVisualizationProps {
 export function ProgressVisualization({
   userProgress,
   // recentMissions = [], // Commented out unused parameter
-  className = ''
+  className = '',
 }: ProgressVisualizationProps) {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
@@ -56,7 +51,7 @@ export function ProgressVisualization({
       averageScore: 87.5,
       currentStreak: 12,
       longestStreak: 18,
-      consistencyRating: 0.85
+      consistencyRating: 0.85,
     },
     trackProgress: {
       exam: {
@@ -71,14 +66,14 @@ export function ProgressVisualization({
         difficultyProgression: {
           current: 'intermediate',
           recommended: 'advanced',
-          readyForAdvancement: true
+          readyForAdvancement: true,
         },
         topicBreakdown: [
           { topic: 'Mathematics', proficiency: 92, missionsCompleted: 8, averageScore: 92.1 },
           { topic: 'Science', proficiency: 88, missionsCompleted: 7, averageScore: 88.3 },
           { topic: 'English', proficiency: 85, missionsCompleted: 6, averageScore: 85.7 },
-          { topic: 'History', proficiency: 91, missionsCompleted: 7, averageScore: 91.2 }
-        ]
+          { topic: 'History', proficiency: 91, missionsCompleted: 7, averageScore: 91.2 },
+        ],
       },
       course_tech: {
         track: 'course_tech',
@@ -92,23 +87,23 @@ export function ProgressVisualization({
         difficultyProgression: {
           current: 'intermediate',
           recommended: 'intermediate',
-          readyForAdvancement: false
+          readyForAdvancement: false,
         },
         topicBreakdown: [
           { topic: 'Frontend Development', proficiency: 88, missionsCompleted: 6, averageScore: 87.5 },
           { topic: 'Algorithms', proficiency: 82, missionsCompleted: 5, averageScore: 82.4 },
           { topic: 'System Design', proficiency: 78, missionsCompleted: 3, averageScore: 78.1 },
-          { topic: 'Data Structures', proficiency: 86, missionsCompleted: 3, averageScore: 86.0 }
-        ]
-      }
+          { topic: 'Data Structures', proficiency: 86, missionsCompleted: 3, averageScore: 86.0 },
+        ],
+      },
     },
     crossTrackInsights: {
       transferableSkills: ['Problem Solving', 'Time Management', 'Analytical Thinking'],
       effectivePatterns: ['Morning study sessions', 'Break complex problems down', 'Regular review'],
       recommendedBalance: {
         exam: 60,
-        course_tech: 40
-      }
+        course_tech: 40,
+      },
     },
     periodSummaries: {
       weekly: [
@@ -123,8 +118,8 @@ export function ProgressVisualization({
           goalsSet: 4,
           achievements: ['Week Warrior', 'Consistent Performer'],
           improvements: ['Focus on weak areas', 'Increase tech track engagement'],
-          periodRating: 4
-        }
+          periodRating: 4,
+        },
       ],
       monthly: [
         {
@@ -138,11 +133,11 @@ export function ProgressVisualization({
           goalsSet: 15,
           achievements: ['Monthly Master', 'Balanced Learner', 'Streak Champion'],
           improvements: ['Advanced problem solving', 'System design concepts'],
-          periodRating: 4
-        }
-      ]
+          periodRating: 4,
+        },
+      ],
     },
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   const getTrendIcon = (trend: 'improving' | 'stable' | 'declining') => {
@@ -180,7 +175,7 @@ export function ProgressVisualization({
       beginner: 'text-orange-600 bg-orange-50 border-orange-200',
       intermediate: 'text-blue-600 bg-blue-50 border-blue-200',
       advanced: 'text-purple-600 bg-purple-50 border-purple-200',
-      expert: 'text-yellow-600 bg-yellow-50 border-yellow-200'
+      expert: 'text-yellow-600 bg-yellow-50 border-yellow-200',
     };
     return colorMap[level as keyof typeof colorMap] || colorMap.beginner;
   };
@@ -232,7 +227,13 @@ export function ProgressVisualization({
     </Card>
   );
 
-  const TrackProgressCard = ({ trackData, trackType }: { trackData: TrackProgress; trackType: 'exam' | 'course_tech' }) => {
+  const TrackProgressCard = ({
+    trackData,
+    trackType,
+  }: {
+    trackData: TrackProgress;
+    trackType: 'exam' | 'course_tech';
+  }) => {
     const TrackIcon = getTrackIcon(trackType);
 
     return (
@@ -245,9 +246,7 @@ export function ProgressVisualization({
             <div>
               <span className="capitalize">{trackType.replace('_', ' ')} Track</span>
               <div className="flex items-center space-x-2 mt-1">
-                <Badge className={getProficiencyColor(trackData.proficiencyLevel)}>
-                  {trackData.proficiencyLevel}
-                </Badge>
+                <Badge className={getProficiencyColor(trackData.proficiencyLevel)}>{trackData.proficiencyLevel}</Badge>
                 <div className="flex items-center space-x-1">
                   {getTrendIcon(trackData.performanceTrend)}
                   <span className={`text-sm ${getTrendColor(trackData.performanceTrend).split(' ')[0]}`}>
@@ -315,7 +314,9 @@ export function ProgressVisualization({
   };
 
   const PeriodSummaryCard = () => {
-    if (!periodData) { return null; }
+    if (!periodData) {
+      return null;
+    }
 
     return (
       <Card>
@@ -350,7 +351,9 @@ export function ProgressVisualization({
               <div className="text-gray-600 text-sm">Time</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-gray-900">{periodData.goalsAchieved}/{periodData.goalsSet}</div>
+              <div className="text-lg font-bold text-gray-900">
+                {periodData.goalsAchieved}/{periodData.goalsSet}
+              </div>
               <div className="text-gray-600 text-sm">Goals</div>
             </div>
           </div>
@@ -430,7 +433,9 @@ export function ProgressVisualization({
             <Progress value={mockProgress.crossTrackInsights.recommendedBalance.exam} className="h-2" />
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Tech Track</span>
-              <span className="text-sm font-medium">{mockProgress.crossTrackInsights.recommendedBalance.course_tech}%</span>
+              <span className="text-sm font-medium">
+                {mockProgress.crossTrackInsights.recommendedBalance.course_tech}%
+              </span>
             </div>
             <Progress value={mockProgress.crossTrackInsights.recommendedBalance.course_tech} className="h-2" />
           </div>
@@ -447,7 +452,7 @@ export function ProgressVisualization({
       {/* Period Selection */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900">Progress Overview</h2>
-        <Tabs value={selectedPeriod} onValueChange={(value) => setSelectedPeriod(value as 'week' | 'month')}>
+        <Tabs value={selectedPeriod} onValueChange={value => setSelectedPeriod(value as 'week' | 'month')}>
           <TabsList>
             <TabsTrigger value="week">This Week</TabsTrigger>
             <TabsTrigger value="month">This Month</TabsTrigger>
@@ -491,12 +496,18 @@ export function ProgressVisualization({
             </div>
             <div className="text-center">
               <div className="text-3xl mb-2">
-                {mockProgress.overallProgress.consistencyRating >= 0.8 ? '🔥' :
-                 mockProgress.overallProgress.consistencyRating >= 0.6 ? '⚡' : '💫'}
+                {mockProgress.overallProgress.consistencyRating >= 0.8
+                  ? '🔥'
+                  : mockProgress.overallProgress.consistencyRating >= 0.6
+                    ? '⚡'
+                    : '💫'}
               </div>
               <div className="text-sm text-gray-600">
-                {mockProgress.overallProgress.consistencyRating >= 0.8 ? 'Excellent' :
-                 mockProgress.overallProgress.consistencyRating >= 0.6 ? 'Good' : 'Improving'}
+                {mockProgress.overallProgress.consistencyRating >= 0.8
+                  ? 'Excellent'
+                  : mockProgress.overallProgress.consistencyRating >= 0.6
+                    ? 'Good'
+                    : 'Improving'}
               </div>
             </div>
           </div>

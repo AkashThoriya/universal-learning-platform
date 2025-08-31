@@ -34,19 +34,27 @@ export default function SubjectPage() {
 
   const getTierColor = (tier: number) => {
     switch (tier) {
-      case 1: return 'bg-red-100 text-red-800';
-      case 2: return 'bg-blue-100 text-blue-800';
-      case 3: return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 1:
+        return 'bg-red-100 text-red-800';
+      case 2:
+        return 'bg-blue-100 text-blue-800';
+      case 3:
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getTierLabel = (tier: number) => {
     switch (tier) {
-      case 1: return 'High Priority';
-      case 2: return 'Professional Knowledge';
-      case 3: return 'Advanced Topics';
-      default: return 'Standard';
+      case 1:
+        return 'High Priority';
+      case 2:
+        return 'Professional Knowledge';
+      case 3:
+        return 'Advanced Topics';
+      default:
+        return 'Standard';
     }
   };
 
@@ -72,12 +80,8 @@ export default function SubjectPage() {
               <h1 className="text-4xl font-bold text-gray-900">{subject.name}</h1>
             </div>
             <div className="flex items-center justify-center space-x-4">
-              <Badge className={getTierColor(subject.tier)}>
-                {getTierLabel(subject.tier)}
-              </Badge>
-              <span className="text-muted-foreground">
-                {subject.topics.length} Topics to Master
-              </span>
+              <Badge className={getTierColor(subject.tier)}>{getTierLabel(subject.tier)}</Badge>
+              <span className="text-muted-foreground">{subject.topics.length} Topics to Master</span>
             </div>
           </div>
 
@@ -107,9 +111,7 @@ export default function SubjectPage() {
                       <Building2 className="h-4 w-4 text-yellow-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-yellow-800 mb-1">Banking Context</p>
-                        <p className="text-sm text-yellow-700 line-clamp-3">
-                          {topic.bankingContext}
-                        </p>
+                        <p className="text-sm text-yellow-700 line-clamp-3">{topic.bankingContext}</p>
                       </div>
                     </div>
                   </div>

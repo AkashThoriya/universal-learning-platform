@@ -13,7 +13,7 @@ import {
   type Achievement,
   type UserAchievement,
   type MissionResults,
-  type UnifiedProgress
+  type UnifiedProgress,
 } from '@/types/mission-system';
 
 import { firebaseService } from './firebase-services';
@@ -43,8 +43,8 @@ export class AchievementService {
         where: [{ field: 'isActive', operator: '==', value: true }],
         orderBy: [
           { field: 'category', direction: 'asc' as const },
-          { field: 'points', direction: 'asc' as const }
-        ]
+          { field: 'points', direction: 'asc' as const },
+        ],
       };
 
       if (category) {
@@ -63,12 +63,9 @@ export class AchievementService {
    */
   async getUserAchievements(userId: string): Promise<Result<UserAchievement[]>> {
     try {
-      const result = await firebaseService.queryCollection<UserAchievement>(
-        `users/${userId}/achievements`,
-        {
-          orderBy: [{ field: 'unlockedAt', direction: 'desc' as const }]
-        }
-      );
+      const result = await firebaseService.queryCollection<UserAchievement>(`users/${userId}/achievements`, {
+        orderBy: [{ field: 'unlockedAt', direction: 'desc' as const }],
+      });
       return result;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get user achievements'));
@@ -85,11 +82,15 @@ export class AchievementService {
   ): Promise<Result<UserAchievement[]>> {
     try {
       const achievementsResult = await this.getAchievements();
-      if (!achievementsResult.success) { return achievementsResult; }
+      if (!achievementsResult.success) {
+        return achievementsResult;
+      }
 
       const allAchievements = achievementsResult.data;
       const userAchievementsResult = await this.getUserAchievements(userId);
-      if (!userAchievementsResult.success) { return userAchievementsResult; }
+      if (!userAchievementsResult.success) {
+        return userAchievementsResult;
+      }
 
       const unlockedAchievementIds = userAchievementsResult.data
         .filter(ua => ua.isUnlocked)
@@ -98,13 +99,11 @@ export class AchievementService {
       const newlyUnlocked: UserAchievement[] = [];
 
       for (const achievement of allAchievements) {
-        if (unlockedAchievementIds.includes(achievement.id)) { continue; }
+        if (unlockedAchievementIds.includes(achievement.id)) {
+          continue;
+        }
 
-        const isUnlocked = this.checkAchievementRequirements(
-          achievement,
-          userProgress,
-          missionResults
-        );
+        const isUnlocked = this.checkAchievementRequirements(achievement, userProgress, missionResults);
 
         if (isUnlocked) {
           const userAchievement: UserAchievement = {
@@ -119,10 +118,10 @@ export class AchievementService {
               requirementIndex: index,
               currentValue: req.target,
               targetValue: req.target,
-              isCompleted: true
+              isCompleted: true,
             })),
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           };
 
           const saveResult = await firebaseService.setDocument(
@@ -149,11 +148,9 @@ export class AchievementService {
   async markAchievementsAsViewed(userId: string, achievementIds: string[]): Promise<Result<void>> {
     try {
       for (const achievementId of achievementIds) {
-        const updateResult = await firebaseService.updateDocument(
-          `users/${userId}/achievements`,
-          achievementId,
-          { isDisplayed: true }
-        );
+        const updateResult = await firebaseService.updateDocument(`users/${userId}/achievements`, achievementId, {
+          isDisplayed: true,
+        });
 
         if (!updateResult.success) {
           return updateResult;
@@ -240,9 +237,7 @@ export class AchievementService {
           const techSkills = userProgress.trackProgress.course_tech.masteredSkills;
           const allMasteredSkills = [...examSkills, ...techSkills];
 
-          const hasMasteredSkills = requiredSkills.every(skill =>
-            allMasteredSkills.includes(skill)
-          );
+          const hasMasteredSkills = requiredSkills.every(skill => allMasteredSkills.includes(skill));
 
           if (!hasMasteredSkills) {
             return false;
@@ -275,11 +270,7 @@ export class AchievementService {
       const defaultAchievements = this.getDefaultAchievements();
 
       for (const achievement of defaultAchievements) {
-        const saveResult = await firebaseService.setDocument(
-          'achievements',
-          achievement.id,
-          achievement
-        );
+        const saveResult = await firebaseService.setDocument('achievements', achievement.id, achievement);
 
         if (!saveResult.success) {
           return saveResult;
@@ -296,14 +287,17 @@ export class AchievementService {
    * Get default achievement definitions
    */
   private getDefaultAchievements(): Achievement[] {
-    const defaultPersonaVariations: Record<UserPersonaType, {
-      name?: string;
-      description?: string;
-      requirements?: Partial<any>[];
-    }> = {
+    const defaultPersonaVariations: Record<
+      UserPersonaType,
+      {
+        name?: string;
+        description?: string;
+        requirements?: Partial<any>[];
+      }
+    > = {
       student: {},
       working_professional: {},
-      freelancer: {}
+      freelancer: {},
     };
 
     return [
@@ -319,26 +313,26 @@ export class AchievementService {
           {
             type: 'missions_completed',
             target: 1,
-            conditions: {}
-          }
+            conditions: {},
+          },
         ],
         badge: {
           iconUrl: '/badges/first-mission.png',
-          color: '#3B82F6'
+          color: '#3B82F6',
         },
         personaVariations: {
           student: {
-            description: 'Complete your first academic mission'
+            description: 'Complete your first academic mission',
           },
           working_professional: {
-            description: 'Complete your first professional development mission'
+            description: 'Complete your first professional development mission',
           },
           freelancer: {
-            description: 'Complete your first skill-building mission'
-          }
+            description: 'Complete your first skill-building mission',
+          },
         },
         isActive: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'streak_7',
@@ -352,16 +346,16 @@ export class AchievementService {
           {
             type: 'streak',
             target: 7,
-            conditions: {}
-          }
+            conditions: {},
+          },
         ],
         badge: {
           iconUrl: '/badges/week-warrior.png',
-          color: '#F59E0B'
+          color: '#F59E0B',
         },
         personaVariations: defaultPersonaVariations,
         isActive: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'perfectionist',
@@ -376,16 +370,16 @@ export class AchievementService {
             type: 'custom',
             target: 1,
             conditions: {},
-            customValidator: 'perfect_score'
-          }
+            customValidator: 'perfect_score',
+          },
         ],
         badge: {
           iconUrl: '/badges/perfectionist.png',
-          color: '#10B981'
+          color: '#10B981',
         },
         personaVariations: defaultPersonaVariations,
         isActive: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'time_investor',
@@ -399,16 +393,16 @@ export class AchievementService {
           {
             type: 'time_spent',
             target: 6000, // 100 hours in minutes
-            conditions: {}
-          }
+            conditions: {},
+          },
         ],
         badge: {
           iconUrl: '/badges/time-investor.png',
-          color: '#8B5CF6'
+          color: '#8B5CF6',
         },
         personaVariations: defaultPersonaVariations,
         isActive: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'excellence_achiever',
@@ -422,22 +416,22 @@ export class AchievementService {
           {
             type: 'missions_completed',
             target: 20,
-            conditions: {}
+            conditions: {},
           },
           {
             type: 'score_threshold',
             target: 90,
-            conditions: {}
-          }
+            conditions: {},
+          },
         ],
         badge: {
           iconUrl: '/badges/excellence-achiever.png',
-          color: '#F59E0B'
+          color: '#F59E0B',
         },
         personaVariations: defaultPersonaVariations,
         isActive: true,
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     ];
   }
 }

@@ -13,7 +13,7 @@ import {
   type TrackProgress,
   type PeriodSummary,
   type Mission,
-  type MissionResults
+  type MissionResults,
 } from '@/types/mission-system';
 
 import { firebaseService } from './firebase-services';
@@ -68,7 +68,9 @@ export class ProgressService {
   ): Promise<Result<UnifiedProgress>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) { return progressResult; }
+      if (!progressResult.success) {
+        return progressResult;
+      }
 
       const progress = progressResult.data;
 
@@ -79,19 +81,18 @@ export class ProgressService {
       // Recalculate average score
       const totalScoreWeight = progress.overallProgress.totalMissionsCompleted;
       progress.overallProgress.averageScore =
-        ((progress.overallProgress.averageScore * (totalScoreWeight - 1)) + results.percentage) / totalScoreWeight;
+        (progress.overallProgress.averageScore * (totalScoreWeight - 1) + results.percentage) / totalScoreWeight;
 
       // Update track-specific progress
-      const trackProgress = mission.track === 'exam'
-        ? progress.trackProgress.exam
-        : progress.trackProgress.course_tech;
+      const trackProgress = mission.track === 'exam' ? progress.trackProgress.exam : progress.trackProgress.course_tech;
 
       trackProgress.missionsCompleted += 1;
       trackProgress.timeInvested += results.totalTime;
 
       // Recalculate track average score
       trackProgress.averageScore =
-        ((trackProgress.averageScore * (trackProgress.missionsCompleted - 1)) + results.percentage) / trackProgress.missionsCompleted;
+        (trackProgress.averageScore * (trackProgress.missionsCompleted - 1) + results.percentage) /
+        trackProgress.missionsCompleted;
 
       // Update proficiency based on recent performance
       this.updateProficiencyLevel(trackProgress);
@@ -106,7 +107,9 @@ export class ProgressService {
       progress.updatedAt = new Date();
       const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
 
-      if (!saveResult.success) { return saveResult; }
+      if (!saveResult.success) {
+        return saveResult;
+      }
 
       return createSuccess(progress);
     } catch (error) {
@@ -120,7 +123,9 @@ export class ProgressService {
   async getWeeklySummary(userId: string): Promise<Result<PeriodSummary | null>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) { return progressResult; }
+      if (!progressResult.success) {
+        return progressResult;
+      }
 
       const progress = progressResult.data;
       const weeklyData = progress.periodSummaries.weekly;
@@ -142,7 +147,9 @@ export class ProgressService {
   async getMonthlySummary(userId: string): Promise<Result<PeriodSummary | null>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) { return progressResult; }
+      if (!progressResult.success) {
+        return progressResult;
+      }
 
       const progress = progressResult.data;
       const monthlyData = progress.periodSummaries.monthly;
@@ -169,12 +176,12 @@ export class ProgressService {
   ): Promise<Result<void>> {
     try {
       const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) { return progressResult; }
+      if (!progressResult.success) {
+        return progressResult;
+      }
 
       const progress = progressResult.data;
-      const trackProgress = track === 'exam'
-        ? progress.trackProgress.exam
-        : progress.trackProgress.course_tech;
+      const trackProgress = track === 'exam' ? progress.trackProgress.exam : progress.trackProgress.course_tech;
 
       // Add to mastered skills if proficiency is high enough
       if (proficiency >= 80 && !trackProgress.masteredSkills.includes(skill)) {
@@ -214,49 +221,53 @@ export class ProgressService {
         averageScore: 0,
         currentStreak: 0,
         longestStreak: 0,
-        consistencyRating: 0
+        consistencyRating: 0,
       },
       trackProgress: {
         exam: this.createDefaultTrackProgress('exam'),
-        course_tech: this.createDefaultTrackProgress('course_tech')
+        course_tech: this.createDefaultTrackProgress('course_tech'),
       },
       crossTrackInsights: {
         transferableSkills: [],
         effectivePatterns: [],
         recommendedBalance: {
           exam: 60,
-          course_tech: 40
-        }
+          course_tech: 40,
+        },
       },
       periodSummaries: {
-        weekly: [{
-          period: 'week',
-          startDate: weekStart,
-          endDate: new Date(),
-          missionsCompleted: 0,
-          averageScore: 0,
-          timeInvested: 0,
-          goalsAchieved: 0,
-          goalsSet: 3,
-          achievements: [],
-          improvements: [],
-          periodRating: 3
-        }],
-        monthly: [{
-          period: 'month',
-          startDate: monthStart,
-          endDate: new Date(),
-          missionsCompleted: 0,
-          averageScore: 0,
-          timeInvested: 0,
-          goalsAchieved: 0,
-          goalsSet: 5,
-          achievements: [],
-          improvements: [],
-          periodRating: 3
-        }]
+        weekly: [
+          {
+            period: 'week',
+            startDate: weekStart,
+            endDate: new Date(),
+            missionsCompleted: 0,
+            averageScore: 0,
+            timeInvested: 0,
+            goalsAchieved: 0,
+            goalsSet: 3,
+            achievements: [],
+            improvements: [],
+            periodRating: 3,
+          },
+        ],
+        monthly: [
+          {
+            period: 'month',
+            startDate: monthStart,
+            endDate: new Date(),
+            missionsCompleted: 0,
+            averageScore: 0,
+            timeInvested: 0,
+            goalsAchieved: 0,
+            goalsSet: 5,
+            achievements: [],
+            improvements: [],
+            periodRating: 3,
+          },
+        ],
       },
-      updatedAt: now
+      updatedAt: now,
     };
   }
 
@@ -276,9 +287,9 @@ export class ProgressService {
       difficultyProgression: {
         current: 'beginner',
         recommended: 'beginner',
-        readyForAdvancement: false
+        readyForAdvancement: false,
       },
-      topicBreakdown: []
+      topicBreakdown: [],
     };
   }
 
@@ -322,7 +333,7 @@ export class ProgressService {
     const streakScore = Math.min(currentStreak / 30, 1); // Max streak contribution
     const volumeScore = Math.min(totalMissionsCompleted / 100, 1); // Max volume contribution
 
-    progress.overallProgress.consistencyRating = (streakScore * 0.6) + (volumeScore * 0.4);
+    progress.overallProgress.consistencyRating = streakScore * 0.6 + volumeScore * 0.4;
   }
 
   /**

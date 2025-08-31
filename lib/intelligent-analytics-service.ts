@@ -17,7 +17,20 @@
  * @version 1.0.0
  */
 
-import { Timestamp, collection, doc, onSnapshot, query, where, orderBy, limit, startAfter as _startAfter, getDocs, writeBatch, increment as _increment } from 'firebase/firestore';
+import {
+  Timestamp,
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter as _startAfter,
+  getDocs,
+  writeBatch,
+  increment as _increment,
+} from 'firebase/firestore';
 
 import { UserPersona } from '@/types/exam';
 
@@ -26,7 +39,6 @@ import { analyticsDemoService } from './analytics-demo-data';
 import { db } from './firebase';
 import { firebaseService } from './firebase-services';
 import { logger } from './logger';
-
 
 // ============================================================================
 // ANALYTICS DATA INTERFACES
@@ -50,19 +62,34 @@ export interface AnalyticsEvent {
  */
 export type AnalyticsEventType =
   // Exam Analytics Events
-  | 'mock_test_started' | 'mock_test_completed' | 'mock_test_abandoned'
-  | 'question_answered' | 'question_skipped' | 'question_flagged'
-  | 'revision_session_started' | 'revision_session_completed'
-  | 'weak_area_identified' | 'improvement_achieved'
+  | 'mock_test_started'
+  | 'mock_test_completed'
+  | 'mock_test_abandoned'
+  | 'question_answered'
+  | 'question_skipped'
+  | 'question_flagged'
+  | 'revision_session_started'
+  | 'revision_session_completed'
+  | 'weak_area_identified'
+  | 'improvement_achieved'
 
   // Course/Tech Analytics Events
-  | 'assignment_started' | 'assignment_completed' | 'assignment_submitted'
-  | 'project_created' | 'project_milestone_reached' | 'project_completed'
-  | 'skill_practice_session' | 'code_execution' | 'debugging_session'
+  | 'assignment_started'
+  | 'assignment_completed'
+  | 'assignment_submitted'
+  | 'project_created'
+  | 'project_milestone_reached'
+  | 'project_completed'
+  | 'skill_practice_session'
+  | 'code_execution'
+  | 'debugging_session'
 
   // Cross-Track Events
-  | 'track_switched' | 'cross_skill_applied' | 'learning_transfer_identified'
-  | 'adaptive_recommendation_accepted' | 'persona_adaptation_triggered';
+  | 'track_switched'
+  | 'cross_skill_applied'
+  | 'learning_transfer_identified'
+  | 'adaptive_recommendation_accepted'
+  | 'persona_adaptation_triggered';
 
 /**
  * Event data payload (flexible structure)
@@ -379,7 +406,7 @@ export class IntelligentAnalyticsService {
         eventType,
         category,
         data,
-        metadata: await this.buildMetadata(userId, metadata)
+        metadata: await this.buildMetadata(userId, metadata),
       };
 
       // Add to buffer for batch processing
@@ -401,12 +428,15 @@ export class IntelligentAnalyticsService {
    */
   async trackExamEvent(
     userId: string,
-    eventType: Extract<AnalyticsEventType, 'mock_test_started' | 'mock_test_completed' | 'question_answered' | 'revision_session_started'>,
+    eventType: Extract<
+      AnalyticsEventType,
+      'mock_test_started' | 'mock_test_completed' | 'question_answered' | 'revision_session_started'
+    >,
     data: AnalyticsEventData
   ): Promise<void> {
     await this.trackEvent(userId, eventType, 'exam', {
       ...data,
-      track: 'exam'
+      track: 'exam',
     });
   }
 
@@ -415,12 +445,15 @@ export class IntelligentAnalyticsService {
    */
   async trackCourseEvent(
     userId: string,
-    eventType: Extract<AnalyticsEventType, 'assignment_started' | 'project_created' | 'skill_practice_session' | 'code_execution'>,
+    eventType: Extract<
+      AnalyticsEventType,
+      'assignment_started' | 'project_created' | 'skill_practice_session' | 'code_execution'
+    >,
     data: AnalyticsEventData
   ): Promise<void> {
     await this.trackEvent(userId, eventType, 'course_tech', {
       ...data,
-      track: 'course_tech'
+      track: 'course_tech',
     });
   }
 
@@ -434,7 +467,7 @@ export class IntelligentAnalyticsService {
   ): Promise<void> {
     await this.trackEvent(userId, eventType, 'cross_track', {
       ...data,
-      track: 'cross_track'
+      track: 'cross_track',
     });
   }
 
@@ -454,7 +487,10 @@ export class IntelligentAnalyticsService {
       const hasMinimumData = userEvents.length >= 5; // Minimum events for meaningful analytics
 
       if (!hasMinimumData) {
-        logger.info('Using demo data for analytics (insufficient user data)', { userId, eventCount: userEvents.length });
+        logger.info('Using demo data for analytics (insufficient user data)', {
+          userId,
+          eventCount: userEvents.length,
+        });
         // Return demo data for new users
         return analyticsDemoService.generateDemoAnalytics();
       }
@@ -464,7 +500,7 @@ export class IntelligentAnalyticsService {
         this.getCoursePerformance(userId),
         this.getCrossTrackInsights(userId),
         this.getPerformanceTrends(userId),
-        this.generatePredictions(userId)
+        this.generatePredictions(userId),
       ]);
 
       const analytics: PerformanceAnalytics = {
@@ -472,7 +508,7 @@ export class IntelligentAnalyticsService {
         coursePerformance,
         crossTrackInsights,
         trends,
-        predictions
+        predictions,
       };
 
       logger.info('Performance analytics generated successfully', { userId });
@@ -488,10 +524,7 @@ export class IntelligentAnalyticsService {
   /**
    * Get real-time performance updates
    */
-  subscribeToPerformanceUpdates(
-    userId: string,
-    callback: (analytics: PerformanceAnalytics) => void
-  ): () => void {
+  subscribeToPerformanceUpdates(userId: string, callback: (analytics: PerformanceAnalytics) => void): () => void {
     const unsubscribeEvents = onSnapshot(
       query(
         collection(db, this.COLLECTION_EVENTS),
@@ -499,7 +532,7 @@ export class IntelligentAnalyticsService {
         orderBy('timestamp', 'desc'),
         limit(50)
       ),
-      async (snapshot) => {
+      async snapshot => {
         if (!snapshot.empty) {
           const analytics = await this.getPerformanceAnalytics(userId);
           callback(analytics);
@@ -507,15 +540,12 @@ export class IntelligentAnalyticsService {
       }
     );
 
-    const unsubscribePerformance = onSnapshot(
-      doc(db, this.COLLECTION_PERFORMANCE, userId),
-      async (doc) => {
-        if (doc.exists()) {
-          const analytics = await this.getPerformanceAnalytics(userId);
-          callback(analytics);
-        }
+    const unsubscribePerformance = onSnapshot(doc(db, this.COLLECTION_PERFORMANCE, userId), async doc => {
+      if (doc.exists()) {
+        const analytics = await this.getPerformanceAnalytics(userId);
+        callback(analytics);
       }
-    );
+    });
 
     return () => {
       unsubscribeEvents();
@@ -546,8 +576,8 @@ export class IntelligentAnalyticsService {
       const allWeakAreas = [...examWeakAreas, ...courseWeakAreas, ...crossTrackWeaknesses];
 
       // Sort by weakness score and improvement potential
-      return allWeakAreas.sort((a, b) =>
-        (b.weaknessScore * b.improvementPotential) - (a.weaknessScore * a.improvementPotential)
+      return allWeakAreas.sort(
+        (a, b) => b.weaknessScore * b.improvementPotential - a.weaknessScore * a.improvementPotential
       );
     } catch (error) {
       logger.error('Failed to identify weak areas', error as Error);
@@ -569,7 +599,8 @@ export class IntelligentAnalyticsService {
 
       const recommendations: AdaptiveRecommendation[] = [];
 
-      for (const weakArea of weakAreas.slice(0, 5)) { // Top 5 weak areas
+      for (const weakArea of weakAreas.slice(0, 5)) {
+        // Top 5 weak areas
         const recommendation = await this.generateImprovementRecommendation(userId, weakArea);
         recommendations.push(recommendation);
       }
@@ -596,9 +627,8 @@ export class IntelligentAnalyticsService {
       // const _transfers: LearningTransfer[] = [];
 
       // Analyze transfer patterns from events
-      const transferEvents = events.filter(event =>
-        event.eventType === 'learning_transfer_identified' ||
-        event.eventType === 'cross_skill_applied'
+      const transferEvents = events.filter(
+        event => event.eventType === 'learning_transfer_identified' || event.eventType === 'cross_skill_applied'
       );
 
       // Group by skill transfer patterns
@@ -628,17 +658,15 @@ export class IntelligentAnalyticsService {
    */
   async identifySkillSynergies(userId: string): Promise<SkillSynergy[]> {
     try {
-      const [examSkills, techSkills] = await Promise.all([
-        this.getExamSkills(userId),
-        this.getTechSkills(userId)
-      ]);
+      const [examSkills, techSkills] = await Promise.all([this.getExamSkills(userId), this.getTechSkills(userId)]);
 
       const synergies: SkillSynergy[] = [];
 
       for (const examSkill of examSkills) {
         for (const techSkill of techSkills) {
           const synergy = this.calculateSkillSynergy(examSkill, techSkill);
-          if (synergy.synergyStrength > 60) { // Only significant synergies
+          if (synergy.synergyStrength > 60) {
+            // Only significant synergies
             synergies.push(synergy);
           }
         }
@@ -664,14 +692,14 @@ export class IntelligentAnalyticsService {
         this.predictExamSuccess(userId),
         this.predictSkillMastery(userId),
         this.generateOptimalStudyPlan(userId),
-        this.identifyRiskFactors(userId)
+        this.identifyRiskFactors(userId),
       ]);
 
       return {
         examSuccessProbability: examPrediction,
         skillMasteryTimeline: skillTimeline,
         optimalStudyPlan: studyPlan,
-        riskFactors
+        riskFactors,
       };
     } catch (error) {
       logger.error('Failed to generate predictions', error as Error);
@@ -679,7 +707,7 @@ export class IntelligentAnalyticsService {
         examSuccessProbability: 0,
         skillMasteryTimeline: [],
         optimalStudyPlan: [],
-        riskFactors: []
+        riskFactors: [],
       };
     }
   }
@@ -705,23 +733,31 @@ export class IntelligentAnalyticsService {
       learningContext: {
         currentStreak: (userData as any)?.stats?.currentStreak || 0,
         totalStudyTime: (userData as any)?.stats?.totalStudyHours || 0,
-        preferredStudyTime: (userData as any)?.preferences?.preferredStudyTime || 'morning'
+        preferredStudyTime: (userData as any)?.preferences?.preferredStudyTime || 'morning',
       },
-      ...partial
+      ...partial,
     };
   }
 
   private detectDeviceType(): 'mobile' | 'tablet' | 'desktop' {
-    if (typeof window === 'undefined') { return 'desktop'; }
+    if (typeof window === 'undefined') {
+      return 'desktop';
+    }
 
     const width = window.innerWidth;
-    if (width < 768) { return 'mobile'; }
-    if (width < 1024) { return 'tablet'; }
+    if (width < 768) {
+      return 'mobile';
+    }
+    if (width < 1024) {
+      return 'tablet';
+    }
     return 'desktop';
   }
 
   private getSessionId(): string {
-    if (typeof window === 'undefined') { return 'server_session'; }
+    if (typeof window === 'undefined') {
+      return 'server_session';
+    }
 
     let sessionId = sessionStorage.getItem('analytics_session_id');
     if (!sessionId) {
@@ -740,7 +776,9 @@ export class IntelligentAnalyticsService {
   }
 
   private async flushEventBuffer(): Promise<void> {
-    if (this.eventBuffer.length === 0) { return; }
+    if (this.eventBuffer.length === 0) {
+      return;
+    }
 
     try {
       const batch = writeBatch(db);
@@ -778,7 +816,7 @@ export class IntelligentAnalyticsService {
         );
 
     const snapshot = await getDocs(eventsQuery);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as AnalyticsEvent));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as AnalyticsEvent);
   }
 
   // Placeholder implementations for complex analytics methods
@@ -791,7 +829,7 @@ export class IntelligentAnalyticsService {
       weakAreas: [],
       strongAreas: [],
       revisionEffectiveness: 0,
-      predictedExamScore: 0
+      predictedExamScore: 0,
     };
   }
 
@@ -803,7 +841,7 @@ export class IntelligentAnalyticsService {
       projectSuccessRate: 0,
       skillMastery: [],
       codingEfficiency: 0,
-      problemSolvingScore: 0
+      problemSolvingScore: 0,
     };
   }
 
@@ -813,7 +851,7 @@ export class IntelligentAnalyticsService {
       learningTransfer: [],
       skillSynergy: [],
       adaptiveRecommendations: [],
-      crossTrackBenefits: []
+      crossTrackBenefits: [],
     };
   }
 
@@ -822,26 +860,53 @@ export class IntelligentAnalyticsService {
     return {
       daily: [],
       weekly: [],
-      monthly: []
+      monthly: [],
     };
   }
 
   // Additional placeholder methods would be implemented here...
-  private async analyzeExamWeaknesses(_userId: string): Promise<WeakArea[]> { return []; }
-  private async analyzeCourseWeaknesses(_userId: string): Promise<WeakArea[]> { return []; }
-  private async analyzeCrossTrackWeaknesses(_userId: string): Promise<WeakArea[]> { return []; }
-  private async generateImprovementRecommendation(_userId: string, _weakArea: WeakArea): Promise<AdaptiveRecommendation> {
+  private async analyzeExamWeaknesses(_userId: string): Promise<WeakArea[]> {
+    return [];
+  }
+  private async analyzeCourseWeaknesses(_userId: string): Promise<WeakArea[]> {
+    return [];
+  }
+  private async analyzeCrossTrackWeaknesses(_userId: string): Promise<WeakArea[]> {
+    return [];
+  }
+  private async generateImprovementRecommendation(
+    _userId: string,
+    _weakArea: WeakArea
+  ): Promise<AdaptiveRecommendation> {
     return {} as AdaptiveRecommendation;
   }
-  private calculateTransferEffectiveness(_existing: LearningTransfer, _event: AnalyticsEvent): number { return 0; }
-  private createLearningTransfer(_event: AnalyticsEvent): LearningTransfer { return {} as LearningTransfer; }
-  private async getExamSkills(_userId: string): Promise<string[]> { return []; }
-  private async getTechSkills(_userId: string): Promise<string[]> { return []; }
-  private calculateSkillSynergy(_examSkill: string, _techSkill: string): SkillSynergy { return {} as SkillSynergy; }
-  private async predictExamSuccess(_userId: string): Promise<number> { return 0; }
-  private async predictSkillMastery(_userId: string): Promise<SkillMasteryPrediction[]> { return []; }
-  private async generateOptimalStudyPlan(_userId: string): Promise<StudyPlanRecommendation[]> { return []; }
-  private async identifyRiskFactors(_userId: string): Promise<RiskFactor[]> { return []; }
+  private calculateTransferEffectiveness(_existing: LearningTransfer, _event: AnalyticsEvent): number {
+    return 0;
+  }
+  private createLearningTransfer(_event: AnalyticsEvent): LearningTransfer {
+    return {} as LearningTransfer;
+  }
+  private async getExamSkills(_userId: string): Promise<string[]> {
+    return [];
+  }
+  private async getTechSkills(_userId: string): Promise<string[]> {
+    return [];
+  }
+  private calculateSkillSynergy(_examSkill: string, _techSkill: string): SkillSynergy {
+    return {} as SkillSynergy;
+  }
+  private async predictExamSuccess(_userId: string): Promise<number> {
+    return 0;
+  }
+  private async predictSkillMastery(_userId: string): Promise<SkillMasteryPrediction[]> {
+    return [];
+  }
+  private async generateOptimalStudyPlan(_userId: string): Promise<StudyPlanRecommendation[]> {
+    return [];
+  }
+  private async identifyRiskFactors(_userId: string): Promise<RiskFactor[]> {
+    return [];
+  }
 }
 
 // Export singleton instance

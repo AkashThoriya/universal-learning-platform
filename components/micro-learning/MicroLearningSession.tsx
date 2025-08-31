@@ -13,7 +13,7 @@ import {
   User,
   Lightbulb,
   Trophy,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -42,7 +42,7 @@ export function MicroLearningSession({
   learningTrack = 'exam',
   requestedDuration,
   onComplete,
-  onError
+  onError,
 }: MicroLearningSessionProps) {
   const [session, setSession] = useState<MicroLearningSession | null>(null);
   const [currentContentIndex, setCurrentContentIndex] = useState(0);
@@ -173,22 +173,23 @@ export function MicroLearningSession({
         conceptsLearned: session.content.map(c => c.id),
         skillsDeveloped: session.learningTrack === 'course_tech' ? [topicId] : [],
         areasForImprovement: identifyAreasForImprovement(),
-        trackSpecificMetrics: session.learningTrack === 'exam'
-          ? {
-              mockTestScore: 85,
-              revisionEffectiveness: 90,
-              examReadinessScore: 80,
-              weakTopics: [],
-              problemSolvingSpeed: 75,
-              accuracyTrend: [80, 85, 85, 90]
-            }
-          : {
-              assignmentCompletionRate: 100,
-              projectProgressPercentage: 25,
-              skillMasteryLevel: { [topicId]: 75 },
-              portfolioQuality: 80,
-              problemSolvingApproach: 85
-            }
+        trackSpecificMetrics:
+          session.learningTrack === 'exam'
+            ? {
+                mockTestScore: 85,
+                revisionEffectiveness: 90,
+                examReadinessScore: 80,
+                weakTopics: [],
+                problemSolvingSpeed: 75,
+                accuracyTrend: [80, 85, 85, 90],
+              }
+            : {
+                assignmentCompletionRate: 100,
+                projectProgressPercentage: 25,
+                skillMasteryLevel: { [topicId]: 75 },
+                portfolioQuality: 80,
+                problemSolvingApproach: 85,
+              },
       };
 
       onComplete?.(performance);
@@ -198,7 +199,9 @@ export function MicroLearningSession({
   const calculateAccuracy = (): number => {
     // Calculate based on quiz answers and interactions
     const totalQuestions = Object.keys(answers).length;
-    if (totalQuestions === 0) { return 100; } // No questions means perfect conceptual understanding
+    if (totalQuestions === 0) {
+      return 100;
+    } // No questions means perfect conceptual understanding
 
     const correctAnswers = Object.values(answers).filter(answer => answer.correct).length;
     return Math.round((correctAnswers / totalQuestions) * 100);
@@ -206,7 +209,9 @@ export function MicroLearningSession({
 
   const calculateEngagementScore = (): number => {
     // Calculate based on interaction patterns and time spent
-    if (!session || !startTime) { return 0; }
+    if (!session || !startTime) {
+      return 0;
+    }
 
     const expectedTime = session.duration * 60; // Convert to seconds
     const actualTime = timeSpent;
@@ -216,7 +221,7 @@ export function MicroLearningSession({
     const timeScore = Math.max(0, 100 - Math.abs(timeRatio - 1) * 50);
 
     // Interaction score based on content engagement
-    const interactionScore = Math.min(currentContentIndex / session.content.length * 100, 100);
+    const interactionScore = Math.min((currentContentIndex / session.content.length) * 100, 100);
 
     return Math.round((timeScore + interactionScore) / 2);
   };
@@ -240,13 +245,19 @@ export function MicroLearningSession({
   };
 
   const getPersonaIcon = () => {
-    if (!session) { return User; }
+    if (!session) {
+      return User;
+    }
 
     switch (session.personaOptimizations.motivationalFraming) {
-      case 'academic': return BookOpen;
-      case 'career': return Target;
-      case 'skill_building': return Code;
-      default: return User;
+      case 'academic':
+        return BookOpen;
+      case 'career':
+        return Target;
+      case 'skill_building':
+        return Code;
+      default:
+        return User;
     }
   };
 
@@ -294,10 +305,7 @@ export function MicroLearningSession({
               <p className="text-red-700 max-w-md mx-auto">{error}</p>
             </div>
             <div className="flex justify-center space-x-3">
-              <Button
-                onClick={loadSession}
-                className="bg-red-600 hover:bg-red-700 text-white"
-              >
+              <Button onClick={loadSession} className="bg-red-600 hover:bg-red-700 text-white">
                 Try Again
               </Button>
               <Button
@@ -319,9 +327,7 @@ export function MicroLearningSession({
       <Card className="w-full max-w-4xl mx-auto">
         <CardContent className="p-8">
           <Alert>
-            <AlertDescription>
-              No session data available. Please try refreshing the page.
-            </AlertDescription>
+            <AlertDescription>No session data available. Please try refreshing the page.</AlertDescription>
           </Alert>
         </CardContent>
       </Card>
@@ -381,8 +387,8 @@ export function MicroLearningSession({
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-gray-800">Ready to start learning?</h3>
               <p className="text-gray-600 max-w-md mx-auto">
-                This session is optimized for your {session.personaOptimizations.motivationalFraming} learning style
-                and will adapt to your pace and preferences.
+                This session is optimized for your {session.personaOptimizations.motivationalFraming} learning style and
+                will adapt to your pace and preferences.
               </p>
             </div>
 
@@ -420,9 +426,7 @@ export function MicroLearningSession({
                 <Badge variant="outline" className="capitalize">
                   {currentContent?.type.replace('_', ' ')}
                 </Badge>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Learning Content
-                </h3>
+                <h3 className="text-lg font-semibold text-gray-800">Learning Content</h3>
               </div>
               <Button
                 variant="outline"

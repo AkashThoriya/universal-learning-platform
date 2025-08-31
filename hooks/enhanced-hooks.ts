@@ -31,7 +31,7 @@ export function useAsyncData<T>(
   const [state, setState] = useState<LoadingState<T>>({
     isLoading: false,
     data: null,
-    error: null
+    error: null,
   });
 
   const cache = useRef<Map<string, { data: T; timestamp: number }>>(new Map());
@@ -43,14 +43,18 @@ export function useAsyncData<T>(
     cacheKey,
     cacheTime = 5 * 60 * 1000, // 5 minutes
     retryAttempts = 3,
-    retryDelay = 1000
+    retryDelay = 1000,
   } = options;
 
   const getCachedData = useCallback((): T | null => {
-    if (!cacheKey) { return null; }
+    if (!cacheKey) {
+      return null;
+    }
 
     const cached = cache.current.get(cacheKey);
-    if (!cached) { return null; }
+    if (!cached) {
+      return null;
+    }
 
     const isExpired = Date.now() - cached.timestamp > cacheTime;
     if (isExpired) {
@@ -61,28 +65,33 @@ export function useAsyncData<T>(
     return cached.data;
   }, [cacheKey, cacheTime]);
 
-  const setCachedData = useCallback((data: T): void => {
-    if (!cacheKey) { return; }
-    cache.current.set(cacheKey, { data, timestamp: Date.now() });
-  }, [cacheKey]);
-
-  const executeWithRetry = useCallback(async (
-    fn: () => Promise<T>,
-    attempt = 1
-  ): Promise<T> => {
-    try {
-      return await fn();
-    } catch (error) {
-      if (attempt < retryAttempts) {
-        await new Promise((resolve) => {
-          const timeout = setTimeout(resolve, retryDelay * Math.pow(2, attempt - 1));
-          retryTimeouts.current.push(timeout);
-        });
-        return executeWithRetry(fn, attempt + 1);
+  const setCachedData = useCallback(
+    (data: T): void => {
+      if (!cacheKey) {
+        return;
       }
-      throw error;
-    }
-  }, [retryAttempts, retryDelay]);
+      cache.current.set(cacheKey, { data, timestamp: Date.now() });
+    },
+    [cacheKey]
+  );
+
+  const executeWithRetry = useCallback(
+    async (fn: () => Promise<T>, attempt = 1): Promise<T> => {
+      try {
+        return await fn();
+      } catch (error) {
+        if (attempt < retryAttempts) {
+          await new Promise(resolve => {
+            const timeout = setTimeout(resolve, retryDelay * Math.pow(2, attempt - 1));
+            retryTimeouts.current.push(timeout);
+          });
+          return executeWithRetry(fn, attempt + 1);
+        }
+        throw error;
+      }
+    },
+    [retryAttempts, retryDelay]
+  );
 
   const execute = useCallback(async (): Promise<void> => {
     // Check cache first
@@ -109,7 +118,7 @@ export function useAsyncData<T>(
         setState({
           isLoading: false,
           data: null,
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -146,7 +155,7 @@ export function useAsyncData<T>(
   return {
     ...state,
     refetch: execute,
-    reset
+    reset,
   };
 }
 
@@ -172,14 +181,8 @@ export function useDebouncedValue<T>(value: T, delay: number): T {
 /**
  * Throttled callback hook
  */
-export function useThrottledCallback<T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T {
-  const throttledCallback = useMemo(
-    () => throttle(callback, delay),
-    [callback, delay]
-  );
+export function useThrottledCallback<T extends (...args: any[]) => any>(callback: T, delay: number): T {
+  const throttledCallback = useMemo(() => throttle(callback, delay), [callback, delay]);
 
   return throttledCallback as T;
 }
@@ -195,10 +198,14 @@ export function useLocalStorage<T>(
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
-      if (!item) { return initialValue; }
+      if (!item) {
+        return initialValue;
+      }
 
       const parsed = JSON.parse(item);
-      if (validator && !validator(parsed)) { return initialValue; }
+      if (validator && !validator(parsed)) {
+        return initialValue;
+      }
 
       return parsed;
     } catch {
@@ -206,15 +213,18 @@ export function useLocalStorage<T>(
     }
   });
 
-  const setValue = useCallback((value: T | ((prev: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
-    }
-  }, [key, storedValue]);
+  const setValue = useCallback(
+    (value: T | ((prev: T) => T)) => {
+      try {
+        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        setStoredValue(valueToStore);
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      } catch (error) {
+        console.error(`Error setting localStorage key "${key}":`, error);
+      }
+    },
+    [key, storedValue]
+  );
 
   const removeValue = useCallback(() => {
     try {
@@ -244,18 +254,19 @@ export function usePrevious<T>(value: T): T | undefined {
 /**
  * Boolean toggle hook
  */
-export function useToggle(
-  initialValue = false
-): [boolean, () => void, (value?: boolean) => void] {
+export function useToggle(initialValue = false): [boolean, () => void, (value?: boolean) => void] {
   const [value, setValue] = useState(initialValue);
 
   const toggle = useCallback(() => {
     setValue(prev => !prev);
   }, []);
 
-  const setToggle = useCallback((newValue?: boolean) => {
-    setValue(newValue ?? !value);
-  }, [value]);
+  const setToggle = useCallback(
+    (newValue?: boolean) => {
+      setValue(newValue ?? !value);
+    },
+    [value]
+  );
 
   return [value, toggle, setToggle];
 }
@@ -294,12 +305,19 @@ export function useCounter(
     setCount(initialValue);
   }, [initialValue]);
 
-  const set = useCallback((value: number) => {
-    let newValue = value;
-    if (min !== undefined) { newValue = Math.max(newValue, min); }
-    if (max !== undefined) { newValue = Math.min(newValue, max); }
-    setCount(newValue);
-  }, [min, max]);
+  const set = useCallback(
+    (value: number) => {
+      let newValue = value;
+      if (min !== undefined) {
+        newValue = Math.max(newValue, min);
+      }
+      if (max !== undefined) {
+        newValue = Math.min(newValue, max);
+      }
+      setCount(newValue);
+    },
+    [min, max]
+  );
 
   return { count, increment, decrement, reset, set };
 }
@@ -349,11 +367,7 @@ export function useArray<T>(initialValue: T[] = []): {
   }, []);
 
   const insert = useCallback((index: number, item: T) => {
-    setArray(prev => [
-      ...prev.slice(0, index),
-      item,
-      ...prev.slice(index)
-    ]);
+    setArray(prev => [...prev.slice(0, index), item, ...prev.slice(index)]);
   }, []);
 
   const remove = useCallback((index: number) => {
@@ -369,7 +383,7 @@ export function useArray<T>(initialValue: T[] = []): {
   }, []);
 
   const update = useCallback((index: number, item: T) => {
-    setArray(prev => prev.map((existingItem, i) => i === index ? item : existingItem));
+    setArray(prev => prev.map((existingItem, i) => (i === index ? item : existingItem)));
   }, []);
 
   return {
@@ -383,7 +397,7 @@ export function useArray<T>(initialValue: T[] = []): {
     remove,
     clear,
     filter,
-    update
+    update,
   };
 }
 
@@ -410,41 +424,47 @@ export function useValidation<T extends Record<string, any>>(
   const [values, setValues] = useState<T>(initialValues);
   const [errors, setErrors] = useState<Partial<Record<keyof T, string[]>>>({});
 
-  const validateField = useCallback((key: keyof T): string[] => {
-    const fieldRules = rules[key] || [];
-    const fieldValue = values[key];
-    const fieldErrors: string[] = [];
+  const validateField = useCallback(
+    (key: keyof T): string[] => {
+      const fieldRules = rules[key] || [];
+      const fieldValue = values[key];
+      const fieldErrors: string[] = [];
 
-    for (const rule of fieldRules) {
-      if (!rule.validate(fieldValue)) {
-        fieldErrors.push(rule.message);
+      for (const rule of fieldRules) {
+        if (!rule.validate(fieldValue)) {
+          fieldErrors.push(rule.message);
+        }
       }
-    }
 
-    return fieldErrors;
-  }, [values, rules]);
+      return fieldErrors;
+    },
+    [values, rules]
+  );
 
-  const validate = useCallback((key?: keyof T): boolean => {
-    if (key) {
-      const fieldErrors = validateField(key);
-      setErrors(prev => ({ ...prev, [key]: fieldErrors }));
-      return fieldErrors.length === 0;
-    }
-
-    const allErrors: Partial<Record<keyof T, string[]>> = {};
-    let isFormValid = true;
-
-    for (const fieldKey of Object.keys(values) as (keyof T)[]) {
-      const fieldErrors = validateField(fieldKey);
-      if (fieldErrors.length > 0) {
-        allErrors[fieldKey] = fieldErrors;
-        isFormValid = false;
+  const validate = useCallback(
+    (key?: keyof T): boolean => {
+      if (key) {
+        const fieldErrors = validateField(key);
+        setErrors(prev => ({ ...prev, [key]: fieldErrors }));
+        return fieldErrors.length === 0;
       }
-    }
 
-    setErrors(allErrors);
-    return isFormValid;
-  }, [values, validateField]);
+      const allErrors: Partial<Record<keyof T, string[]>> = {};
+      let isFormValid = true;
+
+      for (const fieldKey of Object.keys(values) as (keyof T)[]) {
+        const fieldErrors = validateField(fieldKey);
+        if (fieldErrors.length > 0) {
+          allErrors[fieldKey] = fieldErrors;
+          isFormValid = false;
+        }
+      }
+
+      setErrors(allErrors);
+      return isFormValid;
+    },
+    [values, validateField]
+  );
 
   const setValue = useCallback(<K extends keyof T>(key: K, value: T[K]) => {
     setValues(prev => ({ ...prev, [key]: value }));
@@ -462,9 +482,7 @@ export function useValidation<T extends Record<string, any>>(
   }, [initialValues]);
 
   const isValid = useMemo(() => {
-    return Object.values(errors).every(fieldErrors =>
-      !fieldErrors || fieldErrors.length === 0
-    );
+    return Object.values(errors).every(fieldErrors => !fieldErrors || fieldErrors.length === 0);
   }, [errors]);
 
   return {
@@ -474,7 +492,7 @@ export function useValidation<T extends Record<string, any>>(
     setValue,
     setValues: setFormValues,
     validate,
-    reset
+    reset,
   };
 }
 
@@ -489,16 +507,15 @@ export function useIntersectionObserver(
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) { return; }
+    if (!element) {
+      return;
+    }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry) {
-          setIsIntersecting(entry.isIntersecting);
-        }
-      },
-      options
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry) {
+        setIsIntersecting(entry.isIntersecting);
+      }
+    }, options);
 
     observer.observe(element);
 
@@ -516,14 +533,14 @@ export function useIntersectionObserver(
 export function useWindowSize(): { width: number; height: number } {
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
   });
 
   useEffect(() => {
     function handleResize() {
       setWindowSize({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
       });
     }
 

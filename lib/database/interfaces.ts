@@ -1,9 +1,9 @@
 /**
  * @fileoverview Database Abstraction Layer Interfaces
- * 
+ *
  * Defines contracts for database operations that can be implemented
  * by different database providers (Firebase, PostgreSQL, MongoDB, etc.)
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -96,7 +96,10 @@ export interface DatabaseProvider {
 
   // Performance & Optimization
   optimize(collection: string, fields: string[]): Promise<DatabaseResult<void>>;
-  getQueryPerformance(collection: string, timeRange?: { start: Date; end: Date }): Promise<DatabaseResult<QueryMetrics>>;
+  getQueryPerformance(
+    collection: string,
+    timeRange?: { start: Date; end: Date }
+  ): Promise<DatabaseResult<QueryMetrics>>;
 
   // Offline Capabilities
   enableOffline(options?: OfflineOptions): Promise<void>;
@@ -165,7 +168,7 @@ export interface Repository<T> {
   update(id: string, updates: Partial<T>): Promise<DatabaseResult<void>>;
   delete(id: string): Promise<DatabaseResult<void>>;
   search(searchTerm: string, fields: string[]): Promise<DatabaseResult<T[]>>;
-  
+
   // Real-time capabilities
   subscribe(callback: (data: T[]) => void, options?: QueryOptions): RealtimeSubscription;
   subscribeToDocument(id: string, callback: (data: T | null) => void): RealtimeSubscription;

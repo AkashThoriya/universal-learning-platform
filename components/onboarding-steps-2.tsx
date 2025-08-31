@@ -19,7 +19,7 @@ import {
   Info,
   Edit3,
   Save,
-  X
+  X,
 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -82,7 +82,7 @@ export function SyllabusManagementStep({
   form,
   onUpdateSubjectTier,
   onAddSubject,
-  onRemoveSubject
+  onRemoveSubject,
 }: SyllabusManagementStepProps) {
   const [editingSubject, setEditingSubject] = useState<string | null>(null);
   const [tempSubjectName, setTempSubjectName] = useState('');
@@ -110,10 +110,14 @@ export function SyllabusManagementStep({
 
   const getTierColor = (tier: number) => {
     switch (tier) {
-      case 1: return 'bg-red-100 text-red-800 border-red-200';
-      case 2: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 3: return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 1:
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 2:
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 3:
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -132,9 +136,7 @@ export function SyllabusManagementStep({
           <BookOpen className="h-6 w-6 text-purple-600" />
           <CardTitle>Syllabus Management</CardTitle>
         </div>
-        <CardDescription>
-          Organize your subjects by priority tiers to optimize your study strategy.
-        </CardDescription>
+        <CardDescription>Organize your subjects by priority tiers to optimize your study strategy.</CardDescription>
       </CardHeader>
 
       {/* Tier Legend */}
@@ -185,12 +187,7 @@ export function SyllabusManagementStep({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-semibold">Subjects ({form.data.syllabus.length})</h4>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onAddSubject}
-            className="flex items-center space-x-1"
-          >
+          <Button variant="outline" size="sm" onClick={onAddSubject} className="flex items-center space-x-1">
             <Plus className="h-4 w-4" />
             <span>Add Subject</span>
           </Button>
@@ -206,32 +203,31 @@ export function SyllabusManagementStep({
         ) : (
           <div className="space-y-2">
             {form.data.syllabus.map((subject: SyllabusSubject) => (
-              <div key={subject.id} className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-sm transition-shadow">
+              <div
+                key={subject.id}
+                className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-sm transition-shadow"
+              >
                 <div className="flex-1">
                   {editingSubject === subject.id ? (
                     <div className="flex items-center space-x-2">
                       <Input
                         value={tempSubjectName}
-                        onChange={(e) => setTempSubjectName(e.target.value)}
+                        onChange={e => setTempSubjectName(e.target.value)}
                         className="flex-1"
                         autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') { saveSubjectName(subject.id); }
-                          if (e.key === 'Escape') { cancelEditing(); }
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            saveSubjectName(subject.id);
+                          }
+                          if (e.key === 'Escape') {
+                            cancelEditing();
+                          }
                         }}
                       />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => saveSubjectName(subject.id)}
-                      >
+                      <Button size="sm" variant="outline" onClick={() => saveSubjectName(subject.id)}>
                         <Save className="h-4 w-4" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={cancelEditing}
-                      >
+                      <Button size="sm" variant="outline" onClick={cancelEditing}>
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -247,9 +243,7 @@ export function SyllabusManagementStep({
                         <Edit3 className="h-3 w-3" />
                       </Button>
                       {subject.topics && (
-                        <span className="text-sm text-gray-600">
-                          ({subject.topics.length} topics)
-                        </span>
+                        <span className="text-sm text-gray-600">({subject.topics.length} topics)</span>
                       )}
                     </div>
                   )}
@@ -259,7 +253,7 @@ export function SyllabusManagementStep({
                   {/* Tier Selection */}
                   <Select
                     value={subject.tier.toString()}
-                    onValueChange={(value) => onUpdateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
+                    onValueChange={value => onUpdateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
                   >
                     <SelectTrigger className="w-32">
                       <SelectValue />
@@ -296,9 +290,7 @@ export function SyllabusManagementStep({
       {form.errors.syllabus && (
         <Alert className="border-red-200 bg-red-50">
           <AlertCircle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
-            {form.errors.syllabus.message}
-          </AlertDescription>
+          <AlertDescription className="text-red-800">{form.errors.syllabus.message}</AlertDescription>
         </Alert>
       )}
 
@@ -306,8 +298,8 @@ export function SyllabusManagementStep({
       <Alert className="border-blue-200 bg-blue-50">
         <Info className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects
-          for optimal time allocation and maximum score potential.
+          <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects for optimal time
+          allocation and maximum score potential.
         </AlertDescription>
       </Alert>
     </CardContent>
@@ -330,7 +322,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       const newIntervals = [...form.data.preferences.revisionIntervals, days].sort((a, b) => a - b);
       form.updateField('preferences', {
         ...form.data.preferences,
-        revisionIntervals: newIntervals
+        revisionIntervals: newIntervals,
       });
       setCustomInterval('');
     }
@@ -340,7 +332,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
     const newIntervals = form.data.preferences.revisionIntervals.filter((d: number) => d !== days);
     form.updateField('preferences', {
       ...form.data.preferences,
-      revisionIntervals: newIntervals
+      revisionIntervals: newIntervals,
     });
   };
 
@@ -372,10 +364,12 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
 
           <Slider
             value={[form.data.preferences.dailyStudyGoalMinutes]}
-            onValueChange={([value]) => form.updateField('preferences', {
-              ...form.data.preferences,
-              dailyStudyGoalMinutes: value
-            })}
+            onValueChange={([value]) =>
+              form.updateField('preferences', {
+                ...form.data.preferences,
+                dailyStudyGoalMinutes: value,
+              })
+            }
             min={60}
             max={720}
             step={30}
@@ -398,7 +392,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
           onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') =>
             form.updateField('preferences', {
               ...form.data.preferences,
-              preferredStudyTime: value
+              preferredStudyTime: value,
             })
           }
         >
@@ -438,20 +432,20 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       <div className="space-y-4">
         <Label className="text-sm font-medium">Customize Tier Definitions</Label>
 
-        {[1, 2, 3].map((tier) => (
+        {[1, 2, 3].map(tier => (
           <div key={tier} className="space-y-2">
-            <Label className="text-xs font-medium text-gray-600">
-              Tier {tier} Definition
-            </Label>
+            <Label className="text-xs font-medium text-gray-600">Tier {tier} Definition</Label>
             <Input
               value={form.data.preferences.tierDefinitions[tier as keyof typeof form.data.preferences.tierDefinitions]}
-              onChange={(e) => form.updateField('preferences', {
-                ...form.data.preferences,
-                tierDefinitions: {
-                  ...form.data.preferences.tierDefinitions,
-                  [tier]: e.target.value
-                }
-              })}
+              onChange={e =>
+                form.updateField('preferences', {
+                  ...form.data.preferences,
+                  tierDefinitions: {
+                    ...form.data.preferences.tierDefinitions,
+                    [tier]: e.target.value,
+                  },
+                })
+              }
               placeholder={`Define what Tier ${tier} represents...`}
               className="text-sm"
             />
@@ -465,16 +459,9 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
 
         <div className="flex flex-wrap gap-2">
           {form.data.preferences.revisionIntervals.map((days: number) => (
-            <Badge
-              key={days}
-              variant="secondary"
-              className="flex items-center space-x-1 px-2 py-1"
-            >
+            <Badge key={days} variant="secondary" className="flex items-center space-x-1 px-2 py-1">
               <span>{days}d</span>
-              <button
-                onClick={() => removeRevisionInterval(days)}
-                className="ml-1 text-gray-500 hover:text-red-600"
-              >
+              <button onClick={() => removeRevisionInterval(days)} className="ml-1 text-gray-500 hover:text-red-600">
                 <X className="h-3 w-3" />
               </button>
             </Badge>
@@ -486,8 +473,8 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
             type="number"
             placeholder="Add interval (days)"
             value={customInterval}
-            onChange={(e) => setCustomInterval(e.target.value)}
-            onKeyDown={(e) => {
+            onChange={e => setCustomInterval(e.target.value)}
+            onKeyDown={e => {
               if (e.key === 'Enter') {
                 e.preventDefault();
                 addRevisionInterval();
@@ -519,19 +506,19 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
             {
               key: 'revisionReminders' as const,
               label: 'Revision Reminders',
-              description: 'Get notified when topics are due for revision'
+              description: 'Get notified when topics are due for revision',
             },
             {
               key: 'dailyGoalReminders' as const,
               label: 'Daily Goal Reminders',
-              description: 'Receive reminders about your daily study goals'
+              description: 'Receive reminders about your daily study goals',
             },
             {
               key: 'healthCheckReminders' as const,
               label: 'Health Check Reminders',
-              description: 'Get prompted to log your health and energy levels'
-            }
-          ].map((notification) => (
+              description: 'Get prompted to log your health and energy levels',
+            },
+          ].map(notification => (
             <div key={notification.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
@@ -542,13 +529,15 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
               </div>
               <Switch
                 checked={form.data.preferences.notifications[notification.key]}
-                onCheckedChange={(checked) => form.updateField('preferences', {
-                  ...form.data.preferences,
-                  notifications: {
-                    ...form.data.preferences.notifications,
-                    [notification.key]: checked
-                  }
-                })}
+                onCheckedChange={checked =>
+                  form.updateField('preferences', {
+                    ...form.data.preferences,
+                    notifications: {
+                      ...form.data.preferences.notifications,
+                      [notification.key]: checked,
+                    },
+                  })
+                }
               />
             </div>
           ))}
@@ -559,8 +548,8 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
       <Alert className="border-green-200 bg-green-50">
         <CheckCircle className="h-4 w-4 text-green-600" />
         <AlertDescription className="text-green-800">
-          <strong>Setup Complete!</strong> Your personalized strategy engine is ready.
-          You can modify these settings anytime from your dashboard.
+          <strong>Setup Complete!</strong> Your personalized strategy engine is ready. You can modify these settings
+          anytime from your dashboard.
         </AlertDescription>
       </Alert>
     </CardContent>

@@ -18,5 +18,5 @@ export type {
   PersonaOptimizations,
   MicroContent,
   ExamTrackMetrics,
-  CourseTrackMetrics
+  CourseTrackMetrics,
 } from '@/types/micro-learning';

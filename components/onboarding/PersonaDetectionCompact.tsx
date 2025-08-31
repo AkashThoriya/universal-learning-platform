@@ -24,16 +24,16 @@ import {
   Check,
   AlertCircle,
   ArrowRight,
-  Info
+  Info,
 } from 'lucide-react';
 import React, { useState, useEffect, useCallback } from 'react';
 
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { UseFormReturn } from '@/hooks/useForm';
 import { UserPersonaType } from '@/types/exam';
 
@@ -52,7 +52,7 @@ const PERSONA_OPTIONS = [
     bgColor: 'bg-blue-50',
     textColor: 'text-blue-700',
     benefits: ['Flexible schedule', 'Comprehensive coverage', 'Detailed study plans'],
-    challenges: ['Time management', 'Self-discipline', 'Motivation consistency']
+    challenges: ['Time management', 'Self-discipline', 'Motivation consistency'],
   },
   {
     id: 'working_professional' as UserPersonaType,
@@ -65,7 +65,7 @@ const PERSONA_OPTIONS = [
     bgColor: 'bg-green-50',
     textColor: 'text-green-700',
     benefits: ['Practical application', 'Efficient learning', 'Real-world context'],
-    challenges: ['Limited time', 'Work-study balance', 'Energy management']
+    challenges: ['Limited time', 'Work-study balance', 'Energy management'],
   },
   {
     id: 'freelancer' as UserPersonaType,
@@ -78,49 +78,47 @@ const PERSONA_OPTIONS = [
     bgColor: 'bg-purple-50',
     textColor: 'text-purple-700',
     benefits: ['Schedule flexibility', 'Self-directed learning', 'Adaptive planning'],
-    challenges: ['Irregular schedule', 'Client priorities', 'Income stability']
-  }
+    challenges: ['Irregular schedule', 'Client priorities', 'Income stability'],
+  },
 ];
 
 /**
  * Enhanced study time preferences with better UX
  */
 const STUDY_TIMES = [
-  { 
-    id: 'morning', 
-    label: 'Morning', 
-    icon: '🌅', 
+  {
+    id: 'morning',
+    label: 'Morning',
+    icon: '🌅',
     time: '6-10 AM',
     description: 'Fresh mind, fewer distractions',
-    benefits: ['Peak cognitive performance', 'Consistent routine', 'Peaceful environment']
+    benefits: ['Peak cognitive performance', 'Consistent routine', 'Peaceful environment'],
   },
-  { 
-    id: 'afternoon', 
-    label: 'Afternoon', 
-    icon: '☀️', 
+  {
+    id: 'afternoon',
+    label: 'Afternoon',
+    icon: '☀️',
     time: '12-4 PM',
     description: 'Post-lunch focused sessions',
-    benefits: ['Good for review sessions', 'Natural break from work', 'Moderate energy levels']
+    benefits: ['Good for review sessions', 'Natural break from work', 'Moderate energy levels'],
   },
-  { 
-    id: 'evening', 
-    label: 'Evening', 
-    icon: '🌆', 
+  {
+    id: 'evening',
+    label: 'Evening',
+    icon: '🌆',
     time: '5-9 PM',
     description: 'After work relaxed learning',
-    benefits: ['Unwinding activity', 'Family time balance', 'Reflection on daily learning']
+    benefits: ['Unwinding activity', 'Family time balance', 'Reflection on daily learning'],
   },
-  { 
-    id: 'night', 
-    label: 'Night', 
-    icon: '🌙', 
+  {
+    id: 'night',
+    label: 'Night',
+    icon: '🌙',
     time: '9 PM-12 AM',
     description: 'Deep focus in quiet hours',
-    benefits: ['Complete silence', 'Deep concentration', 'No interruptions']
-  }
+    benefits: ['Complete silence', 'Deep concentration', 'No interruptions'],
+  },
 ];
-
-
 
 /**
  * Props for PersonaDetectionStep component - using flexible form type
@@ -134,9 +132,7 @@ interface PersonaDetectionStepProps {
  */
 export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const [currentSubStep, setCurrentSubStep] = useState(1);
-  const [selectedPersona, setSelectedPersona] = useState<UserPersonaType | null>(
-    form.data.userPersona?.type || null
-  );
+  const [selectedPersona, setSelectedPersona] = useState<UserPersonaType | null>(form.data.userPersona?.type || null);
   const [showPersonaDetails, setShowPersonaDetails] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -145,15 +141,15 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
     if (selectedPersona && currentSubStep === 1) {
       // Validate selection
       setValidationErrors([]);
-      
+
       // Track analytics
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'persona_selected', {
           persona_type: selectedPersona,
-          step: 'persona_detection'
+          step: 'persona_detection',
         });
       }
-      
+
       const timer = setTimeout(() => {
         setCurrentSubStep(2);
       }, 1000); // Slightly longer for better UX
@@ -163,70 +159,79 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   }, [selectedPersona, currentSubStep]);
 
   // Enhanced persona selection with validation
-  const handlePersonaSelect = useCallback((personaType: UserPersonaType) => {
-    setSelectedPersona(personaType);
-    setValidationErrors([]);
-    
-    // Update form with selected persona
-    form.updateField('userPersona', { type: personaType });
-    
-    // Set smart default study time based on persona
-    const selectedOption = PERSONA_OPTIONS.find(p => p.id === personaType);
-    if (selectedOption) {
-      form.updateField('preferences', {
-        ...form.data.preferences,
-        dailyStudyGoalMinutes: selectedOption.defaultHours * 60
-      });
-    }
+  const handlePersonaSelect = useCallback(
+    (personaType: UserPersonaType) => {
+      setSelectedPersona(personaType);
+      setValidationErrors([]);
 
-    // Auto-advance after a short delay for better UX
-    setTimeout(() => {
-      setCurrentSubStep(2);
-    }, 800);
+      // Update form with selected persona
+      form.updateField('userPersona', { type: personaType });
 
-    // Analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'persona_selected', {
-        persona_type: personaType,
-        default_hours: selectedOption?.defaultHours
-      });
-    }
-  }, [form]);
+      // Set smart default study time based on persona
+      const selectedOption = PERSONA_OPTIONS.find(p => p.id === personaType);
+      if (selectedOption) {
+        form.updateField('preferences', {
+          ...form.data.preferences,
+          dailyStudyGoalMinutes: selectedOption.defaultHours * 60,
+        });
+      }
+
+      // Auto-advance after a short delay for better UX
+      setTimeout(() => {
+        setCurrentSubStep(2);
+      }, 800);
+
+      // Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'persona_selected', {
+          persona_type: personaType,
+          default_hours: selectedOption?.defaultHours,
+        });
+      }
+    },
+    [form]
+  );
 
   // Enhanced study goal change with validation
-  const handleStudyGoalChange = useCallback((hours: number[]) => {
-    const newHours = hours[0] || 2;
-    
-    // Validate study hours based on persona
-    if (selectedPersona === 'working_professional' && newHours > 4) {
-      setValidationErrors(['Consider a more realistic goal for working professionals (2-4 hours)']);
-    } else if (selectedPersona === 'student' && newHours < 4) {
-      setValidationErrors(['Students typically benefit from 4+ hours of daily study']);
-    } else {
-      setValidationErrors([]);
-    }
-    
-    form.updateField('preferences', {
-      ...form.data.preferences,
-      dailyStudyGoalMinutes: newHours * 60
-    });
-  }, [form, selectedPersona]);
+  const handleStudyGoalChange = useCallback(
+    (hours: number[]) => {
+      const newHours = hours[0] || 2;
+
+      // Validate study hours based on persona
+      if (selectedPersona === 'working_professional' && newHours > 4) {
+        setValidationErrors(['Consider a more realistic goal for working professionals (2-4 hours)']);
+      } else if (selectedPersona === 'student' && newHours < 4) {
+        setValidationErrors(['Students typically benefit from 4+ hours of daily study']);
+      } else {
+        setValidationErrors([]);
+      }
+
+      form.updateField('preferences', {
+        ...form.data.preferences,
+        dailyStudyGoalMinutes: newHours * 60,
+      });
+    },
+    [form, selectedPersona]
+  );
 
   // Enhanced study time preference change
-  const handleStudyTimeChange = useCallback((timeSlot: string) => {
-    form.updateField('preferences', {
-      ...form.data.preferences,
-      preferredStudyTime: timeSlot as 'morning' | 'afternoon' | 'evening' | 'night'
-    });
-
-    // Analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'study_time_selected', {
-        time_slot: timeSlot,
-        persona: selectedPersona
+  const handleStudyTimeChange = useCallback(
+    (timeSlot: string) => {
+      form.updateField('preferences', {
+        ...form.data.preferences,
+        preferredStudyTime: timeSlot as 'morning' | 'afternoon' | 'evening' | 'night',
       });
-    }
-  }, [form, selectedPersona]);
+
+      // Analytics
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'study_time_selected', {
+          time_slot: timeSlot,
+          persona: selectedPersona,
+        });
+      }
+    },
+    [form, selectedPersona]
+  );
 
   const currentStudyHours = Math.round(form.data.preferences?.dailyStudyGoalMinutes / 60) || 2;
   const selectedTimeSlot = form.data.preferences?.preferredStudyTime;
@@ -248,14 +253,17 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       </div>
 
       {/* Enhanced Progress Dots with accessibility */}
-      <div className="flex justify-center space-x-2" role="progressbar" aria-valuenow={currentSubStep} aria-valuemax={3}>
-        {[1, 2, 3].map((step) => (
+      <div
+        className="flex justify-center space-x-2"
+        role="progressbar"
+        aria-valuenow={currentSubStep}
+        aria-valuemax={3}
+      >
+        {[1, 2, 3].map(step => (
           <div
             key={step}
             className={`h-2 w-12 rounded-full transition-all duration-500 ${
-              step <= currentSubStep
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500'
-                : 'bg-gray-200'
+              step <= currentSubStep ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-gray-200'
             }`}
             aria-label={`Step ${step} ${step <= currentSubStep ? 'completed' : 'pending'}`}
           />
@@ -284,15 +292,15 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
               {currentSubStep > 1 && <Check className="h-5 w-5 text-green-600" aria-hidden="true" />}
               <Label className="text-lg font-semibold">What describes you best?</Label>
             </div>
-            
+
             {currentSubStep === 1 ? (
               <div className="space-y-4">
                 {/* Persona Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {PERSONA_OPTIONS.map((persona) => {
+                  {PERSONA_OPTIONS.map(persona => {
                     const Icon = persona.icon;
                     const isSelected = selectedPersona === persona.id;
-                    
+
                     return (
                       <Card
                         key={persona.id}
@@ -302,7 +310,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                         onClick={() => handlePersonaSelect(persona.id)}
-                        onKeyDown={(e) => {
+                        onKeyDown={e => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
                             handlePersonaSelect(persona.id);
@@ -314,7 +322,9 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                         aria-describedby={`persona-${persona.id}-desc`}
                       >
                         <CardContent className="p-6 text-center">
-                          <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${persona.bgColor} group-hover:scale-110 transition-transform`}>
+                          <div
+                            className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center ${persona.bgColor} group-hover:scale-110 transition-transform`}
+                          >
                             <Icon className={`h-8 w-8 ${persona.textColor}`} aria-hidden="true" />
                           </div>
                           <h3 className="font-semibold text-gray-900 mb-2">{persona.title}</h3>
@@ -329,19 +339,19 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                               variant="ghost"
                               size="sm"
                               className="text-xs text-blue-600 hover:text-blue-800"
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 setShowPersonaDetails(showPersonaDetails === persona.id ? null : persona.id);
                               }}
-                              onMouseEnter={(e) => e.stopPropagation()}
-                              onMouseLeave={(e) => e.stopPropagation()}
+                              onMouseEnter={e => e.stopPropagation()}
+                              onMouseLeave={e => e.stopPropagation()}
                             >
                               <Info className="h-3 w-3 mr-1" />
                               {showPersonaDetails === persona.id ? 'Hide details' : 'Learn more'}
                             </Button>
                           </div>
-                          
+
                           {isSelected && (
                             <div className="mt-3 animate-in slide-in-from-bottom">
                               <Check className="h-6 w-6 text-green-600 mx-auto" />
@@ -355,16 +365,18 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                 {/* Persona Details Modal/Expandable */}
                 {showPersonaDetails && (
-                  <Card 
+                  <Card
                     className="border-blue-200 bg-blue-50/50 mt-4"
-                    onMouseEnter={(e) => e.stopPropagation()}
-                    onMouseLeave={(e) => e.stopPropagation()}
+                    onMouseEnter={e => e.stopPropagation()}
+                    onMouseLeave={e => e.stopPropagation()}
                   >
                     <CardContent className="p-4">
                       {(() => {
                         const persona = PERSONA_OPTIONS.find(p => p.id === showPersonaDetails);
-                        if (!persona) return null;
-                        
+                        if (!persona) {
+                          return null;
+                        }
+
                         return (
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
@@ -375,7 +387,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
                                   e.preventDefault();
                                   setShowPersonaDetails(null);
@@ -386,7 +398,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                               </Button>
                             </div>
                             <p className="text-sm text-gray-700">{persona.longDescription}</p>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                               <div>
                                 <h5 className="font-medium text-green-700 mb-1">Advantages:</h5>
@@ -417,11 +429,15 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 <div className="flex items-center space-x-3">
                   {(() => {
                     const selectedOption = PERSONA_OPTIONS.find(p => p.id === selectedPersona);
-                    if (!selectedOption) return null;
+                    if (!selectedOption) {
+                      return null;
+                    }
                     const Icon = selectedOption.icon;
                     return (
                       <>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedOption.bgColor}`}>
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedOption.bgColor}`}
+                        >
                           <Icon className={`h-5 w-5 ${selectedOption.textColor}`} />
                         </div>
                         <div>
@@ -454,17 +470,19 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
               {currentSubStep > 2 && <Check className="h-5 w-5 text-green-600" aria-hidden="true" />}
               <Label className="text-lg font-semibold">How many hours can you realistically study daily?</Label>
             </div>
-            
+
             {currentSubStep === 2 ? (
-              <div 
+              <div
                 className="space-y-6 cursor-pointer"
-                onClick={(e) => {
+                onClick={e => {
                   // Make the entire card area clickable for better UX
                   const target = e.target as HTMLElement;
                   if (!target.closest('.slider-area') && !target.closest('button')) {
                     // Focus on the slider for accessibility
                     const slider = e.currentTarget.querySelector('input[type="range"]') as HTMLInputElement;
-                    if (slider) slider.focus();
+                    if (slider) {
+                      slider.focus();
+                    }
                   }
                 }}
               >
@@ -473,12 +491,14 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     {currentStudyHours} hour{currentStudyHours !== 1 ? 's' : ''}
                   </div>
                   <p className="text-gray-600 max-w-md mx-auto">
-                    {selectedPersona === 'student' && 'As a student, you have flexibility for comprehensive study sessions'}
-                    {selectedPersona === 'working_professional' && 'As a working professional, focus on quality over quantity'}
+                    {selectedPersona === 'student' &&
+                      'As a student, you have flexibility for comprehensive study sessions'}
+                    {selectedPersona === 'working_professional' &&
+                      'As a working professional, focus on quality over quantity'}
                     {selectedPersona === 'freelancer' && 'As a freelancer, adapt your schedule around client work'}
                   </p>
                 </div>
-                
+
                 <div className="px-4 space-y-4 slider-area">
                   <div className="relative">
                     <Slider
@@ -499,13 +519,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                   {/* Study hours recommendations */}
                   <div className="grid grid-cols-3 gap-3 text-xs">
-                    <div 
+                    <div
                       className={`p-2 rounded text-center cursor-pointer transition-all hover:scale-105 ${
-                        currentStudyHours <= 2 
-                          ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-300' 
+                        currentStudyHours <= 2
+                          ? 'bg-yellow-100 text-yellow-800 ring-2 ring-yellow-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         handleStudyGoalChange([1.5]);
                       }}
@@ -513,13 +533,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                       <div className="font-medium">1-2h</div>
                       <div>Maintenance</div>
                     </div>
-                    <div 
+                    <div
                       className={`p-2 rounded text-center cursor-pointer transition-all hover:scale-105 ${
-                        currentStudyHours > 2 && currentStudyHours <= 6 
-                          ? 'bg-green-100 text-green-800 ring-2 ring-green-300' 
+                        currentStudyHours > 2 && currentStudyHours <= 6
+                          ? 'bg-green-100 text-green-800 ring-2 ring-green-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         handleStudyGoalChange([4]);
                       }}
@@ -527,13 +547,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                       <div className="font-medium">3-6h</div>
                       <div>Optimal</div>
                     </div>
-                    <div 
+                    <div
                       className={`p-2 rounded text-center cursor-pointer transition-all hover:scale-105 ${
-                        currentStudyHours > 6 
-                          ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-300' 
+                        currentStudyHours > 6
+                          ? 'bg-blue-100 text-blue-800 ring-2 ring-blue-300'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation();
                         handleStudyGoalChange([8]);
                       }}
@@ -546,7 +566,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                 <div className="flex justify-center">
                   <Button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       setCurrentSubStep(3);
                     }}
@@ -592,10 +612,10 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
               <Target className="h-5 w-5 text-blue-600" aria-hidden="true" />
               <Label className="text-lg font-semibold">When do you study most effectively?</Label>
             </div>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {STUDY_TIMES.map((timeSlot) => (
+                {STUDY_TIMES.map(timeSlot => (
                   <Card
                     key={timeSlot.id}
                     className={`cursor-pointer transition-all duration-300 hover:shadow-md border-2 group ${
@@ -604,7 +624,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     onClick={() => handleStudyTimeChange(timeSlot.id)}
-                    onKeyDown={(e) => {
+                    onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
                         handleStudyTimeChange(timeSlot.id);
@@ -619,7 +639,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                       <h3 className="font-medium text-gray-900 mb-1">{timeSlot.label}</h3>
                       <p className="text-xs text-gray-600 mb-2">{timeSlot.time}</p>
                       <p className="text-xs text-gray-500">{timeSlot.description}</p>
-                      
+
                       {selectedTimeSlot === timeSlot.id && (
                         <div className="mt-2">
                           <Check className="h-4 w-4 text-blue-600 mx-auto" />
@@ -636,8 +656,10 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                   <CardContent className="p-4">
                     {(() => {
                       const timeSlot = STUDY_TIMES.find(t => t.id === selectedTimeSlot);
-                      if (!timeSlot) return null;
-                      
+                      if (!timeSlot) {
+                        return null;
+                      }
+
                       return (
                         <div>
                           <h4 className="font-medium text-blue-800 mb-2">
@@ -674,34 +696,27 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div className="bg-white/70 p-3 rounded-lg">
                     <h4 className="font-medium text-gray-800 mb-1">Profile Type</h4>
-                    <p className="text-gray-700 capitalize">
-                      {selectedPersona.replace('_', ' ')}
-                    </p>
+                    <p className="text-gray-700 capitalize">{selectedPersona.replace('_', ' ')}</p>
                   </div>
                   <div className="bg-white/70 p-3 rounded-lg">
                     <h4 className="font-medium text-gray-800 mb-1">Daily Goal</h4>
-                    <p className="text-gray-700">
-                      {currentStudyHours} hours of focused study
-                    </p>
+                    <p className="text-gray-700">{currentStudyHours} hours of focused study</p>
                   </div>
                   <div className="bg-white/70 p-3 rounded-lg">
                     <h4 className="font-medium text-gray-800 mb-1">Best Time</h4>
-                    <p className="text-gray-700 capitalize">
-                      {selectedTimeSlot} sessions
-                    </p>
+                    <p className="text-gray-700 capitalize">{selectedTimeSlot} sessions</p>
                   </div>
                 </div>
                 <p className="text-green-700 mt-3">
-                  We'll create a customized study strategy that maximizes your {currentStudyHours}-hour 
-                  daily sessions during {selectedTimeSlot} time, perfectly suited for your {selectedPersona.replace('_', ' ')} lifestyle.
+                  We'll create a customized study strategy that maximizes your {currentStudyHours}-hour daily sessions
+                  during {selectedTimeSlot} time, perfectly suited for your {selectedPersona.replace('_', ' ')}{' '}
+                  lifestyle.
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-center pt-4 border-t border-green-200">
-              <Badge className="bg-green-600 text-white px-4 py-2">
-                ✨ Ready for the next step
-              </Badge>
+              <Badge className="bg-green-600 text-white px-4 py-2">✨ Ready for the next step</Badge>
             </div>
           </CardContent>
         </Card>

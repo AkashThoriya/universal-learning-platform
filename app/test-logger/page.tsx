@@ -5,7 +5,6 @@ import { Target, BarChart3, Clock, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
-
 
 export default function TestLoggerPage() {
   const { user } = useAuth();
@@ -66,18 +64,35 @@ export default function TestLoggerPage() {
   const getTotalScore = () => quantScore + reasoningScore + englishScore + pkScore;
   const getTotalErrors = (section: 'quant' | 'reasoning' | 'english' | 'pk') => {
     const maxScore = 50;
-    const actualScore = section === 'quant' ? quantScore :
-                      section === 'reasoning' ? reasoningScore :
-                      section === 'english' ? englishScore : pkScore;
+    const actualScore =
+      section === 'quant'
+        ? quantScore
+        : section === 'reasoning'
+          ? reasoningScore
+          : section === 'english'
+            ? englishScore
+            : pkScore;
     return maxScore - actualScore;
   };
 
   const validateErrorAnalysis = () => {
     const sections = [
-      { name: 'Quant', errors: getTotalErrors('quant'), analysis: quantConcepts + quantCareless + quantGuesses + quantTime },
-      { name: 'Reasoning', errors: getTotalErrors('reasoning'), analysis: reasoningConcepts + reasoningCareless + reasoningGuesses + reasoningTimePressure },
-      { name: 'English', errors: getTotalErrors('english'), analysis: englishConcepts + englishCareless + englishGuesses + englishTimePressure },
-      { name: 'PK', errors: getTotalErrors('pk'), analysis: pkConcepts + pkCareless + pkGuesses + pkTimePressure }
+      {
+        name: 'Quant',
+        errors: getTotalErrors('quant'),
+        analysis: quantConcepts + quantCareless + quantGuesses + quantTime,
+      },
+      {
+        name: 'Reasoning',
+        errors: getTotalErrors('reasoning'),
+        analysis: reasoningConcepts + reasoningCareless + reasoningGuesses + reasoningTimePressure,
+      },
+      {
+        name: 'English',
+        errors: getTotalErrors('english'),
+        analysis: englishConcepts + englishCareless + englishGuesses + englishTimePressure,
+      },
+      { name: 'PK', errors: getTotalErrors('pk'), analysis: pkConcepts + pkCareless + pkGuesses + pkTimePressure },
     ];
 
     for (const section of sections) {
@@ -89,7 +104,9 @@ export default function TestLoggerPage() {
   };
 
   const handleSubmit = async () => {
-    if (!user) { return; }
+    if (!user) {
+      return;
+    }
 
     const validationError = validateErrorAnalysis();
     if (validationError) {
@@ -109,21 +126,21 @@ export default function TestLoggerPage() {
           reasoning: reasoningScore,
           english: englishScore,
           pk: pkScore,
-          total: getTotalScore()
+          total: getTotalScore(),
         },
         timeTaken: {
           quant: quantTime,
           reasoning: reasoningTime,
           english: englishTime,
-          pk: pkTime
+          pk: pkTime,
         },
         analysis: {
           conceptGaps: quantConcepts + reasoningConcepts + englishConcepts + pkConcepts,
           carelessErrors: quantCareless + reasoningCareless + englishCareless + pkCareless,
           intelligentGuesses: quantGuesses + reasoningGuesses + englishGuesses + pkGuesses,
-          timePressures: quantTime + reasoningTimePressure + englishTimePressure + pkTimePressure
+          timePressures: quantTime + reasoningTimePressure + englishTimePressure + pkTimePressure,
         },
-        feedback
+        feedback,
       };
 
       await addDoc(collection(db, 'users', user.uid, 'mockTests'), testData);
@@ -157,11 +174,7 @@ export default function TestLoggerPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Test Date</label>
-                    <Input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
+                    <Input type="date" value={date} onChange={e => setDate(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Platform</label>
@@ -192,11 +205,7 @@ export default function TestLoggerPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button
-                  onClick={() => setStep(2)}
-                  className="w-full"
-                  disabled={!platform || !type}
-                >
+                <Button onClick={() => setStep(2)} className="w-full" disabled={!platform || !type}>
                   Continue to Scores
                 </Button>
               </CardContent>
@@ -212,10 +221,34 @@ export default function TestLoggerPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {[
-                  { label: 'Quantitative Aptitude', score: quantScore, setScore: setQuantScore, time: quantTime, setTime: setQuantTime },
-                  { label: 'Reasoning', score: reasoningScore, setScore: setReasoningScore, time: reasoningTime, setTime: setReasoningTime },
-                  { label: 'English', score: englishScore, setScore: setEnglishScore, time: englishTime, setTime: setEnglishTime },
-                  { label: 'Professional Knowledge', score: pkScore, setScore: setPkScore, time: pkTime, setTime: setPkTime }
+                  {
+                    label: 'Quantitative Aptitude',
+                    score: quantScore,
+                    setScore: setQuantScore,
+                    time: quantTime,
+                    setTime: setQuantTime,
+                  },
+                  {
+                    label: 'Reasoning',
+                    score: reasoningScore,
+                    setScore: setReasoningScore,
+                    time: reasoningTime,
+                    setTime: setReasoningTime,
+                  },
+                  {
+                    label: 'English',
+                    score: englishScore,
+                    setScore: setEnglishScore,
+                    time: englishTime,
+                    setTime: setEnglishTime,
+                  },
+                  {
+                    label: 'Professional Knowledge',
+                    score: pkScore,
+                    setScore: setPkScore,
+                    time: pkTime,
+                    setTime: setPkTime,
+                  },
                 ].map((section, index) => (
                   <div key={index} className="bg-gray-50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-3">{section.label}</h4>
@@ -227,7 +260,7 @@ export default function TestLoggerPage() {
                           min="0"
                           max="50"
                           value={section.score}
-                          onChange={(e) => section.setScore(Number(e.target.value))}
+                          onChange={e => section.setScore(Number(e.target.value))}
                         />
                       </div>
                       <div className="space-y-2">
@@ -236,7 +269,7 @@ export default function TestLoggerPage() {
                           type="number"
                           min="0"
                           value={section.time}
-                          onChange={(e) => section.setTime(Number(e.target.value))}
+                          onChange={e => section.setTime(Number(e.target.value))}
                         />
                       </div>
                     </div>
@@ -264,51 +297,63 @@ export default function TestLoggerPage() {
               <CardHeader className="text-center">
                 <Clock className="h-12 w-12 text-orange-600 mx-auto mb-4" />
                 <CardTitle>Error Analysis</CardTitle>
-                <CardDescription>
-                  Categorize your errors to identify improvement areas
-                </CardDescription>
+                <CardDescription>Categorize your errors to identify improvement areas</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {[
                   {
                     label: 'Quantitative Aptitude',
                     totalErrors: getTotalErrors('quant'),
-                    concepts: quantConcepts, setConcepts: setQuantConcepts,
-                    careless: quantCareless, setCareless: setQuantCareless,
-                    guesses: quantGuesses, setGuesses: setQuantGuesses,
-                    timePressure: quantTimePressure, setTimePressure: setQuantTimePressure
+                    concepts: quantConcepts,
+                    setConcepts: setQuantConcepts,
+                    careless: quantCareless,
+                    setCareless: setQuantCareless,
+                    guesses: quantGuesses,
+                    setGuesses: setQuantGuesses,
+                    timePressure: quantTimePressure,
+                    setTimePressure: setQuantTimePressure,
                   },
                   {
                     label: 'Reasoning',
                     totalErrors: getTotalErrors('reasoning'),
-                    concepts: reasoningConcepts, setConcepts: setReasoningConcepts,
-                    careless: reasoningCareless, setCareless: setReasoningCareless,
-                    guesses: reasoningGuesses, setGuesses: setReasoningGuesses,
-                    timePressure: reasoningTimePressure, setTimePressure: setReasoningTimePressure
+                    concepts: reasoningConcepts,
+                    setConcepts: setReasoningConcepts,
+                    careless: reasoningCareless,
+                    setCareless: setReasoningCareless,
+                    guesses: reasoningGuesses,
+                    setGuesses: setReasoningGuesses,
+                    timePressure: reasoningTimePressure,
+                    setTimePressure: setReasoningTimePressure,
                   },
                   {
                     label: 'English',
                     totalErrors: getTotalErrors('english'),
-                    concepts: englishConcepts, setConcepts: setEnglishConcepts,
-                    careless: englishCareless, setCareless: setEnglishCareless,
-                    guesses: englishGuesses, setGuesses: setEnglishGuesses,
-                    timePressure: englishTimePressure, setTimePressure: setEnglishTimePressure
+                    concepts: englishConcepts,
+                    setConcepts: setEnglishConcepts,
+                    careless: englishCareless,
+                    setCareless: setEnglishCareless,
+                    guesses: englishGuesses,
+                    setGuesses: setEnglishGuesses,
+                    timePressure: englishTimePressure,
+                    setTimePressure: setEnglishTimePressure,
                   },
                   {
                     label: 'Professional Knowledge',
                     totalErrors: getTotalErrors('pk'),
-                    concepts: pkConcepts, setConcepts: setPkConcepts,
-                    careless: pkCareless, setCareless: setPkCareless,
-                    guesses: pkGuesses, setGuesses: setPkGuesses,
-                    timePressure: pkTimePressure, setTimePressure: setPkTimePressure
-                  }
+                    concepts: pkConcepts,
+                    setConcepts: setPkConcepts,
+                    careless: pkCareless,
+                    setCareless: setPkCareless,
+                    guesses: pkGuesses,
+                    setGuesses: setPkGuesses,
+                    timePressure: pkTimePressure,
+                    setTimePressure: setPkTimePressure,
+                  },
                 ].map((section, index) => (
                   <div key={index} className="bg-gray-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-semibold">{section.label}</h4>
-                      <span className="text-sm text-red-600 font-medium">
-                        {section.totalErrors} errors to analyze
-                      </span>
+                      <span className="text-sm text-red-600 font-medium">{section.totalErrors} errors to analyze</span>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="space-y-2">
@@ -318,7 +363,7 @@ export default function TestLoggerPage() {
                           min="0"
                           max={section.totalErrors}
                           value={section.concepts}
-                          onChange={(e) => section.setConcepts(Number(e.target.value))}
+                          onChange={e => section.setConcepts(Number(e.target.value))}
                           className="text-sm"
                         />
                       </div>
@@ -329,7 +374,7 @@ export default function TestLoggerPage() {
                           min="0"
                           max={section.totalErrors}
                           value={section.careless}
-                          onChange={(e) => section.setCareless(Number(e.target.value))}
+                          onChange={e => section.setCareless(Number(e.target.value))}
                           className="text-sm"
                         />
                       </div>
@@ -340,7 +385,7 @@ export default function TestLoggerPage() {
                           min="0"
                           max={section.totalErrors}
                           value={section.guesses}
-                          onChange={(e) => section.setGuesses(Number(e.target.value))}
+                          onChange={e => section.setGuesses(Number(e.target.value))}
                           className="text-sm"
                         />
                       </div>
@@ -351,13 +396,14 @@ export default function TestLoggerPage() {
                           min="0"
                           max={section.totalErrors}
                           value={section.timePressure}
-                          onChange={(e) => section.setTimePressure(Number(e.target.value))}
+                          onChange={e => section.setTimePressure(Number(e.target.value))}
                           className="text-sm"
                         />
                       </div>
                     </div>
                     <div className="mt-2 text-xs text-gray-600">
-                      Analyzed: {section.concepts + section.careless + section.guesses + section.timePressure}/{section.totalErrors}
+                      Analyzed: {section.concepts + section.careless + section.guesses + section.timePressure}/
+                      {section.totalErrors}
                     </div>
                   </div>
                 ))}
@@ -379,14 +425,12 @@ export default function TestLoggerPage() {
               <CardHeader className="text-center">
                 <MessageSquare className="h-12 w-12 text-purple-600 mx-auto mb-4" />
                 <CardTitle>Test Feedback</CardTitle>
-                <CardDescription>
-                  How did you feel during the test? Any observations?
-                </CardDescription>
+                <CardDescription>How did you feel during the test? Any observations?</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Textarea
                   value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
+                  onChange={e => setFeedback(e.target.value)}
                   placeholder="Mental state, concentration level, test environment, specific difficulties faced..."
                   rows={6}
                 />

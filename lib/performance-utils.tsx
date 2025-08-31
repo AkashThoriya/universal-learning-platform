@@ -50,14 +50,22 @@ function shallowEqual(prevProps: Record<string, any>, nextProps: Record<string, 
  * Deep comparison for complex objects (use sparingly)
  */
 function deepEqual(a: any, b: any): boolean {
-  if (a === b) { return true; }
+  if (a === b) {
+    return true;
+  }
 
-  if (a == null || b == null) { return false; }
+  if (a == null || b == null) {
+    return false;
+  }
 
   if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) { return false; }
+    if (a.length !== b.length) {
+      return false;
+    }
     for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) { return false; }
+      if (!deepEqual(a[i], b[i])) {
+        return false;
+      }
     }
     return true;
   }
@@ -66,11 +74,17 @@ function deepEqual(a: any, b: any): boolean {
     const keysA = Object.keys(a);
     const keysB = Object.keys(b);
 
-    if (keysA.length !== keysB.length) { return false; }
+    if (keysA.length !== keysB.length) {
+      return false;
+    }
 
     for (const key of keysA) {
-      if (!keysB.includes(key)) { return false; }
-      if (!deepEqual(a[key], b[key])) { return false; }
+      if (!keysB.includes(key)) {
+        return false;
+      }
+      if (!deepEqual(a[key], b[key])) {
+        return false;
+      }
     }
     return true;
   }
@@ -95,11 +109,7 @@ function createLazyComponent<T extends React.ComponentType<any>>(
 ) {
   const LazyComponent = lazy(importFn);
 
-  const {
-    fallback: Fallback = () => <div>Loading...</div>,
-    errorFallback: ErrorFallback,
-    preload = false
-  } = options;
+  const { fallback: Fallback = () => <div>Loading...</div>, errorFallback: ErrorFallback, preload = false } = options;
 
   if (preload) {
     // Preload the component
@@ -174,7 +184,7 @@ function useVirtualization({
   itemCount,
   itemHeight,
   containerHeight,
-  scrollTop
+  scrollTop,
 }: {
   itemCount: number;
   itemHeight: number;
@@ -183,16 +193,13 @@ function useVirtualization({
 }) {
   return useMemo(() => {
     const startIndex = Math.floor(scrollTop / itemHeight);
-    const endIndex = Math.min(
-      itemCount - 1,
-      Math.floor((scrollTop + containerHeight) / itemHeight)
-    );
+    const endIndex = Math.min(itemCount - 1, Math.floor((scrollTop + containerHeight) / itemHeight));
 
     const visibleItems = [];
     for (let i = startIndex; i <= endIndex; i++) {
       visibleItems.push({
         index: i,
-        offsetTop: i * itemHeight
+        offsetTop: i * itemHeight,
       });
     }
 
@@ -200,7 +207,7 @@ function useVirtualization({
       startIndex,
       endIndex,
       visibleItems,
-      totalHeight: itemCount * itemHeight
+      totalHeight: itemCount * itemHeight,
     };
   }, [itemCount, itemHeight, containerHeight, scrollTop]);
 }
@@ -216,20 +223,14 @@ interface VirtualListProps<T> {
   className?: string;
 }
 
-function VirtualList<T>({
-  items,
-  itemHeight,
-  height,
-  renderItem,
-  className = ''
-}: VirtualListProps<T>) {
+function VirtualList<T>({ items, itemHeight, height, renderItem, className = '' }: VirtualListProps<T>) {
   const [scrollTop, setScrollTop] = React.useState(0);
 
   const { visibleItems, totalHeight } = useVirtualization({
     itemCount: items.length,
     itemHeight,
     containerHeight: height,
-    scrollTop
+    scrollTop,
   });
 
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
@@ -237,18 +238,14 @@ function VirtualList<T>({
   }, []);
 
   return (
-    <div
-      className={`overflow-auto ${className}`}
-      style={{ height }}
-      onScroll={handleScroll}
-    >
+    <div className={`overflow-auto ${className}`} style={{ height }} onScroll={handleScroll}>
       <div style={{ height: totalHeight, position: 'relative' }}>
         {visibleItems.map(({ index, offsetTop }) => {
           const item = items[index];
           if (!item) {
             return null;
           }
-          
+
           return (
             <div
               key={index}
@@ -257,7 +254,7 @@ function VirtualList<T>({
                 top: offsetTop,
                 height: itemHeight,
                 left: 0,
-                right: 0
+                right: 0,
               }}
             >
               {renderItem(item, index)}
@@ -282,33 +279,32 @@ interface ProfilerProps {
   onRender?: (id: string, phase: string, actualDuration: number) => void;
 }
 
-const Profiler: React.FC<ProfilerProps> = ({
-  id,
-  children,
-  onRender
-}) => {
-  const handleRender = useCallback((
-    id: string,
-    phase: 'mount' | 'update' | 'nested-update',
-    actualDuration: number,
-    baseDuration: number,
-    startTime: number,
-    commitTime: number
-  ) => {
-    if (onRender) {
-      onRender(id, phase, actualDuration);
-    }
+const Profiler: React.FC<ProfilerProps> = ({ id, children, onRender }) => {
+  const handleRender = useCallback(
+    (
+      id: string,
+      phase: 'mount' | 'update' | 'nested-update',
+      actualDuration: number,
+      baseDuration: number,
+      startTime: number,
+      commitTime: number
+    ) => {
+      if (onRender) {
+        onRender(id, phase, actualDuration);
+      }
 
-    // Log performance metrics in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[Profiler] ${id} (${phase}):`, {
-        actualDuration,
-        baseDuration,
-        startTime,
-        commitTime
-      });
-    }
-  }, [onRender]);
+      // Log performance metrics in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[Profiler] ${id} (${phase}):`, {
+          actualDuration,
+          baseDuration,
+          startTime,
+          commitTime,
+        });
+      }
+    },
+    [onRender]
+  );
 
   return (
     <React.Profiler id={id} onRender={handleRender}>
@@ -324,9 +320,7 @@ const Profiler: React.FC<ProfilerProps> = ({
 /**
  * Stable callback hook - prevents unnecessary re-renders
  */
-function useStableCallback<T extends (...args: any[]) => any>(
-  callback: T
-): T {
+function useStableCallback<T extends (...args: any[]) => any>(callback: T): T {
   const ref = React.useRef<T>(callback);
 
   React.useLayoutEffect(() => {
@@ -339,10 +333,7 @@ function useStableCallback<T extends (...args: any[]) => any>(
 /**
  * Expensive computation with memoization
  */
-function useExpensiveValue<T>(
-  computeFn: () => T,
-  deps: React.DependencyList
-): T {
+function useExpensiveValue<T>(computeFn: () => T, deps: React.DependencyList): T {
   return useMemo(() => {
     const start = performance.now();
     const result = computeFn();
@@ -359,11 +350,7 @@ function useExpensiveValue<T>(
 /**
  * Debounced expensive operation
  */
-function useDebouncedExpensiveOperation<T>(
-  operation: () => T,
-  delay: number,
-  deps: React.DependencyList
-): T | null {
+function useDebouncedExpensiveOperation<T>(operation: () => T, delay: number, deps: React.DependencyList): T | null {
   const [result, setResult] = React.useState<T | null>(null);
 
   React.useEffect(() => {
@@ -384,15 +371,14 @@ function useDebouncedExpensiveOperation<T>(
 /**
  * Dynamic import with retry logic
  */
-async function dynamicImport<T>(
-  importFn: () => Promise<T>,
-  retries = 3
-): Promise<T> {
+async function dynamicImport<T>(importFn: () => Promise<T>, retries = 3): Promise<T> {
   for (let i = 0; i < retries; i++) {
     try {
       return await importFn();
     } catch (error) {
-      if (i === retries - 1) { throw error; }
+      if (i === retries - 1) {
+        throw error;
+      }
 
       // Wait before retry
       await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
@@ -439,56 +425,38 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   placeholder?: string;
 }
 
-const OptimizedImage: React.FC<OptimizedImageProps> = memo(({
-  src,
-  alt,
-  width,
-  height,
-  lazy = true,
-  placeholder,
-  className = '',
-  ...props
-}) => {
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [error, setError] = React.useState(false);
+const OptimizedImage: React.FC<OptimizedImageProps> = memo(
+  ({ src, alt, width, height, lazy = true, placeholder, className = '', ...props }) => {
+    const [isLoaded, setIsLoaded] = React.useState(false);
+    const [error, setError] = React.useState(false);
 
-  const handleLoad = useCallback(() => {
-    setIsLoaded(true);
-  }, []);
+    const handleLoad = useCallback(() => {
+      setIsLoaded(true);
+    }, []);
 
-  const handleError = useCallback(() => {
-    setError(true);
-  }, []);
+    const handleError = useCallback(() => {
+      setError(true);
+    }, []);
 
-  if (error && placeholder) {
+    if (error && placeholder) {
+      return <img src={placeholder} alt={alt} width={width} height={height} className={className} {...props} />;
+    }
+
     return (
       <img
-        src={placeholder}
+        src={src}
         alt={alt}
         width={width}
         height={height}
-        className={className}
+        loading={lazy ? 'lazy' : 'eager'}
+        className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
+        onLoad={handleLoad}
+        onError={handleError}
         {...props}
       />
     );
   }
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={lazy ? 'lazy' : 'eager'}
-      className={`transition-opacity duration-300 ${
-        isLoaded ? 'opacity-100' : 'opacity-0'
-      } ${className}`}
-      onLoad={handleLoad}
-      onError={handleError}
-      {...props}
-    />
-  );
-});
+);
 
 OptimizedImage.displayName = 'OptimizedImage';
 
@@ -522,5 +490,5 @@ export {
   preloadResources,
 
   // Image optimization
-  OptimizedImage
+  OptimizedImage,
 };

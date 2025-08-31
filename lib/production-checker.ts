@@ -43,7 +43,7 @@ class ProductionReadinessChecker {
       hasTypeScript: componentPath.endsWith('.tsx') || componentPath.endsWith('.ts'),
       hasDocumentation: this.checkDocumentation(componentCode),
       hasTestable: this.checkTestability(componentCode),
-      isSecure: this.checkSecurity(componentCode)
+      isSecure: this.checkSecurity(componentCode),
     };
 
     return validation;
@@ -57,7 +57,7 @@ class ProductionReadinessChecker {
       /ErrorBoundary/gi,
       /componentDidCatch/gi,
       /getDerivedStateFromError/gi,
-      /try\s*{[\s\S]*catch\s*\(/gi
+      /try\s*{[\s\S]*catch\s*\(/gi,
     ];
 
     return errorBoundaryPatterns.some(pattern => pattern.test(code));
@@ -73,7 +73,7 @@ class ProductionReadinessChecker {
       /LoadingSpinner/gi,
       /LoadingState/gi,
       /Skeleton/gi,
-      /loading.*true/gi
+      /loading.*true/gi,
     ];
 
     return loadingPatterns.some(pattern => pattern.test(code));
@@ -88,7 +88,7 @@ class ProductionReadinessChecker {
       /validate/gi,
       /schema/gi,
       /sanitize/gi,
-      /\.min\(|\.max\(|\.email\(|\.required\(/gi
+      /\.min\(|\.max\(|\.email\(|\.required\(/gi,
     ];
 
     return validationPatterns.some(pattern => pattern.test(code));
@@ -105,7 +105,7 @@ class ProductionReadinessChecker {
       /tabIndex/gi,
       /screenReader/gi,
       /useScreenReader/gi,
-      /accessibility/gi
+      /accessibility/gi,
     ];
 
     return a11yPatterns.some(pattern => pattern.test(code));
@@ -120,7 +120,7 @@ class ProductionReadinessChecker {
       /@fileoverview/gi,
       /@param/gi,
       /@returns/gi,
-      /@author/gi
+      /@author/gi,
     ];
 
     return docPatterns.some(pattern => pattern.test(code));
@@ -135,7 +135,7 @@ class ProductionReadinessChecker {
       /data-testid/gi,
       /test-/gi,
       /useCallback/gi,
-      /useMemo/gi
+      /useMemo/gi,
     ];
 
     return testablePatterns.some(pattern => pattern.test(code));
@@ -150,7 +150,7 @@ class ProductionReadinessChecker {
       /eval\s*\(/gi,
       /dangerouslySetInnerHTML/gi,
       /document\.write/gi,
-      /window\.location\.href\s*=/gi
+      /window\.location\.href\s*=/gi,
     ];
 
     // Return true if NO security issues found
@@ -169,7 +169,7 @@ class ProductionReadinessChecker {
       hasTypeScript: 10,
       hasDocumentation: 10,
       hasTestable: 5,
-      isSecure: 25
+      isSecure: 25,
     };
 
     let score = 0;
@@ -206,7 +206,7 @@ class ProductionReadinessChecker {
       hasDocumentation: 0,
       hasTestable: 0,
       isSecure: 0,
-      total: validations.size
+      total: validations.size,
     };
 
     validations.forEach((validation, componentPath) => {
@@ -240,15 +240,13 @@ class ProductionReadinessChecker {
       }
     });
 
-    const overallScore = scores.length > 0
-      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-      : 0;
+    const overallScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
 
     return {
       overallScore,
       criticalIssues,
       recommendations,
-      summary
+      summary,
     };
   }
 
@@ -267,7 +265,7 @@ class ProductionReadinessChecker {
         '📊 Add analytics tracking to user interactions',
         '🧪 Implement comprehensive unit tests',
         '📱 Add PWA capabilities for mobile experience',
-        '🌐 Implement i18n for international users'
+        '🌐 Implement i18n for international users',
       ],
       summary: {
         hasErrorBoundary: 100,
@@ -278,8 +276,8 @@ class ProductionReadinessChecker {
         hasDocumentation: 95,
         hasTestable: 90,
         isSecure: 100,
-        total: 100
-      }
+        total: 100,
+      },
     };
 
     // Log validation results
@@ -318,7 +316,7 @@ export class BestPracticesEnforcer {
       '✅ Performance': 'Code splitting, lazy loading, and optimization patterns',
       '✅ SEO': 'Meta tags, structured data, and search engine optimization',
       '✅ Firebase Integration': 'Production-ready service layer with caching',
-      '✅ UI/UX': 'Consistent design system with responsive layouts'
+      '✅ UI/UX': 'Consistent design system with responsive layouts',
     };
 
     Object.entries(standards).forEach(([key, description]) => {
@@ -340,7 +338,7 @@ export class BestPracticesEnforcer {
       'Security Headers': true, // Next.js security features
       'SSL/HTTPS': true, // Required for production
       'Database Backup': true, // Firebase automatic backups
-      'Monitoring & Logging': true // Our logger implementation
+      'Monitoring & Logging': true, // Our logger implementation
     };
 
     const passedChecks = Object.values(deploymentChecks).filter(Boolean).length;

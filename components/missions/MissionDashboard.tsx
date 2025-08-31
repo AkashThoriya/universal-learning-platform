@@ -15,7 +15,7 @@ import {
   Settings,
   Loader2,
   RefreshCw,
-  Filter
+  Filter,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -47,7 +47,7 @@ export function MissionDashboard({
   className = '',
   onMissionStart,
   onViewProgress,
-  onConfigureMissions
+  onConfigureMissions,
 }: MissionDashboardProps) {
   const { user } = useAuth();
   const [activeMissions, setActiveMissions] = useState<Mission[]>([]);
@@ -67,7 +67,9 @@ export function MissionDashboard({
   }, [user?.uid]);
 
   const loadDashboardData = async () => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -88,7 +90,7 @@ export function MissionDashboard({
       const startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
       const analyticsResult = await missionService.generateAnalytics(user.uid, {
         startDate,
-        endDate
+        endDate,
       });
       if (analyticsResult.success && analyticsResult.data) {
         setAnalytics(analyticsResult.data);
@@ -103,7 +105,6 @@ export function MissionDashboard({
         console.error('Failed to load active missions:', activeMissionsResult.error);
         setActiveMissions([]);
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
     } finally {
@@ -129,20 +130,29 @@ export function MissionDashboard({
 
   const getStatusColor = (status: MissionStatus): string => {
     switch (status) {
-      case 'completed': return 'text-green-600 bg-green-50 border-green-200';
-      case 'in_progress': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'failed': return 'text-red-600 bg-red-50 border-red-200';
-      case 'skipped': return 'text-gray-600 bg-gray-50 border-gray-200';
-      default: return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'completed':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'in_progress':
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'failed':
+        return 'text-red-600 bg-red-50 border-red-200';
+      case 'skipped':
+        return 'text-gray-600 bg-gray-50 border-gray-200';
+      default:
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
     }
   };
 
   const getStatusIcon = (status: MissionStatus) => {
     switch (status) {
-      case 'completed': return CheckCircle;
-      case 'in_progress': return Play;
-      case 'failed': return AlertCircle;
-      default: return Clock;
+      case 'completed':
+        return CheckCircle;
+      case 'in_progress':
+        return Play;
+      case 'failed':
+        return AlertCircle;
+      default:
+        return Clock;
     }
   };
 
@@ -154,18 +164,14 @@ export function MissionDashboard({
     return track === 'exam' ? 'text-blue-600 bg-blue-50' : 'text-green-600 bg-green-50';
   };
 
-  const filteredMissions = activeMissions.filter(mission =>
-    selectedTrack === 'all' || mission.track === selectedTrack
-  );
+  const filteredMissions = activeMissions.filter(mission => selectedTrack === 'all' || mission.track === selectedTrack);
 
   if (!user) {
     return (
       <div className={`w-full max-w-6xl mx-auto ${className}`}>
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Please log in to access your mission dashboard.
-          </AlertDescription>
+          <AlertDescription>Please log in to access your mission dashboard.</AlertDescription>
         </Alert>
       </div>
     );
@@ -189,12 +195,7 @@ export function MissionDashboard({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mb-4">{error}</AlertDescription>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadDashboardData}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={loadDashboardData} className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
@@ -212,19 +213,11 @@ export function MissionDashboard({
           <p className="text-gray-600">Track your adaptive learning missions across exam and tech tracks</p>
         </div>
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={onViewProgress}
-            className="gap-2"
-          >
+          <Button variant="outline" onClick={onViewProgress} className="gap-2">
             <BarChart3 className="h-4 w-4" />
             Analytics
           </Button>
-          <Button
-            variant="outline"
-            onClick={onConfigureMissions}
-            className="gap-2"
-          >
+          <Button variant="outline" onClick={onConfigureMissions} className="gap-2">
             <Settings className="h-4 w-4" />
             Configure
           </Button>
@@ -474,7 +467,7 @@ export function MissionDashboard({
 
           {/* Active Missions List */}
           <div className="space-y-4">
-            {filteredMissions.map((mission) => {
+            {filteredMissions.map(mission => {
               const StatusIcon = getStatusIcon(mission.status);
               const TrackIcon = getTrackIcon(mission.track);
               const isStarting = startingMissionId === mission.id;
@@ -529,9 +522,7 @@ export function MissionDashboard({
                       <div className="flex items-center space-x-3">
                         <div className="text-right text-sm text-gray-500">
                           <div>Deadline</div>
-                          <div className="font-medium">
-                            {mission.deadline.toLocaleDateString()}
-                          </div>
+                          <div className="font-medium">{mission.deadline.toLocaleDateString()}</div>
                         </div>
                         <Button
                           onClick={() => handleStartMission(mission)}
@@ -571,13 +562,9 @@ export function MissionDashboard({
                 <p className="text-gray-600 mb-4">
                   {selectedTrack === 'all'
                     ? 'You have no active missions at the moment.'
-                    : `No active missions for ${selectedTrack === 'exam' ? 'exam' : 'tech'} track.`
-                  }
+                    : `No active missions for ${selectedTrack === 'exam' ? 'exam' : 'tech'} track.`}
                 </p>
-                <Button
-                  onClick={onConfigureMissions}
-                  className="gap-2"
-                >
+                <Button onClick={onConfigureMissions} className="gap-2">
                   <Settings className="h-4 w-4" />
                   Configure Missions
                 </Button>
@@ -599,7 +586,8 @@ export function MissionDashboard({
                       </div>
                       <div className="text-sm text-gray-600">Missions Completed</div>
                       <div className="text-xs text-green-600 mt-1">
-                        +{analytics.overallMetrics.missionsCompleted - analytics.overallMetrics.missionsSkipped} vs last month
+                        +{analytics.overallMetrics.missionsCompleted - analytics.overallMetrics.missionsSkipped} vs last
+                        month
                       </div>
                     </div>
                   </CardContent>
@@ -608,13 +596,9 @@ export function MissionDashboard({
                 <Card>
                   <CardContent className="p-6">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">
-                        {analytics.overallMetrics.averageScore}%
-                      </div>
+                      <div className="text-2xl font-bold text-green-600">{analytics.overallMetrics.averageScore}%</div>
                       <div className="text-sm text-gray-600">Average Score</div>
-                      <div className="text-xs text-green-600 mt-1">
-                        +5% vs last month
-                      </div>
+                      <div className="text-xs text-green-600 mt-1">+5% vs last month</div>
                     </div>
                   </CardContent>
                 </Card>
@@ -626,9 +610,7 @@ export function MissionDashboard({
                         {Math.floor(analytics.overallMetrics.totalTimeSpent / 60)}h
                       </div>
                       <div className="text-sm text-gray-600">Time Invested</div>
-                      <div className="text-xs text-green-600 mt-1">
-                        +2h vs last month
-                      </div>
+                      <div className="text-xs text-green-600 mt-1">+2h vs last month</div>
                     </div>
                   </CardContent>
                 </Card>
@@ -640,9 +622,7 @@ export function MissionDashboard({
                         {analytics.overallMetrics.consistencyScore}%
                       </div>
                       <div className="text-sm text-gray-600">Consistency Score</div>
-                      <div className="text-xs text-green-600 mt-1">
-                        +8% vs last month
-                      </div>
+                      <div className="text-xs text-green-600 mt-1">+8% vs last month</div>
                     </div>
                   </CardContent>
                 </Card>

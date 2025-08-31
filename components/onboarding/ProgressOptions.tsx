@@ -1,6 +1,6 @@
 /**
  * @fileoverview Alternative Minimal Progress Design
- * 
+ *
  * This is an alternative approach with even more space efficiency options
  * for the onboarding progress indicator.
  */
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 // Option 1: Bottom floating progress bar
 export const BottomFloatingProgress = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-  
+
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
       <div className="bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-200">
@@ -27,14 +27,12 @@ export const BottomFloatingProgress = ({ currentStep, totalSteps }: { currentSte
             {currentStep} of {totalSteps}
           </div>
           <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="text-xs text-gray-500">
-            {Math.round(progress)}%
-          </div>
+          <div className="text-xs text-gray-500">{Math.round(progress)}%</div>
         </div>
       </div>
     </div>
@@ -50,16 +48,16 @@ export const SideProgressDots = ({ currentStep, totalSteps }: { currentStep: num
           const step = i + 1;
           const isCompleted = step < currentStep;
           const isCurrent = step === currentStep;
-          
+
           return (
             <div
               key={step}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                isCompleted 
-                  ? 'bg-green-500 shadow-lg' 
+                isCompleted
+                  ? 'bg-green-500 shadow-lg'
                   : isCurrent
-                  ? 'bg-blue-500 shadow-lg ring-2 ring-blue-200'
-                  : 'bg-gray-300'
+                    ? 'bg-blue-500 shadow-lg ring-2 ring-blue-200'
+                    : 'bg-gray-300'
               }`}
             />
           );
@@ -72,7 +70,7 @@ export const SideProgressDots = ({ currentStep, totalSteps }: { currentStep: num
 // Option 3: Header breadcrumb style
 export const HeaderBreadcrumb = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
   const stepNames = ['Profile', 'Exam', 'Topics', 'Settings'];
-  
+
   return (
     <div className="bg-white border-b border-gray-200 px-4 py-2">
       <div className="max-w-4xl mx-auto">
@@ -81,21 +79,17 @@ export const HeaderBreadcrumb = ({ currentStep, totalSteps }: { currentStep: num
             const step = index + 1;
             const isCompleted = step < currentStep;
             const isCurrent = step === currentStep;
-            
+
             return (
               <div key={step} className="flex items-center">
-                <span className={`${
-                  isCurrent 
-                    ? 'text-blue-600 font-semibold' 
-                    : isCompleted 
-                    ? 'text-green-600' 
-                    : 'text-gray-400'
-                }`}>
+                <span
+                  className={`${
+                    isCurrent ? 'text-blue-600 font-semibold' : isCompleted ? 'text-green-600' : 'text-gray-400'
+                  }`}
+                >
                   {name}
                 </span>
-                {step < totalSteps && (
-                  <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
-                )}
+                {step < totalSteps && <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />}
               </div>
             );
           })}
@@ -109,7 +103,7 @@ export const HeaderBreadcrumb = ({ currentStep, totalSteps }: { currentStep: num
 export const CornerIndicator = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
-  
+
   return (
     <div className="fixed top-4 left-4 z-50">
       <Button
@@ -120,9 +114,11 @@ export const CornerIndicator = ({ currentStep, totalSteps }: { currentStep: numb
       >
         {isExpanded ? (
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium">{currentStep}/{totalSteps}</span>
+            <span className="text-sm font-medium">
+              {currentStep}/{totalSteps}
+            </span>
             <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-blue-500 rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />

@@ -1,20 +1,14 @@
 /**
  * @fileoverview Repository Pattern Implementation
- * 
+ *
  * Base repository class that provides domain-specific data operations
  * using the database abstraction layer.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import {
-  DatabaseProvider,
-  Repository,
-  DatabaseResult,
-  QueryOptions,
-  RealtimeSubscription
-} from './interfaces';
+import { DatabaseProvider, Repository, DatabaseResult, QueryOptions, RealtimeSubscription } from './interfaces';
 
 /**
  * Abstract base repository class
@@ -54,27 +48,21 @@ export abstract class BaseRepository<T extends { id: string }> implements Reposi
     const whereConditions = fields.map(field => ({
       field,
       operator: 'contains' as const,
-      value: searchTerm
+      value: searchTerm,
     }));
 
     // Note: This is a simplified search. Real implementation would use
     // full-text search capabilities of the underlying database
     return this.provider.query<T>(this.collectionName, {
-      where: whereConditions.slice(0, 1) // Most databases limit OR conditions
+      where: whereConditions.slice(0, 1), // Most databases limit OR conditions
     });
   }
 
-  subscribe(
-    callback: (data: T[]) => void,
-    options?: QueryOptions
-  ): RealtimeSubscription {
+  subscribe(callback: (data: T[]) => void, options?: QueryOptions): RealtimeSubscription {
     return this.provider.subscribe<T>(this.collectionName, callback, options);
   }
 
-  subscribeToDocument(
-    id: string,
-    callback: (data: T | null) => void
-  ): RealtimeSubscription {
+  subscribeToDocument(id: string, callback: (data: T | null) => void): RealtimeSubscription {
     return this.provider.subscribeToDocument<T>(this.collectionName, id, callback);
   }
 
@@ -83,11 +71,11 @@ export abstract class BaseRepository<T extends { id: string }> implements Reposi
     const whereConditions = conditions.map(({ field, value }) => ({
       field,
       operator: 'eq' as const,
-      value
+      value,
     }));
 
     return this.provider.query<T>(this.collectionName, {
-      where: whereConditions
+      where: whereConditions,
     });
   }
 
@@ -108,11 +96,11 @@ export abstract class BaseRepository<T extends { id: string }> implements Reposi
     const whereConditions = conditions.map(({ field, value }) => ({
       field,
       operator: 'eq' as const,
-      value
+      value,
     }));
 
     return this.provider.count(this.collectionName, {
-      where: whereConditions
+      where: whereConditions,
     });
   }
 }
@@ -178,16 +166,16 @@ export class UserRepository extends BaseRepository<User> {
   async findByEmail(email: string): Promise<DatabaseResult<User | null>> {
     const result = await this.findByField('email', email);
     if (!result.success || !result.data || result.data.length === 0) {
-      return { 
-        success: true, 
-        data: null, 
-        metadata: result.metadata || { queryTime: 0, cached: false }
+      return {
+        success: true,
+        data: null,
+        metadata: result.metadata || { queryTime: 0, cached: false },
       };
     }
-    return { 
-      success: true, 
-      data: result.data[0] || null, 
-      metadata: result.metadata || { queryTime: 0, cached: false }
+    return {
+      success: true,
+      data: result.data[0] || null,
+      metadata: result.metadata || { queryTime: 0, cached: false },
     };
   }
 
@@ -225,7 +213,7 @@ export class ProgressRepository extends BaseRepository<Progress> {
   async findByUserAndSubject(userId: string, subjectId: string): Promise<DatabaseResult<Progress[]>> {
     return this.findWhere([
       { field: 'userId', value: userId },
-      { field: 'subjectId', value: subjectId }
+      { field: 'subjectId', value: subjectId },
     ]);
   }
 
@@ -235,12 +223,12 @@ export class ProgressRepository extends BaseRepository<Progress> {
     updates: Partial<Pick<Progress, 'completionPercentage' | 'lastStudied' | 'streakDays' | 'totalTimeSpent'>>
   ): Promise<DatabaseResult<void>> {
     const existingResult = await this.findByUserAndSubject(userId, subjectId);
-    
+
     if (!existingResult.success) {
       return {
         success: false,
         error: existingResult.error || 'Failed to fetch existing progress',
-        metadata: existingResult.metadata || { queryTime: 0, cached: false }
+        metadata: existingResult.metadata || { queryTime: 0, cached: false },
       };
     }
 
@@ -258,13 +246,13 @@ export class ProgressRepository extends BaseRepository<Progress> {
         streakDays: updates.streakDays || 0,
         totalTimeSpent: updates.totalTimeSpent || 0,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       const createResult = await this.create(newProgress);
       return {
         success: createResult.success,
         error: createResult.error || 'Failed to create progress record',
-        metadata: createResult.metadata || { queryTime: 0, cached: false }
+        metadata: createResult.metadata || { queryTime: 0, cached: false },
       };
     }
   }
@@ -301,7 +289,7 @@ export class MissionRepository extends BaseRepository<Mission> {
   async findActiveMissions(userId: string): Promise<DatabaseResult<Mission[]>> {
     return this.findWhere([
       { field: 'userId', value: userId },
-      { field: 'status', value: 'active' }
+      { field: 'status', value: 'active' },
     ]);
   }
 
@@ -319,15 +307,13 @@ export class MissionRepository extends BaseRepository<Mission> {
       return {
         success: false,
         error: result.error || 'Mission not found',
-        metadata: result.metadata || { queryTime: 0, cached: false }
+        metadata: result.metadata || { queryTime: 0, cached: false },
       };
     }
 
     const mission = result.data;
     const updatedMilestones = mission.milestones.map(milestone =>
-      milestone.id === milestoneId
-        ? { ...milestone, completed: true }
-        : milestone
+      milestone.id === milestoneId ? { ...milestone, completed: true } : milestone
     );
 
     const completedCount = updatedMilestones.filter(m => m.completed).length;
@@ -337,7 +323,7 @@ export class MissionRepository extends BaseRepository<Mission> {
       milestones: updatedMilestones,
       progress,
       status: progress === 100 ? 'completed' : 'active',
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
   }
 }
@@ -360,26 +346,26 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
   async findByUser(userId: string, limit?: number): Promise<DatabaseResult<AnalyticsEvent[]>> {
     const queryOptions: any = {
       where: [{ field: 'userId', operator: 'eq', value: userId }],
-      orderBy: [{ field: 'timestamp', direction: 'desc' }]
+      orderBy: [{ field: 'timestamp', direction: 'desc' }],
     };
-    
+
     if (limit !== undefined) {
       queryOptions.limit = limit;
     }
-    
+
     return this.provider.query<AnalyticsEvent>(this.collectionName, queryOptions);
   }
 
   async findByEventType(eventType: string, limit?: number): Promise<DatabaseResult<AnalyticsEvent[]>> {
     const queryOptions: any = {
       where: [{ field: 'eventType', operator: 'eq', value: eventType }],
-      orderBy: [{ field: 'timestamp', direction: 'desc' }]
+      orderBy: [{ field: 'timestamp', direction: 'desc' }],
     };
-    
+
     if (limit !== undefined) {
       queryOptions.limit = limit;
     }
-    
+
     return this.provider.query<AnalyticsEvent>(this.collectionName, queryOptions);
   }
 
@@ -387,9 +373,9 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
     return this.provider.query<AnalyticsEvent>(this.collectionName, {
       where: [
         { field: 'timestamp', operator: 'gte', value: startDate },
-        { field: 'timestamp', operator: 'lte', value: endDate }
+        { field: 'timestamp', operator: 'lte', value: endDate },
       ],
-      orderBy: [{ field: 'timestamp', direction: 'desc' }]
+      orderBy: [{ field: 'timestamp', direction: 'desc' }],
     });
   }
 
@@ -406,7 +392,7 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
       eventData,
       timestamp: new Date(),
       ...(sessionId && { sessionId }),
-      ...(metadata && { metadata })
+      ...(metadata && { metadata }),
     };
 
     return this.create(event);

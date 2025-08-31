@@ -197,11 +197,13 @@ export interface User {
   /** Whether this is a custom exam */
   isCustomExam?: boolean;
   /** Custom exam details if applicable */
-  customExam?: {
-    name?: string | undefined;
-    description?: string | undefined;
-    category?: string | undefined;
-  } | undefined;
+  customExam?:
+    | {
+        name?: string | undefined;
+        description?: string | undefined;
+        category?: string | undefined;
+      }
+    | undefined;
   /** User persona information */
   userPersona?: UserPersona;
   /** User preferences for studying */

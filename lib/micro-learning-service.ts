@@ -17,7 +17,7 @@ import {
   ExamValidation,
   CourseValidation,
   LearningRecommendation,
-  SessionPerformance
+  SessionPerformance,
 } from '@/types/micro-learning';
 
 import { PersonaAwareGoalSetting as _PersonaAwareGoalSetting } from './persona-aware-goals';
@@ -26,7 +26,6 @@ import { PersonaAwareGoalSetting as _PersonaAwareGoalSetting } from './persona-a
  * Service for managing dual-track micro-learning sessions
  */
 export class MicroLearningService {
-
   /**
    * Generate a personalized micro-learning session
    */
@@ -73,8 +72,8 @@ export class MicroLearningService {
           device: 'desktop',
           browser: 'unknown',
           environment: 'home',
-          interruptionCount: 0
-        }
+          interruptionCount: 0,
+        },
       };
 
       // Save session to Firebase
@@ -82,7 +81,8 @@ export class MicroLearningService {
       const saveResult = await microLearningFirebaseService.saveSession(userId, session);
 
       if (!saveResult.success) {
-        const errorMessage = saveResult.error instanceof Error ? saveResult.error.message : saveResult.error || 'Failed to save session';
+        const errorMessage =
+          saveResult.error instanceof Error ? saveResult.error.message : saveResult.error || 'Failed to save session';
         throw new Error(errorMessage);
       }
 
@@ -101,7 +101,8 @@ export class MicroLearningService {
       const result = await microLearningFirebaseService.getSessionHistory(userId, limit);
 
       if (!result.success) {
-        const errorMessage = result.error instanceof Error ? result.error.message : result.error || 'Failed to get session history';
+        const errorMessage =
+          result.error instanceof Error ? result.error.message : result.error || 'Failed to get session history';
         throw new Error(errorMessage);
       }
 
@@ -143,17 +144,14 @@ export class MicroLearningService {
   /**
    * Update session progress
    */
-  static async updateSessionProgress(
-    userId: string,
-    sessionId: string,
-    progress: any
-  ): Promise<void> {
+  static async updateSessionProgress(userId: string, sessionId: string, progress: any): Promise<void> {
     try {
       const { microLearningFirebaseService } = await import('@/lib/firebase-services');
       const result = await microLearningFirebaseService.updateSessionProgress(userId, sessionId, progress);
 
       if (!result.success) {
-        const errorMessage = result.error instanceof Error ? result.error.message : result.error || 'Failed to update session progress';
+        const errorMessage =
+          result.error instanceof Error ? result.error.message : result.error || 'Failed to update session progress';
         throw new Error(errorMessage);
       }
     } catch (error) {
@@ -164,10 +162,7 @@ export class MicroLearningService {
   /**
    * Calculate persona-specific optimizations
    */
-  private static calculatePersonaOptimizations(
-    persona: UserPersona,
-    requestedDuration?: number
-  ): PersonaOptimizations {
+  private static calculatePersonaOptimizations(persona: UserPersona, requestedDuration?: number): PersonaOptimizations {
     switch (persona.type) {
       case 'student':
         return {
@@ -178,7 +173,7 @@ export class MicroLearningService {
           complexityRamp: 'standard',
           learningTrackPreference: 'exam',
           notificationStyle: 'standard',
-          uiDensity: 'comfortable'
+          uiDensity: 'comfortable',
         };
 
       case 'working_professional':
@@ -193,7 +188,7 @@ export class MicroLearningService {
           complexityRamp: hasLimitedTime ? 'accelerated' : 'standard',
           learningTrackPreference: 'mixed',
           notificationStyle: 'minimal',
-          uiDensity: 'compact'
+          uiDensity: 'compact',
         };
 
       case 'freelancer':
@@ -205,7 +200,7 @@ export class MicroLearningService {
           complexityRamp: 'accelerated',
           learningTrackPreference: 'course_tech',
           notificationStyle: 'comprehensive',
-          uiDensity: 'comfortable'
+          uiDensity: 'comfortable',
         };
 
       default:
@@ -217,7 +212,7 @@ export class MicroLearningService {
           complexityRamp: 'standard',
           learningTrackPreference: 'mixed',
           notificationStyle: 'standard',
-          uiDensity: 'comfortable'
+          uiDensity: 'comfortable',
         };
     }
   }
@@ -243,58 +238,60 @@ export class MicroLearningService {
         author: 'system',
         version: '1.0.0',
         tags: content.tags || [],
-        difficultyRating: content.difficulty || 5
-      }
+        difficultyRating: content.difficulty || 5,
+      },
     }));
   }
 
   /**
    * Generate persona-specific content adaptations
    */
-  private static generatePersonaAdaptations(
-    content: any,
-    persona: UserPersona,
-    learningTrack: 'exam' | 'course_tech'
-  ) {
+  private static generatePersonaAdaptations(content: any, persona: UserPersona, learningTrack: 'exam' | 'course_tech') {
     const adaptations: any = {};
 
     // Student adaptations - academic focus
     adaptations.student = {
       examples: this.generateAcademicExamples(content.topic, learningTrack),
-      motivation: learningTrack === 'exam'
-        ? `Master this concept for exam success!`
-        : `Build strong foundations for your academic journey!`,
-      applicationContext: learningTrack === 'exam'
-        ? `This appears frequently in ${content.examType || 'competitive'} exams`
-        : `This knowledge will help you excel in your coursework and projects`,
+      motivation:
+        learningTrack === 'exam'
+          ? `Master this concept for exam success!`
+          : `Build strong foundations for your academic journey!`,
+      applicationContext:
+        learningTrack === 'exam'
+          ? `This appears frequently in ${content.examType || 'competitive'} exams`
+          : `This knowledge will help you excel in your coursework and projects`,
       validationMethod: learningTrack === 'exam' ? 'quiz' : 'assignment',
-      additionalResources: this.generateStudentResources(content.topic, learningTrack)
+      additionalResources: this.generateStudentResources(content.topic, learningTrack),
     };
 
     // Professional adaptations - career focus
     adaptations.working_professional = {
       examples: this.generateProfessionalExamples(content.topic, persona.careerContext, learningTrack),
-      motivation: learningTrack === 'exam'
-        ? `Advance your career with this certification!`
-        : `Enhance your professional skills and stay competitive!`,
-      applicationContext: learningTrack === 'exam'
-        ? `This certification opens doors to ${persona.careerContext?.targetRole || 'leadership roles'}`
-        : `This skill directly applies to ${persona.careerContext?.targetRole || 'your work'} and increases your market value`,
+      motivation:
+        learningTrack === 'exam'
+          ? `Advance your career with this certification!`
+          : `Enhance your professional skills and stay competitive!`,
+      applicationContext:
+        learningTrack === 'exam'
+          ? `This certification opens doors to ${persona.careerContext?.targetRole || 'leadership roles'}`
+          : `This skill directly applies to ${persona.careerContext?.targetRole || 'your work'} and increases your market value`,
       validationMethod: learningTrack === 'exam' ? 'practice' : 'project',
-      additionalResources: this.generateProfessionalResources(content.topic, learningTrack)
+      additionalResources: this.generateProfessionalResources(content.topic, learningTrack),
     };
 
     // Freelancer adaptations - business/skill focus
     adaptations.freelancer = {
       examples: this.generateFreelancerExamples(content.topic, learningTrack),
-      motivation: learningTrack === 'exam'
-        ? `Expand your credentials and client trust!`
-        : `Add valuable skills to your service portfolio!`,
-      applicationContext: learningTrack === 'exam'
-        ? `This certification helps you charge premium rates and attract better clients`
-        : `This skill allows you to take on higher-value projects and expand your offerings`,
+      motivation:
+        learningTrack === 'exam'
+          ? `Expand your credentials and client trust!`
+          : `Add valuable skills to your service portfolio!`,
+      applicationContext:
+        learningTrack === 'exam'
+          ? `This certification helps you charge premium rates and attract better clients`
+          : `This skill allows you to take on higher-value projects and expand your offerings`,
       validationMethod: learningTrack === 'exam' ? 'practice' : 'project',
-      additionalResources: this.generateFreelancerResources(content.topic, learningTrack)
+      additionalResources: this.generateFreelancerResources(content.topic, learningTrack),
     };
 
     return adaptations;
@@ -315,27 +312,26 @@ export class MicroLearningService {
         mockTestQuestions: persona.type === 'student' ? 10 : 5,
         revisionTopics: [topicId],
         targetExam: subjectId,
-        examStage: 'prelims'
+        examStage: 'prelims',
       };
     }
-      return {
-        type: 'course_tech',
-        assignmentTasks: await this.generateAssignmentTasks(topicId, persona),
-        projectComponents: await this.generateProjectComponents(topicId, persona),
-        skillsToValidate: [topicId],
-        completionCriteria: {
-          minimumScore: 70,
-          requiredTasks: ['basic_implementation'],
-          portfolioSubmission: persona.type === 'freelancer',
-          peerReview: persona.type === 'student',
-          codeQualityStandards: {
-            codeStyle: true,
-            documentation: persona.type !== 'student',
-            testing: persona.type === 'working_professional'
-          }
-        }
-      };
-
+    return {
+      type: 'course_tech',
+      assignmentTasks: await this.generateAssignmentTasks(topicId, persona),
+      projectComponents: await this.generateProjectComponents(topicId, persona),
+      skillsToValidate: [topicId],
+      completionCriteria: {
+        minimumScore: 70,
+        requiredTasks: ['basic_implementation'],
+        portfolioSubmission: persona.type === 'freelancer',
+        peerReview: persona.type === 'student',
+        codeQualityStandards: {
+          codeStyle: true,
+          documentation: persona.type !== 'student',
+          testing: persona.type === 'working_professional',
+        },
+      },
+    };
   }
 
   /**
@@ -403,13 +399,13 @@ export class MicroLearningService {
           type: 'review_content',
           parameters: {
             topics: sessionPerformance.areasForImprovement,
-            difficulty: 'easy'
+            difficulty: 'easy',
           },
           estimatedTime: 15,
-          urgency: 'immediate'
+          urgency: 'immediate',
         },
         reasoning: 'Strong foundations are crucial for advanced learning',
-        expectedBenefit: 'Improved understanding and confidence'
+        expectedBenefit: 'Improved understanding and confidence',
       });
     }
 
@@ -423,13 +419,13 @@ export class MicroLearningService {
         action: {
           type: 'take_break',
           parameters: {
-            duration: 5
+            duration: 5,
           },
           estimatedTime: 5,
-          urgency: 'within_hour'
+          urgency: 'within_hour',
         },
         reasoning: 'Working professionals benefit from regular breaks to maintain productivity',
-        expectedBenefit: 'Improved focus and retention'
+        expectedBenefit: 'Improved focus and retention',
       });
     }
 
@@ -464,14 +460,10 @@ export class MicroLearningService {
     if (learningTrack === 'exam') {
       return persona.type === 'student' ? 'concept' : 'practice';
     }
-      return persona.type === 'freelancer' ? 'project' : 'assignment';
-
+    return persona.type === 'freelancer' ? 'project' : 'assignment';
   }
 
-  private static selectContentType(
-    content: any,
-    learningTrack: 'exam' | 'course_tech'
-  ): MicroContent['type'] {
+  private static selectContentType(content: any, learningTrack: 'exam' | 'course_tech'): MicroContent['type'] {
     if (learningTrack === 'course_tech') {
       return content.hasCode ? 'code_snippet' : 'hands_on';
     }
@@ -504,7 +496,7 @@ export class MicroLearningService {
         workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         commuteTime: 60,
         flexibility: 'flexible',
-        lunchBreakDuration: 60
+        lunchBreakDuration: 60,
       },
       careerContext: {
         currentRole: 'Software Engineer',
@@ -512,8 +504,8 @@ export class MicroLearningService {
         industry: 'Technology',
         urgency: 'short_term',
         motivation: ['promotion', 'skill_relevance'],
-        skillGaps: ['advanced algorithms', 'system design']
-      }
+        skillGaps: ['advanced algorithms', 'system design'],
+      },
     };
   }
 
@@ -534,7 +526,7 @@ export class MicroLearningService {
         priority: 'high' as const,
         estimatedCompletion: '15 min',
         subjectId: 'computer-science',
-        topicId: 'data-structures'
+        topicId: 'data-structures',
       },
       {
         id: '2',
@@ -546,7 +538,7 @@ export class MicroLearningService {
         priority: 'high' as const,
         estimatedCompletion: '20 min',
         subjectId: 'web-development',
-        topicId: 'react-hooks'
+        topicId: 'react-hooks',
       },
       {
         id: '3',
@@ -558,7 +550,7 @@ export class MicroLearningService {
         priority: 'medium' as const,
         estimatedCompletion: '25 min',
         subjectId: 'computer-science',
-        topicId: 'algorithms'
+        topicId: 'algorithms',
       },
       {
         id: '4',
@@ -570,8 +562,8 @@ export class MicroLearningService {
         priority: 'medium' as const,
         estimatedCompletion: '18 min',
         subjectId: 'databases',
-        topicId: 'design-principles'
-      }
+        topicId: 'design-principles',
+      },
     ];
 
     return mockRecommendations;
@@ -587,7 +579,7 @@ export class MicroLearningService {
         difficulty: 5,
         tags: [topicId, learningTrack],
         examType: learningTrack === 'exam' ? 'competitive' : undefined,
-        hasCode: learningTrack === 'course_tech'
+        hasCode: learningTrack === 'course_tech',
       },
       {
         topic: topicId,
@@ -595,12 +587,15 @@ export class MicroLearningService {
         estimatedTime: 240,
         difficulty: 7,
         tags: [topicId, 'advanced', learningTrack],
-        isExample: true
-      }
+        isExample: true,
+      },
     ];
   }
 
-  private static async calculateOptimalDifficulty(_userId: string, _topicId: string): Promise<'easy' | 'medium' | 'hard'> {
+  private static async calculateOptimalDifficulty(
+    _userId: string,
+    _topicId: string
+  ): Promise<'easy' | 'medium' | 'hard'> {
     // Mock implementation - replace with actual difficulty calculation
     return 'medium';
   }
@@ -611,7 +606,11 @@ export class MicroLearningService {
       : [`${topic} in academic research`, `${topic} applications in coursework`];
   }
 
-  private static generateProfessionalExamples(topic: string, careerContext: any, learningTrack: 'exam' | 'course_tech'): string[] {
+  private static generateProfessionalExamples(
+    topic: string,
+    careerContext: any,
+    learningTrack: 'exam' | 'course_tech'
+  ): string[] {
     const role = careerContext?.currentRole || 'professional';
     return learningTrack === 'exam'
       ? [`How ${topic} certification benefits ${role}`, `Industry applications of ${topic}`]
@@ -631,8 +630,8 @@ export class MicroLearningService {
         title: `${topic} Study Guide`,
         url: `#/study-guide/${topic}`,
         estimatedTime: 15,
-        difficulty: 'beginner' as const
-      }
+        difficulty: 'beginner' as const,
+      },
     ];
   }
 
@@ -643,8 +642,8 @@ export class MicroLearningService {
         title: `${topic} Professional Guide`,
         url: `#/professional-guide/${topic}`,
         estimatedTime: 20,
-        difficulty: 'intermediate' as const
-      }
+        difficulty: 'intermediate' as const,
+      },
     ];
   }
 
@@ -655,8 +654,8 @@ export class MicroLearningService {
         title: `${topic} Business Applications`,
         url: `#/business-guide/${topic}`,
         estimatedTime: 25,
-        difficulty: 'advanced' as const
-      }
+        difficulty: 'advanced' as const,
+      },
     ];
   }
 
@@ -670,8 +669,8 @@ export class MicroLearningService {
         difficulty: 'beginner' as const,
         skillsRequired: [topicId],
         template: `// TODO: Implement ${topicId}`,
-        deliverables: ['Working code', 'Documentation']
-      }
+        deliverables: ['Working code', 'Documentation'],
+      },
     ];
   }
 
@@ -683,8 +682,8 @@ export class MicroLearningService {
         title: `${topicId} User Interface`,
         requirements: [`Create UI for ${topicId}`, 'Responsive design', 'User-friendly interface'],
         estimatedHours: persona.type === 'working_professional' ? 2 : 3,
-        technologies: ['HTML', 'CSS', 'JavaScript']
-      }
+        technologies: ['HTML', 'CSS', 'JavaScript'],
+      },
     ];
   }
 }

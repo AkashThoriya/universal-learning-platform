@@ -1,18 +1,14 @@
 /**
  * @fileoverview Database Factory and Configuration
- * 
+ *
  * Factory for creating database providers and managing configurations
  * for different database backends.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import {
-  DatabaseProvider,
-  DatabaseFactory,
-  DatabaseConfig
-} from './interfaces';
+import { DatabaseProvider, DatabaseFactory, DatabaseConfig } from './interfaces';
 import { FirebaseDatabaseProvider } from './firebase-provider';
 
 /**
@@ -20,48 +16,31 @@ import { FirebaseDatabaseProvider } from './firebase-provider';
  */
 class ConfigValidator {
   static validateFirebaseConfig(config: any): boolean {
-    const required = [
-      'apiKey',
-      'authDomain', 
-      'projectId',
-      'storageBucket',
-      'messagingSenderId',
-      'appId'
-    ];
+    const required = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
 
-    return required.every(key => 
-      config.connection && 
-      typeof config.connection[key] === 'string' && 
-      config.connection[key].length > 0
+    return required.every(
+      key => config.connection && typeof config.connection[key] === 'string' && config.connection[key].length > 0
     );
   }
 
   static validatePostgreSQLConfig(config: any): boolean {
     const required = ['host', 'port', 'database', 'username', 'password'];
-    return required.every(key => 
-      config.connection && 
-      config.connection[key] !== undefined
-    );
+    return required.every(key => config.connection && config.connection[key] !== undefined);
   }
 
   static validateMongoDBConfig(config: any): boolean {
-    return config.connection && 
-           typeof config.connection.uri === 'string' && 
-           config.connection.uri.length > 0;
+    return config.connection && typeof config.connection.uri === 'string' && config.connection.uri.length > 0;
   }
 
   static validateSupabaseConfig(config: any): boolean {
     const required = ['url', 'anonKey'];
-    return required.every(key => 
-      config.connection && 
-      typeof config.connection[key] === 'string' && 
-      config.connection[key].length > 0
+    return required.every(
+      key => config.connection && typeof config.connection[key] === 'string' && config.connection[key].length > 0
     );
   }
 
   static validateSQLiteConfig(config: any): boolean {
-    return config.connection && 
-           typeof config.connection.path === 'string';
+    return config.connection && typeof config.connection.path === 'string';
   }
 }
 
@@ -83,7 +62,7 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
 
   createProvider(config: DatabaseConfig): DatabaseProvider {
     const providerId = this.generateProviderId(config);
-    
+
     // Return existing provider if already created
     if (this.providers.has(providerId)) {
       return this.providers.get(providerId)!;
@@ -101,30 +80,30 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
       case 'firebase':
         provider = new FirebaseDatabaseProvider();
         break;
-      
+
       case 'postgresql':
         provider = this.createPostgreSQLProvider(config);
         break;
-      
+
       case 'mongodb':
         provider = this.createMongoDBProvider(config);
         break;
-      
+
       case 'supabase':
         provider = this.createSupabaseProvider(config);
         break;
-      
+
       case 'sqlite':
         provider = this.createSQLiteProvider(config);
         break;
-      
+
       default:
         throw new Error(`Unsupported database provider: ${config.provider}`);
     }
 
     // Cache the provider
     this.providers.set(providerId, provider);
-    
+
     return provider;
   }
 
@@ -184,7 +163,7 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString();
@@ -206,17 +185,17 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
       caching: {
         enabled: true,
         defaultTTL: 300000, // 5 minutes
-        maxSize: 1000
+        maxSize: 1000,
       },
       offline: {
         enableOfflineWrite: true,
         conflictResolution: 'client',
-        syncStrategy: 'immediate'
+        syncStrategy: 'immediate',
       },
       performance: {
         enableMetrics: true,
-        slowQueryThreshold: 1000
-      }
+        slowQueryThreshold: 1000,
+      },
     };
   }
 
@@ -234,56 +213,49 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
       caching: {
         enabled: true,
         defaultTTL: 180000, // 3 minutes
-        maxSize: 500
+        maxSize: 500,
       },
       performance: {
         enableMetrics: true,
-        slowQueryThreshold: 2000
-      }
+        slowQueryThreshold: 2000,
+      },
     };
   }
 
-  createMongoDBConfig(connectionConfig: {
-    uri: string;
-    options?: any;
-  }): DatabaseConfig {
+  createMongoDBConfig(connectionConfig: { uri: string; options?: any }): DatabaseConfig {
     return {
       provider: 'mongodb',
       connection: connectionConfig,
       caching: {
         enabled: true,
         defaultTTL: 240000, // 4 minutes
-        maxSize: 750
+        maxSize: 750,
       },
       performance: {
         enableMetrics: true,
-        slowQueryThreshold: 1500
-      }
+        slowQueryThreshold: 1500,
+      },
     };
   }
 
-  createSupabaseConfig(connectionConfig: {
-    url: string;
-    anonKey: string;
-    serviceRoleKey?: string;
-  }): DatabaseConfig {
+  createSupabaseConfig(connectionConfig: { url: string; anonKey: string; serviceRoleKey?: string }): DatabaseConfig {
     return {
       provider: 'supabase',
       connection: connectionConfig,
       caching: {
         enabled: true,
         defaultTTL: 300000, // 5 minutes
-        maxSize: 1000
+        maxSize: 1000,
       },
       offline: {
         enableOfflineWrite: false, // Supabase handles this
         conflictResolution: 'server',
-        syncStrategy: 'batch'
+        syncStrategy: 'batch',
       },
       performance: {
         enableMetrics: true,
-        slowQueryThreshold: 1000
-      }
+        slowQueryThreshold: 1000,
+      },
     };
   }
 
@@ -319,7 +291,7 @@ export class DatabaseConfigHelper {
       'NEXT_PUBLIC_FIREBASE_PROJECT_ID',
       'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET',
       'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
-      'NEXT_PUBLIC_FIREBASE_APP_ID'
+      'NEXT_PUBLIC_FIREBASE_APP_ID',
     ];
 
     const missing = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -334,9 +306,9 @@ export class DatabaseConfigHelper {
       storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
       messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
       appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
-      ...(process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && { 
-        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID 
-      })
+      ...(process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && {
+        measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+      }),
     };
 
     return databaseFactory.createFirebaseConfig(config);
@@ -348,7 +320,7 @@ export class DatabaseConfigHelper {
       'DATABASE_PORT',
       'DATABASE_NAME',
       'DATABASE_USERNAME',
-      'DATABASE_PASSWORD'
+      'DATABASE_PASSWORD',
     ];
 
     const missing = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -362,13 +334,13 @@ export class DatabaseConfigHelper {
       database: process.env.DATABASE_NAME!,
       username: process.env.DATABASE_USERNAME!,
       password: process.env.DATABASE_PASSWORD!,
-      ssl: process.env.DATABASE_SSL === 'true'
+      ssl: process.env.DATABASE_SSL === 'true',
     });
   }
 
   static getConfigFromEnv(): DatabaseConfig {
     const provider = process.env.DATABASE_PROVIDER || 'firebase';
-    
+
     switch (provider) {
       case 'firebase':
         return this.getFirebaseConfigFromEnv();
@@ -394,7 +366,7 @@ export class DatabaseService {
 
   async initialize(): Promise<void> {
     await this.provider.connect();
-    
+
     if (this.config.offline?.enableOfflineWrite) {
       await this.provider.enableOffline(this.config.offline);
     }
@@ -411,11 +383,11 @@ export class DatabaseService {
   async switchProvider(newConfig: DatabaseConfig): Promise<void> {
     // Disconnect current provider
     await this.provider.disconnect();
-    
+
     // Create new provider
     this.config = newConfig;
     this.provider = databaseFactory.createProvider(newConfig);
-    
+
     // Initialize new provider
     await this.initialize();
   }
@@ -424,14 +396,14 @@ export class DatabaseService {
     // This would implement data migration between providers
     // For now, it's a placeholder
     console.log(`Migration from ${this.config.provider} to ${targetConfig.provider} started`);
-    
+
     // In real implementation:
     // 1. Export all data from current provider
     // 2. Transform data format if needed
     // 3. Import data to new provider
     // 4. Verify data integrity
     // 5. Switch to new provider
-    
+
     throw new Error('Migration not yet implemented');
   }
 
@@ -446,15 +418,15 @@ export class DatabaseService {
     performance: any;
   }> {
     const status = this.provider.getConnectionStatus();
-    
+
     return {
       provider: this.config.provider,
       connection: status,
       performance: {
         // Would include actual performance metrics
         cacheEnabled: this.config.caching?.enabled,
-        offlineEnabled: this.config.offline?.enableOfflineWrite
-      }
+        offlineEnabled: this.config.offline?.enableOfflineWrite,
+      },
     };
   }
 }

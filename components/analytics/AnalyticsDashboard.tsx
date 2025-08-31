@@ -34,7 +34,7 @@ import {
   Download,
   Share,
   Zap,
-  Activity
+  Activity,
 } from 'lucide-react';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
@@ -48,7 +48,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -59,7 +59,12 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { intelligentAnalyticsService, PerformanceAnalytics, WeakArea, AdaptiveRecommendation } from '@/lib/intelligent-analytics-service';
+import {
+  intelligentAnalyticsService,
+  PerformanceAnalytics,
+  WeakArea,
+  AdaptiveRecommendation,
+} from '@/lib/intelligent-analytics-service';
 import { logger } from '@/lib/logger';
 
 // UI Components
@@ -101,7 +106,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
     error: null,
     lastUpdated: null,
     selectedTimeRange: '30d',
-    selectedMetric: 'performance'
+    selectedMetric: 'performance',
   });
 
   // ============================================================================
@@ -109,7 +114,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   // ============================================================================
 
   useEffect(() => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     let unsubscribe: (() => void) | null = null;
 
@@ -121,7 +128,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         const [analytics, weakAreas, recommendations] = await Promise.all([
           intelligentAnalyticsService.getPerformanceAnalytics(user.uid),
           intelligentAnalyticsService.identifyWeakAreas(user.uid),
-          intelligentAnalyticsService.getImprovementRecommendations(user.uid, [])
+          intelligentAnalyticsService.getImprovementRecommendations(user.uid, []),
         ]);
 
         setState(prev => ({
@@ -130,20 +137,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           weakAreas,
           recommendations,
           isLoading: false,
-          lastUpdated: new Date()
+          lastUpdated: new Date(),
         }));
 
         // Subscribe to real-time updates
-        unsubscribe = intelligentAnalyticsService.subscribeToPerformanceUpdates(
-          user.uid,
-          (updatedAnalytics) => {
-            setState(prev => ({
-              ...prev,
-              analytics: updatedAnalytics,
-              lastUpdated: new Date()
-            }));
-          }
-        );
+        unsubscribe = intelligentAnalyticsService.subscribeToPerformanceUpdates(user.uid, updatedAnalytics => {
+          setState(prev => ({
+            ...prev,
+            analytics: updatedAnalytics,
+            lastUpdated: new Date(),
+          }));
+        });
 
         logger.info('Analytics dashboard loaded successfully', { userId: user.uid });
       } catch (error) {
@@ -151,7 +155,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         setState(prev => ({
           ...prev,
           isLoading: false,
-          error: 'Failed to load analytics data. Please try again.'
+          error: 'Failed to load analytics data. Please try again.',
         }));
       }
     };
@@ -170,31 +174,39 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   // ============================================================================
 
   const chartData = useMemo(() => {
-    if (!state.analytics) { return null; }
+    if (!state.analytics) {
+      return null;
+    }
 
     const { trends } = state.analytics;
-    const timeRangeData = state.selectedTimeRange === '7d' ? trends.daily.slice(-7) :
-                         state.selectedTimeRange === '30d' ? trends.daily.slice(-30) :
-                         state.selectedTimeRange === '90d' ? trends.weekly.slice(-12) :
-                         trends.monthly.slice(-12);
+    const timeRangeData =
+      state.selectedTimeRange === '7d'
+        ? trends.daily.slice(-7)
+        : state.selectedTimeRange === '30d'
+          ? trends.daily.slice(-30)
+          : state.selectedTimeRange === '90d'
+            ? trends.weekly.slice(-12)
+            : trends.monthly.slice(-12);
 
     return {
       performance: timeRangeData.map(trend => ({
         date: trend.date.toDate().toLocaleDateString(),
         examScore: trend.examScore,
         courseProgress: trend.courseProgress,
-        efficiency: trend.efficiency
+        efficiency: trend.efficiency,
       })),
       distribution: [
         { name: 'Exam Studies', value: state.analytics.examPerformance.totalMockTests, color: '#3b82f6' },
         { name: 'Course Work', value: state.analytics.coursePerformance.totalAssignments, color: '#10b981' },
-        { name: 'Cross-Track', value: state.analytics.crossTrackInsights.learningTransfer.length, color: '#f59e0b' }
-      ]
+        { name: 'Cross-Track', value: state.analytics.crossTrackInsights.learningTransfer.length, color: '#f59e0b' },
+      ],
     };
   }, [state.analytics, state.selectedTimeRange]);
 
   const performanceMetrics = useMemo(() => {
-    if (!state.analytics) { return null; }
+    if (!state.analytics) {
+      return null;
+    }
 
     const { examPerformance, coursePerformance, predictions } = state.analytics;
 
@@ -202,18 +214,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       examSuccess: {
         current: examPerformance.averageScore,
         trend: examPerformance.scoreImprovement,
-        predicted: predictions.examSuccessProbability
+        predicted: predictions.examSuccessProbability,
       },
       courseSuccess: {
         current: coursePerformance.completionRate,
         trend: coursePerformance.projectSuccessRate - coursePerformance.completionRate,
-        predicted: coursePerformance.projectSuccessRate
+        predicted: coursePerformance.projectSuccessRate,
       },
       efficiency: {
         current: Math.round((examPerformance.revisionEffectiveness + coursePerformance.codingEfficiency) / 2),
         trend: 5.2, // Calculate from historical data
-        predicted: 85
-      }
+        predicted: 85,
+      },
     };
   }, [state.analytics]);
 
@@ -222,7 +234,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
   // ============================================================================
 
   const handleRefreshData = async () => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     setState(prev => ({ ...prev, isLoading: true }));
 
@@ -232,7 +246,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         ...prev,
         analytics,
         isLoading: false,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       }));
     } catch (_error) {
       setState(prev => ({ ...prev, isLoading: false }));
@@ -296,12 +310,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           <AlertTitle>Analytics Error</AlertTitle>
           <AlertDescription>
             {state.error}
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-2"
-              onClick={handleRefreshData}
-            >
+            <Button variant="outline" size="sm" className="mt-2" onClick={handleRefreshData}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Try Again
             </Button>
@@ -337,18 +346,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">
-            Comprehensive insights across your exam and course learning journey
-          </p>
+          <p className="text-muted-foreground">Comprehensive insights across your exam and course learning journey</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefreshData}
-            disabled={state.isLoading}
-          >
+          <Button variant="outline" size="sm" onClick={handleRefreshData} disabled={state.isLoading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${state.isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
@@ -368,16 +370,14 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       {/* Time Range Selector */}
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium">Time Range:</span>
-        {(['7d', '30d', '90d', '1y'] as const).map((range) => (
+        {(['7d', '30d', '90d', '1y'] as const).map(range => (
           <Button
             key={range}
             variant={state.selectedTimeRange === range ? 'default' : 'outline'}
             size="sm"
             onClick={() => handleTimeRangeChange(range)}
           >
-            {range === '7d' ? '7 Days' :
-             range === '30d' ? '30 Days' :
-             range === '90d' ? '90 Days' : '1 Year'}
+            {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : '1 Year'}
           </Button>
         ))}
       </div>
@@ -426,7 +426,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       </div>
 
       {/* Main Analytics Tabs */}
-      <Tabs value={state.selectedMetric} onValueChange={(value) => handleMetricChange(value as any)}>
+      <Tabs value={state.selectedMetric} onValueChange={value => handleMetricChange(value as any)}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="efficiency">Efficiency</TabsTrigger>
@@ -444,9 +444,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
                   <Activity className="h-5 w-5" />
                   Performance Trends
                 </CardTitle>
-                <CardDescription>
-                  Track your progress across exam and course learning
-                </CardDescription>
+                <CardDescription>Track your progress across exam and course learning</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -470,9 +468,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
                   <PieChart className="h-5 w-5" />
                   Learning Distribution
                 </CardTitle>
-                <CardDescription>
-                  Time allocation across different learning activities
-                </CardDescription>
+                <CardDescription>Time allocation across different learning activities</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -553,26 +549,25 @@ const PerformanceMetricCard: React.FC<PerformanceMetricCardProps> = ({
   trend,
   predicted,
   icon,
-  color
+  color,
 }) => {
   const colorClasses = {
     blue: 'text-blue-600 bg-blue-50 border-blue-200',
     green: 'text-green-600 bg-green-50 border-green-200',
     orange: 'text-orange-600 bg-orange-50 border-orange-200',
-    purple: 'text-purple-600 bg-purple-50 border-purple-200'
+    purple: 'text-purple-600 bg-purple-50 border-purple-200',
   };
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div className={`p-2 rounded-full ${colorClasses[color]}`}>
-          {icon}
-        </div>
+        <div className={`p-2 rounded-full ${colorClasses[color]}`}>{icon}</div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">
-          {value.toFixed(1)}{unit}
+          {value.toFixed(1)}
+          {unit}
         </div>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {trend > 0 ? (
@@ -607,23 +602,17 @@ const EfficiencyAnalytics: React.FC<AnalyticsComponentProps> = ({ analytics }) =
     <Card>
       <CardHeader>
         <CardTitle>Learning Efficiency Analysis</CardTitle>
-        <CardDescription>
-          Optimize your study methods for maximum effectiveness
-        </CardDescription>
+        <CardDescription>Optimize your study methods for maximum effectiveness</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
-                {analytics.examPerformance.revisionEffectiveness}%
-              </div>
+              <div className="text-2xl font-bold text-blue-600">{analytics.examPerformance.revisionEffectiveness}%</div>
               <div className="text-sm text-blue-700">Revision Effectiveness</div>
             </div>
             <div className="text-center p-4 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
-                {analytics.coursePerformance.codingEfficiency}%
-              </div>
+              <div className="text-2xl font-bold text-green-600">{analytics.coursePerformance.codingEfficiency}%</div>
               <div className="text-sm text-green-700">Coding Efficiency</div>
             </div>
           </div>
@@ -638,9 +627,7 @@ const ProgressAnalytics: React.FC<AnalyticsComponentProps> = ({ analytics }) => 
     <Card>
       <CardHeader>
         <CardTitle>Progress Tracking</CardTitle>
-        <CardDescription>
-          Monitor your advancement across all learning tracks
-        </CardDescription>
+        <CardDescription>Monitor your advancement across all learning tracks</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -669,17 +656,13 @@ const PredictiveAnalytics: React.FC<AnalyticsComponentProps> = ({ analytics }) =
     <Card>
       <CardHeader>
         <CardTitle>Success Predictions</CardTitle>
-        <CardDescription>
-          AI-powered forecasts for your learning outcomes
-        </CardDescription>
+        <CardDescription>AI-powered forecasts for your learning outcomes</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
             <div className="text-lg font-semibold">Exam Success Probability</div>
-            <div className="text-3xl font-bold text-blue-600">
-              {analytics.predictions.examSuccessProbability}%
-            </div>
+            <div className="text-3xl font-bold text-blue-600">{analytics.predictions.examSuccessProbability}%</div>
           </div>
         </div>
       </CardContent>
@@ -703,9 +686,7 @@ const WeakAreasSection: React.FC<WeakAreasSectionProps> = ({ weakAreas }) => {
           <AlertTriangle className="h-5 w-5 text-orange-500" />
           Areas for Improvement
         </CardTitle>
-        <CardDescription>
-          Focus on these areas to maximize your learning progress
-        </CardDescription>
+        <CardDescription>Focus on these areas to maximize your learning progress</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -716,9 +697,7 @@ const WeakAreasSection: React.FC<WeakAreasSectionProps> = ({ weakAreas }) => {
                 <div className="text-sm text-muted-foreground">{area.subjectName}</div>
               </div>
               <div className="text-right">
-                <div className="font-semibold text-orange-600">
-                  {area.weaknessScore}% weak
-                </div>
+                <div className="font-semibold text-orange-600">{area.weaknessScore}% weak</div>
                 <Badge variant={area.trendDirection === 'improving' ? 'default' : 'destructive'}>
                   {area.trendDirection}
                 </Badge>
@@ -743,9 +722,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({ recomme
           <Lightbulb className="h-5 w-5 text-yellow-500" />
           AI Recommendations
         </CardTitle>
-        <CardDescription>
-          Personalized suggestions to enhance your learning
-        </CardDescription>
+        <CardDescription>Personalized suggestions to enhance your learning</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
@@ -754,17 +731,13 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({ recomme
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="font-medium">{recommendation.recommendation}</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {recommendation.reasoning}
-                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">{recommendation.reasoning}</div>
                 </div>
                 <Badge variant={recommendation.priority === 'high' ? 'destructive' : 'secondary'}>
                   {recommendation.priority}
                 </Badge>
               </div>
-              <div className="mt-2 text-sm text-green-600">
-                Expected impact: {recommendation.expectedImpact}
-              </div>
+              <div className="mt-2 text-sm text-green-600">Expected impact: {recommendation.expectedImpact}</div>
             </div>
           ))}
         </div>
@@ -789,9 +762,7 @@ const CrossTrackInsights: React.FC<CrossTrackInsightsProps> = ({ insights }) => 
           <Brain className="h-5 w-5 text-purple-500" />
           Cross-Track Learning Insights
         </CardTitle>
-        <CardDescription>
-          Discover how your exam and course learning complement each other
-        </CardDescription>
+        <CardDescription>Discover how your exam and course learning complement each other</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -817,9 +788,7 @@ const CrossTrackInsights: React.FC<CrossTrackInsightsProps> = ({ insights }) => 
                   <div className="text-sm font-medium">
                     {synergy.examSkill} ↔ {synergy.techSkill}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Synergy: {synergy.synergyStrength}%
-                  </div>
+                  <div className="text-xs text-muted-foreground">Synergy: {synergy.synergyStrength}%</div>
                 </div>
               ))}
             </div>

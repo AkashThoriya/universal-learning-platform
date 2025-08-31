@@ -9,7 +9,13 @@
  * @version 1.0.0
  */
 
-import { Result, createSuccess as _createSuccess, createError as _createError, LoadingState as _LoadingState, PaginationState as _PaginationState } from './types-utils';
+import {
+  Result,
+  createSuccess as _createSuccess,
+  createError as _createError,
+  LoadingState as _LoadingState,
+  PaginationState as _PaginationState,
+} from './types-utils';
 
 type AsyncResult<T> = Promise<Result<T>>;
 
@@ -77,7 +83,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
       cacheEnabled: false,
       retryAttempts: 3,
       timeout: 5000,
-      ...config
+      ...config,
     };
   }
 
@@ -102,10 +108,14 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
    * Get cached data if available and valid
    */
   protected getFromCache<U>(key: string, maxAge = 300000): U | null {
-    if (!this.config.cacheEnabled) { return null; }
+    if (!this.config.cacheEnabled) {
+      return null;
+    }
 
     const cached = this.cache.get(key);
-    if (!cached) { return null; }
+    if (!cached) {
+      return null;
+    }
 
     const age = Date.now() - cached.timestamp;
     if (age > maxAge) {
@@ -120,11 +130,13 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
    * Store data in cache
    */
   protected setCache(key: string, data: any): void {
-    if (!this.config.cacheEnabled) { return; }
+    if (!this.config.cacheEnabled) {
+      return;
+    }
 
     this.cache.set(key, {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -354,10 +366,9 @@ export class PerformanceMonitor {
         console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
       });
     }
-      const duration = this.end(label);
-      console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
-      return result;
-
+    const duration = this.end(label);
+    console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+    return result;
   }
 }
 

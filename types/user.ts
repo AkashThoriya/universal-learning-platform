@@ -41,7 +41,7 @@ export type {
   DailyLog as EnhancedDailyLog,
   MockTestLog,
   StudyInsight,
-  RevisionItem
+  RevisionItem,
 } from './exam';
 
 /**

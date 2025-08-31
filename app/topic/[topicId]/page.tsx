@@ -40,7 +40,9 @@ export default function TopicPage() {
 
   useEffect(() => {
     const fetchProgress = async () => {
-      if (!user || !topicId) { return; }
+      if (!user || !topicId) {
+        return;
+      }
 
       try {
         const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
@@ -67,7 +69,7 @@ export default function TopicPage() {
             difficulty: 3,
             importance: 3,
             lastScoreImprovement: 0,
-            currentAffairs: []
+            currentAffairs: [],
           };
           setUserProgress(initialProgress);
         }
@@ -82,7 +84,9 @@ export default function TopicPage() {
   }, [user, topicId]);
 
   const handleSave = async () => {
-    if (!user || !userProgress) { return; }
+    if (!user || !userProgress) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -90,7 +94,7 @@ export default function TopicPage() {
         ...userProgress,
         userNotes,
         userBankingContext,
-        lastRevised: Timestamp.now()
+        lastRevised: Timestamp.now(),
       };
 
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
@@ -103,16 +107,18 @@ export default function TopicPage() {
   };
 
   const handleAddCurrentAffair = async () => {
-    if (!user || !userProgress || !newCurrentAffair.trim()) { return; }
+    if (!user || !userProgress || !newCurrentAffair.trim()) {
+      return;
+    }
 
     const newAffair = {
       date: Timestamp.now(),
-      note: newCurrentAffair.trim()
+      note: newCurrentAffair.trim(),
     };
 
     const updatedProgress = {
       ...userProgress,
-      currentAffairs: [...(userProgress.currentAffairs || []), newAffair]
+      currentAffairs: [...(userProgress.currentAffairs || []), newAffair],
     };
 
     try {
@@ -125,12 +131,14 @@ export default function TopicPage() {
   };
 
   const handleMarkRevised = async () => {
-    if (!user || !userProgress) { return; }
+    if (!user || !userProgress) {
+      return;
+    }
 
     const updatedProgress = {
       ...userProgress,
       lastRevised: Timestamp.now(),
-      masteryScore: Math.min(userProgress.masteryScore + 10, 100)
+      masteryScore: Math.min(userProgress.masteryScore + 10, 100),
     };
 
     try {
@@ -193,17 +201,15 @@ export default function TopicPage() {
                       userProgress.masteryScore >= 80
                         ? 'bg-green-100 text-green-800'
                         : userProgress.masteryScore >= 50
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
                     }
                   >
                     Mastery: {userProgress.masteryScore}%
                   </Badge>
                 )}
                 {userProgress?.lastRevised && (
-                  <Badge variant="secondary">
-                    Last revised: {format(userProgress.lastRevised.toDate(), 'MMM dd')}
-                  </Badge>
+                  <Badge variant="secondary">Last revised: {format(userProgress.lastRevised.toDate(), 'MMM dd')}</Badge>
                 )}
               </div>
             </div>
@@ -216,9 +222,7 @@ export default function TopicPage() {
                 <Building2 className="h-5 w-5 text-yellow-600" />
                 <span className="text-yellow-900">Banking Context</span>
               </CardTitle>
-              <CardDescription className="text-yellow-700">
-                Why this topic matters in banking IT
-              </CardDescription>
+              <CardDescription className="text-yellow-700">Why this topic matters in banking IT</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-white p-4 rounded-lg border border-yellow-200">
@@ -226,12 +230,10 @@ export default function TopicPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-yellow-900">
-                  Your Personal Banking Context Notes
-                </label>
+                <label className="text-sm font-medium text-yellow-900">Your Personal Banking Context Notes</label>
                 <Textarea
                   value={userBankingContext}
-                  onChange={(e) => setUserBankingContext(e.target.value)}
+                  onChange={e => setUserBankingContext(e.target.value)}
                   placeholder="Add your own insights about how this topic applies to banking scenarios..."
                   rows={3}
                   className="bg-white border-yellow-200 focus:border-yellow-400"
@@ -247,14 +249,12 @@ export default function TopicPage() {
                 <BookOpen className="h-5 w-5 text-blue-600" />
                 <span>Study Notes</span>
               </CardTitle>
-              <CardDescription>
-                Your personal notes and key points for this topic
-              </CardDescription>
+              <CardDescription>Your personal notes and key points for this topic</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
                 value={userNotes}
-                onChange={(e) => setUserNotes(e.target.value)}
+                onChange={e => setUserNotes(e.target.value)}
                 placeholder="Add your study notes, important formulas, key concepts, practice questions..."
                 rows={8}
                 className="mb-4"
@@ -279,22 +279,17 @@ export default function TopicPage() {
                 <Calendar className="h-5 w-5 text-green-600" />
                 <span>Current Affairs & Updates</span>
               </CardTitle>
-              <CardDescription>
-                Latest banking news and updates related to this topic
-              </CardDescription>
+              <CardDescription>Latest banking news and updates related to this topic</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex space-x-2">
                 <Input
                   value={newCurrentAffair}
-                  onChange={(e) => setNewCurrentAffair(e.target.value)}
+                  onChange={e => setNewCurrentAffair(e.target.value)}
                   placeholder="Add a current affairs note..."
                   className="flex-1"
                 />
-                <Button
-                  onClick={handleAddCurrentAffair}
-                  disabled={!newCurrentAffair.trim()}
-                >
+                <Button onClick={handleAddCurrentAffair} disabled={!newCurrentAffair.trim()}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add
                 </Button>
@@ -342,7 +337,7 @@ export default function TopicPage() {
                     topicId,
                     track: 'exam' as const,
                     duration: 15,
-                    difficulty: 'intermediate' as const
+                    difficulty: 'intermediate' as const,
                   },
                   {
                     title: `${topic?.name} - Practical Application`,
@@ -351,8 +346,8 @@ export default function TopicPage() {
                     topicId,
                     track: 'course_tech' as const,
                     duration: 20,
-                    difficulty: 'advanced' as const
-                  }
+                    difficulty: 'advanced' as const,
+                  },
                 ]}
                 onStartSession={(subjectId, topicId, track, duration) => {
                   window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;

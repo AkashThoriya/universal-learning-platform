@@ -25,18 +25,10 @@ import {
   writeBatch,
   onSnapshot,
   QuerySnapshot as _QuerySnapshot,
-  DocumentData as _DocumentData
+  DocumentData as _DocumentData,
 } from 'firebase/firestore';
 
-import {
-  User,
-  SyllabusSubject,
-  TopicProgress,
-  DailyLog,
-  MockTestLog,
-  RevisionItem,
-  StudyInsight
-} from '@/types/exam';
+import { User, SyllabusSubject, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
 
 import { db } from './firebase';
 
@@ -70,8 +62,8 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
       totalMockTests: 0,
       averageScore: 0,
       topicsCompleted: 0,
-      totalTopics: 0
-    }
+      totalTopics: 0,
+    },
   });
 };
 
@@ -175,7 +167,7 @@ export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> =>
 
   return syllabusSnap.docs.map(doc => ({
     id: doc.id,
-    ...doc.data()
+    ...doc.data(),
   })) as SyllabusSubject[];
 };
 
@@ -199,11 +191,7 @@ export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> =>
  * });
  * ```
  */
-export const updateTopicProgress = async (
-  userId: string,
-  topicId: string,
-  updates: Partial<TopicProgress>
-) => {
+export const updateTopicProgress = async (userId: string, topicId: string, updates: Partial<TopicProgress>) => {
   const progressRef = doc(db, 'users', userId, 'progress', topicId);
   const progressSnap = await getDoc(progressRef);
 
@@ -225,7 +213,7 @@ export const updateTopicProgress = async (
       difficulty: 3,
       importance: 3,
       lastScoreImprovement: 0,
-      ...updates
+      ...updates,
     });
   }
 };
@@ -273,7 +261,7 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
 
   return progressSnap.docs.map(doc => ({
     id: doc.id,
-    ...doc.data()
+    ...doc.data(),
   })) as TopicProgress[];
 };
 
@@ -319,7 +307,13 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
     );
 
     let priority: 'overdue' | 'due_today' | 'due_soon' | 'scheduled' = 'scheduled';
-    if (daysSinceLastRevision > 1) { priority = 'overdue'; } else if (daysSinceLastRevision === 1) { priority = 'due_today'; } else { priority = 'due_soon'; }
+    if (daysSinceLastRevision > 1) {
+      priority = 'overdue';
+    } else if (daysSinceLastRevision === 1) {
+      priority = 'due_today';
+    } else {
+      priority = 'due_soon';
+    }
 
     return {
       topicId: progress.topicId,
@@ -331,7 +325,7 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
       priority,
       estimatedTime: topic?.estimatedHours ? topic.estimatedHours * 60 : 30,
       lastRevised: progress.lastRevised,
-      nextRevision: progress.nextRevision
+      nextRevision: progress.nextRevision,
     } as RevisionItem;
   });
 };
@@ -413,16 +407,12 @@ export const getDailyLog = async (userId: string, date: string): Promise<DailyLo
  */
 export const getRecentDailyLogs = async (userId: string, days = 30): Promise<DailyLog[]> => {
   const logsRef = collection(db, 'users', userId, 'logs_daily');
-  const logsQuery = query(
-    logsRef,
-    orderBy('date', 'desc'),
-    limit(days)
-  );
+  const logsQuery = query(logsRef, orderBy('date', 'desc'), limit(days));
 
   const logsSnap = await getDocs(logsQuery);
   return logsSnap.docs.map(doc => ({
     id: doc.id,
-    ...doc.data()
+    ...doc.data(),
   })) as DailyLog[];
 };
 
@@ -479,16 +469,12 @@ export const saveMockTest = async (userId: string, test: MockTestLog) => {
  */
 export const getMockTests = async (userId: string, limitCount = 10): Promise<MockTestLog[]> => {
   const testsRef = collection(db, 'users', userId, 'logs_mocks');
-  const testsQuery = query(
-    testsRef,
-    orderBy('date', 'desc'),
-    limit(limitCount)
-  );
+  const testsQuery = query(testsRef, orderBy('date', 'desc'), limit(limitCount));
 
   const testsSnap = await getDocs(testsQuery);
   return testsSnap.docs.map(doc => ({
     id: doc.id,
-    ...doc.data()
+    ...doc.data(),
   })) as MockTestLog[];
 };
 
@@ -522,11 +508,12 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
   // Health-Performance Correlation Analysis
   if (recentLogs.length >= 7 && recentTests.length >= 2) {
     const avgEnergy = recentLogs.reduce((sum, log) => sum + log.health.energy, 0) / recentLogs.length;
-    const avgScore = recentTests.reduce((sum, test) => {
-      const totalScore = Object.values(test.scores).reduce((s, score) => s + score, 0);
-      const maxScore = Object.values(test.maxScores).reduce((s, score) => s + score, 0);
-      return sum + (totalScore / maxScore) * 100;
-    }, 0) / recentTests.length;
+    const avgScore =
+      recentTests.reduce((sum, test) => {
+        const totalScore = Object.values(test.scores).reduce((s, score) => s + score, 0);
+        const maxScore = Object.values(test.maxScores).reduce((s, score) => s + score, 0);
+        return sum + (totalScore / maxScore) * 100;
+      }, 0) / recentTests.length;
 
     if (avgEnergy < 6 && avgScore < 70) {
       insights.push({
@@ -536,10 +523,10 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
         actionItems: [
           'Maintain 7-8 hours of sleep daily',
           'Take regular breaks during study sessions',
-          'Include physical exercise in your routine'
+          'Include physical exercise in your routine',
         ],
         priority: 'high',
-        category: 'health'
+        category: 'health',
       });
     }
   }
@@ -551,13 +538,9 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
       type: 'warning',
       title: 'Inconsistent Study Pattern',
       description: `You've studied on only ${studyDays} out of ${recentLogs.length} days. Consistency is key for retention.`,
-      actionItems: [
-        'Set a minimum daily study goal',
-        'Use study reminders',
-        'Plan buffer days for flexibility'
-      ],
+      actionItems: ['Set a minimum daily study goal', 'Use study reminders', 'Plan buffer days for flexibility'],
       priority: 'high',
-      category: 'strategy'
+      category: 'strategy',
     });
   }
 
@@ -575,7 +558,7 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
       actionItems: weakTopics.map(topic => `Prioritize revision for ${topic.topicId}`),
       priority: 'medium',
       category: 'performance',
-      data: { weakTopics }
+      data: { weakTopics },
     });
   }
 
@@ -585,7 +568,9 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
 // Helper Functions
 const updateUserStats = async (userId: string, log: DailyLog) => {
   const user = await getUser(userId);
-  if (!user) { return; }
+  if (!user) {
+    return;
+  }
 
   // Initialize stats if they don't exist
   const defaultStats = {
@@ -595,13 +580,13 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     totalMockTests: 0,
     averageScore: 0,
     topicsCompleted: 0,
-    totalTopics: 0
+    totalTopics: 0,
   };
 
   const currentStats = user.stats || defaultStats;
 
   const totalMinutes = log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0);
-  const totalHours = currentStats.totalStudyHours + (totalMinutes / 60);
+  const totalHours = currentStats.totalStudyHours + totalMinutes / 60;
 
   // Calculate streak
   const yesterday = new Date();
@@ -627,8 +612,8 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
       ...currentStats,
       totalStudyHours: totalHours,
       currentStreak,
-      longestStreak
-    }
+      longestStreak,
+    },
   });
 };
 
@@ -644,17 +629,14 @@ const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog) =>
 
       await updateTopicProgress(userId, topicPerf.topicId, {
         masteryScore: newMasteryScore,
-        lastScoreImprovement: improvementFactor
+        lastScoreImprovement: improvementFactor,
       });
     }
   }
 };
 
 // Real-time subscriptions
-export const subscribeToRevisionQueue = (
-  userId: string,
-  callback: (items: RevisionItem[]) => void
-) => {
+export const subscribeToRevisionQueue = (userId: string, callback: (items: RevisionItem[]) => void) => {
   const progressRef = collection(db, 'users', userId, 'progress');
   const today = Timestamp.now();
 
@@ -665,7 +647,7 @@ export const subscribeToRevisionQueue = (
     limit(20)
   );
 
-  return onSnapshot(revisionQuery, async (snapshot) => {
+  return onSnapshot(revisionQuery, async snapshot => {
     const syllabus = await getSyllabus(userId);
     const items = snapshot.docs.map(doc => {
       const progress = doc.data() as TopicProgress;
@@ -677,7 +659,13 @@ export const subscribeToRevisionQueue = (
       );
 
       let priority: 'overdue' | 'due_today' | 'due_soon' | 'scheduled' = 'scheduled';
-      if (daysSinceLastRevision > 1) { priority = 'overdue'; } else if (daysSinceLastRevision === 1) { priority = 'due_today'; } else { priority = 'due_soon'; }
+      if (daysSinceLastRevision > 1) {
+        priority = 'overdue';
+      } else if (daysSinceLastRevision === 1) {
+        priority = 'due_today';
+      } else {
+        priority = 'due_soon';
+      }
 
       return {
         topicId: progress.topicId,
@@ -689,7 +677,7 @@ export const subscribeToRevisionQueue = (
         priority,
         estimatedTime: topic?.estimatedHours ? topic.estimatedHours * 60 : 30,
         lastRevised: progress.lastRevised,
-        nextRevision: progress.nextRevision
+        nextRevision: progress.nextRevision,
       } as RevisionItem;
     });
 
@@ -697,13 +685,10 @@ export const subscribeToRevisionQueue = (
   });
 };
 
-export const subscribeToUserStats = (
-  userId: string,
-  callback: (user: User) => void
-) => {
+export const subscribeToUserStats = (userId: string, callback: (user: User) => void) => {
   const userRef = doc(db, 'users', userId);
 
-  return onSnapshot(userRef, (doc) => {
+  return onSnapshot(userRef, doc => {
     if (doc.exists()) {
       callback({ userId, ...doc.data() } as User);
     }

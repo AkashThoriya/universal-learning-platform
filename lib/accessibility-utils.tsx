@@ -24,7 +24,9 @@ export function useFocusTrap(isActive = true) {
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) { return; }
+    if (!isActive || !containerRef.current) {
+      return;
+    }
 
     const container = containerRef.current;
     const focusableElements = container.querySelectorAll(
@@ -40,7 +42,9 @@ export function useFocusTrap(isActive = true) {
     }
 
     const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') { return; }
+      if (e.key !== 'Tab') {
+        return;
+      }
 
       if (e.shiftKey) {
         // Shift + Tab
@@ -103,19 +107,14 @@ export function SkipToContent({ targetId }: { targetId: string }) {
 export function LiveRegion({
   children,
   politeness = 'polite' as 'polite' | 'assertive',
-  atomic = false
+  atomic = false,
 }: {
   children: React.ReactNode;
   politeness?: 'polite' | 'assertive';
   atomic?: boolean;
 }) {
   return (
-    <div
-      role="status"
-      aria-live={politeness}
-      aria-atomic={atomic}
-      className="sr-only"
-    >
+    <div role="status" aria-live={politeness} aria-atomic={atomic} className="sr-only">
       {children}
     </div>
   );
@@ -132,11 +131,7 @@ export function useScreenReader() {
     setTimeout(() => setAnnouncement(message), 100);
   }, []);
 
-  const AnnouncementRegion = () => (
-    <LiveRegion politeness="polite">
-      {announcement}
-    </LiveRegion>
-  );
+  const AnnouncementRegion = () => <LiveRegion politeness="polite">{announcement}</LiveRegion>;
 
   return { announce, AnnouncementRegion };
 }
@@ -174,18 +169,19 @@ export function AccessibleButton({
     }
   };
 
-  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseClasses =
+    'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
 
   const variantClasses = {
     primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
     secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
+    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
 
   const sizeClasses = {
     small: 'px-3 py-1.5 text-sm',
     medium: 'px-4 py-2 text-sm',
-    large: 'px-6 py-3 text-base'
+    large: 'px-6 py-3 text-base',
   };
 
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
@@ -214,7 +210,9 @@ export function useKeyboardNavigation(itemCount: number, isActive = true) {
   const listRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!isActive || !listRef.current) { return; }
+    if (!isActive || !listRef.current) {
+      return;
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -284,26 +282,24 @@ export function AccessibleFormField({
 }) {
   const errorId = `${id}-error`;
   const helpId = `${id}-help`;
-  const describedBy = [
-    error ? errorId : null,
-    helpText ? helpId : null
-  ].filter(Boolean).join(' ');
+  const describedBy = [error ? errorId : null, helpText ? helpId : null].filter(Boolean).join(' ');
 
   return (
     <div className="space-y-1">
-      <label
-        htmlFor={id}
-        className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}
-      >
+      <label htmlFor={id} className={`block text-sm font-medium ${disabled ? 'text-gray-400' : 'text-gray-700'}`}>
         {label}
-        {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+        {required && (
+          <span className="text-red-500 ml-1" aria-label="required">
+            *
+          </span>
+        )}
       </label>
 
       <input
         id={id}
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={e => onChange(e.target.value)}
         disabled={disabled}
         required={required}
         placeholder={placeholder}
@@ -400,7 +396,9 @@ export function useReducedMotion(): boolean {
  */
 export function AccessibilityChecker({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') { return; }
+    if (process.env.NODE_ENV !== 'development') {
+      return;
+    }
 
     // Check for missing alt text on images
     const images = document.querySelectorAll('img:not([alt])');

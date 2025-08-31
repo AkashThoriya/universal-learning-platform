@@ -34,7 +34,7 @@ const logger = {
     if (process.env.NODE_ENV === 'development') {
       console.info(message, data);
     }
-  }
+  },
 };
 
 // ============================================================================
@@ -80,11 +80,7 @@ class ErrorReporter {
     return ErrorReporter.instance;
   }
 
-  async reportError(
-    error: Error,
-    errorInfo: ErrorInfo,
-    context: Record<string, any> = {}
-  ): Promise<string> {
+  async reportError(error: Error, errorInfo: ErrorInfo, context: Record<string, any> = {}): Promise<string> {
     const errorId = this.generateErrorId(error);
 
     // Prevent duplicate reporting
@@ -105,7 +101,7 @@ class ErrorReporter {
       userId: context.userId || 'anonymous',
       sessionId: context.sessionId || 'unknown',
       buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION || 'unknown',
-      ...context
+      ...context,
     };
 
     try {
@@ -126,9 +122,9 @@ class ErrorReporter {
         await fetch(process.env.NEXT_PUBLIC_ERROR_REPORTING_ENDPOINT, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(errorData)
+          body: JSON.stringify(errorData),
         });
       }
 
@@ -165,14 +161,14 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       errorInfo: null,
       errorId: null,
       retryCount: 0,
-      isReporting: false
+      isReporting: false,
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
@@ -186,13 +182,13 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
     try {
       const errorId = await this.errorReporter.reportError(error, errorInfo, {
         level: this.props.level || 'global',
-        retryCount: this.state.retryCount
+        retryCount: this.state.retryCount,
       });
 
       this.setState({
         errorInfo,
         errorId,
-        isReporting: false
+        isReporting: false,
       });
 
       // Call custom error handler
@@ -209,23 +205,18 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
   }
 
   private isRecoverableError(error: Error): boolean {
-    const recoverablePatterns = [
-      /ChunkLoadError/,
-      /Loading chunk/,
-      /Failed to fetch/,
-      /NetworkError/,
-      /TimeoutError/
-    ];
+    const recoverablePatterns = [/ChunkLoadError/, /Loading chunk/, /Failed to fetch/, /NetworkError/, /TimeoutError/];
 
-    return recoverablePatterns.some(pattern =>
-      pattern.test(error.message) || pattern.test(error.name)
-    );
+    return recoverablePatterns.some(pattern => pattern.test(error.message) || pattern.test(error.name));
   }
 
   private scheduleRetry() {
-    this.retryTimeout = setTimeout(() => {
-      this.handleRetry();
-    }, Math.min(1000 * Math.pow(2, this.state.retryCount), 10000)); // Exponential backoff, max 10s
+    this.retryTimeout = setTimeout(
+      () => {
+        this.handleRetry();
+      },
+      Math.min(1000 * Math.pow(2, this.state.retryCount), 10000)
+    ); // Exponential backoff, max 10s
   }
 
   private handleRetry = () => {
@@ -235,7 +226,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       errorInfo: null,
       errorId: null,
       retryCount: prevState.retryCount + 1,
-      isReporting: false
+      isReporting: false,
     }));
   };
 
@@ -269,11 +260,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
     if (this.state.hasError && this.state.error) {
       // Use custom fallback if provided
       if (this.props.fallback) {
-        return this.props.fallback(
-          this.state.error,
-          this.state.errorInfo!,
-          this.handleManualRetry
-        );
+        return this.props.fallback(this.state.error, this.state.errorInfo!, this.handleManualRetry);
       }
 
       // Default error UI
@@ -290,9 +277,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
 
               {/* Error Title */}
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Oops! Something went wrong
-                </h1>
+                <h1 className="text-xl font-semibold text-gray-900">Oops! Something went wrong</h1>
                 <p className="text-gray-600 mt-2">
                   We encountered an unexpected error. Don't worry, we've been notified and are working on a fix.
                 </p>
@@ -317,9 +302,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
               {/* Reporting Status */}
               {this.state.isReporting && (
                 <Alert>
-                  <AlertDescription>
-                    Reporting error... Please wait.
-                  </AlertDescription>
+                  <AlertDescription>Reporting error... Please wait.</AlertDescription>
                 </Alert>
               )}
 
@@ -334,20 +317,12 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
                   Try Again
                 </Button>
 
-                <Button
-                  variant="outline"
-                  onClick={this.handleGoHome}
-                  className="flex items-center gap-2"
-                >
+                <Button variant="outline" onClick={this.handleGoHome} className="flex items-center gap-2">
                   <Home className="h-4 w-4" />
                   Go to Dashboard
                 </Button>
 
-                <Button
-                  variant="outline"
-                  onClick={this.handleReload}
-                  className="flex items-center gap-2"
-                >
+                <Button variant="outline" onClick={this.handleReload} className="flex items-center gap-2">
                   <RefreshCw className="h-4 w-4" />
                   Reload Page
                 </Button>
@@ -379,24 +354,22 @@ interface ComponentErrorBoundaryProps {
   onError?: (error: Error) => void;
 }
 
-export function ComponentErrorBoundary({
-  children,
-  fallback,
-  onError
-}: ComponentErrorBoundaryProps) {
+export function ComponentErrorBoundary({ children, fallback, onError }: ComponentErrorBoundaryProps) {
   return (
     <GlobalErrorBoundary
       level="component"
       maxRetries={1}
-      onError={(error) => onError?.(error)}
-      fallback={() => fallback || (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertTriangle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
-            This component encountered an error. Please try refreshing the page.
-          </AlertDescription>
-        </Alert>
-      )}
+      onError={error => onError?.(error)}
+      fallback={() =>
+        fallback || (
+          <Alert className="border-red-200 bg-red-50">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              This component encountered an error. Please try refreshing the page.
+            </AlertDescription>
+          </Alert>
+        )
+      }
     >
       {children}
     </GlobalErrorBoundary>

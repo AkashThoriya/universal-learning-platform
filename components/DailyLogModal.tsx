@@ -97,7 +97,9 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
    */
   useEffect(() => {
     const fetchTopics = async () => {
-      if (!user) { return; }
+      if (!user) {
+        return;
+      }
 
       try {
         // For now, we'll create a temporary repository for syllabus data
@@ -109,8 +111,8 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
           subjects: Array<{
             id: string;
             name: string;
-            topics: Array<{ id: string; name: string }>
-          }>
+            topics: Array<{ id: string; name: string }>;
+          }>;
         }>(`users/${user.uid}/syllabus`);
 
         if (result.success && result.data) {
@@ -121,7 +123,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 topics.push({
                   id: topic.id,
                   name: topic.name,
-                  subject: subject.name
+                  subject: subject.name,
                 });
               });
             });
@@ -145,15 +147,14 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
    * Load existing daily log for today
    */
   const loadExistingLog = async () => {
-    if (!user) { return; }
+    if (!user) {
+      return;
+    }
 
     try {
       const today = format(new Date(), 'yyyy-MM-dd');
       const db = enhancedDatabaseService.getProvider();
-      const result = await db.read<DailyLogData>(
-        `users/${user.uid}/daily-logs`,
-        today
-      );
+      const result = await db.read<DailyLogData>(`users/${user.uid}/daily-logs`, today);
 
       if (result.success && result.data) {
         const log = result.data;
@@ -177,20 +178,21 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   };
 
   const addStudySession = () => {
-    setStudySessions(prev => [...prev, {
-      topicId: '',
-      subjectId: '',
-      minutes: 60,
-      method: 'reading',
-      effectiveness: 3,
-      distractions: 0
-    }]);
+    setStudySessions(prev => [
+      ...prev,
+      {
+        topicId: '',
+        subjectId: '',
+        minutes: 60,
+        method: 'reading',
+        effectiveness: 3,
+        distractions: 0,
+      },
+    ]);
   };
 
   const updateStudySession = (index: number, updates: Partial<StudySession>) => {
-    setStudySessions(prev => prev.map((session, i) =>
-      i === index ? { ...session, ...updates } : session
-    ));
+    setStudySessions(prev => prev.map((session, i) => (i === index ? { ...session, ...updates } : session)));
   };
 
   const removeStudySession = (index: number) => {
@@ -206,9 +208,11 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   };
 
   const handleAddChallenge = (e: React.KeyboardEvent<HTMLInputElement> | React.FormEvent) => {
-    if ('key' in e && e.key !== 'Enter') return;
+    if ('key' in e && e.key !== 'Enter') {
+      return;
+    }
     e.preventDefault();
-    
+
     if (newChallenge.trim()) {
       setChallenges(prev => [...prev, newChallenge.trim()]);
       setNewChallenge('');
@@ -217,9 +221,11 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   };
 
   const handleAddWin = (e: React.KeyboardEvent<HTMLInputElement> | React.FormEvent) => {
-    if ('key' in e && e.key !== 'Enter') return;
+    if ('key' in e && e.key !== 'Enter') {
+      return;
+    }
     e.preventDefault();
-    
+
     if (newWin.trim()) {
       setWins(prev => [...prev, newWin.trim()]);
       setNewWin('');
@@ -243,7 +249,9 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) { return; }
+    if (!user) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -260,11 +268,11 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
           sleepHours,
           sleepQuality: sleepQuality[0] || 7,
           stressLevel: stressLevel[0] || 5,
-          physicalActivity
+          physicalActivity,
         },
         studiedTopics: studySessions,
         goals: {
-          targetMinutes
+          targetMinutes,
         },
         mood,
         productivity,
@@ -272,16 +280,12 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
         challenges,
         wins,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       };
 
       // Save daily log using the database abstraction layer
       const db = enhancedDatabaseService.getProvider();
-      const result = await db.update(
-        `users/${user.uid}/daily-logs`,
-        today,
-        dailyLogData
-      );
+      const result = await db.update(`users/${user.uid}/daily-logs`, today, dailyLogData);
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to save daily log');
@@ -300,7 +304,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
           mood,
           productivity,
           energy: energyLevel[0],
-          sleepHours
+          sleepHours,
         },
         `session-${Date.now()}`
       );
@@ -313,7 +317,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
           if (session.topicId && session.subjectId) {
             await progressRepo.updateProgress(user.uid, session.subjectId, {
               lastStudied: now,
-              totalTimeSpent: session.minutes
+              totalTimeSpent: session.minutes,
             });
           }
         }
@@ -363,9 +367,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
             <Star className="h-5 w-5" />
             Daily Log - {format(new Date(), 'MMMM dd, yyyy')}
           </DialogTitle>
-          <DialogDescription>
-            Track your health, study sessions, and reflections for today
-          </DialogDescription>
+          <DialogDescription>Track your health, study sessions, and reflections for today</DialogDescription>
         </DialogHeader>
 
         {error && (
@@ -407,7 +409,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 <Input
                   type="number"
                   value={sleepHours}
-                  onChange={(e) => setSleepHours(Number(e.target.value))}
+                  onChange={e => setSleepHours(Number(e.target.value))}
                   min="0"
                   max="24"
                   step="0.5"
@@ -456,7 +458,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 <Input
                   type="number"
                   value={physicalActivity}
-                  onChange={(e) => setPhysicalActivity(Number(e.target.value))}
+                  onChange={e => setPhysicalActivity(Number(e.target.value))}
                   min="0"
                   max="1440"
                 />
@@ -487,12 +489,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                   <div key={index} className="border rounded-lg p-4 space-y-4">
                     <div className="flex justify-between items-center">
                       <h4 className="font-medium">Session {index + 1}</h4>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeStudySession(index)}
-                      >
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeStudySession(index)}>
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -503,11 +500,11 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                         <label className="text-sm font-medium">Topic</label>
                         <Select
                           value={session.topicId}
-                          onValueChange={(value) => {
+                          onValueChange={value => {
                             const topic = availableTopics.find(t => t.id === value);
                             updateStudySession(index, {
                               topicId: value,
-                              subjectId: topic?.subject || ''
+                              subjectId: topic?.subject || '',
                             });
                           }}
                         >
@@ -515,7 +512,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                             <SelectValue placeholder="Select a topic" />
                           </SelectTrigger>
                           <SelectContent>
-                            {availableTopics.map((topic) => (
+                            {availableTopics.map(topic => (
                               <SelectItem key={topic.id} value={topic.id}>
                                 {topic.subject} - {topic.name}
                               </SelectItem>
@@ -552,7 +549,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                         <Input
                           type="number"
                           value={session.minutes}
-                          onChange={(e) => updateStudySession(index, { minutes: Number(e.target.value) })}
+                          onChange={e => updateStudySession(index, { minutes: Number(e.target.value) })}
                           min="1"
                           max="1440"
                         />
@@ -563,7 +560,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                         <label className="text-sm font-medium">Effectiveness (1-5)</label>
                         <Select
                           value={session.effectiveness.toString()}
-                          onValueChange={(value) =>
+                          onValueChange={value =>
                             updateStudySession(index, { effectiveness: Number(value) as StudySession['effectiveness'] })
                           }
                         >
@@ -586,7 +583,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                         <Input
                           type="number"
                           value={session.distractions}
-                          onChange={(e) => updateStudySession(index, { distractions: Number(e.target.value) })}
+                          onChange={e => updateStudySession(index, { distractions: Number(e.target.value) })}
                           min="0"
                           max="100"
                         />
@@ -604,9 +601,13 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                     </Badge>
                   </div>
                   <div className="flex justify-between items-center mt-2">
-                    <span className="font-medium">Target: {Math.floor(targetMinutes / 60)}h {targetMinutes % 60}m</span>
+                    <span className="font-medium">
+                      Target: {Math.floor(targetMinutes / 60)}h {targetMinutes % 60}m
+                    </span>
                     <span className="text-sm text-gray-600">
-                      {getTotalStudyMinutes() >= targetMinutes ? '✅ Target achieved!' : `${targetMinutes - getTotalStudyMinutes()}m remaining`}
+                      {getTotalStudyMinutes() >= targetMinutes
+                        ? '✅ Target achieved!'
+                        : `${targetMinutes - getTotalStudyMinutes()}m remaining`}
                     </span>
                   </div>
                 </div>
@@ -628,7 +629,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 <Input
                   type="number"
                   value={targetMinutes}
-                  onChange={(e) => setTargetMinutes(Number(e.target.value))}
+                  onChange={e => setTargetMinutes(Number(e.target.value))}
                   min="0"
                   max="1440"
                 />
@@ -637,10 +638,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
               {/* Mood */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Overall Mood</label>
-                <Select
-                  value={mood.toString()}
-                  onValueChange={(value) => setMood(Number(value) as typeof mood)}
-                >
+                <Select value={mood.toString()} onValueChange={value => setMood(Number(value) as typeof mood)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -659,7 +657,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                 <label className="text-sm font-medium">Productivity</label>
                 <Select
                   value={productivity.toString()}
-                  onValueChange={(value) => setProductivity(Number(value) as typeof productivity)}
+                  onValueChange={value => setProductivity(Number(value) as typeof productivity)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -680,7 +678,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
               <label className="text-sm font-medium">Notes & Observations</label>
               <Textarea
                 value={note}
-                onChange={(e) => setNote(e.target.value)}
+                onChange={e => setNote(e.target.value)}
                 placeholder="Any additional notes about your day..."
                 rows={3}
               />
@@ -695,38 +693,44 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                     <span className="w-2 h-2 bg-red-500 rounded-full"></span>
                     Challenges
                   </label>
-                  <Button type="button" onClick={addChallenge} size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
+                  <Button
+                    type="button"
+                    onClick={addChallenge}
+                    size="sm"
+                    variant="outline"
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Challenge
                   </Button>
                 </div>
-                
+
                 <div className="space-y-2">
                   {/* Inline input for new challenge */}
                   {showChallengeInput && (
                     <div className="bg-red-50 border-2 border-red-200 rounded-lg p-3 space-y-2">
                       <Input
                         value={newChallenge}
-                        onChange={(e) => setNewChallenge(e.target.value)}
+                        onChange={e => setNewChallenge(e.target.value)}
                         onKeyDown={handleAddChallenge}
                         placeholder="What challenge did you face today?"
                         className="border-red-300 focus:border-red-500 focus:ring-red-500"
                         autoFocus
                       />
                       <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          onClick={handleAddChallenge} 
-                          size="sm" 
+                        <Button
+                          type="button"
+                          onClick={handleAddChallenge}
+                          size="sm"
                           className="bg-red-600 hover:bg-red-700 text-white"
                           disabled={!newChallenge.trim()}
                         >
                           Add Challenge
                         </Button>
-                        <Button 
-                          type="button" 
-                          onClick={cancelChallengeInput} 
-                          size="sm" 
+                        <Button
+                          type="button"
+                          onClick={cancelChallengeInput}
+                          size="sm"
                           variant="ghost"
                           className="text-red-600 hover:bg-red-100"
                         >
@@ -738,7 +742,10 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
 
                   {/* List of existing challenges */}
                   {challenges.map((challenge, index) => (
-                    <div key={index} className="flex items-start justify-between bg-red-50 border border-red-200 p-3 rounded-lg group hover:bg-red-100 transition-colors">
+                    <div
+                      key={index}
+                      className="flex items-start justify-between bg-red-50 border border-red-200 p-3 rounded-lg group hover:bg-red-100 transition-colors"
+                    >
                       <div className="flex items-start gap-2 flex-1">
                         <span className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></span>
                         <span className="text-sm text-red-800 leading-relaxed">{challenge}</span>
@@ -754,11 +761,17 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                       </Button>
                     </div>
                   ))}
-                  
+
                   {challenges.length === 0 && !showChallengeInput && (
                     <div className="text-center py-8 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg">
                       <p className="text-sm text-gray-500 mb-2">No challenges recorded yet</p>
-                      <Button type="button" onClick={addChallenge} size="sm" variant="ghost" className="text-red-600 hover:bg-red-50">
+                      <Button
+                        type="button"
+                        onClick={addChallenge}
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-600 hover:bg-red-50"
+                      >
                         <Plus className="h-4 w-4 mr-2" />
                         Add your first challenge
                       </Button>
@@ -774,38 +787,44 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                     Wins & Achievements
                   </label>
-                  <Button type="button" onClick={addWin} size="sm" variant="outline" className="text-green-600 border-green-200 hover:bg-green-50">
+                  <Button
+                    type="button"
+                    onClick={addWin}
+                    size="sm"
+                    variant="outline"
+                    className="text-green-600 border-green-200 hover:bg-green-50"
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Win
                   </Button>
                 </div>
-                
+
                 <div className="space-y-2">
                   {/* Inline input for new win */}
                   {showWinInput && (
                     <div className="bg-green-50 border-2 border-green-200 rounded-lg p-3 space-y-2">
                       <Input
                         value={newWin}
-                        onChange={(e) => setNewWin(e.target.value)}
+                        onChange={e => setNewWin(e.target.value)}
                         onKeyDown={handleAddWin}
                         placeholder="What win did you achieve today?"
                         className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         autoFocus
                       />
                       <div className="flex gap-2">
-                        <Button 
-                          type="button" 
-                          onClick={handleAddWin} 
-                          size="sm" 
+                        <Button
+                          type="button"
+                          onClick={handleAddWin}
+                          size="sm"
                           className="bg-green-600 hover:bg-green-700 text-white"
                           disabled={!newWin.trim()}
                         >
                           Add Win
                         </Button>
-                        <Button 
-                          type="button" 
-                          onClick={cancelWinInput} 
-                          size="sm" 
+                        <Button
+                          type="button"
+                          onClick={cancelWinInput}
+                          size="sm"
                           variant="ghost"
                           className="text-green-600 hover:bg-green-100"
                         >
@@ -817,7 +836,10 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
 
                   {/* List of existing wins */}
                   {wins.map((win, index) => (
-                    <div key={index} className="flex items-start justify-between bg-green-50 border border-green-200 p-3 rounded-lg group hover:bg-green-100 transition-colors">
+                    <div
+                      key={index}
+                      className="flex items-start justify-between bg-green-50 border border-green-200 p-3 rounded-lg group hover:bg-green-100 transition-colors"
+                    >
                       <div className="flex items-start gap-2 flex-1">
                         <span className="text-green-600 mt-1 flex-shrink-0">🎉</span>
                         <span className="text-sm text-green-800 leading-relaxed">{win}</span>
@@ -833,11 +855,17 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                       </Button>
                     </div>
                   ))}
-                  
+
                   {wins.length === 0 && !showWinInput && (
                     <div className="text-center py-8 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg">
                       <p className="text-sm text-gray-500 mb-2">No wins recorded yet</p>
-                      <Button type="button" onClick={addWin} size="sm" variant="ghost" className="text-green-600 hover:bg-green-50">
+                      <Button
+                        type="button"
+                        onClick={addWin}
+                        size="sm"
+                        variant="ghost"
+                        className="text-green-600 hover:bg-green-50"
+                      >
                         <Plus className="h-4 w-4 mr-2" />
                         Celebrate your first win
                       </Button>

@@ -1,17 +1,6 @@
 'use client';
 
-import {
-  BookOpen,
-  Code,
-  Target,
-  Save,
-  RotateCcw,
-  Info,
-  CheckCircle,
-  AlertCircle,
-  Loader2,
-  Plus
-} from 'lucide-react';
+import { BookOpen, Code, Target, Save, RotateCcw, Info, CheckCircle, AlertCircle, Loader2, Plus } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -31,7 +20,7 @@ import {
   type MissionFrequency,
   type MissionDifficulty,
   type LearningTrack,
-  type MissionGenerationRequest
+  type MissionGenerationRequest,
 } from '@/types/mission-system';
 
 interface MissionConfigurationProps {
@@ -67,13 +56,13 @@ const DEFAULT_TRACK_CONFIG: TrackConfig = {
   durationSettings: {
     daily: 15,
     weekly: 60,
-    monthly: 120
+    monthly: 120,
   },
   activeDays: [1, 2, 3, 4, 5], // Monday to Friday
   preferredTime: '09:00',
   notificationsEnabled: true,
   autoStartNext: false,
-  maxMissionsPerDay: 2
+  maxMissionsPerDay: 2,
 };
 
 const WEEKDAYS = [
@@ -83,13 +72,13 @@ const WEEKDAYS = [
   { value: 3, label: 'Wednesday', short: 'Wed' },
   { value: 4, label: 'Thursday', short: 'Thu' },
   { value: 5, label: 'Friday', short: 'Fri' },
-  { value: 6, label: 'Saturday', short: 'Sat' }
+  { value: 6, label: 'Saturday', short: 'Sat' },
 ];
 
 export function MissionConfiguration({
   className = '',
   onConfigurationSave,
-  onGenerateMission
+  onGenerateMission,
 }: MissionConfigurationProps) {
   const { user } = useAuth();
   const [examConfig, setExamConfig] = useState<TrackConfig>(DEFAULT_TRACK_CONFIG);
@@ -108,7 +97,9 @@ export function MissionConfiguration({
   }, [user?.uid]);
 
   const loadExistingConfigurations = async () => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -126,7 +117,9 @@ export function MissionConfiguration({
   };
 
   const handleSaveConfiguration = async () => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setIsSaving(true);
@@ -150,7 +143,7 @@ export function MissionConfiguration({
           autoStartNext: examConfig.autoStartNext,
           maxMissionsPerDay: examConfig.maxMissionsPerDay,
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
 
         // Only set customFrequencyDays if it has a value
@@ -177,7 +170,7 @@ export function MissionConfiguration({
           autoStartNext: techConfig.autoStartNext,
           maxMissionsPerDay: techConfig.maxMissionsPerDay,
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
 
         // Only set customFrequencyDays if it has a value
@@ -199,7 +192,6 @@ export function MissionConfiguration({
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(null), 3000);
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save configurations');
     } finally {
@@ -208,7 +200,9 @@ export function MissionConfiguration({
   };
 
   const handleGenerateMission = async (track: LearningTrack) => {
-    if (!user?.uid) { return; }
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setGeneratingTrack(track);
@@ -218,12 +212,13 @@ export function MissionConfiguration({
         userId: user.uid,
         track,
         frequency: config.frequency,
-        durationOverride: config.frequency === 'custom' ? config.customDuration || 30 : config.durationSettings[config.frequency],
+        durationOverride:
+          config.frequency === 'custom' ? config.customDuration || 30 : config.durationSettings[config.frequency],
         forceRegeneration: false,
         schedulingOptions: {
           preferredStartTime: new Date(),
-          allowWeekends: config.activeDays.includes(0) || config.activeDays.includes(6)
-        }
+          allowWeekends: config.activeDays.includes(0) || config.activeDays.includes(6),
+        },
       };
 
       // Only set difficulty if not using adaptive difficulty
@@ -242,7 +237,6 @@ export function MissionConfiguration({
       } else {
         setError(result.error || 'Failed to generate mission');
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate mission');
     } finally {
@@ -298,14 +292,13 @@ export function MissionConfiguration({
                 <p className="text-sm text-gray-600 mt-1">
                   {track === 'exam'
                     ? 'Generate daily mock questions, weekly revision cycles, and monthly full tests'
-                    : 'Generate daily coding challenges, weekly assignments, and monthly projects'
-                  }
+                    : 'Generate daily coding challenges, weekly assignments, and monthly projects'}
                 </p>
               </div>
               <Switch
                 id={`enable-${track}`}
                 checked={config.enabled}
-                onCheckedChange={(enabled) => updateTrackConfig(track, { enabled })}
+                onCheckedChange={enabled => updateTrackConfig(track, { enabled })}
               />
             </div>
           </CardContent>
@@ -324,9 +317,11 @@ export function MissionConfiguration({
                     <Label>Mission Frequency</Label>
                     <Select
                       value={config.frequency}
-                      onValueChange={(frequency) => updateTrackConfig(track, {
-                        frequency: frequency as MissionFrequency
-                      })}
+                      onValueChange={frequency =>
+                        updateTrackConfig(track, {
+                          frequency: frequency as MissionFrequency,
+                        })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -344,9 +339,11 @@ export function MissionConfiguration({
                     <Label>Preferred Difficulty</Label>
                     <Select
                       value={config.preferredDifficulty}
-                      onValueChange={(difficulty) => updateTrackConfig(track, {
-                        preferredDifficulty: difficulty as MissionDifficulty
-                      })}
+                      onValueChange={difficulty =>
+                        updateTrackConfig(track, {
+                          preferredDifficulty: difficulty as MissionDifficulty,
+                        })
+                      }
                       disabled={config.adaptiveDifficulty}
                     >
                       <SelectTrigger>
@@ -370,9 +367,11 @@ export function MissionConfiguration({
                       min="1"
                       max="30"
                       value={config.customFrequencyDays || 7}
-                      onChange={(e) => updateTrackConfig(track, {
-                        customFrequencyDays: parseInt(e.target.value) || 7
-                      })}
+                      onChange={e =>
+                        updateTrackConfig(track, {
+                          customFrequencyDays: parseInt(e.target.value) || 7,
+                        })
+                      }
                       placeholder="Number of days between missions"
                     />
                   </div>
@@ -382,7 +381,7 @@ export function MissionConfiguration({
                   <Switch
                     id={`adaptive-${track}`}
                     checked={config.adaptiveDifficulty}
-                    onCheckedChange={(adaptiveDifficulty) => updateTrackConfig(track, { adaptiveDifficulty })}
+                    onCheckedChange={adaptiveDifficulty => updateTrackConfig(track, { adaptiveDifficulty })}
                   />
                   <Label htmlFor={`adaptive-${track}`} className="font-medium">
                     Adaptive Difficulty
@@ -412,7 +411,7 @@ export function MissionConfiguration({
                       onValueChange={([value]) => {
                         if (value !== undefined) {
                           updateTrackConfig(track, {
-                            durationSettings: { ...config.durationSettings, daily: value }
+                            durationSettings: { ...config.durationSettings, daily: value },
                           });
                         }
                       }}
@@ -433,7 +432,7 @@ export function MissionConfiguration({
                       onValueChange={([value]) => {
                         if (value !== undefined) {
                           updateTrackConfig(track, {
-                            durationSettings: { ...config.durationSettings, weekly: value }
+                            durationSettings: { ...config.durationSettings, weekly: value },
                           });
                         }
                       }}
@@ -454,7 +453,7 @@ export function MissionConfiguration({
                       onValueChange={([value]) => {
                         if (value !== undefined) {
                           updateTrackConfig(track, {
-                            durationSettings: { ...config.durationSettings, monthly: value }
+                            durationSettings: { ...config.durationSettings, monthly: value },
                           });
                         }
                       }}
@@ -477,7 +476,7 @@ export function MissionConfiguration({
                 <div className="space-y-2">
                   <Label>Active Days</Label>
                   <div className="flex flex-wrap gap-2">
-                    {WEEKDAYS.map((day) => (
+                    {WEEKDAYS.map(day => (
                       <Button
                         key={day.value}
                         variant={config.activeDays.includes(day.value) ? 'default' : 'outline'}
@@ -496,7 +495,7 @@ export function MissionConfiguration({
                   <Input
                     type="time"
                     value={config.preferredTime}
-                    onChange={(e) => updateTrackConfig(track, { preferredTime: e.target.value })}
+                    onChange={e => updateTrackConfig(track, { preferredTime: e.target.value })}
                   />
                 </div>
 
@@ -532,14 +531,12 @@ export function MissionConfiguration({
                     <Label htmlFor={`notifications-${track}`} className="font-medium">
                       Enable Notifications
                     </Label>
-                    <p className="text-sm text-gray-600">
-                      Get notified when new missions are available
-                    </p>
+                    <p className="text-sm text-gray-600">Get notified when new missions are available</p>
                   </div>
                   <Switch
                     id={`notifications-${track}`}
                     checked={config.notificationsEnabled}
-                    onCheckedChange={(notificationsEnabled) => updateTrackConfig(track, { notificationsEnabled })}
+                    onCheckedChange={notificationsEnabled => updateTrackConfig(track, { notificationsEnabled })}
                   />
                 </div>
 
@@ -555,7 +552,7 @@ export function MissionConfiguration({
                   <Switch
                     id={`auto-start-${track}`}
                     checked={config.autoStartNext}
-                    onCheckedChange={(autoStartNext) => updateTrackConfig(track, { autoStartNext })}
+                    onCheckedChange={autoStartNext => updateTrackConfig(track, { autoStartNext })}
                   />
                 </div>
               </CardContent>
@@ -601,9 +598,7 @@ export function MissionConfiguration({
       <div className={`w-full max-w-4xl mx-auto ${className}`}>
         <Alert>
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            Please log in to configure your missions.
-          </AlertDescription>
+          <AlertDescription>Please log in to configure your missions.</AlertDescription>
         </Alert>
       </div>
     );
@@ -630,11 +625,7 @@ export function MissionConfiguration({
           <p className="text-gray-600">Customize your adaptive learning missions for both exam and tech tracks</p>
         </div>
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={handleResetToDefaults}
-            className="gap-2"
-          >
+          <Button variant="outline" onClick={handleResetToDefaults} className="gap-2">
             <RotateCcw className="h-4 w-4" />
             Reset to Defaults
           </Button>
@@ -679,12 +670,20 @@ export function MissionConfiguration({
           <TabsTrigger value="exam" className="gap-2">
             <BookOpen className="h-4 w-4" />
             Exam Track
-            {!examConfig.enabled && <Badge variant="secondary" className="text-xs">Disabled</Badge>}
+            {!examConfig.enabled && (
+              <Badge variant="secondary" className="text-xs">
+                Disabled
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="tech" className="gap-2">
             <Code className="h-4 w-4" />
             Tech Track
-            {!techConfig.enabled && <Badge variant="secondary" className="text-xs">Disabled</Badge>}
+            {!techConfig.enabled && (
+              <Badge variant="secondary" className="text-xs">
+                Disabled
+              </Badge>
+            )}
           </TabsTrigger>
         </TabsList>
 
@@ -715,9 +714,17 @@ export function MissionConfiguration({
               </h4>
               {examConfig.enabled ? (
                 <div className="space-y-1 text-sm text-blue-700">
-                  <p>• {examConfig.frequency} missions ({examConfig.frequency === 'custom' ? examConfig.customDuration || 30 : examConfig.durationSettings[examConfig.frequency]} min)</p>
+                  <p>
+                    • {examConfig.frequency} missions (
+                    {examConfig.frequency === 'custom'
+                      ? examConfig.customDuration || 30
+                      : examConfig.durationSettings[examConfig.frequency]}{' '}
+                    min)
+                  </p>
                   <p>• {examConfig.adaptiveDifficulty ? 'Adaptive' : examConfig.preferredDifficulty} difficulty</p>
-                  <p>• Active on {examConfig.activeDays.length} days at {examConfig.preferredTime}</p>
+                  <p>
+                    • Active on {examConfig.activeDays.length} days at {examConfig.preferredTime}
+                  </p>
                   <p>• Up to {examConfig.maxMissionsPerDay} missions per day</p>
                 </div>
               ) : (
@@ -733,9 +740,17 @@ export function MissionConfiguration({
               </h4>
               {techConfig.enabled ? (
                 <div className="space-y-1 text-sm text-green-700">
-                  <p>• {techConfig.frequency} missions ({techConfig.frequency === 'custom' ? techConfig.customDuration || 30 : techConfig.durationSettings[techConfig.frequency]} min)</p>
+                  <p>
+                    • {techConfig.frequency} missions (
+                    {techConfig.frequency === 'custom'
+                      ? techConfig.customDuration || 30
+                      : techConfig.durationSettings[techConfig.frequency]}{' '}
+                    min)
+                  </p>
                   <p>• {techConfig.adaptiveDifficulty ? 'Adaptive' : techConfig.preferredDifficulty} difficulty</p>
-                  <p>• Active on {techConfig.activeDays.length} days at {techConfig.preferredTime}</p>
+                  <p>
+                    • Active on {techConfig.activeDays.length} days at {techConfig.preferredTime}
+                  </p>
                   <p>• Up to {techConfig.maxMissionsPerDay} missions per day</p>
                 </div>
               ) : (

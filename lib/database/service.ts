@@ -1,10 +1,10 @@
 /**
  * @fileoverview Database Service Layer Integration
- * 
+ *
  * Main service that integrates the database abstraction layer with
  * the existing Firebase-enhanced service layer, providing backward
  * compatibility while enabling future database flexibility.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
@@ -110,8 +110,8 @@ export const firebaseService = {
   getQueryPerformance: enhancedDatabaseService.getQueryPerformance.bind(enhancedDatabaseService),
   clearCache: enhancedDatabaseService.clearCache.bind(enhancedDatabaseService),
   cache: {
-    clear: enhancedDatabaseService.clearCache.bind(enhancedDatabaseService)
-  }
+    clear: enhancedDatabaseService.clearCache.bind(enhancedDatabaseService),
+  },
 };
 
 /**
@@ -135,7 +135,7 @@ export class DatabaseMigration {
     try {
       // Get all documents from source
       const sourceResult = await this.sourceProvider.query<T>(collectionName);
-      
+
       if (!sourceResult.success || !sourceResult.data) {
         throw new Error(`Failed to read from source: ${sourceResult.error}`);
       }
@@ -146,7 +146,7 @@ export class DatabaseMigration {
 
       for (let i = 0; i < documents.length; i += batchSize) {
         const batch = documents.slice(i, i + batchSize);
-        
+
         for (const doc of batch) {
           try {
             const { id, ...data } = doc as any;
@@ -155,7 +155,7 @@ export class DatabaseMigration {
           } catch (error) {
             result.errors.push({
               id: (doc as any).id,
-              error: error instanceof Error ? error.message : 'Unknown error'
+              error: error instanceof Error ? error.message : 'Unknown error',
             });
           }
         }
@@ -163,7 +163,6 @@ export class DatabaseMigration {
         // Progress callback could be added here
         console.log(`Migrated ${Math.min(i + batchSize, documents.length)}/${documents.length} documents`);
       }
-
     } catch (error) {
       throw new Error(`Migration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -191,7 +190,7 @@ export class DatabaseMigration {
 
       // Get all document IDs from source
       const sourceResult = await this.sourceProvider.query<T>(collectionName, {
-        select: ['id']
+        select: ['id'],
       });
 
       if (!sourceResult.success || !sourceResult.data) {
@@ -214,9 +213,8 @@ export class DatabaseMigration {
         sourceCount,
         targetCount,
         missingIds,
-        valid: sourceCount === targetCount && missingIds.length === 0
+        valid: sourceCount === targetCount && missingIds.length === 0,
       };
-
     } catch (error) {
       throw new Error(`Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -235,7 +233,7 @@ export class QueryOptimizer {
 
   async analyzeSlowQueries(collection: string) {
     const performance = await this.provider.getQueryPerformance(collection);
-    
+
     if (!performance.success || !performance.data) {
       return { recommendations: ['Unable to analyze queries'] };
     }
@@ -260,7 +258,7 @@ export class QueryOptimizer {
 
     return {
       metrics,
-      recommendations
+      recommendations,
     };
   }
 
@@ -269,12 +267,14 @@ export class QueryOptimizer {
 
     // Sort by frequency and suggest indexes for most common queries
     const sortedQueries = commonQueries.sort((a, b) => b.frequency - a.frequency);
-    
-    for (const query of sortedQueries.slice(0, 5)) { // Top 5 most common
-      if (query.frequency > 10) { // Only if queried more than 10 times
+
+    for (const query of sortedQueries.slice(0, 5)) {
+      // Top 5 most common
+      if (query.frequency > 10) {
+        // Only if queried more than 10 times
         suggestions.push({
           fields: [query.field],
-          reason: `Frequently queried field (${query.frequency} times)`
+          reason: `Frequently queried field (${query.frequency} times)`,
         });
       }
     }
@@ -282,7 +282,7 @@ export class QueryOptimizer {
     return {
       collection,
       suggestions,
-      totalQueries: commonQueries.reduce((sum, q) => sum + q.frequency, 0)
+      totalQueries: commonQueries.reduce((sum, q) => sum + q.frequency, 0),
     };
   }
 }
@@ -308,7 +308,7 @@ export class OfflineSyncManager {
     await this.provider.enableOffline({
       enableOfflineWrite: true,
       conflictResolution: 'client',
-      syncStrategy: 'batch'
+      syncStrategy: 'batch',
     });
   }
 
@@ -324,7 +324,7 @@ export class OfflineSyncManager {
   }) {
     this.syncQueue.push({
       ...operation,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
@@ -337,11 +337,11 @@ export class OfflineSyncManager {
       type: op.operation,
       collection: op.collection,
       id: op.id,
-      data: op.data
+      data: op.data,
     }));
 
     const result = await this.provider.batch(operations);
-    
+
     if (result.success) {
       this.syncQueue = [];
       return { synced: operations.length, errors: [] };

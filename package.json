@@ -19,6 +19,10 @@
     "lint:fix": "next lint --fix",
     "lint:strict": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0",
     "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 50",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:lint": "npm run format && npm run lint:fix",
+    "format:workflow": "node scripts/format-and-lint.js",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -94,8 +98,11 @@
     "@types/jsdom": "^21.1.7",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2"
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2"
   }
 }

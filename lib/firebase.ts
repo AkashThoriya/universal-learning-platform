@@ -44,16 +44,19 @@ const validateFirebaseConfig = (): FirebaseConfig => {
     { name: 'NEXT_PUBLIC_FIREBASE_PROJECT_ID', value: projectId },
     { name: 'NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', value: storageBucket },
     { name: 'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID', value: messagingSenderId },
-    { name: 'NEXT_PUBLIC_FIREBASE_APP_ID', value: appId }
+    { name: 'NEXT_PUBLIC_FIREBASE_APP_ID', value: appId },
   ];
 
   const missing = requiredEnvVars.filter(envVar => !envVar.value);
 
   if (missing.length > 0) {
-    console.error('Missing Firebase environment variables:', missing.map(v => v.name));
+    console.error(
+      'Missing Firebase environment variables:',
+      missing.map(v => v.name)
+    );
     throw new Error(
       `Missing required Firebase environment variables: ${missing.map(v => v.name).join(', ')}. ` +
-      'Please check your .env.local file.'
+        'Please check your .env.local file.'
     );
   }
 
@@ -63,7 +66,7 @@ const validateFirebaseConfig = (): FirebaseConfig => {
     projectId: projectId!,
     storageBucket: storageBucket!,
     messagingSenderId: messagingSenderId!,
-    appId: appId!
+    appId: appId!,
   };
 
   // Only add measurementId if it exists
@@ -125,7 +128,6 @@ try {
     }
   }
   */
-
 } catch (error) {
   console.error('Firebase initialization failed:', error);
   throw error;
@@ -156,7 +158,7 @@ export const disableOfflineSupport = async (): Promise<void> => {
 // ============================================================================
 
 export const getConnectionStatus = (): Promise<boolean> => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (typeof window === 'undefined') {
       resolve(true); // Assume connected on server
       return;

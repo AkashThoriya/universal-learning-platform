@@ -5,11 +5,13 @@ Screenshots are required for app store listings and enhanced install prompts.
 ## Required Screenshots
 
 ### Desktop (Wide Form Factor)
+
 - **Size**: 1280x720 pixels
 - **File**: desktop-wide.png
 - **Content**: Dashboard view showing key features
 
-### Mobile (Narrow Form Factor)  
+### Mobile (Narrow Form Factor)
+
 - **Size**: 540x720 pixels
 - **File**: mobile-narrow.png
 - **Content**: Mobile learning session interface
@@ -38,23 +40,23 @@ const puppeteer = require('puppeteer');
 async function generateScreenshots() {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  
+
   // Desktop screenshot
   await page.setViewport({ width: 1280, height: 720 });
   await page.goto('http://localhost:3000/dashboard');
-  await page.screenshot({ 
+  await page.screenshot({
     path: 'public/screenshots/desktop-wide.png',
-    fullPage: false 
+    fullPage: false,
   });
-  
-  // Mobile screenshot  
+
+  // Mobile screenshot
   await page.setViewport({ width: 540, height: 720 });
   await page.goto('http://localhost:3000/micro-learning');
-  await page.screenshot({ 
+  await page.screenshot({
     path: 'public/screenshots/mobile-narrow.png',
-    fullPage: false 
+    fullPage: false,
   });
-  
+
   await browser.close();
 }
 ```

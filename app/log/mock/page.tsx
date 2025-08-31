@@ -18,7 +18,6 @@ import { getExamById } from '@/lib/exams-data';
 import { saveMockTest, getUser } from '@/lib/firebase-utils';
 import { MockTestLog, User, Exam } from '@/types/exam';
 
-
 export default function MockTestLogPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -62,7 +61,9 @@ export default function MockTestLogPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) { return; }
+      if (!user) {
+        return;
+      }
 
       try {
         const userDoc = await getUser(user.uid);
@@ -143,11 +144,15 @@ export default function MockTestLogPage() {
   };
 
   const handleSubmit = async () => {
-    if (!user || !userData || !examData) { return; }
+    if (!user || !userData || !examData) {
+      return;
+    }
 
     if (!validateErrorAnalysis()) {
       // TODO: Replace with proper toast notification
-      console.warn(`Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`);
+      console.warn(
+        `Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`
+      );
       return;
     }
 
@@ -173,21 +178,21 @@ export default function MockTestLogPage() {
           wrongAnswers: getTotalErrors(),
           unattempted: 0, // Could be calculated separately
           accuracy: (getTotalScore() / getTotalMaxScore()) * 100,
-          speed: getTotalMaxScore() / Object.values(timeTaken).reduce((sum, time) => sum + time, 0) // Questions per minute
+          speed: getTotalMaxScore() / Object.values(timeTaken).reduce((sum, time) => sum + time, 0), // Questions per minute
         },
         topicWisePerformance: [], // This would be populated based on detailed analysis
         mentalState: {
           confidence,
           anxiety,
-          focus
+          focus,
         },
         environment: {
           location,
           distractions,
-          timeOfDay
+          timeOfDay,
         },
         feedback,
-        actionItems
+        actionItems,
       };
 
       await saveMockTest(user.uid, testData);
@@ -224,9 +229,7 @@ export default function MockTestLogPage() {
             <div className="text-center space-y-4">
               <h1 className="text-2xl font-bold">Setup Required</h1>
               <p className="text-muted-foreground">Please complete onboarding first.</p>
-              <Button onClick={() => router.push('/onboarding')}>
-                Complete Setup
-              </Button>
+              <Button onClick={() => router.push('/onboarding')}>Complete Setup</Button>
             </div>
           </div>
         </div>
@@ -271,11 +274,7 @@ export default function MockTestLogPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Test Date</label>
-                    <Input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
+                    <Input type="date" value={date} onChange={e => setDate(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Platform/Source</label>
@@ -303,7 +302,7 @@ export default function MockTestLogPage() {
                   <Input
                     placeholder="e.g., Full Length Test #15, Sectional Test - Polity"
                     value={testName}
-                    onChange={(e) => setTestName(e.target.value)}
+                    onChange={e => setTestName(e.target.value)}
                   />
                 </div>
 
@@ -340,11 +339,7 @@ export default function MockTestLogPage() {
                   </div>
                 </div>
 
-                <Button
-                  onClick={() => setStep(2)}
-                  className="w-full"
-                  disabled={!platform || !testName || !stage}
-                >
+                <Button onClick={() => setStep(2)} className="w-full" disabled={!platform || !testName || !stage}>
                   Continue to Scores
                 </Button>
               </CardContent>
@@ -356,9 +351,7 @@ export default function MockTestLogPage() {
               <CardHeader className="text-center">
                 <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
                 <CardTitle>Scores & Timing</CardTitle>
-                <CardDescription>
-                  Enter your scores and time taken for {currentStage.name}
-                </CardDescription>
+                <CardDescription>Enter your scores and time taken for {currentStage.name}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {currentStage.sections.map(section => (
@@ -372,11 +365,14 @@ export default function MockTestLogPage() {
                             type="number"
                             min="0"
                             max={section?.maxMarks}
-                            value={section?.id ? (scores[section.id] || 0) : 0}
-                            onChange={(e) => section?.id && setScores(prev => ({
-                              ...prev,
-                              [section.id]: Number(e.target.value)
-                            }))}
+                            value={section?.id ? scores[section.id] || 0 : 0}
+                            onChange={e =>
+                              section?.id &&
+                              setScores(prev => ({
+                                ...prev,
+                                [section.id]: Number(e.target.value),
+                              }))
+                            }
                           />
                           <span className="text-sm text-gray-500">/ {section?.maxMarks}</span>
                         </div>
@@ -388,11 +384,14 @@ export default function MockTestLogPage() {
                           type="number"
                           min="0"
                           max={section?.maxTime}
-                          value={section?.id ? (timeTaken[section.id] || 0) : 0}
-                          onChange={(e) => section?.id && setTimeTaken(prev => ({
-                            ...prev,
-                            [section.id]: Number(e.target.value)
-                          }))}
+                          value={section?.id ? timeTaken[section.id] || 0 : 0}
+                          onChange={e =>
+                            section?.id &&
+                            setTimeTaken(prev => ({
+                              ...prev,
+                              [section.id]: Number(e.target.value),
+                            }))
+                          }
                         />
                       </div>
 
@@ -400,10 +399,12 @@ export default function MockTestLogPage() {
                         <label className="text-sm font-medium">Accuracy</label>
                         <div className="text-lg font-semibold text-blue-600">
                           {(() => {
-                            if (!section?.id) { return '0%'; }
+                            if (!section?.id) {
+                              return '0%';
+                            }
                             const sectionId = section.id;
                             return maxScores[sectionId] && maxScores[sectionId] > 0
-                              ? `${Math.round(((scores[sectionId] || 0) / maxScores[sectionId]) * 100) }%`
+                              ? `${Math.round(((scores[sectionId] || 0) / maxScores[sectionId]) * 100)}%`
                               : '0%';
                           })()}
                         </div>
@@ -452,9 +453,7 @@ export default function MockTestLogPage() {
               <CardHeader className="text-center">
                 <Clock className="h-12 w-12 text-orange-600 mx-auto mb-4" />
                 <CardTitle>Error Analysis</CardTitle>
-                <CardDescription>
-                  Categorize your {getTotalErrors()} errors for strategic improvement
-                </CardDescription>
+                <CardDescription>Categorize your {getTotalErrors()} errors for strategic improvement</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
@@ -486,7 +485,7 @@ export default function MockTestLogPage() {
                       min="0"
                       max={getTotalErrors()}
                       value={conceptGaps}
-                      onChange={(e) => setConceptGaps(Number(e.target.value))}
+                      onChange={e => setConceptGaps(Number(e.target.value))}
                       className="border-red-200 focus:border-red-400"
                     />
                   </div>
@@ -498,7 +497,7 @@ export default function MockTestLogPage() {
                       min="0"
                       max={getTotalErrors()}
                       value={carelessErrors}
-                      onChange={(e) => setCarelessErrors(Number(e.target.value))}
+                      onChange={e => setCarelessErrors(Number(e.target.value))}
                       className="border-orange-200 focus:border-orange-400"
                     />
                   </div>
@@ -510,7 +509,7 @@ export default function MockTestLogPage() {
                       min="0"
                       max={getTotalErrors()}
                       value={intelligentGuesses}
-                      onChange={(e) => setIntelligentGuesses(Number(e.target.value))}
+                      onChange={e => setIntelligentGuesses(Number(e.target.value))}
                       className="border-blue-200 focus:border-blue-400"
                     />
                   </div>
@@ -522,7 +521,7 @@ export default function MockTestLogPage() {
                       min="0"
                       max={getTotalErrors()}
                       value={timePressures}
-                      onChange={(e) => setTimePressures(Number(e.target.value))}
+                      onChange={e => setTimePressures(Number(e.target.value))}
                       className="border-purple-200 focus:border-purple-400"
                     />
                   </div>
@@ -532,7 +531,8 @@ export default function MockTestLogPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Analysis Progress:</span>
                     <span className="text-sm">
-                      {conceptGaps + carelessErrors + intelligentGuesses + timePressures} / {getTotalErrors()} errors analyzed
+                      {conceptGaps + carelessErrors + intelligentGuesses + timePressures} / {getTotalErrors()} errors
+                      analyzed
                     </span>
                   </div>
                   <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
@@ -541,7 +541,7 @@ export default function MockTestLogPage() {
                         validateErrorAnalysis() ? 'bg-green-500' : 'bg-blue-500'
                       }`}
                       style={{
-                        width: `${Math.min(100, ((conceptGaps + carelessErrors + intelligentGuesses + timePressures) / getTotalErrors()) * 100)}%`
+                        width: `${Math.min(100, ((conceptGaps + carelessErrors + intelligentGuesses + timePressures) / getTotalErrors()) * 100)}%`,
                       }}
                     />
                   </div>
@@ -551,11 +551,7 @@ export default function MockTestLogPage() {
                   <Button variant="outline" onClick={() => setStep(2)} className="w-full">
                     Back
                   </Button>
-                  <Button
-                    onClick={() => setStep(4)}
-                    className="w-full"
-                    disabled={!validateErrorAnalysis()}
-                  >
+                  <Button onClick={() => setStep(4)} className="w-full" disabled={!validateErrorAnalysis()}>
                     Add Context & Reflection
                   </Button>
                 </div>
@@ -568,9 +564,7 @@ export default function MockTestLogPage() {
               <CardHeader className="text-center">
                 <MessageSquare className="h-12 w-12 text-purple-600 mx-auto mb-4" />
                 <CardTitle>Test Context & Reflection</CardTitle>
-                <CardDescription>
-                  Capture the complete picture of your test experience
-                </CardDescription>
+                <CardDescription>Capture the complete picture of your test experience</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Mental State */}
@@ -581,7 +575,7 @@ export default function MockTestLogPage() {
                       <label className="text-sm font-medium">Confidence (1-5)</label>
                       <Select
                         value={confidence.toString()}
-                        onValueChange={(value) => setConfidence(Number(value) as 1 | 2 | 3 | 4 | 5)}
+                        onValueChange={value => setConfidence(Number(value) as 1 | 2 | 3 | 4 | 5)}
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -600,7 +594,7 @@ export default function MockTestLogPage() {
                       <label className="text-sm font-medium">Anxiety (1-5)</label>
                       <Select
                         value={anxiety.toString()}
-                        onValueChange={(value) => setAnxiety(Number(value) as 1 | 2 | 3 | 4 | 5)}
+                        onValueChange={value => setAnxiety(Number(value) as 1 | 2 | 3 | 4 | 5)}
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -619,7 +613,7 @@ export default function MockTestLogPage() {
                       <label className="text-sm font-medium">Focus (1-5)</label>
                       <Select
                         value={focus.toString()}
-                        onValueChange={(value) => setFocus(Number(value) as 1 | 2 | 3 | 4 | 5)}
+                        onValueChange={value => setFocus(Number(value) as 1 | 2 | 3 | 4 | 5)}
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -645,7 +639,7 @@ export default function MockTestLogPage() {
                       <Input
                         placeholder="e.g., Home, Library, Test Center"
                         value={location}
-                        onChange={(e) => setLocation(e.target.value)}
+                        onChange={e => setLocation(e.target.value)}
                       />
                     </div>
 
@@ -693,7 +687,7 @@ export default function MockTestLogPage() {
                     <label className="text-sm font-medium">Overall Feedback</label>
                     <Textarea
                       value={feedback}
-                      onChange={(e) => setFeedback(e.target.value)}
+                      onChange={e => setFeedback(e.target.value)}
                       placeholder="How did you feel during the test? What went well? What was challenging?"
                       rows={4}
                     />
@@ -712,9 +706,7 @@ export default function MockTestLogPage() {
                           <p className="text-sm">{action}</p>
                         </div>
                       ))}
-                      {actionItems.length === 0 && (
-                        <p className="text-sm text-muted-foreground">No action items yet</p>
-                      )}
+                      {actionItems.length === 0 && <p className="text-sm text-muted-foreground">No action items yet</p>}
                     </div>
                   </div>
                 </div>

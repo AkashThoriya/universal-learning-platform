@@ -10,15 +10,7 @@
 
 'use client';
 
-import {
-  User,
-  Briefcase,
-  Target,
-  TrendingUp,
-  Info,
-  Plus,
-  Minus
-} from 'lucide-react';
+import { User, Briefcase, Target, TrendingUp, Info, Plus, Minus } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -98,11 +90,19 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       if (section === 'workSchedule') {
         const baseWorkSchedule = {
           workingHours: { start: '09:00', end: '17:00' },
-          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[],
+          workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as (
+            | 'monday'
+            | 'tuesday'
+            | 'wednesday'
+            | 'thursday'
+            | 'friday'
+            | 'saturday'
+            | 'sunday'
+          )[],
           commuteTime: 60,
           flexibility: 'rigid' as const,
           lunchBreakDuration: 60,
-          ...updatedPersona.workSchedule
+          ...updatedPersona.workSchedule,
         };
 
         if (fieldName === 'workingHours') {
@@ -126,7 +126,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
           urgency: 'short_term' as const,
           motivation: [] as CareerMotivation[],
           skillGaps: [] as string[],
-          ...updatedPersona.careerContext
+          ...updatedPersona.careerContext,
         };
 
         if (fieldName === 'currentRole') {
@@ -171,9 +171,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
           <User className="h-6 w-6 text-blue-600" />
           <CardTitle>Let's understand your situation</CardTitle>
         </div>
-        <CardDescription>
-          This helps us create the perfect study plan for your lifestyle and goals
-        </CardDescription>
+        <CardDescription>This helps us create the perfect study plan for your lifestyle and goals</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -187,7 +185,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
               // Reset work schedule and career context when changing persona
               if (value !== 'working_professional') {
                 const updatedPersona: { type: UserPersonaType; workSchedule?: any; careerContext?: any } = {
-                  type: value
+                  type: value,
                 };
                 // Don't set optional properties to undefined, just omit them
                 form.updateField('userPersona', updatedPersona);
@@ -224,9 +222,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 <Label htmlFor="working_professional" className="font-medium cursor-pointer">
                   Working Professional
                 </Label>
-                <p className="text-sm text-muted-foreground mt-1">
-                  I have a full-time job and study in my spare time
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">I have a full-time job and study in my spare time</p>
                 <div className="flex items-center space-x-2 mt-2">
                   <Badge variant="secondary" className="text-xs">
                     Recommended: 1-3 hours/day
@@ -245,9 +241,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 <Label htmlFor="freelancer" className="font-medium cursor-pointer">
                   Freelancer/Entrepreneur
                 </Label>
-                <p className="text-sm text-muted-foreground mt-1">
-                  I have flexible but unpredictable schedule
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">I have flexible but unpredictable schedule</p>
                 <div className="flex items-center space-x-2 mt-2">
                   <Badge variant="secondary" className="text-xs">
                     Recommended: 4-6 hours/day
@@ -262,22 +256,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         </div>
 
         {/* Work Schedule Input for Working Professionals */}
-        {currentPersona === 'working_professional' && (
-          <WorkScheduleInput form={form} />
-        )}
+        {currentPersona === 'working_professional' && <WorkScheduleInput form={form} />}
 
         {/* Career Context for Working Professionals */}
-        {currentPersona === 'working_professional' && (
-          <CareerContextInput form={form} />
-        )}
+        {currentPersona === 'working_professional' && <CareerContextInput form={form} />}
 
         {/* Study Goal Recommendation */}
-        {currentPersona && (
-          <StudyGoalRecommendation
-            form={form}
-            persona={form.data.userPersona}
-          />
-        )}
+        {currentPersona && <StudyGoalRecommendation form={form} persona={form.data.userPersona} />}
 
         {/* Advanced Options Toggle */}
         <div className="border-t pt-4">
@@ -313,7 +298,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
     { id: 'thursday', label: 'Thursday' },
     { id: 'friday', label: 'Friday' },
     { id: 'saturday', label: 'Saturday' },
-    { id: 'sunday', label: 'Sunday' }
+    { id: 'sunday', label: 'Sunday' },
   ];
 
   // Helper function to update work schedule fields
@@ -325,10 +310,18 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
     if (!updatedPersona.workSchedule) {
       updatedPersona.workSchedule = {
         workingHours: { start: '09:00', end: '17:00' },
-        workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[],
+        workingDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as (
+          | 'monday'
+          | 'tuesday'
+          | 'wednesday'
+          | 'thursday'
+          | 'friday'
+          | 'saturday'
+          | 'sunday'
+        )[],
         commuteTime: 60,
         flexibility: 'rigid',
-        lunchBreakDuration: 60
+        lunchBreakDuration: 60,
       };
     }
 
@@ -352,16 +345,16 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
           ...updatedPersona.workSchedule,
           workingHours: {
             start: keys[2] === 'start' ? value : currentWorkingHours.start,
-            end: keys[2] === 'end' ? value : currentWorkingHours.end
-          }
+            end: keys[2] === 'end' ? value : currentWorkingHours.end,
+          },
         };
       } else {
         updatedPersona.workSchedule = {
           ...updatedPersona.workSchedule,
           workingHours: {
             start: keys[2] === 'start' ? value : '09:00',
-            end: keys[2] === 'end' ? value : '17:00'
-          }
+            end: keys[2] === 'end' ? value : '17:00',
+          },
         };
       }
     }
@@ -376,9 +369,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
           <Briefcase className="h-5 w-5 text-blue-600" />
           <CardTitle className="text-lg">Work Schedule</CardTitle>
         </div>
-        <CardDescription>
-          Help us understand your work commitments to optimize your study plan
-        </CardDescription>
+        <CardDescription>Help us understand your work commitments to optimize your study plan</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -389,7 +380,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
             <Input
               type="time"
               value={form.data.userPersona?.workSchedule?.workingHours?.start || '09:00'}
-              onChange={(e) => updateWorkSchedule('workSchedule.workingHours.start', e.target.value)}
+              onChange={e => updateWorkSchedule('workSchedule.workingHours.start', e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -397,7 +388,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
             <Input
               type="time"
               value={form.data.userPersona?.workSchedule?.workingHours?.end || '17:00'}
-              onChange={(e) => updateWorkSchedule('workSchedule.workingHours.end', e.target.value)}
+              onChange={e => updateWorkSchedule('workSchedule.workingHours.end', e.target.value)}
             />
           </div>
         </div>
@@ -406,21 +397,26 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Working Days</Label>
           <div className="grid grid-cols-3 gap-2">
-            {workDays.map((day) => (
+            {workDays.map(day => (
               <div key={day.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={day.id}
                   checked={form.data.userPersona?.workSchedule?.workingDays?.includes(day.id as any) || false}
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={checked => {
                     const currentDays = form.data.userPersona?.workSchedule?.workingDays || [];
                     if (checked) {
                       updateWorkSchedule('workSchedule.workingDays', [...currentDays, day.id]);
                     } else {
-                      updateWorkSchedule('workSchedule.workingDays', currentDays.filter(d => d !== day.id));
+                      updateWorkSchedule(
+                        'workSchedule.workingDays',
+                        currentDays.filter(d => d !== day.id)
+                      );
                     }
                   }}
                 />
-                <Label htmlFor={day.id} className="text-sm">{day.label}</Label>
+                <Label htmlFor={day.id} className="text-sm">
+                  {day.label}
+                </Label>
               </div>
             ))}
           </div>
@@ -469,9 +465,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
           <Label>Lunch Break Duration</Label>
           <Select
             value={String(form.data.userPersona?.workSchedule?.lunchBreakDuration || 60)}
-            onValueChange={(value) =>
-              updateWorkSchedule('workSchedule.lunchBreakDuration', parseInt(value))
-            }
+            onValueChange={value => updateWorkSchedule('workSchedule.lunchBreakDuration', parseInt(value))}
           >
             <SelectTrigger>
               <SelectValue />
@@ -499,7 +493,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
     { id: 'career_transition', label: 'Career Transition', description: 'Switch to new role/field' },
     { id: 'skill_relevance', label: 'Skill Relevance', description: 'Stay current with industry' },
     { id: 'job_security', label: 'Job Security', description: 'Strengthen position' },
-    { id: 'industry_change', label: 'Industry Change', description: 'Move to different sector' }
+    { id: 'industry_change', label: 'Industry Change', description: 'Move to different sector' },
   ];
 
   // Helper function to update career context fields
@@ -514,7 +508,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
         industry: '',
         urgency: 'short_term',
         motivation: [],
-        skillGaps: []
+        skillGaps: [],
       };
     }
 
@@ -547,9 +541,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Target className="h-5 w-5 text-green-600" />
           <CardTitle className="text-lg">Career Goals</CardTitle>
         </div>
-        <CardDescription>
-          Understanding your career context helps us prioritize relevant learning
-        </CardDescription>
+        <CardDescription>Understanding your career context helps us prioritize relevant learning</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -560,7 +552,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
             <Input
               placeholder="e.g., Software Engineer, Manager"
               value={form.data.userPersona?.careerContext?.currentRole || ''}
-              onChange={(e) => updateCareerContext('careerContext.currentRole', e.target.value)}
+              onChange={e => updateCareerContext('careerContext.currentRole', e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -568,7 +560,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
             <Input
               placeholder="e.g., Senior Manager, Product Director"
               value={form.data.userPersona?.careerContext?.targetRole || ''}
-              onChange={(e) => updateCareerContext('careerContext.targetRole', e.target.value)}
+              onChange={e => updateCareerContext('careerContext.targetRole', e.target.value)}
             />
           </div>
         </div>
@@ -579,7 +571,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Input
             placeholder="e.g., Technology, Finance, Healthcare"
             value={form.data.userPersona?.careerContext?.industry || ''}
-            onChange={(e) => updateCareerContext('careerContext.industry', e.target.value)}
+            onChange={e => updateCareerContext('careerContext.industry', e.target.value)}
           />
         </div>
 
@@ -618,17 +610,20 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>What's driving your learning? (Select all that apply)</Label>
           <div className="grid grid-cols-1 gap-2">
-            {motivationOptions.map((motivation) => (
+            {motivationOptions.map(motivation => (
               <div key={motivation.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={motivation.id}
                   checked={form.data.userPersona?.careerContext?.motivation?.includes(motivation.id) || false}
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={checked => {
                     const currentMotivations = form.data.userPersona?.careerContext?.motivation || [];
                     if (checked) {
                       updateCareerContext('careerContext.motivation', [...currentMotivations, motivation.id]);
                     } else {
-                      updateCareerContext('careerContext.motivation', currentMotivations.filter(m => m !== motivation.id));
+                      updateCareerContext(
+                        'careerContext.motivation',
+                        currentMotivations.filter(m => m !== motivation.id)
+                      );
                     }
                   }}
                 />
@@ -649,15 +644,16 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Textarea
             placeholder="e.g., Leadership skills, Technical expertise, Communication, Data analysis..."
             value={form.data.userPersona?.careerContext?.skillGaps?.join(', ') || ''}
-            onChange={(e) => {
-              const skills = e.target.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            onChange={e => {
+              const skills = e.target.value
+                .split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
               updateCareerContext('careerContext.skillGaps', skills);
             }}
             className="min-h-[80px]"
           />
-          <p className="text-xs text-muted-foreground">
-            Separate multiple skills with commas
-          </p>
+          <p className="text-xs text-muted-foreground">Separate multiple skills with commas</p>
         </div>
       </CardContent>
     </Card>
@@ -667,10 +663,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
 /**
  * Study goal recommendation component
  */
-function StudyGoalRecommendation({ form, persona }: {
-  form: UseFormReturn<PersonaFormData>;
-  persona: any;
-}) {
+function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<PersonaFormData>; persona: any }) {
   const recommendations = PersonaAwareGoalSetting.getStudyTimeRecommendations(persona);
 
   // Helper function to update preferences
@@ -692,9 +685,7 @@ function StudyGoalRecommendation({ form, persona }: {
           <TrendingUp className="h-5 w-5 text-orange-600" />
           <CardTitle className="text-lg">Personalized Study Goal</CardTitle>
         </div>
-        <CardDescription>
-          Based on your lifestyle, here's what we recommend
-        </CardDescription>
+        <CardDescription>Based on your lifestyle, here's what we recommend</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -703,7 +694,8 @@ function StudyGoalRecommendation({ form, persona }: {
           <div className="flex items-center justify-between">
             <Label>Daily Study Goal</Label>
             <span className="text-sm text-muted-foreground">
-              {Math.floor(form.data.preferences?.dailyStudyGoalMinutes / 60)}h {form.data.preferences?.dailyStudyGoalMinutes % 60}m
+              {Math.floor(form.data.preferences?.dailyStudyGoalMinutes / 60)}h{' '}
+              {form.data.preferences?.dailyStudyGoalMinutes % 60}m
             </span>
           </div>
           <Slider
@@ -715,9 +707,15 @@ function StudyGoalRecommendation({ form, persona }: {
             className="w-full"
           />
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>{Math.floor(recommendations.minGoal / 60)}h {recommendations.minGoal % 60}m</span>
-            <span className="font-medium">Recommended: {Math.floor(recommendations.recommendedGoal / 60)}h {recommendations.recommendedGoal % 60}m</span>
-            <span>{Math.floor(recommendations.maxGoal / 60)}h {recommendations.maxGoal % 60}m</span>
+            <span>
+              {Math.floor(recommendations.minGoal / 60)}h {recommendations.minGoal % 60}m
+            </span>
+            <span className="font-medium">
+              Recommended: {Math.floor(recommendations.recommendedGoal / 60)}h {recommendations.recommendedGoal % 60}m
+            </span>
+            <span>
+              {Math.floor(recommendations.maxGoal / 60)}h {recommendations.maxGoal % 60}m
+            </span>
           </div>
         </div>
 
@@ -729,7 +727,9 @@ function StudyGoalRecommendation({ form, persona }: {
               <p className="font-medium">Tips for your lifestyle:</p>
               <ul className="list-disc pl-4 space-y-1">
                 {recommendations.tips.map((tip, index) => (
-                  <li key={index} className="text-sm">{tip}</li>
+                  <li key={index} className="text-sm">
+                    {tip}
+                  </li>
                 ))}
               </ul>
             </div>

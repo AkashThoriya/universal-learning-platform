@@ -1,10 +1,10 @@
 'use client';
 
-import { 
-  BarChart3, 
-  BookOpen, 
-  Target, 
-  TrendingUp, 
+import {
+  BarChart3,
+  BookOpen,
+  Target,
+  TrendingUp,
   Clock,
   CheckCircle,
   Zap,
@@ -12,7 +12,7 @@ import {
   Activity,
   BookMarked,
   Flame,
-  Star
+  Star,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -59,7 +59,7 @@ export default function Dashboard() {
     currentStreak: 0,
     weeklyGoalProgress: 0,
     activeMissions: 0,
-    completedTopics: 0
+    completedTopics: 0,
   });
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,7 +75,7 @@ export default function Dashboard() {
           currentStreak: 7,
           weeklyGoalProgress: 68,
           activeMissions: 3,
-          completedTopics: 12
+          completedTopics: 12,
         };
 
         const mockActivity: RecentActivity[] = [
@@ -84,22 +84,22 @@ export default function Dashboard() {
             type: 'session',
             title: 'Banking Awareness - Current Affairs',
             timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            details: 'Completed 15-minute session'
+            details: 'Completed 15-minute session',
           },
           {
             id: '2',
             type: 'achievement',
             title: 'Week Warrior Achievement',
             timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-            details: '7-day study streak completed'
+            details: '7-day study streak completed',
           },
           {
             id: '3',
             type: 'mission',
             title: 'Quantitative Aptitude Mission',
             timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-            details: 'Progress: 80% complete'
-          }
+            details: 'Progress: 80% complete',
+          },
         ];
 
         setStats(mockStats);
@@ -121,7 +121,7 @@ export default function Dashboard() {
       icon: Zap,
       href: '/micro-learning?auto=true',
       color: 'from-yellow-500 to-orange-500',
-      badge: 'Popular'
+      badge: 'Popular',
     },
     {
       title: 'View Analytics',
@@ -129,23 +129,23 @@ export default function Dashboard() {
       icon: BarChart3,
       href: '/analytics',
       color: 'from-blue-500 to-indigo-500',
-      badge: 'New'
+      badge: 'New',
     },
     {
       title: 'Browse Topics',
       description: 'Explore study materials and syllabus',
       icon: BookOpen,
       href: '/syllabus',
-      color: 'from-green-500 to-emerald-500'
+      color: 'from-green-500 to-emerald-500',
     },
     {
       title: 'Daily Missions',
-      description: 'Complete today\'s learning goals',
+      description: "Complete today's learning goals",
       icon: Target,
       href: '/missions',
       color: 'from-purple-500 to-pink-500',
-      badge: '3'
-    }
+      badge: '3',
+    },
   ];
 
   const formatTime = (minutes: number): string => {
@@ -156,19 +156,27 @@ export default function Dashboard() {
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'session': return BookMarked;
-      case 'mission': return Target;
-      case 'achievement': return Trophy;
-      default: return Activity;
+      case 'session':
+        return BookMarked;
+      case 'mission':
+        return Target;
+      case 'achievement':
+        return Trophy;
+      default:
+        return Activity;
     }
   };
 
   const getActivityColor = (type: string) => {
     switch (type) {
-      case 'session': return 'text-blue-600';
-      case 'mission': return 'text-purple-600';
-      case 'achievement': return 'text-yellow-600';
-      default: return 'text-gray-600';
+      case 'session':
+        return 'text-blue-600';
+      case 'mission':
+        return 'text-purple-600';
+      case 'achievement':
+        return 'text-yellow-600';
+      default:
+        return 'text-gray-600';
     }
   };
 
@@ -202,7 +210,7 @@ export default function Dashboard() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-7xl mx-auto p-6 space-y-6">
           {/* Welcome Header */}
           <div className="text-center lg:text-left">
@@ -285,14 +293,12 @@ export default function Dashboard() {
                       <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                         {action.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {action.description}
-                      </p>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <p className="text-sm text-muted-foreground mt-1">{action.description}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="w-full mt-3 group-hover:bg-blue-50 group-hover:border-blue-200"
-                        onClick={() => window.location.href = action.href}
+                        onClick={() => (window.location.href = action.href)}
                       >
                         Get Started
                       </Button>
@@ -313,17 +319,18 @@ export default function Dashboard() {
                     <Activity className="h-5 w-5" />
                     Recent Activity
                   </CardTitle>
-                  <CardDescription>
-                    Your latest study sessions and achievements
-                  </CardDescription>
+                  <CardDescription>Your latest study sessions and achievements</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {recentActivity.length > 0 ? (
                     <div className="space-y-4">
-                      {recentActivity.map((activity) => {
+                      {recentActivity.map(activity => {
                         const IconComponent = getActivityIcon(activity.type);
                         return (
-                          <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                          <div
+                            key={activity.id}
+                            className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                          >
                             <div className={`p-2 rounded-full bg-white ${getActivityColor(activity.type)}`}>
                               <IconComponent className="h-4 w-4" />
                             </div>
@@ -408,8 +415,8 @@ export default function Dashboard() {
           <Alert className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
             <Trophy className="h-4 w-4 text-green-600" />
             <AlertDescription>
-              <strong>Great progress!</strong> You're on a {stats.currentStreak}-day streak. 
-              Keep up the momentum and reach your weekly goal of 10 hours!
+              <strong>Great progress!</strong> You're on a {stats.currentStreak}-day streak. Keep up the momentum and
+              reach your weekly goal of 10 hours!
             </AlertDescription>
           </Alert>
         </div>

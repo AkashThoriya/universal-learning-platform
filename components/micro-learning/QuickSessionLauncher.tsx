@@ -1,16 +1,6 @@
 'use client';
 
-import {
-  BookOpen,
-  Code,
-  Clock,
-  Play,
-  Zap,
-  Target,
-  Loader2,
-  AlertCircle,
-  User
-} from 'lucide-react';
+import { BookOpen, Code, Clock, Play, Zap, Target, Loader2, AlertCircle, User } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -45,7 +35,7 @@ const defaultSessions: QuickSessionConfig[] = [
     topicId: 'algorithms',
     track: 'exam',
     duration: 10,
-    difficulty: 'intermediate'
+    difficulty: 'intermediate',
   },
   {
     title: 'React Components Deep Dive',
@@ -54,7 +44,7 @@ const defaultSessions: QuickSessionConfig[] = [
     topicId: 'react-components',
     track: 'course_tech',
     duration: 15,
-    difficulty: 'intermediate'
+    difficulty: 'intermediate',
   },
   {
     title: 'Data Structures Basics',
@@ -63,8 +53,8 @@ const defaultSessions: QuickSessionConfig[] = [
     topicId: 'data-structures',
     track: 'exam',
     duration: 12,
-    difficulty: 'beginner'
-  }
+    difficulty: 'beginner',
+  },
 ];
 
 export function QuickSessionLauncher({
@@ -72,7 +62,7 @@ export function QuickSessionLauncher({
   sessions,
   onStartSession,
   className = '',
-  autoLoadPersonalized = true
+  autoLoadPersonalized = true,
 }: QuickSessionLauncherProps) {
   const { user } = useAuth();
   const [displaySessions, setDisplaySessions] = useState<QuickSessionConfig[]>(sessions || defaultSessions);
@@ -89,7 +79,9 @@ export function QuickSessionLauncher({
   }, [activeUserId, autoLoadPersonalized, sessions]);
 
   const loadPersonalizedSessions = async () => {
-    if (!activeUserId) { return; }
+    if (!activeUserId) {
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -110,7 +102,7 @@ export function QuickSessionLauncher({
         subjectId: rec.subjectId,
         topicId: rec.topicId,
         icon: rec.track === 'exam' ? '📚' : '💻',
-        color: rec.track === 'exam' ? 'blue' : 'green'
+        color: rec.track === 'exam' ? 'blue' : 'green',
       }));
 
       setDisplaySessions(personalizedSessions.length > 0 ? personalizedSessions : defaultSessions);
@@ -123,7 +115,9 @@ export function QuickSessionLauncher({
   };
 
   const handleStartSession = async (session: QuickSessionConfig, index: number) => {
-    if (!onStartSession || !activeUserId) { return; }
+    if (!onStartSession || !activeUserId) {
+      return;
+    }
 
     setStartingSessionIndex(index);
     try {
@@ -141,10 +135,14 @@ export function QuickSessionLauncher({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return 'bg-green-100 text-green-800';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'beginner':
+        return 'bg-green-100 text-green-800';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'advanced':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -171,9 +169,7 @@ export function QuickSessionLauncher({
             <h3 className="font-semibold text-gray-900">Quick Learning Sessions</h3>
             <p className="text-sm text-gray-600">Start learning in under 15 minutes</p>
           </div>
-          {isLoading && (
-            <Loader2 className="h-4 w-4 animate-spin text-blue-600 ml-auto" />
-          )}
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin text-blue-600 ml-auto" />}
         </div>
 
         {error && (
@@ -181,12 +177,7 @@ export function QuickSessionLauncher({
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
               {error}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={loadPersonalizedSessions}
-                className="ml-2 h-6 px-2"
-              >
+              <Button variant="ghost" size="sm" onClick={loadPersonalizedSessions} className="ml-2 h-6 px-2">
                 Retry
               </Button>
             </AlertDescription>
@@ -209,12 +200,8 @@ export function QuickSessionLauncher({
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-gray-900 text-sm truncate">
-                      {session.title}
-                    </h4>
-                    <p className="text-xs text-gray-600 truncate">
-                      {session.description}
-                    </p>
+                    <h4 className="font-medium text-gray-900 text-sm truncate">{session.title}</h4>
+                    <p className="text-xs text-gray-600 truncate">{session.description}</p>
 
                     <div className="flex items-center space-x-2 mt-1">
                       <Badge variant="secondary" className={`text-xs ${getDifficultyColor(session.difficulty)}`}>
@@ -234,11 +221,7 @@ export function QuickSessionLauncher({
                   disabled={isStarting || isLoading}
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white ml-3 flex-shrink-0 transition-all duration-200"
                 >
-                  {isStarting ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Play className="h-3 w-3" />
-                  )}
+                  {isStarting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3" />}
                 </Button>
               </div>
             );

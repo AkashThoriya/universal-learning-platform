@@ -1,25 +1,17 @@
 /**
  * @fileoverview Background Sync Service for Offline Data Management
- * 
+ *
  * Handles background synchronization of user data when the app comes back online:
  * - Mission progress synchronization
  * - Analytics data sync
  * - User preferences and settings
  * - Conflict resolution for offline changes
- * 
+ *
  * @version 1.0.0
  */
 
 import { db } from '@/lib/firebase';
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
-  collection, 
-  addDoc, 
-  updateDoc, 
-  Timestamp 
-} from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 
 export interface SyncData {
   id: string;
@@ -72,10 +64,10 @@ class BackgroundSyncService {
     };
 
     this.syncQueue.push(syncItem);
-    
+
     // Store in IndexedDB for persistence
     await this.storeSyncItemLocally(syncItem);
-    
+
     // Attempt sync if online
     if (navigator.onLine && !this.isSyncing) {
       this.startSync();
@@ -113,7 +105,7 @@ class BackgroundSyncService {
         syncedItems: 0,
         conflictItems: 0,
         failedItems: 0,
-        errors: ['Sync already in progress']
+        errors: ['Sync already in progress'],
       };
     }
 
@@ -125,15 +117,15 @@ class BackgroundSyncService {
       syncedItems: 0,
       conflictItems: 0,
       failedItems: 0,
-      errors: []
+      errors: [],
     };
 
     try {
       // Load pending items from local storage
       await this.loadLocalSyncQueue();
-      
-      const pendingItems = this.syncQueue.filter(item => 
-        item.status === 'pending' || (item.status === 'failed' && item.retryCount < this.maxRetries)
+
+      const pendingItems = this.syncQueue.filter(
+        item => item.status === 'pending' || (item.status === 'failed' && item.retryCount < this.maxRetries)
       );
 
       console.log(`Syncing ${pendingItems.length} items...`);
@@ -141,14 +133,14 @@ class BackgroundSyncService {
       for (const item of pendingItems) {
         try {
           const syncSuccess = await this.syncItem(item);
-          
+
           if (syncSuccess) {
             item.status = 'synced';
             result.syncedItems++;
           } else {
             item.retryCount++;
             item.lastAttempt = new Date();
-            
+
             if (item.retryCount >= this.maxRetries) {
               item.status = 'failed';
               result.failedItems++;
@@ -164,10 +156,9 @@ class BackgroundSyncService {
 
       // Update local storage
       await this.updateLocalSyncQueue();
-      
+
       // Notify listeners
       this.notifySyncComplete(result);
-
     } catch (error) {
       console.error('Background sync failed:', error);
       result.success = false;
@@ -209,30 +200,34 @@ class BackgroundSyncService {
   private async syncMissionData(item: SyncData): Promise<boolean> {
     try {
       const { missionId, progress, completedAt, timeSpent } = item.data;
-      
+
       // Check for conflicts
       const remoteDoc = await getDoc(doc(db, `users/${item.userId}/missions/${missionId}`));
-      
+
       if (remoteDoc.exists()) {
         const remoteData = remoteDoc.data();
         const remoteTimestamp = remoteData.lastUpdated?.toDate() || new Date(0);
-        
+
         if (remoteTimestamp > item.timestamp) {
           // Conflict detected - remote is newer
           await this.handleSyncConflict(item, remoteData);
           return false;
         }
       }
-      
+
       // Sync to Firebase
-      await setDoc(doc(db, `users/${item.userId}/missions/${missionId}`), {
-        progress,
-        completedAt: completedAt ? Timestamp.fromDate(new Date(completedAt)) : null,
-        timeSpent,
-        lastUpdated: Timestamp.fromDate(item.timestamp),
-        syncedFrom: 'offline'
-      }, { merge: true });
-      
+      await setDoc(
+        doc(db, `users/${item.userId}/missions/${missionId}`),
+        {
+          progress,
+          completedAt: completedAt ? Timestamp.fromDate(new Date(completedAt)) : null,
+          timeSpent,
+          lastUpdated: Timestamp.fromDate(item.timestamp),
+          syncedFrom: 'offline',
+        },
+        { merge: true }
+      );
+
       return true;
     } catch (error) {
       console.error('Mission sync error:', error);
@@ -243,7 +238,7 @@ class BackgroundSyncService {
   private async syncProgressData(item: SyncData): Promise<boolean> {
     try {
       const { sessionId, subject, timeSpent, questionsAnswered, accuracy } = item.data;
-      
+
       await addDoc(collection(db, `users/${item.userId}/study_sessions`), {
         sessionId,
         subject,
@@ -251,9 +246,9 @@ class BackgroundSyncService {
         questionsAnswered,
         accuracy,
         timestamp: Timestamp.fromDate(item.timestamp),
-        syncedFrom: 'offline'
+        syncedFrom: 'offline',
       });
-      
+
       return true;
     } catch (error) {
       console.error('Progress sync error:', error);
@@ -264,14 +259,14 @@ class BackgroundSyncService {
   private async syncAnalyticsData(item: SyncData): Promise<boolean> {
     try {
       const { eventType, eventData } = item.data;
-      
+
       await addDoc(collection(db, `users/${item.userId}/analytics_events`), {
         eventType,
         eventData,
         timestamp: Timestamp.fromDate(item.timestamp),
-        source: 'offline_sync'
+        source: 'offline_sync',
       });
-      
+
       return true;
     } catch (error) {
       console.error('Analytics sync error:', error);
@@ -282,12 +277,12 @@ class BackgroundSyncService {
   private async syncPreferencesData(item: SyncData): Promise<boolean> {
     try {
       const preferences = item.data;
-      
+
       await updateDoc(doc(db, `users/${item.userId}`), {
         preferences,
-        lastUpdated: Timestamp.fromDate(item.timestamp)
+        lastUpdated: Timestamp.fromDate(item.timestamp),
       });
-      
+
       return true;
     } catch (error) {
       console.error('Preferences sync error:', error);
@@ -298,13 +293,13 @@ class BackgroundSyncService {
   private async syncSessionData(item: SyncData): Promise<boolean> {
     try {
       const sessionData = item.data;
-      
+
       await setDoc(doc(db, `users/${item.userId}/sessions/${item.id}`), {
         ...sessionData,
         timestamp: Timestamp.fromDate(item.timestamp),
-        syncedFrom: 'offline'
+        syncedFrom: 'offline',
       });
-      
+
       return true;
     } catch (error) {
       console.error('Session sync error:', error);
@@ -318,14 +313,14 @@ class BackgroundSyncService {
 
   private async handleSyncConflict(localItem: SyncData, remoteData: any): Promise<void> {
     localItem.status = 'conflict';
-    
+
     // Store conflict for user resolution
     await this.storeConflict({
       localItem,
       remoteData,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
-    
+
     console.log('Sync conflict detected for item:', localItem.id);
   }
 
@@ -333,22 +328,22 @@ class BackgroundSyncService {
     try {
       for (const resolution of resolutions) {
         const conflictItem = this.syncQueue.find(item => item.id === resolution.itemId);
-        
+
         if (!conflictItem) {
           continue;
         }
-        
+
         switch (resolution.resolution) {
           case 'local':
             // Keep local data, force sync
             conflictItem.status = 'pending';
             break;
-            
+
           case 'remote':
             // Discard local data
             conflictItem.status = 'synced';
             break;
-            
+
           case 'merge':
             // Use merged data
             if (resolution.mergedData) {
@@ -358,14 +353,14 @@ class BackgroundSyncService {
             break;
         }
       }
-      
+
       await this.updateLocalSyncQueue();
-      
+
       // Restart sync for resolved conflicts
       if (navigator.onLine) {
         this.startSync();
       }
-      
+
       return true;
     } catch (error) {
       console.error('Conflict resolution failed:', error);
@@ -381,13 +376,13 @@ class BackgroundSyncService {
     try {
       const stored = localStorage.getItem('sync_queue');
       const queue = stored ? JSON.parse(stored) : [];
-      
+
       queue.push({
         ...item,
         timestamp: item.timestamp.toISOString(),
-        lastAttempt: item.lastAttempt?.toISOString()
+        lastAttempt: item.lastAttempt?.toISOString(),
       });
-      
+
       localStorage.setItem('sync_queue', JSON.stringify(queue));
     } catch (error) {
       console.error('Failed to store sync item locally:', error);
@@ -397,13 +392,13 @@ class BackgroundSyncService {
   private async loadLocalSyncQueue(): Promise<void> {
     try {
       const stored = localStorage.getItem('sync_queue');
-      
+
       if (stored) {
         const queue = JSON.parse(stored);
         this.syncQueue = queue.map((item: any) => ({
           ...item,
           timestamp: new Date(item.timestamp),
-          lastAttempt: item.lastAttempt ? new Date(item.lastAttempt) : undefined
+          lastAttempt: item.lastAttempt ? new Date(item.lastAttempt) : undefined,
         }));
       }
     } catch (error) {
@@ -417,9 +412,9 @@ class BackgroundSyncService {
       const serializedQueue = this.syncQueue.map(item => ({
         ...item,
         timestamp: item.timestamp.toISOString(),
-        lastAttempt: item.lastAttempt?.toISOString()
+        lastAttempt: item.lastAttempt?.toISOString(),
       }));
-      
+
       localStorage.setItem('sync_queue', JSON.stringify(serializedQueue));
     } catch (error) {
       console.error('Failed to update local sync queue:', error);
@@ -439,12 +434,12 @@ class BackgroundSyncService {
     try {
       const stored = localStorage.getItem('sync_conflicts');
       const conflicts = stored ? JSON.parse(stored) : [];
-      
+
       conflicts.push({
         ...conflict,
-        timestamp: conflict.timestamp.toISOString()
+        timestamp: conflict.timestamp.toISOString(),
       });
-      
+
       localStorage.setItem('sync_conflicts', JSON.stringify(conflicts));
     } catch (error) {
       console.error('Failed to store conflict:', error);
@@ -464,14 +459,16 @@ class BackgroundSyncService {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({
         type: 'SYNC_COMPLETE',
-        result
+        result,
       });
     }
-    
+
     // Dispatch custom event
-    window.dispatchEvent(new CustomEvent('backgroundSyncComplete', {
-      detail: result
-    }));
+    window.dispatchEvent(
+      new CustomEvent('backgroundSyncComplete', {
+        detail: result,
+      })
+    );
   }
 
   // ============================================================================
@@ -485,10 +482,10 @@ class BackgroundSyncService {
         syncedItems: 0,
         conflictItems: 0,
         failedItems: 0,
-        errors: ['No internet connection']
+        errors: ['No internet connection'],
       };
     }
-    
+
     return this.startSync();
   }
 
@@ -499,8 +496,8 @@ class BackgroundSyncService {
       timestamp: new Date(),
       data: {
         missionId,
-        ...progress
-      }
+        ...progress,
+      },
     });
   }
 
@@ -509,7 +506,7 @@ class BackgroundSyncService {
       type: 'progress',
       userId,
       timestamp: new Date(),
-      data: sessionData
+      data: sessionData,
     });
   }
 
@@ -520,8 +517,8 @@ class BackgroundSyncService {
       timestamp: new Date(),
       data: {
         eventType,
-        eventData
-      }
+        eventData,
+      },
     });
   }
 
@@ -530,7 +527,7 @@ class BackgroundSyncService {
       type: 'preferences',
       userId,
       timestamp: new Date(),
-      data: preferences
+      data: preferences,
     });
   }
 
@@ -538,17 +535,17 @@ class BackgroundSyncService {
   async initialize(): Promise<void> {
     // Load existing queue from local storage
     await this.loadLocalSyncQueue();
-    
+
     // Set up online/offline listeners
     window.addEventListener('online', () => {
       console.log('Came back online, starting sync...');
       this.startSync();
     });
-    
+
     window.addEventListener('offline', () => {
       console.log('Went offline, sync will resume when back online');
     });
-    
+
     // Initial sync if online
     if (navigator.onLine && this.syncQueue.length > 0) {
       setTimeout(() => this.startSync(), 1000);

@@ -39,7 +39,7 @@ import {
   type ExamMissionContent,
   type TechMissionContent,
   type MissionResults,
-  type MissionProgress
+  type MissionProgress,
 } from '@/types/mission-system';
 
 // =====================================================
@@ -113,12 +113,12 @@ export class MissionTemplateService {
               general_studies: 0.4,
               mathematics: 0.3,
               reasoning: 0.2,
-              english: 0.1
+              english: 0.1,
             },
             focusTopics: [],
             includeExplanations: true,
-            passingThreshold: 60
-          } as ExamMissionContent
+            passingThreshold: 60,
+          } as ExamMissionContent,
         },
         scoring: {
           maxScore: 100,
@@ -126,14 +126,14 @@ export class MissionTemplateService {
           scoringMethod: 'percentage',
           weights: {
             accuracy: 0.7,
-            speed: 0.3
+            speed: 0.3,
           },
           bonusPoints: {
             earlyCompletion: 5,
-            perfectScore: 10
-          }
+            perfectScore: 10,
+          },
         },
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'exam_weekly_revision_cycle',
@@ -154,8 +154,8 @@ export class MissionTemplateService {
             subjectWeights: {},
             focusTopics: [],
             includeExplanations: true,
-            passingThreshold: 65
-          } as ExamMissionContent
+            passingThreshold: 65,
+          } as ExamMissionContent,
         },
         scoring: {
           maxScore: 100,
@@ -164,13 +164,13 @@ export class MissionTemplateService {
           weights: {
             accuracy: 0.6,
             speed: 0.2,
-            efficiency: 0.2
+            efficiency: 0.2,
           },
           bonusPoints: {
-            perfectScore: 15
-          }
+            perfectScore: 15,
+          },
         },
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'exam_monthly_full_test',
@@ -191,8 +191,8 @@ export class MissionTemplateService {
             subjectWeights: {},
             focusTopics: [],
             includeExplanations: true,
-            passingThreshold: 70
-          } as ExamMissionContent
+            passingThreshold: 70,
+          } as ExamMissionContent,
         },
         scoring: {
           maxScore: 100,
@@ -200,13 +200,13 @@ export class MissionTemplateService {
           scoringMethod: 'percentage',
           weights: {
             accuracy: 0.8,
-            speed: 0.2
+            speed: 0.2,
           },
           bonusPoints: {
-            perfectScore: 20
-          }
+            perfectScore: 20,
+          },
         },
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       // Tech Track Templates
       {
@@ -229,8 +229,8 @@ export class MissionTemplateService {
             deliverables: ['code', 'tests'],
             timeLimit: 20,
             successCriteria: ['correct_output', 'efficient_solution'],
-            allowedResources: true
-          } as TechMissionContent
+            allowedResources: true,
+          } as TechMissionContent,
         },
         scoring: {
           maxScore: 100,
@@ -239,14 +239,14 @@ export class MissionTemplateService {
           weights: {
             accuracy: 0.4,
             efficiency: 0.3,
-            quality: 0.3
+            quality: 0.3,
           },
           bonusPoints: {
             earlyCompletion: 10,
-            innovation: 15
-          }
+            innovation: 15,
+          },
         },
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'tech_weekly_assignment',
@@ -268,8 +268,8 @@ export class MissionTemplateService {
             deliverables: ['code', 'documentation', 'tests'],
             timeLimit: 90,
             successCriteria: ['functional_requirements', 'code_quality', 'documentation'],
-            allowedResources: true
-          } as TechMissionContent
+            allowedResources: true,
+          } as TechMissionContent,
         },
         scoring: {
           maxScore: 100,
@@ -278,13 +278,13 @@ export class MissionTemplateService {
           weights: {
             accuracy: 0.3,
             quality: 0.4,
-            creativity: 0.3
+            creativity: 0.3,
           },
           bonusPoints: {
-            innovation: 20
-          }
+            innovation: 20,
+          },
         },
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'tech_monthly_project',
@@ -306,8 +306,8 @@ export class MissionTemplateService {
             deliverables: ['code', 'documentation', 'tests', 'deployment'],
             timeLimit: 240,
             successCriteria: ['functionality', 'scalability', 'maintainability'],
-            allowedResources: true
-          } as TechMissionContent
+            allowedResources: true,
+          } as TechMissionContent,
         },
         scoring: {
           maxScore: 100,
@@ -317,14 +317,14 @@ export class MissionTemplateService {
             accuracy: 0.25,
             quality: 0.35,
             creativity: 0.25,
-            efficiency: 0.15
+            efficiency: 0.15,
           },
           bonusPoints: {
-            innovation: 25
-          }
+            innovation: 25,
+          },
         },
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     ];
   }
 
@@ -353,9 +353,7 @@ export class MissionTemplateService {
       }
 
       if (persona) {
-        templates = templates.filter(t =>
-          t.supportedPersonas.length === 0 || t.supportedPersonas.includes(persona)
-        );
+        templates = templates.filter(t => t.supportedPersonas.length === 0 || t.supportedPersonas.includes(persona));
       }
 
       return templates;
@@ -373,7 +371,9 @@ export class MissionTemplateService {
       const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.getTemplates(userId);
 
-      if (!result.success) { return null; }
+      if (!result.success) {
+        return null;
+      }
 
       const templates = result.data as MissionTemplate[];
       return templates.find(t => t.id === templateId) || null;
@@ -386,10 +386,7 @@ export class MissionTemplateService {
   /**
    * Add or update template
    */
-  async saveTemplate(
-    userId: string,
-    template: MissionTemplate
-  ): Promise<MissionApiResponse<MissionTemplate>> {
+  async saveTemplate(userId: string, template: MissionTemplate): Promise<MissionApiResponse<MissionTemplate>> {
     try {
       const { missionFirebaseService } = await import('@/lib/firebase-services');
       const result = await missionFirebaseService.saveTemplate(userId, template);
@@ -398,20 +395,19 @@ export class MissionTemplateService {
         return {
           success: true,
           data: template,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
-        return {
-          success: false,
-          error: result.error?.message || 'Failed to save template',
-          timestamp: new Date()
-        };
-
+      return {
+        success: false,
+        error: result.error?.message || 'Failed to save template',
+        timestamp: new Date(),
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to save template',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -460,8 +456,8 @@ export class MissionGenerationService {
             templateUsed: '',
             difficultyAdjustments: [],
             personaOptimizations: [],
-            generationTime: Date.now() - startTime
-          }
+            generationTime: Date.now() - startTime,
+          },
         };
       }
 
@@ -486,8 +482,8 @@ export class MissionGenerationService {
           templateUsed: selectedTemplate.id,
           difficultyAdjustments: [],
           personaOptimizations: [],
-          generationTime: Date.now() - startTime
-        }
+          generationTime: Date.now() - startTime,
+        },
       };
     } catch (error) {
       return {
@@ -497,8 +493,8 @@ export class MissionGenerationService {
           templateUsed: '',
           difficultyAdjustments: [],
           personaOptimizations: [],
-          generationTime: Date.now() - startTime
-        }
+          generationTime: Date.now() - startTime,
+        },
       };
     }
   }
@@ -522,11 +518,11 @@ export class MissionGenerationService {
     });
 
     const selectedTemplate = filteredTemplates[0] || templates[0];
-    
+
     if (!selectedTemplate) {
       throw new Error('No suitable templates available for mission generation');
     }
-    
+
     return selectedTemplate;
   }
 
@@ -574,12 +570,12 @@ export class MissionGenerationService {
           accuracy: 0,
           speed: 0,
           consistency: 0,
-          engagement: 0
-        }
+          engagement: 0,
+        },
       },
       personaOptimizations,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     return mission;
@@ -588,10 +584,7 @@ export class MissionGenerationService {
   /**
    * Generate mission content based on template
    */
-  private async generateMissionContent(
-    template: MissionTemplate,
-    _request: MissionGenerationRequest
-  ): Promise<any> {
+  private async generateMissionContent(template: MissionTemplate, _request: MissionGenerationRequest): Promise<any> {
     // Mock content generation - in production this would:
     // 1. Query question/problem databases
     // 2. Apply difficulty filters
@@ -605,37 +598,38 @@ export class MissionGenerationService {
           questions: [], // Would be populated with actual questions
           timeLimit: template.estimatedDuration,
           passingScore: 60,
-          instructions: `Complete this ${template.name} within ${template.estimatedDuration} minutes`
-        }
+          instructions: `Complete this ${template.name} within ${template.estimatedDuration} minutes`,
+        },
       };
     }
-      return {
-        type: template.contentStructure.type,
-        techContent: {
-          challenge: {
-            id: `challenge_${Date.now()}`,
-            title: template.name,
-            problemStatement: template.description,
-            type: 'algorithm',
-            examples: [],
-            constraints: [],
-            starterCode: {},
-            testCases: [],
-            hints: []
-          },
-          requirements: [],
-          deliverables: [],
-          resources: []
-        }
-      };
-
+    return {
+      type: template.contentStructure.type,
+      techContent: {
+        challenge: {
+          id: `challenge_${Date.now()}`,
+          title: template.name,
+          problemStatement: template.description,
+          type: 'algorithm',
+          examples: [],
+          constraints: [],
+          starterCode: {},
+          testCases: [],
+          hints: [],
+        },
+        requirements: [],
+        deliverables: [],
+        resources: [],
+      },
+    };
   }
 
   /**
    * Calculate mission deadline
    */
   private calculateDeadline(frequency: MissionFrequency, customDeadline?: Date): Date {
-    if (customDeadline) { return customDeadline; }
+    if (customDeadline) {
+      return customDeadline;
+    }
 
     const now = new Date();
     switch (frequency) {
@@ -660,70 +654,70 @@ export class MissionGenerationService {
         timeAdjustments: {
           preferredDuration: 30,
           maxDuration: 60,
-          breakIntervals: [15, 30]
+          breakIntervals: [15, 30],
         },
         contentAdaptations: {
           explanationLevel: 'detailed',
           exampleComplexity: 'simple',
-          contextType: 'academic'
+          contextType: 'academic',
         },
         motivationStrategies: {
           rewardTypes: ['points', 'badges', 'progress'],
           feedbackFrequency: 'step_by_step',
-          challengePreference: 'increasing'
+          challengePreference: 'increasing',
         },
         progressVisualization: {
           chartTypes: ['bar', 'line'],
           detailLevel: 'detailed',
-          comparisons: ['self', 'peers']
-        }
+          comparisons: ['self', 'peers'],
+        },
       },
       working_professional: {
         persona: 'working_professional',
         timeAdjustments: {
           preferredDuration: 20,
           maxDuration: 30,
-          breakIntervals: [10, 20]
+          breakIntervals: [10, 20],
         },
         contentAdaptations: {
           explanationLevel: 'brief',
           exampleComplexity: 'realistic',
-          contextType: 'professional'
+          contextType: 'professional',
         },
         motivationStrategies: {
           rewardTypes: ['certificates', 'progress'],
           feedbackFrequency: 'end_of_mission',
-          challengePreference: 'steady'
+          challengePreference: 'steady',
         },
         progressVisualization: {
           chartTypes: ['gauge', 'line'],
           detailLevel: 'summary',
-          comparisons: ['self', 'benchmarks']
-        }
+          comparisons: ['self', 'benchmarks'],
+        },
       },
       freelancer: {
         persona: 'freelancer',
         timeAdjustments: {
           preferredDuration: 25,
           maxDuration: 45,
-          breakIntervals: [15, 25]
+          breakIntervals: [15, 25],
         },
         contentAdaptations: {
           explanationLevel: 'comprehensive',
           exampleComplexity: 'advanced',
-          contextType: 'practical'
+          contextType: 'practical',
         },
         motivationStrategies: {
           rewardTypes: ['certificates', 'social'],
           feedbackFrequency: 'immediate',
-          challengePreference: 'variable'
+          challengePreference: 'variable',
         },
         progressVisualization: {
           chartTypes: ['pie', 'heatmap'],
           detailLevel: 'comprehensive',
-          comparisons: ['self', 'goals']
-        }
-      }
+          comparisons: ['self', 'goals'],
+        },
+      },
     };
 
     return baseOptimizations[persona];
@@ -775,12 +769,11 @@ export class MissionProgressService {
 
       // Temporary implementation - in production, include userId in method signature
       throw new Error('UpdateProgress requires userId parameter - method signature needs update');
-
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to update progress',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -801,20 +794,19 @@ export class MissionProgressService {
         return {
           success: true,
           data: progress as MissionProgress,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
-        return {
-          success: false,
-          error: (result.error instanceof Error ? result.error.message : result.error) || 'Failed to update progress',
-          timestamp: new Date()
-        };
-
+      return {
+        success: false,
+        error: (result.error instanceof Error ? result.error.message : result.error) || 'Failed to update progress',
+        timestamp: new Date(),
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to update progress',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -822,20 +814,16 @@ export class MissionProgressService {
   /**
    * Complete mission and generate results
    */
-  async completeMission(
-    _missionId: string,
-    _finalSubmissions: any[]
-  ): Promise<MissionApiResponse<MissionResults>> {
+  async completeMission(_missionId: string, _finalSubmissions: any[]): Promise<MissionApiResponse<MissionResults>> {
     try {
       // Extract userId from mission ID or get it from context
       // Temporary implementation - in production, include userId in method signature
       throw new Error('CompleteMission requires userId parameter - method signature needs update');
-
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to complete mission',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -859,20 +847,21 @@ export class MissionProgressService {
         return {
           success: true,
           data: results,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
-        return {
-          success: false,
-          error: (completeResult.error instanceof Error ? completeResult.error.message : completeResult.error) || 'Failed to complete mission',
-          timestamp: new Date()
-        };
-
+      return {
+        success: false,
+        error:
+          (completeResult.error instanceof Error ? completeResult.error.message : completeResult.error) ||
+          'Failed to complete mission',
+        timestamp: new Date(),
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to complete mission',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -880,10 +869,7 @@ export class MissionProgressService {
   /**
    * Calculate mission results
    */
-  private async calculateMissionResults(
-    _missionId: string,
-    _submissions: any[]
-  ): Promise<MissionResults> {
+  private async calculateMissionResults(_missionId: string, _submissions: any[]): Promise<MissionResults> {
     // Mock calculation - in production this would:
     // 1. Grade submissions against correct answers/criteria
     // 2. Calculate performance metrics
@@ -900,7 +886,7 @@ export class MissionProgressService {
         accuracy: 85,
         speed: 92,
         efficiency: 78,
-        consistency: 88
+        consistency: 88,
       },
       strengths: ['Problem solving', 'Time management'],
       improvements: ['Algorithm optimization', 'Edge case handling'],
@@ -910,21 +896,18 @@ export class MissionProgressService {
           topic: 'Sorting',
           score: 90,
           maxScore: 100,
-          timeSpent: 8
+          timeSpent: 8,
         },
         {
           subject: 'Data Structures',
           topic: 'Arrays',
           score: 80,
           maxScore: 100,
-          timeSpent: 10
-        }
+          timeSpent: 10,
+        },
       ],
       achievements: ['Speed Demon', 'Problem Solver'],
-      recommendations: [
-        'Practice more complex algorithm problems',
-        'Focus on space complexity optimization'
-      ]
+      recommendations: ['Practice more complex algorithm problems', 'Focus on space complexity optimization'],
     };
   }
 }
@@ -960,7 +943,7 @@ export class UnifiedProgressService {
           averageScore: 82,
           currentStreak: 7,
           longestStreak: 15,
-          consistencyRating: 88
+          consistencyRating: 88,
         },
         trackProgress: {
           exam: {
@@ -975,28 +958,28 @@ export class UnifiedProgressService {
             difficultyProgression: {
               current: 'intermediate',
               recommended: 'advanced',
-              readyForAdvancement: true
+              readyForAdvancement: true,
             },
             topicBreakdown: [
               {
                 topic: 'General Studies',
                 proficiency: 75,
                 missionsCompleted: 12,
-                averageScore: 76
+                averageScore: 76,
               },
               {
                 topic: 'Mathematics',
                 proficiency: 82,
                 missionsCompleted: 8,
-                averageScore: 84
+                averageScore: 84,
               },
               {
                 topic: 'Reasoning',
                 proficiency: 88,
                 missionsCompleted: 5,
-                averageScore: 89
-              }
-            ]
+                averageScore: 89,
+              },
+            ],
           },
           course_tech: {
             track: 'course_tech',
@@ -1010,55 +993,55 @@ export class UnifiedProgressService {
             difficultyProgression: {
               current: 'intermediate',
               recommended: 'intermediate',
-              readyForAdvancement: false
+              readyForAdvancement: false,
             },
             topicBreakdown: [
               {
                 topic: 'Algorithms',
                 proficiency: 85,
                 missionsCompleted: 8,
-                averageScore: 86
+                averageScore: 86,
               },
               {
                 topic: 'Web Development',
                 proficiency: 90,
                 missionsCompleted: 7,
-                averageScore: 92
+                averageScore: 92,
               },
               {
                 topic: 'System Design',
                 proficiency: 70,
                 missionsCompleted: 5,
-                averageScore: 72
-              }
-            ]
-          }
+                averageScore: 72,
+              },
+            ],
+          },
         },
         crossTrackInsights: {
           transferableSkills: ['Problem Solving', 'Time Management', 'Logical Thinking'],
           effectivePatterns: ['Morning study sessions', 'Short break intervals'],
           recommendedBalance: {
             exam: 60,
-            course_tech: 40
-          }
+            course_tech: 40,
+          },
         },
         periodSummaries: {
           weekly: [],
-          monthly: []
+          monthly: [],
         },
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       return {
         success: true,
         data: progress,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get user progress',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -1084,7 +1067,7 @@ export class UnifiedProgressService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to update progress',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -1124,7 +1107,7 @@ export class MissionAnalyticsService {
           missionsSkipped: 2,
           averageScore: 84,
           totalTimeSpent: 420,
-          consistencyScore: 89
+          consistencyScore: 89,
         },
         trackAnalytics: {
           exam: {
@@ -1136,40 +1119,40 @@ export class MissionAnalyticsService {
               beginner: 1,
               intermediate: 5,
               advanced: 1,
-              expert: 0
+              expert: 0,
             },
             subjectPerformance: [
               {
                 subject: 'General Studies',
                 averageScore: 78,
                 missionsCompleted: 3,
-                timeSpent: 90
+                timeSpent: 90,
               },
               {
                 subject: 'Mathematics',
                 averageScore: 85,
                 missionsCompleted: 2,
-                timeSpent: 75
+                timeSpent: 75,
               },
               {
                 subject: 'Reasoning',
                 averageScore: 88,
                 missionsCompleted: 2,
-                timeSpent: 80
-              }
+                timeSpent: 80,
+              },
             ],
             missionTypePerformance: [
               {
                 type: 'Daily Mock Questions',
                 averageScore: 80,
-                completionRate: 95
+                completionRate: 95,
               },
               {
                 type: 'Weekly Revision',
                 averageScore: 85,
-                completionRate: 100
-              }
-            ]
+                completionRate: 100,
+              },
+            ],
           },
           course_tech: {
             track: 'course_tech',
@@ -1180,46 +1163,54 @@ export class MissionAnalyticsService {
               beginner: 1,
               intermediate: 3,
               advanced: 1,
-              expert: 0
+              expert: 0,
             },
             subjectPerformance: [
               {
                 subject: 'Algorithms',
                 averageScore: 85,
                 missionsCompleted: 2,
-                timeSpent: 70
+                timeSpent: 70,
               },
               {
                 subject: 'Web Development',
                 averageScore: 90,
                 missionsCompleted: 2,
-                timeSpent: 65
+                timeSpent: 65,
               },
               {
                 subject: 'System Design',
                 averageScore: 85,
                 missionsCompleted: 1,
-                timeSpent: 40
-              }
+                timeSpent: 40,
+              },
             ],
             missionTypePerformance: [
               {
                 type: 'Daily Coding Challenge',
                 averageScore: 88,
-                completionRate: 90
+                completionRate: 90,
               },
               {
                 type: 'Weekly Assignment',
                 averageScore: 86,
-                completionRate: 100
-              }
-            ]
-          }
+                completionRate: 100,
+              },
+            ],
+          },
         },
         trends: {
           scoresTrend: [78, 80, 82, 85, 84, 87, 85],
           timeTrend: [25, 30, 28, 35, 32, 30, 28],
-          difficultyTrend: ['intermediate', 'intermediate', 'advanced', 'intermediate', 'advanced', 'intermediate', 'intermediate']
+          difficultyTrend: [
+            'intermediate',
+            'intermediate',
+            'advanced',
+            'intermediate',
+            'advanced',
+            'intermediate',
+            'intermediate',
+          ],
         },
         insights: {
           strengths: ['Consistent performance', 'Good time management', 'Strong in reasoning'],
@@ -1227,23 +1218,23 @@ export class MissionAnalyticsService {
           recommendations: [
             'Try more advanced level missions',
             'Allocate more time to general studies',
-            'Consider increasing daily mission frequency'
+            'Consider increasing daily mission frequency',
           ],
-          predictedPerformance: 88
+          predictedPerformance: 88,
         },
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       return {
         success: true,
         data: analytics,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to generate analytics',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -1298,20 +1289,19 @@ export class MissionService {
         return {
           success: true,
           data: result.data as Mission[],
-          timestamp: new Date()
+          timestamp: new Date(),
         };
       }
-        return {
-          success: false,
-          error: result.error?.message || 'Failed to get active missions',
-          timestamp: new Date()
-        };
-
+      return {
+        success: false,
+        error: result.error?.message || 'Failed to get active missions',
+        timestamp: new Date(),
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get active missions',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }

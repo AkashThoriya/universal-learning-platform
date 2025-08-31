@@ -16,7 +16,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getSyllabus, getAllProgress } from '@/lib/firebase-utils';
 import { SyllabusSubject, TopicProgress } from '@/types/exam';
 
-
 export default function SyllabusPage() {
   const { user } = useAuth();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
@@ -29,13 +28,12 @@ export default function SyllabusPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) { return; }
+      if (!user) {
+        return;
+      }
 
       try {
-        const [syllabusData, progressData] = await Promise.all([
-          getSyllabus(user.uid),
-          getAllProgress(user.uid)
-        ]);
+        const [syllabusData, progressData] = await Promise.all([getSyllabus(user.uid), getAllProgress(user.uid)]);
 
         setSyllabus(syllabusData);
         setProgress(progressData);
@@ -67,7 +65,9 @@ export default function SyllabusPage() {
     const topicProgresses = subject.topics.map(topic => getTopicProgress(topic.id));
     const validProgresses = topicProgresses.filter(p => p !== undefined);
 
-    if (validProgresses.length === 0) { return 0; }
+    if (validProgresses.length === 0) {
+      return 0;
+    }
 
     const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore || 0), 0);
     return Math.round(totalMastery / validProgresses.length);
@@ -75,7 +75,8 @@ export default function SyllabusPage() {
 
   const filteredSyllabus = syllabus.filter(subject => {
     // Search filter
-    const matchesSearch = searchQuery === '' ||
+    const matchesSearch =
+      searchQuery === '' ||
       subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       subject.topics.some(topic => topic.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -104,25 +105,37 @@ export default function SyllabusPage() {
 
   const getTierColor = (tier: number) => {
     switch (tier) {
-      case 1: return 'bg-red-100 text-red-800 border-red-200';
-      case 2: return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 3: return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 1:
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 2:
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 3:
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getTierLabel = (tier: number) => {
     switch (tier) {
-      case 1: return 'High Priority';
-      case 2: return 'Medium Priority';
-      case 3: return 'Low Priority';
-      default: return 'Standard';
+      case 1:
+        return 'High Priority';
+      case 2:
+        return 'Medium Priority';
+      case 3:
+        return 'Low Priority';
+      default:
+        return 'Standard';
     }
   };
 
   const getMasteryColor = (score: number) => {
-    if (score >= 80) { return 'text-green-600'; }
-    if (score >= 50) { return 'text-yellow-600'; }
+    if (score >= 80) {
+      return 'text-green-600';
+    }
+    if (score >= 50) {
+      return 'text-yellow-600';
+    }
     return 'text-red-600';
   };
 
@@ -160,12 +173,8 @@ export default function SyllabusPage() {
                 📚 Syllabus Management
               </Badge>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gradient">
-              Strategic Syllabus Overview
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Manage your study priorities and track mastery progress
-            </p>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Strategic Syllabus Overview</h1>
+            <p className="text-muted-foreground text-lg">Manage your study priorities and track mastery progress</p>
           </div>
 
           {/* Filters */}
@@ -185,7 +194,7 @@ export default function SyllabusPage() {
                     <Input
                       placeholder="Search subjects or topics..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={e => setSearchQuery(e.target.value)}
                       className="pl-10"
                     />
                   </div>
@@ -274,9 +283,9 @@ export default function SyllabusPage() {
                   <div>
                     <p className="text-2xl font-bold">
                       {Math.round(
-                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) /
-                        (syllabus.length || 1)
-                      )}%
+                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
+                      )}
+                      %
                     </p>
                     <p className="text-sm text-muted-foreground">Avg Mastery</p>
                   </div>
@@ -290,12 +299,14 @@ export default function SyllabusPage() {
                   <Clock className="h-8 w-8 text-orange-600" />
                   <div>
                     <p className="text-2xl font-bold">
-                      {progress.filter(p => {
-                        const daysSince = Math.floor(
-                          (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
-                        );
-                        return daysSince >= 0;
-                      }).length}
+                      {
+                        progress.filter(p => {
+                          const daysSince = Math.floor(
+                            (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
+                          );
+                          return daysSince >= 0;
+                        }).length
+                      }
                     </p>
                     <p className="text-sm text-muted-foreground">Due for Revision</p>
                   </div>
@@ -318,11 +329,7 @@ export default function SyllabusPage() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <ChevronRight
-                          className={`h-5 w-5 transition-transform ${
-                            isExpanded ? 'rotate-90' : ''
-                          }`}
-                        />
+                        <ChevronRight className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                         <div>
                           <CardTitle className="text-xl">{subject.name}</CardTitle>
                           <CardDescription>
@@ -333,14 +340,10 @@ export default function SyllabusPage() {
 
                       <div className="flex items-center space-x-4">
                         <div className="text-right">
-                          <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>
-                            {subjectMastery}%
-                          </p>
+                          <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>{subjectMastery}%</p>
                           <p className="text-sm text-muted-foreground">Mastery</p>
                         </div>
-                        <Badge className={getTierColor(subject.tier)}>
-                          Tier {subject.tier}
-                        </Badge>
+                        <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
                       </div>
                     </div>
 
@@ -361,17 +364,12 @@ export default function SyllabusPage() {
                           const masteryScore = topicProgress?.masteryScore || 0;
 
                           return (
-                            <Link
-                              key={topic.id}
-                              href={`/syllabus/${topic.id}?subject=${subject.id}`}
-                            >
+                            <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
                               <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                                 <CardContent className="p-4">
                                   <div className="space-y-3">
                                     <div>
-                                      <h4 className="font-medium text-sm line-clamp-2">
-                                        {topic.name}
-                                      </h4>
+                                      <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -385,7 +383,8 @@ export default function SyllabusPage() {
 
                                     {topicProgress?.lastRevised && (
                                       <p className="text-xs text-muted-foreground">
-                                        Last studied: {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
+                                        Last studied:{' '}
+                                        {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
                                       </p>
                                     )}
                                   </div>
@@ -407,9 +406,7 @@ export default function SyllabusPage() {
               <CardContent className="py-12 text-center">
                 <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No subjects found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your filters or search query to find subjects.
-                </p>
+                <p className="text-muted-foreground">Try adjusting your filters or search query to find subjects.</p>
               </CardContent>
             </Card>
           )}

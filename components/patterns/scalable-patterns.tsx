@@ -29,7 +29,7 @@ import React, {
   ComponentType,
   HTMLAttributes,
   forwardRef as _forwardRef,
-  RefObject
+  RefObject,
 } from 'react';
 
 import { LoadingState } from '../../lib/types-utils';
@@ -61,7 +61,7 @@ function createDataProvider<T>() {
     const [state, setState] = useState<LoadingState<T>>({
       data: initialData,
       isLoading: false,
-      error: null
+      error: null,
     });
 
     const refetch = useCallback(async () => {
@@ -73,7 +73,7 @@ function createDataProvider<T>() {
         setState((prev: LoadingState<T>) => ({
           ...prev,
           isLoading: false,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         }));
       }
     }, [fetchData]);
@@ -82,19 +82,18 @@ function createDataProvider<T>() {
       setState((prev: LoadingState<T>) => ({ ...prev, data }));
     }, []);
 
-    const value = useMemo(() => ({
-      data: state.data,
-      isLoading: state.isLoading,
-      error: state.error,
-      refetch,
-      updateData
-    }), [state, refetch, updateData]);
-
-    return (
-      <DataContext.Provider value={value}>
-        {children}
-      </DataContext.Provider>
+    const value = useMemo(
+      () => ({
+        data: state.data,
+        isLoading: state.isLoading,
+        error: state.error,
+        refetch,
+        updateData,
+      }),
+      [state, refetch, updateData]
     );
+
+    return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
   };
 
   const useData = () => {
@@ -123,107 +122,58 @@ interface ModalContextValue {
 const ModalContext = createContext<ModalContextValue | undefined>(undefined);
 
 const Modal = {
-  Root: ({
-    children,
-    isOpen,
-    onClose
-  }: {
-    children: ReactNode;
-    isOpen: boolean;
-    onClose: () => void;
-  }) => {
+  Root: ({ children, isOpen, onClose }: { children: ReactNode; isOpen: boolean; onClose: () => void }) => {
     const value = useMemo(() => ({ isOpen, onClose }), [isOpen, onClose]);
 
-    if (!isOpen) { return null; }
+    if (!isOpen) {
+      return null;
+    }
 
     return (
       <ModalContext.Provider value={value}>
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={onClose}
-          />
-          <div className="relative z-10 max-h-[90vh] max-w-lg overflow-auto">
-            {children}
-          </div>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+          <div className="relative z-10 max-h-[90vh] max-w-lg overflow-auto">{children}</div>
         </div>
       </ModalContext.Provider>
     );
   },
 
-  Content: ({
-    children,
-    className,
-    ...props
-  }: HTMLAttributes<HTMLDivElement>) => {
+  Content: ({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div
-        className={cn(
-          'glass-card rounded-2xl p-6 shadow-2xl',
-          className
-        )}
-        {...props}
-      >
+      <div className={cn('glass-card rounded-2xl p-6 shadow-2xl', className)} {...props}>
         {children}
       </div>
     );
   },
 
-  Header: ({
-    children,
-    className,
-    ...props
-  }: HTMLAttributes<HTMLDivElement>) => {
+  Header: ({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div
-        className={cn('mb-4 border-b border-white/10 pb-4', className)}
-        {...props}
-      >
+      <div className={cn('mb-4 border-b border-white/10 pb-4', className)} {...props}>
         {children}
       </div>
     );
   },
 
-  Title: ({
-    children,
-    className,
-    ...props
-  }: HTMLAttributes<HTMLHeadingElement>) => {
+  Title: ({ children, className, ...props }: HTMLAttributes<HTMLHeadingElement>) => {
     return (
-      <h2
-        className={cn('text-xl font-semibold text-white', className)}
-        {...props}
-      >
+      <h2 className={cn('text-xl font-semibold text-white', className)} {...props}>
         {children}
       </h2>
     );
   },
 
-  Body: ({
-    children,
-    className,
-    ...props
-  }: HTMLAttributes<HTMLDivElement>) => {
+  Body: ({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div
-        className={cn('text-gray-100', className)}
-        {...props}
-      >
+      <div className={cn('text-gray-100', className)} {...props}>
         {children}
       </div>
     );
   },
 
-  Footer: ({
-    children,
-    className,
-    ...props
-  }: HTMLAttributes<HTMLDivElement>) => {
+  Footer: ({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) => {
     return (
-      <div
-        className={cn('mt-6 flex justify-end gap-3 border-t border-white/10 pt-4', className)}
-        {...props}
-      >
+      <div className={cn('mt-6 flex justify-end gap-3 border-t border-white/10 pt-4', className)} {...props}>
         {children}
       </div>
     );
@@ -235,21 +185,20 @@ const Modal = {
     ...props
   }: HTMLAttributes<HTMLButtonElement> & { children?: ReactNode }) => {
     const modal = useContext(ModalContext);
-    if (!modal) { throw new Error('Modal.CloseButton must be used within Modal.Root'); }
+    if (!modal) {
+      throw new Error('Modal.CloseButton must be used within Modal.Root');
+    }
 
     return (
       <button
-        className={cn(
-          'rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20',
-          className
-        )}
+        className={cn('rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20', className)}
         onClick={modal.onClose}
         {...props}
       >
         {children}
       </button>
     );
-  }
+  },
 };
 
 // ============================================================================
@@ -265,15 +214,11 @@ interface AsyncOperationProps<T> {
   immediate?: boolean;
 }
 
-function AsyncOperation<T>({
-  operation,
-  children,
-  immediate = false
-}: AsyncOperationProps<T>) {
+function AsyncOperation<T>({ operation, children, immediate = false }: AsyncOperationProps<T>) {
   const [state, setState] = useState<LoadingState<T>>({
     data: null,
     isLoading: false,
-    error: null
+    error: null,
   });
 
   const execute = useCallback(async () => {
@@ -285,7 +230,7 @@ function AsyncOperation<T>({
       setState((prev: LoadingState<T>) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       }));
     }
   }, [operation]);
@@ -303,10 +248,7 @@ function AsyncOperation<T>({
  * Intersection observer render prop component
  */
 interface IntersectionObserverProps {
-  children: (props: {
-    ref: RefObject<HTMLDivElement>;
-    isIntersecting: boolean;
-  }) => ReactNode;
+  children: (props: { ref: RefObject<HTMLDivElement>; isIntersecting: boolean }) => ReactNode;
   threshold?: number;
   rootMargin?: string;
 }
@@ -314,14 +256,16 @@ interface IntersectionObserverProps {
 const IntersectionObserver: React.FC<IntersectionObserverProps> = ({
   children,
   threshold = 0.1,
-  rootMargin = '0px'
+  rootMargin = '0px',
 }) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const element = ref.current;
-    if (!element) { return; }
+    if (!element) {
+      return;
+    }
 
     const observer = new window.IntersectionObserver(
       ([entry]) => {
@@ -351,15 +295,9 @@ interface WithLoadingProps {
   loadingComponent?: ReactNode;
 }
 
-function withLoading<P extends object>(
-  WrappedComponent: ComponentType<P>
-): ComponentType<P & WithLoadingProps> {
+function withLoading<P extends object>(WrappedComponent: ComponentType<P>): ComponentType<P & WithLoadingProps> {
   const WithLoadingComponent = (props: P & WithLoadingProps) => {
-    const {
-      isLoading = false,
-      loadingComponent = <div>Loading...</div>,
-      ...restProps
-    } = props;
+    const { isLoading = false, loadingComponent = <div>Loading...</div>, ...restProps } = props;
 
     if (isLoading) {
       return <>{loadingComponent}</>;
@@ -413,12 +351,8 @@ function withErrorBoundary<P extends object>(
 
         return (
           <div className="glass-card rounded-lg p-6 text-center">
-            <h2 className="mb-2 text-lg font-semibold text-red-400">
-              Something went wrong
-            </h2>
-            <p className="mb-4 text-gray-300">
-              {this.state.error.message}
-            </p>
+            <h2 className="mb-2 text-lg font-semibold text-red-400">Something went wrong</h2>
+            <p className="mb-4 text-gray-300">{this.state.error.message}</p>
             <button
               onClick={this.reset}
               className="rounded-lg bg-red-500/20 px-4 py-2 text-red-300 hover:bg-red-500/30"
@@ -476,19 +410,10 @@ interface LazyLoadProps {
   rootMargin?: string;
 }
 
-const LazyLoad: React.FC<LazyLoadProps> = ({
-  children,
-  fallback = null,
-  threshold = 0.1,
-  rootMargin = '100px'
-}) => {
+const LazyLoad: React.FC<LazyLoadProps> = ({ children, fallback = null, threshold = 0.1, rootMargin = '100px' }) => {
   return (
     <IntersectionObserver threshold={threshold} rootMargin={rootMargin}>
-      {({ ref, isIntersecting }) => (
-        <div ref={ref}>
-          {isIntersecting ? children : fallback}
-        </div>
-      )}
+      {({ ref, isIntersecting }) => <div ref={ref}>{isIntersecting ? children : fallback}</div>}
     </IntersectionObserver>
   );
 };
@@ -503,12 +428,7 @@ interface FadeInProps {
   threshold?: number;
 }
 
-const FadeIn: React.FC<FadeInProps> = ({
-  children,
-  delay = 0,
-  duration = 300,
-  threshold = 0.1
-}) => {
+const FadeIn: React.FC<FadeInProps> = ({ children, delay = 0, duration = 300, threshold = 0.1 }) => {
   return (
     <IntersectionObserver threshold={threshold}>
       {({ ref, isIntersecting }) => (
@@ -517,7 +437,7 @@ const FadeIn: React.FC<FadeInProps> = ({
           className={`transition-all ${isIntersecting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           style={{
             transitionDelay: `${delay}ms`,
-            transitionDuration: `${duration}ms`
+            transitionDuration: `${duration}ms`,
           }}
         >
           {children}
@@ -536,11 +456,7 @@ interface ConditionalWrapperProps {
   children: ReactNode;
 }
 
-const ConditionalWrapper: React.FC<ConditionalWrapperProps> = ({
-  condition,
-  wrapper,
-  children
-}) => {
+const ConditionalWrapper: React.FC<ConditionalWrapperProps> = ({ condition, wrapper, children }) => {
   return condition ? <>{wrapper(children)}</> : <>{children}</>;
 };
 
@@ -578,5 +494,5 @@ export {
   type WithAuthProps,
   type LazyLoadProps,
   type FadeInProps,
-  type ConditionalWrapperProps
+  type ConditionalWrapperProps,
 };

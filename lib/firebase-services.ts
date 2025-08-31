@@ -22,7 +22,7 @@ import {
   limit,
   Timestamp,
   writeBatch,
-  onSnapshot as _onSnapshot
+  onSnapshot as _onSnapshot,
 } from 'firebase/firestore';
 
 import { db } from './firebase';
@@ -127,13 +127,15 @@ class CacheService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
-    if (!entry) { return null; }
+    if (!entry) {
+      return null;
+    }
 
     const isExpired = Date.now() - entry.timestamp > entry.ttl;
     if (isExpired) {
@@ -274,7 +276,7 @@ class FirebaseService {
         const docRef = doc(db, collectionPath, docId);
         await updateDoc(docRef, {
           ...updates,
-          updatedAt: Timestamp.fromDate(new Date())
+          updatedAt: Timestamp.fromDate(new Date()),
         });
       });
 
@@ -340,7 +342,7 @@ class FirebaseService {
       orderBy: orderByConditions = [],
       limit: limitCount,
       useCache = true,
-      cacheTTL = 180000 // 3 minutes for collections
+      cacheTTL = 180000, // 3 minutes for collections
     } = options;
 
     // Create cache key from query parameters
@@ -422,7 +424,7 @@ class FirebaseService {
             case 'update':
               batch.update(docRef, {
                 ...op.data,
-                updatedAt: Timestamp.fromDate(new Date())
+                updatedAt: Timestamp.fromDate(new Date()),
               });
               break;
             case 'delete':
@@ -450,10 +452,10 @@ class FirebaseService {
    * Get cache statistics
    */
   getCacheStats(): { size: number; keys: string[] } {
-    const { cache } = (this.cache as any);
+    const { cache } = this.cache as any;
     return {
       size: cache.size,
-      keys: Array.from(cache.keys())
+      keys: Array.from(cache.keys()),
     };
   }
 
@@ -498,8 +500,8 @@ export const userService = {
         totalMockTests: 0,
         averageScore: 0,
         topicsCompleted: 0,
-        totalTopics: 0
-      }
+        totalTopics: 0,
+      },
     };
     return firebaseService.setDocument('users', userId, userDoc);
   },
@@ -515,16 +517,18 @@ export const userService = {
   async getProgress(userId: string): Promise<Result<any[]>> {
     return firebaseService.queryCollection(`users/${userId}/progress`, {
       orderBy: [{ field: 'lastStudied', direction: 'desc' }],
-      limit: 100
+      limit: 100,
     });
   },
 
   async getStats(userId: string): Promise<Result<any | null>> {
     const userResult = await this.get(userId);
-    if (!userResult.success) { return userResult; }
+    if (!userResult.success) {
+      return userResult;
+    }
 
     return createSuccess(userResult.data?.stats || null);
-  }
+  },
 };
 
 /**
@@ -536,14 +540,10 @@ export const dailyLogService = {
     const dailyLog = {
       ...logData,
       id: logId,
-      createdAt: Timestamp.fromDate(new Date())
+      createdAt: Timestamp.fromDate(new Date()),
     };
 
-    const result = await firebaseService.setDocument(
-      `users/${userId}/dailyLogs`,
-      logId,
-      dailyLog
-    );
+    const result = await firebaseService.setDocument(`users/${userId}/dailyLogs`, logId, dailyLog);
 
     return result.success ? createSuccess(logId) : result;
   },
@@ -555,32 +555,23 @@ export const dailyLogService = {
     return firebaseService.queryCollection(`users/${userId}/dailyLogs`, {
       where: [{ field: 'date', operator: '>=', value: Timestamp.fromDate(startDate) }],
       orderBy: [{ field: 'date', direction: 'desc' }],
-      limit: days
+      limit: days,
     });
-  }
+  },
 };
 
 /**
  * Enhanced progress tracking operations
  */
 export const progressService = {
-  async updateTopic(
-    userId: string,
-    topicId: string,
-    progress: any
-  ): Promise<Result<void>> {
+  async updateTopic(userId: string, topicId: string, progress: any): Promise<Result<void>> {
     const progressData = {
       ...progress,
       topicId,
-      lastStudied: Timestamp.fromDate(new Date())
+      lastStudied: Timestamp.fromDate(new Date()),
     };
 
-    return firebaseService.setDocument(
-      `users/${userId}/progress`,
-      topicId,
-      progressData,
-      { merge: true }
-    );
+    return firebaseService.setDocument(`users/${userId}/progress`, topicId, progressData, { merge: true });
   },
 
   async getTopic(userId: string, topicId: string): Promise<Result<any | null>> {
@@ -589,9 +580,9 @@ export const progressService = {
 
   async getAllProgress(userId: string): Promise<Result<any[]>> {
     return firebaseService.queryCollection(`users/${userId}/progress`, {
-      orderBy: [{ field: 'lastStudied', direction: 'desc' }]
+      orderBy: [{ field: 'lastStudied', direction: 'desc' }],
     });
-  }
+  },
 };
 
 /**
@@ -603,7 +594,7 @@ export const revisionService = {
     const progressResult = await firebaseService.queryCollection(`users/${userId}/progress`, {
       where: [{ field: 'nextRevision', operator: '<=', value: Timestamp.fromDate(new Date()) }],
       orderBy: [{ field: 'nextRevision', direction: 'asc' }],
-      limit: 20
+      limit: 20,
     });
 
     return progressResult;
@@ -622,9 +613,9 @@ export const revisionService = {
       lastRevised: now,
       nextRevision: Timestamp.fromDate(nextRevision),
       masteryScore,
-      revisionCount: currentRevisionCount + 1
+      revisionCount: currentRevisionCount + 1,
     });
-  }
+  },
 };
 
 /**
@@ -636,14 +627,10 @@ export const mockTestService = {
     const mockTest = {
       ...testData,
       id: testId,
-      createdAt: Timestamp.fromDate(new Date())
+      createdAt: Timestamp.fromDate(new Date()),
     };
 
-    const result = await firebaseService.setDocument(
-      `users/${userId}/logs_mocks`,
-      testId,
-      mockTest
-    );
+    const result = await firebaseService.setDocument(`users/${userId}/logs_mocks`, testId, mockTest);
 
     return result.success ? createSuccess(testId) : result;
   },
@@ -651,13 +638,13 @@ export const mockTestService = {
   async getTests(userId: string, limit = 10): Promise<Result<any[]>> {
     return firebaseService.queryCollection(`users/${userId}/logs_mocks`, {
       orderBy: [{ field: 'date', direction: 'desc' }],
-      limit
+      limit,
     });
   },
 
   async getTest(userId: string, testId: string): Promise<Result<any | null>> {
     return firebaseService.getDocument(`users/${userId}/logs_mocks`, testId);
-  }
+  },
 };
 
 /**
@@ -668,7 +655,7 @@ export const insightsService = {
     // This would implement the generateStudyInsights logic
     // For now, return empty array as placeholder
     return createSuccess([]);
-  }
+  },
 };
 
 /**
@@ -678,16 +665,12 @@ export const missionFirebaseService = {
   async saveTemplate(userId: string, template: any): Promise<Result<void>> {
     try {
       const templateId = template.id || doc(collection(db, `users/${userId}/mission-templates`)).id;
-      return firebaseService.setDocument(
-        `users/${userId}/mission-templates`,
-        templateId,
-        {
-          ...template,
-          id: templateId,
-          createdAt: template.createdAt || Timestamp.fromDate(new Date()),
-          updatedAt: Timestamp.fromDate(new Date())
-        }
-      );
+      return firebaseService.setDocument(`users/${userId}/mission-templates`, templateId, {
+        ...template,
+        id: templateId,
+        createdAt: template.createdAt || Timestamp.fromDate(new Date()),
+        updatedAt: Timestamp.fromDate(new Date()),
+      });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to save template'));
     }
@@ -697,7 +680,7 @@ export const missionFirebaseService = {
     try {
       const options: any = {
         useCache: true,
-        cacheTTL: 600000 // 10 minutes
+        cacheTTL: 600000, // 10 minutes
       };
 
       if (track) {
@@ -717,14 +700,10 @@ export const missionFirebaseService = {
         ...mission,
         id: missionId,
         createdAt: mission.createdAt || Timestamp.fromDate(new Date()),
-        updatedAt: Timestamp.fromDate(new Date())
+        updatedAt: Timestamp.fromDate(new Date()),
       };
 
-      const result = await firebaseService.setDocument(
-        `users/${userId}/active-missions`,
-        missionId,
-        missionData
-      );
+      const result = await firebaseService.setDocument(`users/${userId}/active-missions`, missionId, missionData);
 
       return result.success ? createSuccess(missionId) : result;
     } catch (error) {
@@ -738,39 +717,27 @@ export const missionFirebaseService = {
         where: [{ field: 'status', operator: 'in', value: ['not_started', 'in_progress'] }],
         orderBy: [{ field: 'deadline', direction: 'asc' }],
         useCache: true,
-        cacheTTL: 300000 // 5 minutes
+        cacheTTL: 300000, // 5 minutes
       });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get active missions'));
     }
   },
 
-  async updateMissionProgress(
-    userId: string,
-    missionId: string,
-    progress: any
-  ): Promise<Result<void>> {
+  async updateMissionProgress(userId: string, missionId: string, progress: any): Promise<Result<void>> {
     try {
       const status = progress.completionPercentage >= 100 ? 'completed' : 'in_progress';
-      return firebaseService.updateDocument(
-        `users/${userId}/active-missions`,
-        missionId,
-        {
-          progress,
-          status,
-          updatedAt: Timestamp.fromDate(new Date())
-        }
-      );
+      return firebaseService.updateDocument(`users/${userId}/active-missions`, missionId, {
+        progress,
+        status,
+        updatedAt: Timestamp.fromDate(new Date()),
+      });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to update mission progress'));
     }
   },
 
-  async completeMission(
-    userId: string,
-    missionId: string,
-    results: any
-  ): Promise<Result<void>> {
+  async completeMission(userId: string, missionId: string, results: any): Promise<Result<void>> {
     try {
       const mission = await firebaseService.getDocument(`users/${userId}/active-missions`, missionId);
       if (!mission.success || !mission.data) {
@@ -783,7 +750,7 @@ export const missionFirebaseService = {
         status: 'completed',
         results,
         completedAt: Timestamp.fromDate(new Date()),
-        updatedAt: Timestamp.fromDate(new Date())
+        updatedAt: Timestamp.fromDate(new Date()),
       };
 
       const operations = [
@@ -791,13 +758,13 @@ export const missionFirebaseService = {
           type: 'set' as const,
           path: `users/${userId}/mission-history`,
           docId: missionId,
-          data: completedMission
+          data: completedMission,
         },
         {
           type: 'delete' as const,
           path: `users/${userId}/active-missions`,
-          docId: missionId
-        }
+          docId: missionId,
+        },
       ];
 
       const result = await firebaseService.batchWrite(operations);
@@ -819,7 +786,7 @@ export const missionFirebaseService = {
         orderBy: [{ field: 'completedAt', direction: 'desc' }],
         limit,
         useCache: true,
-        cacheTTL: 600000 // 10 minutes
+        cacheTTL: 600000, // 10 minutes
       });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get mission history'));
@@ -828,10 +795,7 @@ export const missionFirebaseService = {
 
   async deleteMission(userId: string, missionId: string): Promise<Result<void>> {
     try {
-      const result = await firebaseService.deleteDocument(
-        `users/${userId}/active-missions`,
-        missionId
-      );
+      const result = await firebaseService.deleteDocument(`users/${userId}/active-missions`, missionId);
 
       if (result.success) {
         this.clearMissionCache(userId);
@@ -843,10 +807,7 @@ export const missionFirebaseService = {
     }
   },
 
-  async generateMissionAnalytics(
-    userId: string,
-    period: { startDate: Date; endDate: Date }
-  ): Promise<Result<any>> {
+  async generateMissionAnalytics(userId: string, period: { startDate: Date; endDate: Date }): Promise<Result<any>> {
     try {
       const historyResult = await this.getMissionHistory(userId, 100);
 
@@ -856,21 +817,25 @@ export const missionFirebaseService = {
 
       const missions = historyResult.data;
       const periodMissions = missions.filter((mission: any) => {
-        if (!mission.completedAt) { return false; }
+        if (!mission.completedAt) {
+          return false;
+        }
         const completedAt = mission.completedAt.toDate();
         return completedAt >= period.startDate && completedAt <= period.endDate;
       });
 
       const analytics = {
         totalMissions: periodMissions.length,
-        averageScore: periodMissions.length > 0
-          ? periodMissions.reduce((sum: number, m: any) => sum + (m.results?.finalScore || 0), 0) / periodMissions.length
-          : 0,
+        averageScore:
+          periodMissions.length > 0
+            ? periodMissions.reduce((sum: number, m: any) => sum + (m.results?.finalScore || 0), 0) /
+              periodMissions.length
+            : 0,
         totalTimeSpent: periodMissions.reduce((sum: number, m: any) => sum + (m.results?.totalTime || 0), 0),
         trackBreakdown: this.calculateTrackBreakdown(periodMissions),
         difficultyBreakdown: this.calculateDifficultyBreakdown(periodMissions),
         trends: this.calculateTrends(periodMissions),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       return createSuccess(analytics);
@@ -906,7 +871,7 @@ export const missionFirebaseService = {
       .map((mission: any) => ({
         date: mission.completedAt.toDate(),
         score: mission.results?.finalScore || 0,
-        timeSpent: mission.results?.totalTime || 0
+        timeSpent: mission.results?.totalTime || 0,
       }));
   },
 
@@ -917,7 +882,7 @@ export const missionFirebaseService = {
       firebaseService.cache.delete(`users/${userId}/mission-history`);
       firebaseService.cache.delete(`users/${userId}/mission-templates`);
     }
-  }
+  },
 };
 
 /**
@@ -930,45 +895,31 @@ export const microLearningFirebaseService = {
       ...session,
       id: sessionId,
       createdAt: Timestamp.fromDate(new Date()),
-      updatedAt: Timestamp.fromDate(new Date())
+      updatedAt: Timestamp.fromDate(new Date()),
     };
 
-    const result = await firebaseService.setDocument(
-      `users/${userId}/micro-learning-sessions`,
-      sessionId,
-      sessionData
-    );
+    const result = await firebaseService.setDocument(`users/${userId}/micro-learning-sessions`, sessionId, sessionData);
 
     return result.success ? createSuccess(sessionId) : result;
   },
 
-  async getSessionHistory(
-    userId: string,
-    limit = 20
-  ): Promise<Result<any[]>> {
+  async getSessionHistory(userId: string, limit = 20): Promise<Result<any[]>> {
     return firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
       orderBy: [{ field: 'createdAt', direction: 'desc' }],
       limit,
       useCache: true,
-      cacheTTL: 300000 // 5 minutes
+      cacheTTL: 300000, // 5 minutes
     });
   },
 
-  async saveRecommendations(
-    userId: string,
-    recommendations: any[]
-  ): Promise<Result<void>> {
+  async saveRecommendations(userId: string, recommendations: any[]): Promise<Result<void>> {
     const recommendationsData = {
       recommendations,
       generatedAt: Timestamp.fromDate(new Date()),
-      expiresAt: Timestamp.fromDate(new Date(Date.now() + 24 * 60 * 60 * 1000)) // 24 hours
+      expiresAt: Timestamp.fromDate(new Date(Date.now() + 24 * 60 * 60 * 1000)), // 24 hours
     };
 
-    return firebaseService.setDocument(
-      `users/${userId}/micro-learning`,
-      'recommendations',
-      recommendationsData
-    );
+    return firebaseService.setDocument(`users/${userId}/micro-learning`, 'recommendations', recommendationsData);
   },
 
   async getRecommendations(userId: string): Promise<Result<any[]>> {
@@ -996,30 +947,18 @@ export const microLearningFirebaseService = {
     return createSuccess(data.recommendations || []);
   },
 
-  async updateSessionProgress(
-    userId: string,
-    sessionId: string,
-    progress: any
-  ): Promise<Result<void>> {
-    return firebaseService.updateDocument(
-      `users/${userId}/micro-learning-sessions`,
-      sessionId,
-      { progress, updatedAt: Timestamp.fromDate(new Date()) }
-    );
+  async updateSessionProgress(userId: string, sessionId: string, progress: any): Promise<Result<void>> {
+    return firebaseService.updateDocument(`users/${userId}/micro-learning-sessions`, sessionId, {
+      progress,
+      updatedAt: Timestamp.fromDate(new Date()),
+    });
   },
 
-  async saveUserPreferences(
-    userId: string,
-    preferences: any
-  ): Promise<Result<void>> {
-    return firebaseService.setDocument(
-      `users/${userId}/micro-learning`,
-      'preferences',
-      {
-        ...preferences,
-        updatedAt: Timestamp.fromDate(new Date())
-      }
-    );
+  async saveUserPreferences(userId: string, preferences: any): Promise<Result<void>> {
+    return firebaseService.setDocument(`users/${userId}/micro-learning`, 'preferences', {
+      ...preferences,
+      updatedAt: Timestamp.fromDate(new Date()),
+    });
   },
 
   async getUserPreferences(userId: string): Promise<Result<any>> {
@@ -1034,41 +973,40 @@ export const microLearningFirebaseService = {
     const sessionsResult = await firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
       where: [
         { field: 'createdAt', operator: '>=', value: Timestamp.fromDate(period.startDate) },
-        { field: 'createdAt', operator: '<=', value: Timestamp.fromDate(period.endDate) }
+        { field: 'createdAt', operator: '<=', value: Timestamp.fromDate(period.endDate) },
       ],
-      orderBy: [{ field: 'createdAt', direction: 'desc' }]
+      orderBy: [{ field: 'createdAt', direction: 'desc' }],
     });
 
-    if (!sessionsResult.success) { return sessionsResult; }
+    if (!sessionsResult.success) {
+      return sessionsResult;
+    }
 
     const sessions = sessionsResult.data;
     const analytics = {
       period,
       totalSessions: sessions.length,
       totalTimeSpent: sessions.reduce((sum: number, s: any) => sum + (s.duration || 0), 0),
-      averageAccuracy: sessions.length > 0
-        ? sessions.reduce((sum: number, s: any) => sum + (s.progress?.accuracy || 0), 0) / sessions.length
-        : 0,
+      averageAccuracy:
+        sessions.length > 0
+          ? sessions.reduce((sum: number, s: any) => sum + (s.progress?.accuracy || 0), 0) / sessions.length
+          : 0,
       trackBreakdown: {
         exam: sessions.filter((s: any) => s.learningTrack === 'exam').length,
-        course_tech: sessions.filter((s: any) => s.learningTrack === 'course_tech').length
+        course_tech: sessions.filter((s: any) => s.learningTrack === 'course_tech').length,
       },
-      generatedAt: new Date()
+      generatedAt: new Date(),
     };
 
     return createSuccess(analytics);
-  }
+  },
 };
 
 // ============================================================================
 // EXPORTS
 // ============================================================================
 
-export {
-  FirebaseService,
-  CacheService,
-  firebaseService
-};
+export { FirebaseService, CacheService, firebaseService };
 
 // Export the enhanced firebase service as default
 export default firebaseService;

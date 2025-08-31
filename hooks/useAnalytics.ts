@@ -19,7 +19,11 @@
 import { useEffect, useCallback, useRef } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { intelligentAnalyticsService, AnalyticsEventType, AnalyticsEventData } from '@/lib/intelligent-analytics-service';
+import {
+  intelligentAnalyticsService,
+  AnalyticsEventType,
+  AnalyticsEventData,
+} from '@/lib/intelligent-analytics-service';
 import { logger } from '@/lib/logger';
 
 // ============================================================================
@@ -36,57 +40,75 @@ export const useAnalytics = () => {
   const pageStartTime = useRef<number>(Date.now());
 
   // Track event with automatic context
-  const trackEvent = useCallback(async (
-    eventType: AnalyticsEventType,
-    category: 'exam' | 'course_tech' | 'cross_track',
-    data: AnalyticsEventData,
-    customMetadata?: any
-  ) => {
-    if (!user?.uid) {
-      logger.warn('Cannot track event: User not authenticated');
-      return;
-    }
+  const trackEvent = useCallback(
+    async (
+      eventType: AnalyticsEventType,
+      category: 'exam' | 'course_tech' | 'cross_track',
+      data: AnalyticsEventData,
+      customMetadata?: any
+    ) => {
+      if (!user?.uid) {
+        logger.warn('Cannot track event: User not authenticated');
+        return;
+      }
 
-    try {
-      await intelligentAnalyticsService.trackEvent(
-        user.uid,
-        eventType,
-        category,
-        {
-          ...data,
-          sessionDuration: Date.now() - sessionStartTime.current,
-          pageTime: Date.now() - pageStartTime.current
-        },
-        customMetadata
-      );
-    } catch (error) {
-      logger.error('Failed to track analytics event', error as Error);
-    }
-  }, [user?.uid]);
+      try {
+        await intelligentAnalyticsService.trackEvent(
+          user.uid,
+          eventType,
+          category,
+          {
+            ...data,
+            sessionDuration: Date.now() - sessionStartTime.current,
+            pageTime: Date.now() - pageStartTime.current,
+          },
+          customMetadata
+        );
+      } catch (error) {
+        logger.error('Failed to track analytics event', error as Error);
+      }
+    },
+    [user?.uid]
+  );
 
   // Track exam events
-  const trackExamEvent = useCallback((
-    eventType: Extract<AnalyticsEventType, 'mock_test_started' | 'mock_test_completed' | 'question_answered' | 'revision_session_started'>,
-    data: AnalyticsEventData
-  ) => {
-    return trackEvent(eventType, 'exam', data);
-  }, [trackEvent]);
+  const trackExamEvent = useCallback(
+    (
+      eventType: Extract<
+        AnalyticsEventType,
+        'mock_test_started' | 'mock_test_completed' | 'question_answered' | 'revision_session_started'
+      >,
+      data: AnalyticsEventData
+    ) => {
+      return trackEvent(eventType, 'exam', data);
+    },
+    [trackEvent]
+  );
 
   // Track course events
-  const trackCourseEvent = useCallback((
-    eventType: Extract<AnalyticsEventType, 'assignment_started' | 'project_created' | 'skill_practice_session' | 'code_execution'>,
-    data: AnalyticsEventData
-  ) => {
-    return trackEvent(eventType, 'course_tech', data);
-  }, [trackEvent]);
+  const trackCourseEvent = useCallback(
+    (
+      eventType: Extract<
+        AnalyticsEventType,
+        'assignment_started' | 'project_created' | 'skill_practice_session' | 'code_execution'
+      >,
+      data: AnalyticsEventData
+    ) => {
+      return trackEvent(eventType, 'course_tech', data);
+    },
+    [trackEvent]
+  );
 
   // Track cross-track events
-  const trackCrossTrackEvent = useCallback((
-    eventType: Extract<AnalyticsEventType, 'track_switched' | 'cross_skill_applied' | 'learning_transfer_identified'>,
-    data: AnalyticsEventData
-  ) => {
-    return trackEvent(eventType, 'cross_track', data);
-  }, [trackEvent]);
+  const trackCrossTrackEvent = useCallback(
+    (
+      eventType: Extract<AnalyticsEventType, 'track_switched' | 'cross_skill_applied' | 'learning_transfer_identified'>,
+      data: AnalyticsEventData
+    ) => {
+      return trackEvent(eventType, 'cross_track', data);
+    },
+    [trackEvent]
+  );
 
   // Reset page timing on component mount
   useEffect(() => {
@@ -97,7 +119,7 @@ export const useAnalytics = () => {
     trackEvent,
     trackExamEvent,
     trackCourseEvent,
-    trackCrossTrackEvent
+    trackCrossTrackEvent,
   };
 };
 
@@ -111,59 +133,66 @@ export const useAnalytics = () => {
 export const useExamAnalytics = () => {
   const { trackExamEvent } = useAnalytics();
 
-  const trackMockTestStart = useCallback((testData: {
-    testId: string;
-    subjectId: string;
-    difficulty: 'easy' | 'medium' | 'hard';
-    totalQuestions: number;
-  }) => {
-    return trackExamEvent('mock_test_started', {
-      ...testData,
-      startTime: Date.now()
-    });
-  }, [trackExamEvent]);
+  const trackMockTestStart = useCallback(
+    (testData: {
+      testId: string;
+      subjectId: string;
+      difficulty: 'easy' | 'medium' | 'hard';
+      totalQuestions: number;
+    }) => {
+      return trackExamEvent('mock_test_started', {
+        ...testData,
+        startTime: Date.now(),
+      });
+    },
+    [trackExamEvent]
+  );
 
-  const trackMockTestComplete = useCallback((testData: {
-    testId: string;
-    score: number;
-    accuracy: number;
-    timeSpent: number;
-    totalQuestions: number;
-    correctAnswers: number;
-    skippedQuestions: number;
-  }) => {
-    return trackExamEvent('mock_test_completed', {
-      ...testData,
-      completionTime: Date.now()
-    });
-  }, [trackExamEvent]);
+  const trackMockTestComplete = useCallback(
+    (testData: {
+      testId: string;
+      score: number;
+      accuracy: number;
+      timeSpent: number;
+      totalQuestions: number;
+      correctAnswers: number;
+      skippedQuestions: number;
+    }) => {
+      return trackExamEvent('mock_test_completed', {
+        ...testData,
+        completionTime: Date.now(),
+      });
+    },
+    [trackExamEvent]
+  );
 
-  const trackQuestionAnswer = useCallback((questionData: {
-    questionId: string;
-    isCorrect: boolean;
-    timeSpent: number;
-    difficulty: 'easy' | 'medium' | 'hard';
-    topicId: string;
-    attempts: number;
-    hintsUsed: number;
-  }) => {
-    return trackExamEvent('question_answered', questionData);
-  }, [trackExamEvent]);
+  const trackQuestionAnswer = useCallback(
+    (questionData: {
+      questionId: string;
+      isCorrect: boolean;
+      timeSpent: number;
+      difficulty: 'easy' | 'medium' | 'hard';
+      topicId: string;
+      attempts: number;
+      hintsUsed: number;
+    }) => {
+      return trackExamEvent('question_answered', questionData);
+    },
+    [trackExamEvent]
+  );
 
-  const trackRevisionSession = useCallback((revisionData: {
-    topicId: string;
-    duration: number;
-    questionsReviewed: number;
-    improvementScore: number;
-  }) => {
-    return trackExamEvent('revision_session_started', revisionData);
-  }, [trackExamEvent]);
+  const trackRevisionSession = useCallback(
+    (revisionData: { topicId: string; duration: number; questionsReviewed: number; improvementScore: number }) => {
+      return trackExamEvent('revision_session_started', revisionData);
+    },
+    [trackExamEvent]
+  );
 
   return {
     trackMockTestStart,
     trackMockTestComplete,
     trackQuestionAnswer,
-    trackRevisionSession
+    trackRevisionSession,
   };
 };
 
@@ -177,54 +206,66 @@ export const useExamAnalytics = () => {
 export const useCourseAnalytics = () => {
   const { trackCourseEvent } = useAnalytics();
 
-  const trackAssignmentStart = useCallback((assignmentData: {
-    assignmentId: string;
-    courseId: string;
-    difficulty: 'easy' | 'medium' | 'hard';
-    estimatedDuration: number;
-  }) => {
-    return trackCourseEvent('assignment_started', {
-      ...assignmentData,
-      startTime: Date.now()
-    });
-  }, [trackCourseEvent]);
+  const trackAssignmentStart = useCallback(
+    (assignmentData: {
+      assignmentId: string;
+      courseId: string;
+      difficulty: 'easy' | 'medium' | 'hard';
+      estimatedDuration: number;
+    }) => {
+      return trackCourseEvent('assignment_started', {
+        ...assignmentData,
+        startTime: Date.now(),
+      });
+    },
+    [trackCourseEvent]
+  );
 
-  const trackProjectCreation = useCallback((projectData: {
-    projectId: string;
-    projectType: string;
-    technologies: string[];
-    complexity: 'simple' | 'moderate' | 'complex';
-  }) => {
-    return trackCourseEvent('project_created', {
-      ...projectData,
-      creationTime: Date.now()
-    });
-  }, [trackCourseEvent]);
+  const trackProjectCreation = useCallback(
+    (projectData: {
+      projectId: string;
+      projectType: string;
+      technologies: string[];
+      complexity: 'simple' | 'moderate' | 'complex';
+    }) => {
+      return trackCourseEvent('project_created', {
+        ...projectData,
+        creationTime: Date.now(),
+      });
+    },
+    [trackCourseEvent]
+  );
 
-  const trackSkillPractice = useCallback((practiceData: {
-    skillId: string;
-    practiceType: 'tutorial' | 'exercise' | 'challenge';
-    duration: number;
-    completionRate: number;
-  }) => {
-    return trackCourseEvent('skill_practice_session', practiceData);
-  }, [trackCourseEvent]);
+  const trackSkillPractice = useCallback(
+    (practiceData: {
+      skillId: string;
+      practiceType: 'tutorial' | 'exercise' | 'challenge';
+      duration: number;
+      completionRate: number;
+    }) => {
+      return trackCourseEvent('skill_practice_session', practiceData);
+    },
+    [trackCourseEvent]
+  );
 
-  const trackCodeExecution = useCallback((codeData: {
-    language: string;
-    executionTime: number;
-    linesOfCode: number;
-    successful: boolean;
-    errors?: string[];
-  }) => {
-    return trackCourseEvent('code_execution', codeData);
-  }, [trackCourseEvent]);
+  const trackCodeExecution = useCallback(
+    (codeData: {
+      language: string;
+      executionTime: number;
+      linesOfCode: number;
+      successful: boolean;
+      errors?: string[];
+    }) => {
+      return trackCourseEvent('code_execution', codeData);
+    },
+    [trackCourseEvent]
+  );
 
   return {
     trackAssignmentStart,
     trackProjectCreation,
     trackSkillPractice,
-    trackCodeExecution
+    trackCodeExecution,
   };
 };
 
@@ -238,39 +279,48 @@ export const useCourseAnalytics = () => {
 export const useCrossTrackAnalytics = () => {
   const { trackCrossTrackEvent } = useAnalytics();
 
-  const trackTrackSwitch = useCallback((switchData: {
-    fromTrack: 'exam' | 'course_tech';
-    toTrack: 'exam' | 'course_tech';
-    context: string;
-    sessionDuration: number;
-  }) => {
-    return trackCrossTrackEvent('track_switched', switchData);
-  }, [trackCrossTrackEvent]);
+  const trackTrackSwitch = useCallback(
+    (switchData: {
+      fromTrack: 'exam' | 'course_tech';
+      toTrack: 'exam' | 'course_tech';
+      context: string;
+      sessionDuration: number;
+    }) => {
+      return trackCrossTrackEvent('track_switched', switchData);
+    },
+    [trackCrossTrackEvent]
+  );
 
-  const trackSkillApplication = useCallback((applicationData: {
-    sourceSkill: string;
-    sourceTrack: 'exam' | 'course_tech';
-    targetContext: string;
-    targetTrack: 'exam' | 'course_tech';
-    effectivenessRating: number;
-  }) => {
-    return trackCrossTrackEvent('cross_skill_applied', applicationData);
-  }, [trackCrossTrackEvent]);
+  const trackSkillApplication = useCallback(
+    (applicationData: {
+      sourceSkill: string;
+      sourceTrack: 'exam' | 'course_tech';
+      targetContext: string;
+      targetTrack: 'exam' | 'course_tech';
+      effectivenessRating: number;
+    }) => {
+      return trackCrossTrackEvent('cross_skill_applied', applicationData);
+    },
+    [trackCrossTrackEvent]
+  );
 
-  const trackLearningTransfer = useCallback((transferData: {
-    transferredFrom: 'exam' | 'course_tech';
-    transferredTo: 'exam' | 'course_tech';
-    skillsApplied: string[];
-    context: string;
-    successRate: number;
-  }) => {
-    return trackCrossTrackEvent('learning_transfer_identified', transferData);
-  }, [trackCrossTrackEvent]);
+  const trackLearningTransfer = useCallback(
+    (transferData: {
+      transferredFrom: 'exam' | 'course_tech';
+      transferredTo: 'exam' | 'course_tech';
+      skillsApplied: string[];
+      context: string;
+      successRate: number;
+    }) => {
+      return trackCrossTrackEvent('learning_transfer_identified', transferData);
+    },
+    [trackCrossTrackEvent]
+  );
 
   return {
     trackTrackSwitch,
     trackSkillApplication,
-    trackLearningTransfer
+    trackLearningTransfer,
   };
 };
 
@@ -289,52 +339,54 @@ export const usePerformanceAnalytics = () => {
     performanceEntries.current.set(operationId, performance.now());
   }, []);
 
-  const endTiming = useCallback((
-    operationId: string,
-    category: 'exam' | 'course_tech' | 'cross_track',
-    metadata?: any
-  ) => {
-    const startTime = performanceEntries.current.get(operationId);
-    if (!startTime) {
-      logger.warn('No start time found for operation', { operationId });
-      return;
-    }
+  const endTiming = useCallback(
+    (operationId: string, category: 'exam' | 'course_tech' | 'cross_track', metadata?: any) => {
+      const startTime = performanceEntries.current.get(operationId);
+      if (!startTime) {
+        logger.warn('No start time found for operation', { operationId });
+        return;
+      }
 
-    const duration = performance.now() - startTime;
-    performanceEntries.current.delete(operationId);
+      const duration = performance.now() - startTime;
+      performanceEntries.current.delete(operationId);
 
-    // Track performance event
-    trackEvent('performance_measured' as AnalyticsEventType, category, {
-      operationId,
-      duration,
-      timestamp: Date.now(),
-      ...metadata
-    });
+      // Track performance event
+      trackEvent('performance_measured' as AnalyticsEventType, category, {
+        operationId,
+        duration,
+        timestamp: Date.now(),
+        ...metadata,
+      });
 
-    return duration;
-  }, [trackEvent]);
+      return duration;
+    },
+    [trackEvent]
+  );
 
-  const measureFunction = useCallback(async <T>(
-    operationId: string,
-    category: 'exam' | 'course_tech' | 'cross_track',
-    fn: () => Promise<T>,
-    metadata?: any
-  ): Promise<T> => {
-    startTiming(operationId);
-    try {
-      const result = await fn();
-      endTiming(operationId, category, { success: true, ...metadata });
-      return result;
-    } catch (error) {
-      endTiming(operationId, category, { success: false, error: (error as Error).message, ...metadata });
-      throw error;
-    }
-  }, [startTiming, endTiming]);
+  const measureFunction = useCallback(
+    async <T>(
+      operationId: string,
+      category: 'exam' | 'course_tech' | 'cross_track',
+      fn: () => Promise<T>,
+      metadata?: any
+    ): Promise<T> => {
+      startTiming(operationId);
+      try {
+        const result = await fn();
+        endTiming(operationId, category, { success: true, ...metadata });
+        return result;
+      } catch (error) {
+        endTiming(operationId, category, { success: false, error: (error as Error).message, ...metadata });
+        throw error;
+      }
+    },
+    [startTiming, endTiming]
+  );
 
   return {
     startTiming,
     endTiming,
-    measureFunction
+    measureFunction,
   };
 };
 
@@ -348,37 +400,38 @@ export const usePerformanceAnalytics = () => {
 export const useErrorAnalytics = () => {
   const { trackEvent } = useAnalytics();
 
-  const trackError = useCallback((errorData: {
-    errorType: string;
-    errorMessage: string;
-    stackTrace?: string;
-    component: string;
-    userAction: string;
-    recoverable: boolean;
-  }) => {
-    return trackEvent('error_occurred' as AnalyticsEventType, 'cross_track', {
-      ...errorData,
-      timestamp: Date.now(),
-      userAgent: navigator.userAgent,
-      url: window.location.href
-    });
-  }, [trackEvent]);
+  const trackError = useCallback(
+    (errorData: {
+      errorType: string;
+      errorMessage: string;
+      stackTrace?: string;
+      component: string;
+      userAction: string;
+      recoverable: boolean;
+    }) => {
+      return trackEvent('error_occurred' as AnalyticsEventType, 'cross_track', {
+        ...errorData,
+        timestamp: Date.now(),
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+      });
+    },
+    [trackEvent]
+  );
 
-  const trackRecovery = useCallback((recoveryData: {
-    errorType: string;
-    recoveryMethod: string;
-    recoveryTime: number;
-    successful: boolean;
-  }) => {
-    return trackEvent('error_recovery' as AnalyticsEventType, 'cross_track', {
-      ...recoveryData,
-      timestamp: Date.now()
-    });
-  }, [trackEvent]);
+  const trackRecovery = useCallback(
+    (recoveryData: { errorType: string; recoveryMethod: string; recoveryTime: number; successful: boolean }) => {
+      return trackEvent('error_recovery' as AnalyticsEventType, 'cross_track', {
+        ...recoveryData,
+        timestamp: Date.now(),
+      });
+    },
+    [trackEvent]
+  );
 
   return {
     trackError,
-    trackRecovery
+    trackRecovery,
   };
 };
 
@@ -395,38 +448,47 @@ export const useSessionAnalytics = () => {
     startTime: Date.now(),
     pageViews: 0,
     interactions: 0,
-    features: new Set<string>()
+    features: new Set<string>(),
   });
 
-  const trackPageView = useCallback((pageName: string, metadata?: any) => {
-    sessionData.current.pageViews++;
-    return trackEvent('page_viewed' as AnalyticsEventType, 'cross_track', {
-      pageName,
-      pageViewCount: sessionData.current.pageViews,
-      sessionDuration: Date.now() - sessionData.current.startTime,
-      ...metadata
-    });
-  }, [trackEvent]);
+  const trackPageView = useCallback(
+    (pageName: string, metadata?: any) => {
+      sessionData.current.pageViews++;
+      return trackEvent('page_viewed' as AnalyticsEventType, 'cross_track', {
+        pageName,
+        pageViewCount: sessionData.current.pageViews,
+        sessionDuration: Date.now() - sessionData.current.startTime,
+        ...metadata,
+      });
+    },
+    [trackEvent]
+  );
 
-  const trackInteraction = useCallback((interactionType: string, metadata?: any) => {
-    sessionData.current.interactions++;
-    return trackEvent('user_interaction' as AnalyticsEventType, 'cross_track', {
-      interactionType,
-      interactionCount: sessionData.current.interactions,
-      sessionDuration: Date.now() - sessionData.current.startTime,
-      ...metadata
-    });
-  }, [trackEvent]);
+  const trackInteraction = useCallback(
+    (interactionType: string, metadata?: any) => {
+      sessionData.current.interactions++;
+      return trackEvent('user_interaction' as AnalyticsEventType, 'cross_track', {
+        interactionType,
+        interactionCount: sessionData.current.interactions,
+        sessionDuration: Date.now() - sessionData.current.startTime,
+        ...metadata,
+      });
+    },
+    [trackEvent]
+  );
 
-  const trackFeatureUsage = useCallback((featureName: string, metadata?: any) => {
-    sessionData.current.features.add(featureName);
-    return trackEvent('feature_used' as AnalyticsEventType, 'cross_track', {
-      featureName,
-      uniqueFeaturesUsed: sessionData.current.features.size,
-      sessionDuration: Date.now() - sessionData.current.startTime,
-      ...metadata
-    });
-  }, [trackEvent]);
+  const trackFeatureUsage = useCallback(
+    (featureName: string, metadata?: any) => {
+      sessionData.current.features.add(featureName);
+      return trackEvent('feature_used' as AnalyticsEventType, 'cross_track', {
+        featureName,
+        uniqueFeaturesUsed: sessionData.current.features.size,
+        sessionDuration: Date.now() - sessionData.current.startTime,
+        ...metadata,
+      });
+    },
+    [trackEvent]
+  );
 
   // Track session end on unmount
   useEffect(() => {
@@ -435,7 +497,7 @@ export const useSessionAnalytics = () => {
         sessionDuration: Date.now() - sessionData.current.startTime,
         totalPageViews: sessionData.current.pageViews,
         totalInteractions: sessionData.current.interactions,
-        uniqueFeatures: Array.from(sessionData.current.features)
+        uniqueFeatures: Array.from(sessionData.current.features),
       });
     };
   }, [trackEvent]);
@@ -443,7 +505,7 @@ export const useSessionAnalytics = () => {
   return {
     trackPageView,
     trackInteraction,
-    trackFeatureUsage
+    trackFeatureUsage,
   };
 };
 
@@ -454,5 +516,5 @@ export default {
   useCrossTrackAnalytics,
   usePerformanceAnalytics,
   useErrorAnalytics,
-  useSessionAnalytics
+  useSessionAnalytics,
 };

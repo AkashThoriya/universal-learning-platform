@@ -38,9 +38,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
           <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-red-600" />
           </div>
-          <CardTitle className="text-2xl font-bold text-red-900">
-            Something went wrong
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold text-red-900">Something went wrong</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center">
@@ -55,7 +53,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
                   <strong>Development Error:</strong>
                   <pre className="mt-2 text-xs overflow-auto max-h-32">
                     {error.message}
-                    {error.stack && `\n\nStack trace:\n${ error.stack}`}
+                    {error.stack && `\n\nStack trace:\n${error.stack}`}
                   </pre>
                 </AlertDescription>
               </Alert>
@@ -63,17 +61,13 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button
-              onClick={resetError}
-              className="flex items-center gap-2"
-              variant="default"
-            >
+            <Button onClick={resetError} className="flex items-center gap-2" variant="default">
               <RefreshCw className="w-4 h-4" />
               Try Again
             </Button>
 
             <Button
-              onClick={onNavigateHome || (() => window.location.href = '/')}
+              onClick={onNavigateHome || (() => (window.location.href = '/'))}
               variant="outline"
               className="flex items-center gap-2"
             >
@@ -100,21 +94,21 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
 
     // Log error to console in development
@@ -135,7 +129,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     this.setState({
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     });
   };
 
@@ -143,12 +137,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     if (this.state.hasError && this.state.error) {
       const FallbackComponent = this.props.fallback || DefaultErrorFallback;
 
-      return (
-        <FallbackComponent
-          error={this.state.error}
-          resetError={this.resetError}
-        />
-      );
+      return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
     }
 
     return this.props.children;
@@ -177,7 +166,7 @@ export function SimpleErrorFallback({
   error,
   resetError,
   title = 'Something went wrong',
-  description = 'Please try again or contact support if the problem persists.'
+  description = 'Please try again or contact support if the problem persists.',
 }: {
   error: Error;
   resetError: () => void;
@@ -199,17 +188,12 @@ export function SimpleErrorFallback({
               <summary className="cursor-pointer font-medium">Error Details (Development)</summary>
               <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-32">
                 {error.message}
-                {error.stack && `\n\n${ error.stack}`}
+                {error.stack && `\n\n${error.stack}`}
               </pre>
             </details>
           )}
 
-          <Button
-            onClick={resetError}
-            size="sm"
-            variant="outline"
-            className="flex items-center gap-2"
-          >
+          <Button onClick={resetError} size="sm" variant="outline" className="flex items-center gap-2">
             <RefreshCw className="w-3 h-3" />
             Try Again
           </Button>
@@ -225,7 +209,7 @@ export function SimpleErrorFallback({
 export function FeatureErrorBoundary({
   children,
   featureName,
-  fallbackMessage
+  fallbackMessage,
 }: {
   children: React.ReactNode;
   featureName: string;

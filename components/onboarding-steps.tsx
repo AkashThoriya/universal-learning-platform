@@ -9,15 +9,7 @@
  * @version 1.0.0
  */
 
-import {
-  User,
-  Search,
-  Calendar,
-  Plus,
-  AlertCircle,
-  CheckCircle,
-  Info
-} from 'lucide-react';
+import { User, Search, Calendar, Plus, AlertCircle, CheckCircle, Info } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -82,7 +74,7 @@ export function PersonalInfoStep({
   searchQuery,
   setSearchQuery,
   onExamSelect,
-  selectedExam
+  selectedExam,
 }: PersonalInfoStepProps) {
   const [showAllExams, setShowAllExams] = useState(false);
   const displayedExams = showAllExams ? filteredExams : filteredExams.slice(0, 6);
@@ -107,7 +99,7 @@ export function PersonalInfoStep({
         <Input
           id="displayName"
           value={form.data.displayName}
-          onChange={(e) => form.updateField('displayName', e.target.value)}
+          onChange={e => form.updateField('displayName', e.target.value)}
           onBlur={() => form.markFieldTouched('displayName')}
           placeholder="Enter your full name"
           className={form.errors.displayName ? 'border-red-500' : ''}
@@ -130,20 +122,18 @@ export function PersonalInfoStep({
           <Input
             placeholder="Search for your exam..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
 
         {/* Exam Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {displayedExams.map((exam) => (
+          {displayedExams.map(exam => (
             <Card
               key={exam.id}
               className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                form.data.selectedExamId === exam.id
-                  ? 'ring-2 ring-blue-500 bg-blue-50'
-                  : 'hover:bg-gray-50'
+                form.data.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
               }`}
               onClick={() => onExamSelect(exam.id)}
             >
@@ -185,11 +175,7 @@ export function PersonalInfoStep({
 
         {/* Show More Button */}
         {!showAllExams && filteredExams.length > 6 && (
-          <Button
-            variant="outline"
-            onClick={() => setShowAllExams(true)}
-            className="w-full"
-          >
+          <Button variant="outline" onClick={() => setShowAllExams(true)} className="w-full">
             Show {filteredExams.length - 6} more exams
           </Button>
         )}
@@ -197,9 +183,7 @@ export function PersonalInfoStep({
         {form.errors.selectedExamId && (
           <Alert className="border-red-200 bg-red-50">
             <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
-              {form.errors.selectedExamId.message}
-            </AlertDescription>
+            <AlertDescription className="text-red-800">{form.errors.selectedExamId.message}</AlertDescription>
           </Alert>
         )}
       </div>
@@ -216,7 +200,7 @@ export function PersonalInfoStep({
               id="examDate"
               type="date"
               value={form.data.examDate}
-              onChange={(e) => form.updateField('examDate', e.target.value)}
+              onChange={e => form.updateField('examDate', e.target.value)}
               onBlur={() => form.markFieldTouched('examDate')}
               className={`pl-10 ${form.errors.examDate ? 'border-red-500' : ''}`}
               min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
@@ -240,8 +224,8 @@ export function PersonalInfoStep({
             <strong>{selectedExam.name}</strong> - {selectedExam.description}
             <br />
             <span className="text-sm">
-              Syllabus: {selectedExam.defaultSyllabus.length} subjects •
-              Estimated study time: {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours || 0), 0)} hours
+              Syllabus: {selectedExam.defaultSyllabus.length} subjects • Estimated study time:{' '}
+              {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours || 0), 0)} hours
             </span>
           </AlertDescription>
         </Alert>
@@ -265,9 +249,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           <Plus className="h-6 w-6 text-green-600" />
           <CardTitle>Custom Exam Details</CardTitle>
         </div>
-        <CardDescription>
-          Provide details about your custom exam to create a tailored study strategy.
-        </CardDescription>
+        <CardDescription>Provide details about your custom exam to create a tailored study strategy.</CardDescription>
       </CardHeader>
 
       <div className="space-y-4">
@@ -279,10 +261,12 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           <Input
             id="customExamName"
             value={form.data.customExam.name}
-            onChange={(e) => form.updateField('customExam', {
-              ...form.data.customExam,
-              name: e.target.value
-            })}
+            onChange={e =>
+              form.updateField('customExam', {
+                ...form.data.customExam,
+                name: e.target.value,
+              })
+            }
             onBlur={() => form.markFieldTouched('customExam')}
             placeholder="e.g., State Public Service Commission"
             className={form.errors['customExam.name'] ? 'border-red-500' : ''}
@@ -302,10 +286,12 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Select
             value={form.data.customExam.category}
-            onValueChange={(value) => form.updateField('customExam', {
-              ...form.data.customExam,
-              category: value
-            })}
+            onValueChange={value =>
+              form.updateField('customExam', {
+                ...form.data.customExam,
+                category: value,
+              })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Select exam category" />
@@ -333,10 +319,12 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           <Textarea
             id="customExamDescription"
             value={form.data.customExam.description}
-            onChange={(e) => form.updateField('customExam', {
-              ...form.data.customExam,
-              description: e.target.value
-            })}
+            onChange={e =>
+              form.updateField('customExam', {
+                ...form.data.customExam,
+                description: e.target.value,
+              })
+            }
             placeholder="Brief description of the exam pattern, difficulty level, and selection process..."
             rows={4}
           />
@@ -346,8 +334,8 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
       <Alert className="border-amber-200 bg-amber-50">
         <Info className="h-4 w-4 text-amber-600" />
         <AlertDescription className="text-amber-800">
-          <strong>Note:</strong> You'll be able to add and customize subjects in the next step.
-          Our system will help you structure your syllabus effectively.
+          <strong>Note:</strong> You'll be able to add and customize subjects in the next step. Our system will help you
+          structure your syllabus effectively.
         </AlertDescription>
       </Alert>
     </CardContent>
@@ -363,11 +351,14 @@ interface ExamReviewStepProps {
 }
 
 export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
-  if (!selectedExam) { return null; }
+  if (!selectedExam) {
+    return null;
+  }
 
   const totalHours = selectedExam.defaultSyllabus.reduce((sum, subject) => sum + (subject.estimatedHours || 0), 0);
-  const daysUntilExam = form.data.examDate ?
-    Math.max(0, Math.ceil((new Date(form.data.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0;
+  const daysUntilExam = form.data.examDate
+    ? Math.max(0, Math.ceil((new Date(form.data.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : 0;
 
   return (
     <CardContent className="space-y-6">
@@ -376,9 +367,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
           <CheckCircle className="h-6 w-6 text-green-600" />
           <CardTitle>Exam Overview</CardTitle>
         </div>
-        <CardDescription>
-          Review your selected exam details and preparation timeline.
-        </CardDescription>
+        <CardDescription>Review your selected exam details and preparation timeline.</CardDescription>
       </CardHeader>
 
       {/* Exam Summary */}
@@ -401,7 +390,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">
-              {daysUntilExam > 0 ? Math.round(totalHours / daysUntilExam * 10) / 10 : 0}h
+              {daysUntilExam > 0 ? Math.round((totalHours / daysUntilExam) * 10) / 10 : 0}h
             </div>
             <div className="text-sm text-blue-600">Daily Goal</div>
           </div>
@@ -419,13 +408,13 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
           <AlertDescription className={daysUntilExam < 30 ? 'text-red-800' : 'text-green-800'}>
             {daysUntilExam < 30 ? (
               <>
-                <strong>Intensive preparation needed!</strong> With only {daysUntilExam} days left,
-                you'll need approximately {Math.round(totalHours / daysUntilExam * 10) / 10} hours of focused study daily.
+                <strong>Intensive preparation needed!</strong> With only {daysUntilExam} days left, you'll need
+                approximately {Math.round((totalHours / daysUntilExam) * 10) / 10} hours of focused study daily.
               </>
             ) : (
               <>
                 <strong>Good preparation time!</strong> With {daysUntilExam} days available,
-                {Math.round(totalHours / daysUntilExam * 10) / 10} hours daily will give you comprehensive coverage.
+                {Math.round((totalHours / daysUntilExam) * 10) / 10} hours daily will give you comprehensive coverage.
               </>
             )}
           </AlertDescription>
@@ -436,7 +425,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
       <div className="space-y-3">
         <h4 className="font-semibold">Included Subjects</h4>
         <div className="grid gap-2">
-          {selectedExam.defaultSyllabus.map((subject) => (
+          {selectedExam.defaultSyllabus.map(subject => (
             <div key={subject.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
                 <span className="font-medium">{subject.name}</span>

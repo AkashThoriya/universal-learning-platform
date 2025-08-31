@@ -5,13 +5,11 @@ import { Shield, Target, TrendingUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { auth } from '@/lib/firebase';
-
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -59,9 +57,7 @@ export default function LoginPage() {
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Exam Strategy Engine
             </h1>
-            <p className="text-xl text-muted-foreground">
-              Universal Strategic Platform for Competitive Exam Success
-            </p>
+            <p className="text-xl text-muted-foreground">Universal Strategic Platform for Competitive Exam Success</p>
           </div>
 
           <div className="space-y-4">
@@ -101,9 +97,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="space-y-2 text-center">
             <CardTitle>Enter Strategy Engine</CardTitle>
-            <CardDescription>
-              Access your strategic preparation dashboard
-            </CardDescription>
+            <CardDescription>Access your strategic preparation dashboard</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="login" className="w-full">
@@ -119,7 +113,7 @@ export default function LoginPage() {
                       type="email"
                       placeholder="Email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={e => setEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -128,13 +122,11 @@ export default function LoginPage() {
                       type="password"
                       placeholder="Password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={e => setPassword(e.target.value)}
                       required
                     />
                   </div>
-                  {error && (
-                    <p className="text-sm text-destructive">{error}</p>
-                  )}
+                  {error && <p className="text-sm text-destructive">{error}</p>}
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Signing in...' : 'Enter Strategy Engine'}
                   </Button>
@@ -148,7 +140,7 @@ export default function LoginPage() {
                       type="email"
                       placeholder="Email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={e => setEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -157,14 +149,12 @@ export default function LoginPage() {
                       type="password"
                       placeholder="Password (min 6 characters)"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={e => setPassword(e.target.value)}
                       required
                       minLength={6}
                     />
                   </div>
-                  {error && (
-                    <p className="text-sm text-destructive">{error}</p>
-                  )}
+                  {error && <p className="text-sm text-destructive">{error}</p>}
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Creating account...' : 'Start Your Journey'}
                   </Button>

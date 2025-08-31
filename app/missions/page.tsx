@@ -15,7 +15,7 @@ import {
   Users,
   Flame,
   Star,
-  Award
+  Award,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -28,11 +28,7 @@ import { ProgressVisualization } from '@/components/missions/ProgressVisualizati
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  type Mission,
-  type MissionResults,
-  type Achievement
-} from '@/types/mission-system';
+import { type Mission, type MissionResults, type Achievement } from '@/types/mission-system';
 
 type ViewMode = 'dashboard' | 'configuration' | 'execution' | 'achievements' | 'progress';
 
@@ -118,20 +114,18 @@ export default function MissionsPage() {
     mode,
     icon: Icon,
     label,
-    badge
+    badge,
   }: {
     mode: ViewMode;
     icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
     label: string;
-    badge?: string
+    badge?: string;
   }) => (
     <Button
       variant={currentView === mode ? 'default' : 'ghost'}
       onClick={() => setCurrentView(mode)}
       className={`relative transition-all duration-200 ${
-        currentView === mode
-          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
-          : 'hover:bg-gray-100'
+        currentView === mode ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'hover:bg-gray-100'
       }`}
       disabled={mode === 'execution' && !activeMission}
     >
@@ -219,9 +213,7 @@ export default function MissionsPage() {
                 <NavButton mode="configuration" icon={Settings} label="Configure" />
                 <NavButton mode="progress" icon={BarChart3} label="Analytics" />
                 <NavButton mode="achievements" icon={Trophy} label="Achievements" badge="2" />
-                {activeMission && (
-                  <NavButton mode="execution" icon={Play} label="Active Mission" />
-                )}
+                {activeMission && <NavButton mode="execution" icon={Play} label="Active Mission" />}
               </div>
             )}
           </div>
@@ -229,26 +221,15 @@ export default function MissionsPage() {
           {/* Content */}
           <div className="space-y-6">
             {currentView === 'dashboard' && (
-              <MissionDashboard
-                onMissionStart={handleMissionStart}
-                className="animate-in fade-in-50 duration-500"
-              />
+              <MissionDashboard onMissionStart={handleMissionStart} className="animate-in fade-in-50 duration-500" />
             )}
 
-            {currentView === 'configuration' && (
-              <MissionConfiguration
-                className="animate-in fade-in-50 duration-500"
-              />
-            )}
+            {currentView === 'configuration' && <MissionConfiguration className="animate-in fade-in-50 duration-500" />}
 
             {currentView === 'execution' && activeMission && (
               <div className="animate-in fade-in-50 duration-500">
                 <div className="mb-6">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentView('dashboard')}
-                    className="mb-4"
-                  >
+                  <Button variant="outline" onClick={() => setCurrentView('dashboard')} className="mb-4">
                     <Home className="h-4 w-4 mr-2" />
                     Back to Dashboard
                   </Button>
@@ -269,11 +250,7 @@ export default function MissionsPage() {
               />
             )}
 
-            {currentView === 'progress' && (
-              <ProgressVisualization
-                className="animate-in fade-in-50 duration-500"
-              />
-            )}
+            {currentView === 'progress' && <ProgressVisualization className="animate-in fade-in-50 duration-500" />}
           </div>
 
           {/* Quick Stats Footer */}
@@ -326,8 +303,8 @@ export default function MissionsPage() {
                       Welcome to the Adaptive Mission System!
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      Your personalized dual-track learning system combines exam preparation and technical
-                      skills development. Each mission is adapted to your learning style and current proficiency level.
+                      Your personalized dual-track learning system combines exam preparation and technical skills
+                      development. Each mission is adapted to your learning style and current proficiency level.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center space-x-3">
@@ -338,7 +315,9 @@ export default function MissionsPage() {
                       </div>
                       <div className="flex items-center space-x-3">
                         <Code className="h-5 w-5 text-green-600" />
-                        <span className="text-sm text-gray-700">💻 Tech Track: Daily coding, weekly projects, monthly challenges</span>
+                        <span className="text-sm text-gray-700">
+                          💻 Tech Track: Daily coding, weekly projects, monthly challenges
+                        </span>
                       </div>
                       <div className="flex items-center space-x-3">
                         <Brain className="h-5 w-5 text-purple-600" />

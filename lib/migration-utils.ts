@@ -12,7 +12,7 @@ import {
   userService,
   progressService,
   mockTestService,
-  dailyLogService as _dailyLogService
+  dailyLogService as _dailyLogService,
 } from '@/lib/firebase-services';
 import { Result } from '@/lib/types-utils';
 import { User, TopicProgress as _TopicProgress, MockTestLog, DailyLog as _DailyLog } from '@/types/exam';
@@ -50,7 +50,7 @@ export function migrateLegacyUserData(legacyData: any): User {
     currentExam: {
       id: legacyData.selectedExamId || 'unknown',
       name: legacyData.examName || 'Unknown Exam',
-      targetDate: legacyData.examDate || legacyData.createdAt
+      targetDate: legacyData.examDate || legacyData.createdAt,
     },
     onboardingComplete: legacyData.onboardingComplete || false,
     createdAt: legacyData.createdAt,
@@ -60,21 +60,21 @@ export function migrateLegacyUserData(legacyData: any): User {
       tierDefinition: {
         1: 'High Priority',
         2: 'Medium Priority',
-        3: 'Low Priority'
+        3: 'Low Priority',
       },
       notifications: {
         revisionReminders: true,
         dailyGoalReminders: true,
-        healthCheckReminders: true
+        healthCheckReminders: true,
       },
       preferences: {
         theme: 'system' as const,
         language: 'en',
-        timezone: 'UTC'
+        timezone: 'UTC',
       },
       userPersona: {
-        type: 'student' as const
-      }
+        type: 'student' as const,
+      },
     },
     stats: {
       totalStudyHours: legacyData.totalStudyHours || 0,
@@ -83,8 +83,8 @@ export function migrateLegacyUserData(legacyData: any): User {
       totalMockTests: 0,
       averageScore: 0,
       topicsCompleted: 0,
-      totalTopics: 0
-    }
+      totalTopics: 0,
+    },
   };
 }
 
@@ -114,8 +114,8 @@ export async function userManagementExample(userId: string) {
     const updateResult = await userService.update(userId, {
       settings: {
         ...user.settings,
-        dailyStudyGoalMinutes: 480 // 8 hours
-      }
+        dailyStudyGoalMinutes: 480, // 8 hours
+      },
     });
 
     if (!updateResult.success) {
@@ -124,7 +124,6 @@ export async function userManagementExample(userId: string) {
     }
 
     console.log('User updated successfully');
-
   } catch (error) {
     console.error('Unexpected error in user management:', error);
   }
@@ -150,7 +149,7 @@ export async function progressTrackingExample(userId: string, topicId: string) {
       personalContext: 'Key concepts for exam preparation',
       tags: ['important', 'revision-needed'],
       difficulty: 3,
-      importance: 5
+      importance: 5,
     });
 
     if (!updateResult.success) {
@@ -159,7 +158,6 @@ export async function progressTrackingExample(userId: string, topicId: string) {
     }
 
     console.log('Progress updated successfully');
-
   } catch (error) {
     console.error('Unexpected error in progress tracking:', error);
   }
@@ -176,9 +174,9 @@ export async function mockTestAnalysisExample(userId: string) {
       testName: 'Prelims Test #5',
       stage: 'prelims',
       type: 'full_length',
-      scores: { 'GS Paper I': 98, 'CSAT': 180 },
-      maxScores: { 'GS Paper I': 200, 'CSAT': 200 },
-      timeTaken: { 'GS Paper I': 110, 'CSAT': 115 },
+      scores: { 'GS Paper I': 98, CSAT: 180 },
+      maxScores: { 'GS Paper I': 200, CSAT: 200 },
+      timeTaken: { 'GS Paper I': 110, CSAT: 115 },
       analysis: {
         conceptGaps: 10,
         carelessErrors: 5,
@@ -189,21 +187,21 @@ export async function mockTestAnalysisExample(userId: string) {
         wrongAnswers: 20,
         unattempted: 5,
         accuracy: 75.0,
-        speed: 0.83
+        speed: 0.83,
       },
       topicWisePerformance: [],
       mentalState: {
         confidence: 4,
         anxiety: 2,
-        focus: 4
+        focus: 4,
       },
       environment: {
         location: 'Study room',
         distractions: [],
-        timeOfDay: 'morning'
+        timeOfDay: 'morning',
       },
       feedback: 'Good performance overall',
-      actionItems: ['Focus on current affairs', 'Practice more math']
+      actionItems: ['Focus on current affairs', 'Practice more math'],
     };
 
     const createResult = await mockTestService.create(userId, mockTestData);
@@ -224,14 +222,14 @@ export async function mockTestAnalysisExample(userId: string) {
     }
 
     const recentTests = testsResult.data || [];
-    const averageScore = recentTests.reduce((sum, test: any) => {
-      const totalScore = (Object.values(test.scores) as number[]).reduce((s: number, score: number) => s + score, 0);
-      const maxScore = (Object.values(test.maxScores) as number[]).reduce((s: number, score: number) => s + score, 0);
-      return sum + (totalScore / maxScore) * 100;
-    }, 0) / recentTests.length;
+    const averageScore =
+      recentTests.reduce((sum, test: any) => {
+        const totalScore = (Object.values(test.scores) as number[]).reduce((s: number, score: number) => s + score, 0);
+        const maxScore = (Object.values(test.maxScores) as number[]).reduce((s: number, score: number) => s + score, 0);
+        return sum + (totalScore / maxScore) * 100;
+      }, 0) / recentTests.length;
 
     console.log(`Average score across ${recentTests.length} tests: ${averageScore.toFixed(1)}%`);
-
   } catch (error) {
     console.error('Unexpected error in mock test analysis:', error);
   }
@@ -254,13 +252,14 @@ export async function errorHandlingExample(userId: string) {
   }
 
   // Pattern 2: Chained operations with error propagation
-  const chainedResult = await userService.get(userId)
-    .then(async (userResult) => {
-      if (!userResult.success) { return userResult; }
+  const chainedResult = await userService.get(userId).then(async userResult => {
+    if (!userResult.success) {
+      return userResult;
+    }
 
-      // Use the user data for next operation
-      return progressService.getAllProgress(userId);
-    });
+    // Use the user data for next operation
+    return progressService.getAllProgress(userId);
+  });
 
   if (!chainedResult.success) {
     console.error('Chain failed:', chainedResult.error);
@@ -284,7 +283,7 @@ export const mockServiceResponses = {
       currentExam: {
         id: 'upsc_cse_prelims',
         name: 'UPSC CSE - Prelims',
-        targetDate: new Date() as any
+        targetDate: new Date() as any,
       },
       onboardingComplete: true,
       createdAt: new Date() as any,
@@ -295,16 +294,16 @@ export const mockServiceResponses = {
         notifications: {
           revisionReminders: true,
           dailyGoalReminders: true,
-          healthCheckReminders: true
+          healthCheckReminders: true,
         },
         preferences: {
           theme: 'system' as const,
           language: 'en',
-          timezone: 'UTC'
+          timezone: 'UTC',
         },
         userPersona: {
-          type: 'student' as const
-        }
+          type: 'student' as const,
+        },
       },
       stats: {
         totalStudyHours: 120,
@@ -313,15 +312,15 @@ export const mockServiceResponses = {
         totalMockTests: 10,
         averageScore: 75.5,
         topicsCompleted: 45,
-        totalTopics: 60
-      }
-    }
+        totalTopics: 60,
+      },
+    },
   }),
 
   errorResponse: (message: string): Result<never> => ({
     success: false,
-    error: new Error(message)
-  })
+    error: new Error(message),
+  }),
 };
 
 export default {
@@ -331,5 +330,5 @@ export default {
   progressTrackingExample,
   mockTestAnalysisExample,
   errorHandlingExample,
-  mockServiceResponses
+  mockServiceResponses,
 };

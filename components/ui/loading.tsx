@@ -32,12 +32,10 @@ export function LoadingSpinner({ size = 'md', className = '' }: LoadingSpinnerPr
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
-    lg: 'h-12 w-12'
+    lg: 'h-12 w-12',
   };
 
-  return (
-    <Loader2 className={`animate-spin text-blue-600 ${sizeClasses[size]} ${className}`} />
-  );
+  return <Loader2 className={`animate-spin text-blue-600 ${sizeClasses[size]} ${className}`} />;
 }
 
 /**
@@ -49,7 +47,7 @@ export function LoadingState({
   type = 'component',
   showProgress = false,
   progress = 0,
-  className = ''
+  className = '',
 }: LoadingStateProps) {
   if (type === 'inline') {
     return (
@@ -62,7 +60,9 @@ export function LoadingState({
 
   if (type === 'page') {
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 flex items-center justify-center p-4 ${className}`}>
+      <div
+        className={`min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 flex items-center justify-center p-4 ${className}`}
+      >
         <div className="text-center space-y-6 max-w-md mx-auto">
           <div className="relative">
             <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
@@ -86,7 +86,7 @@ export function LoadingState({
                       <div
                         className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300 ease-out"
                         style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                       />
+                      />
                     </div>
                     <p className="text-sm text-gray-500">{Math.round(progress)}% complete</p>
                   </div>
@@ -123,7 +123,7 @@ export function LoadingState({
               <div
                 className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-               />
+              />
             </div>
             <p className="text-xs text-gray-500">{Math.round(progress)}%</p>
           </div>
@@ -231,13 +231,7 @@ export function MicroLearningLoading() {
 /**
  * Data loading component for specific features
  */
-export function DataLoading({
-  feature,
-  className = ''
-}: {
-  feature: string;
-  className?: string;
-}) {
+export function DataLoading({ feature, className = '' }: { feature: string; className?: string }) {
   const getFeatureIcon = (feature: string) => {
     switch (feature.toLowerCase()) {
       case 'mission':

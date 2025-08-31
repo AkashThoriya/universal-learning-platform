@@ -36,7 +36,9 @@ export default function AnalyticsPage() {
             <div className="text-center space-y-4 max-w-md">
               <div className="text-6xl">📊</div>
               <h2 className="text-2xl font-bold text-gray-900">Analytics Temporarily Unavailable</h2>
-              <p className="text-gray-600">We're working to restore your analytics dashboard. Please try refreshing the page.</p>
+              <p className="text-gray-600">
+                We're working to restore your analytics dashboard. Please try refreshing the page.
+              </p>
               <button
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -58,10 +60,15 @@ export default function AnalyticsPage() {
                       <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
                         <LoadingSpinner size="large" />
                         <h3 className="text-lg font-semibold text-gray-900 mb-2 mt-4">Loading Analytics</h3>
-                        <p className="text-sm text-gray-600">Analyzing your learning patterns and performance data...</p>
+                        <p className="text-sm text-gray-600">
+                          Analyzing your learning patterns and performance data...
+                        </p>
                         <div className="mt-4 space-y-2">
                           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full animate-pulse" style={{ width: '60%' }} />
+                            <div
+                              className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full animate-pulse"
+                              style={{ width: '60%' }}
+                            />
                           </div>
                           <p className="text-xs text-gray-500">Processing cross-track insights</p>
                         </div>

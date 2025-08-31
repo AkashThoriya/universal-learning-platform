@@ -36,6 +36,7 @@ convert source-icon-1024.png -resize 72x72 public/icons/badge-72x72.png
 ## Alternative: Online Icon Generators
 
 You can also use online tools like:
+
 - https://realfavicongenerator.net/
 - https://www.favicon-generator.org/
 - https://favicon.io/
@@ -43,8 +44,9 @@ You can also use online tools like:
 ## Required Icons Checklist
 
 ### Basic App Icons
+
 - [x] favicon-16x16.png
-- [x] favicon-32x32.png  
+- [x] favicon-32x32.png
 - [x] icon-72x72.png
 - [x] icon-96x96.png
 - [x] icon-128x128.png
@@ -56,25 +58,30 @@ You can also use online tools like:
 - [x] icon-512x512.png
 
 ### Microsoft Tiles
+
 - [x] mstile-70x70.png
 - [x] mstile-150x150.png
 - [x] mstile-310x150.png
 - [x] mstile-310x310.png
 
 ### Safari
+
 - [ ] safari-pinned-tab.svg
 
 ### Notification Icons
+
 - [x] badge-72x72.png
-- [x] action-*.png (96x96 each)
+- [x] action-\*.png (96x96 each)
 
 ### Shortcut Icons
+
 - [ ] shortcut-learn.png
-- [ ] shortcut-dashboard.png  
+- [ ] shortcut-dashboard.png
 - [ ] shortcut-test.png
 - [ ] shortcut-analytics.png
 
 ### Splash Screens (iOS)
+
 - [ ] apple-splash-2048-2732.jpg
 - [ ] apple-splash-1668-2224.jpg
 - [ ] apple-splash-1536-2048.jpg

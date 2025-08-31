@@ -19,7 +19,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase-utils';
 import { DailyLog, StudySession } from '@/types/exam';
 
-
 export default function DailyLogPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -48,7 +47,9 @@ export default function DailyLogPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) { return; }
+      if (!user) {
+        return;
+      }
 
       setLoading(true);
       try {
@@ -58,7 +59,7 @@ export default function DailyLogPage() {
           subject.topics.map(topic => ({
             id: topic.id,
             name: topic.name,
-            subject: subject.name
+            subject: subject.name,
           }))
         );
         setAvailableTopics(topics);
@@ -93,20 +94,21 @@ export default function DailyLogPage() {
   }, [user]);
 
   const addStudySession = () => {
-    setStudySessions(prev => [...prev, {
-      topicId: '',
-      subjectId: '',
-      minutes: 60,
-      method: 'reading',
-      effectiveness: 3,
-      distractions: 0
-    }]);
+    setStudySessions(prev => [
+      ...prev,
+      {
+        topicId: '',
+        subjectId: '',
+        minutes: 60,
+        method: 'reading',
+        effectiveness: 3,
+        distractions: 0,
+      },
+    ]);
   };
 
   const updateStudySession = (index: number, updates: Partial<StudySession>) => {
-    setStudySessions(prev => prev.map((session, i) =>
-      i === index ? { ...session, ...updates } : session
-    ));
+    setStudySessions(prev => prev.map((session, i) => (i === index ? { ...session, ...updates } : session)));
   };
 
   const removeStudySession = (index: number) => {
@@ -135,7 +137,9 @@ export default function DailyLogPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) { return; }
+    if (!user) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -149,19 +153,19 @@ export default function DailyLogPage() {
           sleepQuality: sleepQuality[0] ?? 5,
           stressLevel: stressLevel[0] ?? 5,
           physicalActivity,
-          screenTime: 0
+          screenTime: 0,
         },
         studiedTopics: studySessions.filter(session => session.topicId && session.minutes > 0),
         goals: {
           targetMinutes,
           actualMinutes: getTotalStudyMinutes(),
-          completed: getTotalStudyMinutes() >= targetMinutes
+          completed: getTotalStudyMinutes() >= targetMinutes,
         },
         mood,
         productivity,
         note,
         challenges,
-        wins
+        wins,
       };
 
       await saveDailyLog(user.uid, logData);
@@ -226,9 +230,7 @@ export default function DailyLogPage() {
                   </div>
                   <span>Health & Wellness Metrics</span>
                 </CardTitle>
-                <CardDescription>
-                  Your physical and mental state directly impacts study performance
-                </CardDescription>
+                <CardDescription>Your physical and mental state directly impacts study performance</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -258,7 +260,7 @@ export default function DailyLogPage() {
                       max="12"
                       step="0.5"
                       value={sleepHours}
-                      onChange={(e) => setSleepHours(Number(e.target.value))}
+                      onChange={e => setSleepHours(Number(e.target.value))}
                     />
                   </div>
 
@@ -269,7 +271,7 @@ export default function DailyLogPage() {
                       min="0"
                       max="300"
                       value={physicalActivity}
-                      onChange={(e) => setPhysicalActivity(Number(e.target.value))}
+                      onChange={e => setPhysicalActivity(Number(e.target.value))}
                     />
                   </div>
                 </div>
@@ -330,12 +332,7 @@ export default function DailyLogPage() {
                   <div key={index} className="p-4 border rounded-lg space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">Session {index + 1}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeStudySession(index)}
-                      >
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeStudySession(index)}>
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -345,11 +342,11 @@ export default function DailyLogPage() {
                         <label className="text-sm font-medium">Topic</label>
                         <Select
                           value={session.topicId}
-                          onValueChange={(value) => {
+                          onValueChange={value => {
                             const topic = availableTopics.find(t => t.id === value);
                             updateStudySession(index, {
                               topicId: value,
-                              subjectId: topic?.subject || ''
+                              subjectId: topic?.subject || '',
                             });
                           }}
                         >
@@ -378,7 +375,7 @@ export default function DailyLogPage() {
                           min="5"
                           max="480"
                           value={session.minutes}
-                          onChange={(e) => updateStudySession(index, { minutes: Number(e.target.value) })}
+                          onChange={e => updateStudySession(index, { minutes: Number(e.target.value) })}
                         />
                       </div>
                     </div>
@@ -410,7 +407,9 @@ export default function DailyLogPage() {
                           min="1"
                           max="5"
                           value={session.effectiveness}
-                          onChange={(e) => updateStudySession(index, { effectiveness: Number(e.target.value) as 1 | 2 | 3 | 4 | 5 })}
+                          onChange={e =>
+                            updateStudySession(index, { effectiveness: Number(e.target.value) as 1 | 2 | 3 | 4 | 5 })
+                          }
                         />
                       </div>
 
@@ -421,7 +420,7 @@ export default function DailyLogPage() {
                           min="0"
                           max="50"
                           value={session.distractions}
-                          onChange={(e) => updateStudySession(index, { distractions: Number(e.target.value) })}
+                          onChange={e => updateStudySession(index, { distractions: Number(e.target.value) })}
                         />
                       </div>
                     </div>
@@ -439,12 +438,21 @@ export default function DailyLogPage() {
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-blue-800">
-                        Total study time: <strong>{Math.floor(getTotalStudyMinutes() / 60)}h {getTotalStudyMinutes() % 60}m</strong>
+                        Total study time:{' '}
+                        <strong>
+                          {Math.floor(getTotalStudyMinutes() / 60)}h {getTotalStudyMinutes() % 60}m
+                        </strong>
                       </p>
                       <Badge
-                        className={getTotalStudyMinutes() >= targetMinutes ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}
+                        className={
+                          getTotalStudyMinutes() >= targetMinutes
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }
                       >
-                        {getTotalStudyMinutes() >= targetMinutes ? 'Goal Achieved!' : `${targetMinutes - getTotalStudyMinutes()}m to goal`}
+                        {getTotalStudyMinutes() >= targetMinutes
+                          ? 'Goal Achieved!'
+                          : `${targetMinutes - getTotalStudyMinutes()}m to goal`}
                       </Badge>
                     </div>
                   </div>
@@ -467,7 +475,7 @@ export default function DailyLogPage() {
                       min="60"
                       max="720"
                       value={targetMinutes}
-                      onChange={(e) => setTargetMinutes(Number(e.target.value))}
+                      onChange={e => setTargetMinutes(Number(e.target.value))}
                     />
                   </div>
 
@@ -475,7 +483,7 @@ export default function DailyLogPage() {
                     <label className="text-sm font-medium">Mood (1-5)</label>
                     <Select
                       value={mood.toString()}
-                      onValueChange={(value) => setMood(Number(value) as 1 | 2 | 3 | 4 | 5)}
+                      onValueChange={value => setMood(Number(value) as 1 | 2 | 3 | 4 | 5)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -494,7 +502,7 @@ export default function DailyLogPage() {
                     <label className="text-sm font-medium">Productivity (1-5)</label>
                     <Select
                       value={productivity.toString()}
-                      onValueChange={(value) => setProductivity(Number(value) as 1 | 2 | 3 | 4 | 5)}
+                      onValueChange={value => setProductivity(Number(value) as 1 | 2 | 3 | 4 | 5)}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -560,7 +568,7 @@ export default function DailyLogPage() {
                   <label className="text-sm font-medium">Additional Notes</label>
                   <Textarea
                     value={note}
-                    onChange={(e) => setNote(e.target.value)}
+                    onChange={e => setNote(e.target.value)}
                     placeholder="Any additional thoughts about today's study session..."
                     rows={4}
                   />
@@ -570,19 +578,10 @@ export default function DailyLogPage() {
 
             {/* Submit Button */}
             <div className="flex space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push('/dashboard')}
-                className="w-full"
-              >
+              <Button type="button" variant="outline" onClick={() => router.push('/dashboard')} className="w-full">
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={saving}
-                className="w-full"
-              >
+              <Button type="submit" disabled={saving} className="w-full">
                 {saving ? (
                   <div className="flex items-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
