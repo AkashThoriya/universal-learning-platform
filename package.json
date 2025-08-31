@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
-    "@next/bundle-analyzer": "^15.5.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -90,6 +89,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.5.2",
     "@types/dompurify": "^3.0.5",
     "@types/jsdom": "^21.1.7",
     "@typescript-eslint/eslint-plugin": "^8.40.0",

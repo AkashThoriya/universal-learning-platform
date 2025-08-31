@@ -587,8 +587,21 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
   const user = await getUser(userId);
   if (!user) { return; }
 
+  // Initialize stats if they don't exist
+  const defaultStats = {
+    totalStudyHours: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    totalMockTests: 0,
+    averageScore: 0,
+    topicsCompleted: 0,
+    totalTopics: 0
+  };
+
+  const currentStats = user.stats || defaultStats;
+
   const totalMinutes = log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0);
-  const totalHours = user.stats.totalStudyHours + (totalMinutes / 60);
+  const totalHours = currentStats.totalStudyHours + (totalMinutes / 60);
 
   // Calculate streak
   const yesterday = new Date();
@@ -596,7 +609,7 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
   const yesterdayDateString = yesterday.toISOString().split('T')[0]!; // Safe since ISO string always has 'T'
   const yesterdayLog = await getDailyLog(userId, yesterdayDateString);
 
-  let { currentStreak } = user.stats;
+  let { currentStreak } = currentStats;
   if (totalMinutes > 0) {
     if (yesterdayLog && yesterdayLog.studiedTopics.length > 0) {
       currentStreak += 1;
@@ -607,11 +620,11 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     currentStreak = 0;
   }
 
-  const longestStreak = Math.max(user.stats.longestStreak, currentStreak);
+  const longestStreak = Math.max(currentStats.longestStreak, currentStreak);
 
   await updateUser(userId, {
     stats: {
-      ...user.stats,
+      ...currentStats,
       totalStudyHours: totalHours,
       currentStreak,
       longestStreak
