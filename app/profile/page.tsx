@@ -206,33 +206,33 @@ export default function ProfilePage() {
           // Load selected exam
           if (fetchedUser.selectedExamId && fetchedUser.selectedExamId !== 'custom') {
             const exam = getExamById(fetchedUser.selectedExamId);
-            setSelectedExam(exam || null);
+            setSelectedExam(exam ?? null);
           }
 
           // Initialize form with user data
           const formData: ProfileFormData = {
-            displayName: fetchedUser.displayName || '',
-            email: fetchedUser.email || '',
+            displayName: fetchedUser.displayName ?? '',
+            email: fetchedUser.email ?? '',
             userPersona: fetchedUser.userPersona ?? undefined,
-            selectedExamId: fetchedUser.selectedExamId || '',
-            examDate: fetchedUser.examDate ? fetchedUser.examDate.toDate().toISOString().split('T')[0] || '' : '',
+            selectedExamId: fetchedUser.selectedExamId ?? '',
+            examDate: fetchedUser.examDate ? fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '' : '',
             isCustomExam: fetchedUser.isCustomExam ?? false,
             customExam: {
-              name: fetchedUser.customExam?.name || '',
-              description: fetchedUser.customExam?.description || '',
-              category: fetchedUser.customExam?.category || '',
+              name: fetchedUser.customExam?.name ?? '',
+              description: fetchedUser.customExam?.description ?? '',
+              category: fetchedUser.customExam?.category ?? '',
             },
             syllabus: userSyllabus ?? [],
             preferences: {
               dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes ?? 240,
               preferredStudyTime: fetchedUser.preferences?.preferredStudyTime ?? 'morning',
-              tierDefinitions: fetchedUser.preferences?.tierDefinitions || {
+              tierDefinitions: fetchedUser.preferences?.tierDefinitions ?? {
                 1: 'High Priority - Core Topics',
                 2: 'Medium Priority - Important Topics',
                 3: 'Low Priority - Additional Topics',
               },
-              revisionIntervals: fetchedUser.preferences?.revisionIntervals || [1, 3, 7, 16, 35],
-              notifications: fetchedUser.preferences?.notifications || {
+              revisionIntervals: fetchedUser.preferences?.revisionIntervals ?? [1, 3, 7, 16, 35],
+              notifications: fetchedUser.preferences?.notifications ?? {
                 revisionReminders: true,
                 dailyGoalReminders: true,
                 healthCheckReminders: true,
@@ -764,7 +764,7 @@ export default function ProfilePage() {
                             <Label htmlFor="custom-exam-name">Exam Name *</Label>
                             <Input
                               id="custom-exam-name"
-                              value={form.data.customExam?.name || ''}
+                              value={form.data.customExam?.name ?? ''}
                               onChange={e =>
                                 form.updateField('customExam', {
                                   ...form.data.customExam,
@@ -778,7 +778,7 @@ export default function ProfilePage() {
                             <Label htmlFor="custom-exam-category">Category</Label>
                             <Input
                               id="custom-exam-category"
-                              value={form.data.customExam?.category || ''}
+                              value={form.data.customExam?.category ?? ''}
                               onChange={e =>
                                 form.updateField('customExam', {
                                   ...form.data.customExam,
@@ -792,7 +792,7 @@ export default function ProfilePage() {
                             <Label htmlFor="custom-exam-description">Description</Label>
                             <Textarea
                               id="custom-exam-description"
-                              value={form.data.customExam?.description || ''}
+                              value={form.data.customExam?.description ?? ''}
                               onChange={e =>
                                 form.updateField('customExam', {
                                   ...form.data.customExam,
@@ -1026,7 +1026,7 @@ export default function ProfilePage() {
                           onChange={e =>
                             form.updateField('preferences', {
                               ...form.data.preferences,
-                              dailyStudyGoalMinutes: parseInt(e.target.value) || 240,
+                              dailyStudyGoalMinutes: parseInt(e.target.value) ?? 240,
                             })
                           }
                           className={validationErrors['preferences.dailyStudyGoalMinutes'] ? 'border-red-300' : ''}
@@ -1093,7 +1093,7 @@ export default function ProfilePage() {
                               value={interval}
                               onChange={e => {
                                 const newIntervals = [...form.data.preferences.revisionIntervals];
-                                newIntervals[index] = parseInt(e.target.value) || 1;
+                                newIntervals[index] = parseInt(e.target.value) ?? 1;
                                 form.updateField('preferences', {
                                   ...form.data.preferences,
                                   revisionIntervals: newIntervals,

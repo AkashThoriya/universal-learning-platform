@@ -103,8 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (user) {
           logInfo('User authenticated', {
             userId: user.uid,
-            email: user.email || 'no-email',
-            displayName: user.displayName || 'no-display-name',
+            email: user.email ?? 'no-email',
+            displayName: user.displayName ?? 'no-display-name',
             emailVerified: user.emailVerified,
             authProvider: user.providerData?.[0]?.providerId ?? 'unknown',
           });
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       logInfo('User logout initiated', {
         userId: user?.uid ?? 'unknown',
-        email: user?.email || 'no-email',
+        email: user?.email ?? 'no-email',
       });
 
       await signOut(auth);

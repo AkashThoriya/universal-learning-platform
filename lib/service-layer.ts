@@ -38,7 +38,7 @@ export interface QueryOptions {
   offset?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-  filters?: Record<string, any>;
+  filters?: Record<string, string | number | boolean | null | undefined>;
   include?: string[];
 }
 
@@ -66,7 +66,7 @@ export type ServiceEvent =
 /**
  * Event handler interface
  */
-export interface ServiceEventHandler<T = any> {
+export interface ServiceEventHandler<T = unknown> {
   (event: ServiceEvent, data: T): void | Promise<void>;
 }
 
@@ -193,15 +193,15 @@ export interface Repository<T, ID = string> {
   save(data: T): Promise<T>;
   update(id: ID, data: Partial<T>): Promise<T | null>;
   delete(id: ID): Promise<boolean>;
-  count(filters?: Record<string, any>): Promise<number>;
+  count(filters?: Record<string, string | number | boolean | null | undefined>): Promise<number>;
 }
 
 /**
  * Service container for dependency injection
  */
 export class ServiceContainer {
-  private services: Map<string, any> = new Map();
-  private factories: Map<string, () => any> = new Map();
+  private services: Map<string, unknown> = new Map();
+  private factories: Map<string, () => unknown> = new Map();
 
   /**
    * Register a service instance
@@ -223,7 +223,7 @@ export class ServiceContainer {
   get<T>(name: string): T {
     // Return existing instance if available
     if (this.services.has(name)) {
-      return this.services.get(name);
+      return this.services.get(name) as T;
     }
 
     // Create new instance from factory
@@ -231,7 +231,7 @@ export class ServiceContainer {
       const factory = this.factories.get(name)!;
       const instance = factory();
       this.services.set(name, instance);
-      return instance;
+      return instance as T;
     }
 
     throw new Error(`Service '${name}' not found`);
@@ -261,8 +261,10 @@ export const serviceContainer = new ServiceContainer();
 /**
  * Decorator for service injection
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function injectable<T extends new (...args: any[]) => any>(constructor: T) {
   return class extends constructor {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(...args: any[]) {
       super(...args);
       // Auto-register in service container

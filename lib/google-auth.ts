@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-import { signInWithPopup, GoogleAuthProvider, UserCredential, AuthError } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, UserCredential, AuthError, User } from 'firebase/auth';
 import { doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
 
 import { auth, db } from './firebase';
@@ -191,7 +191,7 @@ export async function signInWithGoogle(): Promise<GoogleAuthResult> {
  * @param isNewUser - Whether this is a new user registration
  * @returns Promise<GoogleUserData> - The saved user data
  */
-async function saveGoogleUserData(user: any, isNewUser: boolean): Promise<GoogleUserData> {
+async function saveGoogleUserData(user: User, isNewUser: boolean): Promise<GoogleUserData> {
   const now = Timestamp.fromDate(new Date());
 
   const userData: GoogleUserData = {
@@ -200,7 +200,7 @@ async function saveGoogleUserData(user: any, isNewUser: boolean): Promise<Google
     displayName: user.displayName ?? 'Google User',
     photoURL: user.photoURL,
     provider: 'google',
-    createdAt: isNewUser ? now : (await getExistingUserData(user.uid))?.createdAt || now,
+    createdAt: isNewUser ? now : (await getExistingUserData(user.uid))?.createdAt ?? now,
     updatedAt: now,
     lastSignInAt: now,
     onboardingComplete: isNewUser ? false : ((await getExistingUserData(user.uid))?.onboardingComplete ?? false),
@@ -219,7 +219,7 @@ async function saveGoogleUserData(user: any, isNewUser: boolean): Promise<Google
           topicsCompleted: 0,
           totalTopics: 0,
         }
-      : (await getExistingUserData(user.uid))?.stats || {
+      : (await getExistingUserData(user.uid))?.stats ?? {
           totalStudyHours: 0,
           currentStreak: 0,
           longestStreak: 0,

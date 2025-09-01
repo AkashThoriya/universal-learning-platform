@@ -43,8 +43,8 @@ export function ProgressVisualization({
   const [_selectedTrack, _setSelectedTrack] = useState<'both' | 'exam' | 'course_tech'>('both'); // Prefixed with _ to indicate unused
 
   // Mock data for demonstration
-  const mockProgress: UnifiedProgress = userProgress || {
-    userId: user?.uid || '',
+  const mockProgress: UnifiedProgress = userProgress ?? {
+    userId: user?.uid ?? '',
     overallProgress: {
       totalMissionsCompleted: 45,
       totalTimeInvested: 2340, // minutes
@@ -177,7 +177,7 @@ export function ProgressVisualization({
       advanced: 'text-purple-600 bg-purple-50 border-purple-200',
       expert: 'text-yellow-600 bg-yellow-50 border-yellow-200',
     };
-    return colorMap[level as keyof typeof colorMap] || colorMap.beginner;
+    return colorMap[level as keyof typeof colorMap] ?? colorMap.beginner;
   };
 
   const formatTime = (minutes: number): string => {
@@ -191,9 +191,9 @@ export function ProgressVisualization({
 
   const getSelectedPeriodData = (): PeriodSummary | null => {
     if (selectedPeriod === 'week') {
-      return mockProgress.periodSummaries.weekly[0] || null;
+      return mockProgress.periodSummaries.weekly[0] ?? null;
     }
-    return mockProgress.periodSummaries.monthly[0] || null;
+    return mockProgress.periodSummaries.monthly[0] ?? null;
   };
 
   const periodData = getSelectedPeriodData();

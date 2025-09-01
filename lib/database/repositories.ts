@@ -169,13 +169,13 @@ export class UserRepository extends BaseRepository<User> {
       return {
         success: true,
         data: null,
-        metadata: result.metadata || { queryTime: 0, cached: false },
+        metadata: result.metadata ?? { queryTime: 0, cached: false },
       };
     }
     return {
       success: true,
-      data: result.data[0] || null,
-      metadata: result.metadata || { queryTime: 0, cached: false },
+      data: result.data[0] ?? null,
+      metadata: result.metadata ?? { queryTime: 0, cached: false },
     };
   }
 
@@ -227,8 +227,8 @@ export class ProgressRepository extends BaseRepository<Progress> {
     if (!existingResult.success) {
       return {
         success: false,
-        error: existingResult.error || 'Failed to fetch existing progress',
-        metadata: existingResult.metadata || { queryTime: 0, cached: false },
+        error: existingResult.error ?? 'Failed to fetch existing progress',
+        metadata: existingResult.metadata ?? { queryTime: 0, cached: false },
       };
     }
 
@@ -251,8 +251,8 @@ export class ProgressRepository extends BaseRepository<Progress> {
     const createResult = await this.create(newProgress);
     return {
       success: createResult.success,
-      error: createResult.error || 'Failed to create progress record',
-      metadata: createResult.metadata || { queryTime: 0, cached: false },
+      error: createResult.error ?? 'Failed to create progress record',
+      metadata: createResult.metadata ?? { queryTime: 0, cached: false },
     };
   }
 }
@@ -305,8 +305,8 @@ export class MissionRepository extends BaseRepository<Mission> {
     if (!result.success || !result.data) {
       return {
         success: false,
-        error: result.error || 'Mission not found',
-        metadata: result.metadata || { queryTime: 0, cached: false },
+        error: result.error ?? 'Mission not found',
+        metadata: result.metadata ?? { queryTime: 0, cached: false },
       };
     }
 
@@ -331,10 +331,10 @@ export interface AnalyticsEvent {
   id: string;
   userId: string;
   eventType: string;
-  eventData: Record<string, any>;
+  eventData: Record<string, unknown>;
   timestamp: Date;
   sessionId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
@@ -343,7 +343,7 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
   }
 
   async findByUser(userId: string, limit?: number): Promise<DatabaseResult<AnalyticsEvent[]>> {
-    const queryOptions: unknown = {
+    const queryOptions: QueryOptions = {
       where: [{ field: 'userId', operator: 'eq', value: userId }],
       orderBy: [{ field: 'timestamp', direction: 'desc' }],
     };
@@ -356,7 +356,7 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
   }
 
   async findByEventType(eventType: string, limit?: number): Promise<DatabaseResult<AnalyticsEvent[]>> {
-    const queryOptions: unknown = {
+    const queryOptions: QueryOptions = {
       where: [{ field: 'eventType', operator: 'eq', value: eventType }],
       orderBy: [{ field: 'timestamp', direction: 'desc' }],
     };
@@ -381,9 +381,9 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
   async recordEvent(
     userId: string,
     eventType: string,
-    eventData: Record<string, any>,
+    eventData: Record<string, unknown>,
     sessionId?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<DatabaseResult<AnalyticsEvent>> {
     const event: Omit<AnalyticsEvent, 'id'> = {
       userId,

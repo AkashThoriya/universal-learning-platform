@@ -196,7 +196,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                   type: value,
                 };
                 // Don't set optional properties to undefined, just omit them
-                form.updateField('userPersona', updatedPersona as any);
+                form.updateField('userPersona', updatedPersona as UserPersona);
               }
               // Update recommended study goal
               const newPersona = { ...form.data.userPersona, type: value };
@@ -299,7 +299,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
  * Work schedule input component for working professionals
  */
 function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
-  const workDays = [
+  const workDays: Array<{ id: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'; label: string }> = [
     { id: 'monday', label: 'Monday' },
     { id: 'tuesday', label: 'Tuesday' },
     { id: 'wednesday', label: 'Wednesday' },
@@ -395,7 +395,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
             <Label>Work Start Time</Label>
             <Input
               type="time"
-              value={form.data.userPersona?.workSchedule?.workingHours?.start || '09:00'}
+              value={form.data.userPersona?.workSchedule?.workingHours?.start ?? '09:00'}
               onChange={e => updateWorkSchedule('workSchedule.workingHours.start', e.target.value)}
             />
           </div>
@@ -403,7 +403,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
             <Label>Work End Time</Label>
             <Input
               type="time"
-              value={form.data.userPersona?.workSchedule?.workingHours?.end || '17:00'}
+              value={form.data.userPersona?.workSchedule?.workingHours?.end ?? '17:00'}
               onChange={e => updateWorkSchedule('workSchedule.workingHours.end', e.target.value)}
             />
           </div>
@@ -417,7 +417,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
               <div key={day.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={day.id}
-                  checked={form.data.userPersona?.workSchedule?.workingDays?.includes(day.id as any) || false}
+                  checked={form.data.userPersona?.workSchedule?.workingDays?.includes(day.id) ?? false}
                   onCheckedChange={checked => {
                     const currentDays = form.data.userPersona?.workSchedule?.workingDays ?? [];
                     if (checked) {
@@ -567,7 +567,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
             <Label>Current Role</Label>
             <Input
               placeholder="e.g., Software Engineer, Manager"
-              value={form.data.userPersona?.careerContext?.currentRole || ''}
+              value={form.data.userPersona?.careerContext?.currentRole ?? ''}
               onChange={e => updateCareerContext('careerContext.currentRole', e.target.value)}
             />
           </div>
@@ -575,7 +575,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
             <Label>Target Role</Label>
             <Input
               placeholder="e.g., Senior Manager, Product Director"
-              value={form.data.userPersona?.careerContext?.targetRole || ''}
+              value={form.data.userPersona?.careerContext?.targetRole ?? ''}
               onChange={e => updateCareerContext('careerContext.targetRole', e.target.value)}
             />
           </div>
@@ -586,7 +586,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Label>Industry</Label>
           <Input
             placeholder="e.g., Technology, Finance, Healthcare"
-            value={form.data.userPersona?.careerContext?.industry || ''}
+            value={form.data.userPersona?.careerContext?.industry ?? ''}
             onChange={e => updateCareerContext('careerContext.industry', e.target.value)}
           />
         </div>
@@ -630,7 +630,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
               <div key={motivation.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={motivation.id}
-                  checked={form.data.userPersona?.careerContext?.motivation?.includes(motivation.id) || false}
+                  checked={form.data.userPersona?.careerContext?.motivation?.includes(motivation.id) ?? false}
                   onCheckedChange={checked => {
                     const currentMotivations = form.data.userPersona?.careerContext?.motivation ?? [];
                     if (checked) {
@@ -659,7 +659,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Label>Key Skill Gaps (optional)</Label>
           <Textarea
             placeholder="e.g., Leadership skills, Technical expertise, Communication, Data analysis..."
-            value={form.data.userPersona?.careerContext?.skillGaps?.join(', ') || ''}
+            value={form.data.userPersona?.careerContext?.skillGaps?.join(', ') ?? ''}
             onChange={e => {
               const skills = e.target.value
                 .split(',')

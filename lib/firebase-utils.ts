@@ -771,8 +771,8 @@ export const subscribeToRevisionQueue = (userId: string, callback: (items: Revis
 
       return {
         topicId: progress.topicId,
-        topicName: topic?.name || 'Unknown Topic',
-        subjectName: subject?.name || 'Unknown Subject',
+        topicName: topic?.name ?? 'Unknown Topic',
+        subjectName: subject?.name ?? 'Unknown Subject',
         tier: subject?.tier ?? 3,
         masteryScore: progress.masteryScore,
         daysSinceLastRevision,

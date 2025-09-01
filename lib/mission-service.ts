@@ -40,6 +40,7 @@ import {
   type TechMissionContent,
   type MissionResults,
   type MissionProgress,
+  type MissionContent,
 } from '@/types/mission-system';
 
 // =====================================================
@@ -342,7 +343,7 @@ export class MissionTemplateService {
       const result = await missionFirebaseService.getTemplates(userId, track);
 
       if (!result.success) {
-        throw new Error(result.error?.message || 'Failed to get templates');
+        throw new Error(result.error?.message ?? 'Failed to get templates');
       }
 
       let templates = result.data as MissionTemplate[];
@@ -376,7 +377,7 @@ export class MissionTemplateService {
       }
 
       const templates = result.data as MissionTemplate[];
-      return templates.find(t => t.id === templateId) || null;
+      return templates.find(t => t.id === templateId) ?? null;
     } catch (error) {
       console.error('Failed to get template:', error);
       return null;
@@ -400,7 +401,7 @@ export class MissionTemplateService {
       }
       return {
         success: false,
-        error: result.error?.message || 'Failed to save template',
+        error: result.error?.message ?? 'Failed to save template',
         timestamp: new Date(),
       };
     } catch (error) {
@@ -472,7 +473,7 @@ export class MissionGenerationService {
       const saveResult = await missionFirebaseService.saveActiveMission(request.userId, mission);
 
       if (!saveResult.success) {
-        throw new Error(saveResult.error?.message || 'Failed to save generated mission');
+        throw new Error(saveResult.error?.message ?? 'Failed to save generated mission');
       }
 
       return {
@@ -517,7 +518,7 @@ export class MissionGenerationService {
       return true;
     });
 
-    const selectedTemplate = filteredTemplates[0] || templates[0];
+    const selectedTemplate = filteredTemplates[0] ?? templates[0];
 
     if (!selectedTemplate) {
       throw new Error('No suitable templates available for mission generation');
@@ -587,7 +588,7 @@ export class MissionGenerationService {
   private async generateMissionContent(
     template: MissionTemplate,
     _request: MissionGenerationRequest
-  ): Promise<unknown> {
+  ): Promise<MissionContent> {
     // Mock content generation - in production this would:
     // 1. Query question/problem databases
     // 2. Apply difficulty filters
@@ -729,7 +730,7 @@ export class MissionGenerationService {
   /**
    * Calculate total steps for mission content
    */
-  private calculateTotalSteps(content: unknown): number {
+  private calculateTotalSteps(content: MissionContent): number {
     if (content.examContent) {
       return content.examContent.questions?.length ?? 10;
     } else if (content.techContent) {
@@ -802,7 +803,7 @@ export class MissionProgressService {
       }
       return {
         success: false,
-        error: (result.error instanceof Error ? result.error.message : result.error) || 'Failed to update progress',
+        error: (result.error instanceof Error ? result.error.message : result.error) ?? 'Failed to update progress',
         timestamp: new Date(),
       };
     } catch (error) {
@@ -1297,7 +1298,7 @@ export class MissionService {
       }
       return {
         success: false,
-        error: result.error?.message || 'Failed to get active missions',
+        error: result.error?.message ?? 'Failed to get active missions',
         timestamp: new Date(),
       };
     } catch (error) {

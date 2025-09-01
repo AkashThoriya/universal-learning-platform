@@ -65,7 +65,8 @@ interface OnboardingFormData {
       healthCheckReminders: boolean;
     };
   };
-  [key: string]: any; // Allow for other form fields
+  // Additional form fields with specific types
+  [key: string]: string | number | boolean | object | undefined;
 }
 
 /**
@@ -123,7 +124,7 @@ export function SyllabusManagementStep({
 
   const tierCounts = form.data.syllabus.reduce(
     (acc: Record<number, number>, subject: SyllabusSubject) => {
-      acc[subject.tier] = (acc[subject.tier] || 0) + 1;
+      acc[subject.tier] = (acc[subject.tier] ?? 0) + 1;
       return acc;
     },
     {} as Record<number, number>
@@ -170,15 +171,15 @@ export function SyllabusManagementStep({
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <div className="text-center p-3 bg-red-50 rounded-lg">
-          <div className="text-2xl font-bold text-red-600">{tierCounts[1] || 0}</div>
+          <div className="text-2xl font-bold text-red-600">{tierCounts[1] ?? 0}</div>
           <div className="text-sm text-red-600">Tier 1</div>
         </div>
         <div className="text-center p-3 bg-yellow-50 rounded-lg">
-          <div className="text-2xl font-bold text-yellow-600">{tierCounts[2] || 0}</div>
+          <div className="text-2xl font-bold text-yellow-600">{tierCounts[2] ?? 0}</div>
           <div className="text-sm text-yellow-600">Tier 2</div>
         </div>
         <div className="text-center p-3 bg-green-50 rounded-lg">
-          <div className="text-2xl font-bold text-green-600">{tierCounts[3] || 0}</div>
+          <div className="text-2xl font-bold text-green-600">{tierCounts[3] ?? 0}</div>
           <div className="text-sm text-green-600">Tier 3</div>
         </div>
       </div>

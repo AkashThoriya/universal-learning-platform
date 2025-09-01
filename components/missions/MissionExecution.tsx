@@ -50,7 +50,7 @@ export function MissionExecution({ mission, onComplete, onPause, onExit, classNa
   const [timeSpent, setTimeSpent] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [submissions, setSubmissions] = useState<Record<number, any>>({});
+  const [submissions, setSubmissions] = useState<Record<number, string>>({});
   const [currentAnswer, setCurrentAnswer] = useState<string>('');
   const [showExplanation, setShowExplanation] = useState(false);
   // const [progress, setProgress] = useState<MissionProgress>(mission.progress);
@@ -133,7 +133,7 @@ export function MissionExecution({ mission, onComplete, onPause, onExit, classNa
 
   const getCurrentQuestion = (): ExamQuestion | null => {
     if (mission.content.examContent?.questions) {
-      return mission.content.examContent.questions[currentStep] || null;
+      return mission.content.examContent.questions[currentStep] ?? null;
     }
     return null;
   };
@@ -156,7 +156,7 @@ export function MissionExecution({ mission, onComplete, onPause, onExit, classNa
   const nextStep = () => {
     if (currentStep < getTotalSteps() - 1) {
       setCurrentStep(prev => prev + 1);
-      setCurrentAnswer(submissions[currentStep + 1] || '');
+      setCurrentAnswer(submissions[currentStep + 1] ?? '');
       setShowExplanation(false);
     } else {
       completeMission();
@@ -166,7 +166,7 @@ export function MissionExecution({ mission, onComplete, onPause, onExit, classNa
   const previousStep = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
-      setCurrentAnswer(submissions[currentStep - 1] || '');
+      setCurrentAnswer(submissions[currentStep - 1] ?? '');
       setShowExplanation(false);
     }
   };

@@ -170,8 +170,8 @@ export function validateFormData<T>(
 /**
  * Sanitize object properties recursively
  */
-export function sanitizeObject(obj: Record<string, any>): Record<string, any> {
-  const sanitized: Record<string, any> = {};
+export function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
@@ -182,10 +182,10 @@ export function sanitizeObject(obj: Record<string, any>): Record<string, any> {
       sanitized[key] = value;
     } else if (Array.isArray(value)) {
       sanitized[key] = value.map(item =>
-        typeof item === 'object' ? sanitizeObject(item) : sanitizeText(String(item))
+        typeof item === 'object' && item !== null ? sanitizeObject(item as Record<string, unknown>) : sanitizeText(String(item))
       );
     } else if (value && typeof value === 'object') {
-      sanitized[key] = sanitizeObject(value);
+      sanitized[key] = sanitizeObject(value as Record<string, unknown>);
     } else {
       sanitized[key] = value;
     }

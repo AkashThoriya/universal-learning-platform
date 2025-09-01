@@ -14,7 +14,7 @@ interface LogEntry {
   level: LogLevel;
   message: string;
   timestamp: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   error?: Error;
   userId?: string;
   sessionId?: string;
@@ -28,7 +28,7 @@ class Logger {
     return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private createLogEntry(level: LogLevel, message: string, context?: Record<string, any>, error?: Error): LogEntry {
+  private createLogEntry(level: LogLevel, message: string, context?: Record<string, unknown>, error?: Error): LogEntry {
     const userId = this.getCurrentUserId();
     return {
       level,
@@ -105,7 +105,7 @@ class Logger {
   /**
    * Log debug information (development only)
    */
-  debug(message: string, context?: Record<string, any>): void {
+  debug(message: string, context?: Record<string, unknown>): void {
     if (!this.shouldLog('debug')) {
       return;
     }
@@ -117,7 +117,7 @@ class Logger {
   /**
    * Log general information
    */
-  info(message: string, context?: Record<string, any>): void {
+  info(message: string, context?: Record<string, unknown>): void {
     if (!this.shouldLog('info')) {
       return;
     }
@@ -129,7 +129,7 @@ class Logger {
   /**
    * Log warnings
    */
-  warn(message: string, context?: Record<string, any>): void {
+  warn(message: string, context?: Record<string, unknown>): void {
     if (!this.shouldLog('warn')) {
       return;
     }
@@ -142,7 +142,7 @@ class Logger {
   /**
    * Log errors
    */
-  error(message: string, error?: Error | Record<string, any>): void {
+  error(message: string, error?: Error | Record<string, unknown>): void {
     if (!this.shouldLog('error')) {
       return;
     }
@@ -158,7 +158,7 @@ class Logger {
   /**
    * Track user actions for analytics
    */
-  track(event: string, properties?: Record<string, any>): void {
+  track(event: string, properties?: Record<string, unknown>): void {
     if (this.isDevelopment) {
       this.debug(`Track Event: ${event}`, properties);
     }
@@ -170,7 +170,7 @@ class Logger {
   /**
    * Performance monitoring
    */
-  perf(operation: string, duration: number, context?: Record<string, any>): void {
+  perf(operation: string, duration: number, context?: Record<string, unknown>): void {
     const message = `Performance: ${operation} took ${duration}ms`;
 
     if (duration > 1000) {
@@ -185,30 +185,30 @@ class Logger {
 export const logger = new Logger();
 
 // Convenience functions for common patterns
-export const logError = (message: string, error?: Error | Record<string, any>) => {
+export const logError = (message: string, error?: Error | Record<string, unknown>) => {
   logger.error(message, error);
 };
 
-export const logWarning = (message: string, context?: Record<string, any>) => {
+export const logWarning = (message: string, context?: Record<string, unknown>) => {
   logger.warn(message, context);
 };
 
-export const logInfo = (message: string, context?: Record<string, any>) => {
+export const logInfo = (message: string, context?: Record<string, unknown>) => {
   logger.info(message, context);
 };
 
-export const logDebug = (message: string, context?: Record<string, any>) => {
+export const logDebug = (message: string, context?: Record<string, unknown>) => {
   logger.debug(message, context);
 };
 
-export const trackEvent = (event: string, properties?: Record<string, any>) => {
+export const trackEvent = (event: string, properties?: Record<string, unknown>) => {
   logger.track(event, properties);
 };
 
 export const measurePerformance = async <T>(
   operation: string,
   fn: () => Promise<T> | T,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): Promise<T> => {
   const start = performance.now();
   try {

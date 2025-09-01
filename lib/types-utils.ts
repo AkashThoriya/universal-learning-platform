@@ -47,12 +47,12 @@ export type KeysOfType<T, U> = {
 /**
  * Type-safe event handler type
  */
-export type EventHandler<T = any> = (event: T) => void | Promise<void>;
+export type EventHandler<T = unknown> = (event: T) => void | Promise<void>;
 
 /**
  * Generic loading state type
  */
-export interface LoadingState<T = any> {
+export interface LoadingState<T = unknown> {
   isLoading: boolean;
   data: T | null;
   error: string | null;
@@ -72,7 +72,7 @@ export interface PaginationState {
 /**
  * Generic API response type
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   timestamp: string;
@@ -175,7 +175,7 @@ export function getErrorMessage(error: unknown): string {
 /**
  * Debounce function with TypeScript support
  */
-export function debounce<T extends (...args: unknown[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -190,7 +190,7 @@ export function debounce<T extends (...args: unknown[]) => any>(
 /**
  * Throttle function with TypeScript support
  */
-export function throttle<T extends (...args: unknown[]) => any>(
+export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -285,7 +285,7 @@ export const arrayUtils = {
   /**
    * Sort array by multiple criteria
    */
-  sortBy<T>(array: T[], ...criteria: ((item: T) => any)[]): T[] {
+  sortBy<T>(array: T[], ...criteria: ((item: T) => string | number)[]): T[] {
     return [...array].sort((a, b) => {
       for (const criterion of criteria) {
         const valueA = criterion(a);

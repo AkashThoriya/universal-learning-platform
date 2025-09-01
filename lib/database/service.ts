@@ -10,7 +10,7 @@
  */
 
 import { DatabaseService, DatabaseConfigHelper } from './factory';
-import { DatabaseProvider } from './interfaces';
+import { DatabaseProvider, QueryOptions, CacheOptions } from './interfaces';
 import { RepositoryFactory } from './repositories';
 
 /**
@@ -64,12 +64,16 @@ class MainDatabaseService extends DatabaseService {
     return this.getProvider().delete(collectionPath, docId);
   }
 
-  async queryCollection<T>(collectionPath: string, options: unknown = {}) {
+  async queryCollection<T>(collectionPath: string, options?: QueryOptions & CacheOptions) {
     return this.getProvider().query<T>(collectionPath, options);
   }
 
   // Real-time subscriptions with backward compatibility
-  onSnapshot<T>(collectionPath: string, callback: (data: T[]) => void, options: unknown = {}) {
+  onSnapshot<T>(
+    collectionPath: string,
+    callback: (data: T[]) => void,
+    options?: QueryOptions & { errorCallback?: (error: Error) => void }
+  ) {
     return this.getProvider().subscribe<T>(collectionPath, callback, options);
   }
 
@@ -197,7 +201,7 @@ export class DatabaseMigration {
         throw new Error('Failed to get source IDs');
       }
 
-      const sourceIds = new Set(sourceResult.data.map((doc: unknown) => doc.id));
+      const sourceIds = new Set(sourceResult.data.map((doc: any) => doc.id));
       const missingIds: string[] = [];
 
       // Check if each source document exists in target
@@ -346,7 +350,7 @@ export class OfflineSyncManager {
       this.syncQueue = [];
       return { synced: operations.length, errors: [] };
     }
-    return { synced: 0, errors: [result.error || 'Unknown error'] };
+    return { synced: 0, errors: [result.error ?? 'Unknown error'] };
   }
 
   getPendingOperationsCount(): number {

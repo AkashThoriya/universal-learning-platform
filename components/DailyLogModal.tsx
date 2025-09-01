@@ -15,6 +15,17 @@ import { useAuth } from '@/contexts/AuthContext';
 // Use new database abstraction layer
 import { enhancedDatabaseService, RepositoryFactory } from '@/lib/database';
 
+// Interface for the syllabus API response structure
+interface SyllabusApiResponse {
+  id: string;
+  name: string;
+  subjects: Array<{
+    id: string;
+    name: string;
+    topics: Array<{ id: string; name: string }>;
+  }>;
+}
+
 // Type definitions for daily log
 interface StudySession {
   topicId: string;
@@ -104,21 +115,13 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
         // For now, we'll create a temporary repository for syllabus data
         // This can be refactored to use a dedicated SyllabusRepository later
         const db = enhancedDatabaseService.getProvider();
-        const result = await db.query<{
-          id: string;
-          name: string;
-          subjects: Array<{
-            id: string;
-            name: string;
-            topics: Array<{ id: string; name: string }>;
-          }>;
-        }>(`users/${user.uid}/syllabus`);
+        const result = await db.query<SyllabusApiResponse>(`users/${user.uid}/syllabus`);
 
         if (result.success && result.data) {
           const topics: Topic[] = [];
-          result.data.forEach((syllabusItem: any) => {
-            syllabusItem.subjects?.forEach((subject: any) => {
-              subject.topics?.forEach((topic: any) => {
+          result.data.forEach((syllabusItem: SyllabusApiResponse) => {
+            syllabusItem.subjects?.forEach((subject) => {
+              subject.topics?.forEach((topic) => {
                 topics.push({
                   id: topic.id,
                   name: topic.name,
@@ -263,10 +266,10 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
         userId: user.uid,
         date: today,
         health: {
-          energy: energyLevel[0] || 7,
+          energy: energyLevel[0] ?? 7,
           sleepHours,
-          sleepQuality: sleepQuality[0] || 7,
-          stressLevel: stressLevel[0] || 5,
+          sleepQuality: sleepQuality[0] ?? 7,
+          stressLevel: stressLevel[0] ?? 5,
           physicalActivity,
         },
         studiedTopics: studySessions,
@@ -287,7 +290,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
       const result = await db.update(`users/${user.uid}/daily-logs`, today, dailyLogData);
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to save daily log');
+        throw new Error(result.error ?? 'Failed to save daily log');
       }
 
       // Record analytics event for daily log completion
@@ -503,7 +506,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
                             const topic = availableTopics.find(t => t.id === value);
                             updateStudySession(index, {
                               topicId: value,
-                              subjectId: topic?.subject || '',
+                              subjectId: topic?.subject ?? '',
                             });
                           }}
                         >

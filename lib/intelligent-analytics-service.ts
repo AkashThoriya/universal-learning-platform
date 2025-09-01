@@ -726,7 +726,7 @@ export class IntelligentAnalyticsService {
     const userData = userResult.success ? userResult.data : null;
 
     return {
-      persona: (userData as any)?.persona || { type: 'student' },
+      persona: (userData as any)?.persona ?? { type: 'student' },
       deviceType: this.detectDeviceType(),
       sessionId: this.getSessionId(),
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',

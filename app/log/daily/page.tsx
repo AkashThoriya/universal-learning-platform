@@ -255,7 +255,9 @@ export default function DailyLogPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Moon className="h-4 w-4 text-blue-500" />
-                      <label htmlFor="sleep-hours" className="text-sm font-medium">Sleep Hours</label>
+                      <label htmlFor="sleep-hours" className="text-sm font-medium">
+                        Sleep Hours
+                      </label>
                     </div>
                     <Input
                       id="sleep-hours"
@@ -269,7 +271,9 @@ export default function DailyLogPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="physical-activity" className="text-sm font-medium">Physical Activity (min)</label>
+                    <label htmlFor="physical-activity" className="text-sm font-medium">
+                      Physical Activity (min)
+                    </label>
                     <Input
                       id="physical-activity"
                       type="number"
@@ -286,7 +290,9 @@ export default function DailyLogPage() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-2">
                         <Star className="h-4 w-4 text-yellow-500" />
-                        <label htmlFor="sleep-quality" className="text-sm font-medium">Sleep Quality</label>
+                        <label htmlFor="sleep-quality" className="text-sm font-medium">
+                          Sleep Quality
+                        </label>
                       </div>
                       <span className="text-sm text-muted-foreground">{sleepQuality[0]}/10</span>
                     </div>
@@ -303,7 +309,9 @@ export default function DailyLogPage() {
 
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label htmlFor="stress-level" className="text-sm font-medium">Stress Level</label>
+                      <label htmlFor="stress-level" className="text-sm font-medium">
+                        Stress Level
+                      </label>
                       <span className="text-sm text-muted-foreground">{stressLevel[0]}/10</span>
                     </div>
                     <Slider
@@ -346,7 +354,9 @@ export default function DailyLogPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <label htmlFor={`topic-${index}`} className="text-sm font-medium">Topic</label>
+                        <label htmlFor={`topic-${index}`} className="text-sm font-medium">
+                          Topic
+                        </label>
                         <Select
                           value={session.topicId}
                           onValueChange={value => {
@@ -376,7 +386,9 @@ export default function DailyLogPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label htmlFor={`minutes-${index}`} className="text-sm font-medium">Minutes</label>
+                        <label htmlFor={`minutes-${index}`} className="text-sm font-medium">
+                          Minutes
+                        </label>
                         <Input
                           id={`minutes-${index}`}
                           type="number"
@@ -390,7 +402,9 @@ export default function DailyLogPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Method</label>
+                        <label htmlFor={`method-${index}`} className="text-sm font-medium">
+                          Method
+                        </label>
                         <Select
                           value={session.method}
                           onValueChange={(value: string) =>
@@ -413,8 +427,11 @@ export default function DailyLogPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Effectiveness (1-5)</label>
+                        <label htmlFor={`effectiveness-${index}`} className="text-sm font-medium">
+                          Effectiveness (1-5)
+                        </label>
                         <Input
+                          id={`effectiveness-${index}`}
                           type="number"
                           min="1"
                           max="5"
@@ -426,8 +443,11 @@ export default function DailyLogPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Distractions</label>
+                        <label htmlFor={`distractions-${index}`} className="text-sm font-medium">
+                          Distractions
+                        </label>
                         <Input
+                          id={`distractions-${index}`}
                           type="number"
                           min="0"
                           max="50"
@@ -481,8 +501,11 @@ export default function DailyLogPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Daily Goal (minutes)</label>
+                    <label htmlFor="daily-goal" className="text-sm font-medium">
+                      Daily Goal (minutes)
+                    </label>
                     <Input
+                      id="daily-goal"
                       type="number"
                       min="60"
                       max="720"
@@ -492,12 +515,14 @@ export default function DailyLogPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Mood (1-5)</label>
+                    <label htmlFor="mood-select" className="text-sm font-medium">
+                      Mood (1-5)
+                    </label>
                     <Select
                       value={mood.toString()}
                       onValueChange={value => setMood(Number(value) as 1 | 2 | 3 | 4 | 5)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="mood-select">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -511,12 +536,14 @@ export default function DailyLogPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Productivity (1-5)</label>
+                    <label htmlFor="productivity-select" className="text-sm font-medium">
+                      Productivity (1-5)
+                    </label>
                     <Select
                       value={productivity.toString()}
                       onValueChange={value => setProductivity(Number(value) as 1 | 2 | 3 | 4 | 5)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="productivity-select">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -533,13 +560,15 @@ export default function DailyLogPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium">Challenges</label>
+                      <label htmlFor="challenges-list" className="text-sm font-medium">
+                        Challenges
+                      </label>
                       <Button type="button" variant="outline" size="sm" onClick={addChallenge}>
                         <Plus className="h-3 w-3 mr-1" />
                         Add
                       </Button>
                     </div>
-                    <div className="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
+                    <div id="challenges-list" className="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
                       {challenges.map((challenge, index) => (
                         <div key={index} className="text-sm p-3 bg-red-50 rounded border-l-4 border-red-200">
                           {challenge}
@@ -555,13 +584,15 @@ export default function DailyLogPage() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium">Wins</label>
+                      <label htmlFor="wins-list" className="text-sm font-medium">
+                        Wins
+                      </label>
                       <Button type="button" variant="outline" size="sm" onClick={addWin}>
                         <Plus className="h-3 w-3 mr-1" />
                         Add
                       </Button>
                     </div>
-                    <div className="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
+                    <div id="wins-list" className="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
                       {wins.map((win, index) => (
                         <div key={index} className="text-sm p-3 bg-green-50 rounded border-l-4 border-green-200">
                           {win}
@@ -577,8 +608,11 @@ export default function DailyLogPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Additional Notes</label>
+                  <label htmlFor="additional-notes" className="text-sm font-medium">
+                    Additional Notes
+                  </label>
                   <Textarea
+                    id="additional-notes"
                     value={note}
                     onChange={e => setNote(e.target.value)}
                     placeholder="Any additional thoughts about today's study session..."

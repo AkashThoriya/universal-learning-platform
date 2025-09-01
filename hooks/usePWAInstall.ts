@@ -325,7 +325,7 @@ export function usePWAInstall() {
 
     // Check if user has visited multiple pages
     // Check engagement metrics
-    const pageCount = typeof window !== 'undefined' ? parseInt(sessionStorage.getItem('page_count') || '0') : 0;
+    const pageCount = typeof window !== 'undefined' ? parseInt(sessionStorage.getItem('page_count') ?? '0') : 0;
     if (pageCount < 2) {
       return false;
     }
@@ -338,7 +338,7 @@ export function usePWAInstall() {
       return;
     }
 
-    const currentCount = parseInt(sessionStorage.getItem('page_count') || '0');
+    const currentCount = parseInt(sessionStorage.getItem('page_count') ?? '0');
     sessionStorage.setItem('page_count', (currentCount + 1).toString());
 
     if (!sessionStorage.getItem('page_load_time')) {

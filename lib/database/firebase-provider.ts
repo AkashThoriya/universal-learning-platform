@@ -23,6 +23,7 @@ import {
   Timestamp,
   writeBatch,
   onSnapshot,
+  WhereFilterOp,
   enableNetwork,
   disableNetwork,
   getCountFromServer,
@@ -119,7 +120,7 @@ class DatabaseCacheService {
   }
 
   getQueryMetrics(collection: string): { average: number; count: number; slowQueries: number } {
-    const times = this.queryMetrics.get(collection) || [];
+    const times = this.queryMetrics.get(collection) ?? [];
     if (times.length === 0) {
       return { average: 0, count: 0, slowQueries: 0 };
     }
@@ -158,7 +159,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
         updatedAt: Timestamp.fromDate(new Date()),
       } as T;
 
-      await setDoc(docRef, createData as any);
+      await setDoc(docRef, createData as Record<string, unknown>);
 
       // Invalidate collection cache
       this.cache.invalidateByTag(`collection:${collectionName}`);
@@ -240,7 +241,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       await updateDoc(docRef, {
         ...updates,
         updatedAt: Timestamp.fromDate(new Date()),
-      } as any);
+      } as Record<string, unknown>);
 
       // Invalidate caches
       this.cache.delete(`doc:${collectionName}:${id}`);
@@ -309,7 +310,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       // Apply where conditions
       if (options?.where) {
         for (const condition of options.where) {
-          q = query(q, where(condition.field, this.mapOperator(condition.operator) as any, condition.value));
+          q = query(q, where(condition.field, this.mapOperator(condition.operator), condition.value));
         }
       }
 
@@ -370,7 +371,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       // Apply where conditions
       if (options?.where) {
         for (const condition of options.where) {
-          q = query(q, where(condition.field, this.mapOperator(condition.operator) as any, condition.value));
+          q = query(q, where(condition.field, this.mapOperator(condition.operator), condition.value));
         }
       }
 
@@ -457,7 +458,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     // Apply query options (similar to query method)
     if (options?.where) {
       for (const condition of options.where) {
-        q = query(q, where(condition.field, this.mapOperator(condition.operator) as any, condition.value));
+        q = query(q, where(condition.field, this.mapOperator(condition.operator), condition.value));
       }
     }
 
@@ -646,7 +647,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     };
   }
 
-  private mapOperator(operator: WhereCondition['operator']): unknown {
+  private mapOperator(operator: WhereCondition['operator']): WhereFilterOp {
     const operatorMap = {
       eq: '==',
       ne: '!=',
@@ -660,6 +661,6 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       startsWith: '>=', // Firestore doesn't have startsWith, this is a workaround
     };
 
-    return operatorMap[operator] || '==';
+    return (operatorMap[operator] ?? '==') as WhereFilterOp;
   }
 }

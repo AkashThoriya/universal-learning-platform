@@ -42,7 +42,7 @@ interface PWAFeature {
   name: string;
   available: boolean;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   importance: 'critical' | 'high' | 'medium' | 'low';
 }
 

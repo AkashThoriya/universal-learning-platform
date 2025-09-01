@@ -48,7 +48,7 @@ export function MicroLearningSession({
   const [currentContentIndex, setCurrentContentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
-  const [answers] = useState<Record<string, any>>({});
+  const [answers] = useState<Record<string, { correct: boolean; value: string | number }>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
@@ -455,7 +455,7 @@ export function MicroLearningSession({
                 </div>
               ) : (
                 <div className="prose max-w-none text-gray-700 leading-relaxed">
-                  <div dangerouslySetInnerHTML={{ __html: currentContent?.content || '' }} />
+                  <div dangerouslySetInnerHTML={{ __html: currentContent?.content ?? '' }} />
                 </div>
               )}
             </div>

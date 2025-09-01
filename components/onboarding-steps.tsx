@@ -97,9 +97,9 @@ export function PersonalInfoStep({
         </Label>
         <Input
           id="displayName"
-          value={formData?.displayName || ''}
-          onChange={e => (form.updateField as any)('displayName', e.target.value)}
-          onBlur={() => (form.markFieldTouched as any)('displayName')}
+          value={formData?.displayName ?? ''}
+          onChange={e => (form.updateField as (field: string, value: string) => void)('displayName', e.target.value)}
+          onBlur={() => (form.markFieldTouched as (field: string) => void)('displayName')}
           placeholder="Enter your full name"
           className={form.errors.displayName ? 'border-red-500' : ''}
           aria-describedby={form.errors.displayName ? 'displayName-error' : undefined}
@@ -200,9 +200,9 @@ export function PersonalInfoStep({
             <Input
               id="examDate"
               type="date"
-              value={formData?.examDate || ''}
-              onChange={e => (form.updateField as any)('examDate', e.target.value)}
-              onBlur={() => (form.markFieldTouched as any)('examDate')}
+              value={formData?.examDate ?? ''}
+              onChange={e => (form.updateField as (field: string, value: string) => void)('examDate', e.target.value)}
+              onBlur={() => (form.markFieldTouched as (field: string) => void)('examDate')}
               className={`pl-10 ${form.errors.examDate ? 'border-red-500' : ''}`}
               min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
               aria-describedby={form.errors.examDate ? 'examDate-error' : undefined}
@@ -263,14 +263,14 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Input
             id="customExamName"
-            value={formData?.customExam?.name || ''}
+            value={formData?.customExam?.name ?? ''}
             onChange={e =>
-              (form.updateField as any)('customExam', {
+              (form.updateField as (field: string, value: unknown) => void)('customExam', {
                 ...formData?.customExam,
                 name: e.target.value,
               })
             }
-            onBlur={() => (form.markFieldTouched as any)('customExam')}
+            onBlur={() => (form.markFieldTouched as (field: string) => void)('customExam')}
             placeholder="e.g., State Public Service Commission"
             className={form.errors['customExam.name'] ? 'border-red-500' : ''}
           />
@@ -288,9 +288,9 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
             Category
           </Label>
           <Select
-            value={formData?.customExam?.category || ''}
+            value={formData?.customExam?.category ?? ''}
             onValueChange={value =>
-              (form.updateField as any)('customExam', {
+              (form.updateField as (field: string, value: unknown) => void)('customExam', {
                 ...formData?.customExam,
                 category: value,
               })
@@ -321,9 +321,9 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Textarea
             id="customExamDescription"
-            value={formData?.customExam?.description || ''}
+            value={formData?.customExam?.description ?? ''}
             onChange={e =>
-              (form.updateField as any)('customExam', {
+              (form.updateField as (field: string, value: unknown) => void)('customExam', {
                 ...formData?.customExam,
                 description: e.target.value,
               })

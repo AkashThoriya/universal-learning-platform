@@ -80,7 +80,7 @@ class ErrorReporter {
     return ErrorReporter.instance;
   }
 
-  async reportError(error: Error, errorInfo: ErrorInfo, context: Record<string, any> = {}): Promise<string> {
+  async reportError(error: Error, errorInfo: ErrorInfo, context: Record<string, unknown> = {}): Promise<string> {
     const errorId = this.generateErrorId(error);
 
     // Prevent duplicate reporting

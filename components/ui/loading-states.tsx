@@ -431,7 +431,7 @@ export function EmptyState({
   message?: string;
   actionLabel?: string;
   onAction?: () => void;
-  icon?: React.ComponentType<any>;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   variant?: 'default' | 'compact';
 }) {
   if (variant === 'compact') {

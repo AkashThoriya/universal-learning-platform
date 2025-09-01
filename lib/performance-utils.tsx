@@ -29,7 +29,7 @@ function smartMemo<T extends React.ComponentType<unknown>>(
 /**
  * Shallow comparison for React.memo
  */
-function shallowEqual(prevProps: Record<string, any>, nextProps: Record<string, any>): boolean {
+function shallowEqual(prevProps: Record<string, unknown>, nextProps: Record<string, unknown>): boolean {
   const keys1 = Object.keys(prevProps);
   const keys2 = Object.keys(nextProps);
 

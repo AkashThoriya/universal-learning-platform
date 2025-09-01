@@ -51,7 +51,7 @@ export function migrateLegacyUserData(legacyData: unknown): User {
     displayName: typedLegacyData.displayName,
     currentExam: {
       id: typedLegacyData.selectedExamId ?? 'unknown',
-      name: typedLegacyData.examName || 'Unknown Exam',
+      name: typedLegacyData.examName ?? 'Unknown Exam',
       targetDate: typedLegacyData.examDate ?? typedLegacyData.createdAt,
     },
     onboardingComplete: typedLegacyData.onboardingComplete ?? false,

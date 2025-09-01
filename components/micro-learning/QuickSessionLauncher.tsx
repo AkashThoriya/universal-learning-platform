@@ -76,7 +76,7 @@ export function QuickSessionLauncher({
   autoLoadPersonalized = true,
 }: QuickSessionLauncherProps) {
   const { user } = useAuth();
-  const [displaySessions, setDisplaySessions] = useState<QuickSessionConfig[]>(sessions || defaultSessions);
+  const [displaySessions, setDisplaySessions] = useState<QuickSessionConfig[]>(sessions ?? defaultSessions);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startingSessionIndex, setStartingSessionIndex] = useState<number | null>(null);

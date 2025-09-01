@@ -9,11 +9,12 @@
  * @version 1.0.0
  */
 
-import { UserPersona } from '@/types/exam';
+import { UserPersona, CareerContext } from '@/types/exam';
 import {
   MicroLearningSession,
   PersonaOptimizations,
   MicroContent,
+  PersonaAdaptations,
   ExamValidation,
   CourseValidation,
   LearningRecommendation,
@@ -21,6 +22,21 @@ import {
 } from '@/types/micro-learning';
 
 import { PersonaAwareGoalSetting as _PersonaAwareGoalSetting } from './persona-aware-goals';
+
+/**
+ * Base content structure from external sources
+ */
+interface BaseContentItem {
+  topic: string;
+  body?: string;
+  content?: string;
+  estimatedTime?: number;
+  difficulty?: number;
+  tags?: string[];
+  examType?: string;
+  hasCode?: boolean;
+  isExample?: boolean;
+}
 
 /**
  * Service for managing dual-track micro-learning sessions
@@ -82,7 +98,7 @@ export class MicroLearningService {
 
       if (!saveResult.success) {
         const errorMessage =
-          saveResult.error instanceof Error ? saveResult.error.message : saveResult.error || 'Failed to save session';
+          saveResult.error instanceof Error ? saveResult.error.message : saveResult.error ?? 'Failed to save session';
         throw new Error(errorMessage);
       }
 
@@ -102,7 +118,7 @@ export class MicroLearningService {
 
       if (!result.success) {
         const errorMessage =
-          result.error instanceof Error ? result.error.message : result.error || 'Failed to get session history';
+          result.error instanceof Error ? result.error.message : result.error ?? 'Failed to get session history';
         throw new Error(errorMessage);
       }
 
@@ -151,7 +167,7 @@ export class MicroLearningService {
 
       if (!result.success) {
         const errorMessage =
-          result.error instanceof Error ? result.error.message : result.error || 'Failed to update session progress';
+          result.error instanceof Error ? result.error.message : result.error ?? 'Failed to update session progress';
         throw new Error(errorMessage);
       }
     } catch (error) {
@@ -166,7 +182,7 @@ export class MicroLearningService {
     switch (persona.type) {
       case 'student':
         return {
-          sessionLength: requestedDuration || 15,
+          sessionLength: requestedDuration ?? 15,
           breakReminders: false,
           contextSwitching: false,
           motivationalFraming: 'academic',
@@ -193,7 +209,7 @@ export class MicroLearningService {
 
       case 'freelancer':
         return {
-          sessionLength: requestedDuration || 10,
+          sessionLength: requestedDuration ?? 10,
           breakReminders: true,
           contextSwitching: true,
           motivationalFraming: 'skill_building',
@@ -205,7 +221,7 @@ export class MicroLearningService {
 
       default:
         return {
-          sessionLength: requestedDuration || 10,
+          sessionLength: requestedDuration ?? 10,
           breakReminders: false,
           contextSwitching: false,
           motivationalFraming: 'personal',
@@ -221,14 +237,14 @@ export class MicroLearningService {
    * Adapt content based on persona and learning track
    */
   private static adaptContentForPersona(
-    baseContent: unknown[],
+    baseContent: BaseContentItem[],
     persona: UserPersona,
     learningTrack: 'exam' | 'course_tech'
   ): MicroContent[] {
     return baseContent.map((content, index) => ({
       id: `content_${index}_${Date.now()}`,
       type: this.selectContentType(content, learningTrack),
-      content: content.body ?? (content.content || ''),
+      content: content.body ?? (content.content ?? ''),
       estimatedTime: content.estimatedTime ?? 120,
       learningTrack,
       personaAdaptations: this.generatePersonaAdaptations(content, persona, learningTrack),
@@ -247,11 +263,11 @@ export class MicroLearningService {
    * Generate persona-specific content adaptations
    */
   private static generatePersonaAdaptations(
-    content: unknown,
+    content: BaseContentItem,
     persona: UserPersona,
     learningTrack: 'exam' | 'course_tech'
-  ) {
-    const adaptations: unknown = {};
+  ): PersonaAdaptations {
+    const adaptations: PersonaAdaptations = {};
 
     // Student adaptations - academic focus
     adaptations.student = {
@@ -277,8 +293,8 @@ export class MicroLearningService {
           : `Enhance your professional skills and stay competitive!`,
       applicationContext:
         learningTrack === 'exam'
-          ? `This certification opens doors to ${persona.careerContext?.targetRole || 'leadership roles'}`
-          : `This skill directly applies to ${persona.careerContext?.targetRole || 'your work'} and increases your market value`,
+          ? `This certification opens doors to ${persona.careerContext?.targetRole ?? 'leadership roles'}`
+          : `This skill directly applies to ${persona.careerContext?.targetRole ?? 'your work'} and increases your market value`,
       validationMethod: learningTrack === 'exam' ? 'practice' : 'project',
       additionalResources: this.generateProfessionalResources(content.topic, learningTrack),
     };
@@ -467,7 +483,7 @@ export class MicroLearningService {
     return persona.type === 'freelancer' ? 'project' : 'assignment';
   }
 
-  private static selectContentType(content: unknown, learningTrack: 'exam' | 'course_tech'): MicroContent['type'] {
+  private static selectContentType(content: BaseContentItem, learningTrack: 'exam' | 'course_tech'): MicroContent['type'] {
     if (learningTrack === 'course_tech') {
       return content.hasCode ? 'code_snippet' : 'hands_on';
     }
@@ -573,7 +589,7 @@ export class MicroLearningService {
     return mockRecommendations;
   }
 
-  private static async getTopicContent(topicId: string, learningTrack: 'exam' | 'course_tech'): Promise<unknown[]> {
+  private static async getTopicContent(topicId: string, learningTrack: 'exam' | 'course_tech'): Promise<BaseContentItem[]> {
     // Mock implementation - replace with actual content fetching
     return [
       {
@@ -582,7 +598,7 @@ export class MicroLearningService {
         estimatedTime: 180,
         difficulty: 5,
         tags: [topicId, learningTrack],
-        examType: learningTrack === 'exam' ? 'competitive' : undefined,
+        ...(learningTrack === 'exam' && { examType: 'competitive' }),
         hasCode: learningTrack === 'course_tech',
       },
       {
@@ -612,7 +628,7 @@ export class MicroLearningService {
 
   private static generateProfessionalExamples(
     topic: string,
-    careerContext: unknown,
+    careerContext: CareerContext | undefined,
     learningTrack: 'exam' | 'course_tech'
   ): string[] {
     const role = careerContext?.currentRole ?? 'professional';

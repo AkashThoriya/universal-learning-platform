@@ -67,7 +67,7 @@ export function MicroLearningDashboard({
   const [error, setError] = useState<string | null>(null);
   const [isStartingSession, setIsStartingSession] = useState<string | null>(null);
 
-  const activeUserId = userId || user?.uid;
+  const activeUserId = userId ?? user?.uid;
 
   const loadDashboardData = async () => {
     if (!activeUserId) {

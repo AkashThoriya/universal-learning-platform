@@ -158,7 +158,7 @@ export default function MockTestLogPage() {
     try {
       const testData: MockTestLog = {
         id: `test_${Date.now()}`,
-        date: Timestamp.fromDate(new Date(date || new Date())),
+        date: Timestamp.fromDate(new Date(date ?? new Date())),
         platform,
         testName,
         stage,
@@ -271,13 +271,17 @@ export default function MockTestLogPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Test Date</label>
-                    <Input type="date" value={date} onChange={e => setDate(e.target.value)} />
+                    <label htmlFor="test-date" className="text-sm font-medium">
+                      Test Date
+                    </label>
+                    <Input id="test-date" type="date" value={date} onChange={e => setDate(e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Platform/Source</label>
+                    <label htmlFor="test-platform" className="text-sm font-medium">
+                      Platform/Source
+                    </label>
                     <Select value={platform} onValueChange={setPlatform}>
-                      <SelectTrigger>
+                      <SelectTrigger id="test-platform">
                         <SelectValue placeholder="Select platform" />
                       </SelectTrigger>
                       <SelectContent>
@@ -296,8 +300,11 @@ export default function MockTestLogPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Test Name</label>
+                  <label htmlFor="test-name" className="text-sm font-medium">
+                    Test Name
+                  </label>
                   <Input
+                    id="test-name"
                     placeholder="e.g., Full Length Test #15, Sectional Test - Polity"
                     value={testName}
                     onChange={e => setTestName(e.target.value)}
@@ -306,9 +313,11 @@ export default function MockTestLogPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Exam Stage</label>
+                    <label htmlFor="exam-stage" className="text-sm font-medium">
+                      Exam Stage
+                    </label>
                     <Select value={stage} onValueChange={setStage}>
-                      <SelectTrigger>
+                      <SelectTrigger id="exam-stage">
                         <SelectValue placeholder="Select stage" />
                       </SelectTrigger>
                       <SelectContent>
@@ -322,9 +331,11 @@ export default function MockTestLogPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Test Type</label>
-                    <Select value={type} onValueChange={value => setType(value as any)}>
-                      <SelectTrigger>
+                    <label htmlFor="test-type" className="text-sm font-medium">
+                      Test Type
+                    </label>
+                    <Select value={type} onValueChange={value => setType(value as 'full_length' | 'sectional' | 'topic_wise' | 'previous_year')}>
+                      <SelectTrigger id="test-type">
                         <SelectValue placeholder="Select test type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -357,13 +368,16 @@ export default function MockTestLogPage() {
                     <h4 className="font-semibold mb-3">{section?.name}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Score</label>
+                        <label htmlFor={`score-${section?.id}`} className="text-sm font-medium">
+                          Score
+                        </label>
                         <div className="flex items-center space-x-2">
                           <Input
+                            id={`score-${section?.id}`}
                             type="number"
                             min="0"
                             max={section?.maxMarks}
-                            value={section?.id ? scores[section.id] || 0 : 0}
+                            value={section?.id ? scores[section.id] ?? 0 : 0}
                             onChange={e =>
                               section?.id &&
                               setScores(prev => ({
@@ -377,12 +391,15 @@ export default function MockTestLogPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Time Taken (minutes)</label>
+                        <label htmlFor={`time-taken-${section?.id}`} className="text-sm font-medium">
+                          Time Taken (minutes)
+                        </label>
                         <Input
+                          id={`time-taken-${section?.id}`}
                           type="number"
                           min="0"
                           max={section?.maxTime}
-                          value={section?.id ? timeTaken[section.id] || 0 : 0}
+                          value={section?.id ? timeTaken[section.id] ?? 0 : 0}
                           onChange={e =>
                             section?.id &&
                             setTimeTaken(prev => ({
@@ -394,15 +411,17 @@ export default function MockTestLogPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Accuracy</label>
-                        <div className="text-lg font-semibold text-blue-600">
+                        <label htmlFor={`accuracy-${section?.id}`} className="text-sm font-medium">
+                          Accuracy
+                        </label>
+                        <div id={`accuracy-${section?.id}`} className="text-lg font-semibold text-blue-600">
                           {(() => {
                             if (!section?.id) {
                               return '0%';
                             }
                             const sectionId = section.id;
                             return maxScores[sectionId] && maxScores[sectionId] > 0
-                              ? `${Math.round(((scores[sectionId] || 0) / maxScores[sectionId]) * 100)}%`
+                              ? `${Math.round(((scores[sectionId] ?? 0) / maxScores[sectionId]) * 100)}%`
                               : '0%';
                           })()}
                         </div>
@@ -570,12 +589,14 @@ export default function MockTestLogPage() {
                   <h4 className="font-semibold">Mental State During Test</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Confidence (1-5)</label>
+                      <label htmlFor="confidence-select" className="text-sm font-medium">
+                        Confidence (1-5)
+                      </label>
                       <Select
                         value={confidence.toString()}
                         onValueChange={value => setConfidence(Number(value) as 1 | 2 | 3 | 4 | 5)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id="confidence-select">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -589,12 +610,14 @@ export default function MockTestLogPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Anxiety (1-5)</label>
+                      <label htmlFor="anxiety-select" className="text-sm font-medium">
+                        Anxiety (1-5)
+                      </label>
                       <Select
                         value={anxiety.toString()}
                         onValueChange={value => setAnxiety(Number(value) as 1 | 2 | 3 | 4 | 5)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id="anxiety-select">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -608,12 +631,14 @@ export default function MockTestLogPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Focus (1-5)</label>
+                      <label htmlFor="focus-select" className="text-sm font-medium">
+                        Focus (1-5)
+                      </label>
                       <Select
                         value={focus.toString()}
                         onValueChange={value => setFocus(Number(value) as 1 | 2 | 3 | 4 | 5)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id="focus-select">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -633,8 +658,11 @@ export default function MockTestLogPage() {
                   <h4 className="font-semibold">Test Environment</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Location</label>
+                      <label htmlFor="test-location" className="text-sm font-medium">
+                        Location
+                      </label>
                       <Input
+                        id="test-location"
                         placeholder="e.g., Home, Library, Test Center"
                         value={location}
                         onChange={e => setLocation(e.target.value)}
@@ -642,9 +670,11 @@ export default function MockTestLogPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Time of Day</label>
-                      <Select value={timeOfDay} onValueChange={value => setTimeOfDay(value as any)}>
-                        <SelectTrigger>
+                      <label htmlFor="time-of-day" className="text-sm font-medium">
+                        Time of Day
+                      </label>
+                      <Select value={timeOfDay} onValueChange={value => setTimeOfDay(value as 'morning' | 'afternoon' | 'evening' | 'night')}>
+                        <SelectTrigger id="time-of-day">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -659,12 +689,14 @@ export default function MockTestLogPage() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium">Distractions</label>
+                      <label htmlFor="distractions-list" className="text-sm font-medium">
+                        Distractions
+                      </label>
                       <Button type="button" variant="outline" size="sm" onClick={addDistraction}>
                         Add Distraction
                       </Button>
                     </div>
-                    <div className="space-y-2">
+                    <div id="distractions-list" className="space-y-2">
                       {distractions.map((distraction, index) => (
                         <Badge key={index} variant="outline" className="mr-2">
                           {distraction}
@@ -682,8 +714,11 @@ export default function MockTestLogPage() {
                   <h4 className="font-semibold">Reflection & Action Plan</h4>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Overall Feedback</label>
+                    <label htmlFor="overall-feedback" className="text-sm font-medium">
+                      Overall Feedback
+                    </label>
                     <Textarea
+                      id="overall-feedback"
                       value={feedback}
                       onChange={e => setFeedback(e.target.value)}
                       placeholder="How did you feel during the test? What went well? What was challenging?"
@@ -693,12 +728,14 @@ export default function MockTestLogPage() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <label className="text-sm font-medium">Action Items</label>
+                      <label htmlFor="action-items-list" className="text-sm font-medium">
+                        Action Items
+                      </label>
                       <Button type="button" variant="outline" size="sm" onClick={addActionItem}>
                         Add Action Item
                       </Button>
                     </div>
-                    <div className="space-y-2">
+                    <div id="action-items-list" className="space-y-2">
                       {actionItems.map((action, index) => (
                         <div key={index} className="p-3 bg-blue-50 rounded border-l-4 border-blue-200">
                           <p className="text-sm">{action}</p>

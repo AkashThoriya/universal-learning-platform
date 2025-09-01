@@ -26,6 +26,13 @@ import { UseFormReturn } from '@/hooks/useForm';
 import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
 import { Exam, SyllabusSubject, UserPersona } from '@/types/exam';
 
+// Interface for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag?: (command: string, action: string, parameters?: Record<string, unknown>) => void;
+  }
+}
+
 /**
  * Form data interface for onboarding
  */
@@ -56,7 +63,8 @@ interface OnboardingFormData {
       healthCheckReminders: boolean;
     };
   };
-  [key: string]: any; // Allow for other form fields
+  // Additional form fields with specific types
+  [key: string]: string | number | boolean | object | undefined;
 }
 
 /**
@@ -132,12 +140,12 @@ export function PersonalInfoStepCompact({
       const error = validateName(value);
       setValidationErrors(prev => ({
         ...prev,
-        displayName: error || '',
+        displayName: error ?? '',
       }));
 
       // Analytics
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'name_input', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'name_input', {
           length: value.length,
           has_error: !!error,
         });
@@ -154,16 +162,16 @@ export function PersonalInfoStepCompact({
       const error = validateExamDate(value);
       setValidationErrors(prev => ({
         ...prev,
-        examDate: error || '',
+        examDate: error ?? '',
       }));
 
       // Analytics
-      if (typeof window !== 'undefined' && (window as any).gtag && value) {
+      if (typeof window !== 'undefined' && window.gtag && value) {
         const examDate = new Date(value);
         const today = new Date();
         const daysToExam = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-        (window as any).gtag('event', 'exam_date_selected', {
+        window.gtag('event', 'exam_date_selected', {
           days_to_exam: daysToExam,
           exam_id: form.data.selectedExamId,
         });
@@ -201,8 +209,8 @@ export function PersonalInfoStepCompact({
     onExamSelect('custom');
 
     // Analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'custom_exam_selected', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'custom_exam_selected', {
         source: 'manual_selection',
       });
     }
@@ -556,7 +564,7 @@ export function PersonalInfoStepCompact({
                 </Label>
                 <Input
                   id="custom-exam-name"
-                  value={form.data.customExam?.name || ''}
+                  value={form.data.customExam?.name ?? ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,
@@ -574,7 +582,7 @@ export function PersonalInfoStepCompact({
                 </Label>
                 <Input
                   id="custom-exam-category"
-                  value={form.data.customExam?.category || ''}
+                  value={form.data.customExam?.category ?? ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,
@@ -591,7 +599,7 @@ export function PersonalInfoStepCompact({
                 </Label>
                 <Input
                   id="custom-exam-description"
-                  value={form.data.customExam?.description || ''}
+                  value={form.data.customExam?.description ?? ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,

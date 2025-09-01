@@ -67,7 +67,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   const { user } = useAuth();
 
   logInfo('AdaptiveDashboard component initialized', {
-    userId: user?.uid || 'no-user',
+    userId: user?.uid ?? 'no-user',
     timestamp: new Date().toISOString(),
   });
 
@@ -105,7 +105,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     const loadDashboardData = async () => {
       await measurePerformance('loadDashboardData', async () => {
         logInfo('Loading dashboard data', {
-          userId: user?.uid || 'no-user',
+          userId: user?.uid ?? 'no-user',
           timeOfDay,
         });
 
@@ -144,14 +144,14 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           setMotivationalMessage(getMotivationalMessage(timeOfDay, mockStats.currentStreak));
 
           logInfo('Dashboard data loaded successfully', {
-            userId: user?.uid || 'no-user',
+            userId: user?.uid ?? 'no-user',
             stats: mockStats,
             achievementCount: mockAchievements.length,
             timeOfDay,
           });
         } catch (error) {
           logError('Error loading dashboard data', {
-            userId: user?.uid || 'no-user',
+            userId: user?.uid ?? 'no-user',
             error: error instanceof Error ? error.message : 'Unknown error',
           });
         } finally {

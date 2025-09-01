@@ -22,6 +22,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
+// Interface for the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  platforms: string[];
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+  prompt(): Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
+
+// Interface for Service Worker Registration with Background Sync
+interface ServiceWorkerRegistrationWithSync extends ServiceWorkerRegistration {
+  sync: {
+    register(tag: string): Promise<void>;
+  };
+}
+
 interface PWAState {
   isInstallable: boolean;
   isInstalled: boolean;
@@ -49,7 +63,7 @@ export function PWAManager() {
   });
 
   const [cacheStatus, setCacheStatus] = useState<CacheStatus>({});
-  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // ============================================================================
@@ -114,9 +128,10 @@ export function PWAManager() {
   // ============================================================================
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setInstallPrompt(e);
+    const handleBeforeInstallPrompt = (e: Event) => {
+      const promptEvent = e as BeforeInstallPromptEvent;
+      promptEvent.preventDefault();
+      setInstallPrompt(promptEvent);
       setPwaState(prev => ({ ...prev, isInstallable: true }));
     };
 
@@ -151,7 +166,7 @@ export function PWAManager() {
     setIsLoading(true);
 
     try {
-      const result = await (installPrompt as any).prompt();
+      const result = await installPrompt.prompt();
 
       if (result.outcome === 'accepted') {
         toast({
@@ -346,7 +361,7 @@ export function PWAManager() {
         const registration = await navigator.serviceWorker.ready;
 
         // Type assertion for background sync support
-        const syncRegistration = registration as any;
+        const syncRegistration = registration as ServiceWorkerRegistrationWithSync;
 
         await Promise.all([
           syncRegistration.sync.register('background-sync-missions'),

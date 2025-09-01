@@ -427,7 +427,7 @@ export function useValidation<T extends Record<string, any>>(
 
   const validateField = useCallback(
     (key: keyof T): string[] => {
-      const fieldRules = rules[key] || [];
+      const fieldRules = rules[key] ?? [];
       const fieldValue = values[key];
       const fieldErrors: string[] = [];
 

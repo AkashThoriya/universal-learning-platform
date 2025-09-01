@@ -94,11 +94,11 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
       ]);
 
       if (!achievementsResult.success) {
-        throw new Error(achievementsResult.error?.message || 'Failed to load achievements');
+        throw new Error(achievementsResult.error?.message ?? 'Failed to load achievements');
       }
 
       if (!userAchievementsResult.success) {
-        throw new Error(userAchievementsResult.error?.message || 'Failed to load user achievements');
+        throw new Error(userAchievementsResult.error?.message ?? 'Failed to load user achievements');
       }
 
       const allAchievements = achievementsResult.data;
@@ -209,7 +209,7 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
       excellence_achiever: '🏆',
     };
 
-    return iconMap[achievement.id] || '🏅';
+    return iconMap[achievement.id] ?? '🏅';
   };
 
   const filteredAndSortedAchievements = achievements
@@ -451,7 +451,7 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={value => setSortBy(value as any)}>
+              <Select value={sortBy} onValueChange={value => setSortBy(value as 'name' | 'points' | 'progress' | 'date')}>
                 <SelectTrigger className="w-36">
                   <SelectValue />
                 </SelectTrigger>

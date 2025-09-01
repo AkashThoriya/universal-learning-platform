@@ -53,6 +53,13 @@ import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { logger, logError, logInfo } from '@/lib/logger';
 import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
 
+// Interface for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag?: (command: string, action: string, parameters?: Record<string, unknown>) => void;
+  }
+}
+
 /**
  * Enhanced onboarding form data structure with complete validation
  */
@@ -130,7 +137,19 @@ const onboardingSchema = z.object({
     .refine(() => {
       return true; // Custom validation in component
     }),
-  syllabus: z.array(z.any()).min(1, 'At least one subject is required').max(20, 'Maximum 20 subjects allowed'),
+  syllabus: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    topics: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      subtopics: z.array(z.string()).optional().transform(val => val ?? undefined),
+      estimatedHours: z.number().optional().transform(val => val ?? undefined),
+    })),
+    estimatedHours: z.number().optional().transform(val => val ?? undefined),
+    isCustom: z.boolean().optional().transform(val => val ?? undefined),
+  })).min(1, 'At least one subject is required').max(20, 'Maximum 20 subjects allowed'),
   preferences: z.object({
     dailyStudyGoalMinutes: z
       .number()
@@ -198,7 +217,7 @@ export default function OnboardingSetupPage() {
     if (user) {
       logInfo('User authenticated for onboarding', {
         userId: user.uid,
-        email: user.email || 'no-email',
+        email: user.email ?? 'no-email',
       });
     } else {
       logInfo('User not authenticated, waiting for auth state');
@@ -243,7 +262,7 @@ export default function OnboardingSetupPage() {
 
   // Initialize form data with enhanced defaults
   const initialFormData: OnboardingFormData = {
-    displayName: user?.displayName || '',
+    displayName: user?.displayName ?? '',
     selectedExamId: '',
     examDate: '',
     isCustomExam: false,
@@ -284,8 +303,8 @@ export default function OnboardingSetupPage() {
       });
 
       // Analytics tracking
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'onboarding_step_change', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'onboarding_step_change', {
           current_step: current,
           previous_step: previous,
           user_type: form.data.userPersona?.type ?? 'unknown',
@@ -311,10 +330,11 @@ export default function OnboardingSetupPage() {
     validateOnChange: false,
     validateOnBlur: true,
     debounceMs: 500,
-    onFormEvent: (event: string, data: any) => {
+    onFormEvent: (event: string, data: unknown) => {
+      const eventData = data as { field?: string; [key: string]: unknown };
       logger.debug('Onboarding form event', {
         event,
-        field: (data as any)?.field ?? 'unknown',
+        field: eventData?.field ?? 'unknown',
         step: multiStep.currentStep,
         timestamp: new Date().toISOString(),
       });
@@ -325,11 +345,11 @@ export default function OnboardingSetupPage() {
       }
 
       // Analytics for form events
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'onboarding_form_event', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'onboarding_form_event', {
           event_type: event,
           step: multiStep.currentStep,
-          field: (data as any)?.field ?? 'unknown',
+          field: (data as { field?: string })?.field ?? 'unknown',
         });
       }
     },
@@ -339,7 +359,7 @@ export default function OnboardingSetupPage() {
   useEffect(() => {
     if (form.data.selectedExamId && form.data.selectedExamId !== 'custom') {
       const exam = getExamById(form.data.selectedExamId);
-      setSelectedExam(exam || null);
+      setSelectedExam(exam ?? null);
 
       logInfo('Exam loaded for onboarding', {
         examId: form.data.selectedExamId,
@@ -529,8 +549,8 @@ export default function OnboardingSetupPage() {
       }
 
       // Analytics
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'exam_selected', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'exam_selected', {
           exam_id: examId,
           is_custom: examId === 'custom',
         });
@@ -544,9 +564,9 @@ export default function OnboardingSetupPage() {
     (subjectId: string, tier: 1 | 2 | 3) => {
       logInfo('Updating subject tier', { subjectId, tier });
 
-      const updatedSyllabus = form.data.syllabus.map((subject: SyllabusSubject) =>
+      const updatedSyllabus = form.data.syllabus.map((subject) =>
         subject.id === subjectId ? { ...subject, tier } : subject
-      );
+      ) as SyllabusSubject[];
       form.updateField('syllabus', updatedSyllabus);
     },
     [form]
@@ -570,7 +590,7 @@ export default function OnboardingSetupPage() {
     (subjectId: string) => {
       logInfo('Removing subject from syllabus', { subjectId });
 
-      const updatedSyllabus = form.data.syllabus.filter((subject: SyllabusSubject) => subject.id !== subjectId);
+      const updatedSyllabus = form.data.syllabus.filter((subject) => subject.id !== subjectId) as SyllabusSubject[];
       form.updateField('syllabus', updatedSyllabus);
 
       logInfo('Subject removed', {
@@ -584,7 +604,7 @@ export default function OnboardingSetupPage() {
   // Enhanced completion handler with error recovery
   const handleComplete = useCallback(async () => {
     logInfo('Onboarding completion initiated', {
-      userId: user?.uid || 'no-user',
+      userId: user?.uid ?? 'no-user',
       hasUser: !!user,
       currentStep: multiStep.currentStep,
     });
@@ -592,7 +612,7 @@ export default function OnboardingSetupPage() {
     if (!user) {
       const errorMsg = 'You must be logged in to complete setup.';
       logError('Onboarding completion failed - no user', { error: errorMsg });
-      form.setError('_form' as any, {
+      form.setError('_form' as keyof OnboardingFormData, {
         message: errorMsg,
         type: 'server',
         path: '_form',
@@ -662,7 +682,7 @@ export default function OnboardingSetupPage() {
 
           const operations = await Promise.allSettled([
             createUser(user.uid, userData),
-            saveSyllabus(user.uid, form.data.syllabus),
+            saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]),
           ]);
 
           const duration = performance.now() - startTime;
@@ -723,8 +743,8 @@ export default function OnboardingSetupPage() {
       logInfo('Onboarding data saved successfully, finishing completion process');
 
       // Analytics completion event
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'onboarding_completed', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'onboarding_completed', {
           user_type: form.data.userPersona?.type,
           exam_type: form.data.isCustomExam ? 'custom' : 'predefined',
           total_subjects: form.data.syllabus.length,
@@ -781,7 +801,7 @@ export default function OnboardingSetupPage() {
         }
       }
 
-      form.setError('_form' as any, {
+      form.setError('_form' as keyof OnboardingFormData, {
         message: userFriendlyMessage,
         type: 'server',
         path: '_form',

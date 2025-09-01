@@ -33,6 +33,13 @@ import {
 import { logInfo, logger } from '@/lib/logger';
 import { UserPersona, UserPersonaType } from '@/types/exam';
 
+// Interface for Google Analytics gtag function
+declare global {
+  interface Window {
+    gtag?: (command: string, action: string, parameters?: Record<string, unknown>) => void;
+  }
+}
+
 /**
  * Form data interface for onboarding
  */
@@ -53,7 +60,8 @@ interface OnboardingFormData {
       healthCheckReminders: boolean;
     };
   };
-  [key: string]: any; // Allow for other form fields
+  // Additional form fields with specific types
+  [key: string]: string | number | boolean | object | undefined;
 }
 
 /**
@@ -102,8 +110,8 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       });
 
       // Analytics
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'persona_selected', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'persona_selected', {
           persona_type: personaType,
           default_hours: defaultHours,
         });
@@ -122,7 +130,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   // Enhanced study goal change with validation
   const handleStudyGoalChange = useCallback(
     (hours: number[]) => {
-      const newHours = hours[0] || 2;
+      const newHours = hours[0] ?? 2;
 
       logInfo('Study goal changed in persona detection', {
         newHours,
@@ -164,8 +172,8 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       });
 
       // Analytics
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'study_time_selected', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'study_time_selected', {
           time_slot: timeSlot,
           persona: selectedPersona,
         });

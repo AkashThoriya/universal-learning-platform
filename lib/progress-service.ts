@@ -135,7 +135,7 @@ export class ProgressService {
       }
 
       const firstWeekly = weeklyData[0];
-      return createSuccess(firstWeekly || null);
+      return createSuccess(firstWeekly ?? null);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get weekly summary'));
     }
@@ -159,7 +159,7 @@ export class ProgressService {
       }
 
       const firstMonthly = monthlyData[0];
-      return createSuccess(firstMonthly || null);
+      return createSuccess(firstMonthly ?? null);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get monthly summary'));
     }
