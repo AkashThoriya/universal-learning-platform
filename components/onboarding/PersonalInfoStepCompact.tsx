@@ -37,13 +37,46 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { UseFormReturn } from '@/hooks/useForm';
-import { Exam } from '@/types/exam';
+import { Exam, SyllabusSubject, UserPersona } from '@/types/exam';
+
+/**
+ * Form data interface for onboarding
+ */
+interface OnboardingFormData {
+  userPersona?: UserPersona;
+  displayName: string;
+  selectedExamId: string;
+  examDate: string;
+  isCustomExam: boolean;
+  customExam: {
+    name?: string;
+    description?: string;
+    category?: string;
+  };
+  syllabus: SyllabusSubject[];
+  preferences: {
+    dailyStudyGoalMinutes: number;
+    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    tierDefinitions: {
+      1: string;
+      2: string;
+      3: string;
+    };
+    revisionIntervals: number[];
+    notifications: {
+      revisionReminders: boolean;
+      dailyGoalReminders: boolean;
+      healthCheckReminders: boolean;
+    };
+  };
+  [key: string]: any; // Allow for other form fields
+}
 
 /**
  * Props for personal info step
  */
 interface PersonalInfoStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<OnboardingFormData>;
   filteredExams: Exam[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -340,7 +373,7 @@ export function PersonalInfoStepCompact({
                 {POPULAR_CATEGORIES.map(category => {
                   const Icon = category.icon;
                   const isActive = activeCategory === category.id;
-                  const examCount = examsByCategory[category.id]?.length || 0;
+                  const examCount = examsByCategory[category.id]?.length ?? 0;
 
                   return (
                     <Card
@@ -654,10 +687,10 @@ export function PersonalInfoStepCompact({
                     </div>
                     <div className="bg-white/70 p-3 rounded-lg">
                       <h4 className="font-medium text-gray-800 mb-1">Target Exam</h4>
-                      <p className="text-gray-700">{selectedExam?.name || form.data.customExam?.name}</p>
-                      {(selectedExam?.category || form.data.customExam?.category) && (
+                      <p className="text-gray-700">{selectedExam?.name ?? form.data.customExam?.name}</p>
+                      {(selectedExam?.category ?? form.data.customExam?.category) && (
                         <Badge variant="outline" className="mt-1 text-xs">
-                          {selectedExam?.category || form.data.customExam?.category}
+                          {selectedExam?.category ?? form.data.customExam?.category}
                         </Badge>
                       )}
                     </div>
@@ -684,7 +717,7 @@ export function PersonalInfoStepCompact({
 
                   <p className="text-green-700">
                     Perfect! We'll now create a personalized study strategy for{' '}
-                    {selectedExam?.name || form.data.customExam?.name}
+                    {selectedExam?.name ?? form.data.customExam?.name}
                     with your exam scheduled for{' '}
                     <strong>
                       {new Date(form.data.examDate).toLocaleDateString('en-US', {
@@ -712,7 +745,7 @@ export function PersonalInfoStepCompact({
         )}
 
       {/* Validation Summary */}
-      {(validationErrors.displayName || validationErrors.examDate || !form.data.selectedExamId) && (
+      {(validationErrors.displayName ?? (validationErrors.examDate || !form.data.selectedExamId)) && (
         <Alert className="border-amber-200 bg-amber-50">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-800">

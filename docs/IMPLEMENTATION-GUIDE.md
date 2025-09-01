@@ -998,6 +998,7 @@ if (loading) {
 return (
 <Card className="w-full max-w-2xl mx-auto">
 <CardContent className="p-6">
+
 <div className="animate-pulse space-y-4">
 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
 <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -1011,6 +1012,7 @@ if (!session) {
 return (
 <Card className="w-full max-w-2xl mx-auto">
 <CardContent className="p-6">
+
 <p className="text-center text-gray-500">Failed to load session</p>
 </CardContent>
 </Card>
@@ -1023,6 +1025,7 @@ const progress = ((currentContentIndex + 1) / session.content.length) \* 100;
 return (
 <Card className="w-full max-w-2xl mx-auto">
 <CardHeader>
+
 <div className="flex items-center justify-between">
 <CardTitle className="flex items-center gap-2">
 <Clock className="h-5 w-5" />

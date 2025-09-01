@@ -792,7 +792,7 @@ export interface StudyInsight {
   /** Category classification of the insight */
   category: 'performance' | 'health' | 'strategy' | 'time_management';
   /** Supporting data for the insight (optional) */
-  data?: any;
+  data?: unknown;
 }
 
 /**

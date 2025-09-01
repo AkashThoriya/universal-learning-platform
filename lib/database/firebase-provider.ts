@@ -48,7 +48,7 @@ import {
  * Database cache service with tagging and invalidation strategies
  */
 class DatabaseCacheService {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number; tags: string[] }>();
+  private cache = new Map<string, { data: unknown; timestamp: number; ttl: number; tags: string[] }>();
   private tagIndex = new Map<string, Set<string>>(); // tag -> cache keys
   private queryMetrics = new Map<string, number[]>(); // collection -> query times
 
@@ -83,7 +83,7 @@ class DatabaseCacheService {
       return null;
     }
 
-    return entry.data;
+    return entry.data as T | null;
   }
 
   delete(key: string): void {
@@ -148,7 +148,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     const startTime = Date.now();
 
     try {
-      const docId = options?.id || doc(collection(db, collectionName)).id;
+      const docId = options?.id ?? doc(collection(db, collectionName)).id;
       const docRef = doc(db, collectionName, docId);
 
       const createData = {
@@ -212,7 +212,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       const data = { id, ...docSnap.data() } as T;
 
       // Cache the result
-      const { ttl = 300000, tags = [] } = options || {};
+      const { ttl = 300000, tags = [] } = options ?? {};
       this.cache.set(cacheKey, data, {
         ttl,
         tags: [...tags, `collection:${collectionName}`, `doc:${collectionName}:${id}`],
@@ -309,7 +309,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       // Apply where conditions
       if (options?.where) {
         for (const condition of options.where) {
-          q = query(q, where(condition.field, this.mapOperator(condition.operator), condition.value));
+          q = query(q, where(condition.field, this.mapOperator(condition.operator) as any, condition.value));
         }
       }
 
@@ -336,7 +336,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       this.cache.recordQueryTime(collectionName, queryTime);
 
       // Cache the result
-      const { ttl = 180000, tags = [] } = options || {};
+      const { ttl = 180000, tags = [] } = options ?? {};
       this.cache.set(cacheKey, documents, {
         ttl,
         tags: [...tags, `collection:${collectionName}`],
@@ -344,7 +344,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
 
       // Log slow queries
       if (queryTime > this.slowQueryThreshold) {
-        console.warn(`Slow query detected: ${collectionName} took ${queryTime}ms`, options);
+        // console.warn(`Slow query detected: ${collectionName} took ${queryTime}ms`, options);
       }
 
       return {
@@ -370,7 +370,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       // Apply where conditions
       if (options?.where) {
         for (const condition of options.where) {
-          q = query(q, where(condition.field, this.mapOperator(condition.operator), condition.value));
+          q = query(q, where(condition.field, this.mapOperator(condition.operator) as any, condition.value));
         }
       }
 
@@ -406,7 +406,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
         switch (operation.type) {
           case 'create':
             batch.set(docRef, {
-              ...operation.data,
+              ...(operation.data as Record<string, any>),
               id: operation.id,
               createdAt: Timestamp.fromDate(new Date()),
               updatedAt: Timestamp.fromDate(new Date()),
@@ -414,7 +414,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
             break;
           case 'update':
             batch.update(docRef, {
-              ...operation.data,
+              ...(operation.data as Record<string, any>),
               updatedAt: Timestamp.fromDate(new Date()),
             });
             break;
@@ -457,7 +457,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     // Apply query options (similar to query method)
     if (options?.where) {
       for (const condition of options.where) {
-        q = query(q, where(condition.field, this.mapOperator(condition.operator), condition.value));
+        q = query(q, where(condition.field, this.mapOperator(condition.operator) as any, condition.value));
       }
     }
 
@@ -558,10 +558,10 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     };
   }
 
-  async optimize(collectionName: string, fields: string[]): Promise<DatabaseResult<void>> {
+  async optimize(_collectionName: string, _fields: string[]): Promise<DatabaseResult<void>> {
     // Firebase automatically handles indexing
     // This is a no-op for Firebase but maintains interface consistency
-    console.log(`Firebase auto-optimization enabled for ${collectionName} with fields:`, fields);
+    // console.log(`Firebase auto-optimization enabled for ${collectionName} with fields:`, fields);
 
     return {
       success: true,
@@ -594,7 +594,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     if (!this.isOfflineEnabled) {
       // Firebase Firestore has automatic offline support
       this.isOfflineEnabled = true;
-      console.log('Firebase offline persistence enabled');
+      // console.log('Firebase offline persistence enabled');
     }
   }
 
@@ -646,7 +646,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
     };
   }
 
-  private mapOperator(operator: WhereCondition['operator']): any {
+  private mapOperator(operator: WhereCondition['operator']): unknown {
     const operatorMap = {
       eq: '==',
       ne: '!=',

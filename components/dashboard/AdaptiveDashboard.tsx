@@ -28,6 +28,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/contexts/AuthContext';
+import { logError, logInfo, measurePerformance } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 interface DashboardStats {
@@ -64,6 +65,12 @@ interface AdaptiveDashboardProps {
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
+
+  logInfo('AdaptiveDashboard component initialized', {
+    userId: user?.uid || 'no-user',
+    timestamp: new Date().toISOString(),
+  });
+
   const [stats, setStats] = useState<DashboardStats>({
     totalStudyTime: 0,
     completedSessions: 0,
@@ -96,44 +103,61 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
   useEffect(() => {
     const loadDashboardData = async () => {
-      try {
-        // Mock data - replace with actual Firebase calls
-        const mockStats: DashboardStats = {
-          totalStudyTime: 165,
-          completedSessions: 52,
-          currentStreak: 8,
-          weeklyGoalProgress: 78,
-          activeMissions: 4,
-          completedTopics: 18,
-        };
+      await measurePerformance('loadDashboardData', async () => {
+        logInfo('Loading dashboard data', {
+          userId: user?.uid || 'no-user',
+          timeOfDay,
+        });
 
-        const mockAchievements: Achievement[] = [
-          {
-            id: '1',
-            title: 'Week Warrior',
-            description: 'Completed 7 consecutive days of study',
-            icon: Flame,
-            earnedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-            rarity: 'rare',
-          },
-          {
-            id: '2',
-            title: 'First Steps',
-            description: 'Completed your first study session',
-            icon: Award,
-            earnedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-            rarity: 'common',
-          },
-        ];
+        try {
+          // Mock data - replace with actual Firebase calls
+          const mockStats: DashboardStats = {
+            totalStudyTime: 165,
+            completedSessions: 52,
+            currentStreak: 8,
+            weeklyGoalProgress: 78,
+            activeMissions: 4,
+            completedTopics: 18,
+          };
 
-        setStats(mockStats);
-        setRecentAchievements(mockAchievements);
-        setMotivationalMessage(getMotivationalMessage(timeOfDay, mockStats.currentStreak));
-      } catch (error) {
-        console.error('Error loading dashboard data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+          const mockAchievements: Achievement[] = [
+            {
+              id: '1',
+              title: 'Week Warrior',
+              description: 'Completed 7 consecutive days of study',
+              icon: Flame,
+              earnedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+              rarity: 'rare',
+            },
+            {
+              id: '2',
+              title: 'First Steps',
+              description: 'Completed your first study session',
+              icon: Award,
+              earnedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+              rarity: 'common',
+            },
+          ];
+
+          setStats(mockStats);
+          setRecentAchievements(mockAchievements);
+          setMotivationalMessage(getMotivationalMessage(timeOfDay, mockStats.currentStreak));
+
+          logInfo('Dashboard data loaded successfully', {
+            userId: user?.uid || 'no-user',
+            stats: mockStats,
+            achievementCount: mockAchievements.length,
+            timeOfDay,
+          });
+        } catch (error) {
+          logError('Error loading dashboard data', {
+            userId: user?.uid || 'no-user',
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      });
     };
 
     loadDashboardData();

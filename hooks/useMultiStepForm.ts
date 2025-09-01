@@ -165,19 +165,19 @@ export const useMultiStepForm = (config: MultiStepFormConfig): UseMultiStepFormR
     (step: number) => {
       // Validate step bounds
       if (step < 1 || step > totalSteps) {
-        console.warn(`Invalid step: ${step}. Must be between 1 and ${totalSteps}`);
+        // console.warn(`Invalid step: ${step}. Must be between 1 and ${totalSteps}`);
         return;
       }
 
       // Check if backward navigation is allowed
       if (step < currentStep && !allowBackward) {
-        console.warn('Backward navigation is not allowed');
+        // console.warn('Backward navigation is not allowed');
         return;
       }
 
       // Check if forward navigation without validation is allowed
       if (step > currentStep && !allowSkipValidation) {
-        console.warn('Forward navigation without validation is not allowed');
+        // console.warn('Forward navigation without validation is not allowed');
         return;
       }
 
@@ -261,7 +261,7 @@ export const useFormValidation = <T = any>(config: UseFormValidationConfig<T>) =
     async (step: number): Promise<boolean> => {
       const validator = validationSchemas[step];
       if (!validator) {
-        console.warn(`No validation schema found for step ${step}`);
+        // console.warn(`No validation schema found for step ${step}`);
         return true;
       }
 

@@ -34,7 +34,7 @@ export interface NotificationPayload {
   icon?: string;
   badge?: string;
   image?: string;
-  data?: any;
+  data?: unknown;
   actions?: Array<{
     action: string;
     title: string;
@@ -51,7 +51,7 @@ export interface StudyReminder {
   scheduledTime: Date;
   title: string;
   body: string;
-  data?: any;
+  data?: unknown;
 }
 
 class PushNotificationService {
@@ -79,7 +79,7 @@ class PushNotificationService {
         userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
       });
 
-      console.log('Push subscription saved for user:', userId);
+      // console.log('Push subscription saved for user:', userId);
       return true;
     } catch (error) {
       console.error('Failed to save push subscription:', error);
@@ -129,13 +129,13 @@ class PushNotificationService {
       const subscription = await this.getUserSubscription(userId);
 
       if (!subscription) {
-        console.log('No active subscription found for user:', userId);
+        // console.log('No active subscription found for user:', userId);
         return false;
       }
 
       // In a real implementation, this would use a server-side push service
       // For now, we'll simulate the notification
-      console.log('Sending notification to user:', userId, payload);
+      // console.log('Sending notification to user:', userId, payload);
 
       // Store notification in Firestore for tracking
       await this.logNotification(userId, payload);

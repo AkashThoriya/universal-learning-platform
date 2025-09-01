@@ -133,7 +133,7 @@ export function PWAInstallBanner({
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <AlertDescription className="text-blue-800 font-medium">
-                Install Exam Strategy Engine for a better experience
+                🚀 Get faster access and study offline - Install our app!
               </AlertDescription>
             </div>
             <div className="flex items-center gap-2 ml-4">
@@ -164,11 +164,11 @@ export function PWAInstallBanner({
             <div className="mx-auto mb-4 p-3 rounded-full bg-blue-100">
               {platform === 'ios' ? (
                 <Smartphone className="h-6 w-6 text-blue-600" />
-              ) : platform === 'desktop' ? (
+              ) : (platform === 'desktop' ? (
                 <Monitor className="h-6 w-6 text-blue-600" />
               ) : (
                 <Download className="h-6 w-6 text-blue-600" />
-              )}
+              ))}
             </div>
             <CardTitle className="text-xl">Install Our App</CardTitle>
             <CardDescription>Get the best experience with our Progressive Web App</CardDescription>
@@ -244,9 +244,9 @@ export function PWAInstallBanner({
 
             <div className="flex-1 space-y-3">
               <div>
-                <h3 className="font-semibold text-blue-900">Install for Better Experience</h3>
+                <h3 className="font-semibold text-blue-900">📱 Install Our App</h3>
                 <p className="text-blue-700 text-sm mt-1">
-                  Add Exam Strategy Engine to your home screen for faster access, offline study, and push notifications.
+                  Get instant access, study offline, and receive smart notifications on your home screen.
                 </p>
               </div>
 

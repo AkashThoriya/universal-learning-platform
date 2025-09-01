@@ -11,6 +11,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { z } from 'zod';
 
+import { logInfo, logger } from '@/lib/logger';
+
 /**
  * Field error structure
  */
@@ -45,7 +47,7 @@ export interface UseFormConfig<T> {
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
   debounceMs?: number;
-  onFormEvent?: (event: FormEvent, data: any) => void;
+  onFormEvent?: (event: FormEvent, data: unknown) => void;
 }
 
 /**
@@ -99,6 +101,15 @@ export function useForm<T extends Record<string, any>>(config: UseFormConfig<T>)
     onFormEvent,
   } = config;
 
+  logInfo('useForm hook initialized', {
+    storageKey,
+    persistData,
+    validateOnChange,
+    validateOnBlur,
+    hasValidationSchema: !!validationSchema,
+    debounceMs,
+  });
+
   // State management
   const [data, setDataState] = useState<T>(() => {
     if (persistData && typeof window !== 'undefined') {
@@ -106,11 +117,18 @@ export function useForm<T extends Record<string, any>>(config: UseFormConfig<T>)
         const saved = localStorage.getItem(storageKey);
         if (saved) {
           const parsed = JSON.parse(saved);
+          logInfo('Form data restored from localStorage', {
+            storageKey,
+            restoredFields: Object.keys(parsed),
+          });
           onFormEvent?.('data_restore', parsed);
           return { ...initialData, ...parsed };
         }
       } catch (error) {
-        console.warn('Failed to restore form data:', error);
+        logger.warn('Failed to restore form data', {
+          storageKey,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        });
       }
     }
     return initialData;
@@ -133,8 +151,8 @@ export function useForm<T extends Record<string, any>>(config: UseFormConfig<T>)
       try {
         localStorage.setItem(storageKey, JSON.stringify(data));
         onFormEvent?.('data_persist', data);
-      } catch (error) {
-        console.warn('Failed to persist form data:', error);
+      } catch (_error) {
+        // console.warn('Failed to persist form data:', error);
       }
     }
   }, [data, persistData, storageKey, onFormEvent]);

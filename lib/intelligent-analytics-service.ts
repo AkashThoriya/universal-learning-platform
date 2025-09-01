@@ -120,7 +120,7 @@ export interface AnalyticsEventData {
   improvementAreas?: string[];
 
   // Custom data (extensible)
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -731,9 +731,9 @@ export class IntelligentAnalyticsService {
       sessionId: this.getSessionId(),
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
       learningContext: {
-        currentStreak: (userData as any)?.stats?.currentStreak || 0,
-        totalStudyTime: (userData as any)?.stats?.totalStudyHours || 0,
-        preferredStudyTime: (userData as any)?.preferences?.preferredStudyTime || 'morning',
+        currentStreak: (userData as any)?.stats?.currentStreak ?? 0,
+        totalStudyTime: (userData as any)?.stats?.totalStudyHours ?? 0,
+        preferredStudyTime: (userData as any)?.preferences?.preferredStudyTime ?? 'morning',
       },
       ...partial,
     };

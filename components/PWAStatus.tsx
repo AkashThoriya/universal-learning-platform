@@ -122,7 +122,7 @@ export function PWAStatus() {
     return (
       window.matchMedia('(display-mode: standalone)').matches ||
       window.matchMedia('(display-mode: fullscreen)').matches ||
-      // @ts-ignore
+      // @ts-ignore: navigator.standalone is an iOS-specific property not in TypeScript types
       window.navigator.standalone === true
     );
   };
@@ -144,7 +144,7 @@ export function PWAStatus() {
         active: !!registration.active,
         waiting: !!registration.waiting,
         scope: registration.scope,
-        scriptURL: registration.active?.scriptURL || '',
+        scriptURL: registration.active?.scriptURL ?? '',
         updateFound: !!registration.waiting,
       };
     } catch (error) {

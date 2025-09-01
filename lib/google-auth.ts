@@ -140,7 +140,7 @@ function getGoogleAuthErrorMessage(error: AuthError): string {
 export async function signInWithGoogle(): Promise<GoogleAuthResult> {
   try {
     // Show loading state or spinner here if needed
-    console.log('Initiating Google sign-in...');
+    // console.log('Initiating Google sign-in...');
 
     const result: UserCredential = await signInWithPopup(auth, googleProvider);
     const { user } = result;
@@ -153,7 +153,7 @@ export async function signInWithGoogle(): Promise<GoogleAuthResult> {
       };
     }
 
-    console.log('Google sign-in successful:', user.uid);
+    // console.log('Google sign-in successful:', user.uid);
 
     // Check if this is a new user
     const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -196,18 +196,18 @@ async function saveGoogleUserData(user: any, isNewUser: boolean): Promise<Google
 
   const userData: GoogleUserData = {
     uid: user.uid,
-    email: user.email || '',
-    displayName: user.displayName || 'Google User',
+    email: user.email ?? '',
+    displayName: user.displayName ?? 'Google User',
     photoURL: user.photoURL,
     provider: 'google',
     createdAt: isNewUser ? now : (await getExistingUserData(user.uid))?.createdAt || now,
     updatedAt: now,
     lastSignInAt: now,
-    onboardingComplete: isNewUser ? false : (await getExistingUserData(user.uid))?.onboardingComplete || false,
-    emailVerified: user.emailVerified || false,
+    onboardingComplete: isNewUser ? false : ((await getExistingUserData(user.uid))?.onboardingComplete ?? false),
+    emailVerified: user.emailVerified ?? false,
     metadata: {
-      creationTime: user.metadata.creationTime || new Date().toISOString(),
-      lastSignInTime: user.metadata.lastSignInTime || new Date().toISOString(),
+      creationTime: user.metadata.creationTime ?? new Date().toISOString(),
+      lastSignInTime: user.metadata.lastSignInTime ?? new Date().toISOString(),
     },
     stats: isNewUser
       ? {
@@ -233,7 +233,7 @@ async function saveGoogleUserData(user: any, isNewUser: boolean): Promise<Google
   // Save to Firestore
   await setDoc(doc(db, 'users', user.uid), userData, { merge: true });
 
-  console.log(`User data ${isNewUser ? 'created' : 'updated'} for:`, user.uid);
+  // console.log(`User data ${isNewUser ? 'created' : 'updated'} for:`, user.uid);
 
   return userData;
 }
@@ -325,12 +325,12 @@ export function getGoogleAuthProvider(): GoogleAuthProvider {
  */
 export function logGoogleAuthConfig(): void {
   if (process.env.NODE_ENV === 'development') {
-    console.log('Google Auth Configuration:', {
-      available: isGoogleAuthAvailable(),
-      popupSupported: isPopupSupported(),
-      authDomain: auth?.app.options.authDomain,
-      providerId: googleProvider.providerId,
-    });
+    // console.log('Google Auth Configuration:', {
+    //   available: isGoogleAuthAvailable(),
+    //   popupSupported: isPopupSupported(),
+    //   authDomain: auth?.app.options.authDomain,
+    //   providerId: googleProvider.providerId,
+    // });
   }
 }
 

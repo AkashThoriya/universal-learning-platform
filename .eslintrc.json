@@ -10,6 +10,58 @@
     "project": "./tsconfig.json"
   },
   "plugins": ["@typescript-eslint", "react-hooks", "jsx-a11y", "import", "prettier"],
+  "overrides": [
+    {
+      "files": ["*.js", "*.mjs", "*.jsx"],
+      "parser": "espree",
+      "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+      },
+      "extends": ["eslint:recommended"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/prefer-optional-chain": "off",
+        "@typescript-eslint/prefer-nullish-coalescing": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unnecessary-type-assertion": "off",
+        "import/no-anonymous-default-export": "off",
+        "no-magic-numbers": "off"
+      }
+    },
+    {
+      "files": ["pages/**/*", "app/**/*", "src/pages/**/*"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": ["*.config.js", "*.config.ts", "tailwind.config.ts", "next.config.js"],
+      "rules": {
+        "import/no-anonymous-default-export": "off",
+        "no-magic-numbers": "off",
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    },
+    {
+      "files": ["types/**/*", "**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-magic-numbers": "off",
+        "@typescript-eslint/no-empty-interface": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "rules": {
+        "no-magic-numbers": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-console": "off"
+      }
+    }
+  ],
   "rules": {
     // React & JSX Best Practices
     "react/no-unescaped-entities": "off",
@@ -217,44 +269,5 @@
     },
     "import/extensions": [".js", ".jsx", ".ts", ".tsx"]
   },
-  "overrides": [
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {
-        "@typescript-eslint/no-var-requires": "off",
-        "@typescript-eslint/explicit-function-return-type": "off"
-      }
-    },
-    {
-      "files": ["pages/**/*", "app/**/*", "src/pages/**/*"],
-      "rules": {
-        "import/no-default-export": "off"
-      }
-    },
-    {
-      "files": ["*.config.js", "*.config.ts", "tailwind.config.ts", "next.config.js"],
-      "rules": {
-        "import/no-anonymous-default-export": "off",
-        "no-magic-numbers": "off",
-        "@typescript-eslint/no-var-requires": "off"
-      }
-    },
-    {
-      "files": ["types/**/*", "**/*.d.ts"],
-      "rules": {
-        "@typescript-eslint/no-explicit-any": "off",
-        "no-magic-numbers": "off",
-        "@typescript-eslint/no-empty-interface": "off"
-      }
-    },
-    {
-      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
-      "rules": {
-        "no-magic-numbers": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "no-console": "off"
-      }
-    }
-  ],
   "ignorePatterns": ["node_modules/", ".next/", "out/", "dist/", "build/", "coverage/", "*.min.js", "*.bundle.js"]
 }

@@ -210,7 +210,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
                 </div>
               )}
             </div>
-            <Progress value={summaryMetrics?.examPerformance.current || 0} className="h-2" />
+            <Progress value={summaryMetrics?.examPerformance.current ?? 0} className="h-2" />
           </div>
 
           <div className="space-y-2">
@@ -224,7 +224,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
                 {summaryMetrics?.learningEfficiency.crossTrackBenefits} insights
               </Badge>
             </div>
-            <Progress value={summaryMetrics?.learningEfficiency.current || 0} className="h-2" />
+            <Progress value={summaryMetrics?.learningEfficiency.current ?? 0} className="h-2" />
           </div>
         </div>
 

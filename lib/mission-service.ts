@@ -553,11 +553,11 @@ export class MissionGenerationService {
       frequency: template.frequency,
       title: template.name,
       description: template.description,
-      difficulty: request.difficulty || 'intermediate',
-      estimatedDuration: request.durationOverride || template.estimatedDuration,
+      difficulty: request.difficulty ?? 'intermediate',
+      estimatedDuration: request.durationOverride ?? template.estimatedDuration,
       content,
       status: 'not_started',
-      scheduledAt: request.schedulingOptions?.preferredStartTime || now,
+      scheduledAt: request.schedulingOptions?.preferredStartTime ?? now,
       deadline,
       progress: {
         completionPercentage: 0,
@@ -584,7 +584,10 @@ export class MissionGenerationService {
   /**
    * Generate mission content based on template
    */
-  private async generateMissionContent(template: MissionTemplate, _request: MissionGenerationRequest): Promise<any> {
+  private async generateMissionContent(
+    template: MissionTemplate,
+    _request: MissionGenerationRequest
+  ): Promise<unknown> {
     // Mock content generation - in production this would:
     // 1. Query question/problem databases
     // 2. Apply difficulty filters
@@ -726,11 +729,11 @@ export class MissionGenerationService {
   /**
    * Calculate total steps for mission content
    */
-  private calculateTotalSteps(content: any): number {
+  private calculateTotalSteps(content: unknown): number {
     if (content.examContent) {
-      return content.examContent.questions?.length || 10;
+      return content.examContent.questions?.length ?? 10;
     } else if (content.techContent) {
-      return content.techContent.deliverables?.length || 3;
+      return content.techContent.deliverables?.length ?? 3;
     }
     return 1;
   }
@@ -814,7 +817,7 @@ export class MissionProgressService {
   /**
    * Complete mission and generate results
    */
-  async completeMission(_missionId: string, _finalSubmissions: any[]): Promise<MissionApiResponse<MissionResults>> {
+  async completeMission(_missionId: string, _finalSubmissions: unknown[]): Promise<MissionApiResponse<MissionResults>> {
     try {
       // Extract userId from mission ID or get it from context
       // Temporary implementation - in production, include userId in method signature
@@ -834,7 +837,7 @@ export class MissionProgressService {
   async completeMissionWithUser(
     userId: string,
     missionId: string,
-    finalSubmissions: any[]
+    finalSubmissions: unknown[]
   ): Promise<MissionApiResponse<MissionResults>> {
     try {
       // Calculate results based on submissions
@@ -869,7 +872,7 @@ export class MissionProgressService {
   /**
    * Calculate mission results
    */
-  private async calculateMissionResults(_missionId: string, _submissions: any[]): Promise<MissionResults> {
+  private async calculateMissionResults(_missionId: string, _submissions: unknown[]): Promise<MissionResults> {
     // Mock calculation - in production this would:
     // 1. Grade submissions against correct answers/criteria
     // 2. Calculate performance metrics
@@ -1322,7 +1325,7 @@ export class MissionService {
   async completeMission(
     userId: string,
     missionId: string,
-    submissions: any[]
+    submissions: unknown[]
   ): Promise<MissionApiResponse<MissionResults>> {
     return this.progressService.completeMissionWithUser(userId, missionId, submissions);
   }

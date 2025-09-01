@@ -55,7 +55,7 @@ export default function SubjectsPage() {
           {/* Quick Micro-Learning */}
           <div className="max-w-2xl mx-auto">
             <QuickSessionLauncher
-              userId={user?.uid || ''}
+              userId={user?.uid ?? ''}
               onStartSession={(subjectId, topicId, track, duration) => {
                 window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
               }}

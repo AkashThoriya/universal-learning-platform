@@ -39,7 +39,7 @@ export class AchievementService {
    */
   async getAchievements(category?: AchievementCategory): Promise<Result<Achievement[]>> {
     try {
-      const queryOptions: any = {
+      const queryOptions: unknown = {
         where: [{ field: 'isActive', operator: '==', value: true }],
         orderBy: [
           { field: 'category', direction: 'asc' as const },
@@ -232,7 +232,7 @@ export class AchievementService {
 
         case 'skill_mastery':
           // Check if user has mastered required skills
-          const requiredSkills = requirement.conditions?.subjects || [];
+          const requiredSkills = requirement.conditions?.subjects ?? [];
           const examSkills = userProgress.trackProgress.exam.masteredSkills;
           const techSkills = userProgress.trackProgress.course_tech.masteredSkills;
           const allMasteredSkills = [...examSkills, ...techSkills];
@@ -292,7 +292,7 @@ export class AchievementService {
       {
         name?: string;
         description?: string;
-        requirements?: Partial<any>[];
+        requirements?: Partial<unknown>[];
       }
     > = {
       student: {},

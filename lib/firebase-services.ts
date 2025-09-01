@@ -84,7 +84,7 @@ class _RetryService {
         const jitteredDelay = delay + Math.random() * 1000;
 
         if (process.env.NODE_ENV === 'development') {
-          console.warn(`Retry attempt ${attempt + 1}/${opts.maxRetries} after ${jitteredDelay}ms delay`);
+          // console.warn(`Retry attempt ${attempt + 1}/${opts.maxRetries} after ${jitteredDelay}ms delay`);
         }
 
         await new Promise(resolve => setTimeout(resolve, jitteredDelay));
@@ -94,7 +94,7 @@ class _RetryService {
     throw lastError!;
   }
 
-  private static isNonRetryableError(error: any): boolean {
+  private static isNonRetryableError(error: unknown): boolean {
     // Don't retry on permission errors, invalid arguments, etc.
     const nonRetryableCodes = [
       'permission-denied',
@@ -115,7 +115,7 @@ class _RetryService {
 // ============================================================================
 
 class CacheService {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
   private cleanupInterval: NodeJS.Timeout;
 
   constructor() {
@@ -330,7 +330,7 @@ class FirebaseService {
   async queryCollection<T>(
     collectionPath: string,
     options: {
-      where?: { field: string; operator: any; value: any }[];
+      where?: { field: string; operator: unknown; value: unknown }[];
       orderBy?: { field: string; direction: 'asc' | 'desc' }[];
       limit?: number;
       useCache?: boolean;
@@ -407,7 +407,7 @@ class FirebaseService {
       type: 'set' | 'update' | 'delete';
       path: string;
       docId: string;
-      data?: any;
+      data?: unknown;
     }>
   ): Promise<Result<void>> {
     try {
@@ -487,7 +487,7 @@ serviceContainer.register('CacheService', firebaseService.cache);
  * Enhanced user operations
  */
 export const userService = {
-  async create(userId: string, userData: any): Promise<Result<void>> {
+  async create(userId: string, userData: unknown): Promise<Result<void>> {
     const userDoc = {
       ...userData,
       userId,
@@ -510,11 +510,11 @@ export const userService = {
     return firebaseService.getDocument('users', userId);
   },
 
-  async update(userId: string, updates: any): Promise<Result<void>> {
+  async update(userId: string, updates: unknown): Promise<Result<void>> {
     return firebaseService.updateDocument('users', userId, updates);
   },
 
-  async getProgress(userId: string): Promise<Result<any[]>> {
+  async getProgress(userId: string): Promise<Result<unknown[]>> {
     return firebaseService.queryCollection(`users/${userId}/progress`, {
       orderBy: [{ field: 'lastStudied', direction: 'desc' }],
       limit: 100,
@@ -527,7 +527,7 @@ export const userService = {
       return userResult;
     }
 
-    return createSuccess(userResult.data?.stats || null);
+    return createSuccess(userResult.data?.stats ?? null);
   },
 };
 
@@ -535,7 +535,7 @@ export const userService = {
  * Enhanced daily log operations
  */
 export const dailyLogService = {
-  async create(userId: string, logData: any): Promise<Result<string>> {
+  async create(userId: string, logData: unknown): Promise<Result<string>> {
     const logId = doc(collection(db, `users/${userId}/dailyLogs`)).id;
     const dailyLog = {
       ...logData,
@@ -548,7 +548,7 @@ export const dailyLogService = {
     return result.success ? createSuccess(logId) : result;
   },
 
-  async getLogs(userId: string, days = 30): Promise<Result<any[]>> {
+  async getLogs(userId: string, days = 30): Promise<Result<unknown[]>> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
@@ -564,7 +564,7 @@ export const dailyLogService = {
  * Enhanced progress tracking operations
  */
 export const progressService = {
-  async updateTopic(userId: string, topicId: string, progress: any): Promise<Result<void>> {
+  async updateTopic(userId: string, topicId: string, progress: unknown): Promise<Result<void>> {
     const progressData = {
       ...progress,
       topicId,
@@ -578,7 +578,7 @@ export const progressService = {
     return firebaseService.getDocument(`users/${userId}/progress`, topicId);
   },
 
-  async getAllProgress(userId: string): Promise<Result<any[]>> {
+  async getAllProgress(userId: string): Promise<Result<unknown[]>> {
     return firebaseService.queryCollection(`users/${userId}/progress`, {
       orderBy: [{ field: 'lastStudied', direction: 'desc' }],
     });
@@ -589,7 +589,7 @@ export const progressService = {
  * Enhanced revision queue operations
  */
 export const revisionService = {
-  async getQueue(userId: string): Promise<Result<any[]>> {
+  async getQueue(userId: string): Promise<Result<unknown[]>> {
     // This will use the existing getRevisionQueue logic but wrapped in service pattern
     const progressResult = await firebaseService.queryCollection(`users/${userId}/progress`, {
       where: [{ field: 'nextRevision', operator: '<=', value: Timestamp.fromDate(new Date()) }],
@@ -607,7 +607,7 @@ export const revisionService = {
 
     // Get current revision count
     const currentProgress = await firebaseService.getDocument(`users/${userId}/progress`, topicId);
-    const currentRevisionCount = (currentProgress.data as any)?.revisionCount || 0;
+    const currentRevisionCount = (currentProgress.data as any)?.revisionCount ?? 0;
 
     return firebaseService.updateDocument(`users/${userId}/progress`, topicId, {
       lastRevised: now,
@@ -622,7 +622,7 @@ export const revisionService = {
  * Enhanced mock test operations
  */
 export const mockTestService = {
-  async create(userId: string, testData: any): Promise<Result<string>> {
+  async create(userId: string, testData: unknown): Promise<Result<string>> {
     const testId = doc(collection(db, `users/${userId}/logs_mocks`)).id;
     const mockTest = {
       ...testData,
@@ -635,7 +635,7 @@ export const mockTestService = {
     return result.success ? createSuccess(testId) : result;
   },
 
-  async getTests(userId: string, limit = 10): Promise<Result<any[]>> {
+  async getTests(userId: string, limit = 10): Promise<Result<unknown[]>> {
     return firebaseService.queryCollection(`users/${userId}/logs_mocks`, {
       orderBy: [{ field: 'date', direction: 'desc' }],
       limit,
@@ -651,7 +651,7 @@ export const mockTestService = {
  * Enhanced insights service
  */
 export const insightsService = {
-  async generate(_userId: string): Promise<Result<any[]>> {
+  async generate(_userId: string): Promise<Result<unknown[]>> {
     // This would implement the generateStudyInsights logic
     // For now, return empty array as placeholder
     return createSuccess([]);
@@ -662,13 +662,13 @@ export const insightsService = {
  * Enhanced mission system operations
  */
 export const missionFirebaseService = {
-  async saveTemplate(userId: string, template: any): Promise<Result<void>> {
+  async saveTemplate(userId: string, template: unknown): Promise<Result<void>> {
     try {
-      const templateId = template.id || doc(collection(db, `users/${userId}/mission-templates`)).id;
+      const templateId = template.id ?? doc(collection(db, `users/${userId}/mission-templates`)).id;
       return firebaseService.setDocument(`users/${userId}/mission-templates`, templateId, {
         ...template,
         id: templateId,
-        createdAt: template.createdAt || Timestamp.fromDate(new Date()),
+        createdAt: template.createdAt ?? Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       });
     } catch (error) {
@@ -676,9 +676,9 @@ export const missionFirebaseService = {
     }
   },
 
-  async getTemplates(userId: string, track?: string): Promise<Result<any[]>> {
+  async getTemplates(userId: string, track?: string): Promise<Result<unknown[]>> {
     try {
-      const options: any = {
+      const options: unknown = {
         useCache: true,
         cacheTTL: 600000, // 10 minutes
       };
@@ -693,13 +693,13 @@ export const missionFirebaseService = {
     }
   },
 
-  async saveActiveMission(userId: string, mission: any): Promise<Result<string>> {
+  async saveActiveMission(userId: string, mission: unknown): Promise<Result<string>> {
     try {
-      const missionId = mission.id || doc(collection(db, `users/${userId}/active-missions`)).id;
+      const missionId = mission.id ?? doc(collection(db, `users/${userId}/active-missions`)).id;
       const missionData = {
         ...mission,
         id: missionId,
-        createdAt: mission.createdAt || Timestamp.fromDate(new Date()),
+        createdAt: mission.createdAt ?? Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       };
 
@@ -711,7 +711,7 @@ export const missionFirebaseService = {
     }
   },
 
-  async getActiveMissions(userId: string): Promise<Result<any[]>> {
+  async getActiveMissions(userId: string): Promise<Result<unknown[]>> {
     try {
       return firebaseService.queryCollection(`users/${userId}/active-missions`, {
         where: [{ field: 'status', operator: 'in', value: ['not_started', 'in_progress'] }],
@@ -724,7 +724,7 @@ export const missionFirebaseService = {
     }
   },
 
-  async updateMissionProgress(userId: string, missionId: string, progress: any): Promise<Result<void>> {
+  async updateMissionProgress(userId: string, missionId: string, progress: unknown): Promise<Result<void>> {
     try {
       const status = progress.completionPercentage >= 100 ? 'completed' : 'in_progress';
       return firebaseService.updateDocument(`users/${userId}/active-missions`, missionId, {
@@ -737,7 +737,7 @@ export const missionFirebaseService = {
     }
   },
 
-  async completeMission(userId: string, missionId: string, results: any): Promise<Result<void>> {
+  async completeMission(userId: string, missionId: string, results: unknown): Promise<Result<void>> {
     try {
       const mission = await firebaseService.getDocument(`users/${userId}/active-missions`, missionId);
       if (!mission.success || !mission.data) {
@@ -780,7 +780,7 @@ export const missionFirebaseService = {
     }
   },
 
-  async getMissionHistory(userId: string, limit = 20): Promise<Result<any[]>> {
+  async getMissionHistory(userId: string, limit = 20): Promise<Result<unknown[]>> {
     try {
       return firebaseService.queryCollection(`users/${userId}/mission-history`, {
         orderBy: [{ field: 'completedAt', direction: 'desc' }],
@@ -807,7 +807,7 @@ export const missionFirebaseService = {
     }
   },
 
-  async generateMissionAnalytics(userId: string, period: { startDate: Date; endDate: Date }): Promise<Result<any>> {
+  async generateMissionAnalytics(userId: string, period: { startDate: Date; endDate: Date }): Promise<Result<unknown>> {
     try {
       const historyResult = await this.getMissionHistory(userId, 100);
 
@@ -816,7 +816,7 @@ export const missionFirebaseService = {
       }
 
       const missions = historyResult.data;
-      const periodMissions = missions.filter((mission: any) => {
+      const periodMissions = missions.filter((mission: unknown) => {
         if (!mission.completedAt) {
           return false;
         }
@@ -828,10 +828,10 @@ export const missionFirebaseService = {
         totalMissions: periodMissions.length,
         averageScore:
           periodMissions.length > 0
-            ? periodMissions.reduce((sum: number, m: any) => sum + (m.results?.finalScore || 0), 0) /
+            ? periodMissions.reduce((sum: number, m: unknown) => sum + (m.results?.finalScore ?? 0), 0) /
               periodMissions.length
             : 0,
-        totalTimeSpent: periodMissions.reduce((sum: number, m: any) => sum + (m.results?.totalTime || 0), 0),
+        totalTimeSpent: periodMissions.reduce((sum: number, m: unknown) => sum + (m.results?.totalTime ?? 0), 0),
         trackBreakdown: this.calculateTrackBreakdown(periodMissions),
         difficultyBreakdown: this.calculateDifficultyBreakdown(periodMissions),
         trends: this.calculateTrends(periodMissions),
@@ -844,9 +844,9 @@ export const missionFirebaseService = {
     }
   },
 
-  calculateTrackBreakdown(missions: any[]): any {
+  calculateTrackBreakdown(missions: unknown[]): unknown {
     const breakdown = { exam: 0, course_tech: 0 };
-    missions.forEach((mission: any) => {
+    missions.forEach((mission: unknown) => {
       if (mission.track && breakdown.hasOwnProperty(mission.track)) {
         breakdown[mission.track as keyof typeof breakdown]++;
       }
@@ -854,9 +854,9 @@ export const missionFirebaseService = {
     return breakdown;
   },
 
-  calculateDifficultyBreakdown(missions: any[]): any {
+  calculateDifficultyBreakdown(missions: unknown[]): unknown {
     const breakdown = { beginner: 0, intermediate: 0, advanced: 0, expert: 0 };
-    missions.forEach((mission: any) => {
+    missions.forEach((mission: unknown) => {
       if (mission.difficulty && breakdown.hasOwnProperty(mission.difficulty)) {
         breakdown[mission.difficulty as keyof typeof breakdown]++;
       }
@@ -864,14 +864,14 @@ export const missionFirebaseService = {
     return breakdown;
   },
 
-  calculateTrends(missions: any[]): any[] {
+  calculateTrends(missions: unknown[]): unknown[] {
     return missions
-      .filter((mission: any) => mission.completedAt && mission.results)
-      .sort((a: any, b: any) => a.completedAt.toDate().getTime() - b.completedAt.toDate().getTime())
-      .map((mission: any) => ({
+      .filter((mission: unknown) => mission.completedAt && mission.results)
+      .sort((a: unknown, b: unknown) => a.completedAt.toDate().getTime() - b.completedAt.toDate().getTime())
+      .map((mission: unknown) => ({
         date: mission.completedAt.toDate(),
-        score: mission.results?.finalScore || 0,
-        timeSpent: mission.results?.totalTime || 0,
+        score: mission.results?.finalScore ?? 0,
+        timeSpent: mission.results?.totalTime ?? 0,
       }));
   },
 
@@ -889,7 +889,7 @@ export const missionFirebaseService = {
  * Enhanced micro-learning system operations
  */
 export const microLearningFirebaseService = {
-  async saveSession(userId: string, session: any): Promise<Result<string>> {
+  async saveSession(userId: string, session: unknown): Promise<Result<string>> {
     const sessionId = doc(collection(db, `users/${userId}/micro-learning-sessions`)).id;
     const sessionData = {
       ...session,
@@ -903,7 +903,7 @@ export const microLearningFirebaseService = {
     return result.success ? createSuccess(sessionId) : result;
   },
 
-  async getSessionHistory(userId: string, limit = 20): Promise<Result<any[]>> {
+  async getSessionHistory(userId: string, limit = 20): Promise<Result<unknown[]>> {
     return firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
       orderBy: [{ field: 'createdAt', direction: 'desc' }],
       limit,
@@ -912,7 +912,7 @@ export const microLearningFirebaseService = {
     });
   },
 
-  async saveRecommendations(userId: string, recommendations: any[]): Promise<Result<void>> {
+  async saveRecommendations(userId: string, recommendations: unknown[]): Promise<Result<void>> {
     const recommendationsData = {
       recommendations,
       generatedAt: Timestamp.fromDate(new Date()),
@@ -922,7 +922,7 @@ export const microLearningFirebaseService = {
     return firebaseService.setDocument(`users/${userId}/micro-learning`, 'recommendations', recommendationsData);
   },
 
-  async getRecommendations(userId: string): Promise<Result<any[]>> {
+  async getRecommendations(userId: string): Promise<Result<unknown[]>> {
     const result = await firebaseService.getDocument(
       `users/${userId}/micro-learning`,
       'recommendations',
@@ -944,24 +944,24 @@ export const microLearningFirebaseService = {
       }
     }
 
-    return createSuccess(data.recommendations || []);
+    return createSuccess(data.recommendations ?? []);
   },
 
-  async updateSessionProgress(userId: string, sessionId: string, progress: any): Promise<Result<void>> {
+  async updateSessionProgress(userId: string, sessionId: string, progress: unknown): Promise<Result<void>> {
     return firebaseService.updateDocument(`users/${userId}/micro-learning-sessions`, sessionId, {
       progress,
       updatedAt: Timestamp.fromDate(new Date()),
     });
   },
 
-  async saveUserPreferences(userId: string, preferences: any): Promise<Result<void>> {
+  async saveUserPreferences(userId: string, preferences: unknown): Promise<Result<void>> {
     return firebaseService.setDocument(`users/${userId}/micro-learning`, 'preferences', {
       ...preferences,
       updatedAt: Timestamp.fromDate(new Date()),
     });
   },
 
-  async getUserPreferences(userId: string): Promise<Result<any>> {
+  async getUserPreferences(userId: string): Promise<Result<unknown>> {
     return firebaseService.getDocument(
       `users/${userId}/micro-learning`,
       'preferences',
@@ -969,7 +969,7 @@ export const microLearningFirebaseService = {
     );
   },
 
-  async getSessionAnalytics(userId: string, period: { startDate: Date; endDate: Date }): Promise<Result<any>> {
+  async getSessionAnalytics(userId: string, period: { startDate: Date; endDate: Date }): Promise<Result<unknown>> {
     const sessionsResult = await firebaseService.queryCollection(`users/${userId}/micro-learning-sessions`, {
       where: [
         { field: 'createdAt', operator: '>=', value: Timestamp.fromDate(period.startDate) },
@@ -986,14 +986,14 @@ export const microLearningFirebaseService = {
     const analytics = {
       period,
       totalSessions: sessions.length,
-      totalTimeSpent: sessions.reduce((sum: number, s: any) => sum + (s.duration || 0), 0),
+      totalTimeSpent: sessions.reduce((sum: number, s: unknown) => sum + (s.duration ?? 0), 0),
       averageAccuracy:
         sessions.length > 0
-          ? sessions.reduce((sum: number, s: any) => sum + (s.progress?.accuracy || 0), 0) / sessions.length
+          ? sessions.reduce((sum: number, s: unknown) => sum + (s.progress?.accuracy ?? 0), 0) / sessions.length
           : 0,
       trackBreakdown: {
-        exam: sessions.filter((s: any) => s.learningTrack === 'exam').length,
-        course_tech: sessions.filter((s: any) => s.learningTrack === 'course_tech').length,
+        exam: sessions.filter((s: unknown) => s.learningTrack === 'exam').length,
+        course_tech: sessions.filter((s: unknown) => s.learningTrack === 'course_tech').length,
       },
       generatedAt: new Date(),
     };

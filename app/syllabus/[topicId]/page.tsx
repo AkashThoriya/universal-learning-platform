@@ -29,7 +29,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getTopicProgress, updateTopicProgress, getSyllabus } from '@/lib/firebase-utils';
+import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase-utils';
+
+// Constants
+const MASTERY_THRESHOLD = 80;
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 export default function TopicDetailPage() {
@@ -75,7 +78,7 @@ export default function TopicDetailPage() {
           // Create initial progress if it doesn't exist
           const initialProgress: Partial<TopicProgress> = {
             topicId,
-            subjectId: subjectId || '',
+            subjectId: subjectId ?? '',
             masteryScore: 0,
             lastRevised: Timestamp.now(),
             nextRevision: Timestamp.now(),
@@ -230,7 +233,7 @@ export default function TopicDetailPage() {
   }
 
   const getMasteryColor = (score: number) => {
-    if (score >= 80) {
+    if (score >= MASTERY_THRESHOLD) {
       return 'text-green-600';
     }
     if (score >= 50) {

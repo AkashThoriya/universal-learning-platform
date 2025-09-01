@@ -83,7 +83,7 @@ export function MicroLearningDashboard({
       // Load personalized recommendations from Firebase
       const { MicroLearningService } = await import('@/lib/micro-learning-service');
       const recommendations = await MicroLearningService.generatePersonalizedRecommendations(activeUserId);
-      setRecommendations(recommendations);
+      setRecommendations(recommendations as SessionRecommendation[]);
 
       // Load session history and calculate weekly progress
       const sessionHistory = await MicroLearningService.getSessionHistory(activeUserId, 50);
@@ -103,7 +103,7 @@ export function MicroLearningDashboard({
         timeSpent: thisWeekSessions.reduce((total, session) => total + session.duration, 0),
         accuracyAverage:
           thisWeekSessions.length > 0
-            ? thisWeekSessions.reduce((total, session) => total + (session.performance?.accuracy || 0), 0) /
+            ? thisWeekSessions.reduce((total, session) => total + (session.performance?.accuracy ?? 0), 0) /
               thisWeekSessions.length
             : 0,
       };
@@ -286,7 +286,7 @@ export function MicroLearningDashboard({
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="flex items-center space-x-2">
               <label className="text-sm font-medium text-gray-700">Track:</label>
-              <Select value={trackFilter} onValueChange={(value: any) => setTrackFilter(value)}>
+              <Select value={trackFilter} onValueChange={(value: string) => setTrackFilter(value as 'all' | 'exam' | 'course_tech')}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
@@ -299,7 +299,7 @@ export function MicroLearningDashboard({
             </div>
             <div className="flex items-center space-x-2">
               <label className="text-sm font-medium text-gray-700">Difficulty:</label>
-              <Select value={difficultyFilter} onValueChange={(value: any) => setDifficultyFilter(value)}>
+              <Select value={difficultyFilter} onValueChange={(value: string) => setDifficultyFilter(value as 'all' | 'beginner' | 'intermediate' | 'advanced')}>
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>

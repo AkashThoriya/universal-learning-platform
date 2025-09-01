@@ -33,13 +33,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from '@/hooks/useForm';
-import { SyllabusSubject } from '@/types/exam';
+import { SyllabusSubject, UserPersona } from '@/types/exam';
 
 /**
- * Props for onboarding form data
+ * Form data interface for onboarding
  */
-/*
 interface OnboardingFormData {
+  userPersona?: UserPersona;
   displayName: string;
   selectedExamId: string;
   examDate: string;
@@ -65,14 +65,14 @@ interface OnboardingFormData {
       healthCheckReminders: boolean;
     };
   };
+  [key: string]: any; // Allow for other form fields
 }
-*/
 
 /**
  * Syllabus Management Step
  */
 interface SyllabusManagementStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<OnboardingFormData>;
   onUpdateSubjectTier: (subjectId: string, tier: 1 | 2 | 3) => void;
   onAddSubject: () => void;
   onRemoveSubject: (subjectId: string) => void;
@@ -122,7 +122,7 @@ export function SyllabusManagementStep({
   };
 
   const tierCounts = form.data.syllabus.reduce(
-    (acc: Record<number, number>, subject: any) => {
+    (acc: Record<number, number>, subject: SyllabusSubject) => {
       acc[subject.tier] = (acc[subject.tier] || 0) + 1;
       return acc;
     },
@@ -310,7 +310,7 @@ export function SyllabusManagementStep({
  * Study Preferences Step
  */
 interface PreferencesStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<OnboardingFormData>;
 }
 
 export function PreferencesStep({ form }: PreferencesStepProps) {
@@ -367,7 +367,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
             onValueChange={([value]) =>
               form.updateField('preferences', {
                 ...form.data.preferences,
-                dailyStudyGoalMinutes: value,
+                dailyStudyGoalMinutes: value ?? 240,
               })
             }
             min={60}

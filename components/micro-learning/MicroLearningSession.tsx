@@ -233,7 +233,7 @@ export function MicroLearningSession({
       areas.push('Content comprehension');
     }
 
-    if (timeSpent > (session?.duration || 15) * 60 * 1.5) {
+    if (timeSpent > (session?.duration ?? 15) * 60 * 1.5) {
       areas.push('Learning pace');
     }
 
@@ -481,7 +481,7 @@ export function MicroLearningSession({
               </Button>
 
               <div className="text-sm text-gray-500">
-                Estimated time: {Math.round((currentContent?.estimatedTime || 0) / 60)} min
+                Estimated time: {Math.round((currentContent?.estimatedTime ?? 0) / 60)} min
               </div>
 
               <Button

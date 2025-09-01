@@ -73,13 +73,13 @@ const CACHE_FIRST_PATTERNS = [
 // ============================================================================
 
 self.addEventListener('install', (event) => {
-  console.log('[ServiceWorker] Installing...');
+  // console.log('[ServiceWorker] Installing...');
   
   event.waitUntil(
     Promise.all([
       // Cache static assets
       caches.open(STATIC_CACHE_NAME).then((cache) => {
-        console.log('[ServiceWorker] Caching static assets');
+        // console.log('[ServiceWorker] Caching static assets');
         return cache.addAll(STATIC_ASSETS);
       }),
       
@@ -94,7 +94,7 @@ self.addEventListener('install', (event) => {
 // ============================================================================
 
 self.addEventListener('activate', (event) => {
-  console.log('[ServiceWorker] Activating...');
+  // console.log('[ServiceWorker] Activating...');
   
   event.waitUntil(
     Promise.all([
@@ -365,7 +365,7 @@ async function cleanupOldCaches() {
     cacheNames
       .filter(cacheName => !currentCaches.includes(cacheName))
       .map(cacheName => {
-        console.log('[ServiceWorker] Deleting old cache:', cacheName);
+        // console.log('[ServiceWorker] Deleting old cache:', cacheName);
         return caches.delete(cacheName);
       })
   );
@@ -377,7 +377,7 @@ async function cleanupOldCaches() {
 
 async function initializeBackgroundSync() {
   if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-    console.log('[ServiceWorker] Background sync supported');
+    // console.log('[ServiceWorker] Background sync supported');
   }
 }
 
@@ -507,9 +507,9 @@ self.addEventListener('push', (event) => {
         icon: '/icons/action-dismiss.png'
       }
     ],
-    tag: data.tag || 'default',
+    tag: data.tag ?? 'default',
     renotify: true,
-    requireInteraction: data.requireInteraction || false,
+    requireInteraction: data.requireInteraction ?? false,
   };
   
   event.waitUntil(
@@ -609,7 +609,7 @@ self.addEventListener('message', (event) => {
       break;
       
     default:
-      console.log('[ServiceWorker] Unknown message type:', type);
+      // console.log('[ServiceWorker] Unknown message type:', type);
   }
 });
 
@@ -635,4 +635,4 @@ async function getCacheStatus() {
   return status;
 }
 
-console.log('[ServiceWorker] Service Worker loaded and ready!');
+// console.log('[ServiceWorker] Service Worker loaded and ready!');

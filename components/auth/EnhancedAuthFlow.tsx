@@ -178,196 +178,221 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     }
   }, [password, email, isNewUser, passwordStrength, onSuccess, router]);
 
-  const EmailCaptureStep = useMemo(() => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">
-          Email Address
-        </label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="pl-10"
-            autoComplete="email"
-          />
-        </div>
-      </div>
-
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
-        >
-          {error}
-        </motion.div>
-      )}
-
-      <Button onClick={handleEmailSubmit} disabled={!email || loading} className="w-full" size="lg">
-        {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
-        Continue
-      </Button>
-
-      <div className="flex items-center space-x-2 text-xs text-gray-500">
-        <Shield className="h-3 w-3" />
-        <span>Secure authentication with end-to-end encryption</span>
-      </div>
-      
-      <div className="text-center text-xs text-gray-500 mt-4">
-        <p>Prefer one-click sign-in? Try Google authentication above</p>
-      </div>
-    </motion.div>
-  ), [email, error, loading, handleEmailSubmit]);
-
-  const PasswordStep = useMemo(() => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
-    >
-      <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-        <CheckCircle className="h-4 w-4 text-green-500" />
-        <span>{email}</span>
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium text-gray-700">
-          {isNewUser ? 'Create Password' : 'Enter Password'}
-        </label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder={isNewUser ? 'Create a strong password' : 'Enter your password'}
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="pl-10 pr-10"
-            autoComplete={isNewUser ? 'new-password' : 'current-password'}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
-      </div>
-
-      {isNewUser && password && (
+  const EmailCaptureStep = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="space-y-6"
+      >
         <div className="space-y-2">
-          <div className="flex justify-between text-xs">
-            <span className="text-gray-600">Password Strength</span>
-            <span className={`font-medium ${getPasswordStrengthColor(passwordStrength)}`}>
-              {getPasswordStrengthText(passwordStrength)}
-            </span>
+          <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email address"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="pl-10"
+              autoComplete="email"
+            />
           </div>
-          <Progress value={passwordStrength} className="h-2" />
         </div>
-      )}
 
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
-        >
-          {error}
-        </motion.div>
-      )}
-
-      <div className="flex space-x-3">
-        <Button variant="outline" onClick={() => setCurrentStep('email')} disabled={loading} className="flex-1">
-          Back
-        </Button>
-        <Button onClick={handlePasswordSubmit} disabled={!password || loading} className="flex-1" size="lg">
-          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
-          {isNewUser ? 'Create Account' : 'Sign In'}
-        </Button>
-      </div>
-
-      {!isNewUser && (
-        <div className="text-center">
-          <button
-            type="button"
-            className="text-sm text-blue-600 hover:text-blue-700 underline"
-            onClick={() => {
-              // TODO: Implement forgot password flow
-              setError('Password reset functionality coming soon!');
-            }}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
           >
-            Forgot your password?
-          </button>
+            {error}
+          </motion.div>
+        )}
+
+        <Button onClick={handleEmailSubmit} disabled={!email || loading} className="w-full" size="lg">
+          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
+          Continue
+        </Button>
+
+        <div className="flex items-center space-x-2 text-xs text-gray-500">
+          <Shield className="h-3 w-3" />
+          <span>Secure authentication with end-to-end encryption</span>
         </div>
-      )}
-    </motion.div>
-  ), [email, isNewUser, password, showPassword, passwordStrength, error, loading, handlePasswordSubmit, setCurrentStep, setShowPassword, setPassword, setError]);
 
-  const SuccessStep = useMemo(() => (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="text-center space-y-6"
-    >
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-        className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto"
-      >
-        <CheckCircle className="h-8 w-8 text-green-600" />
+        <div className="text-center text-xs text-gray-500 mt-4">
+          <p>Prefer one-click sign-in? Try Google authentication above</p>
+        </div>
       </motion.div>
+    ),
+    [email, error, loading, handleEmailSubmit]
+  );
 
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900">Welcome Aboard! 🎉</h3>
-        <p className="text-gray-600 mt-1">
-          {isNewUser ? 'Your account has been created successfully' : "You've been signed in successfully"}
-        </p>
-      </div>
-
+  const PasswordStep = useMemo(
+    () => (
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="text-sm text-gray-500"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="space-y-6"
       >
-        Redirecting to your personalized dashboard...
-      </motion.div>
-    </motion.div>
-  ), [isNewUser]);
+        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+          <CheckCircle className="h-4 w-4 text-green-500" />
+          <span>{email}</span>
+        </div>
 
-  const authSteps: Record<string, AuthStep> = useMemo(() => ({
-    email: {
-      id: 'email',
-      title: "Welcome! Let's get started",
-      subtitle: 'Enter your email to begin your learning journey',
-      component: EmailCaptureStep,
-    },
-    password: {
-      id: 'password',
-      title: isNewUser ? 'Secure Your Account' : 'Welcome Back!',
-      subtitle: isNewUser ? 'Create a strong password for your account' : 'Enter your password to continue',
-      component: PasswordStep,
-    },
-    success: {
-      id: 'success',
-      title: 'All Set!',
-      subtitle: "Your account is ready. Let's personalize your experience",
-      component: SuccessStep,
-    },
-  }), [EmailCaptureStep, PasswordStep, SuccessStep, isNewUser]);
+        <div className="space-y-2">
+          <label htmlFor="password" className="text-sm font-medium text-gray-700">
+            {isNewUser ? 'Create Password' : 'Enter Password'}
+          </label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder={isNewUser ? 'Create a strong password' : 'Enter your password'}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="pl-10 pr-10"
+              autoComplete={isNewUser ? 'new-password' : 'current-password'}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        {isNewUser && password && (
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-gray-600">Password Strength</span>
+              <span className={`font-medium ${getPasswordStrengthColor(passwordStrength)}`}>
+                {getPasswordStrengthText(passwordStrength)}
+              </span>
+            </div>
+            <Progress value={passwordStrength} className="h-2" />
+          </div>
+        )}
+
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
+          >
+            {error}
+          </motion.div>
+        )}
+
+        <div className="flex space-x-3">
+          <Button variant="outline" onClick={() => setCurrentStep('email')} disabled={loading} className="flex-1">
+            Back
+          </Button>
+          <Button onClick={handlePasswordSubmit} disabled={!password || loading} className="flex-1" size="lg">
+            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
+            {isNewUser ? 'Create Account' : 'Sign In'}
+          </Button>
+        </div>
+
+        {!isNewUser && (
+          <div className="text-center">
+            <button
+              type="button"
+              className="text-sm text-blue-600 hover:text-blue-700 underline"
+              onClick={() => {
+                // TODO: Implement forgot password flow
+                setError('Password reset functionality coming soon!');
+              }}
+            >
+              Forgot your password?
+            </button>
+          </div>
+        )}
+      </motion.div>
+    ),
+    [
+      email,
+      isNewUser,
+      password,
+      showPassword,
+      passwordStrength,
+      error,
+      loading,
+      handlePasswordSubmit,
+      setCurrentStep,
+      setShowPassword,
+      setPassword,
+      setError,
+    ]
+  );
+
+  const SuccessStep = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center space-y-6"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+          className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto"
+        >
+          <CheckCircle className="h-8 w-8 text-green-600" />
+        </motion.div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Welcome Aboard! 🎉</h3>
+          <p className="text-gray-600 mt-1">
+            {isNewUser ? 'Your account has been created successfully' : "You've been signed in successfully"}
+          </p>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-sm text-gray-500"
+        >
+          Redirecting to your personalized dashboard...
+        </motion.div>
+      </motion.div>
+    ),
+    [isNewUser]
+  );
+
+  const authSteps: Record<string, AuthStep> = useMemo(
+    () => ({
+      email: {
+        id: 'email',
+        title: "Welcome! Let's get started",
+        subtitle: 'Enter your email to begin your learning journey',
+        component: EmailCaptureStep,
+      },
+      password: {
+        id: 'password',
+        title: isNewUser ? 'Secure Your Account' : 'Welcome Back!',
+        subtitle: isNewUser ? 'Create a strong password for your account' : 'Enter your password to continue',
+        component: PasswordStep,
+      },
+      success: {
+        id: 'success',
+        title: 'All Set!',
+        subtitle: "Your account is ready. Let's personalize your experience",
+        component: SuccessStep,
+      },
+    }),
+    [EmailCaptureStep, PasswordStep, SuccessStep, isNewUser]
+  );
 
   const currentStepData = authSteps[currentStep];
 

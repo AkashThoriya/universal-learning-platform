@@ -31,6 +31,7 @@ import {
 import { User, SyllabusSubject, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
 
 import { db } from './firebase';
+import { logError, logInfo, measurePerformance } from './logger';
 
 // User Management
 
@@ -50,20 +51,45 @@ import { db } from './firebase';
  * ```
  */
 export const createUser = async (userId: string, userData: Partial<User>) => {
-  const userRef = doc(db, 'users', userId);
-  await setDoc(userRef, {
-    ...userData,
-    createdAt: Timestamp.now(),
-    onboardingComplete: false,
-    stats: {
-      totalStudyHours: 0,
-      currentStreak: 0,
-      longestStreak: 0,
-      totalMockTests: 0,
-      averageScore: 0,
-      topicsCompleted: 0,
-      totalTopics: 0,
-    },
+  return measurePerformance('createUser', async () => {
+    logInfo('Creating new user', {
+      userId,
+      displayName: userData.displayName ?? 'no-display-name',
+      selectedExamId: userData.selectedExamId ?? 'no-exam',
+      isCustomExam: userData.isCustomExam ?? false,
+    });
+
+    try {
+      const userRef = doc(db, 'users', userId);
+      const newUserData = {
+        ...userData,
+        createdAt: Timestamp.now(),
+        onboardingComplete: false,
+        stats: {
+          totalStudyHours: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          totalMockTests: 0,
+          averageScore: 0,
+          topicsCompleted: 0,
+          totalTopics: 0,
+        },
+      };
+
+      await setDoc(userRef, newUserData);
+
+      logInfo('User created successfully', {
+        userId,
+        createdAt: newUserData.createdAt.toDate(),
+        onboardingComplete: newUserData.onboardingComplete,
+      });
+    } catch (error) {
+      logError('Failed to create user', {
+        userId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw error;
+    }
   });
 };
 
@@ -77,18 +103,38 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
  * ```typescript
  * const user = await getUser('user123');
  * if (user) {
- *   console.log(`Welcome ${user.displayName}!`);
+ *   // console.log(`Welcome ${user.displayName}!`);
  * }
  * ```
  */
 export const getUser = async (userId: string): Promise<User | null> => {
-  const userRef = doc(db, 'users', userId);
-  const userSnap = await getDoc(userRef);
+  return measurePerformance('getUser', async () => {
+    logInfo('Fetching user data', { userId });
 
-  if (userSnap.exists()) {
-    return { userId, ...userSnap.data() } as User;
-  }
-  return null;
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const userData = { userId, ...userSnap.data() } as User;
+        logInfo('User data retrieved successfully', {
+          userId,
+          hasDisplayName: !!userData.displayName,
+          onboardingComplete: userData.onboardingComplete ?? false,
+          selectedExamId: userData.selectedExamId ?? 'none',
+        });
+        return userData;
+      }
+      logInfo('User not found', { userId });
+      return null;
+    } catch (error) {
+      logError('Failed to fetch user data', {
+        userId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw error;
+    }
+  });
 };
 
 /**
@@ -107,8 +153,30 @@ export const getUser = async (userId: string): Promise<User | null> => {
  * ```
  */
 export const updateUser = async (userId: string, updates: Partial<User>) => {
-  const userRef = doc(db, 'users', userId);
-  await updateDoc(userRef, updates);
+  return measurePerformance('updateUser', async () => {
+    logInfo('Updating user data', {
+      userId,
+      updateFields: Object.keys(updates),
+      onboardingComplete: updates.onboardingComplete,
+    });
+
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, updates);
+
+      logInfo('User data updated successfully', {
+        userId,
+        updatedFields: Object.keys(updates),
+      });
+    } catch (error) {
+      logError('Failed to update user data', {
+        userId,
+        updateFields: Object.keys(updates),
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw error;
+    }
+  });
 };
 
 // Syllabus Management
@@ -131,22 +199,56 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
  * ```
  */
 export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[]) => {
-  const batch = writeBatch(db);
+  return measurePerformance('saveSyllabus', async () => {
+    logInfo('Saving syllabus', {
+      userId,
+      subjectCount: syllabus.length,
+      subjectIds: syllabus.map(s => s.id),
+      tierDistribution: {
+        tier1: syllabus.filter(s => s.tier === 1).length,
+        tier2: syllabus.filter(s => s.tier === 2).length,
+        tier3: syllabus.filter(s => s.tier === 3).length,
+      },
+    });
 
-  // Clear existing syllabus
-  const syllabusRef = collection(db, 'users', userId, 'syllabus');
-  const existingSyllabus = await getDocs(syllabusRef);
-  existingSyllabus.docs.forEach(doc => {
-    batch.delete(doc.ref);
+    try {
+      const batch = writeBatch(db);
+
+      // Clear existing syllabus
+      const syllabusRef = collection(db, 'users', userId, 'syllabus');
+      const existingSyllabus = await getDocs(syllabusRef);
+
+      logInfo('Clearing existing syllabus', {
+        userId,
+        existingSubjectCount: existingSyllabus.docs.length,
+      });
+
+      existingSyllabus.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      // Add new syllabus
+      syllabus.forEach(subject => {
+        const subjectRef = doc(db, 'users', userId, 'syllabus', subject.id);
+        batch.set(subjectRef, subject);
+      });
+
+      await batch.commit();
+
+      logInfo('Syllabus saved successfully', {
+        userId,
+        newSubjectCount: syllabus.length,
+        totalTopics: syllabus.reduce((total, subject) => total + (subject.topics?.length ?? 0), 0),
+      });
+    } catch (error) {
+      logError('Failed to save syllabus', {
+        userId,
+        subjectCount: syllabus.length,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw error;
+    }
   });
-
-  // Add new syllabus
-  syllabus.forEach(subject => {
-    const subjectRef = doc(db, 'users', userId, 'syllabus', subject.id);
-    batch.set(subjectRef, subject);
-  });
-
-  await batch.commit();
 };
 
 /**
@@ -158,7 +260,7 @@ export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[]) 
  * @example
  * ```typescript
  * const syllabus = await getSyllabus('user123');
- * console.log(`User has ${syllabus.length} subjects in their syllabus`);
+ * // console.log(`User has ${syllabus.length} subjects in their syllabus`);
  * ```
  */
 export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> => {
@@ -229,7 +331,7 @@ export const updateTopicProgress = async (userId: string, topicId: string, updat
  * ```typescript
  * const progress = await getTopicProgress('user123', 'british_rule');
  * if (progress) {
- *   console.log(`Mastery score: ${progress.masteryScore}%`);
+ *   // console.log(`Mastery score: ${progress.masteryScore}%`);
  * }
  * ```
  */
@@ -277,9 +379,9 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
  * @example
  * ```typescript
  * const revisionQueue = await getRevisionQueue('user123');
- * console.log(`${revisionQueue.length} topics due for revision`);
+ * // console.log(`${revisionQueue.length} topics due for revision`);
  * revisionQueue.forEach(item => {
- *   console.log(`${item.topicName} - ${item.priority}`);
+ *   // console.log(`${item.topicName} - ${item.priority}`);
  * });
  * ```
  */
@@ -317,9 +419,9 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
 
     return {
       topicId: progress.topicId,
-      topicName: topic?.name || 'Unknown Topic',
-      subjectName: subject?.name || 'Unknown Subject',
-      tier: subject?.tier || 3,
+      topicName: topic?.name ?? 'Unknown Topic',
+      subjectName: subject?.name ?? 'Unknown Subject',
+      tier: subject?.tier ?? 3,
       masteryScore: progress.masteryScore,
       daysSinceLastRevision,
       priority,
@@ -376,7 +478,7 @@ export const saveDailyLog = async (userId: string, log: DailyLog) => {
  * ```typescript
  * const todayLog = await getDailyLog('user123', '2025-08-20');
  * if (todayLog) {
- *   console.log(`Study time: ${todayLog.goals.actualMinutes} minutes`);
+ *   // console.log(`Study time: ${todayLog.goals.actualMinutes} minutes`);
  * }
  * ```
  */
@@ -402,7 +504,7 @@ export const getDailyLog = async (userId: string, date: string): Promise<DailyLo
  * ```typescript
  * const recentLogs = await getRecentDailyLogs('user123', 7);
  * const totalStudyTime = recentLogs.reduce((sum, log) => sum + log.goals.actualMinutes, 0);
- * console.log(`Total study time in last 7 days: ${totalStudyTime} minutes`);
+ * // console.log(`Total study time in last 7 days: ${totalStudyTime} minutes`);
  * ```
  */
 export const getRecentDailyLogs = async (userId: string, days = 30): Promise<DailyLog[]> => {
@@ -491,9 +593,9 @@ export const getMockTests = async (userId: string, limitCount = 10): Promise<Moc
  * ```typescript
  * const insights = await generateStudyInsights('user123');
  * insights.forEach(insight => {
- *   console.log(`${insight.priority.toUpperCase()}: ${insight.title}`);
- *   console.log(insight.description);
- *   insight.actionItems.forEach(action => console.log(`- ${action}`));
+ *   // console.log(`${insight.priority.toUpperCase()}: ${insight.title}`);
+ *   // console.log(insight.description);
+ *   insight.actionItems.forEach(action => // console.log(`- ${action}`));
  * });
  * ```
  */
@@ -583,7 +685,7 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     totalTopics: 0,
   };
 
-  const currentStats = user.stats || defaultStats;
+  const currentStats = user.stats ?? defaultStats;
 
   const totalMinutes = log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0);
   const totalHours = currentStats.totalStudyHours + totalMinutes / 60;
@@ -671,7 +773,7 @@ export const subscribeToRevisionQueue = (userId: string, callback: (items: Revis
         topicId: progress.topicId,
         topicName: topic?.name || 'Unknown Topic',
         subjectName: subject?.name || 'Unknown Subject',
-        tier: subject?.tier || 3,
+        tier: subject?.tier ?? 3,
         masteryScore: progress.masteryScore,
         daysSinceLastRevision,
         priority,

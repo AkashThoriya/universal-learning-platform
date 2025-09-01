@@ -64,12 +64,12 @@ class MainDatabaseService extends DatabaseService {
     return this.getProvider().delete(collectionPath, docId);
   }
 
-  async queryCollection<T>(collectionPath: string, options: any = {}) {
+  async queryCollection<T>(collectionPath: string, options: unknown = {}) {
     return this.getProvider().query<T>(collectionPath, options);
   }
 
   // Real-time subscriptions with backward compatibility
-  onSnapshot<T>(collectionPath: string, callback: (data: T[]) => void, options: any = {}) {
+  onSnapshot<T>(collectionPath: string, callback: (data: T[]) => void, options: unknown = {}) {
     return this.getProvider().subscribe<T>(collectionPath, callback, options);
   }
 
@@ -161,7 +161,7 @@ export class DatabaseMigration {
         }
 
         // Progress callback could be added here
-        console.log(`Migrated ${Math.min(i + batchSize, documents.length)}/${documents.length} documents`);
+        // console.log(`Migrated ${Math.min(i + batchSize, documents.length)}/${documents.length} documents`);
       }
     } catch (error) {
       throw new Error(`Migration failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -185,8 +185,8 @@ export class DatabaseMigration {
         throw new Error('Failed to count documents');
       }
 
-      const sourceCount = sourceCountResult.data || 0;
-      const targetCount = targetCountResult.data || 0;
+      const sourceCount = sourceCountResult.data ?? 0;
+      const targetCount = targetCountResult.data ?? 0;
 
       // Get all document IDs from source
       const sourceResult = await this.sourceProvider.query<T>(collectionName, {
@@ -197,7 +197,7 @@ export class DatabaseMigration {
         throw new Error('Failed to get source IDs');
       }
 
-      const sourceIds = new Set(sourceResult.data.map((doc: any) => doc.id));
+      const sourceIds = new Set(sourceResult.data.map((doc: unknown) => doc.id));
       const missingIds: string[] = [];
 
       // Check if each source document exists in target
@@ -296,7 +296,7 @@ export class OfflineSyncManager {
     id: string;
     operation: 'create' | 'update' | 'delete';
     collection: string;
-    data?: any;
+    data?: unknown;
     timestamp: Date;
   }> = [];
 
@@ -320,7 +320,7 @@ export class OfflineSyncManager {
     id: string;
     operation: 'create' | 'update' | 'delete';
     collection: string;
-    data?: any;
+    data?: unknown;
   }) {
     this.syncQueue.push({
       ...operation,

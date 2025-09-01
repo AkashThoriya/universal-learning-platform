@@ -58,7 +58,7 @@ export function PWAManager() {
 
   const registerServiceWorker = useCallback(async () => {
     if (!('serviceWorker' in navigator)) {
-      console.warn('Service Worker not supported');
+      // console.warn('Service Worker not supported');
       return;
     }
 
@@ -68,7 +68,7 @@ export function PWAManager() {
         updateViaCache: 'none',
       });
 
-      console.log('Service Worker registered:', registration);
+      // console.log('Service Worker registered:', registration);
 
       setPwaState(prev => ({ ...prev, isRegistered: true }));
 
@@ -151,7 +151,7 @@ export function PWAManager() {
     setIsLoading(true);
 
     try {
-      const result = await installPrompt.prompt();
+      const result = await (installPrompt as any).prompt();
 
       if (result.outcome === 'accepted') {
         toast({
@@ -272,7 +272,7 @@ export function PWAManager() {
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
       if (!vapidPublicKey) {
-        console.warn('VAPID public key not configured');
+        // console.warn('VAPID public key not configured');
         return;
       }
 
@@ -332,7 +332,7 @@ export function PWAManager() {
         break;
 
       default:
-        console.log('Unknown service worker message:', type);
+      // console.log('Unknown service worker message:', type);
     }
   };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Target, Filter, Search, ChevronRight, Clock, TrendingUp } from 'lucide-react';
+import { BookOpen, ChevronRight, Search, Filter, Grid, List, Clock, Target, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -14,7 +14,12 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSyllabus, getAllProgress } from '@/lib/firebase-utils';
+import { logInfo, logError } from '@/lib/logger';
 import { SyllabusSubject, TopicProgress } from '@/types/exam';
+
+// Constants
+const MASTERY_THRESHOLD = 80;
+const MEDIUM_MASTERY_THRESHOLD = 50;
 
 export default function SyllabusPage() {
   const { user } = useAuth();
@@ -25,22 +30,38 @@ export default function SyllabusPage() {
   const [tierFilter, setTierFilter] = useState<string>('all');
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<'subjects' | 'topics'>('subjects');
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) {
+        logInfo('Syllabus page: No user available, skipping data fetch');
         return;
       }
+
+      logInfo('Syllabus page: Starting data fetch', { userId: user.uid });
 
       try {
         const [syllabusData, progressData] = await Promise.all([getSyllabus(user.uid), getAllProgress(user.uid)]);
 
+        logInfo('Syllabus page: Data fetched successfully', {
+          syllabusCount: syllabusData.length,
+          progressCount: progressData.length,
+          userId: user.uid,
+        });
+
         setSyllabus(syllabusData);
         setProgress(progressData);
       } catch (error) {
-        console.error('Error fetching syllabus data:', error);
+        logError('Error fetching syllabus data', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          userId: user.uid,
+          context: 'syllabus_page_data_fetch',
+        });
       } finally {
         setLoading(false);
+        logInfo('Syllabus page: Data fetch completed', { userId: user.uid });
       }
     };
 
@@ -69,7 +90,7 @@ export default function SyllabusPage() {
       return 0;
     }
 
-    const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore || 0), 0);
+    const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore ?? 0), 0);
     return Math.round(totalMastery / validProgresses.length);
   };
 
@@ -89,13 +110,56 @@ export default function SyllabusPage() {
       const subjectMastery = getSubjectMastery(subject);
       switch (masteryFilter) {
         case 'low':
-          matchesMastery = subjectMastery < 50;
+          matchesMastery = subjectMastery < MEDIUM_MASTERY_THRESHOLD;
           break;
         case 'medium':
-          matchesMastery = subjectMastery >= 50 && subjectMastery < 80;
+          matchesMastery = subjectMastery >= MEDIUM_MASTERY_THRESHOLD && subjectMastery < MASTERY_THRESHOLD;
           break;
         case 'high':
-          matchesMastery = subjectMastery >= 80;
+          matchesMastery = subjectMastery >= MASTERY_THRESHOLD;
+          break;
+      }
+    }
+
+    return matchesSearch && matchesTier && matchesMastery;
+  });
+
+  // Get all topics with subject information for topics view
+  const getAllTopics = () => {
+    return syllabus.flatMap(subject =>
+      subject.topics.map(topic => ({
+        ...topic,
+        subjectId: subject.id,
+        subjectName: subject.name,
+        subjectTier: subject.tier,
+      }))
+    );
+  };
+
+  const filteredTopics = getAllTopics().filter(topic => {
+    // Search filter
+    const matchesSearch =
+      searchQuery === '' ||
+      topic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      topic.subjectName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    // Tier filter
+    const matchesTier = tierFilter === 'all' || topic.subjectTier.toString() === tierFilter;
+
+    // Mastery filter
+    let matchesMastery = true;
+    if (masteryFilter !== 'all') {
+      const topicProgress = getTopicProgress(topic.id);
+      const masteryScore = topicProgress?.masteryScore ?? 0;
+      switch (masteryFilter) {
+        case 'low':
+          matchesMastery = masteryScore < MEDIUM_MASTERY_THRESHOLD;
+          break;
+        case 'medium':
+          matchesMastery = masteryScore >= MEDIUM_MASTERY_THRESHOLD && masteryScore < MASTERY_THRESHOLD;
+          break;
+        case 'high':
+          matchesMastery = masteryScore >= MASTERY_THRESHOLD;
           break;
       }
     }
@@ -130,10 +194,10 @@ export default function SyllabusPage() {
   };
 
   const getMasteryColor = (score: number) => {
-    if (score >= 80) {
+    if (score >= MASTERY_THRESHOLD) {
       return 'text-green-600';
     }
-    if (score >= 50) {
+    if (score >= MEDIUM_MASTERY_THRESHOLD) {
       return 'text-yellow-600';
     }
     return 'text-red-600';
@@ -177,6 +241,32 @@ export default function SyllabusPage() {
             <p className="text-muted-foreground text-lg">Manage your study priorities and track mastery progress</p>
           </div>
 
+          {/* View Mode Toggle */}
+          <div className="flex justify-center">
+            <div className="bg-white rounded-lg p-1 shadow-sm border">
+              <div className="flex space-x-1">
+                <Button
+                  variant={viewMode === 'subjects' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('subjects')}
+                  className="px-4 py-2 text-sm font-medium"
+                >
+                  <List className="h-4 w-4 mr-2" />
+                  Subjects View
+                </Button>
+                <Button
+                  variant={viewMode === 'topics' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('topics')}
+                  className="px-4 py-2 text-sm font-medium"
+                >
+                  <Grid className="h-4 w-4 mr-2" />
+                  Topics View
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {/* Filters */}
           <Card>
             <CardHeader>
@@ -188,10 +278,11 @@ export default function SyllabusPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Search Topics</label>
+                  <label htmlFor="search-topics" className="text-sm font-medium">Search Topics</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
+                      id="search-topics"
                       placeholder="Search subjects or topics..."
                       value={searchQuery}
                       onChange={e => setSearchQuery(e.target.value)}
@@ -201,9 +292,9 @@ export default function SyllabusPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Filter by Tier</label>
+                  <label htmlFor="tier-filter" className="text-sm font-medium">Filter by Tier</label>
                   <Select value={tierFilter} onValueChange={setTierFilter}>
-                    <SelectTrigger>
+                    <SelectTrigger id="tier-filter">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -216,16 +307,16 @@ export default function SyllabusPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Filter by Mastery</label>
+                  <label htmlFor="mastery-filter" className="text-sm font-medium">Filter by Mastery</label>
                   <Select value={masteryFilter} onValueChange={setMasteryFilter}>
-                    <SelectTrigger>
+                    <SelectTrigger id="mastery-filter">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Levels</SelectItem>
                       <SelectItem value="low">Low (&lt; 50%)</SelectItem>
                       <SelectItem value="medium">Medium (50-79%)</SelectItem>
-                      <SelectItem value="high">High (≥ 80%)</SelectItem>
+                      <SelectItem value="high">High (≥ {MASTERY_THRESHOLD}%)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -283,7 +374,7 @@ export default function SyllabusPage() {
                   <div>
                     <p className="text-2xl font-bold">
                       {Math.round(
-                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
+                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length ?? 1)
                       )}
                       %
                     </p>
@@ -315,100 +406,184 @@ export default function SyllabusPage() {
             </Card>
           </div>
 
-          {/* Subjects List */}
-          <div className="space-y-4">
-            {filteredSyllabus.map(subject => {
-              const subjectMastery = getSubjectMastery(subject);
-              const isExpanded = expandedSubjects.has(subject.id);
+          {/* Content based on view mode */}
+          {viewMode === 'subjects' ? (
+            <>
+              {/* Subjects List */}
+              <div className="space-y-4">
+                {filteredSyllabus.map(subject => {
+                  const subjectMastery = getSubjectMastery(subject);
+                  const isExpanded = expandedSubjects.has(subject.id);
 
-              return (
-                <Card key={subject.id} className="overflow-hidden">
-                  <CardHeader
-                    className="cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => toggleSubjectExpansion(subject.id)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <ChevronRight className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-                        <div>
-                          <CardTitle className="text-xl">{subject.name}</CardTitle>
-                          <CardDescription>
-                            {subject.topics.length} topics • {getTierLabel(subject.tier)}
-                          </CardDescription>
+                  return (
+                    <Card key={subject.id} className="overflow-hidden">
+                      <CardHeader
+                        className="cursor-pointer hover:bg-gray-50 transition-colors"
+                        onClick={() => toggleSubjectExpansion(subject.id)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <ChevronRight className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                            <div>
+                              <CardTitle className="text-xl">{subject.name}</CardTitle>
+                              <CardDescription>
+                                {subject.topics.length} topics • {getTierLabel(subject.tier)}
+                              </CardDescription>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-4">
+                            <div className="text-right">
+                              <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>
+                                {subjectMastery}%
+                              </p>
+                              <p className="text-sm text-muted-foreground">Mastery</p>
+                            </div>
+                            <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>{subjectMastery}%</p>
-                          <p className="text-sm text-muted-foreground">Mastery</p>
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm text-muted-foreground">Subject Progress</span>
+                            <span className="text-sm font-medium">{subjectMastery}%</span>
+                          </div>
+                          <Progress value={subjectMastery} className="h-2" />
                         </div>
-                        <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
-                      </div>
-                    </div>
+                      </CardHeader>
 
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">Subject Progress</span>
-                        <span className="text-sm font-medium">{subjectMastery}%</span>
-                      </div>
-                      <Progress value={subjectMastery} className="h-2" />
-                    </div>
-                  </CardHeader>
+                      {isExpanded && (
+                        <CardContent className="pt-0">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {subject.topics.map(topic => {
+                              const topicProgress = getTopicProgress(topic.id);
+                              const masteryScore = topicProgress?.masteryScore ?? 0;
 
-                  {isExpanded && (
-                    <CardContent className="pt-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {subject.topics.map(topic => {
-                          const topicProgress = getTopicProgress(topic.id);
-                          const masteryScore = topicProgress?.masteryScore || 0;
+                              return (
+                                <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
+                                  <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                                    <CardContent className="p-4">
+                                      <div className="space-y-3">
+                                        <div>
+                                          <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
+                                        </div>
 
-                          return (
-                            <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
-                              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                                <CardContent className="p-4">
-                                  <div className="space-y-3">
-                                    <div>
-                                      <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
-                                    </div>
+                                        <div className="flex items-center justify-between">
+                                          <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
+                                            {masteryScore}% mastery
+                                          </span>
+                                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                                        </div>
 
-                                    <div className="flex items-center justify-between">
-                                      <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
-                                        {masteryScore}% mastery
-                                      </span>
-                                      <ChevronRight className="h-4 w-4 text-gray-400" />
-                                    </div>
+                                        <Progress value={masteryScore} className="h-1" />
 
-                                    <Progress value={masteryScore} className="h-1" />
+                                        {topicProgress?.lastRevised && (
+                                          <p className="text-xs text-muted-foreground">
+                                            Last studied:{' '}
+                                            {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </CardContent>
+                      )}
+                    </Card>
+                  );
+                })}
+              </div>
 
-                                    {topicProgress?.lastRevised && (
-                                      <p className="text-xs text-muted-foreground">
-                                        Last studied:{' '}
-                                        {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
-                                      </p>
-                                    )}
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </CardContent>
-                  )}
+              {filteredSyllabus.length === 0 && (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No subjects found</h3>
+                    <p className="text-muted-foreground">
+                      Try adjusting your filters or search query to find subjects.
+                    </p>
+                  </CardContent>
                 </Card>
-              );
-            })}
-          </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Topics Grid View */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filteredTopics.map(topic => {
+                  const topicProgress = getTopicProgress(topic.id);
+                  const masteryScore = topicProgress?.masteryScore ?? 0;
 
-          {filteredSyllabus.length === 0 && (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No subjects found</h3>
-                <p className="text-muted-foreground">Try adjusting your filters or search query to find subjects.</p>
-              </CardContent>
-            </Card>
+                  return (
+                    <Link
+                      key={`${topic.subjectId}-${topic.id}`}
+                      href={`/syllabus/${topic.id}?subject=${topic.subjectId}`}
+                    >
+                      <Card className="hover:shadow-md transition-shadow cursor-pointer h-full group">
+                        <CardContent className="p-5">
+                          <div className="space-y-4">
+                            {/* Topic Header */}
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-base line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                  {topic.name}
+                                </h3>
+                                <p className="text-sm text-muted-foreground mt-1 flex items-center">
+                                  <span className="truncate">{topic.subjectName}</span>
+                                  <Badge className={`ml-2 text-xs ${getTierColor(topic.subjectTier)}`}>
+                                    T{topic.subjectTier}
+                                  </Badge>
+                                </p>
+                              </div>
+                              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors mt-1 flex-shrink-0" />
+                            </div>
+
+                            {/* Progress Section */}
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-muted-foreground">Mastery</span>
+                                <span className={`text-sm font-semibold ${getMasteryColor(masteryScore)}`}>
+                                  {masteryScore}%
+                                </span>
+                              </div>
+                              <Progress value={masteryScore} className="h-2" />
+                            </div>
+
+                            {/* Last Study Info */}
+                            {topicProgress?.lastRevised && (
+                              <div className="text-xs text-muted-foreground">
+                                Last studied: {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
+                              </div>
+                            )}
+
+                            {/* Study Time if available */}
+                            {topic.estimatedHours && (
+                              <div className="text-xs text-muted-foreground flex items-center">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {topic.estimatedHours}h estimated
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {filteredTopics.length === 0 && (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No topics found</h3>
+                    <p className="text-muted-foreground">Try adjusting your filters or search query to find topics.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           )}
         </div>
       </div>

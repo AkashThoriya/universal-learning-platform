@@ -51,27 +51,27 @@ const COMMON_CONSTANTS = {
 
 function runESLintFix(pattern) {
   try {
-    console.log(`🔧 Fixing ESLint issues in: ${pattern}`);
+    // console.log(`🔧 Fixing ESLint issues in: ${pattern}`);
     execSync(`npx eslint "${pattern}" --fix --quiet`, { 
       stdio: 'inherit',
       cwd: process.cwd()
     });
-    console.log(`✅ Fixed: ${pattern}`);
+    // console.log(`✅ Fixed: ${pattern}`);
   } catch (error) {
-    console.log(`⚠️  Issues remain in: ${pattern}`);
+    // console.log(`⚠️  Issues remain in: ${pattern}`);
   }
 }
 
 function main() {
-  console.log('🚀 Starting ESLint auto-fix process...\n');
+  // console.log('🚀 Starting ESLint auto-fix process...\n');
   
   // Fix files in priority order
   PRIORITY_PATTERNS.forEach(pattern => {
     runESLintFix(pattern);
   });
   
-  console.log('\n✨ ESLint auto-fix completed!');
-  console.log('\n📊 Running final check to see remaining issues...');
+  // console.log('\n✨ ESLint auto-fix completed!');
+  // console.log('\n📊 Running final check to see remaining issues...');
   
   try {
     execSync('npx eslint . --ext .ts,.tsx --format=compact --max-warnings=20', {
@@ -79,7 +79,7 @@ function main() {
       cwd: process.cwd()
     });
   } catch (error) {
-    console.log('\n⚠️  Some issues require manual fixes.');
+    // console.log('\n⚠️  Some issues require manual fixes.');
   }
 }
 

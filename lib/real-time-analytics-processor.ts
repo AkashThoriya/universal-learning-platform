@@ -178,7 +178,7 @@ export class RealTimeAnalyticsProcessor {
    * Process queued events
    */
   private async processEventQueue(): Promise<void> {
-    if (this.isProcessing || this.processingQueue.length === 0) {
+    if (this.isProcessing ?? this.processingQueue.length === 0) {
       return;
     }
 
@@ -298,7 +298,7 @@ export class RealTimeAnalyticsProcessor {
     // Analyze score trends
     const testCompletions = events.filter(e => e.eventType === 'mock_test_completed');
     if (testCompletions.length >= 3) {
-      const scores = testCompletions.map(e => e.data.score || 0);
+      const scores = testCompletions.map(e => e.data.score ?? 0);
       const trend = this.calculateTrend(scores);
 
       if (trend > 0.1) {
@@ -334,7 +334,7 @@ export class RealTimeAnalyticsProcessor {
     // Analyze assignment completion patterns
     const assignments = events.filter(e => e.eventType === 'assignment_completed');
     if (assignments.length >= 2) {
-      const completionRates = assignments.map(e => e.data.completionRate || 0);
+      const completionRates = assignments.map(e => e.data.completionRate ?? 0);
       const avgCompletionRate = completionRates.reduce((a, b) => a + b, 0) / completionRates.length;
 
       if (avgCompletionRate > 0.85) {
@@ -362,7 +362,7 @@ export class RealTimeAnalyticsProcessor {
     const transferEvents = events.filter(e => e.eventType === 'learning_transfer_identified');
     if (transferEvents.length > 0) {
       const avgEffectiveness =
-        transferEvents.reduce((sum, event) => sum + (event.data.effectivenessRating || 0), 0) / transferEvents.length;
+        transferEvents.reduce((sum, event) => sum + (event.data.effectivenessRating ?? 0), 0) / transferEvents.length;
 
       if (avgEffectiveness > 0.7) {
         patterns.push({
@@ -536,7 +536,7 @@ export class RealTimeAnalyticsProcessor {
     }
 
     const examEvents = events.filter(e => e.category === 'exam');
-    const testScores = examEvents.filter(e => e.eventType === 'mock_test_completed').map(e => e.data.score || 0);
+    const testScores = examEvents.filter(e => e.eventType === 'mock_test_completed').map(e => e.data.score ?? 0);
 
     if (testScores.length >= 2) {
       const avgScore = testScores.reduce((a, b) => a + b, 0) / testScores.length;
@@ -570,7 +570,7 @@ export class RealTimeAnalyticsProcessor {
         if (!acc[skillId]) {
           acc[skillId] = [];
         }
-        acc[skillId].push(event.data.completionRate || 0);
+        acc[skillId].push(event.data.completionRate ?? 0);
         return acc;
       },
       {} as Record<string, number[]>
@@ -600,8 +600,8 @@ export class RealTimeAnalyticsProcessor {
   /**
    * Detect anomalies in user behavior and performance
    */
-  private async detectAnomalies(_userId: string, events: AnalyticsEvent[]): Promise<any[]> {
-    const anomalies: any[] = [];
+  private async detectAnomalies(_userId: string, events: AnalyticsEvent[]): Promise<unknown[]> {
+    const anomalies: unknown[] = [];
 
     try {
       // Detect performance anomalies
@@ -619,13 +619,13 @@ export class RealTimeAnalyticsProcessor {
     }
   }
 
-  private async detectPerformanceAnomalies(events: AnalyticsEvent[]): Promise<any[]> {
-    const anomalies: any[] = [];
+  private async detectPerformanceAnomalies(events: AnalyticsEvent[]): Promise<unknown[]> {
+    const anomalies: unknown[] = [];
 
     // Detect sudden performance drops
     const testEvents = events.filter(e => e.eventType === 'mock_test_completed');
     if (testEvents.length >= 3) {
-      const scores = testEvents.map(e => e.data.score || 0);
+      const scores = testEvents.map(e => e.data.score ?? 0);
       const recentScore = scores[scores.length - 1];
       const avgPreviousScores = scores.slice(0, -1).reduce((a, b) => a + b, 0) / (scores.length - 1);
 
@@ -647,8 +647,8 @@ export class RealTimeAnalyticsProcessor {
     return anomalies;
   }
 
-  private async detectBehaviorAnomalies(events: AnalyticsEvent[]): Promise<any[]> {
-    const anomalies: any[] = [];
+  private async detectBehaviorAnomalies(events: AnalyticsEvent[]): Promise<unknown[]> {
+    const anomalies: unknown[] = [];
 
     // Detect sudden activity changes
     const recentEvents = events.filter(
@@ -699,7 +699,7 @@ export class RealTimeAnalyticsProcessor {
   /**
    * Store processed results
    */
-  private async storeProcessedResults(userId: string, results: any): Promise<void> {
+  private async storeProcessedResults(userId: string, results: unknown): Promise<void> {
     try {
       // In a real implementation, this would store to Firebase
       logger.debug(`Storing processed results for user ${userId}`, results);

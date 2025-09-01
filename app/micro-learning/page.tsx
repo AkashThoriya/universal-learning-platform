@@ -7,7 +7,8 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { MicroLearningSession, SessionSummary, MicroLearningDashboard } from '@/components/micro-learning';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { type SessionPerformance } from '@/types/micro-learning';
+import { logInfo, logError } from '@/lib/logger';
+import { type SessionPerformance, type MicroLearningSession as MicroLearningSessionType } from '@/types/micro-learning';
 
 type ViewState = 'dashboard' | 'session' | 'summary';
 
@@ -25,7 +26,7 @@ function MicroLearningContent() {
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
   const [sessionConfig, setSessionConfig] = useState<SessionConfig | null>(null);
   const [sessionPerformance, setSessionPerformance] = useState<SessionPerformance | null>(null);
-  const [completedSession, setCompletedSession] = useState<any>(null);
+  const [completedSession, setCompletedSession] = useState<MicroLearningSessionType | null>(null);
 
   // Get authenticated user ID - ensure user is authenticated
   const userId = user?.uid;
@@ -33,6 +34,7 @@ function MicroLearningContent() {
   // Check for auto-start parameters from URL
   useEffect(() => {
     if (!userId) {
+      logInfo('Micro-learning: No user available, skipping auto-start check');
       return;
     } // Don't process if user not authenticated
 
@@ -42,15 +44,31 @@ function MicroLearningContent() {
     const track = searchParams.get('track') as 'exam' | 'course_tech' | null;
     const duration = searchParams.get('duration');
 
+    logInfo('Micro-learning: Checking URL parameters', {
+      autoStart,
+      subject,
+      topic,
+      track,
+      duration,
+      userId,
+    });
+
     if (autoStart === 'true' && subject && topic && track) {
       const parsedDuration = duration ? parseInt(duration) : undefined;
-      setSessionConfig({
+      const config = {
         userId,
         subjectId: subject,
         topicId: topic,
         learningTrack: track,
         ...(parsedDuration !== undefined && { duration: parsedDuration }),
+      };
+
+      logInfo('Micro-learning: Auto-starting session', {
+        config,
+        userId,
       });
+
+      setSessionConfig(config);
       setCurrentView('session');
     }
   }, [searchParams, userId]); // Add userId to dependency array
@@ -75,29 +93,115 @@ function MicroLearningContent() {
     duration?: number | undefined
   ) => {
     if (!userId) {
+      logInfo('Micro-learning: Cannot start session - no user ID available');
       return;
     } // Safety check
 
-    setSessionConfig({
+    const config = {
       userId,
       subjectId,
       topicId,
       learningTrack: track,
       ...(duration !== undefined && { duration }),
+    };
+
+    logInfo('Micro-learning: Starting session', {
+      config,
+      userId,
     });
+
+    setSessionConfig(config);
     setCurrentView('session');
   };
 
   const handleSessionComplete = (performance: SessionPerformance) => {
+    logInfo('Micro-learning: Session completed', {
+      performance: {
+        accuracy: performance.accuracy,
+        timeSpent: performance.timeSpent,
+        engagementScore: performance.engagementScore,
+        conceptsLearned: performance.conceptsLearned.length,
+        skillsDeveloped: performance.skillsDeveloped.length,
+      },
+      userId,
+      sessionConfig: sessionConfig
+        ? {
+            subjectId: sessionConfig.subjectId,
+            topicId: sessionConfig.topicId,
+            track: sessionConfig.learningTrack,
+          }
+        : null,
+    });
+
     setSessionPerformance(performance);
-    setCompletedSession(sessionConfig);
+
+    // Transform sessionConfig to MicroLearningSession
+    if (sessionConfig) {
+      const session: MicroLearningSessionType = {
+        id: `session_${Date.now()}`,
+        userId: sessionConfig.userId,
+        learningTrack: sessionConfig.learningTrack,
+        subjectId: sessionConfig.subjectId,
+        topicId: sessionConfig.topicId,
+        sessionType: 'practice',
+        duration: sessionConfig.duration ?? 15,
+        difficulty: 'medium',
+        personaOptimizations: {
+          sessionLength: sessionConfig.duration ?? 15,
+          breakReminders: true,
+          contextSwitching: false,
+          motivationalFraming: 'academic',
+          complexityRamp: 'standard',
+          learningTrackPreference: sessionConfig.learningTrack,
+          notificationStyle: 'standard',
+          uiDensity: 'comfortable',
+        },
+        content: [],
+        validationMethod:
+          sessionConfig.learningTrack === 'exam'
+            ? {
+                type: 'exam' as const,
+                mockTestQuestions: 5,
+                revisionTopics: [sessionConfig.topicId],
+                targetExam: 'general',
+              }
+            : {
+                type: 'course_tech' as const,
+                assignmentTasks: [],
+                projectComponents: [],
+                skillsToValidate: [],
+                completionCriteria: {
+                  minimumScore: 70,
+                  requiredTasks: [],
+                  portfolioSubmission: false,
+                  peerReview: false,
+                },
+              },
+        createdAt: new Date(),
+      };
+      setCompletedSession(session);
+    }
+
     setCurrentView('summary');
   };
 
   const handleSessionError = (error: Error) => {
-    console.error('Session error:', error);
+    logError('Micro-learning: Session error occurred', {
+      error: error.message,
+      stack: error.stack,
+      userId,
+      sessionConfig: sessionConfig
+        ? {
+            subjectId: sessionConfig.subjectId,
+            topicId: sessionConfig.topicId,
+            track: sessionConfig.learningTrack,
+          }
+        : null,
+      context: 'micro_learning_session_error',
+    });
+
     // TODO: Replace with proper toast notification
-    console.warn(`Session error: ${error.message}`);
+    // console.warn(`Session error: ${error.message}`);
     setCurrentView('dashboard');
   };
 
@@ -141,7 +245,9 @@ function MicroLearningContent() {
           <MicroLearningDashboard
             userId={userId}
             onStartSession={handleStartSession}
-            onViewProgress={() => console.log('View progress clicked')}
+            onViewProgress={() => {
+              logInfo('Micro-learning: View progress clicked', { userId });
+            }}
           />
         )}
 

@@ -24,39 +24,41 @@ import { User, TopicProgress as _TopicProgress, MockTestLog, DailyLog as _DailyL
 /**
  * Type guard to check if data matches the new User interface
  */
-export function isValidUser(data: any): data is User {
+export function isValidUser(data: unknown): data is User {
+  const typedData = data as Record<string, any>;
   return (
     data &&
-    typeof data.userId === 'string' &&
-    typeof data.email === 'string' &&
-    typeof data.displayName === 'string' &&
-    data.currentExam &&
-    typeof data.currentExam.id === 'string' &&
-    typeof data.onboardingComplete === 'boolean' &&
-    data.createdAt &&
-    data.settings &&
-    data.stats
+    typeof typedData.userId === 'string' &&
+    typeof typedData.email === 'string' &&
+    typeof typedData.displayName === 'string' &&
+    typedData.currentExam &&
+    typeof typedData.currentExam.id === 'string' &&
+    typeof typedData.onboardingComplete === 'boolean' &&
+    typedData.createdAt &&
+    typedData.settings &&
+    typedData.stats
   );
 }
 
 /**
  * Migrate legacy user data to new User interface
  */
-export function migrateLegacyUserData(legacyData: any): User {
+export function migrateLegacyUserData(legacyData: unknown): User {
+  const typedLegacyData = legacyData as Record<string, any>;
   return {
-    userId: legacyData.userId,
-    email: legacyData.email,
-    displayName: legacyData.displayName,
+    userId: typedLegacyData.userId,
+    email: typedLegacyData.email,
+    displayName: typedLegacyData.displayName,
     currentExam: {
-      id: legacyData.selectedExamId || 'unknown',
-      name: legacyData.examName || 'Unknown Exam',
-      targetDate: legacyData.examDate || legacyData.createdAt,
+      id: typedLegacyData.selectedExamId ?? 'unknown',
+      name: typedLegacyData.examName || 'Unknown Exam',
+      targetDate: typedLegacyData.examDate ?? typedLegacyData.createdAt,
     },
-    onboardingComplete: legacyData.onboardingComplete || false,
-    createdAt: legacyData.createdAt,
+    onboardingComplete: typedLegacyData.onboardingComplete ?? false,
+    createdAt: typedLegacyData.createdAt,
     settings: {
       revisionIntervals: [1, 3, 7, 16],
-      dailyStudyGoalMinutes: (legacyData.settings?.dailyStudyGoalHrs || 8) * 60,
+      dailyStudyGoalMinutes: (typedLegacyData.settings?.dailyStudyGoalHrs ?? 8) * 60,
       tierDefinition: {
         1: 'High Priority',
         2: 'Medium Priority',
@@ -77,9 +79,9 @@ export function migrateLegacyUserData(legacyData: any): User {
       },
     },
     stats: {
-      totalStudyHours: legacyData.totalStudyHours || 0,
-      currentStreak: legacyData.studyStreak || 0,
-      longestStreak: legacyData.studyStreak || 0,
+      totalStudyHours: typedLegacyData.totalStudyHours ?? 0,
+      currentStreak: typedLegacyData.studyStreak ?? 0,
+      longestStreak: typedLegacyData.studyStreak ?? 0,
       totalMockTests: 0,
       averageScore: 0,
       topicsCompleted: 0,
@@ -106,7 +108,7 @@ export async function userManagementExample(userId: string) {
 
     const user = userResult.data;
     if (!user) {
-      console.log('User not found');
+      // console.log('User not found');
       return;
     }
 
@@ -120,10 +122,9 @@ export async function userManagementExample(userId: string) {
 
     if (!updateResult.success) {
       console.error('Failed to update user:', updateResult.error);
-      return;
     }
 
-    console.log('User updated successfully');
+    // console.log('User updated successfully');
   } catch (error) {
     console.error('Unexpected error in user management:', error);
   }
@@ -154,10 +155,9 @@ export async function progressTrackingExample(userId: string, topicId: string) {
 
     if (!updateResult.success) {
       console.error('Failed to update progress:', updateResult.error);
-      return;
     }
 
-    console.log('Progress updated successfully');
+    // console.log('Progress updated successfully');
   } catch (error) {
     console.error('Unexpected error in progress tracking:', error);
   }
@@ -211,7 +211,7 @@ export async function mockTestAnalysisExample(userId: string) {
       return;
     }
 
-    console.log('Mock test created with ID:', createResult.data);
+    // console.log('Mock test created with ID:', createResult.data);
 
     // 2. Fetch recent mock tests for analysis
     const testsResult = await mockTestService.getTests(userId, 5);
@@ -221,20 +221,23 @@ export async function mockTestAnalysisExample(userId: string) {
       return;
     }
 
-    const recentTests = testsResult.data || [];
+    const recentTests = testsResult.data ?? [];
+    // Calculate average score across recent tests
     const averageScore =
-      recentTests.reduce((sum, test: any) => {
-        const totalScore = Object.values(test.scores as Record<string, number>).reduce(
+      recentTests.reduce((sum: number, test: unknown) => {
+        const typedTest = test as Record<string, any>;
+        const totalScore = Object.values(typedTest.scores as Record<string, number>).reduce(
           (s: number, score: number) => s + score,
           0
         );
-        const maxScore = Object.values(test.maxScores as Record<string, number>).reduce(
+        const maxScore = Object.values(typedTest.maxScores as Record<string, number>).reduce(
           (s: number, score: number) => s + score,
           0
         );
         return sum + (totalScore / maxScore) * 100;
       }, 0) / recentTests.length;
 
+    // Log the average score for debugging
     console.log(`Average score across ${recentTests.length} tests: ${averageScore.toFixed(1)}%`);
   } catch (error) {
     console.error('Unexpected error in mock test analysis:', error);
@@ -250,7 +253,7 @@ export async function errorHandlingExample(userId: string) {
   if (!result.success) {
     // Handle specific error types
     if (result.error.message.includes('not found')) {
-      console.log('User does not exist');
+      // console.log('User does not exist');
     } else {
       console.error('Database error:', result.error);
     }

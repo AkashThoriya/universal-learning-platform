@@ -26,7 +26,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from '@/hooks/useForm';
 import { PersonaAwareGoalSetting } from '@/lib/persona-aware-goals';
-import { UserPersonaType, CareerMotivation } from '@/types/exam';
+import { UserPersonaType, CareerMotivation, UserPersona } from '@/types/exam';
 
 /**
  * Form data structure for persona detection step
@@ -73,14 +73,14 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const currentPersona = form.data.userPersona?.type;
 
   // Helper function to update nested persona fields
-  const updatePersonaField = (field: string, value: any) => {
+  const updatePersonaField = (field: string, value: unknown) => {
     const keys = field.split('.');
     const updatedPersona = { ...form.data.userPersona };
 
     if (keys.length === 2) {
       // userPersona.type
       if (keys[1] === 'type') {
-        updatedPersona.type = value;
+        updatedPersona.type = value as UserPersonaType;
       }
     } else if (keys.length === 3) {
       // userPersona.workSchedule.field or userPersona.careerContext.field
@@ -106,15 +106,15 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         };
 
         if (fieldName === 'workingHours') {
-          baseWorkSchedule.workingHours = value;
+          baseWorkSchedule.workingHours = value as { start: string; end: string };
         } else if (fieldName === 'workingDays') {
-          baseWorkSchedule.workingDays = value;
+          baseWorkSchedule.workingDays = value as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
         } else if (fieldName === 'commuteTime') {
-          baseWorkSchedule.commuteTime = value;
+          baseWorkSchedule.commuteTime = value as number;
         } else if (fieldName === 'flexibility') {
-          baseWorkSchedule.flexibility = value;
+          baseWorkSchedule.flexibility = value as 'rigid' | 'flexible' | 'hybrid';
         } else if (fieldName === 'lunchBreakDuration') {
-          baseWorkSchedule.lunchBreakDuration = value;
+          baseWorkSchedule.lunchBreakDuration = value as number;
         }
 
         updatedPersona.workSchedule = baseWorkSchedule;
@@ -130,17 +130,17 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         };
 
         if (fieldName === 'currentRole') {
-          baseCareerContext.currentRole = value;
+          baseCareerContext.currentRole = value as string;
         } else if (fieldName === 'targetRole') {
-          baseCareerContext.targetRole = value;
+          baseCareerContext.targetRole = value as string;
         } else if (fieldName === 'industry') {
-          baseCareerContext.industry = value;
+          baseCareerContext.industry = value as string;
         } else if (fieldName === 'urgency') {
-          baseCareerContext.urgency = value;
+          baseCareerContext.urgency = value as 'immediate' | 'short_term' | 'long_term';
         } else if (fieldName === 'motivation') {
-          baseCareerContext.motivation = value;
+          baseCareerContext.motivation = value as CareerMotivation[];
         } else if (fieldName === 'skillGaps') {
-          baseCareerContext.skillGaps = value;
+          baseCareerContext.skillGaps = value as string[];
         }
 
         updatedPersona.careerContext = baseCareerContext;
@@ -153,13 +153,13 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   };
 
   // Helper function to update preferences
-  const updatePreferenceField = (field: string, value: any) => {
+  const updatePreferenceField = (field: string, value: unknown) => {
     const updatedPreferences = { ...form.data.preferences };
     const fieldName = field.split('.')[1];
     if (fieldName === 'dailyStudyGoalMinutes') {
-      updatedPreferences.dailyStudyGoalMinutes = value;
+      updatedPreferences.dailyStudyGoalMinutes = value as number;
     } else if (fieldName === 'preferredStudyTime') {
-      updatedPreferences.preferredStudyTime = value;
+      updatedPreferences.preferredStudyTime = value as 'morning' | 'afternoon' | 'evening' | 'night';
     }
     form.updateField('preferences', updatedPreferences);
   };
@@ -184,11 +184,11 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
               updatePersonaField('userPersona.type', value);
               // Reset work schedule and career context when changing persona
               if (value !== 'working_professional') {
-                const updatedPersona: { type: UserPersonaType; workSchedule?: any; careerContext?: any } = {
+                const updatedPersona: { type: UserPersonaType; workSchedule?: unknown; careerContext?: unknown } = {
                   type: value,
                 };
                 // Don't set optional properties to undefined, just omit them
-                form.updateField('userPersona', updatedPersona);
+                form.updateField('userPersona', updatedPersona as any);
               }
               // Update recommended study goal
               const newPersona = { ...form.data.userPersona, type: value };
@@ -302,7 +302,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
   ];
 
   // Helper function to update work schedule fields
-  const updateWorkSchedule = (field: string, value: any) => {
+  const updateWorkSchedule = (field: string, value: unknown) => {
     const updatedPersona = { ...form.data.userPersona };
     const keys = field.split('.');
 
@@ -329,13 +329,13 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
       // workSchedule.field
       const fieldName = keys[1];
       if (fieldName === 'commuteTime') {
-        updatedPersona.workSchedule.commuteTime = value;
+        updatedPersona.workSchedule.commuteTime = value as number;
       } else if (fieldName === 'flexibility') {
-        updatedPersona.workSchedule.flexibility = value;
+        updatedPersona.workSchedule.flexibility = value as 'rigid' | 'flexible' | 'hybrid';
       } else if (fieldName === 'lunchBreakDuration') {
-        updatedPersona.workSchedule.lunchBreakDuration = value;
+        updatedPersona.workSchedule.lunchBreakDuration = value as number;
       } else if (fieldName === 'workingDays') {
-        updatedPersona.workSchedule.workingDays = value;
+        updatedPersona.workSchedule.workingDays = value as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
       }
     } else if (keys.length === 3 && keys[1] === 'workingHours') {
       // workSchedule.workingHours.start/end
@@ -344,16 +344,16 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         updatedPersona.workSchedule = {
           ...updatedPersona.workSchedule,
           workingHours: {
-            start: keys[2] === 'start' ? value : currentWorkingHours.start,
-            end: keys[2] === 'end' ? value : currentWorkingHours.end,
+            start: keys[2] === 'start' ? value as string : currentWorkingHours.start,
+            end: keys[2] === 'end' ? value as string : currentWorkingHours.end,
           },
         };
       } else {
         updatedPersona.workSchedule = {
           ...updatedPersona.workSchedule,
           workingHours: {
-            start: keys[2] === 'start' ? value : '09:00',
-            end: keys[2] === 'end' ? value : '17:00',
+            start: keys[2] === 'start' ? value as string : '09:00',
+            end: keys[2] === 'end' ? value as string : '17:00',
           },
         };
       }
@@ -403,7 +403,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
                   id={day.id}
                   checked={form.data.userPersona?.workSchedule?.workingDays?.includes(day.id as any) || false}
                   onCheckedChange={checked => {
-                    const currentDays = form.data.userPersona?.workSchedule?.workingDays || [];
+                    const currentDays = form.data.userPersona?.workSchedule?.workingDays ?? [];
                     if (checked) {
                       updateWorkSchedule('workSchedule.workingDays', [...currentDays, day.id]);
                     } else {
@@ -427,7 +427,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
           <Label>Daily Commute Time (both ways)</Label>
           <div className="flex items-center space-x-2">
             <Slider
-              value={[form.data.userPersona?.workSchedule?.commuteTime || 60]}
+              value={[form.data.userPersona?.workSchedule?.commuteTime ?? 60]}
               onValueChange={([value]) => updateWorkSchedule('workSchedule.commuteTime', value)}
               max={180}
               min={0}
@@ -435,7 +435,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
               className="flex-1"
             />
             <span className="w-16 text-sm text-muted-foreground">
-              {form.data.userPersona?.workSchedule?.commuteTime || 60} min
+              {form.data.userPersona?.workSchedule?.commuteTime ?? 60} min
             </span>
           </div>
         </div>
@@ -444,7 +444,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Work Schedule Flexibility</Label>
           <Select
-            value={form.data.userPersona?.workSchedule?.flexibility || 'rigid'}
+            value={form.data.userPersona?.workSchedule?.flexibility ?? 'rigid'}
             onValueChange={(value: 'rigid' | 'flexible' | 'hybrid') =>
               updateWorkSchedule('workSchedule.flexibility', value)
             }
@@ -464,7 +464,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Lunch Break Duration</Label>
           <Select
-            value={String(form.data.userPersona?.workSchedule?.lunchBreakDuration || 60)}
+            value={String(form.data.userPersona?.workSchedule?.lunchBreakDuration ?? 60)}
             onValueChange={value => updateWorkSchedule('workSchedule.lunchBreakDuration', parseInt(value))}
           >
             <SelectTrigger>
@@ -497,7 +497,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
   ];
 
   // Helper function to update career context fields
-  const updateCareerContext = (field: string, value: any) => {
+  const updateCareerContext = (field: string, value: unknown) => {
     const updatedPersona = { ...form.data.userPersona };
 
     // Initialize careerContext if it doesn't exist
@@ -517,17 +517,17 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
       // careerContext.field
       const fieldName = keys[1];
       if (fieldName === 'currentRole') {
-        updatedPersona.careerContext.currentRole = value;
+        updatedPersona.careerContext.currentRole = value as string;
       } else if (fieldName === 'targetRole') {
-        updatedPersona.careerContext.targetRole = value;
+        updatedPersona.careerContext.targetRole = value as string;
       } else if (fieldName === 'industry') {
-        updatedPersona.careerContext.industry = value;
+        updatedPersona.careerContext.industry = value as string;
       } else if (fieldName === 'urgency') {
-        updatedPersona.careerContext.urgency = value;
+        updatedPersona.careerContext.urgency = value as 'immediate' | 'short_term' | 'long_term';
       } else if (fieldName === 'motivation') {
-        updatedPersona.careerContext.motivation = value;
+        updatedPersona.careerContext.motivation = value as CareerMotivation[];
       } else if (fieldName === 'skillGaps') {
-        updatedPersona.careerContext.skillGaps = value;
+        updatedPersona.careerContext.skillGaps = value as string[];
       }
     }
 
@@ -579,7 +579,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Timeline for Career Goals</Label>
           <RadioGroup
-            value={form.data.userPersona?.careerContext?.urgency || 'short_term'}
+            value={form.data.userPersona?.careerContext?.urgency ?? 'short_term'}
             onValueChange={(value: 'immediate' | 'short_term' | 'long_term') =>
               updateCareerContext('careerContext.urgency', value)
             }
@@ -616,7 +616,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
                   id={motivation.id}
                   checked={form.data.userPersona?.careerContext?.motivation?.includes(motivation.id) || false}
                   onCheckedChange={checked => {
-                    const currentMotivations = form.data.userPersona?.careerContext?.motivation || [];
+                    const currentMotivations = form.data.userPersona?.careerContext?.motivation ?? [];
                     if (checked) {
                       updateCareerContext('careerContext.motivation', [...currentMotivations, motivation.id]);
                     } else {
@@ -663,17 +663,17 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
 /**
  * Study goal recommendation component
  */
-function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<PersonaFormData>; persona: any }) {
-  const recommendations = PersonaAwareGoalSetting.getStudyTimeRecommendations(persona);
+function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<PersonaFormData>; persona: unknown }) {
+  const recommendations = PersonaAwareGoalSetting.getStudyTimeRecommendations(persona as UserPersona);
 
   // Helper function to update preferences
-  const updatePreference = (field: string, value: any) => {
+  const updatePreference = (field: string, value: unknown) => {
     const updatedPreferences = { ...form.data.preferences };
     const fieldName = field.split('.')[1];
     if (fieldName === 'dailyStudyGoalMinutes') {
-      updatedPreferences.dailyStudyGoalMinutes = value;
+      updatedPreferences.dailyStudyGoalMinutes = value as number;
     } else if (fieldName === 'preferredStudyTime') {
-      updatedPreferences.preferredStudyTime = value;
+      updatedPreferences.preferredStudyTime = value as 'morning' | 'afternoon' | 'evening' | 'night';
     }
     form.updateField('preferences', updatedPreferences);
   };
@@ -699,7 +699,7 @@ function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<Person
             </span>
           </div>
           <Slider
-            value={[form.data.preferences?.dailyStudyGoalMinutes || 480]}
+            value={[form.data.preferences?.dailyStudyGoalMinutes ?? 480]}
             onValueChange={([value]) => updatePreference('preferences.dailyStudyGoalMinutes', value)}
             max={recommendations.maxGoal}
             min={recommendations.minGoal}
@@ -757,13 +757,13 @@ function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<Person
  */
 function PreferredStudyTimeInput({ form }: PersonaDetectionStepProps) {
   // Helper function to update preferences
-  const updatePreference = (field: string, value: any) => {
+  const updatePreference = (field: string, value: unknown) => {
     const updatedPreferences = { ...form.data.preferences };
     const fieldName = field.split('.')[1];
     if (fieldName === 'dailyStudyGoalMinutes') {
-      updatedPreferences.dailyStudyGoalMinutes = value;
+      updatedPreferences.dailyStudyGoalMinutes = value as number;
     } else if (fieldName === 'preferredStudyTime') {
-      updatedPreferences.preferredStudyTime = value;
+      updatedPreferences.preferredStudyTime = value as 'morning' | 'afternoon' | 'evening' | 'night';
     }
     form.updateField('preferences', updatedPreferences);
   };
@@ -772,7 +772,7 @@ function PreferredStudyTimeInput({ form }: PersonaDetectionStepProps) {
     <div className="space-y-2">
       <Label>Preferred Study Time</Label>
       <Select
-        value={form.data.preferences?.preferredStudyTime || 'morning'}
+        value={form.data.preferences?.preferredStudyTime ?? 'morning'}
         onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') =>
           updatePreference('preferences.preferredStudyTime', value)
         }

@@ -35,7 +35,31 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
-import { UserPersonaType } from '@/types/exam';
+import { logInfo, logger } from '@/lib/logger';
+import { UserPersona, UserPersonaType } from '@/types/exam';
+
+/**
+ * Form data interface for onboarding
+ */
+interface OnboardingFormData {
+  userPersona?: UserPersona;
+  preferences?: {
+    dailyStudyGoalMinutes?: number;
+    preferredStudyTime?: 'morning' | 'afternoon' | 'evening' | 'night';
+    tierDefinitions?: {
+      1: string;
+      2: string;
+      3: string;
+    };
+    revisionIntervals?: number[];
+    notifications?: {
+      revisionReminders: boolean;
+      dailyGoalReminders: boolean;
+      healthCheckReminders: boolean;
+    };
+  };
+  [key: string]: any; // Allow for other form fields
+}
 
 /**
  * Enhanced persona options with comprehensive metadata
@@ -121,10 +145,10 @@ const STUDY_TIMES = [
 ];
 
 /**
- * Props for PersonaDetectionStep component - using flexible form type
+ * Props for PersonaDetectionStep component - using properly typed form
  */
 interface PersonaDetectionStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<OnboardingFormData>;
 }
 
 /**
@@ -132,13 +156,18 @@ interface PersonaDetectionStepProps {
  */
 export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const [currentSubStep, setCurrentSubStep] = useState(1);
-  const [selectedPersona, setSelectedPersona] = useState<UserPersonaType | null>(form.data.userPersona?.type || null);
+  const [selectedPersona, setSelectedPersona] = useState<UserPersonaType | null>(form.data.userPersona?.type ?? null);
   const [showPersonaDetails, setShowPersonaDetails] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Enhanced persona selection with improved UX
   const handlePersonaSelect = useCallback(
     (personaType: UserPersonaType) => {
+      logInfo('Persona selected in onboarding', {
+        personaType,
+        timestamp: new Date().toISOString(),
+      });
+
       setSelectedPersona(personaType);
       setValidationErrors([]);
 
@@ -148,9 +177,15 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       // Set smart default study time based on persona
       const selectedOption = PERSONA_OPTIONS.find(p => p.id === personaType);
       if (selectedOption) {
+        const newStudyGoal = selectedOption.defaultHours * 60;
         form.updateField('preferences', {
-          ...form.data.preferences,
-          dailyStudyGoalMinutes: selectedOption.defaultHours * 60,
+          ...(form.data.preferences ?? {}),
+          dailyStudyGoalMinutes: newStudyGoal,
+        });
+        logInfo('Default study goal set based on persona', {
+          personaType,
+          defaultHours: selectedOption.defaultHours,
+          studyGoalMinutes: newStudyGoal,
         });
       }
 
@@ -177,17 +212,34 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
     (hours: number[]) => {
       const newHours = hours[0] || 2;
 
+      logInfo('Study goal changed in persona detection', {
+        newHours,
+        newMinutes: newHours * 60,
+        selectedPersona,
+        timestamp: new Date().toISOString(),
+      });
+
       // Validate study hours based on persona
       if (selectedPersona === 'working_professional' && newHours > 4) {
         setValidationErrors(['Consider a more realistic goal for working professionals (2-4 hours)']);
+        logger.debug('Study goal validation warning', {
+          persona: selectedPersona,
+          hours: newHours,
+          warning: 'Too many hours for working professional',
+        });
       } else if (selectedPersona === 'student' && newHours < 4) {
         setValidationErrors(['Students typically benefit from 4+ hours of daily study']);
+        logger.debug('Study goal validation warning', {
+          persona: selectedPersona,
+          hours: newHours,
+          warning: 'Too few hours for student',
+        });
       } else {
         setValidationErrors([]);
       }
 
       form.updateField('preferences', {
-        ...form.data.preferences,
+        ...(form.data.preferences ?? {}),
         dailyStudyGoalMinutes: newHours * 60,
       });
     },
@@ -198,7 +250,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const handleStudyTimeChange = useCallback(
     (timeSlot: string) => {
       form.updateField('preferences', {
-        ...form.data.preferences,
+        ...(form.data.preferences ?? {}),
         preferredStudyTime: timeSlot as 'morning' | 'afternoon' | 'evening' | 'night',
       });
 
@@ -213,7 +265,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
     [form, selectedPersona]
   );
 
-  const currentStudyHours = Math.round(form.data.preferences?.dailyStudyGoalMinutes / 60) || 2;
+  const currentStudyHours = Math.round((form.data.preferences?.dailyStudyGoalMinutes ?? 120) / 60) || 2;
   const selectedTimeSlot = form.data.preferences?.preferredStudyTime;
 
   return (
@@ -289,7 +341,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                             ? 'border-blue-500 shadow-lg transform scale-105 ring-blue-200 bg-blue-50'
                             : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
                         }`}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.preventDefault();
                           e.stopPropagation();
                           handlePersonaSelect(persona.id);
@@ -317,43 +369,49 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                           <div
                             className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
-                              isSelected 
-                                ? `${persona.bgColor} scale-110 ring-4 ring-blue-200` 
+                              isSelected
+                                ? `${persona.bgColor} scale-110 ring-4 ring-blue-200`
                                 : `${persona.bgColor} group-hover:scale-110`
                             }`}
                           >
-                            <Icon className={`h-8 w-8 ${persona.textColor} transition-transform duration-300`} aria-hidden="true" />
+                            <Icon
+                              className={`h-8 w-8 ${persona.textColor} transition-transform duration-300`}
+                              aria-hidden="true"
+                            />
                           </div>
-                          
-                          <h3 className={`font-semibold mb-2 transition-colors ${
-                            isSelected ? 'text-blue-700' : 'text-gray-900'
-                          }`}>
+
+                          <h3
+                            className={`font-semibold mb-2 transition-colors ${
+                              isSelected ? 'text-blue-700' : 'text-gray-900'
+                            }`}
+                          >
                             {persona.title}
                           </h3>
-                          
-                          <p id={`persona-${persona.id}-desc`} className={`text-sm mb-3 transition-colors ${
-                            isSelected ? 'text-blue-600' : 'text-gray-600'
-                          }`}>
+
+                          <p
+                            id={`persona-${persona.id}-desc`}
+                            className={`text-sm mb-3 transition-colors ${
+                              isSelected ? 'text-blue-600' : 'text-gray-600'
+                            }`}
+                          >
                             {persona.description}
                           </p>
-                          
+
                           <div className="space-y-2">
-                            <Badge 
-                              variant={isSelected ? "default" : "secondary"} 
-                              className={`text-xs ${
-                                isSelected ? 'bg-blue-600 text-white' : ''
-                              }`}
+                            <Badge
+                              variant={isSelected ? 'default' : 'secondary'}
+                              className={`text-xs ${isSelected ? 'bg-blue-600 text-white' : ''}`}
                             >
                               ~{persona.defaultHours}h/day recommended
                             </Badge>
-                            
+
                             <div>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 className={`text-xs transition-colors ${
-                                  isSelected 
-                                    ? 'text-blue-700 hover:text-blue-800 hover:bg-blue-100' 
+                                  isSelected
+                                    ? 'text-blue-700 hover:text-blue-800 hover:bg-blue-100'
                                     : 'text-blue-600 hover:text-blue-800'
                                 }`}
                                 onClick={e => {
@@ -382,13 +440,14 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                 {/* Continue button - only show when persona is selected */}
                 {selectedPersona && (
-                  <div className="flex justify-center mt-6 animate-in slide-in-from-bottom">
+                  <div className="flex justify-center mt-8 pt-6 border-t border-gray-100 animate-in slide-in-from-bottom duration-500">
                     <Button
                       onClick={handleProceedToNextStep}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 text-base shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[280px] rounded-xl"
                     >
-                      Continue with {PERSONA_OPTIONS.find(p => p.id === selectedPersona)?.title}
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      <span>Continue with {PERSONA_OPTIONS.find(p => p.id === selectedPersona)?.title}</span>
+                      <ArrowRight className="ml-3 h-5 w-5" />
                     </Button>
                   </div>
                 )}
@@ -413,7 +472,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
                                   e.preventDefault();
                                   setShowPersonaDetails(null);
@@ -628,7 +687,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                         ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-200 transform scale-105'
                         : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
                     }`}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.preventDefault();
                       e.stopPropagation();
                       handleStudyTimeChange(timeSlot.id);
@@ -654,19 +713,25 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                       )}
 
                       <div className="text-2xl mb-2">{timeSlot.icon}</div>
-                      <h3 className={`font-medium mb-1 transition-colors ${
-                        selectedTimeSlot === timeSlot.id ? 'text-blue-700' : 'text-gray-900'
-                      }`}>
+                      <h3
+                        className={`font-medium mb-1 transition-colors ${
+                          selectedTimeSlot === timeSlot.id ? 'text-blue-700' : 'text-gray-900'
+                        }`}
+                      >
                         {timeSlot.label}
                       </h3>
-                      <p className={`text-xs mb-2 transition-colors ${
-                        selectedTimeSlot === timeSlot.id ? 'text-blue-600' : 'text-gray-600'
-                      }`}>
+                      <p
+                        className={`text-xs mb-2 transition-colors ${
+                          selectedTimeSlot === timeSlot.id ? 'text-blue-600' : 'text-gray-600'
+                        }`}
+                      >
                         {timeSlot.time}
                       </p>
-                      <p className={`text-xs transition-colors ${
-                        selectedTimeSlot === timeSlot.id ? 'text-blue-500' : 'text-gray-500'
-                      }`}>
+                      <p
+                        className={`text-xs transition-colors ${
+                          selectedTimeSlot === timeSlot.id ? 'text-blue-500' : 'text-gray-500'
+                        }`}
+                      >
                         {timeSlot.description}
                       </p>
                     </CardContent>

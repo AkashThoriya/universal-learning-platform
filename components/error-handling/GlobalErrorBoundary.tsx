@@ -19,18 +19,18 @@ import { Card } from '@/components/ui/card';
 
 // Simple logger for error reporting
 const logger = {
-  error: (message: string, data?: any) => {
+  error: (message: string, data?: unknown) => {
     if (process.env.NODE_ENV === 'development') {
       console.error(message, data);
     }
     // In production, this could send to an external logging service
   },
-  warn: (message: string, data?: any) => {
+  warn: (_message: string, _data?: unknown) => {
     if (process.env.NODE_ENV === 'development') {
-      console.warn(message, data);
+      // console.warn(message, data);
     }
   },
-  info: (message: string, data?: any) => {
+  info: (message: string, data?: unknown) => {
     if (process.env.NODE_ENV === 'development') {
       console.info(message, data);
     }
@@ -98,9 +98,9 @@ class ErrorReporter {
       timestamp: new Date().toISOString(),
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'SSR',
       url: typeof window !== 'undefined' ? window.location.href : 'SSR',
-      userId: context.userId || 'anonymous',
-      sessionId: context.sessionId || 'unknown',
-      buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION || 'unknown',
+      userId: context.userId ?? 'anonymous',
+      sessionId: context.sessionId ?? 'unknown',
+      buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION ?? 'unknown',
       ...context,
     };
 
@@ -177,11 +177,20 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
   }
 
   private async handleError(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ isReporting: true });
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    if (isDevelopment) {
+      console.error('Global Error Boundary caught an error:', error);
+      console.error('Error Info:', errorInfo);
+    }
+
+    this.setState({
+      isReporting: true,
+    });
 
     try {
       const errorId = await this.errorReporter.reportError(error, errorInfo, {
-        level: this.props.level || 'global',
+        level: this.props.level ?? 'global',
         retryCount: this.state.retryCount,
       });
 
@@ -195,7 +204,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       this.props.onError?.(error, errorInfo, errorId);
 
       // Auto-retry for recoverable errors
-      if (this.isRecoverableError(error) && this.state.retryCount < (this.props.maxRetries || 3)) {
+      if (this.isRecoverableError(error) && this.state.retryCount < (this.props.maxRetries ?? 3)) {
         this.scheduleRetry();
       }
     } catch (reportingError) {
@@ -284,7 +293,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
               </div>
 
               {/* Error Details (Development only) */}
-              {(this.props.showDetails || process.env.NODE_ENV === 'development') && (
+              {(this.props.showDetails ?? process.env.NODE_ENV === 'development') && (
                 <Alert className="text-left">
                   <Bug className="h-4 w-4" />
                   <AlertDescription className="font-mono text-xs">
@@ -331,7 +340,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
               {/* Retry Count */}
               {this.state.retryCount > 0 && (
                 <p className="text-sm text-gray-500">
-                  Retry attempt: {this.state.retryCount} / {this.props.maxRetries || 3}
+                  Retry attempt: {this.state.retryCount} / {this.props.maxRetries ?? 3}
                 </p>
               )}
             </div>

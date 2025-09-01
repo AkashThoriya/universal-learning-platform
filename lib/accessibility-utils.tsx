@@ -160,7 +160,7 @@ export function AccessibleButton({
   size?: 'small' | 'medium' | 'large';
   ariaLabel?: string;
   ariaDescribedBy?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
@@ -278,7 +278,7 @@ export function AccessibleFormField({
   disabled?: boolean;
   placeholder?: string;
   autoComplete?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   const errorId = `${id}-error`;
   const helpId = `${id}-help`;
@@ -403,7 +403,7 @@ export function AccessibilityChecker({ children }: { children: React.ReactNode }
     // Check for missing alt text on images
     const images = document.querySelectorAll('img:not([alt])');
     if (images.length > 0) {
-      console.warn('Accessibility: Found images without alt text:', images);
+      // console.warn('Accessibility: Found images without alt text:', images);
     }
 
     // Check for missing form labels
@@ -414,13 +414,13 @@ export function AccessibilityChecker({ children }: { children: React.ReactNode }
     });
 
     if (unlabeledInputs.length > 0) {
-      console.warn('Accessibility: Found inputs without proper labels:', unlabeledInputs);
+      // console.warn('Accessibility: Found inputs without proper labels:', unlabeledInputs);
     }
 
     // Check for missing headings
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     if (headings.length === 0) {
-      console.warn('Accessibility: No heading elements found on page');
+      // console.warn('Accessibility: No heading elements found on page');
     }
   }, []);
 

@@ -253,19 +253,19 @@ export default function ProfilePage() {
           const formData: ProfileFormData = {
             displayName: fetchedUser.displayName || '',
             email: fetchedUser.email || '',
-            userPersona: fetchedUser.userPersona || undefined,
+            userPersona: fetchedUser.userPersona ?? undefined,
             selectedExamId: fetchedUser.selectedExamId || '',
             examDate: fetchedUser.examDate ? fetchedUser.examDate.toDate().toISOString().split('T')[0] || '' : '',
-            isCustomExam: fetchedUser.isCustomExam || false,
+            isCustomExam: fetchedUser.isCustomExam ?? false,
             customExam: {
               name: fetchedUser.customExam?.name || '',
               description: fetchedUser.customExam?.description || '',
               category: fetchedUser.customExam?.category || '',
             },
-            syllabus: userSyllabus || [],
+            syllabus: userSyllabus ?? [],
             preferences: {
-              dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes || 240,
-              preferredStudyTime: fetchedUser.preferences?.preferredStudyTime || 'morning',
+              dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes ?? 240,
+              preferredStudyTime: fetchedUser.preferences?.preferredStudyTime ?? 'morning',
               tierDefinitions: fetchedUser.preferences?.tierDefinitions || {
                 1: 'High Priority - Core Topics',
                 2: 'Medium Priority - Important Topics',
@@ -1350,7 +1350,7 @@ export default function ProfilePage() {
                 <h3 className="font-semibold mb-2">Exam Configuration</h3>
                 <div className="bg-gray-50 p-3 rounded-lg space-y-1">
                   <p>
-                    <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
+                    <strong>Exam:</strong> {selectedExam?.name ?? form.data.customExam?.name}
                   </p>
                   <p>
                     <strong>Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}

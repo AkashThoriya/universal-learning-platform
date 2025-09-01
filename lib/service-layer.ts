@@ -76,7 +76,7 @@ export interface ServiceEventHandler<T = any> {
 export abstract class AbstractService<T, ID = string> implements BaseService<T, ID> {
   protected config: ServiceConfig;
   private eventHandlers: Map<ServiceEvent, ServiceEventHandler[]> = new Map();
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private cache: Map<string, { data: unknown; timestamp: number }> = new Map();
 
   constructor(config: ServiceConfig = {}) {
     this.config = {
@@ -91,7 +91,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
    * Register event handler
    */
   on(event: ServiceEvent, handler: ServiceEventHandler): void {
-    const handlers = this.eventHandlers.get(event) || [];
+    const handlers = this.eventHandlers.get(event) ?? [];
     handlers.push(handler);
     this.eventHandlers.set(event, handlers);
   }
@@ -99,8 +99,8 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
   /**
    * Emit event to registered handlers
    */
-  protected async emit(event: ServiceEvent, data: any): Promise<void> {
-    const handlers = this.eventHandlers.get(event) || [];
+  protected async emit(event: ServiceEvent, data: unknown): Promise<void> {
+    const handlers = this.eventHandlers.get(event) ?? [];
     await Promise.all(handlers.map(handler => handler(event, data)));
   }
 
@@ -123,13 +123,13 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
       return null;
     }
 
-    return cached.data;
+    return cached.data as U | null;
   }
 
   /**
    * Store data in cache
    */
-  protected setCache(key: string, data: any): void {
+  protected setCache(key: string, data: unknown): void {
     if (!this.config.cacheEnabled) {
       return;
     }
@@ -145,7 +145,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
    */
   protected async withRetry<U>(
     operation: () => Promise<U>,
-    attempts: number = this.config.retryAttempts || 3
+    attempts: number = this.config.retryAttempts ?? 3
   ): Promise<U> {
     let lastError: Error;
 
@@ -172,7 +172,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
   /**
    * Transform data after retrieval
    */
-  protected transform(data: any): T {
+  protected transform(data: unknown): T {
     return data as T;
   }
 
@@ -288,7 +288,7 @@ export class ServiceError extends Error {
   constructor(
     message: string,
     public code: string,
-    public details?: any
+    public details?: unknown
   ) {
     super(message);
     this.name = 'ServiceError';
@@ -303,10 +303,10 @@ export function isServiceError(error: unknown): error is ServiceError {
  * Logging interface for services
  */
 export interface Logger {
-  debug(message: string, ...args: any[]): void;
-  info(message: string, ...args: any[]): void;
-  warn(message: string, ...args: any[]): void;
-  error(message: string, error?: Error, ...args: any[]): void;
+  debug(message: string, ...args: unknown[]): void;
+  info(message: string, ...args: unknown[]): void;
+  warn(message: string, ...args: unknown[]): void;
+  error(message: string, error?: Error, ...args: unknown[]): void;
 }
 
 /**
@@ -315,19 +315,19 @@ export interface Logger {
 export class ConsoleLogger implements Logger {
   constructor(private prefix = '[Service]') {}
 
-  debug(message: string, ...args: any[]): void {
-    console.debug(`${this.prefix} ${message}`, ...args);
+  debug(_message: string, ..._args: unknown[]): void {
+    // console.debug(`${this.prefix} ${message}`, ...args);
   }
 
-  info(message: string, ...args: any[]): void {
+  info(message: string, ...args: unknown[]): void {
     console.info(`${this.prefix} ${message}`, ...args);
   }
 
-  warn(message: string, ...args: any[]): void {
-    console.warn(`${this.prefix} ${message}`, ...args);
+  warn(_message: string, ..._args: unknown[]): void {
+    // console.warn(`${this.prefix} ${message}`, ...args);
   }
 
-  error(message: string, error?: Error, ...args: any[]): void {
+  error(message: string, error?: Error, ...args: unknown[]): void {
     console.error(`${this.prefix} ${message}`, error, ...args);
   }
 }
@@ -362,12 +362,12 @@ export class PerformanceMonitor {
 
     if (result instanceof Promise) {
       return result.finally(() => {
-        const duration = this.end(label);
-        console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+        this.end(label);
+        // console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
       });
     }
-    const duration = this.end(label);
-    console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+    this.end(label);
+    // console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
     return result;
   }
 }

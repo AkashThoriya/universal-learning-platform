@@ -46,6 +46,7 @@ If you're using a custom Google Cloud project:
 Your Firebase configuration automatically includes Google authentication. No additional environment variables are required unless you need custom settings.
 
 **Optional**: Add to your `.env.local` file if you need custom Google OAuth configuration:
+
 ```bash
 # Google OAuth Configuration (Optional)
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
@@ -62,6 +63,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
 ## Features Implemented
 
 ### ✅ Core Authentication
+
 - [x] Google OAuth popup sign-in
 - [x] User data synchronization with Firestore
 - [x] Automatic account creation for new users
@@ -69,6 +71,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
 - [x] Error handling and user feedback
 
 ### ✅ User Experience
+
 - [x] Loading states during authentication
 - [x] Comprehensive error messages
 - [x] Fallback to email/password authentication
@@ -76,6 +79,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
 - [x] Mobile-friendly popup handling
 
 ### ✅ Security Features
+
 - [x] Secure token handling
 - [x] Account linking prevention for security
 - [x] Popup blocking detection
@@ -83,6 +87,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
 - [x] Rate limiting awareness
 
 ### ✅ Data Management
+
 - [x] User profile data sync (name, email, photo)
 - [x] Automatic user document creation
 - [x] Onboarding flow integration
@@ -92,6 +97,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
 ## User Flow
 
 ### New User Flow
+
 1. User clicks "Continue with Google"
 2. Google OAuth popup opens
 3. User selects/logs into Google account
@@ -100,6 +106,7 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.googleusercontent.com
 6. Complete onboarding and access dashboard
 
 ### Existing User Flow
+
 1. User clicks "Continue with Google"
 2. Google OAuth popup opens
 3. User authenticates with Google
@@ -152,6 +159,7 @@ The system handles various error scenarios:
 ### Automated Testing
 
 The Google authentication service includes:
+
 - Environment validation functions
 - Popup support detection
 - Configuration validation
@@ -179,6 +187,7 @@ The Google authentication service includes:
 ### Debug Mode
 
 Enable debug logging in development:
+
 ```javascript
 import { logGoogleAuthConfig } from '@/lib/google-auth';
 
@@ -191,6 +200,7 @@ logGoogleAuthConfig();
 ### User Authentication Metrics
 
 The system tracks:
+
 - Google sign-in success/failure rates
 - New vs returning user ratios
 - Authentication method preferences
@@ -206,6 +216,7 @@ The system tracks:
 ## Future Enhancements
 
 ### Planned Features
+
 - [ ] Google account linking for existing email users
 - [ ] Enhanced profile sync (additional Google data)
 - [ ] Google Drive integration for document storage
@@ -213,6 +224,7 @@ The system tracks:
 - [ ] SSO integration for enterprise users
 
 ### Advanced Configuration
+
 - [ ] Custom OAuth scopes for additional permissions
 - [ ] Enterprise Google Workspace integration
 - [ ] Multi-domain support for white-label deployments
@@ -221,11 +233,13 @@ The system tracks:
 ## Support
 
 ### Documentation
+
 - [Firebase Authentication Docs](https://firebase.google.com/docs/auth)
 - [Google OAuth 2.0 Docs](https://developers.google.com/identity/protocols/oauth2)
 - [React Firebase Docs](https://github.com/CSFrequency/react-firebase-hooks)
 
 ### Getting Help
+
 - Check Firebase console for authentication logs
 - Review browser console for client-side errors
 - Check Firestore rules for permission issues
@@ -236,11 +250,13 @@ The system tracks:
 ## Removed Features
 
 ### ❌ Apple Sign-In
+
 - Removed Apple authentication to simplify the authentication flow
 - Users can still use email/password or Google authentication
 - Apple Sign-In can be re-added in the future if needed
 
 **Rationale for Removal**:
+
 - Simplified user interface with fewer options
 - Reduced maintenance complexity
 - Focus on most commonly used authentication methods
@@ -248,5 +264,5 @@ The system tracks:
 
 ---
 
-*Last Updated: [Current Date]*
-*Version: 1.0.0*
+_Last Updated: [Current Date]_
+_Version: 1.0.0_

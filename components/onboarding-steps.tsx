@@ -2,7 +2,7 @@
  * @fileoverview Onboarding Step Components
  *
  * Individual step components for the enhanced onboarding flow.
- * Each component follows enterprise patterns with proper type safety,
+ * Each component f                (formData?.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50')llows enterprise patterns with proper type safety,
  * accessibility, and UX best practices.
  *
  * @author Exam Strategy Engine Team
@@ -26,7 +26,6 @@ import { Exam, SyllabusSubject as _SyllabusSubject } from '@/types/exam';
 /**
  * Props for onboarding form data
  */
-/*
 interface OnboardingFormData {
   displayName: string;
   selectedExamId: string;
@@ -37,7 +36,7 @@ interface OnboardingFormData {
     description?: string;
     category?: string;
   };
-  syllabus: SyllabusSubject[];
+  syllabus: _SyllabusSubject[];
   preferences: {
     dailyStudyGoalMinutes: number;
     preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
@@ -54,13 +53,12 @@ interface OnboardingFormData {
     };
   };
 }
-*/
 
 /**
  * Personal Information & Exam Selection Step
  */
 interface PersonalInfoStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<unknown>;
   filteredExams: Exam[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -78,6 +76,7 @@ export function PersonalInfoStep({
 }: PersonalInfoStepProps) {
   const [showAllExams, setShowAllExams] = useState(false);
   const displayedExams = showAllExams ? filteredExams : filteredExams.slice(0, 6);
+  const formData = form.data as OnboardingFormData;
 
   return (
     <CardContent className="space-y-6">
@@ -98,9 +97,9 @@ export function PersonalInfoStep({
         </Label>
         <Input
           id="displayName"
-          value={form.data.displayName}
-          onChange={e => form.updateField('displayName', e.target.value)}
-          onBlur={() => form.markFieldTouched('displayName')}
+          value={formData?.displayName || ''}
+          onChange={e => (form.updateField as any)('displayName', e.target.value)}
+          onBlur={() => (form.markFieldTouched as any)('displayName')}
           placeholder="Enter your full name"
           className={form.errors.displayName ? 'border-red-500' : ''}
           aria-describedby={form.errors.displayName ? 'displayName-error' : undefined}
@@ -133,7 +132,7 @@ export function PersonalInfoStep({
             <Card
               key={exam.id}
               className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                form.data.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                (form.data as OnboardingFormData)?.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
               }`}
               onClick={() => onExamSelect(exam.id)}
             >
@@ -146,7 +145,7 @@ export function PersonalInfoStep({
                       {exam.category}
                     </Badge>
                   </div>
-                  {form.data.selectedExamId === exam.id && (
+                  {formData?.selectedExamId === exam.id && (
                     <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0" />
                   )}
                 </div>
@@ -157,7 +156,7 @@ export function PersonalInfoStep({
           {/* Custom Exam Option */}
           <Card
             className={`cursor-pointer transition-all duration-200 hover:shadow-md border-dashed ${
-              form.data.isCustomExam
+              formData?.isCustomExam
                 ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-300'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}
@@ -189,7 +188,7 @@ export function PersonalInfoStep({
       </div>
 
       {/* Exam Date */}
-      {form.data.selectedExamId && (
+      {formData?.selectedExamId && (
         <div className="space-y-2">
           <Label htmlFor="examDate" className="text-sm font-medium">
             Target Exam Date *
@@ -199,9 +198,9 @@ export function PersonalInfoStep({
             <Input
               id="examDate"
               type="date"
-              value={form.data.examDate}
-              onChange={e => form.updateField('examDate', e.target.value)}
-              onBlur={() => form.markFieldTouched('examDate')}
+              value={formData?.examDate || ''}
+              onChange={e => (form.updateField as any)('examDate', e.target.value)}
+              onBlur={() => (form.markFieldTouched as any)('examDate')}
               className={`pl-10 ${form.errors.examDate ? 'border-red-500' : ''}`}
               min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
               aria-describedby={form.errors.examDate ? 'examDate-error' : undefined}
@@ -217,7 +216,7 @@ export function PersonalInfoStep({
       )}
 
       {/* Selected Exam Summary */}
-      {selectedExam && !form.data.isCustomExam && (
+      {selectedExam && !formData?.isCustomExam && (
         <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
@@ -225,7 +224,7 @@ export function PersonalInfoStep({
             <br />
             <span className="text-sm">
               Syllabus: {selectedExam.defaultSyllabus.length} subjects • Estimated study time:{' '}
-              {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours || 0), 0)} hours
+              {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours ?? 0), 0)} hours
             </span>
           </AlertDescription>
         </Alert>
@@ -238,10 +237,12 @@ export function PersonalInfoStep({
  * Custom Exam Details Step
  */
 interface CustomExamStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<unknown>;
 }
 
 export function CustomExamStep({ form }: CustomExamStepProps) {
+  const formData = form.data as OnboardingFormData;
+  
   return (
     <CardContent className="space-y-6">
       <CardHeader className="px-0 pt-0">
@@ -260,14 +261,14 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Input
             id="customExamName"
-            value={form.data.customExam.name}
+            value={formData?.customExam?.name || ''}
             onChange={e =>
-              form.updateField('customExam', {
-                ...form.data.customExam,
+              (form.updateField as any)('customExam', {
+                ...formData?.customExam,
                 name: e.target.value,
               })
             }
-            onBlur={() => form.markFieldTouched('customExam')}
+            onBlur={() => (form.markFieldTouched as any)('customExam')}
             placeholder="e.g., State Public Service Commission"
             className={form.errors['customExam.name'] ? 'border-red-500' : ''}
           />
@@ -285,10 +286,10 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
             Category
           </Label>
           <Select
-            value={form.data.customExam.category}
+            value={formData?.customExam?.category || ''}
             onValueChange={value =>
-              form.updateField('customExam', {
-                ...form.data.customExam,
+              (form.updateField as any)('customExam', {
+                ...formData?.customExam,
                 category: value,
               })
             }
@@ -318,10 +319,10 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Textarea
             id="customExamDescription"
-            value={form.data.customExam.description}
+            value={formData?.customExam?.description || ''}
             onChange={e =>
-              form.updateField('customExam', {
-                ...form.data.customExam,
+              (form.updateField as any)('customExam', {
+                ...formData?.customExam,
                 description: e.target.value,
               })
             }
@@ -346,18 +347,20 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
  * Exam Review Step (for predefined exams)
  */
 interface ExamReviewStepProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<unknown>;
   selectedExam: Exam | null;
 }
 
 export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
+  const formData = form.data as OnboardingFormData;
+  
   if (!selectedExam) {
     return null;
   }
 
-  const totalHours = selectedExam.defaultSyllabus.reduce((sum, subject) => sum + (subject.estimatedHours || 0), 0);
-  const daysUntilExam = form.data.examDate
-    ? Math.max(0, Math.ceil((new Date(form.data.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+  const totalHours = selectedExam.defaultSyllabus.reduce((sum, subject) => sum + (subject.estimatedHours ?? 0), 0);
+  const daysUntilExam = formData?.examDate
+    ? Math.max(0, Math.ceil((new Date(formData.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
 
   return (
@@ -435,7 +438,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
                 <Badge variant={subject.tier === 1 ? 'destructive' : subject.tier === 2 ? 'default' : 'secondary'}>
                   Tier {subject.tier}
                 </Badge>
-                <div className="text-sm text-gray-600">{subject.estimatedHours || 0}h</div>
+                <div className="text-sm text-gray-600">{subject.estimatedHours ?? 0}h</div>
               </div>
             </div>
           ))}

@@ -235,9 +235,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
 
   const handleRefreshData = async () => {
     if (!user?.uid) {
+      logger.info('Analytics refresh: No user available');
       return;
     }
 
+    logger.info('Analytics refresh: Starting data refresh', { userId: user.uid });
     setState(prev => ({ ...prev, isLoading: true }));
 
     try {
@@ -248,7 +250,16 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         isLoading: false,
         lastUpdated: new Date(),
       }));
-    } catch (_error) {
+      logger.info('Analytics refresh: Data refreshed successfully', {
+        userId: user.uid,
+        dataPoints: analytics ? Object.keys(analytics).length : 0,
+      });
+    } catch (error) {
+      logger.error('Analytics refresh: Failed to refresh data', {
+        error: error instanceof Error ? error.message : String(error),
+        userId: user.uid,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -386,30 +397,30 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <PerformanceMetricCard
           title="Exam Performance"
-          value={performanceMetrics?.examSuccess.current || 0}
+          value={performanceMetrics?.examSuccess.current ?? 0}
           unit="%"
-          trend={performanceMetrics?.examSuccess.trend || 0}
-          predicted={performanceMetrics?.examSuccess.predicted || 0}
+          trend={performanceMetrics?.examSuccess.trend ?? 0}
+          predicted={performanceMetrics?.examSuccess.predicted ?? 0}
           icon={<Target className="h-4 w-4" />}
           color="blue"
         />
 
         <PerformanceMetricCard
           title="Course Progress"
-          value={performanceMetrics?.courseSuccess.current || 0}
+          value={performanceMetrics?.courseSuccess.current ?? 0}
           unit="%"
-          trend={performanceMetrics?.courseSuccess.trend || 0}
-          predicted={performanceMetrics?.courseSuccess.predicted || 0}
+          trend={performanceMetrics?.courseSuccess.trend ?? 0}
+          predicted={performanceMetrics?.courseSuccess.predicted ?? 0}
           icon={<Code className="h-4 w-4" />}
           color="green"
         />
 
         <PerformanceMetricCard
           title="Learning Efficiency"
-          value={performanceMetrics?.efficiency.current || 0}
+          value={performanceMetrics?.efficiency.current ?? 0}
           unit="%"
-          trend={performanceMetrics?.efficiency.trend || 0}
-          predicted={performanceMetrics?.efficiency.predicted || 0}
+          trend={performanceMetrics?.efficiency.trend ?? 0}
+          predicted={performanceMetrics?.efficiency.predicted ?? 0}
           icon={<Zap className="h-4 w-4" />}
           color="orange"
         />
@@ -448,7 +459,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData?.performance || []}>
+                  <LineChart data={chartData?.performance ?? []}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />
@@ -474,7 +485,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPieChart>
                     <Pie
-                      data={chartData?.distribution || []}
+                      data={chartData?.distribution ?? []}
                       cx="50%"
                       cy="50%"
                       outerRadius={80}

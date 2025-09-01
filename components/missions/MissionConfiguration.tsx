@@ -213,7 +213,7 @@ export function MissionConfiguration({
         track,
         frequency: config.frequency,
         durationOverride:
-          config.frequency === 'custom' ? config.customDuration || 30 : config.durationSettings[config.frequency],
+          config.frequency === 'custom' ? (config.customDuration ?? 30) : config.durationSettings[config.frequency],
         forceRegeneration: false,
         schedulingOptions: {
           preferredStartTime: new Date(),
@@ -366,7 +366,7 @@ export function MissionConfiguration({
                       type="number"
                       min="1"
                       max="30"
-                      value={config.customFrequencyDays || 7}
+                      value={config.customFrequencyDays ?? 7}
                       onChange={e =>
                         updateTrackConfig(track, {
                           customFrequencyDays: parseInt(e.target.value) || 7,
@@ -717,7 +717,7 @@ export function MissionConfiguration({
                   <p>
                     • {examConfig.frequency} missions (
                     {examConfig.frequency === 'custom'
-                      ? examConfig.customDuration || 30
+                      ? (examConfig.customDuration ?? 30)
                       : examConfig.durationSettings[examConfig.frequency]}{' '}
                     min)
                   </p>
@@ -743,7 +743,7 @@ export function MissionConfiguration({
                   <p>
                     • {techConfig.frequency} missions (
                     {techConfig.frequency === 'custom'
-                      ? techConfig.customDuration || 30
+                      ? (techConfig.customDuration ?? 30)
                       : techConfig.durationSettings[techConfig.frequency]}{' '}
                     min)
                   </p>

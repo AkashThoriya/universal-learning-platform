@@ -19,6 +19,17 @@ interface QuickSessionConfig {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
 }
 
+interface MicroLearningRecommendation {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  track: 'exam' | 'course_tech';
+  subjectId: string;
+  topicId: string;
+}
+
 interface QuickSessionLauncherProps {
   userId?: string;
   sessions?: QuickSessionConfig[];
@@ -70,7 +81,7 @@ export function QuickSessionLauncher({
   const [error, setError] = useState<string | null>(null);
   const [startingSessionIndex, setStartingSessionIndex] = useState<number | null>(null);
 
-  const activeUserId = userId || user?.uid;
+  const activeUserId = userId ?? user?.uid;
 
   useEffect(() => {
     if (autoLoadPersonalized && activeUserId && !sessions) {
@@ -92,7 +103,7 @@ export function QuickSessionLauncher({
       const recommendations = await MicroLearningService.generatePersonalizedRecommendations(activeUserId);
 
       // Convert recommendations to quick session format
-      const personalizedSessions = recommendations.map(rec => ({
+      const personalizedSessions = (recommendations as MicroLearningRecommendation[]).map(rec => ({
         id: rec.id,
         title: rec.title,
         description: rec.description,

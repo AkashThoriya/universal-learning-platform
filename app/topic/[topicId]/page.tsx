@@ -17,8 +17,24 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
+import { logInfo, logError } from '@/lib/logger';
 import { SUBJECTS_DATA } from '@/lib/subjects-data';
 import { TopicProgress } from '@/types/exam';
+
+// Constants
+const MASTERY_THRESHOLD = 80;
+const MEDIUM_MASTERY_THRESHOLD = 50;
+
+// Helper function for mastery badge styling
+const getMasteryBadgeClass = (score: number): string => {
+  if (score >= MASTERY_THRESHOLD) {
+    return 'bg-green-100 text-green-800';
+  }
+  if (score >= MEDIUM_MASTERY_THRESHOLD) {
+    return 'bg-yellow-100 text-yellow-800';
+  }
+  return 'bg-red-100 text-red-800';
+};
 
 export default function TopicPage() {
   const { user } = useAuth();
@@ -41,16 +57,33 @@ export default function TopicPage() {
   useEffect(() => {
     const fetchProgress = async () => {
       if (!user || !topicId) {
+        logInfo('Topic page: No user or topicId available, skipping fetch', {
+          hasUser: !!user,
+          topicId,
+        });
         return;
       }
+
+      logInfo('Topic page: Starting progress fetch', {
+        userId: user.uid,
+        topicId,
+        subjectId,
+      });
 
       try {
         const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
         if (progressDoc.exists()) {
           const data = progressDoc.data() as TopicProgress;
           setUserProgress(data);
-          setUserNotes(data.userNotes || '');
-          setUserBankingContext(data.userBankingContext || '');
+          setUserNotes(data.userNotes ?? '');
+          setUserBankingContext(data.userBankingContext ?? '');
+
+          logInfo('Topic page: Existing progress loaded', {
+            userId: user.uid,
+            topicId,
+            masteryScore: data.masteryScore,
+            revisionCount: data.revisionCount,
+          });
         } else {
           // Create initial progress document
           const initialProgress: TopicProgress = {
@@ -72,21 +105,44 @@ export default function TopicPage() {
             currentAffairs: [],
           };
           setUserProgress(initialProgress);
+
+          logInfo('Topic page: Created initial progress document', {
+            userId: user.uid,
+            topicId,
+          });
         }
       } catch (error) {
-        console.error('Error fetching progress:', error);
+        logError('Error fetching topic progress', {
+          error: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
+          userId: user.uid,
+          topicId,
+          context: 'topic_page_fetch_progress',
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchProgress();
-  }, [user, topicId]);
+  }, [user, topicId, subjectId]);
 
   const handleSave = async () => {
     if (!user || !userProgress) {
+      logInfo('Topic page: Cannot save - missing user or progress', {
+        hasUser: !!user,
+        hasProgress: !!userProgress,
+        topicId,
+      });
       return;
     }
+
+    logInfo('Topic page: Starting save operation', {
+      userId: user.uid,
+      topicId,
+      notesLength: userNotes.length,
+      contextLength: userBankingContext.length,
+    });
 
     setSaving(true);
     try {
@@ -99,8 +155,20 @@ export default function TopicPage() {
 
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
       setUserProgress(updatedProgress);
+
+      logInfo('Topic page: Progress saved successfully', {
+        userId: user.uid,
+        topicId,
+        dataSize: JSON.stringify(updatedProgress).length,
+      });
     } catch (error) {
-      console.error('Error saving progress:', error);
+      logError('Error saving topic progress', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        userId: user.uid,
+        topicId,
+        context: 'topic_page_save_progress',
+      });
     } finally {
       setSaving(false);
     }
@@ -108,8 +176,20 @@ export default function TopicPage() {
 
   const handleAddCurrentAffair = async () => {
     if (!user || !userProgress || !newCurrentAffair.trim()) {
+      logInfo('Topic page: Cannot add current affair - missing requirements', {
+        hasUser: !!user,
+        hasProgress: !!userProgress,
+        hasContent: !!newCurrentAffair.trim(),
+        topicId,
+      });
       return;
     }
+
+    logInfo('Topic page: Adding current affair', {
+      userId: user.uid,
+      topicId,
+      contentLength: newCurrentAffair.trim().length,
+    });
 
     const newAffair = {
       date: Timestamp.now(),
@@ -118,15 +198,27 @@ export default function TopicPage() {
 
     const updatedProgress = {
       ...userProgress,
-      currentAffairs: [...(userProgress.currentAffairs || []), newAffair],
+      currentAffairs: [...(userProgress.currentAffairs ?? []), newAffair],
     };
 
     try {
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
       setUserProgress(updatedProgress);
       setNewCurrentAffair('');
+
+      logInfo('Topic page: Current affair added successfully', {
+        userId: user.uid,
+        topicId,
+        totalAffairs: updatedProgress.currentAffairs.length,
+      });
     } catch (error) {
-      console.error('Error adding current affair:', error);
+      logError('Error adding current affair', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        userId: user.uid,
+        topicId,
+        context: 'topic_page_add_current_affair',
+      });
     }
   };
 
@@ -196,15 +288,7 @@ export default function TopicPage() {
               <div className="flex items-center justify-center space-x-3">
                 <Badge variant="outline">{subject.name}</Badge>
                 {userProgress && (
-                  <Badge
-                    className={
-                      userProgress.masteryScore >= 80
-                        ? 'bg-green-100 text-green-800'
-                        : userProgress.masteryScore >= 50
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                    }
-                  >
+                  <Badge className={getMasteryBadgeClass(userProgress.masteryScore)}>
                     Mastery: {userProgress.masteryScore}%
                   </Badge>
                 )}
@@ -230,8 +314,9 @@ export default function TopicPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-yellow-900">Your Personal Banking Context Notes</label>
+                <label htmlFor="banking-context-notes" className="text-sm font-medium text-yellow-900">Your Personal Banking Context Notes</label>
                 <Textarea
+                  id="banking-context-notes"
                   value={userBankingContext}
                   onChange={e => setUserBankingContext(e.target.value)}
                   placeholder="Add your own insights about how this topic applies to banking scenarios..."
@@ -328,12 +413,12 @@ export default function TopicPage() {
             </CardHeader>
             <CardContent>
               <QuickSessionLauncher
-                userId={user?.uid || ''}
+                userId={user?.uid ?? ''}
                 sessions={[
                   {
                     title: `${topic?.name} - Quick Review`,
                     description: `15-minute focused session on ${topic?.name} concepts`,
-                    subjectId: subjectId || '',
+                    subjectId: subjectId ?? '',
                     topicId,
                     track: 'exam' as const,
                     duration: 15,
@@ -342,7 +427,7 @@ export default function TopicPage() {
                   {
                     title: `${topic?.name} - Practical Application`,
                     description: `Apply ${topic?.name} in real banking scenarios`,
-                    subjectId: subjectId || '',
+                    subjectId: subjectId ?? '',
                     topicId,
                     track: 'course_tech' as const,
                     duration: 20,

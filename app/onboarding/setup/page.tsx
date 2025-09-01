@@ -50,6 +50,7 @@ import { useForm } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { createUser, saveSyllabus } from '@/lib/firebase-utils';
+import { logger, logError, logInfo } from '@/lib/logger';
 import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
 
 /**
@@ -188,7 +189,21 @@ const STEP_INFO = [
  * Enhanced Onboarding Setup Page Component with Premium Features
  */
 export default function OnboardingSetupPage() {
+  logInfo('Onboarding setup page initialized', { timestamp: new Date().toISOString() });
+
   const { user } = useAuth();
+
+  // Log user authentication status
+  useEffect(() => {
+    if (user) {
+      logInfo('User authenticated for onboarding', {
+        userId: user.uid,
+        email: user.email || 'no-email',
+      });
+    } else {
+      logInfo('User not authenticated, waiting for auth state');
+    }
+  }, [user]);
 
   // Component state
   const [searchQuery, setSearchQuery] = useState('');
@@ -228,9 +243,6 @@ export default function OnboardingSetupPage() {
 
   // Initialize form data with enhanced defaults
   const initialFormData: OnboardingFormData = {
-    userPersona: {
-      type: 'student',
-    },
     displayName: user?.displayName || '',
     selectedExamId: '',
     examDate: '',
@@ -264,12 +276,19 @@ export default function OnboardingSetupPage() {
     persistState: true,
     storageKey: 'onboarding-progress-v2',
     onStepChange: (current, previous) => {
+      logInfo('Onboarding step changed', {
+        currentStep: current,
+        previousStep: previous,
+        userType: form.data.userPersona?.type ?? 'unknown',
+        timestamp: new Date().toISOString(),
+      });
+
       // Analytics tracking
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'onboarding_step_change', {
           current_step: current,
           previous_step: previous,
-          user_type: form.data.userPersona?.type || 'unknown',
+          user_type: form.data.userPersona?.type ?? 'unknown',
         });
       }
 
@@ -293,6 +312,13 @@ export default function OnboardingSetupPage() {
     validateOnBlur: true,
     debounceMs: 500,
     onFormEvent: (event: string, data: any) => {
+      logger.debug('Onboarding form event', {
+        event,
+        field: (data as any)?.field ?? 'unknown',
+        step: multiStep.currentStep,
+        timestamp: new Date().toISOString(),
+      });
+
       if (event === 'field_change') {
         setAutoSaveStatus('saving');
         setTimeout(() => setAutoSaveStatus('saved'), 1000);
@@ -303,7 +329,7 @@ export default function OnboardingSetupPage() {
         (window as any).gtag('event', 'onboarding_form_event', {
           event_type: event,
           step: multiStep.currentStep,
-          field: data.field || 'unknown',
+          field: (data as any)?.field ?? 'unknown',
         });
       }
     },
@@ -315,12 +341,23 @@ export default function OnboardingSetupPage() {
       const exam = getExamById(form.data.selectedExamId);
       setSelectedExam(exam || null);
 
+      logInfo('Exam loaded for onboarding', {
+        examId: form.data.selectedExamId,
+        examName: exam?.name ?? 'unknown',
+        syllabusSubjects: exam?.defaultSyllabus?.length ?? 0,
+      });
+
       // Auto-populate syllabus for predefined exams
       if (exam && !form.data.isCustomExam) {
         form.updateField('syllabus', exam.defaultSyllabus);
+        logInfo('Syllabus auto-populated from exam', {
+          examId: form.data.selectedExamId,
+          subjectCount: exam.defaultSyllabus?.length ?? 0,
+        });
       }
-    } else {
+    } else if (form.data.selectedExamId === 'custom') {
       setSelectedExam(null);
+      logInfo('Custom exam selected', { isCustomExam: form.data.isCustomExam });
     }
   }, [form.data.selectedExamId, form.data.isCustomExam]);
 
@@ -335,6 +372,9 @@ export default function OnboardingSetupPage() {
   // Enhanced step validation with detailed feedback
   const validateStep = useCallback(
     async (step: number): Promise<boolean> => {
+      const startTime = performance.now();
+      logInfo('Starting step validation', { step, timestamp: new Date().toISOString() });
+
       const errors: Record<string, string> = {};
 
       switch (step) {
@@ -385,30 +425,75 @@ export default function OnboardingSetupPage() {
           break;
 
         default:
+          logInfo('Step validation completed - unknown step', { step });
           return true;
       }
 
+      const isValid = Object.keys(errors).length === 0;
+      const duration = performance.now() - startTime;
+
+      if (isValid) {
+        logInfo('Step validation passed', {
+          step,
+          duration: Math.round(duration),
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        logger.warn('Step validation failed', {
+          step,
+          errors: Object.keys(errors),
+          errorMessages: errors,
+          duration: Math.round(duration),
+          formData: {
+            hasPersona: !!form.data.userPersona?.type,
+            displayName: form.data.displayName?.length ?? 0,
+            hasExam: !!form.data.selectedExamId,
+            hasExamDate: !!form.data.examDate,
+            syllabusCount: form.data.syllabus?.length ?? 0,
+            studyGoal: form.data.preferences?.dailyStudyGoalMinutes ?? 0,
+          },
+        });
+      }
+
       setValidationErrors(errors);
-      return Object.keys(errors).length === 0;
+      return isValid;
     },
     [form.data]
   );
 
   // Enhanced navigation handlers with accessibility
   const handleNext = useCallback(async () => {
+    logInfo('Attempting to navigate to next step', {
+      currentStep: multiStep.currentStep,
+      totalSteps: 4,
+    });
+
     const isValid = await validateStep(multiStep.currentStep);
     if (isValid) {
       setValidationErrors({});
       multiStep.goToNext();
+      logInfo('Successfully navigated to next step', {
+        newStep: multiStep.currentStep + 1,
+      });
     } else {
+      logger.warn('Navigation blocked due to validation errors', {
+        currentStep: multiStep.currentStep,
+        validationErrors,
+      });
+
       // Announce validation errors to screen readers
       if (announceRef.current) {
         announceRef.current.textContent = 'Please fix the errors before continuing';
       }
     }
-  }, [multiStep, validateStep]);
+  }, [multiStep, validateStep, validationErrors]);
 
   const handlePrevious = useCallback(() => {
+    logInfo('Navigating to previous step', {
+      currentStep: multiStep.currentStep,
+      targetStep: multiStep.currentStep - 1,
+    });
+
     setValidationErrors({});
     multiStep.goToPrevious();
   }, [multiStep]);
@@ -416,12 +501,15 @@ export default function OnboardingSetupPage() {
   // Exam selection handler with analytics
   const handleExamSelect = useCallback(
     (examId: string) => {
+      logInfo('Exam selection initiated', { examId, isCustom: examId === 'custom' });
+
       if (examId === 'custom') {
         form.updateFields({
           selectedExamId: 'custom',
           isCustomExam: true,
           syllabus: [],
         });
+        logInfo('Custom exam configured', { syllabusCleared: true });
       } else {
         const exam = getExamById(examId);
         if (exam) {
@@ -430,6 +518,13 @@ export default function OnboardingSetupPage() {
             isCustomExam: false,
             syllabus: exam.defaultSyllabus,
           });
+          logInfo('Predefined exam configured', {
+            examId,
+            examName: exam.name,
+            syllabusSubjects: exam.defaultSyllabus?.length ?? 0,
+          });
+        } else {
+          logger.error('Exam not found during selection', { examId });
         }
       }
 
@@ -447,6 +542,8 @@ export default function OnboardingSetupPage() {
   // Syllabus management functions
   const updateSubjectTier = useCallback(
     (subjectId: string, tier: 1 | 2 | 3) => {
+      logInfo('Updating subject tier', { subjectId, tier });
+
       const updatedSyllabus = form.data.syllabus.map((subject: SyllabusSubject) =>
         subject.id === subjectId ? { ...subject, tier } : subject
       );
@@ -456,8 +553,11 @@ export default function OnboardingSetupPage() {
   );
 
   const addCustomSubject = useCallback(() => {
+    const newSubjectId = `custom-${Date.now()}`;
+    logInfo('Adding custom subject', { subjectId: newSubjectId });
+
     const newSubject: SyllabusSubject = {
-      id: `custom-${Date.now()}`,
+      id: newSubjectId,
       name: 'New Subject',
       tier: 2,
       topics: [],
@@ -468,17 +568,32 @@ export default function OnboardingSetupPage() {
 
   const removeSubject = useCallback(
     (subjectId: string) => {
+      logInfo('Removing subject from syllabus', { subjectId });
+
       const updatedSyllabus = form.data.syllabus.filter((subject: SyllabusSubject) => subject.id !== subjectId);
       form.updateField('syllabus', updatedSyllabus);
+
+      logInfo('Subject removed', {
+        subjectId,
+        remainingSubjects: updatedSyllabus.length,
+      });
     },
     [form]
   );
 
   // Enhanced completion handler with error recovery
   const handleComplete = useCallback(async () => {
+    logInfo('Onboarding completion initiated', {
+      userId: user?.uid || 'no-user',
+      hasUser: !!user,
+      currentStep: multiStep.currentStep,
+    });
+
     if (!user) {
+      const errorMsg = 'You must be logged in to complete setup.';
+      logError('Onboarding completion failed - no user', { error: errorMsg });
       form.setError('_form' as any, {
-        message: 'You must be logged in to complete setup.',
+        message: errorMsg,
         type: 'server',
         path: '_form',
       });
@@ -488,11 +603,38 @@ export default function OnboardingSetupPage() {
     setIsSubmitting(true);
 
     try {
+      logInfo('Starting final validation and data preparation');
+
       // Final validation
       const isValid = await validateStep(4);
       if (!isValid) {
         throw new Error('Please fix all validation errors before completing setup.');
       }
+
+      // Validate required data before saving
+      if (!form.data.displayName?.trim()) {
+        throw new Error('Display name is required.');
+      }
+
+      if (!form.data.selectedExamId && !form.data.isCustomExam) {
+        throw new Error('Please select an exam or create a custom exam.');
+      }
+
+      if (!form.data.syllabus || form.data.syllabus.length === 0) {
+        throw new Error('Please add at least one subject to your syllabus.');
+      }
+
+      if (!form.data.preferences) {
+        throw new Error('Study preferences are required.');
+      }
+
+      logInfo('Validation completed, preparing user data', {
+        displayName: form.data.displayName,
+        examId: form.data.selectedExamId,
+        isCustomExam: form.data.isCustomExam,
+        syllabusCount: form.data.syllabus.length,
+        userPersona: form.data.userPersona?.type ?? 'none',
+      });
 
       // Prepare user data
       const userData: Partial<UserType> = {
@@ -508,31 +650,77 @@ export default function OnboardingSetupPage() {
         customExam: form.data.isCustomExam ? form.data.customExam : undefined,
       };
 
-      // Save data with retry logic
+      // Save data with retry logic and better error handling
       let retryCount = 0;
       const maxRetries = 3;
 
+      logInfo('Starting save operations with retry logic', { maxRetries });
+
       while (retryCount < maxRetries) {
         try {
+          const startTime = performance.now();
+
           const operations = await Promise.allSettled([
             createUser(user.uid, userData),
             saveSyllabus(user.uid, form.data.syllabus),
           ]);
 
+          const duration = performance.now() - startTime;
+
           const failures = operations.filter(result => result.status === 'rejected');
           if (failures.length > 0) {
-            throw new Error('Failed to save some data');
+            logError('Save operations failed', {
+              failures: failures.map((failure, index) => ({
+                operation: index === 0 ? 'user profile' : 'syllabus data',
+                reason: failure.reason,
+              })),
+              retryCount,
+              duration: Math.round(duration),
+            });
+
+            const failureReasons = failures.map((failure, index) => {
+              const operationName = index === 0 ? 'user profile' : 'syllabus data';
+              return `${operationName}: ${failure.reason}`;
+            });
+            throw new Error(`Failed to save: ${failureReasons.join(', ')}`);
           }
+
+          logInfo('Save operations completed successfully', {
+            duration: Math.round(duration),
+            retryCount,
+            operationsCompleted: operations.length,
+          });
 
           break; // Success, exit retry loop
         } catch (error) {
           retryCount++;
+          logError(`Save attempt ${retryCount} failed`, {
+            error: error instanceof Error ? error.message : 'Unknown error',
+            retryCount,
+            maxRetries,
+            willRetry: retryCount < maxRetries,
+          });
+
           if (retryCount >= maxRetries) {
-            throw error;
+            // Provide more specific error message
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+            const finalError = `Unable to complete setup after ${maxRetries} attempts. ${errorMessage}. Please check your internet connection and try again.`;
+            logError('Final save attempt failed, giving up', {
+              error: errorMessage,
+              retryCount,
+              maxRetries,
+            });
+            throw new Error(finalError);
           }
-          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+
+          // Progressive backoff delay
+          const delay = 1000 * retryCount * retryCount;
+          logInfo(`Waiting ${delay}ms before retry`, { retryCount, delay });
+          await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
+
+      logInfo('Onboarding data saved successfully, finishing completion process');
 
       // Analytics completion event
       if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -548,10 +736,15 @@ export default function OnboardingSetupPage() {
         try {
           localStorage.removeItem('onboarding-progress-v2');
           localStorage.removeItem('onboarding-form-data-v2');
+          logInfo('Cleared onboarding localStorage data');
         } catch (error) {
-          console.warn('Failed to clear localStorage:', error);
+          logger.warn('Failed to clear localStorage', {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
         }
       }
+
+      logInfo('Onboarding completed successfully, navigating to dashboard');
 
       // Navigate to dashboard with success state
       const dashboardUrl = new URL('/dashboard', window.location.origin);
@@ -559,24 +752,37 @@ export default function OnboardingSetupPage() {
       dashboardUrl.searchParams.set('welcome', 'true');
       window.location.href = dashboardUrl.toString();
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
 
-      let errorMessage = 'Failed to complete setup. Please try again.';
+      logError('Error completing onboarding', {
+        error: errorMessage,
+        userId: user?.uid,
+        currentStep: multiStep.currentStep,
+        formData: {
+          hasDisplayName: !!form.data.displayName?.trim(),
+          hasExamId: !!form.data.selectedExamId,
+          isCustomExam: form.data.isCustomExam,
+          syllabusCount: form.data.syllabus?.length ?? 0,
+          hasPreferences: !!form.data.preferences,
+        },
+      });
+
+      let userFriendlyMessage = 'Failed to complete setup. Please try again.';
 
       if (error instanceof Error) {
         if (error.message.includes('Firebase')) {
-          errorMessage = 'Connection error. Please check your internet connection and try again.';
+          userFriendlyMessage = 'Connection error. Please check your internet connection and try again.';
         } else if (error.message.includes('permission')) {
-          errorMessage = 'Permission denied. Please refresh the page and try again.';
+          userFriendlyMessage = 'Permission denied. Please refresh the page and try again.';
         } else if (error.message.includes('quota')) {
-          errorMessage = 'Service temporarily unavailable. Please try again in a few minutes.';
+          userFriendlyMessage = 'Service temporarily unavailable. Please try again in a few minutes.';
         } else {
-          errorMessage = error.message;
+          userFriendlyMessage = error.message;
         }
       }
 
       form.setError('_form' as any, {
-        message: errorMessage,
+        message: userFriendlyMessage,
         type: 'server',
         path: '_form',
       });
@@ -590,7 +796,7 @@ export default function OnboardingSetupPage() {
   // Keyboard navigation support
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey || event.metaKey) {
+      if (event.ctrlKey ?? event.metaKey) {
         switch (event.key) {
           case 'ArrowLeft':
             event.preventDefault();
@@ -625,12 +831,12 @@ export default function OnboardingSetupPage() {
     try {
       switch (multiStep.currentStep) {
         case 1:
-          return <PersonaDetectionStep form={form} />;
+          return <PersonaDetectionStep form={form as any} />;
 
         case 2:
           return (
             <PersonalInfoStep
-              form={form}
+              form={form as any}
               filteredExams={filteredExams}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -642,7 +848,7 @@ export default function OnboardingSetupPage() {
         case 3:
           return (
             <SyllabusManagementStep
-              form={form}
+              form={form as any}
               onUpdateSubjectTier={updateSubjectTier}
               onAddSubject={addCustomSubject}
               onRemoveSubject={removeSubject}
@@ -650,7 +856,7 @@ export default function OnboardingSetupPage() {
           );
 
         case 4:
-          return <PreferencesStep form={form} />;
+          return <PreferencesStep form={form as any} />;
 
         default:
           return (
@@ -661,7 +867,12 @@ export default function OnboardingSetupPage() {
           );
       }
     } catch (error) {
-      console.error('Error rendering step content:', error);
+      logError('Error rendering step content', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        currentStep: multiStep.currentStep,
+        stackTrace: error instanceof Error ? error.stack : undefined,
+      });
+
       return (
         <div className="text-center py-8">
           <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
@@ -899,7 +1110,7 @@ export default function OnboardingSetupPage() {
                     <strong>Profile:</strong> {form.data.userPersona?.type.replace('_', ' ')}
                   </p>
                   <p>
-                    <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
+                    <strong>Exam:</strong> {selectedExam?.name ?? form.data.customExam?.name}
                   </p>
                   <p>
                     <strong>Exam Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}

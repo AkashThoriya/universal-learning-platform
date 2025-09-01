@@ -8,6 +8,7 @@ import { useState } from 'react';
 import EnhancedAuthFlow from '@/components/auth/EnhancedAuthFlow';
 import { Button } from '@/components/ui/button';
 import { signInWithGoogle } from '@/lib/google-auth';
+import { logError, logInfo } from '@/lib/logger';
 
 const features = [
   {
@@ -36,6 +37,11 @@ export default function LoginPage() {
   const [googleError, setGoogleError] = useState('');
 
   const handleGoogleSignIn = async () => {
+    logInfo('Google sign-in initiated', {
+      timestamp: new Date().toISOString(),
+      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
+    });
+
     setIsGoogleLoading(true);
     setGoogleError('');
 
@@ -43,19 +49,32 @@ export default function LoginPage() {
       const result = await signInWithGoogle();
 
       if (result.success && result.user) {
-        console.log('Google sign-in successful:', result.user);
-        
-        // Redirect based on whether user needs onboarding
-        if (result.user.isNewUser) {
+        logInfo('Google sign-in successful', {
+          userId: result.user.uid,
+          email: result.user.email ?? 'No email',
+          isNewUser: result.user.isNewUser ?? false,
+        });
+
+        if (result.user.isNewUser ?? false) {
+          logInfo('Redirecting new user to onboarding');
           router.push('/onboarding');
         } else {
+          logInfo('Redirecting existing user to dashboard');
           router.push('/dashboard');
         }
       } else {
-        setGoogleError(result.error || 'Google sign-in failed. Please try again.');
+        logError('Google sign-in failed', {
+          error: result.error ?? 'Unknown error',
+          context: 'authentication_flow',
+        });
+        setGoogleError(result.error ?? 'Google sign-in failed. Please try again.');
       }
     } catch (error) {
-      console.error('Google sign-in error:', error);
+      logError('Unexpected error during Google sign-in', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        context: 'authentication_exception',
+      });
       setGoogleError('An unexpected error occurred. Please try again.');
     } finally {
       setIsGoogleLoading(false);
@@ -79,7 +98,7 @@ export default function LoginPage() {
           {/* Left side - Branding & Features */}
           <div className="space-y-8 text-center lg:text-left">
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
                 Exam Strategy Engine
               </h1>
               <p className="text-xl text-gray-600 leading-relaxed">
@@ -140,17 +159,10 @@ export default function LoginPage() {
               </div>
 
               {googleError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-                  {googleError}
-                </div>
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{googleError}</div>
               )}
 
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleGoogleSignIn}
-                disabled={isGoogleLoading}
-              >
+              <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isGoogleLoading}>
                 {isGoogleLoading ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (

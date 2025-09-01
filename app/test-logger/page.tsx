@@ -111,7 +111,7 @@ export default function TestLoggerPage() {
     const validationError = validateErrorAnalysis();
     if (validationError) {
       // TODO: Replace with proper toast notification
-      console.warn(validationError);
+      // console.warn(validationError);
       return;
     }
 

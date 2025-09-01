@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+
 import { /* Result, AsyncResult, */ LoadingState, /* debounce, */ throttle } from '../lib/types-utils'; // Commented out unused imports
 
 /**
@@ -181,7 +182,7 @@ export function useDebouncedValue<T>(value: T, delay: number): T {
 /**
  * Throttled callback hook
  */
-export function useThrottledCallback<T extends (...args: any[]) => any>(callback: T, delay: number): T {
+export function useThrottledCallback<T extends (...args: unknown[]) => any>(callback: T, delay: number): T {
   const throttledCallback = useMemo(() => throttle(callback, delay), [callback, delay]);
 
   return throttledCallback as T;

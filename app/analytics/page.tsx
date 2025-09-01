@@ -20,14 +20,23 @@
 
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 
 import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import AuthGuard from '@/components/AuthGuard';
 import { ComponentErrorBoundary } from '@/components/error-handling/GlobalErrorBoundary';
 import { LoadingSpinner } from '@/components/ui/loading-states';
+import { logInfo } from '@/lib/logger';
 
 export default function AnalyticsPage() {
+  useEffect(() => {
+    logInfo('Analytics page mounted');
+
+    return () => {
+      logInfo('Analytics page unmounted');
+    };
+  }, []);
+
   return (
     <AuthGuard>
       <ComponentErrorBoundary

@@ -15,7 +15,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { useToast } from '@/hooks/use-toast';
-
 import { TIME_CONSTANTS } from '@/lib/constants';
 
 export interface PWAInstallState {
@@ -130,7 +129,7 @@ export function usePWAInstall() {
       showInstallPrompt: true,
     }));
 
-    console.log('PWA install prompt available');
+    // console.log('PWA install prompt available');
   }, []);
 
   const handleAppInstalled = useCallback(() => {
@@ -293,7 +292,7 @@ export function usePWAInstall() {
         }
 
         // Log to console for development
-        console.log('PWA Install Event:', { action, platform: installState.platform });
+        // console.log('PWA Install Event:', { action, platform: installState.platform });
       } catch (error) {
         console.error('Failed to track installation:', error);
       }

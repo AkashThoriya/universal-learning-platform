@@ -17,12 +17,12 @@ import React, { memo, useMemo, useCallback, lazy, Suspense } from 'react';
 /**
  * Enhanced memo with custom comparison function
  */
-function smartMemo<T extends React.ComponentType<any>>(
+function smartMemo<T extends React.ComponentType<unknown>>(
   Component: T,
-  propsAreEqual?: (prevProps: any, nextProps: any) => boolean
+  propsAreEqual?: (prevProps: unknown, nextProps: unknown) => boolean
 ): React.MemoExoticComponent<T> {
   const MemoizedComponent = memo(Component, propsAreEqual);
-  MemoizedComponent.displayName = `SmartMemo(${Component.displayName || Component.name})`;
+  MemoizedComponent.displayName = `SmartMemo(${Component.displayName ?? Component.name})`;
   return MemoizedComponent;
 }
 
@@ -49,7 +49,7 @@ function shallowEqual(prevProps: Record<string, any>, nextProps: Record<string, 
 /**
  * Deep comparison for complex objects (use sparingly)
  */
-function deepEqual(a: any, b: any): boolean {
+function deepEqual(a: unknown, b: unknown): boolean {
   if (a === b) {
     return true;
   }
@@ -71,8 +71,8 @@ function deepEqual(a: any, b: any): boolean {
   }
 
   if (typeof a === 'object' && typeof b === 'object') {
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
+    const keysA = Object.keys(a as Record<string, unknown>);
+    const keysB = Object.keys(b as Record<string, unknown>);
 
     if (keysA.length !== keysB.length) {
       return false;
@@ -82,7 +82,7 @@ function deepEqual(a: any, b: any): boolean {
       if (!keysB.includes(key)) {
         return false;
       }
-      if (!deepEqual(a[key], b[key])) {
+      if (!deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])) {
         return false;
       }
     }
@@ -99,7 +99,7 @@ function deepEqual(a: any, b: any): boolean {
 /**
  * Enhanced lazy loading with error boundary and loading states
  */
-function createLazyComponent<T extends React.ComponentType<any>>(
+function createLazyComponent<T extends React.ComponentType<unknown>>(
   importFn: () => Promise<{ default: T }>,
   options: {
     fallback?: React.ComponentType;
@@ -121,7 +121,7 @@ function createLazyComponent<T extends React.ComponentType<any>>(
       return (
         <ErrorBoundary fallback={ErrorFallback}>
           <Suspense fallback={<Fallback />}>
-            <LazyComponent {...props} />
+            <LazyComponent {...(props as any)} />
           </Suspense>
         </ErrorBoundary>
       );
@@ -129,7 +129,7 @@ function createLazyComponent<T extends React.ComponentType<any>>(
 
     return (
       <Suspense fallback={<Fallback />}>
-        <LazyComponent {...props} />
+        <LazyComponent {...(props as any)} />
       </Suspense>
     );
   };
@@ -150,7 +150,10 @@ class ErrorBoundary extends React.Component<
   },
   { hasError: boolean; error: Error | null }
 > {
-  constructor(props: any) {
+  constructor(props: {
+    children: React.ReactNode;
+    fallback: React.ComponentType<{ error: Error; retry: () => void }>;
+  }) {
     super(props);
     this.state = { hasError: false, error: null };
   }
@@ -285,9 +288,9 @@ const Profiler: React.FC<ProfilerProps> = ({ id, children, onRender }) => {
       id: string,
       phase: 'mount' | 'update' | 'nested-update',
       actualDuration: number,
-      baseDuration: number,
-      startTime: number,
-      commitTime: number
+      _baseDuration: number,
+      _startTime: number,
+      _commitTime: number
     ) => {
       if (onRender) {
         onRender(id, phase, actualDuration);
@@ -295,12 +298,12 @@ const Profiler: React.FC<ProfilerProps> = ({ id, children, onRender }) => {
 
       // Log performance metrics in development
       if (process.env.NODE_ENV === 'development') {
-        console.log(`[Profiler] ${id} (${phase}):`, {
-          actualDuration,
-          baseDuration,
-          startTime,
-          commitTime,
-        });
+        // console.log(`[Profiler] ${id} (${phase}):`, {
+        //   actualDuration,
+        //   baseDuration,
+        //   startTime,
+        //   commitTime,
+        // });
       }
     },
     [onRender]
@@ -320,7 +323,7 @@ const Profiler: React.FC<ProfilerProps> = ({ id, children, onRender }) => {
 /**
  * Stable callback hook - prevents unnecessary re-renders
  */
-function useStableCallback<T extends (...args: any[]) => any>(callback: T): T {
+function useStableCallback<T extends (...args: unknown[]) => any>(callback: T): T {
   const ref = React.useRef<T>(callback);
 
   React.useLayoutEffect(() => {
@@ -340,7 +343,7 @@ function useExpensiveValue<T>(computeFn: () => T, deps: React.DependencyList): T
     const end = performance.now();
 
     if (process.env.NODE_ENV === 'development' && end - start > 16) {
-      console.warn(`Expensive computation took ${end - start}ms`);
+      // console.warn(`Expensive computation took ${end - start}ms`);
     }
 
     return result;

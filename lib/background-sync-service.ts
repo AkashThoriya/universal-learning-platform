@@ -17,7 +17,7 @@ import { db } from '@/lib/firebase';
 export interface SyncData {
   id: string;
   type: 'mission' | 'progress' | 'analytics' | 'preferences' | 'session';
-  data: any;
+  data: unknown;
   timestamp: Date;
   userId: string;
   status: 'pending' | 'synced' | 'conflict' | 'failed';
@@ -36,7 +36,7 @@ export interface SyncResult {
 export interface ConflictResolution {
   itemId: string;
   resolution: 'local' | 'remote' | 'merge';
-  mergedData?: any;
+  mergedData?: unknown;
 }
 
 class BackgroundSyncService {
@@ -100,7 +100,7 @@ class BackgroundSyncService {
 
   async startSync(): Promise<SyncResult> {
     if (this.isSyncing) {
-      console.log('Sync already in progress');
+      // console.log('Sync already in progress');
       return {
         success: false,
         syncedItems: 0,
@@ -111,7 +111,7 @@ class BackgroundSyncService {
     }
 
     this.isSyncing = true;
-    console.log('Starting background sync...');
+    // console.log('Starting background sync...');
 
     const result: SyncResult = {
       success: true,
@@ -129,7 +129,7 @@ class BackgroundSyncService {
         item => item.status === 'pending' || (item.status === 'failed' && item.retryCount < this.maxRetries)
       );
 
-      console.log(`Syncing ${pendingItems.length} items...`);
+      // console.log(`Syncing ${pendingItems.length} items...`);
 
       for (const item of pendingItems) {
         try {
@@ -185,7 +185,7 @@ class BackgroundSyncService {
         case 'session':
           return await this.syncSessionData(item);
         default:
-          console.warn('Unknown sync type:', item.type);
+          // console.warn('Unknown sync type:', item.type);
           return false;
       }
     } catch (error) {
@@ -312,7 +312,7 @@ class BackgroundSyncService {
   // CONFLICT RESOLUTION
   // ============================================================================
 
-  private async handleSyncConflict(localItem: SyncData, remoteData: any): Promise<void> {
+  private async handleSyncConflict(localItem: SyncData, remoteData: unknown): Promise<void> {
     localItem.status = 'conflict';
 
     // Store conflict for user resolution
@@ -322,7 +322,7 @@ class BackgroundSyncService {
       timestamp: new Date(),
     });
 
-    console.log('Sync conflict detected for item:', localItem.id);
+    // console.log('Sync conflict detected for item:', localItem.id);
   }
 
   async resolveConflicts(resolutions: ConflictResolution[]): Promise<boolean> {
@@ -396,7 +396,7 @@ class BackgroundSyncService {
 
       if (stored) {
         const queue = JSON.parse(stored);
-        this.syncQueue = queue.map((item: any) => ({
+        this.syncQueue = queue.map((item: unknown) => ({
           ...item,
           timestamp: new Date(item.timestamp),
           lastAttempt: item.lastAttempt ? new Date(item.lastAttempt) : undefined,
@@ -431,7 +431,7 @@ class BackgroundSyncService {
     }
   }
 
-  private async storeConflict(conflict: any): Promise<void> {
+  private async storeConflict(conflict: unknown): Promise<void> {
     try {
       const stored = localStorage.getItem('sync_conflicts');
       const conflicts = stored ? JSON.parse(stored) : [];
@@ -490,7 +490,7 @@ class BackgroundSyncService {
     return this.startSync();
   }
 
-  async syncMissionProgress(userId: string, missionId: string, progress: any): Promise<void> {
+  async syncMissionProgress(userId: string, missionId: string, progress: unknown): Promise<void> {
     await this.addToSyncQueue({
       type: 'mission',
       userId,
@@ -502,7 +502,7 @@ class BackgroundSyncService {
     });
   }
 
-  async syncStudySession(userId: string, sessionData: any): Promise<void> {
+  async syncStudySession(userId: string, sessionData: unknown): Promise<void> {
     await this.addToSyncQueue({
       type: 'progress',
       userId,
@@ -511,7 +511,7 @@ class BackgroundSyncService {
     });
   }
 
-  async syncAnalyticsEvent(userId: string, eventType: string, eventData: any): Promise<void> {
+  async syncAnalyticsEvent(userId: string, eventType: string, eventData: unknown): Promise<void> {
     await this.addToSyncQueue({
       type: 'analytics',
       userId,
@@ -523,7 +523,7 @@ class BackgroundSyncService {
     });
   }
 
-  async syncUserPreferences(userId: string, preferences: any): Promise<void> {
+  async syncUserPreferences(userId: string, preferences: unknown): Promise<void> {
     await this.addToSyncQueue({
       type: 'preferences',
       userId,
@@ -539,12 +539,12 @@ class BackgroundSyncService {
 
     // Set up online/offline listeners
     window.addEventListener('online', () => {
-      console.log('Came back online, starting sync...');
+      // console.log('Came back online, starting sync...');
       this.startSync();
     });
 
     window.addEventListener('offline', () => {
-      console.log('Went offline, sync will resume when back online');
+      // console.log('Went offline, sync will resume when back online');
     });
 
     // Initial sync if online

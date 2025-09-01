@@ -138,7 +138,7 @@ export default function HomePage() {
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
               <span className="block mb-2">Master Any Exam</span>
-              <span className="block text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-gradient">
+              <span className="block text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-gradient pb-2">
                 with AI-Powered Strategy
               </span>
             </h1>
@@ -259,7 +259,7 @@ export default function HomePage() {
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
                   <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
                       25K+
                     </div>
                     <div className="text-muted-foreground font-medium text-sm sm:text-base">Active Learners</div>
@@ -271,7 +271,7 @@ export default function HomePage() {
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
                   <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
                       150+
                     </div>
                     <div className="text-muted-foreground font-medium text-sm sm:text-base">Exam Categories</div>
@@ -283,7 +283,7 @@ export default function HomePage() {
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
                   <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
                       98%
                     </div>
                     <div className="text-muted-foreground font-medium text-sm sm:text-base">Success Rate</div>
@@ -295,7 +295,7 @@ export default function HomePage() {
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
                   <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2">
+                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
                       5M+
                     </div>
                     <div className="text-muted-foreground font-medium text-sm sm:text-base">Study Hours</div>
@@ -569,7 +569,7 @@ export default function HomePage() {
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8">
                       <Card className="p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-0">
                         <div className="text-center">
-                          <div className="text-2xl sm:text-3xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          <div className="text-2xl sm:text-3xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pb-1">
                             42
                           </div>
                           <div className="text-xs sm:text-sm text-muted-foreground font-medium">Study Streak</div>
@@ -577,7 +577,7 @@ export default function HomePage() {
                       </Card>
                       <Card className="p-3 sm:p-4 bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 border-0">
                         <div className="text-center">
-                          <div className="text-2xl sm:text-3xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                          <div className="text-2xl sm:text-3xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent pb-1">
                             89%
                           </div>
                           <div className="text-xs sm:text-sm text-muted-foreground font-medium">Accuracy</div>
@@ -602,7 +602,7 @@ export default function HomePage() {
         <section className="py-20 sm:py-24 px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-800 relative overflow-hidden">
           {/* Subtle pattern overlay */}
           <div className="absolute inset-0 bg-grid-slate-100/20 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/10" />
-          
+
           <div className="max-w-4xl mx-auto text-center relative z-10">
             <Badge
               variant="secondary"

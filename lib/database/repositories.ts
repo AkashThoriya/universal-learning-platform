@@ -67,7 +67,7 @@ export abstract class BaseRepository<T extends { id: string }> implements Reposi
   }
 
   // Additional helper methods for common patterns
-  protected async findWhere(conditions: { field: string; value: any }[]): Promise<DatabaseResult<T[]>> {
+  protected async findWhere(conditions: { field: string; value: unknown }[]): Promise<DatabaseResult<T[]>> {
     const whereConditions = conditions.map(({ field, value }) => ({
       field,
       operator: 'eq' as const,
@@ -79,7 +79,7 @@ export abstract class BaseRepository<T extends { id: string }> implements Reposi
     });
   }
 
-  protected async findByField(field: string, value: any): Promise<DatabaseResult<T[]>> {
+  protected async findByField(field: string, value: unknown): Promise<DatabaseResult<T[]>> {
     return this.findWhere([{ field, value }]);
   }
 
@@ -88,7 +88,7 @@ export abstract class BaseRepository<T extends { id: string }> implements Reposi
     return result.success && result.data !== null;
   }
 
-  protected async count(conditions?: { field: string; value: any }[]): Promise<DatabaseResult<number>> {
+  protected async count(conditions?: { field: string; value: unknown }[]): Promise<DatabaseResult<number>> {
     if (!conditions) {
       return this.provider.count(this.collectionName);
     }
@@ -165,7 +165,7 @@ export class UserRepository extends BaseRepository<User> {
 
   async findByEmail(email: string): Promise<DatabaseResult<User | null>> {
     const result = await this.findByField('email', email);
-    if (!result.success || !result.data || result.data.length === 0) {
+    if ((!result.success || !result.data) ?? result.data.length === 0) {
       return {
         success: true,
         data: null,
@@ -241,10 +241,10 @@ export class ProgressRepository extends BaseRepository<Progress> {
     const newProgress: Omit<Progress, 'id'> = {
       userId,
       subjectId,
-      completionPercentage: updates.completionPercentage || 0,
-      lastStudied: updates.lastStudied || new Date(),
-      streakDays: updates.streakDays || 0,
-      totalTimeSpent: updates.totalTimeSpent || 0,
+      completionPercentage: updates.completionPercentage ?? 0,
+      lastStudied: updates.lastStudied ?? new Date(),
+      streakDays: updates.streakDays ?? 0,
+      totalTimeSpent: updates.totalTimeSpent ?? 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -343,7 +343,7 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
   }
 
   async findByUser(userId: string, limit?: number): Promise<DatabaseResult<AnalyticsEvent[]>> {
-    const queryOptions: any = {
+    const queryOptions: unknown = {
       where: [{ field: 'userId', operator: 'eq', value: userId }],
       orderBy: [{ field: 'timestamp', direction: 'desc' }],
     };
@@ -356,7 +356,7 @@ export class AnalyticsRepository extends BaseRepository<AnalyticsEvent> {
   }
 
   async findByEventType(eventType: string, limit?: number): Promise<DatabaseResult<AnalyticsEvent[]>> {
-    const queryOptions: any = {
+    const queryOptions: unknown = {
       where: [{ field: 'eventType', operator: 'eq', value: eventType }],
       orderBy: [{ field: 'timestamp', direction: 'desc' }],
     };

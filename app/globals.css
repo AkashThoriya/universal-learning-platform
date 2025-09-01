@@ -545,11 +545,11 @@
   .persona-card-selected {
     transform: scale(1.02);
   }
-  
+
   .persona-card-hover:hover {
     transform: translateY(-1px);
   }
-  
+
   .study-time-card-selected {
     transform: scale(1.01);
   }

@@ -345,7 +345,7 @@ export interface ContentInteraction {
   /** Interaction prompt or question */
   prompt: string;
   /** Expected response or correct answer */
-  expectedResponse?: any;
+  expectedResponse?: unknown;
   /** Feedback for correct/incorrect responses */
   feedback: {
     correct: string;

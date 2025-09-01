@@ -385,7 +385,7 @@ export default function DailyLogPage() {
                         <label className="text-sm font-medium">Method</label>
                         <Select
                           value={session.method}
-                          onValueChange={(value: any) => updateStudySession(index, { method: value })}
+                          onValueChange={(value: string) => updateStudySession(index, { method: value as 'reading' | 'notes' | 'practice' | 'revision' | 'mock_test' })}
                         >
                           <SelectTrigger>
                             <SelectValue />

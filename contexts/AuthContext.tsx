@@ -14,6 +14,7 @@ import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { auth } from '@/lib/firebase';
+import { logError, logInfo } from '@/lib/logger';
 
 /**
  * Authentication context type definition
@@ -90,15 +91,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  logInfo('AuthProvider initialized', { timestamp: new Date().toISOString() });
+
   useEffect(() => {
+    logInfo('Setting up Firebase auth state listener');
+
     // Subscribe to Firebase auth state changes
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      setUser(user);
-      setLoading(false);
-    });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      user => {
+        if (user) {
+          logInfo('User authenticated', {
+            userId: user.uid,
+            email: user.email || 'no-email',
+            displayName: user.displayName || 'no-display-name',
+            emailVerified: user.emailVerified,
+            authProvider: user.providerData?.[0]?.providerId ?? 'unknown',
+          });
+        } else {
+          logInfo('User signed out or not authenticated');
+        }
+
+        setUser(user);
+        setLoading(false);
+
+        logInfo('Auth state updated', {
+          hasUser: !!user,
+          loading: false,
+          userId: user?.uid ?? 'none',
+        });
+      },
+      error => {
+        logError('Firebase auth state change error', {
+          error: error.message,
+          errorType: error.name ?? 'unknown',
+        });
+        setLoading(false);
+      }
+    );
 
     // Cleanup subscription on unmount
-    return unsubscribe;
+    return () => {
+      logInfo('Cleaning up Firebase auth state listener');
+      unsubscribe();
+    };
   }, []);
 
   /**
@@ -107,7 +143,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * @returns {Promise<void>} Promise that resolves when logout is complete
    */
   const logout = async () => {
-    await signOut(auth);
+    try {
+      logInfo('User logout initiated', {
+        userId: user?.uid ?? 'unknown',
+        email: user?.email || 'no-email',
+      });
+
+      await signOut(auth);
+
+      logInfo('User logout completed successfully');
+    } catch (error) {
+      logError('User logout failed', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        userId: user?.uid ?? 'unknown',
+      });
+      throw error;
+    }
   };
 
   return <AuthContext.Provider value={{ user, loading, logout }}>{children}</AuthContext.Provider>;

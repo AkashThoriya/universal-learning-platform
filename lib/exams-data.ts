@@ -31,7 +31,7 @@ import { Exam } from '@/types/exam';
  *
  * // Calculate total estimated hours for an exam
  * const totalHours = upscExam?.defaultSyllabus.reduce((sum, subject) =>
- *   sum + (subject.estimatedHours || 0), 0
+ *   sum + (subject.estimatedHours ?? 0), 0
  * );
  * ```
  */
@@ -571,8 +571,8 @@ export const EXAMS_DATA: Exam[] = [
  * ```typescript
  * const upscExam = getExamById('upsc_cse_prelims');
  * if (upscExam) {
- *   console.log(`Found exam: ${upscExam.name}`);
- *   console.log(`Total subjects: ${upscExam.defaultSyllabus.length}`);
+ *   // console.log(`Found exam: ${upscExam.name}`);
+ *   // console.log(`Total subjects: ${upscExam.defaultSyllabus.length}`);
  * }
  * ```
  */
@@ -589,8 +589,8 @@ export const getExamById = (examId: string): Exam | undefined => {
  * @example
  * ```typescript
  * const bankingExams = getExamsByCategory('Banking');
- * console.log(`Found ${bankingExams.length} banking exams:`);
- * bankingExams.forEach(exam => console.log(`- ${exam.name}`));
+ * // console.log(`Found ${bankingExams.length} banking exams:`);
+ * bankingExams.forEach(exam => // console.log(`- ${exam.name}`));
  * ```
  */
 export const getExamsByCategory = (category: string): Exam[] => {
@@ -605,8 +605,8 @@ export const getExamsByCategory = (category: string): Exam[] => {
  * @example
  * ```typescript
  * const categories = getAllCategories();
- * console.log('Available exam categories:');
- * categories.forEach(category => console.log(`- ${category}`));
+ * // console.log('Available exam categories:');
+ * categories.forEach(category => // console.log(`- ${category}`));
  * ```
  */
 export const getAllCategories = (): string[] => {
@@ -631,7 +631,7 @@ export const getAllCategories = (): string[] => {
  * // Search for preliminary exams
  * const prelimsExams = searchExams('prelim');
  *
- * console.log(`Found ${upscExams.length} UPSC exams`);
+ * // console.log(`Found ${upscExams.length} UPSC exams`);
  * ```
  */
 export const searchExams = (query: string): Exam[] => {

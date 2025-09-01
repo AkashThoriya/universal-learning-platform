@@ -150,9 +150,7 @@ export default function MockTestLogPage() {
 
     if (!validateErrorAnalysis()) {
       // TODO: Replace with proper toast notification
-      console.warn(
-        `Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`
-      );
+      // console.warn(`Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`);
       return;
     }
 
@@ -325,7 +323,7 @@ export default function MockTestLogPage() {
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Test Type</label>
-                    <Select value={type} onValueChange={(value: any) => setType(value)}>
+                    <Select value={type} onValueChange={value => setType(value as any)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select test type" />
                       </SelectTrigger>
@@ -645,7 +643,7 @@ export default function MockTestLogPage() {
 
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Time of Day</label>
-                      <Select value={timeOfDay} onValueChange={(value: any) => setTimeOfDay(value)}>
+                      <Select value={timeOfDay} onValueChange={value => setTimeOfDay(value as any)}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>

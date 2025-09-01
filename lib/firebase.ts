@@ -104,8 +104,8 @@ try {
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
     try {
       analytics = getAnalytics(app);
-    } catch (error) {
-      console.warn('Analytics initialization failed:', error);
+    } catch (_error) {
+      // console.warn('Analytics initialization failed:', error);
     }
   }
 

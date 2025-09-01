@@ -45,7 +45,7 @@ export const useAnalytics = () => {
       eventType: AnalyticsEventType,
       category: 'exam' | 'course_tech' | 'cross_track',
       data: AnalyticsEventData,
-      customMetadata?: any
+      customMetadata?: unknown
     ) => {
       if (!user?.uid) {
         logger.warn('Cannot track event: User not authenticated');
@@ -340,7 +340,7 @@ export const usePerformanceAnalytics = () => {
   }, []);
 
   const endTiming = useCallback(
-    (operationId: string, category: 'exam' | 'course_tech' | 'cross_track', metadata?: any) => {
+    (operationId: string, category: 'exam' | 'course_tech' | 'cross_track', metadata?: unknown) => {
       const startTime = performanceEntries.current.get(operationId);
       if (!startTime) {
         logger.warn('No start time found for operation', { operationId });
@@ -368,7 +368,7 @@ export const usePerformanceAnalytics = () => {
       operationId: string,
       category: 'exam' | 'course_tech' | 'cross_track',
       fn: () => Promise<T>,
-      metadata?: any
+      metadata?: unknown
     ): Promise<T> => {
       startTiming(operationId);
       try {
@@ -452,7 +452,7 @@ export const useSessionAnalytics = () => {
   });
 
   const trackPageView = useCallback(
-    (pageName: string, metadata?: any) => {
+    (pageName: string, metadata?: unknown) => {
       sessionData.current.pageViews++;
       return trackEvent('page_viewed' as AnalyticsEventType, 'cross_track', {
         pageName,
@@ -465,7 +465,7 @@ export const useSessionAnalytics = () => {
   );
 
   const trackInteraction = useCallback(
-    (interactionType: string, metadata?: any) => {
+    (interactionType: string, metadata?: unknown) => {
       sessionData.current.interactions++;
       return trackEvent('user_interaction' as AnalyticsEventType, 'cross_track', {
         interactionType,
@@ -478,7 +478,7 @@ export const useSessionAnalytics = () => {
   );
 
   const trackFeatureUsage = useCallback(
-    (featureName: string, metadata?: any) => {
+    (featureName: string, metadata?: unknown) => {
       sessionData.current.features.add(featureName);
       return trackEvent('feature_used' as AnalyticsEventType, 'cross_track', {
         featureName,

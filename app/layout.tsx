@@ -3,10 +3,9 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 
 import GlobalErrorBoundary from '@/components/error-handling/GlobalErrorBoundary';
-import PWAInstallBanner from '@/components/PWAInstallBanner';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
-import { SkipToContent, AccessibilityChecker } from '@/lib/accessibility-utils';
+import { AccessibilityChecker, SkipToContent } from '@/lib/accessibility-utils';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -138,10 +137,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 window.addEventListener('load', () => {
                   navigator.serviceWorker.register('/sw.js')
                     .then((registration) => {
-                      console.log('SW registered: ', registration);
+                      // console.log('SW registered: ', registration);
                     })
                     .catch((registrationError) => {
-                      console.log('SW registration failed: ', registrationError);
+                      // console.log('SW registration failed: ', registrationError);
                     });
                 });
               }
@@ -153,7 +152,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GlobalErrorBoundary level="global" showDetails={false}>
           <AccessibilityChecker>
             <SkipToContent targetId="main-content" />
-            <PWAInstallBanner />
             <AuthProvider>
               <main id="main-content" className="min-h-screen">
                 {children}

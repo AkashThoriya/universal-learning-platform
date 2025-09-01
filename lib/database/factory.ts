@@ -15,32 +15,48 @@ import { DatabaseProvider, DatabaseFactory, DatabaseConfig } from './interfaces'
  * Configuration validation utilities
  */
 class ConfigValidator {
-  static validateFirebaseConfig(config: any): boolean {
+  static validateFirebaseConfig(config: unknown): boolean {
     const required = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
 
+    const typedConfig = config as { connection?: Record<string, unknown> };
+
     return required.every(
-      key => config.connection && typeof config.connection[key] === 'string' && config.connection[key].length > 0
+      key =>
+        typedConfig.connection &&
+        typeof typedConfig.connection[key] === 'string' &&
+        (typedConfig.connection[key] as string).length > 0
     );
   }
 
-  static validatePostgreSQLConfig(config: any): boolean {
+  static validatePostgreSQLConfig(config: unknown): boolean {
     const required = ['host', 'port', 'database', 'username', 'password'];
-    return required.every(key => config.connection && config.connection[key] !== undefined);
+    const typedConfig = config as { connection?: Record<string, unknown> };
+    return required.every(key => typedConfig.connection && typedConfig.connection[key] !== undefined);
   }
 
-  static validateMongoDBConfig(config: any): boolean {
-    return config.connection && typeof config.connection.uri === 'string' && config.connection.uri.length > 0;
-  }
-
-  static validateSupabaseConfig(config: any): boolean {
-    const required = ['url', 'anonKey'];
-    return required.every(
-      key => config.connection && typeof config.connection[key] === 'string' && config.connection[key].length > 0
+  static validateMongoDBConfig(config: unknown): boolean {
+    const typedConfig = config as { connection?: { uri?: string } };
+    return !!(
+      typedConfig.connection &&
+      typeof typedConfig.connection.uri === 'string' &&
+      typedConfig.connection.uri.length > 0
     );
   }
 
-  static validateSQLiteConfig(config: any): boolean {
-    return config.connection && typeof config.connection.path === 'string';
+  static validateSupabaseConfig(config: unknown): boolean {
+    const required = ['url', 'anonKey'];
+    const typedConfig = config as { connection?: Record<string, unknown> };
+    return required.every(
+      key =>
+        typedConfig.connection &&
+        typeof typedConfig.connection[key] === 'string' &&
+        (typedConfig.connection[key] as string).length > 0
+    );
+  }
+
+  static validateSQLiteConfig(config: unknown): boolean {
+    const typedConfig = config as { connection?: { path?: string } };
+    return !!(typedConfig.connection && typeof typedConfig.connection.path === 'string');
   }
 }
 
@@ -111,7 +127,7 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
     return ['firebase', 'postgresql', 'mongodb', 'supabase', 'sqlite'];
   }
 
-  validateConfig(provider: string, config: any): boolean {
+  validateConfig(provider: string, config: unknown): boolean {
     switch (provider) {
       case 'firebase':
         return ConfigValidator.validateFirebaseConfig(config);
@@ -222,7 +238,7 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
     };
   }
 
-  createMongoDBConfig(connectionConfig: { uri: string; options?: any }): DatabaseConfig {
+  createMongoDBConfig(connectionConfig: { uri: string; options?: unknown }): DatabaseConfig {
     return {
       provider: 'mongodb',
       connection: connectionConfig,
@@ -339,7 +355,7 @@ export class DatabaseConfigHelper {
   }
 
   static getConfigFromEnv(): DatabaseConfig {
-    const provider = process.env.DATABASE_PROVIDER || 'firebase';
+    const provider = process.env.DATABASE_PROVIDER ?? 'firebase';
 
     switch (provider) {
       case 'firebase':
@@ -392,10 +408,10 @@ export class DatabaseService {
     await this.initialize();
   }
 
-  async migrate(targetConfig: DatabaseConfig): Promise<void> {
+  async migrate(_targetConfig: DatabaseConfig): Promise<void> {
     // This would implement data migration between providers
     // For now, it's a placeholder
-    console.log(`Migration from ${this.config.provider} to ${targetConfig.provider} started`);
+    // console.log(`Migration from ${this.config.provider} to ${targetConfig.provider} started`);
 
     // In real implementation:
     // 1. Export all data from current provider
@@ -414,8 +430,8 @@ export class DatabaseService {
   // Performance monitoring
   async getPerformanceReport(): Promise<{
     provider: string;
-    connection: any;
-    performance: any;
+    connection: unknown;
+    performance: unknown;
   }> {
     const status = this.provider.getConnectionStatus();
 

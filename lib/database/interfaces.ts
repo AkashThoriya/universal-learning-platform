@@ -19,7 +19,7 @@ export interface QueryOptions {
 export interface WhereCondition {
   field: string;
   operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'notIn' | 'contains' | 'startsWith';
-  value: any;
+  value: unknown;
 }
 
 export interface OrderByCondition {
@@ -48,7 +48,7 @@ export interface BatchOperation {
   type: 'create' | 'update' | 'delete';
   collection: string;
   id: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface CacheOptions {
@@ -138,8 +138,8 @@ export interface SyncResult {
 export interface ConflictRecord {
   collection: string;
   id: string;
-  clientVersion: any;
-  serverVersion: any;
+  clientVersion: unknown;
+  serverVersion: unknown;
   resolvedWith: 'client' | 'server' | 'merged';
 }
 
@@ -180,12 +180,12 @@ export interface Repository<T> {
 export interface DatabaseFactory {
   createProvider(config: DatabaseConfig): DatabaseProvider;
   getSupportedProviders(): string[];
-  validateConfig(provider: string, config: any): boolean;
+  validateConfig(provider: string, config: unknown): boolean;
 }
 
 export interface DatabaseConfig {
   provider: 'firebase' | 'postgresql' | 'mongodb' | 'supabase' | 'sqlite';
-  connection: any; // Provider-specific connection config
+  connection: unknown; // Provider-specific connection config
   caching?: {
     enabled: boolean;
     defaultTTL: number;

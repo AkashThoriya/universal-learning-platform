@@ -175,7 +175,10 @@ export function getErrorMessage(error: unknown): string {
 /**
  * Debounce function with TypeScript support
  */
-export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: unknown[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
 
   return (...args: Parameters<T>) => {
@@ -187,7 +190,10 @@ export function debounce<T extends (...args: any[]) => any>(func: T, wait: numbe
 /**
  * Throttle function with TypeScript support
  */
-export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
+export function throttle<T extends (...args: unknown[]) => any>(
+  func: T,
+  limit: number
+): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
 
   return (...args: Parameters<T>) => {

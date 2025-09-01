@@ -115,7 +115,7 @@ export class MicroLearningService {
   /**
    * Generate personalized recommendations
    */
-  static async generatePersonalizedRecommendations(userId: string): Promise<any[]> {
+  static async generatePersonalizedRecommendations(userId: string): Promise<unknown[]> {
     try {
       // Get user's learning history and preferences
       const sessionHistory = await this.getSessionHistory(userId, 50);
@@ -144,7 +144,7 @@ export class MicroLearningService {
   /**
    * Update session progress
    */
-  static async updateSessionProgress(userId: string, sessionId: string, progress: any): Promise<void> {
+  static async updateSessionProgress(userId: string, sessionId: string, progress: unknown): Promise<void> {
     try {
       const { microLearningFirebaseService } = await import('@/lib/firebase-services');
       const result = await microLearningFirebaseService.updateSessionProgress(userId, sessionId, progress);
@@ -221,15 +221,15 @@ export class MicroLearningService {
    * Adapt content based on persona and learning track
    */
   private static adaptContentForPersona(
-    baseContent: any[],
+    baseContent: unknown[],
     persona: UserPersona,
     learningTrack: 'exam' | 'course_tech'
   ): MicroContent[] {
     return baseContent.map((content, index) => ({
       id: `content_${index}_${Date.now()}`,
       type: this.selectContentType(content, learningTrack),
-      content: content.body || content.content || '',
-      estimatedTime: content.estimatedTime || 120,
+      content: content.body ?? (content.content || ''),
+      estimatedTime: content.estimatedTime ?? 120,
       learningTrack,
       personaAdaptations: this.generatePersonaAdaptations(content, persona, learningTrack),
       metadata: {
@@ -237,8 +237,8 @@ export class MicroLearningService {
         updatedAt: new Date(),
         author: 'system',
         version: '1.0.0',
-        tags: content.tags || [],
-        difficultyRating: content.difficulty || 5,
+        tags: content.tags ?? [],
+        difficultyRating: content.difficulty ?? 5,
       },
     }));
   }
@@ -246,8 +246,12 @@ export class MicroLearningService {
   /**
    * Generate persona-specific content adaptations
    */
-  private static generatePersonaAdaptations(content: any, persona: UserPersona, learningTrack: 'exam' | 'course_tech') {
-    const adaptations: any = {};
+  private static generatePersonaAdaptations(
+    content: unknown,
+    persona: UserPersona,
+    learningTrack: 'exam' | 'course_tech'
+  ) {
+    const adaptations: unknown = {};
 
     // Student adaptations - academic focus
     adaptations.student = {
@@ -258,7 +262,7 @@ export class MicroLearningService {
           : `Build strong foundations for your academic journey!`,
       applicationContext:
         learningTrack === 'exam'
-          ? `This appears frequently in ${content.examType || 'competitive'} exams`
+          ? `This appears frequently in ${content.examType ?? 'competitive'} exams`
           : `This knowledge will help you excel in your coursework and projects`,
       validationMethod: learningTrack === 'exam' ? 'quiz' : 'assignment',
       additionalResources: this.generateStudentResources(content.topic, learningTrack),
@@ -463,7 +467,7 @@ export class MicroLearningService {
     return persona.type === 'freelancer' ? 'project' : 'assignment';
   }
 
-  private static selectContentType(content: any, learningTrack: 'exam' | 'course_tech'): MicroContent['type'] {
+  private static selectContentType(content: unknown, learningTrack: 'exam' | 'course_tech'): MicroContent['type'] {
     if (learningTrack === 'course_tech') {
       return content.hasCode ? 'code_snippet' : 'hands_on';
     }
@@ -478,7 +482,7 @@ export class MicroLearningService {
       const result = await userService.get(userId);
 
       if (result.success && result.data) {
-        return result.data.persona || this.getDefaultPersona();
+        return result.data.persona ?? this.getDefaultPersona();
       }
 
       return this.getDefaultPersona();
@@ -512,7 +516,7 @@ export class MicroLearningService {
   private static async generateRecommendationsFromHistory(
     _userId: string,
     _sessionHistory: MicroLearningSession[]
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     // Analyze user's learning patterns and generate recommendations
     // For now, return mock recommendations - replace with actual recommendation algorithm
     const mockRecommendations = [
@@ -569,7 +573,7 @@ export class MicroLearningService {
     return mockRecommendations;
   }
 
-  private static async getTopicContent(topicId: string, learningTrack: 'exam' | 'course_tech'): Promise<any[]> {
+  private static async getTopicContent(topicId: string, learningTrack: 'exam' | 'course_tech'): Promise<unknown[]> {
     // Mock implementation - replace with actual content fetching
     return [
       {
@@ -608,10 +612,10 @@ export class MicroLearningService {
 
   private static generateProfessionalExamples(
     topic: string,
-    careerContext: any,
+    careerContext: unknown,
     learningTrack: 'exam' | 'course_tech'
   ): string[] {
-    const role = careerContext?.currentRole || 'professional';
+    const role = careerContext?.currentRole ?? 'professional';
     return learningTrack === 'exam'
       ? [`How ${topic} certification benefits ${role}`, `Industry applications of ${topic}`]
       : [`${topic} in ${role} daily work`, `${topic} for career advancement`];
