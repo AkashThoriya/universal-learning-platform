@@ -11,12 +11,9 @@ import {
   WifiOff,
   RefreshCw,
   BookOpen,
-  Clock,
-  Trophy,
   Smartphone,
   CheckCircle,
   AlertCircle,
-  Activity,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -24,6 +21,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { OFFLINE_FEATURES } from '@/lib/data';
 
 export default function OfflinePage() {
   const [isOnline, setIsOnline] = useState(false);
@@ -71,32 +69,7 @@ export default function OfflinePage() {
     window.location.href = '/';
   };
 
-  const offlineFeatures = [
-    {
-      icon: BookOpen,
-      title: 'Cached Content',
-      description: 'Access previously viewed study materials and notes',
-      available: true,
-    },
-    {
-      icon: Clock,
-      title: 'Study Timer',
-      description: 'Continue timing your study sessions offline',
-      available: true,
-    },
-    {
-      icon: Trophy,
-      title: 'Progress Tracking',
-      description: "Your progress will sync when you're back online",
-      available: true,
-    },
-    {
-      icon: Activity,
-      title: 'Analytics',
-      description: 'View cached performance data and insights',
-      available: true,
-    },
-  ];
+  const offlineFeatures = OFFLINE_FEATURES;
 
   if (isOnline) {
     return (

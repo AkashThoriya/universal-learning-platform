@@ -17,9 +17,6 @@ import {
   Download,
   Smartphone,
   Monitor,
-  Zap,
-  Wifi,
-  Bell,
   Rocket,
   ChevronRight,
   Share,
@@ -33,6 +30,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
+import { PWA_BENEFITS } from '@/lib/data/ui-content';
 
 interface PWAInstallBannerProps {
   variant?: 'banner' | 'modal' | 'inline';
@@ -99,29 +97,6 @@ export function PWAInstallBanner({
     dismissInstallPrompt();
   };
 
-  const benefits = [
-    {
-      icon: Zap,
-      title: 'Faster Loading',
-      description: 'Instant access with offline caching',
-    },
-    {
-      icon: Wifi,
-      title: 'Works Offline',
-      description: 'Continue studying without internet',
-    },
-    {
-      icon: Bell,
-      title: 'Smart Notifications',
-      description: 'Study reminders and progress updates',
-    },
-    {
-      icon: Smartphone,
-      title: 'Native Experience',
-      description: 'Full-screen app-like interface',
-    },
-  ];
-
   const instructions = getManualInstallInstructions();
 
   // Banner variant
@@ -177,7 +152,7 @@ export function PWAInstallBanner({
           <CardContent className="space-y-6">
             {showBenefits && (
               <div className="grid grid-cols-2 gap-4">
-                {benefits.map((benefit, index) => {
+                {PWA_BENEFITS.map((benefit, index) => {
                   const IconComponent = benefit.icon;
                   return (
                     <div key={index} className="text-center p-3 rounded-lg bg-gray-50">
@@ -252,7 +227,7 @@ export function PWAInstallBanner({
 
               {showBenefits && (
                 <div className="flex flex-wrap gap-2">
-                  {benefits.slice(0, 2).map((benefit, index) => {
+                  {PWA_BENEFITS.slice(0, 2).map((benefit, index) => {
                     const IconComponent = benefit.icon;
                     return (
                       <div

@@ -7,7 +7,22 @@
  * @version 1.0.0
  */
 
-import { Target, TrendingUp, Shield, Wifi, Download, Zap, FileText, BarChart } from 'lucide-react';
+import {
+  Target,
+  TrendingUp,
+  Shield,
+  Wifi,
+  Zap,
+  Bell,
+  Smartphone,
+  User,
+  BookOpen,
+  Settings,
+  Palette,
+  Clock,
+  Trophy,
+  Activity,
+} from 'lucide-react';
 
 // ============================================================================
 // LOGIN PAGE CONTENT
@@ -50,7 +65,7 @@ export const LOGIN_FEATURES: readonly FeatureHighlight[] = [
 // ============================================================================
 
 export interface PWABenefit {
-  icon: string;
+  icon: typeof Zap;
   title: string;
   description: string;
 }
@@ -61,19 +76,24 @@ export interface PWABenefit {
  */
 export const PWA_BENEFITS: readonly PWABenefit[] = [
   {
-    icon: '⚡',
+    icon: Zap,
     title: 'Faster Loading',
-    description: 'Lightning-fast performance with offline caching',
+    description: 'Instant access with offline caching',
   },
   {
-    icon: '📱',
-    title: 'Mobile Experience',
-    description: 'Native app-like experience on your device',
+    icon: Wifi,
+    title: 'Works Offline',
+    description: 'Continue studying without internet',
   },
   {
-    icon: '🔔',
-    title: 'Push Notifications',
-    description: 'Stay updated with study reminders and progress alerts',
+    icon: Bell,
+    title: 'Smart Notifications',
+    description: 'Study reminders and progress updates',
+  },
+  {
+    icon: Smartphone,
+    title: 'Native Experience',
+    description: 'Full-screen app-like interface',
   },
 ] as const;
 
@@ -90,34 +110,28 @@ export interface OfflineFeature {
  */
 export const OFFLINE_FEATURES: readonly OfflineFeature[] = [
   {
-    icon: FileText,
-    title: 'Offline Reading',
-    description: 'Access your saved content and notes without internet',
+    icon: BookOpen,
+    title: 'Cached Content',
+    description: 'Access previously viewed study materials and notes',
     available: true,
   },
   {
-    icon: BarChart,
+    icon: Clock,
+    title: 'Study Timer',
+    description: 'Continue timing your study sessions offline',
+    available: true,
+  },
+  {
+    icon: Trophy,
     title: 'Progress Tracking',
-    description: 'View your study progress and analytics offline',
+    description: "Your progress will sync when you're back online",
     available: true,
   },
   {
-    icon: Download,
-    title: 'Content Sync',
-    description: 'Download content for offline access',
+    icon: Activity,
+    title: 'Analytics',
+    description: 'View cached performance data and insights',
     available: true,
-  },
-  {
-    icon: Zap,
-    title: 'Background Sync',
-    description: 'Automatic synchronization when connection returns',
-    available: true,
-  },
-  {
-    icon: Wifi,
-    title: 'Offline Quizzes',
-    description: 'Take practice tests without internet connection',
-    available: false,
   },
 ] as const;
 
@@ -138,28 +152,40 @@ export interface ProfileTab {
  */
 export const PROFILE_TABS: readonly ProfileTab[] = [
   {
-    id: 'overview',
-    label: 'Overview',
+    id: 'personal',
+    label: 'Personal Info',
+    icon: User,
+    description: 'Basic information and persona',
+  },
+  {
+    id: 'exam',
+    label: 'Exam Setup',
+    icon: BookOpen,
+    description: 'Target exam and timeline',
+  },
+  {
+    id: 'syllabus',
+    label: 'Syllabus',
     icon: Target,
-    description: 'Your study progress and key metrics',
+    description: 'Subject organization and priorities',
   },
   {
-    id: 'achievements',
-    label: 'Achievements',
-    icon: TrendingUp,
-    description: "Badges and milestones you've earned",
+    id: 'preferences',
+    label: 'Study Preferences',
+    icon: Settings,
+    description: 'Goals and scheduling',
   },
   {
-    id: 'analytics',
-    label: 'Analytics',
-    icon: BarChart,
-    description: 'Detailed performance insights',
+    id: 'notifications',
+    label: 'Notifications',
+    icon: Bell,
+    description: 'Alerts and reminders',
   },
   {
-    id: 'settings',
-    label: 'Settings',
-    icon: Shield,
-    description: 'Account preferences and privacy',
+    id: 'system',
+    label: 'System Settings',
+    icon: Palette,
+    description: 'Theme and language',
   },
 ] as const;
 

@@ -63,6 +63,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase-utils';
+import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType } from '@/types/exam';
 
 /**
@@ -168,48 +169,6 @@ const profileSchema = z.object({
     timezone: z.string(),
   }),
 });
-
-/**
- * Profile tab configuration
- */
-const PROFILE_TABS = [
-  {
-    id: 'personal',
-    label: 'Personal Info',
-    icon: User,
-    description: 'Basic information and persona',
-  },
-  {
-    id: 'exam',
-    label: 'Exam Setup',
-    icon: BookOpen,
-    description: 'Target exam and timeline',
-  },
-  {
-    id: 'syllabus',
-    label: 'Syllabus',
-    icon: Target,
-    description: 'Subject organization and priorities',
-  },
-  {
-    id: 'preferences',
-    label: 'Study Preferences',
-    icon: Settings,
-    description: 'Goals and scheduling',
-  },
-  {
-    id: 'notifications',
-    label: 'Notifications',
-    icon: Bell,
-    description: 'Alerts and reminders',
-  },
-  {
-    id: 'system',
-    label: 'System Settings',
-    icon: Palette,
-    description: 'Theme and language',
-  },
-];
 
 /**
  * Enhanced User Profile Management Page
