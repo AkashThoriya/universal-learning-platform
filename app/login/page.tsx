@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Target, TrendingUp, ArrowLeft, Loader2 } from 'lucide-react';
+import { Shield, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -8,28 +8,8 @@ import { useState } from 'react';
 import EnhancedAuthFlow from '@/components/auth/EnhancedAuthFlow';
 import { Button } from '@/components/ui/button';
 import { signInWithGoogle } from '@/lib/google-auth';
+import { LOGIN_FEATURES } from '@/lib/data/ui-content';
 import { logError, logInfo } from '@/lib/logger';
-
-const features = [
-  {
-    icon: Target,
-    title: 'Strategic Planning',
-    description: 'Tier-based prioritization with spaced repetition',
-    color: 'blue',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Progress Analytics',
-    description: 'AI-powered insights and performance correlation',
-    color: 'green',
-  },
-  {
-    icon: Shield,
-    title: 'Contextual Mastery',
-    description: 'Personal context creation for deeper understanding',
-    color: 'purple',
-  },
-];
 
 export default function LoginPage() {
   const router = useRouter();
@@ -111,7 +91,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-6">
-              {features.map((feature, index) => (
+              {LOGIN_FEATURES.map((feature, index) => (
                 <div key={index} className="flex items-start space-x-4">
                   <div className={`p-3 rounded-xl bg-${feature.color}-100 flex-shrink-0`}>
                     <feature.icon className={`h-6 w-6 text-${feature.color}-600`} />

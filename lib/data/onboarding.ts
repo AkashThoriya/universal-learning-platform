@@ -181,6 +181,44 @@ export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
 ] as const;
 
 // ============================================================================
+// WEEKDAY DEFINITIONS
+// ============================================================================
+
+export interface WeekdayOption {
+  value: number;
+  label: string;
+  short: string;
+}
+
+/**
+ * Standardized weekday definitions (full week)
+ * Used in: MissionConfiguration.tsx, PersonaDetection.tsx
+ */
+export const WEEKDAY_OPTIONS: readonly WeekdayOption[] = [
+  { value: 0, label: 'Sunday', short: 'Sun' },
+  { value: 1, label: 'Monday', short: 'Mon' },
+  { value: 2, label: 'Tuesday', short: 'Tue' },
+  { value: 3, label: 'Wednesday', short: 'Wed' },
+  { value: 4, label: 'Thursday', short: 'Thu' },
+  { value: 5, label: 'Friday', short: 'Fri' },
+  { value: 6, label: 'Saturday', short: 'Sat' },
+] as const;
+
+/**
+ * Work days for onboarding (simplified format)
+ * Used in: PersonaDetection.tsx
+ */
+export const WORK_DAYS: readonly { id: string; label: string }[] = [
+  { id: 'monday', label: 'Monday' },
+  { id: 'tuesday', label: 'Tuesday' },
+  { id: 'wednesday', label: 'Wednesday' },
+  { id: 'thursday', label: 'Thursday' },
+  { id: 'friday', label: 'Friday' },
+  { id: 'saturday', label: 'Saturday' },
+  { id: 'sunday', label: 'Sunday' },
+] as const;
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
@@ -203,6 +241,20 @@ export const getStudyTimeById = (id: string): StudyTimePreference | undefined =>
  */
 export const getExamCategoryById = (id: string): ExamCategory | undefined => {
   return POPULAR_EXAM_CATEGORIES.find(category => category.id === id);
+};
+
+/**
+ * Get weekday by value
+ */
+export const getWeekdayByValue = (value: number): WeekdayOption | undefined => {
+  return WEEKDAY_OPTIONS.find(day => day.value === value);
+};
+
+/**
+ * Get work day by ID
+ */
+export const getWorkDayById = (id: string): { id: string; label: string } | undefined => {
+  return WORK_DAYS.find(day => day.id === id);
 };
 
 /**

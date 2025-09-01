@@ -14,6 +14,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { WEEKDAY_OPTIONS } from '@/lib/data/onboarding';
 import { missionService } from '@/lib/mission-service';
 import {
   type MissionCycleConfig,
@@ -64,16 +65,6 @@ const DEFAULT_TRACK_CONFIG: TrackConfig = {
   autoStartNext: false,
   maxMissionsPerDay: 2,
 };
-
-const WEEKDAYS = [
-  { value: 0, label: 'Sunday', short: 'Sun' },
-  { value: 1, label: 'Monday', short: 'Mon' },
-  { value: 2, label: 'Tuesday', short: 'Tue' },
-  { value: 3, label: 'Wednesday', short: 'Wed' },
-  { value: 4, label: 'Thursday', short: 'Thu' },
-  { value: 5, label: 'Friday', short: 'Fri' },
-  { value: 6, label: 'Saturday', short: 'Sat' },
-];
 
 export function MissionConfiguration({
   className = '',
@@ -476,7 +467,7 @@ export function MissionConfiguration({
                 <div className="space-y-2">
                   <Label>Active Days</Label>
                   <div className="flex flex-wrap gap-2">
-                    {WEEKDAYS.map(day => (
+                    {WEEKDAY_OPTIONS.map(day => (
                       <Button
                         key={day.value}
                         variant={config.activeDays.includes(day.value) ? 'default' : 'outline'}
