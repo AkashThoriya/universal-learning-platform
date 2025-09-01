@@ -14,18 +14,7 @@
 
 'use client';
 
-import {
-  User,
-  GraduationCap,
-  Briefcase,
-  Code,
-  Clock,
-  Target,
-  Check,
-  AlertCircle,
-  ArrowRight,
-  Info,
-} from 'lucide-react';
+import { User, Clock, Target, Check, AlertCircle, ArrowRight, Info } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -35,6 +24,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
+import {
+  PERSONA_OPTIONS,
+  STUDY_TIME_PREFERENCES,
+  getDefaultStudyHours,
+  validateStudyHours,
+} from '@/lib/data/onboarding';
 import { logInfo, logger } from '@/lib/logger';
 import { UserPersona, UserPersonaType } from '@/types/exam';
 
@@ -60,89 +55,6 @@ interface OnboardingFormData {
   };
   [key: string]: any; // Allow for other form fields
 }
-
-/**
- * Enhanced persona options with comprehensive metadata
- */
-const PERSONA_OPTIONS = [
-  {
-    id: 'student' as UserPersonaType,
-    icon: GraduationCap,
-    title: 'Student',
-    description: 'Full-time study focus with flexible schedule',
-    longDescription: 'Dedicated time for comprehensive preparation with access to structured learning resources',
-    defaultHours: 6,
-    color: 'from-blue-500 to-cyan-500',
-    bgColor: 'bg-blue-50',
-    textColor: 'text-blue-700',
-    benefits: ['Flexible schedule', 'Comprehensive coverage', 'Detailed study plans'],
-    challenges: ['Time management', 'Self-discipline', 'Motivation consistency'],
-  },
-  {
-    id: 'working_professional' as UserPersonaType,
-    icon: Briefcase,
-    title: 'Working Professional',
-    description: 'Balancing career responsibilities with exam prep',
-    longDescription: 'Strategic preparation optimized for limited time with focus on high-impact topics',
-    defaultHours: 2,
-    color: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50',
-    textColor: 'text-green-700',
-    benefits: ['Practical application', 'Efficient learning', 'Real-world context'],
-    challenges: ['Limited time', 'Work-study balance', 'Energy management'],
-  },
-  {
-    id: 'freelancer' as UserPersonaType,
-    icon: Code,
-    title: 'Freelancer',
-    description: 'Variable schedule with project-based availability',
-    longDescription: 'Adaptive study plans that work around client commitments and irregular schedules',
-    defaultHours: 4,
-    color: 'from-purple-500 to-pink-500',
-    bgColor: 'bg-purple-50',
-    textColor: 'text-purple-700',
-    benefits: ['Schedule flexibility', 'Self-directed learning', 'Adaptive planning'],
-    challenges: ['Irregular schedule', 'Client priorities', 'Income stability'],
-  },
-];
-
-/**
- * Enhanced study time preferences with better UX
- */
-const STUDY_TIMES = [
-  {
-    id: 'morning',
-    label: 'Morning',
-    icon: '🌅',
-    time: '6-10 AM',
-    description: 'Fresh mind, fewer distractions',
-    benefits: ['Peak cognitive performance', 'Consistent routine', 'Peaceful environment'],
-  },
-  {
-    id: 'afternoon',
-    label: 'Afternoon',
-    icon: '☀️',
-    time: '12-4 PM',
-    description: 'Post-lunch focused sessions',
-    benefits: ['Good for review sessions', 'Natural break from work', 'Moderate energy levels'],
-  },
-  {
-    id: 'evening',
-    label: 'Evening',
-    icon: '🌆',
-    time: '5-9 PM',
-    description: 'After work relaxed learning',
-    benefits: ['Unwinding activity', 'Family time balance', 'Reflection on daily learning'],
-  },
-  {
-    id: 'night',
-    label: 'Night',
-    icon: '🌙',
-    time: '9 PM-12 AM',
-    description: 'Deep focus in quiet hours',
-    benefits: ['Complete silence', 'Deep concentration', 'No interruptions'],
-  },
-];
 
 /**
  * Props for PersonaDetectionStep component - using properly typed form
@@ -175,25 +87,25 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       form.updateField('userPersona', { type: personaType });
 
       // Set smart default study time based on persona
-      const selectedOption = PERSONA_OPTIONS.find(p => p.id === personaType);
-      if (selectedOption) {
-        const newStudyGoal = selectedOption.defaultHours * 60;
-        form.updateField('preferences', {
-          ...(form.data.preferences ?? {}),
-          dailyStudyGoalMinutes: newStudyGoal,
-        });
-        logInfo('Default study goal set based on persona', {
-          personaType,
-          defaultHours: selectedOption.defaultHours,
-          studyGoalMinutes: newStudyGoal,
-        });
-      }
+      const defaultHours = getDefaultStudyHours(personaType);
+      const newStudyGoal = defaultHours * 60;
+
+      form.updateField('preferences', {
+        ...(form.data.preferences ?? {}),
+        dailyStudyGoalMinutes: newStudyGoal,
+      });
+
+      logInfo('Default study goal set based on persona', {
+        personaType,
+        defaultHours,
+        studyGoalMinutes: newStudyGoal,
+      });
 
       // Analytics
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', 'persona_selected', {
           persona_type: personaType,
-          default_hours: selectedOption?.defaultHours,
+          default_hours: defaultHours,
         });
       }
     },
@@ -220,20 +132,17 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
       });
 
       // Validate study hours based on persona
-      if (selectedPersona === 'working_professional' && newHours > 4) {
-        setValidationErrors(['Consider a more realistic goal for working professionals (2-4 hours)']);
-        logger.debug('Study goal validation warning', {
-          persona: selectedPersona,
-          hours: newHours,
-          warning: 'Too many hours for working professional',
-        });
-      } else if (selectedPersona === 'student' && newHours < 4) {
-        setValidationErrors(['Students typically benefit from 4+ hours of daily study']);
-        logger.debug('Study goal validation warning', {
-          persona: selectedPersona,
-          hours: newHours,
-          warning: 'Too few hours for student',
-        });
+      if (selectedPersona) {
+        const validationErrors = validateStudyHours(selectedPersona, newHours);
+        setValidationErrors(validationErrors);
+
+        if (validationErrors.length > 0) {
+          logger.debug('Study goal validation warning', {
+            persona: selectedPersona,
+            hours: newHours,
+            warnings: validationErrors,
+          });
+        }
       } else {
         setValidationErrors([]);
       }
@@ -679,7 +588,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {STUDY_TIMES.map(timeSlot => (
+                {STUDY_TIME_PREFERENCES.map(timeSlot => (
                   <Card
                     key={timeSlot.id}
                     className={`cursor-pointer transition-all duration-300 hover:shadow-md border-2 group ${
@@ -744,7 +653,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                 <Card className="border-blue-200 bg-blue-50/50">
                   <CardContent className="p-4">
                     {(() => {
-                      const timeSlot = STUDY_TIMES.find(t => t.id === selectedTimeSlot);
+                      const timeSlot = STUDY_TIME_PREFERENCES.find(t => t.id === selectedTimeSlot);
                       if (!timeSlot) {
                         return null;
                       }
