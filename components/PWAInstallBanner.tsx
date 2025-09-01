@@ -12,17 +12,7 @@
 
 'use client';
 
-import {
-  X,
-  Download,
-  Smartphone,
-  Monitor,
-  Rocket,
-  ChevronRight,
-  Share,
-  Plus,
-  MoreHorizontal,
-} from 'lucide-react';
+import { X, Download, Smartphone, Monitor, Rocket, ChevronRight, Share, Plus, MoreHorizontal } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -139,11 +129,11 @@ export function PWAInstallBanner({
             <div className="mx-auto mb-4 p-3 rounded-full bg-blue-100">
               {platform === 'ios' ? (
                 <Smartphone className="h-6 w-6 text-blue-600" />
-              ) : (platform === 'desktop' ? (
+              ) : platform === 'desktop' ? (
                 <Monitor className="h-6 w-6 text-blue-600" />
               ) : (
                 <Download className="h-6 w-6 text-blue-600" />
-              ))}
+              )}
             </div>
             <CardTitle className="text-xl">Install Our App</CardTitle>
             <CardDescription>Get the best experience with our Progressive Web App</CardDescription>

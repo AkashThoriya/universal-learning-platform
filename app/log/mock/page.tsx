@@ -71,7 +71,7 @@ export default function MockTestLogPage() {
 
         if (userDoc?.currentExam.id) {
           const exam = getExamById(userDoc.currentExam.id);
-          setExamData(exam || null);
+          setExamData(exam ?? null);
 
           // Initialize scores and max scores based on exam structure
           if (exam && exam.stages.length > 0) {

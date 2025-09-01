@@ -30,10 +30,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase-utils';
+import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
-import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 export default function TopicDetailPage() {
   const { user } = useAuth();

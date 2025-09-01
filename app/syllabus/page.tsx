@@ -278,7 +278,9 @@ export default function SyllabusPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="search-topics" className="text-sm font-medium">Search Topics</label>
+                  <label htmlFor="search-topics" className="text-sm font-medium">
+                    Search Topics
+                  </label>
                   <div className="relative">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -292,7 +294,9 @@ export default function SyllabusPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="tier-filter" className="text-sm font-medium">Filter by Tier</label>
+                  <label htmlFor="tier-filter" className="text-sm font-medium">
+                    Filter by Tier
+                  </label>
                   <Select value={tierFilter} onValueChange={setTierFilter}>
                     <SelectTrigger id="tier-filter">
                       <SelectValue />
@@ -307,7 +311,9 @@ export default function SyllabusPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="mastery-filter" className="text-sm font-medium">Filter by Mastery</label>
+                  <label htmlFor="mastery-filter" className="text-sm font-medium">
+                    Filter by Mastery
+                  </label>
                   <Select value={masteryFilter} onValueChange={setMasteryFilter}>
                     <SelectTrigger id="mastery-filter">
                       <SelectValue />

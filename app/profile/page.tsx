@@ -57,13 +57,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { AGE_LIMITS } from '@/lib/constants';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
+import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase-utils';
-import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType } from '@/types/exam';
 
 /**
@@ -156,7 +157,7 @@ const profileSchema = z.object({
       2: z.string().min(3, 'Tier 2 definition required'),
       3: z.string().min(3, 'Tier 3 definition required'),
     }),
-    revisionIntervals: z.array(z.number().min(1).max(365)).min(3, 'At least 3 intervals required'),
+    revisionIntervals: z.array(z.number().min(1).max(AGE_LIMITS.MAX_AGE_YEARS)).min(3, 'At least 3 intervals required'),
     notifications: z.object({
       revisionReminders: z.boolean(),
       dailyGoalReminders: z.boolean(),

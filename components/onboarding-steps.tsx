@@ -132,7 +132,9 @@ export function PersonalInfoStep({
             <Card
               key={exam.id}
               className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                (form.data as OnboardingFormData)?.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                (form.data as OnboardingFormData)?.selectedExamId === exam.id
+                  ? 'ring-2 ring-blue-500 bg-blue-50'
+                  : 'hover:bg-gray-50'
               }`}
               onClick={() => onExamSelect(exam.id)}
             >
@@ -242,7 +244,7 @@ interface CustomExamStepProps {
 
 export function CustomExamStep({ form }: CustomExamStepProps) {
   const formData = form.data as OnboardingFormData;
-  
+
   return (
     <CardContent className="space-y-6">
       <CardHeader className="px-0 pt-0">
@@ -353,7 +355,7 @@ interface ExamReviewStepProps {
 
 export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
   const formData = form.data as OnboardingFormData;
-  
+
   if (!selectedExam) {
     return null;
   }

@@ -235,10 +235,13 @@ export default function DailyLogPage() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-medium">Energy Level</label>
+                    <label htmlFor="energy-level" className="text-sm font-medium">
+                      Energy Level
+                    </label>
                     <span className="text-sm text-muted-foreground">{energyLevel[0]}/10</span>
                   </div>
                   <Slider
+                    id="energy-level"
                     value={energyLevel}
                     onValueChange={setEnergyLevel}
                     max={10}
@@ -252,9 +255,10 @@ export default function DailyLogPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Moon className="h-4 w-4 text-blue-500" />
-                      <label className="text-sm font-medium">Sleep Hours</label>
+                      <label htmlFor="sleep-hours" className="text-sm font-medium">Sleep Hours</label>
                     </div>
                     <Input
+                      id="sleep-hours"
                       type="number"
                       min="0"
                       max="12"
@@ -265,8 +269,9 @@ export default function DailyLogPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Physical Activity (min)</label>
+                    <label htmlFor="physical-activity" className="text-sm font-medium">Physical Activity (min)</label>
                     <Input
+                      id="physical-activity"
                       type="number"
                       min="0"
                       max="300"
@@ -281,11 +286,12 @@ export default function DailyLogPage() {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center space-x-2">
                         <Star className="h-4 w-4 text-yellow-500" />
-                        <label className="text-sm font-medium">Sleep Quality</label>
+                        <label htmlFor="sleep-quality" className="text-sm font-medium">Sleep Quality</label>
                       </div>
                       <span className="text-sm text-muted-foreground">{sleepQuality[0]}/10</span>
                     </div>
                     <Slider
+                      id="sleep-quality"
                       value={sleepQuality}
                       onValueChange={setSleepQuality}
                       max={10}
@@ -297,10 +303,11 @@ export default function DailyLogPage() {
 
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="text-sm font-medium">Stress Level</label>
+                      <label htmlFor="stress-level" className="text-sm font-medium">Stress Level</label>
                       <span className="text-sm text-muted-foreground">{stressLevel[0]}/10</span>
                     </div>
                     <Slider
+                      id="stress-level"
                       value={stressLevel}
                       onValueChange={setStressLevel}
                       max={10}
@@ -339,14 +346,14 @@ export default function DailyLogPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Topic</label>
+                        <label htmlFor={`topic-${index}`} className="text-sm font-medium">Topic</label>
                         <Select
                           value={session.topicId}
                           onValueChange={value => {
                             const topic = availableTopics.find(t => t.id === value);
                             updateStudySession(index, {
                               topicId: value,
-                              subjectId: topic?.subject || '',
+                              subjectId: topic?.subject ?? '',
                             });
                           }}
                         >
@@ -369,8 +376,9 @@ export default function DailyLogPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Minutes</label>
+                        <label htmlFor={`minutes-${index}`} className="text-sm font-medium">Minutes</label>
                         <Input
+                          id={`minutes-${index}`}
                           type="number"
                           min="5"
                           max="480"
@@ -385,7 +393,11 @@ export default function DailyLogPage() {
                         <label className="text-sm font-medium">Method</label>
                         <Select
                           value={session.method}
-                          onValueChange={(value: string) => updateStudySession(index, { method: value as 'reading' | 'notes' | 'practice' | 'revision' | 'mock_test' })}
+                          onValueChange={(value: string) =>
+                            updateStudySession(index, {
+                              method: value as 'reading' | 'notes' | 'practice' | 'revision' | 'mock_test',
+                            })
+                          }
                         >
                           <SelectTrigger>
                             <SelectValue />

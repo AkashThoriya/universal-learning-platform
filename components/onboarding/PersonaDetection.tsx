@@ -108,7 +108,15 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         if (fieldName === 'workingHours') {
           baseWorkSchedule.workingHours = value as { start: string; end: string };
         } else if (fieldName === 'workingDays') {
-          baseWorkSchedule.workingDays = value as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
+          baseWorkSchedule.workingDays = value as (
+            | 'monday'
+            | 'tuesday'
+            | 'wednesday'
+            | 'thursday'
+            | 'friday'
+            | 'saturday'
+            | 'sunday'
+          )[];
         } else if (fieldName === 'commuteTime') {
           baseWorkSchedule.commuteTime = value as number;
         } else if (fieldName === 'flexibility') {
@@ -335,7 +343,15 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
       } else if (fieldName === 'lunchBreakDuration') {
         updatedPersona.workSchedule.lunchBreakDuration = value as number;
       } else if (fieldName === 'workingDays') {
-        updatedPersona.workSchedule.workingDays = value as ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[];
+        updatedPersona.workSchedule.workingDays = value as (
+          | 'monday'
+          | 'tuesday'
+          | 'wednesday'
+          | 'thursday'
+          | 'friday'
+          | 'saturday'
+          | 'sunday'
+        )[];
       }
     } else if (keys.length === 3 && keys[1] === 'workingHours') {
       // workSchedule.workingHours.start/end
@@ -344,16 +360,16 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         updatedPersona.workSchedule = {
           ...updatedPersona.workSchedule,
           workingHours: {
-            start: keys[2] === 'start' ? value as string : currentWorkingHours.start,
-            end: keys[2] === 'end' ? value as string : currentWorkingHours.end,
+            start: keys[2] === 'start' ? (value as string) : currentWorkingHours.start,
+            end: keys[2] === 'end' ? (value as string) : currentWorkingHours.end,
           },
         };
       } else {
         updatedPersona.workSchedule = {
           ...updatedPersona.workSchedule,
           workingHours: {
-            start: keys[2] === 'start' ? value as string : '09:00',
-            end: keys[2] === 'end' ? value as string : '17:00',
+            start: keys[2] === 'start' ? (value as string) : '09:00',
+            end: keys[2] === 'end' ? (value as string) : '17:00',
           },
         };
       }

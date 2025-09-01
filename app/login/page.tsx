@@ -7,8 +7,8 @@ import { useState } from 'react';
 
 import EnhancedAuthFlow from '@/components/auth/EnhancedAuthFlow';
 import { Button } from '@/components/ui/button';
-import { signInWithGoogle } from '@/lib/google-auth';
 import { LOGIN_FEATURES } from '@/lib/data/ui-content';
+import { signInWithGoogle } from '@/lib/google-auth';
 import { logError, logInfo } from '@/lib/logger';
 
 export default function LoginPage() {

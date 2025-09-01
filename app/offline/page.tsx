@@ -7,14 +7,7 @@
 
 'use client';
 
-import {
-  WifiOff,
-  RefreshCw,
-  BookOpen,
-  Smartphone,
-  CheckCircle,
-  AlertCircle,
-} from 'lucide-react';
+import { WifiOff, RefreshCw, BookOpen, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';

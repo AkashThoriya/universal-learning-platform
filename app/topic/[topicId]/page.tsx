@@ -314,7 +314,9 @@ export default function TopicPage() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="banking-context-notes" className="text-sm font-medium text-yellow-900">Your Personal Banking Context Notes</label>
+                <label htmlFor="banking-context-notes" className="text-sm font-medium text-yellow-900">
+                  Your Personal Banking Context Notes
+                </label>
                 <Textarea
                   id="banking-context-notes"
                   value={userBankingContext}

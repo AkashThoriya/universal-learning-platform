@@ -9,8 +9,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme();
 
   const getTheme = () => {
-    if (theme === 'system') return 'system';
-    if (theme === 'light') return 'light';
+    if (theme === 'system') {
+      return 'system';
+    }
+    if (theme === 'light') {
+      return 'light';
+    }
     return 'dark';
   };
 
