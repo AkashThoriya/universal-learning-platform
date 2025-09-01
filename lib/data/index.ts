@@ -11,13 +11,15 @@
 export {
   PERSONA_OPTIONS,
   STUDY_TIME_PREFERENCES,
+  POPULAR_EXAM_CATEGORIES,
   getPersonaById,
   getStudyTimeById,
+  getExamCategoryById,
   getDefaultStudyHours,
   validateStudyHours,
 } from './onboarding';
 
-export type { PersonaOption, StudyTimePreference } from './onboarding';
+export type { PersonaOption, StudyTimePreference, ExamCategory } from './onboarding';
 
 // ============================================================================
 // BUSINESS DATA (Existing)

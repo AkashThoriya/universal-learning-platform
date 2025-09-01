@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-import { GraduationCap, Briefcase, Code } from 'lucide-react';
+import { GraduationCap, Briefcase, Code, Users, TrendingUp, BookOpen, Plus } from 'lucide-react';
 
 import type { UserPersonaType } from '@/types/exam';
 
@@ -129,6 +129,58 @@ export const STUDY_TIME_PREFERENCES: readonly StudyTimePreference[] = [
 ] as const;
 
 // ============================================================================
+// EXAM CATEGORIES
+// ============================================================================
+
+export interface ExamCategory {
+  id: string;
+  name: string;
+  icon: typeof Users;
+  count: number;
+  color: string;
+  description: string;
+}
+
+/**
+ * Popular exam categories for onboarding
+ * Used in: PersonalInfoStepCompact.tsx
+ */
+export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
+  {
+    id: 'civil-services',
+    name: 'Civil Services',
+    icon: Users,
+    count: 15,
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    description: 'UPSC, State PCS, and other administrative services',
+  },
+  {
+    id: 'banking',
+    name: 'Banking',
+    icon: TrendingUp,
+    count: 12,
+    color: 'bg-green-50 text-green-700 border-green-200',
+    description: 'Bank PO, Clerk, and financial service exams',
+  },
+  {
+    id: 'engineering',
+    name: 'Engineering',
+    icon: BookOpen,
+    count: 8,
+    color: 'bg-purple-50 text-purple-700 border-purple-200',
+    description: 'JEE, GATE, and technical competitive exams',
+  },
+  {
+    id: 'medical',
+    name: 'Medical',
+    icon: Plus,
+    count: 6,
+    color: 'bg-red-50 text-red-700 border-red-200',
+    description: 'NEET, AIIMS, and medical entrance exams',
+  },
+] as const;
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
@@ -144,6 +196,13 @@ export const getPersonaById = (id: UserPersonaType): PersonaOption | undefined =
  */
 export const getStudyTimeById = (id: string): StudyTimePreference | undefined => {
   return STUDY_TIME_PREFERENCES.find(time => time.id === id);
+};
+
+/**
+ * Get exam category by ID
+ */
+export const getExamCategoryById = (id: string): ExamCategory | undefined => {
+  return POPULAR_EXAM_CATEGORIES.find(category => category.id === id);
 };
 
 /**

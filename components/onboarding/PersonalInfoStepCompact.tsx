@@ -12,21 +12,7 @@
  * @version 3.0.0
  */
 
-import {
-  User,
-  Search,
-  Calendar,
-  BookOpen,
-  Plus,
-  CheckCircle,
-  Clock,
-  Users,
-  TrendingUp,
-  AlertCircle,
-  Star,
-  X,
-  Info,
-} from 'lucide-react';
+import { User, Search, Calendar, BookOpen, Plus, CheckCircle, Clock, AlertCircle, Star, X, Info } from 'lucide-react';
 import React, { useState, useMemo, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -37,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { UseFormReturn } from '@/hooks/useForm';
+import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
 import { Exam, SyllabusSubject, UserPersona } from '@/types/exam';
 
 /**
@@ -83,44 +70,6 @@ interface PersonalInfoStepProps {
   onExamSelect: (examId: string) => void;
   selectedExam: Exam | null;
 }
-
-/**
- * Enhanced popular exam categories with metadata
- */
-const POPULAR_CATEGORIES = [
-  {
-    id: 'civil-services',
-    name: 'Civil Services',
-    icon: Users,
-    count: 15,
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    description: 'UPSC, State PCS, and other administrative services',
-  },
-  {
-    id: 'banking',
-    name: 'Banking',
-    icon: TrendingUp,
-    count: 12,
-    color: 'bg-green-50 text-green-700 border-green-200',
-    description: 'Bank PO, Clerk, and financial service exams',
-  },
-  {
-    id: 'engineering',
-    name: 'Engineering',
-    icon: BookOpen,
-    count: 8,
-    color: 'bg-purple-50 text-purple-700 border-purple-200',
-    description: 'JEE, GATE, and technical competitive exams',
-  },
-  {
-    id: 'medical',
-    name: 'Medical',
-    icon: Plus,
-    count: 6,
-    color: 'bg-red-50 text-red-700 border-red-200',
-    description: 'NEET, AIIMS, and medical entrance exams',
-  },
-];
 
 /**
  * Form validation helper
@@ -370,7 +319,7 @@ export function PersonalInfoStepCompact({
                 </Badge>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {POPULAR_CATEGORIES.map(category => {
+                {POPULAR_EXAM_CATEGORIES.map(category => {
                   const Icon = category.icon;
                   const isActive = activeCategory === category.id;
                   const examCount = examsByCategory[category.id]?.length ?? 0;
@@ -404,7 +353,8 @@ export function PersonalInfoStepCompact({
               {activeCategory && (
                 <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    Showing {displayExams.length} exams in {POPULAR_CATEGORIES.find(c => c.id === activeCategory)?.name}
+                    Showing {displayExams.length} exams in{' '}
+                    {POPULAR_EXAM_CATEGORIES.find(c => c.id === activeCategory)?.name}
                   </p>
                 </div>
               )}
@@ -418,7 +368,7 @@ export function PersonalInfoStepCompact({
                 {searchQuery
                   ? `Search Results (${filteredExams.length})`
                   : activeCategory
-                    ? `${POPULAR_CATEGORIES.find(c => c.id === activeCategory)?.name} Exams`
+                    ? `${POPULAR_EXAM_CATEGORIES.find(c => c.id === activeCategory)?.name} Exams`
                     : 'Available Exams'}
               </Label>
               {displayExams.length < filteredExams.length && (
