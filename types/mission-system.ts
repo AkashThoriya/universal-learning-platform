@@ -38,9 +38,9 @@ export type MissionDifficulty = 'beginner' | 'intermediate' | 'advanced' | 'expe
 export type MissionStatus = 'not_started' | 'in_progress' | 'completed' | 'failed' | 'skipped';
 
 /**
- * Learning track types
+ * Learning track types - supports both traditional exams and custom learning paths
  */
-export type LearningTrack = 'exam' | 'course_tech';
+export type LearningTrack = 'exam' | 'course_tech' | 'custom_skill' | 'language' | 'certification';
 
 // =====================================================
 // MISSION CONFIGURATION
@@ -195,6 +195,111 @@ export interface MissionScoringRules {
 }
 
 // =====================================================
+// CUSTOM LEARNING SYSTEM
+// =====================================================
+
+/**
+ * Validation criteria for custom content modules
+ */
+export interface ValidationCriteria {
+  /** Type of validation required */
+  type: 'completion' | 'quiz_score' | 'time_spent' | 'project_submission';
+  /** Minimum score required (for quiz_score type) */
+  minimumScore?: number;
+  /** Minimum time required in minutes (for time_spent type) */
+  minimumTime?: number;
+  /** Whether submission is required (for project_submission type) */
+  requiredSubmission?: boolean;
+}
+
+/**
+ * Learning resource for custom content
+ */
+export interface LearningResource {
+  /** Unique resource identifier */
+  id: string;
+  /** Type of resource */
+  type: 'documentation' | 'tool' | 'book' | 'course' | 'practice_env';
+  /** Resource title */
+  title: string;
+  /** Resource description */
+  description: string;
+  /** Resource URL */
+  url: string;
+  /** Whether this is a premium resource */
+  isPremium: boolean;
+  /** User rating (1-5 stars) */
+  rating?: number;
+  /** Resource tags for categorization */
+  tags: string[];
+}
+
+/**
+ * Custom content module for learning paths
+ */
+export interface CustomContentModule {
+  /** Unique module identifier */
+  id: string;
+  /** Type of content module */
+  type: 'video' | 'article' | 'practice' | 'project' | 'quiz';
+  /** Module title */
+  title: string;
+  /** Module description */
+  description: string;
+  /** External URL for content (YouTube, documentation, etc.) */
+  url?: string;
+  /** Embedded content for platform-hosted materials */
+  content?: string;
+  /** Estimated time to complete in minutes */
+  estimatedTime: number;
+  /** Difficulty level using existing mission difficulty type */
+  difficulty: MissionDifficulty;
+  /** Validation criteria for completion */
+  validationCriteria?: ValidationCriteria;
+  /** Additional learning resources */
+  resources?: LearningResource[];
+}
+
+/**
+ * Custom learning goal
+ */
+export interface CustomGoal {
+  /** Unique goal identifier */
+  id: string;
+  /** User ID who owns this goal */
+  userId: string;
+  /** Goal title (e.g., "Master Docker & Kubernetes") */
+  title: string;
+  /** Detailed description of the goal */
+  description: string;
+  /** Learning category */
+  category: 'programming' | 'devops' | 'language' | 'design' | 'business' | 'other';
+  /** Estimated duration in days */
+  estimatedDuration: number;
+  /** Goal difficulty level */
+  difficulty: MissionDifficulty;
+  /** Creation timestamp */
+  createdAt: Date;
+  /** Last updated timestamp */
+  updatedAt: Date;
+  /** Associated mission IDs */
+  missions: string[];
+  /** Goal progress tracking */
+  progress: {
+    /** Number of completed missions */
+    completedMissions: number;
+    /** Total number of missions for this goal */
+    totalMissions: number;
+    /** Current streak in days */
+    currentStreak: number;
+    /** Estimated completion date */
+    estimatedCompletion: Date;
+  };
+  /** Whether the goal is currently active */
+  isActive: boolean;
+}
+
+// =====================================================
 // ACTIVE MISSIONS
 // =====================================================
 
@@ -242,6 +347,14 @@ export interface Mission {
   createdAt: Date;
   /** Last updated timestamp */
   updatedAt: Date;
+
+  // Custom Learning Path Fields (backward compatible)
+  /** Indicates if this is a custom learning path mission */
+  isCustomLearningPath?: boolean;
+  /** Associated custom goal ID */
+  customGoal?: string;
+  /** Custom content modules for learning paths */
+  customContent?: CustomContentModule[];
 }
 
 /**

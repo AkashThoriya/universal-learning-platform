@@ -39,7 +39,10 @@ export class AchievementService {
    */
   async getAchievements(category?: AchievementCategory): Promise<Result<Achievement[]>> {
     try {
-      const queryOptions: unknown = {
+      const queryOptions: {
+        where: Array<{ field: string; operator: string; value: any }>;
+        orderBy: Array<{ field: string; direction: 'asc' | 'desc' }>;
+      } = {
         where: [{ field: 'isActive', operator: '==', value: true }],
         orderBy: [
           { field: 'category', direction: 'asc' as const },

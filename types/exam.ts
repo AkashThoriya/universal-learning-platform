@@ -1,5 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 
+import type { CustomGoal } from './mission-system';
+
 /**
  * @fileoverview Core type definitions for the Exam Strategy Engine
  *
@@ -230,6 +232,30 @@ export interface User {
   settings?: UserSettings;
   /** User's study statistics and achievements */
   stats?: UserStats;
+
+  // Custom Learning Path Fields (backward compatible)
+  /** User's custom learning goals */
+  customGoals?: CustomGoal[];
+  /** Learning preferences for custom paths */
+  learningPreferences?: {
+    /** Preferred content types for learning */
+    preferredContentTypes: ('video' | 'text' | 'practice' | 'interactive')[];
+    /** Estimated weekly hours available for learning */
+    estimatedWeeklyHours: number;
+    /** Difficulty preference progression */
+    difficultyPreference: 'gradual' | 'challenge' | 'mixed';
+    /** Learning style preference */
+    learningStyle: 'visual' | 'auditory' | 'kinesthetic' | 'mixed';
+  };
+  /** Achievement tracking for custom learning */
+  achievements?: {
+    /** Number of learning paths completed */
+    pathsCompleted: number;
+    /** Skills/certifications earned */
+    skillsCertified: string[];
+    /** Total hours spent on custom learning */
+    totalLearningHours: number;
+  };
 }
 
 /**

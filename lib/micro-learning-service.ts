@@ -498,7 +498,7 @@ export class MicroLearningService {
       const result = await userService.get(userId);
 
       if (result.success && result.data) {
-        return result.data.persona ?? this.getDefaultPersona();
+        return result.data.userPersona ?? this.getDefaultPersona();
       }
 
       return this.getDefaultPersona();

@@ -43,6 +43,23 @@ export {
 export type { FeatureHighlight, PWABenefit, OfflineFeature, ProfileTab } from './ui-content';
 
 // ============================================================================
+// LEARNING TEMPLATES
+// ============================================================================
+
+export {
+  LEARNING_GOAL_TEMPLATES,
+  LEARNING_CATEGORIES,
+  TEMPLATES_BY_CATEGORY,
+  TEMPLATES_BY_DIFFICULTY,
+  getTemplateById,
+  getAvailableCategories,
+  searchTemplates,
+  validateTemplateStructure,
+} from './learning-templates';
+
+export type { LearningGoalTemplate, LearningCategory } from './learning-templates';
+
+// ============================================================================
 // BUSINESS DATA (Existing)
 // ============================================================================
 

@@ -32,6 +32,7 @@ import { z } from 'zod';
 
 import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetectionCompact';
 import { PersonalInfoStep } from '@/components/onboarding/PersonalInfoStepCompact';
+import { CustomLearningStep } from '@/components/onboarding/CustomLearningStep';
 import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding-steps-2';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,7 @@ import { useForm, UseFormReturn } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { createUser, saveSyllabus } from '@/lib/firebase-utils';
+import { customLearningService } from '@/lib/firebase-services';
 import { logger, logError, logInfo } from '@/lib/logger';
 import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
 
@@ -99,6 +101,17 @@ interface OnboardingFormData {
       healthCheckReminders: boolean;
     };
   };
+
+  // Step 6: Custom Learning Goals
+  customLearningGoals?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    targetValue: number;
+    unit: string;
+    priority: 'high' | 'medium' | 'low';
+  }>;
 
   // Index signature to satisfy Record<string, unknown> constraint
   [key: string]: string | number | boolean | object | undefined;
@@ -224,6 +237,13 @@ const STEP_INFO = [
     icon: '⚙️',
     estimatedTime: '3 minutes',
   },
+  {
+    title: 'Custom Learning Goals',
+    description: 'Set up your personal learning goals beyond exam preparation',
+    helpText: 'Create goals for skills, technologies, or knowledge you want to develop alongside your exam prep.',
+    icon: '🎯',
+    estimatedTime: '4 minutes',
+  },
 ];
 
 /**
@@ -264,7 +284,7 @@ export default function OnboardingSetupPage() {
   const announceStepChange = useCallback((step: number) => {
     const stepInfo = STEP_INFO[step - 1];
     if (announceRef.current && stepInfo) {
-      announceRef.current.textContent = `Now on step ${step} of 4: ${stepInfo.title}. ${stepInfo.description}`;
+      announceRef.current.textContent = `Now on step ${step} of 5: ${stepInfo.title}. ${stepInfo.description}`;
     }
   }, []);
 
@@ -309,11 +329,12 @@ export default function OnboardingSetupPage() {
         healthCheckReminders: true,
       },
     },
+    customLearningGoals: [],
   };
 
   // Enhanced multi-step form management with analytics
   const multiStep = useMultiStepForm({
-    totalSteps: 4,
+    totalSteps: 5,
     persistState: true,
     storageKey: 'onboarding-progress-v2',
     onStepChange: (current, previous) => {
@@ -507,7 +528,7 @@ export default function OnboardingSetupPage() {
   const handleNext = useCallback(async () => {
     logInfo('Attempting to navigate to next step', {
       currentStep: multiStep.currentStep,
-      totalSteps: 4,
+      totalSteps: 5,
     });
 
     const isValid = await validateStep(multiStep.currentStep);
@@ -707,6 +728,29 @@ export default function OnboardingSetupPage() {
             saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]),
           ]);
 
+          // Save custom learning goals separately if any exist
+          if ((form.data as any).customLearningGoals && (form.data as any).customLearningGoals.length > 0) {
+            const goalOperations = await Promise.allSettled(
+              (form.data as any).customLearningGoals.map((goal: any) =>
+                customLearningService.saveCustomGoal(user.uid, {
+                  ...goal,
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  status: 'active',
+                  progress: 0,
+                })
+              )
+            );
+
+            const goalFailures = goalOperations.filter(result => result.status === 'rejected');
+            if (goalFailures.length > 0) {
+              logError('Failed to save some custom learning goals', {
+                failures: goalFailures.length,
+                total: (form.data as any).customLearningGoals.length,
+              });
+            }
+          }
+
           const duration = performance.now() - startTime;
 
           const failures = operations.filter(result => result.status === 'rejected');
@@ -899,6 +943,9 @@ export default function OnboardingSetupPage() {
 
         case 4:
           return <PreferencesStep form={form as UseFormReturn<OnboardingFormData>} />;
+
+        case 5:
+          return <CustomLearningStep form={form as UseFormReturn<OnboardingFormData>} />;
 
         default:
           return (

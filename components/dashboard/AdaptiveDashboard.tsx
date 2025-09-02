@@ -17,17 +17,21 @@ import {
   PlayCircle,
   Users,
   Sparkles,
+  Plus,
   LucideIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalyticsDashboard';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { customLearningService } from '@/lib/firebase-services';
 import { logError, logInfo, measurePerformance } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
@@ -38,6 +42,10 @@ interface DashboardStats {
   weeklyGoalProgress: number;
   activeMissions: number;
   completedTopics: number;
+  // Custom learning stats
+  customGoalsActive: number;
+  customGoalsCompleted: number;
+  customLearningHours: number;
 }
 
 interface QuickAction {
@@ -63,6 +71,55 @@ interface AdaptiveDashboardProps {
   className?: string;
 }
 
+// Custom Goal Card Component
+interface CustomGoalCardProps {
+  goal: {
+    id: string;
+    title: string;
+    description?: string;
+    category: string;
+    progress: number;
+    targetValue: number;
+    createdAt: Date;
+    dueDate?: Date;
+    status: 'active' | 'completed' | 'paused';
+  };
+}
+
+function CustomGoalCard({ goal }: CustomGoalCardProps) {
+  const progressPercentage = Math.min((goal.progress / goal.targetValue) * 100, 100);
+
+  return (
+    <Card className="hover:shadow-lg transition-all duration-300">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold text-gray-900">{goal.title}</CardTitle>
+          <Badge variant={goal.status === 'completed' ? 'default' : 'secondary'} className="text-xs">
+            {goal.status}
+          </Badge>
+        </div>
+        {goal.description && <CardDescription className="text-sm text-gray-600">{goal.description}</CardDescription>}
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-gray-600">Progress</span>
+            <span className="font-medium">
+              {goal.progress} / {goal.targetValue}
+            </span>
+          </div>
+          <Progress value={progressPercentage} className="h-2" />
+          <div className="flex justify-between items-center text-xs text-gray-500">
+            <span>Category: {goal.category}</span>
+            <span>{progressPercentage.toFixed(0)}%</span>
+          </div>
+          {goal.dueDate && <div className="text-xs text-gray-500">Due: {goal.dueDate.toLocaleDateString()}</div>}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
 
@@ -78,11 +135,15 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     weeklyGoalProgress: 0,
     activeMissions: 0,
     completedTopics: 0,
+    customGoalsActive: 0,
+    customGoalsCompleted: 0,
+    customLearningHours: 0,
   });
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [motivationalMessage, setMotivationalMessage] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning');
+  const [customGoals, setCustomGoals] = useState<any[]>([]);
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -118,6 +179,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             weeklyGoalProgress: 78,
             activeMissions: 4,
             completedTopics: 18,
+            customGoalsActive: 2,
+            customGoalsCompleted: 1,
+            customLearningHours: 24,
           };
 
           const mockAchievements: Achievement[] = [
@@ -139,7 +203,31 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             },
           ];
 
-          setStats(mockStats);
+          // Load custom goals if user is authenticated
+          if (user?.uid) {
+            const customGoalsResult = await customLearningService.getUserCustomGoals(user.uid);
+            if (customGoalsResult.success) {
+              setCustomGoals(customGoalsResult.data);
+
+              // Update stats with real custom learning data
+              const activeGoals = customGoalsResult.data.filter((goal: any) => goal.isActive).length;
+              const completedGoals = customGoalsResult.data.filter(
+                (goal: any) => goal.progress.completedMissions === goal.progress.totalMissions
+              ).length;
+
+              setStats(prevStats => ({
+                ...prevStats,
+                ...mockStats,
+                customGoalsActive: activeGoals,
+                customGoalsCompleted: completedGoals,
+              }));
+            } else {
+              setStats(mockStats);
+            }
+          } else {
+            setStats(mockStats);
+          }
+
           setRecentAchievements(mockAchievements);
           setMotivationalMessage(getMotivationalMessage(timeOfDay, mockStats.currentStreak));
 
@@ -349,13 +437,22 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         </motion.div>
       )}
 
-      {/* Enhanced Stats Overview */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-      >
+      {/* Main Dashboard Tabs */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
+          <TabsTrigger value="analytics">Learning Analytics</TabsTrigger>
+        </TabsList>
+
+        {/* Overview Tab - Original Dashboard Content */}
+        <TabsContent value="overview" className="space-y-6 mt-6">
+          {/* Enhanced Stats Overview */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
         <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden relative">
           <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -403,6 +500,40 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             <Progress value={stats.weeklyGoalProgress} className="mt-2 bg-white/20" />
           </CardContent>
         </Card>
+      </motion.div>
+
+      {/* Custom Learning Goals */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mb-8"
+      >
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
+          <Target className="h-5 w-5 mr-2 text-blue-500" />
+          Custom Learning Goals
+        </h2>
+        {customGoals.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {customGoals.map(goal => (
+              <CustomGoalCard key={goal.id} goal={goal} />
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="text-center py-8">
+              <div className="text-gray-500 mb-4">
+                <BookOpen className="h-12 w-12 mx-auto mb-2" />
+                <p>No custom learning goals yet</p>
+                <p className="text-sm">Create your first goal to start learning something new!</p>
+              </div>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Learning Goal
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </motion.div>
 
       {/* Priority Actions */}
@@ -562,8 +693,14 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">This Week</span>
+                <span className="text-sm text-gray-600">Custom Goals Active</span>
                 <Badge variant="outline" className="bg-purple-50">
+                  {stats.customGoalsActive}
+                </Badge>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">This Week</span>
+                <Badge variant="outline" className="bg-orange-50">
                   {formatTime(stats.totalStudyTime)}
                 </Badge>
               </div>
@@ -610,6 +747,13 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       <div className="lg:hidden">
         <FloatingActionButton />
       </div>
+        </TabsContent>
+
+        {/* Analytics Tab - Learning Analytics Dashboard */}
+        <TabsContent value="analytics" className="mt-6">
+          <LearningAnalyticsDashboard />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

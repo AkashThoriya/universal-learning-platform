@@ -23,6 +23,7 @@ import {
   intelligentAnalyticsService,
   AnalyticsEventType,
   AnalyticsEventData,
+  AnalyticsMetadata,
 } from '@/lib/intelligent-analytics-service';
 import { logger } from '@/lib/logger';
 
@@ -62,7 +63,7 @@ export const useAnalytics = () => {
             sessionDuration: Date.now() - sessionStartTime.current,
             pageTime: Date.now() - pageStartTime.current,
           },
-          customMetadata
+          customMetadata as Partial<AnalyticsMetadata> | undefined
         );
       } catch (error) {
         logger.error('Failed to track analytics event', error as Error);
@@ -355,7 +356,7 @@ export const usePerformanceAnalytics = () => {
         operationId,
         duration,
         timestamp: Date.now(),
-        ...metadata,
+        ...(metadata && typeof metadata === 'object' ? metadata : {}),
       });
 
       return duration;
@@ -373,10 +374,10 @@ export const usePerformanceAnalytics = () => {
       startTiming(operationId);
       try {
         const result = await fn();
-        endTiming(operationId, category, { success: true, ...metadata });
+        endTiming(operationId, category, { success: true, ...(metadata && typeof metadata === 'object' ? metadata : {}) });
         return result;
       } catch (error) {
-        endTiming(operationId, category, { success: false, error: (error as Error).message, ...metadata });
+        endTiming(operationId, category, { success: false, error: (error as Error).message, ...(metadata && typeof metadata === 'object' ? metadata : {}) });
         throw error;
       }
     },
@@ -458,7 +459,7 @@ export const useSessionAnalytics = () => {
         pageName,
         pageViewCount: sessionData.current.pageViews,
         sessionDuration: Date.now() - sessionData.current.startTime,
-        ...metadata,
+        ...(metadata && typeof metadata === 'object' ? metadata : {}),
       });
     },
     [trackEvent]
@@ -471,7 +472,7 @@ export const useSessionAnalytics = () => {
         interactionType,
         interactionCount: sessionData.current.interactions,
         sessionDuration: Date.now() - sessionData.current.startTime,
-        ...metadata,
+        ...(metadata && typeof metadata === 'object' ? metadata : {}),
       });
     },
     [trackEvent]
@@ -484,7 +485,7 @@ export const useSessionAnalytics = () => {
         featureName,
         uniqueFeaturesUsed: sessionData.current.features.size,
         sessionDuration: Date.now() - sessionData.current.startTime,
-        ...metadata,
+        ...(metadata && typeof metadata === 'object' ? metadata : {}),
       });
     },
     [trackEvent]

@@ -1177,6 +1177,319 @@ export const microLearningFirebaseService = {
 };
 
 // ============================================================================
+// CUSTOM LEARNING SERVICE (Phase 2 - Universal Learning Platform)
+// ============================================================================
+
+/**
+ * Custom Learning Service for Universal Learning Platform
+ * Extends existing Firebase infrastructure to support custom learning goals
+ */
+export const customLearningService = {
+  /**
+   * Create custom learning mission using existing infrastructure
+   */
+  async createCustomMission(userId: string, goalId: string, content: any[]): Promise<Result<any>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      const mission = await monitor.measure(`createCustomMission:${userId}:${goalId}`, async () => {
+        const missionData = {
+          id: `custom_${Date.now()}`,
+          userId,
+          templateId: 'custom_template',
+          track: 'custom_skill',
+          frequency: 'custom',
+          title: `Custom Learning Mission`,
+          description: `Custom learning mission for goal ${goalId}`,
+          difficulty: 'intermediate',
+          estimatedDuration: content.reduce((sum: number, module: any) => sum + (module.estimatedTime || 30), 0),
+          content: {
+            type: 'custom_module',
+            customContent: content,
+          },
+          status: 'not_started',
+          scheduledAt: new Date(),
+          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          progress: {
+            completedSteps: 0,
+            totalSteps: content.length,
+            currentStep: 0,
+            timeSpent: 0,
+            accuracy: 0,
+            submissions: [],
+          },
+          personaOptimizations: {
+            timeAllocation: {},
+            difficultyAdjustment: 0,
+            contentPreferences: [],
+            motivationalElements: [],
+          },
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isCustomLearningPath: true,
+          customGoal: goalId,
+          customContent: content,
+        };
+
+        // Save mission using existing pattern
+        const docRef = doc(db, 'users', userId, 'missions', missionData.id);
+        await setDoc(docRef, {
+          ...missionData,
+          createdAt: Timestamp.fromDate(missionData.createdAt),
+          updatedAt: Timestamp.fromDate(missionData.updatedAt),
+          scheduledAt: Timestamp.fromDate(missionData.scheduledAt),
+          deadline: Timestamp.fromDate(missionData.deadline),
+        });
+
+        return missionData;
+      });
+
+      return createSuccess(mission);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create custom mission'));
+    }
+  },
+
+  /**
+   * Save custom goal using existing Firebase patterns
+   */
+  async saveCustomGoal(userId: string, goal: any): Promise<Result<void>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      await monitor.measure(`saveCustomGoal:${userId}:${goal.id}`, async () => {
+        const docRef = doc(db, 'users', userId, 'custom_goals', goal.id);
+        await setDoc(docRef, {
+          ...goal,
+          createdAt: Timestamp.fromDate(goal.createdAt),
+          updatedAt: Timestamp.fromDate(goal.updatedAt),
+          progress: {
+            ...goal.progress,
+            estimatedCompletion: Timestamp.fromDate(goal.progress.estimatedCompletion),
+          },
+        });
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to save custom goal'));
+    }
+  },
+
+  /**
+   * Get user's custom goals
+   */
+  async getUserCustomGoals(userId: string): Promise<Result<any[]>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      const goals = await monitor.measure(`getUserCustomGoals:${userId}`, async () => {
+        const goalsCollection = collection(db, 'users', userId, 'custom_goals');
+        const snapshot = await getDocs(goalsCollection);
+
+        return snapshot.docs.map(docSnapshot => {
+          const data = docSnapshot.data();
+          return {
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+            progress: {
+              ...data.progress,
+              estimatedCompletion: data.progress?.estimatedCompletion?.toDate() || new Date(),
+            },
+          };
+        });
+      });
+
+      return createSuccess(goals);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get custom goals'));
+    }
+  },
+
+  /**
+   * Update custom goal progress
+   */
+  async updateCustomGoalProgress(userId: string, goalId: string, progressUpdate: any): Promise<Result<void>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      await monitor.measure(`updateCustomGoalProgress:${userId}:${goalId}`, async () => {
+        const docRef = doc(db, 'users', userId, 'custom_goals', goalId);
+        await updateDoc(docRef, {
+          progress: progressUpdate,
+          updatedAt: Timestamp.now(),
+        });
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update custom goal progress'));
+    }
+  },
+
+  /**
+   * Get custom missions for a specific goal
+   */
+  async getCustomMissions(userId: string, goalId: string): Promise<Result<any[]>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      const missions = await monitor.measure(`getCustomMissions:${userId}:${goalId}`, async () => {
+        const missionsCollection = collection(db, 'users', userId, 'missions');
+        const customMissionsQuery = query(
+          missionsCollection,
+          where('isCustomLearningPath', '==', true),
+          where('customGoal', '==', goalId),
+          orderBy('createdAt', 'desc')
+        );
+
+        const snapshot = await getDocs(customMissionsQuery);
+        return snapshot.docs.map(docSnapshot => {
+          const data = docSnapshot.data();
+          return {
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+            scheduledAt: data.scheduledAt?.toDate() || new Date(),
+            deadline: data.deadline?.toDate() || new Date(),
+          };
+        });
+      });
+
+      return createSuccess(missions);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get custom missions'));
+    }
+  },
+
+  /**
+   * Create custom goal from template
+   */
+  async createCustomGoalFromTemplate(userId: string, templateId: string, customizations?: any): Promise<Result<any>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      const customGoal = await monitor.measure(`createFromTemplate:${userId}:${templateId}`, async () => {
+        const { LearningTemplateService } = await import('./learning-templates');
+
+        const template = LearningTemplateService.getTemplateById(templateId);
+        if (!template) {
+          throw new Error('Template not found');
+        }
+
+        const goalData = {
+          ...template,
+          userId,
+          id: `goal_${Date.now()}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          missions: [],
+          isActive: true,
+          ...customizations,
+        };
+
+        // Save the custom goal
+        const saveResult = await this.saveCustomGoal(userId, goalData);
+        if (!saveResult.success) {
+          throw saveResult.error;
+        }
+
+        return goalData;
+      });
+
+      return createSuccess(customGoal);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create custom goal from template'));
+    }
+  },
+
+  /**
+   * Get learning analytics for custom goals
+   */
+  async getCustomLearningAnalytics(userId: string): Promise<Result<any>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      const analytics = await monitor.measure(`getCustomLearningAnalytics:${userId}`, async () => {
+        const [goalsResult, missionsResult] = await Promise.all([
+          this.getUserCustomGoals(userId),
+          this.getAllCustomMissions(userId),
+        ]);
+
+        if (!goalsResult.success || !missionsResult.success) {
+          throw new Error('Failed to load analytics data');
+        }
+
+        const goals = goalsResult.data;
+        const missions = missionsResult.data;
+
+        return {
+          totalGoals: goals.length,
+          activeGoals: goals.filter((goal: any) => goal.isActive).length,
+          completedGoals: goals.filter((goal: any) => goal.progress.completedMissions === goal.progress.totalMissions)
+            .length,
+          totalMissions: missions.length,
+          completedMissions: missions.filter((mission: any) => mission.status === 'completed').length,
+          totalLearningHours:
+            missions.reduce((sum: number, mission: any) => sum + (mission.progress?.timeSpent || 0), 0) / 60, // Convert to hours
+          categoriesActive: Array.from(new Set(goals.map((goal: any) => goal.category))),
+          streakDays: Math.max(...goals.map((goal: any) => goal.progress.currentStreak || 0)),
+          averageProgress:
+            goals.length > 0
+              ? (goals.reduce(
+                  (sum: number, goal: any) =>
+                    sum + goal.progress.completedMissions / Math.max(goal.progress.totalMissions, 1),
+                  0
+                ) /
+                  goals.length) *
+                100
+              : 0,
+        };
+      });
+
+      return createSuccess(analytics);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get custom learning analytics'));
+    }
+  },
+
+  /**
+   * Helper method to get all custom missions for a user
+   */
+  async getAllCustomMissions(userId: string): Promise<Result<any[]>> {
+    const monitor = new PerformanceMonitor();
+
+    try {
+      const missions = await monitor.measure(`getAllCustomMissions:${userId}`, async () => {
+        const missionsCollection = collection(db, 'users', userId, 'missions');
+        const customMissionsQuery = query(
+          missionsCollection,
+          where('isCustomLearningPath', '==', true),
+          orderBy('createdAt', 'desc')
+        );
+
+        const snapshot = await getDocs(customMissionsQuery);
+        return snapshot.docs.map(docSnapshot => {
+          const data = docSnapshot.data();
+          return {
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+            scheduledAt: data.scheduledAt?.toDate() || new Date(),
+            deadline: data.deadline?.toDate() || new Date(),
+          };
+        });
+      });
+
+      return createSuccess(missions);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get all custom missions'));
+    }
+  },
+};
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 

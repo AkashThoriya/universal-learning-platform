@@ -27,7 +27,9 @@ import { User, TopicProgress as _TopicProgress, MockTestLog, DailyLog as _DailyL
  * Type guard to check if data matches the new User interface
  */
 export function isValidUser(data: unknown): data is User {
-  if (typeof data !== 'object' || data === null) return false;
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
   
   const typedData = data as Record<string, unknown>;
   const currentExam = typedData.currentExam as Record<string, unknown>;

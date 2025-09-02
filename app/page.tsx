@@ -84,7 +84,7 @@ export default function HomePage() {
             <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
             <div className="relative glass rounded-2xl p-8">
               <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gradient mb-2">Exam Strategy Engine</h1>
+              <h1 className="text-2xl font-bold text-gradient mb-2">Universal Learning Platform</h1>
               <p className="text-muted-foreground">Initializing your strategic learning experience...</p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Target className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-gradient">Exam Strategy Engine</span>
+              <span className="text-xl font-bold text-gradient">Universal Learning Platform</span>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/login">
@@ -117,152 +117,176 @@ export default function HomePage() {
           </div>
         </nav>
 
-        {/* Hero Section */}
-        <section className="relative px-6 lg:px-8 pt-20 pb-32 overflow-hidden">
+        {/* Hero Section - Optimized Above-the-Fold */}
+        <section className="relative px-6 lg:px-8 pt-8 pb-12 overflow-hidden min-h-[90vh] flex items-center">
           {/* Enhanced Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
             <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
             {/* Floating Elements */}
-            <div className="absolute top-20 left-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl animate-pulse" />
-            <div className="absolute top-40 right-20 w-32 h-32 bg-purple-400/20 rounded-full blur-xl animate-pulse delay-1000" />
-            <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-indigo-400/20 rounded-full blur-xl animate-pulse delay-500" />
+            <div className="absolute top-20 left-10 w-16 h-16 sm:w-20 sm:h-20 bg-blue-400/20 rounded-full blur-xl animate-pulse" />
+            <div className="absolute top-40 right-20 w-24 h-24 sm:w-32 sm:h-32 bg-purple-400/20 rounded-full blur-xl animate-pulse delay-1000" />
+            <div className="absolute bottom-20 left-1/4 w-20 h-20 sm:w-24 sm:h-24 bg-indigo-400/20 rounded-full blur-xl animate-pulse delay-500" />
           </div>
 
-          <div className="max-w-6xl mx-auto text-center relative z-10">
+          <div className="max-w-5xl mx-auto text-center relative z-10 w-full">
             <Badge
               variant="secondary"
-              className="mb-8 px-6 py-3 text-base font-medium bg-white/80 backdrop-blur-sm border border-blue-200 hover:scale-105 transition-transform duration-300"
+              className="mb-4 sm:mb-6 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium bg-white/80 backdrop-blur-sm border border-blue-200 hover:scale-105 transition-transform duration-300"
             >
-              🚀 The Future of Exam Preparation is Here
+              🚀 The Future of Strategic Learning is Here
             </Badge>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-tight">
-              <span className="block mb-2">Master Any Exam</span>
-              <span className="block text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-gradient pb-2">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1] max-w-4xl mx-auto">
+              <span className="block mb-2">Master Any Goal</span>
+              <span className="block text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent animate-gradient leading-[1.1]">
                 with AI-Powered Strategy
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed px-4">
-              Transform chaotic studying into a{' '}
-              <span className="font-semibold text-blue-600 dark:text-blue-400">data-driven, strategic process</span>{' '}
-              that adapts to your learning style and maximizes your potential.
+            <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed px-4">
+              Transform chaotic studying into strategic, data-driven learning.{' '}
+              <span className="block sm:inline">Whether targeting{' '}
+              <span className="font-semibold text-blue-600 dark:text-blue-400">competitive exams</span>{' '}
+              or{' '}
+              <span className="font-semibold text-purple-600 dark:text-purple-400">custom skills</span>{' '}
+              - our AI adapts to your style.</span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Link href="/login">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8">
+              <Link href="/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-8 py-6 text-lg font-semibold hover:scale-105"
+                  className="w-full sm:w-auto gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold hover:scale-105"
                 >
-                  <Rocket className="mr-3 h-6 w-6" />
-                  Start Your Journey Free
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  <Rocket className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
+                  Start Your Learning Journey
+                  <ArrowRight className="ml-2 sm:ml-3 h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </Link>
             </div>
 
-            {/* Enhanced Feature Cards */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto px-4">
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
-                <CardHeader className="text-center pb-4 px-4 sm:px-6">
-                  <div className="mx-auto mb-4 sm:mb-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                    <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-                  </div>
-                  <CardTitle className="text-lg sm:text-xl mb-3">Smart Analytics</CardTitle>
-                  <CardDescription className="text-sm sm:text-base leading-relaxed">
-                    AI-powered insights that identify your patterns, predict weak areas, and optimize your study
-                    strategy in real-time
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
-                <CardHeader className="text-center pb-4 px-4 sm:px-6">
-                  <div className="mx-auto mb-4 sm:mb-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                    <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-                  </div>
-                  <CardTitle className="text-lg sm:text-xl mb-3">Progress Mastery</CardTitle>
-                  <CardDescription className="text-sm sm:text-base leading-relaxed">
-                    Comprehensive tracking with visual dashboards that transform your study data into actionable
-                    insights and motivation
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group sm:col-span-2 lg:col-span-1">
-                <CardHeader className="text-center pb-4 px-4 sm:px-6">
-                  <div
-                    className="mx-auto mb-4 sm:mb-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br
-                       from-orange-500 to-red-500 rounded-2xl flex items-center justify-center
-                       group-hover:rotate-12 transition-transform duration-300"
-                  >
-                    <Target className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-                  </div>
-                  <CardTitle className="text-lg sm:text-xl mb-3">Strategic Planning</CardTitle>
-                  <CardDescription className="text-sm sm:text-base leading-relaxed">
-                    Personalized study plans that evolve with your progress, ensuring optimal preparation for your
-                    target exam date
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/20">
-              <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
-                Trusted by thousands of successful candidates
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 opacity-60">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
-                  <span className="text-xs sm:text-sm font-medium">No Setup Required</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
-                  <span className="text-xs sm:text-sm font-medium">100% Free Forever</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
-                  <span className="text-xs sm:text-sm font-medium">Instant Access</span>
-                </div>
+            {/* Compact Trust Indicators */}
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 opacity-80">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+                <span className="text-xs sm:text-sm font-medium">100% Free Forever</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+                <span className="text-xs sm:text-sm font-medium">25K+ Active Learners</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+                <span className="text-xs sm:text-sm font-medium">Instant Access</span>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Feature Highlight Section - Seamless Transition */}
+        <section className="py-12 sm:py-16 px-6 lg:px-8 relative overflow-hidden">
+          {/* Seamless Background Transition */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-slate-50 dark:from-gray-900 dark:via-blue-900 dark:to-slate-900">
+            <div className="absolute inset-0 bg-grid-slate-100/30 [mask-image:linear-gradient(180deg,transparent,white,transparent)] dark:bg-grid-slate-700/20" />
+          </div>
+          
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+                Everything You Need to{' '}
+                <span className="text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Succeed
+                </span>
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+                Comprehensive AI-powered tools for exam preparation and custom learning goals
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4">
+              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+                <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
+                  <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                    <Brain className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  <CardTitle className="text-base sm:text-lg mb-2 sm:mb-3">Smart Analytics</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm leading-relaxed">
+                    AI insights that identify patterns, predict weak areas, and optimize your strategy
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+                <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
+                  <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  <CardTitle className="text-base sm:text-lg mb-2 sm:mb-3">Progress Mastery</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm leading-relaxed">
+                    Visual dashboards that transform study data into actionable insights
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+                <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
+                  <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                    <Target className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  <CardTitle className="text-base sm:text-lg mb-2 sm:mb-3">Strategic Planning</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm leading-relaxed">
+                    Personalized study plans that evolve with your progress
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+                <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
+                  <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                  </div>
+                  <CardTitle className="text-base sm:text-lg mb-2 sm:mb-3">Custom Learning</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm leading-relaxed">
+                    Pursue any goal from Docker mastery to language learning
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Enhanced Stats Section */}
-        <section className="py-24 relative overflow-hidden">
-          {/* Background with subtle patterns */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
-            <div className="absolute inset-0 bg-grid-slate-100/50 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/25" />
+        <section className="py-16 sm:py-20 relative overflow-hidden">
+          {/* Seamless Background Continuation */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900">
+            <div className="absolute inset-0 bg-grid-slate-100/40 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/20" />
           </div>
 
-          <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
-            <Badge variant="secondary" className="mb-8 px-6 py-3 bg-white/80 backdrop-blur-sm border border-blue-200">
-              <Trophy className="h-4 w-4 mr-2" />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center relative z-10">
+            <Badge variant="secondary" className="mb-6 sm:mb-8 px-4 sm:px-6 py-2 sm:py-3 bg-white/80 backdrop-blur-sm border border-blue-200 text-sm sm:text-base">
+              <Trophy className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
               Global Impact
             </Badge>
 
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Empowering Success{' '}
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
+              Transforming Learning{' '}
               <span className="text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Worldwide
               </span>
             </h2>
 
-            <p className="text-xl text-muted-foreground mb-16 max-w-3xl mx-auto">
-              Join a thriving community of achievers who've transformed their exam preparation journey
+            <p className="text-lg sm:text-xl text-muted-foreground mb-12 sm:mb-16 max-w-3xl mx-auto px-4">
+              Join a thriving community achieving exam success and custom learning goals
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 px-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 px-4">
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
-                  <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
+                  <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       25K+
                     </div>
-                    <div className="text-muted-foreground font-medium text-sm sm:text-base">Active Learners</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Active Learners</div>
                     <div className="text-xs text-muted-foreground mt-1">Growing daily</div>
                   </CardContent>
                 </Card>
@@ -270,23 +294,23 @@ export default function HomePage() {
 
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
-                  <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
+                  <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       150+
                     </div>
-                    <div className="text-muted-foreground font-medium text-sm sm:text-base">Exam Categories</div>
-                    <div className="text-xs text-muted-foreground mt-1">All covered</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Learning Goals</div>
+                    <div className="text-xs text-muted-foreground mt-1">Exams & Skills</div>
                   </CardContent>
                 </Card>
               </div>
 
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
-                  <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
+                  <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       98%
                     </div>
-                    <div className="text-muted-foreground font-medium text-sm sm:text-base">Success Rate</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Goal Achievement</div>
                     <div className="text-xs text-muted-foreground mt-1">Proven results</div>
                   </CardContent>
                 </Card>
@@ -294,11 +318,11 @@ export default function HomePage() {
 
               <div className="group cursor-pointer">
                 <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
-                  <CardContent className="p-6 sm:p-8 text-center">
-                    <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-2 pb-1">
+                  <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       5M+
                     </div>
-                    <div className="text-muted-foreground font-medium text-sm sm:text-base">Study Hours</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Study Hours</div>
                     <div className="text-xs text-muted-foreground mt-1">Tracked & optimized</div>
                   </CardContent>
                 </Card>
@@ -306,18 +330,18 @@ export default function HomePage() {
             </div>
 
             {/* Additional trust indicators */}
-            <div className="mt-12 sm:mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto px-4">
-              <div className="flex items-center justify-center space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
-                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-500" />
-                <span className="font-medium text-sm sm:text-base">Zero Hidden Costs</span>
+            <div className="mt-8 sm:mt-12 lg:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-4xl mx-auto px-4">
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-green-500" />
+                <span className="font-medium text-xs sm:text-sm lg:text-base">Zero Hidden Costs</span>
               </div>
-              <div className="flex items-center justify-center space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
-                <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
-                <span className="font-medium text-sm sm:text-base">Privacy Protected</span>
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-blue-500" />
+                <span className="font-medium text-xs sm:text-sm lg:text-base">Privacy Protected</span>
               </div>
-              <div className="flex items-center justify-center space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm sm:col-span-2 lg:col-span-1">
-                <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-500" />
-                <span className="font-medium text-sm sm:text-base">Instant Access</span>
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-yellow-500" />
+                <span className="font-medium text-xs sm:text-sm lg:text-base">Instant Access</span>
               </div>
             </div>
           </div>
@@ -684,8 +708,8 @@ export default function HomePage() {
             </h2>
 
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
-              Join the revolution in exam preparation. Experience the power of strategic learning, backed by AI insights
-              and proven methodologies.
+              Join the revolution in learning. Experience the power of strategic goal achievement, backed by AI insights
+              and proven methodologies for both exams and custom skills.
             </p>
 
             <div className="flex justify-center mb-8 sm:mb-12">
@@ -695,7 +719,7 @@ export default function HomePage() {
                   className="gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-8 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-bold hover:scale-105"
                 >
                   <Rocket className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
-                  Start Your Journey Free
+                  Start Your Learning Journey
                   <ArrowRight className="ml-2 sm:ml-3 h-5 w-5 sm:h-6 sm:w-6" />
                 </Button>
               </Link>
@@ -730,11 +754,10 @@ export default function HomePage() {
               <div className="md:col-span-1">
                 <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                   <Target className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                  <span className="text-base sm:text-lg font-bold">Exam Strategy Engine</span>
+                  <span className="text-base sm:text-lg font-bold">Universal Learning Platform</span>
                 </div>
                 <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
-                  Transforming exam preparation with strategic intelligence and data-driven insights. Your success is
-                  our mission.
+                  Transforming learning with strategic intelligence and data-driven insights. Whether mastering exams or custom skills, your success is our mission.
                 </p>
               </div>
 
@@ -818,7 +841,7 @@ export default function HomePage() {
             </div>
 
             <div className="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-gray-400">
-              <p>&copy; 2024 Exam Strategy Engine. All rights reserved. Made with ❤️ for students worldwide.</p>
+              <p>&copy; 2024 Universal Learning Platform. All rights reserved. Made with ❤️ for learners worldwide.</p>
             </div>
           </div>
         </footer>

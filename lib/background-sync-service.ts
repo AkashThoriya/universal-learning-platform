@@ -200,7 +200,13 @@ class BackgroundSyncService {
 
   private async syncMissionData(item: SyncData): Promise<boolean> {
     try {
-      const { missionId, progress, completedAt, timeSpent } = item.data;
+      const data = item.data as {
+        missionId: string;
+        progress: any;
+        completedAt?: Date;
+        timeSpent: number;
+      };
+      const { missionId, progress, completedAt, timeSpent } = data;
 
       // Check for conflicts
       const remoteDoc = await getDoc(doc(db, `users/${item.userId}/missions/${missionId}`));
@@ -238,7 +244,14 @@ class BackgroundSyncService {
 
   private async syncProgressData(item: SyncData): Promise<boolean> {
     try {
-      const { sessionId, subject, timeSpent, questionsAnswered, accuracy } = item.data;
+      const data = item.data as {
+        sessionId: string;
+        subject: string;
+        timeSpent: number;
+        questionsAnswered: number;
+        accuracy: number;
+      };
+      const { sessionId, subject, timeSpent, questionsAnswered, accuracy } = data;
 
       await addDoc(collection(db, `users/${item.userId}/study_sessions`), {
         sessionId,
@@ -259,7 +272,11 @@ class BackgroundSyncService {
 
   private async syncAnalyticsData(item: SyncData): Promise<boolean> {
     try {
-      const { eventType, eventData } = item.data;
+      const data = item.data as {
+        eventType: string;
+        eventData: any;
+      };
+      const { eventType, eventData } = data;
 
       await addDoc(collection(db, `users/${item.userId}/analytics_events`), {
         eventType,
@@ -277,10 +294,10 @@ class BackgroundSyncService {
 
   private async syncPreferencesData(item: SyncData): Promise<boolean> {
     try {
-      const preferences = item.data;
+      const preferences = item.data as Record<string, any>;
 
       await updateDoc(doc(db, `users/${item.userId}`), {
-        preferences,
+        preferences: preferences && typeof preferences === 'object' ? preferences : {},
         lastUpdated: Timestamp.fromDate(item.timestamp),
       });
 
@@ -293,10 +310,10 @@ class BackgroundSyncService {
 
   private async syncSessionData(item: SyncData): Promise<boolean> {
     try {
-      const sessionData = item.data;
+      const sessionData = item.data as Record<string, any>;
 
       await setDoc(doc(db, `users/${item.userId}/sessions/${item.id}`), {
-        ...sessionData,
+        ...(sessionData && typeof sessionData === 'object' ? sessionData : {}),
         timestamp: Timestamp.fromDate(item.timestamp),
         syncedFrom: 'offline',
       });
@@ -396,10 +413,10 @@ class BackgroundSyncService {
 
       if (stored) {
         const queue = JSON.parse(stored);
-        this.syncQueue = queue.map((item: unknown) => ({
-          ...item,
-          timestamp: new Date(item.timestamp),
-          lastAttempt: item.lastAttempt ? new Date(item.lastAttempt) : undefined,
+        this.syncQueue = queue.map((item: any) => ({
+          ...(item && typeof item === 'object' ? item : {}),
+          timestamp: new Date((item as any)?.timestamp || Date.now()),
+          lastAttempt: (item as any)?.lastAttempt ? new Date((item as any).lastAttempt) : undefined,
         }));
       }
     } catch (error) {
@@ -431,14 +448,14 @@ class BackgroundSyncService {
     }
   }
 
-  private async storeConflict(conflict: unknown): Promise<void> {
+  private async storeConflict(conflict: any): Promise<void> {
     try {
       const stored = localStorage.getItem('sync_conflicts');
       const conflicts = stored ? JSON.parse(stored) : [];
 
       conflicts.push({
-        ...conflict,
-        timestamp: conflict.timestamp.toISOString(),
+        ...(conflict && typeof conflict === 'object' ? conflict : {}),
+        timestamp: (conflict as any)?.timestamp?.toISOString() || new Date().toISOString(),
       });
 
       localStorage.setItem('sync_conflicts', JSON.stringify(conflicts));
@@ -490,24 +507,24 @@ class BackgroundSyncService {
     return this.startSync();
   }
 
-  async syncMissionProgress(userId: string, missionId: string, progress: unknown): Promise<void> {
+  async syncMissionProgress(userId: string, missionId: string, progress: any): Promise<void> {
     await this.addToSyncQueue({
       type: 'mission',
       userId,
       timestamp: new Date(),
       data: {
         missionId,
-        ...progress,
+        ...(progress && typeof progress === 'object' ? progress : {}),
       },
     });
   }
 
-  async syncStudySession(userId: string, sessionData: unknown): Promise<void> {
+  async syncStudySession(userId: string, sessionData: any): Promise<void> {
     await this.addToSyncQueue({
       type: 'progress',
       userId,
       timestamp: new Date(),
-      data: sessionData,
+      data: sessionData && typeof sessionData === 'object' ? sessionData : {},
     });
   }
 
