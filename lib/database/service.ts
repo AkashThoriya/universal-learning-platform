@@ -90,7 +90,7 @@ class MainDatabaseService extends DatabaseService {
   clearCache() {
     const provider = this.getProvider();
     if ('cache' in provider && provider.cache && typeof provider.cache === 'object' && 'clear' in provider.cache) {
-      (provider.cache as any).clear();
+      (provider.cache as { clear: () => void }).clear();
     }
   }
 }
@@ -153,12 +153,13 @@ export class DatabaseMigration {
 
         for (const doc of batch) {
           try {
-            const { id, ...data } = doc as any;
+            const typedDoc = doc as Record<string, unknown> & { id: string };
+            const { id, ...data } = typedDoc;
             await this.targetProvider.create(collectionName, data, { id });
             result.migrated++;
           } catch (error) {
             result.errors.push({
-              id: (doc as any).id,
+              id: (doc as Record<string, unknown> & { id: string }).id,
               error: error instanceof Error ? error.message : 'Unknown error',
             });
           }
@@ -201,7 +202,7 @@ export class DatabaseMigration {
         throw new Error('Failed to get source IDs');
       }
 
-      const sourceIds = new Set(sourceResult.data.map((doc: any) => doc.id));
+      const sourceIds = new Set(sourceResult.data.map((doc: unknown) => (doc as Record<string, unknown> & { id: string }).id));
       const missingIds: string[] = [];
 
       // Check if each source document exists in target

@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpen, Code, Target, Save, RotateCcw, Info, CheckCircle, AlertCircle, Loader2, Plus } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -81,13 +81,7 @@ export function MissionConfiguration({
   const [generatingTrack, setGeneratingTrack] = useState<LearningTrack | null>(null);
   const [activeTab, setActiveTab] = useState('exam');
 
-  useEffect(() => {
-    if (user?.uid) {
-      loadExistingConfigurations();
-    }
-  }, [user?.uid]);
-
-  const loadExistingConfigurations = async () => {
+  const loadExistingConfigurations = useCallback(async () => {
     if (!user?.uid) {
       return;
     }
@@ -105,7 +99,13 @@ export function MissionConfiguration({
       setError(err instanceof Error ? err.message : 'Failed to load configurations');
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      loadExistingConfigurations();
+    }
+  }, [user?.uid, loadExistingConfigurations]);
 
   const handleSaveConfiguration = async () => {
     if (!user?.uid) {

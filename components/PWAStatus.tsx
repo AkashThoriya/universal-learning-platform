@@ -30,7 +30,7 @@ import {
   Shield,
   Info,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -91,7 +91,7 @@ export function PWAStatus() {
   // STATUS CHECKING
   // ============================================================================
 
-  const checkPWAStatus = async () => {
+  const checkPWAStatus = useCallback(async () => {
     setIsLoading(true);
 
     try {
@@ -112,7 +112,7 @@ export function PWAStatus() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const checkInstallationStatus = (): boolean => {
     if (typeof window === 'undefined') {
@@ -309,7 +309,7 @@ export function PWAStatus() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [checkPWAStatus]);
 
   // ============================================================================
   // RENDER HELPERS
@@ -393,7 +393,13 @@ export function PWAStatus() {
               <CardDescription>Progressive Web App readiness and features</CardDescription>
             </div>
             <Badge
-              variant={overallScore >= 80 ? 'default' : overallScore >= 60 ? 'secondary' : 'destructive'}
+              variant={
+                overallScore >= 80 
+                  ? 'default' 
+                  : overallScore >= 60 
+                    ? 'secondary' 
+                    : 'destructive'
+              }
               className="text-lg px-3 py-1"
             >
               {overallScore}%

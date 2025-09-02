@@ -17,7 +17,7 @@ import {
   RefreshCw,
   Filter,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -60,13 +60,7 @@ export function MissionDashboard({
 
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    if (user?.uid) {
-      loadDashboardData();
-    }
-  }, [user?.uid]);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!user?.uid) {
       return;
     }
@@ -110,7 +104,13 @@ export function MissionDashboard({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      loadDashboardData();
+    }
+  }, [user?.uid, loadDashboardData]);
 
   const handleStartMission = async (mission: Mission) => {
     setStartingMissionId(mission.id);

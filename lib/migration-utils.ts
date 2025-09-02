@@ -8,6 +8,8 @@
  * @version 2.0.0 (August 2025)
  */
 
+import { Timestamp } from 'firebase/firestore';
+
 import {
   userService,
   progressService,
@@ -25,18 +27,21 @@ import { User, TopicProgress as _TopicProgress, MockTestLog, DailyLog as _DailyL
  * Type guard to check if data matches the new User interface
  */
 export function isValidUser(data: unknown): data is User {
-  const typedData = data as Record<string, any>;
+  if (typeof data !== 'object' || data === null) return false;
+  
+  const typedData = data as Record<string, unknown>;
+  const currentExam = typedData.currentExam as Record<string, unknown>;
+  
   return (
-    data &&
     typeof typedData.userId === 'string' &&
     typeof typedData.email === 'string' &&
     typeof typedData.displayName === 'string' &&
-    typedData.currentExam &&
-    typeof typedData.currentExam.id === 'string' &&
+    typeof currentExam === 'object' && currentExam !== null &&
+    typeof currentExam.id === 'string' &&
     typeof typedData.onboardingComplete === 'boolean' &&
-    typedData.createdAt &&
-    typedData.settings &&
-    typedData.stats
+    typeof typedData.createdAt === 'object' && typedData.createdAt !== null &&
+    typeof typedData.settings === 'object' && typedData.settings !== null &&
+    typeof typedData.stats === 'object' && typedData.stats !== null
   );
 }
 
@@ -44,21 +49,23 @@ export function isValidUser(data: unknown): data is User {
  * Migrate legacy user data to new User interface
  */
 export function migrateLegacyUserData(legacyData: unknown): User {
-  const typedLegacyData = legacyData as Record<string, any>;
+  const typedLegacyData = legacyData as Record<string, unknown>;
+  const settings = typedLegacyData.settings as Record<string, unknown> || {};
+  
   return {
-    userId: typedLegacyData.userId,
-    email: typedLegacyData.email,
-    displayName: typedLegacyData.displayName,
+    userId: typedLegacyData.userId as string,
+    email: typedLegacyData.email as string,
+    displayName: typedLegacyData.displayName as string,
     currentExam: {
-      id: typedLegacyData.selectedExamId ?? 'unknown',
-      name: typedLegacyData.examName ?? 'Unknown Exam',
-      targetDate: typedLegacyData.examDate ?? typedLegacyData.createdAt,
+      id: (typedLegacyData.selectedExamId as string) ?? 'unknown',
+      name: (typedLegacyData.examName as string) ?? 'Unknown Exam',
+      targetDate: (typedLegacyData.examDate ?? typedLegacyData.createdAt) as Timestamp,
     },
-    onboardingComplete: typedLegacyData.onboardingComplete ?? false,
-    createdAt: typedLegacyData.createdAt,
+    onboardingComplete: (typedLegacyData.onboardingComplete as boolean) ?? false,
+    createdAt: typedLegacyData.createdAt as Timestamp,
     settings: {
       revisionIntervals: [1, 3, 7, 16],
-      dailyStudyGoalMinutes: (typedLegacyData.settings?.dailyStudyGoalHrs ?? 8) * 60,
+      dailyStudyGoalMinutes: ((settings.dailyStudyGoalHrs as number) ?? 8) * 60,
       tierDefinition: {
         1: 'High Priority',
         2: 'Medium Priority',
@@ -79,9 +86,9 @@ export function migrateLegacyUserData(legacyData: unknown): User {
       },
     },
     stats: {
-      totalStudyHours: typedLegacyData.totalStudyHours ?? 0,
-      currentStreak: typedLegacyData.studyStreak ?? 0,
-      longestStreak: typedLegacyData.studyStreak ?? 0,
+      totalStudyHours: (typedLegacyData.totalStudyHours as number) ?? 0,
+      currentStreak: (typedLegacyData.studyStreak as number) ?? 0,
+      longestStreak: (typedLegacyData.studyStreak as number) ?? 0,
       totalMockTests: 0,
       averageScore: 0,
       topicsCompleted: 0,
@@ -225,12 +232,12 @@ export async function mockTestAnalysisExample(userId: string) {
     // Calculate average score across recent tests
     const averageScore =
       recentTests.reduce((sum: number, test: unknown) => {
-        const typedTest = test as Record<string, any>;
-        const totalScore = Object.values(typedTest.scores as Record<string, number>).reduce(
+        const typedTest = test as Record<string, unknown>;
+        const totalScore = Object.values((typedTest.scores as Record<string, number>) ?? {}).reduce(
           (s: number, score: number) => s + score,
           0
         );
-        const maxScore = Object.values(typedTest.maxScores as Record<string, number>).reduce(
+        const maxScore = Object.values((typedTest.maxScores as Record<string, number>) ?? {}).reduce(
           (s: number, score: number) => s + score,
           0
         );
@@ -292,10 +299,10 @@ export const mockServiceResponses = {
       currentExam: {
         id: 'upsc_cse_prelims',
         name: 'UPSC CSE - Prelims',
-        targetDate: new Date() as any,
+        targetDate: Timestamp.fromDate(new Date()),
       },
       onboardingComplete: true,
-      createdAt: new Date() as any,
+      createdAt: Timestamp.fromDate(new Date()),
       settings: {
         revisionIntervals: [1, 3, 7, 16],
         dailyStudyGoalMinutes: 480,

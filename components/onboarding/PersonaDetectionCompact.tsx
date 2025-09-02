@@ -31,7 +31,7 @@ import {
   validateStudyHours,
 } from '@/lib/data/onboarding';
 import { logInfo, logger } from '@/lib/logger';
-import { UserPersona, UserPersonaType } from '@/types/exam';
+import { UserPersona, UserPersonaType, SyllabusSubject } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
@@ -45,16 +45,26 @@ declare global {
  */
 interface OnboardingFormData {
   userPersona?: UserPersona;
-  preferences?: {
-    dailyStudyGoalMinutes?: number;
-    preferredStudyTime?: 'morning' | 'afternoon' | 'evening' | 'night';
-    tierDefinitions?: {
+  displayName: string;
+  selectedExamId: string;
+  examDate: string;
+  isCustomExam: boolean;
+  customExam: {
+    name?: string;
+    description?: string;
+    category?: string;
+  };
+  syllabus: SyllabusSubject[];
+  preferences: {
+    dailyStudyGoalMinutes: number;
+    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    tierDefinitions: {
       1: string;
       2: string;
       3: string;
     };
-    revisionIntervals?: number[];
-    notifications?: {
+    revisionIntervals: number[];
+    notifications: {
       revisionReminders: boolean;
       dailyGoalReminders: boolean;
       healthCheckReminders: boolean;

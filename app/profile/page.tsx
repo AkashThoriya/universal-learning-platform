@@ -57,11 +57,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { AGE_LIMITS } from '@/lib/constants';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
+import { AGE_LIMITS } from '@/lib/constants';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase-utils';
@@ -112,6 +112,9 @@ interface ProfileFormData {
     language: string;
     timezone: string;
   };
+
+  // Index signature to satisfy Record<string, unknown> constraint
+  [key: string]: unknown;
 }
 
 /**
@@ -189,6 +192,48 @@ export default function ProfilePage() {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
+  // Initialize form with enhanced configuration
+  const form = useForm<ProfileFormData>({
+    initialData: {
+      displayName: '',
+      email: '',
+      userPersona: undefined,
+      selectedExamId: '',
+      examDate: '',
+      isCustomExam: false,
+      customExam: { name: '', description: '', category: '' },
+      syllabus: [],
+      preferences: {
+        dailyStudyGoalMinutes: 240,
+        preferredStudyTime: 'morning' as const,
+        tierDefinitions: {
+          1: 'High Priority - Core Topics',
+          2: 'Medium Priority - Important Topics',
+          3: 'Low Priority - Additional Topics',
+        },
+        revisionIntervals: [1, 3, 7, 16, 35],
+        notifications: {
+          revisionReminders: true,
+          dailyGoalReminders: true,
+          healthCheckReminders: true,
+        },
+      },
+      settings: {
+        theme: 'system' as const,
+        language: 'en',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+    },
+    persistData: false,
+    validateOnChange: true,
+    validateOnBlur: true,
+    onFormEvent: (event: string) => {
+      if (event === 'field_change') {
+        setHasUnsavedChanges(true);
+      }
+    },
+  });
+
   // Load user data on component mount
   useEffect(() => {
     const loadUserData = async () => {
@@ -215,7 +260,7 @@ export default function ProfilePage() {
             email: fetchedUser.email ?? '',
             userPersona: fetchedUser.userPersona ?? undefined,
             selectedExamId: fetchedUser.selectedExamId ?? '',
-            examDate: fetchedUser.examDate ? fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '' : '',
+            examDate: fetchedUser.examDate ? (fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '') : '',
             isCustomExam: fetchedUser.isCustomExam ?? false,
             customExam: {
               name: fetchedUser.customExam?.name ?? '',
@@ -260,49 +305,7 @@ export default function ProfilePage() {
     };
 
     loadUserData();
-  }, [user]);
-
-  // Initialize form with enhanced configuration
-  const form = useForm<ProfileFormData>({
-    initialData: {
-      displayName: '',
-      email: '',
-      userPersona: undefined,
-      selectedExamId: '',
-      examDate: '',
-      isCustomExam: false,
-      customExam: { name: '', description: '', category: '' },
-      syllabus: [],
-      preferences: {
-        dailyStudyGoalMinutes: 240,
-        preferredStudyTime: 'morning' as const,
-        tierDefinitions: {
-          1: 'High Priority - Core Topics',
-          2: 'Medium Priority - Important Topics',
-          3: 'Low Priority - Additional Topics',
-        },
-        revisionIntervals: [1, 3, 7, 16, 35],
-        notifications: {
-          revisionReminders: true,
-          dailyGoalReminders: true,
-          healthCheckReminders: true,
-        },
-      },
-      settings: {
-        theme: 'system' as const,
-        language: 'en',
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      },
-    },
-    persistData: false,
-    validateOnChange: true,
-    validateOnBlur: true,
-    onFormEvent: (event: string) => {
-      if (event === 'field_change') {
-        setHasUnsavedChanges(true);
-      }
-    },
-  });
+  }, [user, form, toast]);
 
   // Exam selection handler
   const handleExamSelect = useCallback(

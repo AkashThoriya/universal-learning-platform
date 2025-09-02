@@ -638,9 +638,11 @@ export class IntelligentAnalyticsService {
         const key = `${event.data.transferredFrom}-${event.data.skillsApplied?.join(',')}`;
 
         if (transferMap.has(key)) {
-          const existing = transferMap.get(key)!;
-          existing.frequency++;
-          existing.effectivenessScore = this.calculateTransferEffectiveness(existing, event);
+          const existing = transferMap.get(key);
+          if (existing) {
+            existing.frequency++;
+            existing.effectivenessScore = this.calculateTransferEffectiveness(existing, event);
+          }
         } else {
           transferMap.set(key, this.createLearningTransfer(event));
         }
@@ -725,15 +727,27 @@ export class IntelligentAnalyticsService {
     const userResult = await firebaseService.getDocument('users', userId);
     const userData = userResult.success ? userResult.data : null;
 
+    // Type guard to safely access user data properties
+    const safeUserData = userData as Record<string, unknown> | null;
+    const persona = safeUserData?.persona as Record<string, unknown> | undefined;
+    const stats = safeUserData?.stats as Record<string, unknown> | undefined;
+    const preferences = safeUserData?.preferences as Record<string, unknown> | undefined;
+
+    // Safe persona construction with type guard
+    const defaultPersona: UserPersona = { type: 'student' };
+    const validPersona = persona && typeof persona.type === 'string' 
+      ? (persona as unknown as UserPersona) 
+      : defaultPersona;
+
     return {
-      persona: (userData as any)?.persona ?? { type: 'student' },
+      persona: validPersona,
       deviceType: this.detectDeviceType(),
       sessionId: this.getSessionId(),
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
       learningContext: {
-        currentStreak: (userData as any)?.stats?.currentStreak ?? 0,
-        totalStudyTime: (userData as any)?.stats?.totalStudyHours ?? 0,
-        preferredStudyTime: (userData as any)?.preferences?.preferredStudyTime ?? 'morning',
+        currentStreak: (stats?.currentStreak as number) ?? 0,
+        totalStudyTime: (stats?.totalStudyHours as number) ?? 0,
+        preferredStudyTime: (preferences?.preferredStudyTime as string) ?? 'morning',
       },
       ...partial,
     };

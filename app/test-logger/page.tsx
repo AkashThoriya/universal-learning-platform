@@ -64,14 +64,18 @@ export default function TestLoggerPage() {
   const getTotalScore = () => quantScore + reasoningScore + englishScore + pkScore;
   const getTotalErrors = (section: 'quant' | 'reasoning' | 'english' | 'pk') => {
     const maxScore = 50;
-    const actualScore =
-      section === 'quant'
-        ? quantScore
-        : section === 'reasoning'
-          ? reasoningScore
-          : section === 'english'
-            ? englishScore
-            : pkScore;
+    let actualScore;
+    
+    if (section === 'quant') {
+      actualScore = quantScore;
+    } else if (section === 'reasoning') {
+      actualScore = reasoningScore;
+    } else if (section === 'english') {
+      actualScore = englishScore;
+    } else {
+      actualScore = pkScore;
+    }
+    
     return maxScore - actualScore;
   };
 
@@ -115,10 +119,16 @@ export default function TestLoggerPage() {
       return;
     }
 
+    if (!date) {
+      // TODO: Replace with proper toast notification
+      // console.warn('Please select a test date');
+      return;
+    }
+
     setLoading(true);
     try {
       const testData = {
-        date: Timestamp.fromDate(new Date(date!)),
+        date: Timestamp.fromDate(new Date(date)),
         platform,
         type,
         scores: {

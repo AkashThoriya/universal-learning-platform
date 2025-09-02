@@ -334,18 +334,23 @@ export class RealTimeAnalyticsProcessor {
     // Analyze assignment completion patterns
     const assignments = events.filter(e => e.eventType === 'assignment_completed');
     if (assignments.length >= 2) {
-      const completionRates = assignments.map(e => e.data.completionRate ?? 0);
-      const avgCompletionRate = completionRates.reduce((a, b) => a + b, 0) / completionRates.length;
+      const completionRates: number[] = assignments
+        .map(e => e.data.completionRate)
+        .filter((rate): rate is number => typeof rate === 'number');
 
-      if (avgCompletionRate > 0.85) {
-        patterns.push({
-          patternId: `${Date.now()}_course_excellence`,
-          patternType: 'improvement',
-          confidence: 0.8,
-          description: `High course completion rate: ${(avgCompletionRate * 100).toFixed(1)}%`,
-          recommendedActions: ['Continue excellent progress', 'Consider advanced topics'],
-          applicableTracks: ['course_tech'],
-        });
+      if (completionRates.length > 0) {
+        const avgCompletionRate = completionRates.reduce((a, b) => a + b, 0) / completionRates.length;
+
+        if (avgCompletionRate > 0.85) {
+          patterns.push({
+            patternId: `${Date.now()}_course_excellence`,
+            patternType: 'improvement',
+            confidence: 0.8,
+            description: `High course completion rate: ${(avgCompletionRate * 100).toFixed(1)}%`,
+            recommendedActions: ['Continue excellent progress', 'Consider advanced topics'],
+            applicableTracks: ['course_tech'],
+          });
+        }
       }
     }
 
@@ -361,18 +366,24 @@ export class RealTimeAnalyticsProcessor {
     // Analyze skill transfer events
     const transferEvents = events.filter(e => e.eventType === 'learning_transfer_identified');
     if (transferEvents.length > 0) {
-      const avgEffectiveness =
-        transferEvents.reduce((sum, event) => sum + (event.data.effectivenessRating ?? 0), 0) / transferEvents.length;
+      const effectivenessRatings: number[] = transferEvents
+        .map(event => event.data.effectivenessRating)
+        .filter((rating): rating is number => typeof rating === 'number');
 
-      if (avgEffectiveness > 0.7) {
-        patterns.push({
-          patternId: `${Date.now()}_cross_transfer`,
-          patternType: 'breakthrough',
-          confidence: 0.85,
-          description: `Strong cross-track skill transfer detected (${(avgEffectiveness * 100).toFixed(1)}% effective)`,
-          recommendedActions: ['Leverage cross-track learning', 'Apply successful strategies across tracks'],
-          applicableTracks: ['exam', 'course_tech'],
-        });
+      if (effectivenessRatings.length > 0) {
+        const avgEffectiveness =
+          effectivenessRatings.reduce((sum, rating) => sum + rating, 0) / effectivenessRatings.length;
+
+        if (avgEffectiveness > 0.7) {
+          patterns.push({
+            patternId: `${Date.now()}_cross_transfer`,
+            patternType: 'breakthrough',
+            confidence: 0.85,
+            description: `Strong cross-track skill transfer detected (${(avgEffectiveness * 100).toFixed(1)}% effective)`,
+            recommendedActions: ['Leverage cross-track learning', 'Apply successful strategies across tracks'],
+            applicableTracks: ['exam', 'course_tech'],
+          });
+        }
       }
     }
 
@@ -472,7 +483,15 @@ export class RealTimeAnalyticsProcessor {
     // Analyze time spent vs outcomes
     const timeSpentData = events
       .filter(e => e.data.timeSpent && e.data.score)
-      .map(e => ({ time: e.data.timeSpent!, score: e.data.score! }));
+      .map(e => {
+        const timeSpent = e.data.timeSpent;
+        const score = e.data.score;
+        if (timeSpent === undefined || score === undefined) {
+          // This should never happen due to the filter above, but provides safety
+          throw new Error('Invalid time spent or score data');
+        }
+        return { time: timeSpent, score };
+      });
 
     if (timeSpentData.length >= 3) {
       const avgEfficiency = timeSpentData.reduce((sum, data) => sum + data.score / data.time, 0) / timeSpentData.length;
@@ -562,15 +581,18 @@ export class RealTimeAnalyticsProcessor {
 
     const skillProgress = skillEvents.reduce(
       (acc, event) => {
-        const { skillId } = event.data;
-        if (!skillId) {
+        const skillId = event.data.skillId;
+        if (!skillId || typeof skillId !== 'string') {
           return acc;
         }
 
         if (!acc[skillId]) {
           acc[skillId] = [];
         }
-        acc[skillId].push(event.data.completionRate ?? 0);
+        const completionRate = event.data.completionRate;
+        if (typeof completionRate === 'number') {
+          acc[skillId].push(completionRate);
+        }
         return acc;
       },
       {} as Record<string, number[]>
@@ -702,7 +724,10 @@ export class RealTimeAnalyticsProcessor {
   private async storeProcessedResults(userId: string, results: unknown): Promise<void> {
     try {
       // In a real implementation, this would store to Firebase
-      logger.debug(`Storing processed results for user ${userId}`, results);
+      logger.debug(
+        `Storing processed results for user ${userId}`,
+        results && typeof results === 'object' ? (results as Record<string, unknown>) : undefined
+      );
     } catch (error) {
       logger.error('Failed to store processed results', error as Error);
     }

@@ -15,10 +15,18 @@ import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase
 import { db } from '@/lib/firebase';
 
 // VAPID Configuration (used by server-side push service)
-export const VAPID_KEYS = {
-  publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  privateKey: process.env.VAPID_PRIVATE_KEY!,
+const validateVapidKeys = () => {
+  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+  
+  if (!publicKey || !privateKey) {
+    throw new Error('VAPID keys not configured. Please set NEXT_PUBLIC_VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY environment variables.');
+  }
+  
+  return { publicKey, privateKey };
 };
+
+export const VAPID_KEYS = validateVapidKeys();
 
 export interface PushSubscription {
   endpoint: string;
@@ -378,7 +386,7 @@ class PushNotificationService {
 
           await this.scheduleStudyReminder({
             userId,
-            type: type as any,
+            type: type as 'daily_goal' | 'mission_deadline' | 'streak_risk' | 'micro_learning',
             scheduledTime,
             title: this.getDefaultTitle(type),
             body: this.getDefaultBody(type),

@@ -693,7 +693,12 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
   // Calculate streak
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayDateString = yesterday.toISOString().split('T')[0]!; // Safe since ISO string always has 'T'
+  const isoString = yesterday.toISOString();
+  const datePart = isoString.split('T')[0];
+  if (!datePart) {
+    throw new Error('Invalid date string format');
+  }
+  const yesterdayDateString = datePart;
   const yesterdayLog = await getDailyLog(userId, yesterdayDateString);
 
   let { currentStreak } = currentStats;

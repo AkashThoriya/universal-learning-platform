@@ -227,7 +227,7 @@ export const useMultiStepForm = (config: MultiStepFormConfig): UseMultiStepFormR
  *
  * @interface UseFormValidationConfig
  */
-interface UseFormValidationConfig<T = any> {
+interface UseFormValidationConfig<T = Record<string, unknown>> {
   /** Validation schema for each step */
   validationSchemas: Record<number, (data: T) => boolean | Promise<boolean>>;
   /** Form data to validate */
@@ -254,7 +254,7 @@ interface UseFormValidationConfig<T = any> {
  * const canProceed = validation.isStepValid(currentStep);
  * ```
  */
-export const useFormValidation = <T = any>(config: UseFormValidationConfig<T>) => {
+export const useFormValidation = <T = Record<string, unknown>>(config: UseFormValidationConfig<T>) => {
   const { validationSchemas, formData } = config;
 
   const isStepValid = useCallback(

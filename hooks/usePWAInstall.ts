@@ -283,8 +283,8 @@ export function usePWAInstall() {
     (action: string) => {
       try {
         // Track with your analytics service
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'pwa_install', {
+        if (typeof window !== 'undefined' && 'gtag' in window) {
+          (window as Window & { gtag: (event: string, action: string, params: Record<string, unknown>) => void }).gtag('event', 'pwa_install', {
             action,
             platform: installState.platform,
             timestamp: new Date().toISOString(),

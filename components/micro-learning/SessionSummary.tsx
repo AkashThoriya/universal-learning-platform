@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpen, Code, Clock, Target, TrendingUp, Star, Brain, Home, ArrowRight, Loader2 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -60,7 +60,7 @@ export function SessionSummary({
     return `${mins}m ${secs}s`;
   };
 
-  const handleContinueLearning = async () => {
+  const handleContinueLearning = useCallback(async () => {
     if (onContinueLearning) {
       setIsNavigating(true);
       try {
@@ -71,9 +71,9 @@ export function SessionSummary({
         setIsNavigating(false);
       }
     }
-  };
+  }, [onContinueLearning]);
 
-  const handleReturnToDashboard = async () => {
+  const handleReturnToDashboard = useCallback(async () => {
     if (onReturnToDashboard) {
       setIsNavigating(true);
       try {
@@ -84,10 +84,10 @@ export function SessionSummary({
         setIsNavigating(false);
       }
     }
-  };
+  }, [onReturnToDashboard]);
 
   // Handle keyboard navigation
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === 'Enter' && event.ctrlKey) {
         handleContinueLearning();
@@ -98,7 +98,7 @@ export function SessionSummary({
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [handleContinueLearning, handleReturnToDashboard]);
 
   if (isLoading) {
     return (

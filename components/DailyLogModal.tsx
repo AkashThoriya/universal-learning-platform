@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { Zap, Moon, Star, Plus, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -105,6 +105,40 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   /**
    * Fetch topics using the new database abstraction layer
    */
+  /**
+   * Load existing daily log for today
+   */
+  const loadExistingLog = useCallback(async () => {
+    if (!user) {
+      return;
+    }
+
+    try {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const db = enhancedDatabaseService.getProvider();
+      const result = await db.read<DailyLogData>(`users/${user.uid}/daily-logs`, today);
+
+      if (result.success && result.data) {
+        const log = result.data;
+        // Pre-populate form with existing data
+        setEnergyLevel([log.health.energy]);
+        setSleepHours(log.health.sleepHours);
+        setSleepQuality([log.health.sleepQuality]);
+        setStressLevel([log.health.stressLevel]);
+        setPhysicalActivity(log.health.physicalActivity);
+        setStudySessions(log.studiedTopics);
+        setTargetMinutes(log.goals.targetMinutes);
+        setMood(log.mood);
+        setProductivity(log.productivity);
+        setNote(log.note);
+        setChallenges(log.challenges);
+        setWins(log.wins);
+      }
+    } catch (error) {
+      console.error('Error loading existing log:', error);
+    }
+  }, [user]);
+
   useEffect(() => {
     const fetchTopics = async () => {
       if (!user) {
@@ -143,41 +177,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
       // Check if today's log already exists
       loadExistingLog();
     }
-  }, [user, isOpen]);
-
-  /**
-   * Load existing daily log for today
-   */
-  const loadExistingLog = async () => {
-    if (!user) {
-      return;
-    }
-
-    try {
-      const today = format(new Date(), 'yyyy-MM-dd');
-      const db = enhancedDatabaseService.getProvider();
-      const result = await db.read<DailyLogData>(`users/${user.uid}/daily-logs`, today);
-
-      if (result.success && result.data) {
-        const log = result.data;
-        // Pre-populate form with existing data
-        setEnergyLevel([log.health.energy]);
-        setSleepHours(log.health.sleepHours);
-        setSleepQuality([log.health.sleepQuality]);
-        setStressLevel([log.health.stressLevel]);
-        setPhysicalActivity(log.health.physicalActivity);
-        setStudySessions(log.studiedTopics);
-        setTargetMinutes(log.goals.targetMinutes);
-        setMood(log.mood);
-        setProductivity(log.productivity);
-        setNote(log.note);
-        setChallenges(log.challenges);
-        setWins(log.wins);
-      }
-    } catch (error) {
-      console.error('Error loading existing log:', error);
-    }
-  };
+  }, [user, isOpen, loadExistingLog]);
 
   const addStudySession = () => {
     setStudySessions(prev => [

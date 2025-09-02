@@ -81,7 +81,11 @@ export class ExamEngineDatabaseFactory implements DatabaseFactory {
 
     // Return existing provider if already created
     if (this.providers.has(providerId)) {
-      return this.providers.get(providerId)!;
+      const existingProvider = this.providers.get(providerId);
+      if (!existingProvider) {
+        throw new Error(`Provider not found for ID: ${providerId}`);
+      }
+      return existingProvider;
     }
 
     // Validate configuration
@@ -315,13 +319,26 @@ export class DatabaseConfigHelper {
       throw new Error(`Missing Firebase environment variables: ${missing.join(', ')}`);
     }
 
+    // Extract validated environment variables
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+    const messagingSenderId = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID;
+    const appId = process.env.NEXT_PUBLIC_FIREBASE_APP_ID;
+
+    // TypeScript guard - should never happen due to validation above
+    if (!apiKey || !authDomain || !projectId || !storageBucket || !messagingSenderId || !appId) {
+      throw new Error('Firebase configuration validation failed');
+    }
+
     const config = {
-      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
-      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+      apiKey,
+      authDomain,
+      projectId,
+      storageBucket,
+      messagingSenderId,
+      appId,
       ...(process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID && {
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
       }),
@@ -344,12 +361,24 @@ export class DatabaseConfigHelper {
       throw new Error(`Missing PostgreSQL environment variables: ${missing.join(', ')}`);
     }
 
+    // Extract validated environment variables
+    const host = process.env.DATABASE_HOST;
+    const port = process.env.DATABASE_PORT;
+    const database = process.env.DATABASE_NAME;
+    const username = process.env.DATABASE_USERNAME;
+    const password = process.env.DATABASE_PASSWORD;
+
+    // TypeScript guard - should never happen due to validation above
+    if (!host || !port || !database || !username || !password) {
+      throw new Error('PostgreSQL configuration validation failed');
+    }
+
     return databaseFactory.createPostgreSQLConfig({
-      host: process.env.DATABASE_HOST!,
-      port: parseInt(process.env.DATABASE_PORT!),
-      database: process.env.DATABASE_NAME!,
-      username: process.env.DATABASE_USERNAME!,
-      password: process.env.DATABASE_PASSWORD!,
+      host,
+      port: parseInt(port),
+      database,
+      username,
+      password,
       ssl: process.env.DATABASE_SSL === 'true',
     });
   }

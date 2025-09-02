@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpen, Code, Clock, Play, Zap, Target, Loader2, AlertCircle, User } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -83,13 +83,7 @@ export function QuickSessionLauncher({
 
   const activeUserId = userId ?? user?.uid;
 
-  useEffect(() => {
-    if (autoLoadPersonalized && activeUserId && !sessions) {
-      loadPersonalizedSessions();
-    }
-  }, [activeUserId, autoLoadPersonalized, sessions]);
-
-  const loadPersonalizedSessions = async () => {
+  const loadPersonalizedSessions = useCallback(async () => {
     if (!activeUserId) {
       return;
     }
@@ -123,7 +117,13 @@ export function QuickSessionLauncher({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [activeUserId]);
+
+  useEffect(() => {
+    if (autoLoadPersonalized && activeUserId && !sessions) {
+      loadPersonalizedSessions();
+    }
+  }, [activeUserId, autoLoadPersonalized, sessions, loadPersonalizedSessions]);
 
   const handleStartSession = async (session: QuickSessionConfig, index: number) => {
     if (!onStartSession || !activeUserId) {

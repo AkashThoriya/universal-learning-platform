@@ -99,7 +99,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
 /**
  * Enhanced lazy loading with error boundary and loading states
  */
-function createLazyComponent<T extends React.ComponentType<unknown>>(
+function createLazyComponent<T extends React.ComponentType<Record<string, unknown>>>(
   importFn: () => Promise<{ default: T }>,
   options: {
     fallback?: React.ComponentType;
@@ -121,6 +121,7 @@ function createLazyComponent<T extends React.ComponentType<unknown>>(
       return (
         <ErrorBoundary fallback={ErrorFallback}>
           <Suspense fallback={<Fallback />}>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <LazyComponent {...(props as any)} />
           </Suspense>
         </ErrorBoundary>
@@ -129,13 +130,19 @@ function createLazyComponent<T extends React.ComponentType<unknown>>(
 
     return (
       <Suspense fallback={<Fallback />}>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <LazyComponent {...(props as any)} />
       </Suspense>
     );
   };
 
-  // Expose preload method
-  (WrappedComponent as any).preload = importFn;
+  // Expose preload method with proper typing
+  const typedComponent = WrappedComponent as React.ComponentType<React.ComponentProps<T>> & { 
+    preload: () => Promise<{ default: T }> 
+  };
+  typedComponent.preload = importFn;
+
+  return typedComponent;
 
   return WrappedComponent;
 }
@@ -323,7 +330,7 @@ const Profiler: React.FC<ProfilerProps> = ({ id, children, onRender }) => {
 /**
  * Stable callback hook - prevents unnecessary re-renders
  */
-function useStableCallback<T extends (...args: unknown[]) => any>(callback: T): T {
+function useStableCallback<T extends (...args: unknown[]) => unknown>(callback: T): T {
   const ref = React.useRef<T>(callback);
 
   React.useLayoutEffect(() => {

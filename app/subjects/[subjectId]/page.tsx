@@ -98,7 +98,12 @@ export default function SubjectPage() {
                           Topic {index + 1}
                         </Badge>
                         <Badge variant="secondary" className="text-xs">
-                          {subject.tier === 1 ? 'Core' : subject.tier === 2 ? 'PK' : 'Advanced'}
+                          {subject.tier === 1 
+                            ? 'Core' 
+                            : subject.tier === 2 
+                              ? 'PK' 
+                              : 'Advanced'
+                          }
                         </Badge>
                       </div>
                     </div>

@@ -161,7 +161,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     };
 
     loadDashboardData();
-  }, [timeOfDay]);
+  }, [timeOfDay, user?.uid]);
 
   const getMotivationalMessage = (timeOfDay: string, streak: number): string => {
     const messages = {

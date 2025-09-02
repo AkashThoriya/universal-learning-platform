@@ -60,13 +60,18 @@ const validateFirebaseConfig = (): FirebaseConfig => {
     );
   }
 
+  // TypeScript guard - these values are guaranteed to exist due to validation above
+  if (!apiKey || !authDomain || !projectId || !storageBucket || !messagingSenderId || !appId) {
+    throw new Error('Firebase configuration validation failed');
+  }
+
   const config: FirebaseConfig = {
-    apiKey: apiKey!,
-    authDomain: authDomain!,
-    projectId: projectId!,
-    storageBucket: storageBucket!,
-    messagingSenderId: messagingSenderId!,
-    appId: appId!,
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
   };
 
   // Only add measurementId if it exists
@@ -93,7 +98,12 @@ try {
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
   } else {
-    app = getApps()[0]!;
+    const existingApps = getApps();
+    const firstApp = existingApps[0];
+    if (!firstApp) {
+      throw new Error('Firebase app initialization failed');
+    }
+    app = firstApp;
   }
 
   // Initialize services

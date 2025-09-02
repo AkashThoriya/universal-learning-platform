@@ -68,7 +68,10 @@ class DatabaseCacheService {
       if (!this.tagIndex.has(tag)) {
         this.tagIndex.set(tag, new Set());
       }
-      this.tagIndex.get(tag)!.add(key);
+      const tagSet = this.tagIndex.get(tag);
+      if (tagSet) {
+        tagSet.add(key);
+      }
     });
   }
 
@@ -110,12 +113,14 @@ class DatabaseCacheService {
     if (!this.queryMetrics.has(collection)) {
       this.queryMetrics.set(collection, []);
     }
-    this.queryMetrics.get(collection)!.push(time);
-
-    // Keep only last 100 queries per collection
-    const times = this.queryMetrics.get(collection)!;
-    if (times.length > 100) {
-      times.splice(0, times.length - 100);
+    const times = this.queryMetrics.get(collection);
+    if (times) {
+      times.push(time);
+    
+      // Keep only last 100 queries per collection
+      if (times.length > 100) {
+        times.splice(0, times.length - 100);
+      }
     }
   }
 
@@ -407,7 +412,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
         switch (operation.type) {
           case 'create':
             batch.set(docRef, {
-              ...(operation.data as Record<string, any>),
+              ...(operation.data as Record<string, unknown>),
               id: operation.id,
               createdAt: Timestamp.fromDate(new Date()),
               updatedAt: Timestamp.fromDate(new Date()),
@@ -415,7 +420,7 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
             break;
           case 'update':
             batch.update(docRef, {
-              ...(operation.data as Record<string, any>),
+              ...(operation.data as Record<string, unknown>),
               updatedAt: Timestamp.fromDate(new Date()),
             });
             break;

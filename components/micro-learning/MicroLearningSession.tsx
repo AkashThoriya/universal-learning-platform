@@ -15,7 +15,7 @@ import {
   Trophy,
   AlertTriangle,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -53,9 +53,136 @@ export function MicroLearningSession({
   const [error, setError] = useState<string | null>(null);
   const [timeSpent, setTimeSpent] = useState(0);
 
+  const loadSession = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const newSession = await MicroLearningService.generateSession(
+        userId,
+        subjectId,
+        topicId,
+        learningTrack,
+        requestedDuration
+      );
+
+      setSession(newSession);
+      setLoading(false);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load session';
+      setError(errorMessage);
+      setLoading(false);
+      onError?.(error instanceof Error ? error : new Error(errorMessage));
+    }
+  }, [userId, subjectId, topicId, learningTrack, requestedDuration, onError]);
+
+  const calculateAccuracy = useCallback((): number => {
+    // Calculate based on quiz answers and interactions
+    const totalQuestions = Object.keys(answers).length;
+    if (totalQuestions === 0) {
+      return 100;
+    } // No questions means perfect conceptual understanding
+
+    const correctAnswers = Object.values(answers).filter(answer => answer.correct).length;
+    return Math.round((correctAnswers / totalQuestions) * 100);
+  }, [answers]);
+
+  const calculateEngagementScore = useCallback((): number => {
+    // Calculate based on interaction patterns and time spent
+    if (!session || !startTime) {
+      return 0;
+    }
+
+    const expectedTime = session.duration * 60; // Convert to seconds
+    const actualTime = timeSpent;
+    const timeRatio = Math.min(actualTime / expectedTime, 2); // Cap at 2x expected time
+
+    // Higher engagement if close to expected time
+    const timeScore = Math.max(0, 100 - Math.abs(timeRatio - 1) * 50);
+
+    // Interaction score based on content engagement
+    const interactionScore = Math.min((currentContentIndex / session.content.length) * 100, 100);
+
+    return Math.round((timeScore + interactionScore) / 2);
+  }, [session, startTime, timeSpent, currentContentIndex]);
+
+  const identifyAreasForImprovement = useCallback((): string[] => {
+    const areas: string[] = [];
+
+    if (calculateAccuracy() < 70) {
+      areas.push('Content comprehension');
+    }
+
+    if (timeSpent > (session?.duration ?? 15) * 60 * 1.5) {
+      areas.push('Learning pace');
+    }
+
+    return areas;
+  }, [calculateAccuracy, timeSpent, session]);
+
+  const completeSession = useCallback(() => {
+    if (session && startTime) {
+      const endTime = new Date();
+      const totalTimeSpent = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
+
+      const performance: SessionPerformance = {
+        accuracy: calculateAccuracy(),
+        timeSpent: totalTimeSpent,
+        engagementScore: calculateEngagementScore(),
+        conceptsLearned: session.content.map(c => c.id),
+        skillsDeveloped: session.learningTrack === 'course_tech' ? [topicId] : [],
+        areasForImprovement: identifyAreasForImprovement(),
+        trackSpecificMetrics:
+          session.learningTrack === 'exam'
+            ? {
+                mockTestScore: 85,
+                revisionEffectiveness: 90,
+                examReadinessScore: 80,
+                weakTopics: [],
+                problemSolvingSpeed: 75,
+                accuracyTrend: [80, 85, 85, 90],
+              }
+            : {
+                assignmentCompletionRate: 100,
+                projectProgressPercentage: 25,
+                skillMasteryLevel: { [topicId]: 75 },
+                portfolioQuality: 80,
+                problemSolvingApproach: 85,
+              },
+      };
+
+      onComplete?.(performance);
+    }
+  }, [session, startTime, topicId, onComplete, calculateAccuracy, calculateEngagementScore, identifyAreasForImprovement]);
+
+  const startSession = useCallback(() => {
+    setIsPlaying(true);
+    if (!startTime) {
+      setStartTime(new Date());
+    }
+  }, [startTime]);
+
+  const pauseSession = () => {
+    setIsPlaying(false);
+  };
+
+  const nextContent = useCallback(() => {
+    if (session && currentContentIndex < session.content.length - 1) {
+      setCurrentContentIndex(currentContentIndex + 1);
+    } else {
+      completeSession();
+    }
+  }, [session, currentContentIndex, completeSession]);
+
+  const previousContent = useCallback(() => {
+    if (currentContentIndex > 0) {
+      setCurrentContentIndex(currentContentIndex - 1);
+    }
+  }, [currentContentIndex]);
+
   useEffect(() => {
     loadSession();
-  }, [userId, subjectId, topicId, learningTrack]);
+  }, [loadSession]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -111,134 +238,7 @@ export function MicroLearningSession({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [session, isPlaying, startTime, currentContentIndex]);
-
-  const loadSession = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const newSession = await MicroLearningService.generateSession(
-        userId,
-        subjectId,
-        topicId,
-        learningTrack,
-        requestedDuration
-      );
-
-      setSession(newSession);
-      setLoading(false);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load session';
-      setError(errorMessage);
-      setLoading(false);
-      onError?.(error instanceof Error ? error : new Error(errorMessage));
-    }
-  };
-
-  const startSession = () => {
-    setIsPlaying(true);
-    if (!startTime) {
-      setStartTime(new Date());
-    }
-  };
-
-  const pauseSession = () => {
-    setIsPlaying(false);
-  };
-
-  const nextContent = () => {
-    if (session && currentContentIndex < session.content.length - 1) {
-      setCurrentContentIndex(currentContentIndex + 1);
-    } else {
-      completeSession();
-    }
-  };
-
-  const previousContent = () => {
-    if (currentContentIndex > 0) {
-      setCurrentContentIndex(currentContentIndex - 1);
-    }
-  };
-
-  const completeSession = () => {
-    if (session && startTime) {
-      const endTime = new Date();
-      const totalTimeSpent = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-
-      const performance: SessionPerformance = {
-        accuracy: calculateAccuracy(),
-        timeSpent: totalTimeSpent,
-        engagementScore: calculateEngagementScore(),
-        conceptsLearned: session.content.map(c => c.id),
-        skillsDeveloped: session.learningTrack === 'course_tech' ? [topicId] : [],
-        areasForImprovement: identifyAreasForImprovement(),
-        trackSpecificMetrics:
-          session.learningTrack === 'exam'
-            ? {
-                mockTestScore: 85,
-                revisionEffectiveness: 90,
-                examReadinessScore: 80,
-                weakTopics: [],
-                problemSolvingSpeed: 75,
-                accuracyTrend: [80, 85, 85, 90],
-              }
-            : {
-                assignmentCompletionRate: 100,
-                projectProgressPercentage: 25,
-                skillMasteryLevel: { [topicId]: 75 },
-                portfolioQuality: 80,
-                problemSolvingApproach: 85,
-              },
-      };
-
-      onComplete?.(performance);
-    }
-  };
-
-  const calculateAccuracy = (): number => {
-    // Calculate based on quiz answers and interactions
-    const totalQuestions = Object.keys(answers).length;
-    if (totalQuestions === 0) {
-      return 100;
-    } // No questions means perfect conceptual understanding
-
-    const correctAnswers = Object.values(answers).filter(answer => answer.correct).length;
-    return Math.round((correctAnswers / totalQuestions) * 100);
-  };
-
-  const calculateEngagementScore = (): number => {
-    // Calculate based on interaction patterns and time spent
-    if (!session || !startTime) {
-      return 0;
-    }
-
-    const expectedTime = session.duration * 60; // Convert to seconds
-    const actualTime = timeSpent;
-    const timeRatio = Math.min(actualTime / expectedTime, 2); // Cap at 2x expected time
-
-    // Higher engagement if close to expected time
-    const timeScore = Math.max(0, 100 - Math.abs(timeRatio - 1) * 50);
-
-    // Interaction score based on content engagement
-    const interactionScore = Math.min((currentContentIndex / session.content.length) * 100, 100);
-
-    return Math.round((timeScore + interactionScore) / 2);
-  };
-
-  const identifyAreasForImprovement = (): string[] => {
-    const areas: string[] = [];
-
-    if (calculateAccuracy() < 70) {
-      areas.push('Content comprehension');
-    }
-
-    if (timeSpent > (session?.duration ?? 15) * 60 * 1.5) {
-      areas.push('Learning pace');
-    }
-
-    return areas;
-  };
+  }, [session, isPlaying, startTime, currentContentIndex, nextContent, previousContent, startSession]);
 
   const getTrackIcon = () => {
     return learningTrack === 'exam' ? BookOpen : Code;

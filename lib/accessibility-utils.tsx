@@ -355,7 +355,13 @@ export function getContrastRatio(color1: string, color2: string): number {
       return 0; // Return fallback luminance
     }
 
-    return 0.2126 * sRGB[0]! + 0.7152 * sRGB[1]! + 0.0722 * sRGB[2]!;
+    // TypeScript guard - array is guaranteed to have 3 defined values
+    const [sR, sG, sB] = sRGB;
+    if (sR === undefined || sG === undefined || sB === undefined) {
+      return 0; // Additional safety check
+    }
+
+    return 0.2126 * sR + 0.7152 * sG + 0.0722 * sB;
   };
 
   const l1 = getLuminance(color1);

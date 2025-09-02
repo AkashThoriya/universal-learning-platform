@@ -25,7 +25,7 @@ import {
   Loader2,
   RefreshCw,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -69,13 +69,7 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
   const tracks = ['all', 'both', 'exam', 'course_tech'];
   const rarities = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary'];
 
-  useEffect(() => {
-    if (user?.uid) {
-      loadAchievements();
-    }
-  }, [user?.uid]);
-
-  const loadAchievements = async () => {
+  const loadAchievements = useCallback(async () => {
     if (!user?.uid) {
       return;
     }
@@ -133,7 +127,13 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      loadAchievements();
+    }
+  }, [user?.uid, loadAchievements]);
 
   const getRarityColor = (rarity: Achievement['rarity']): string => {
     switch (rarity) {
@@ -360,7 +360,12 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
               <div>
                 <h3 className="font-semibold text-purple-800">Rank</h3>
                 <div className="text-2xl font-bold text-purple-900">
-                  {totalPoints >= 1000 ? 'Gold' : totalPoints >= 500 ? 'Silver' : 'Bronze'}
+                  {totalPoints >= 1000 
+                    ? 'Gold' 
+                    : totalPoints >= 500 
+                      ? 'Silver' 
+                      : 'Bronze'
+                  }
                 </div>
               </div>
             </div>

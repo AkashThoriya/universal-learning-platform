@@ -14,6 +14,7 @@ import {
   type PeriodSummary,
   type Mission,
   type MissionResults,
+  type MissionDifficulty,
 } from '@/types/mission-system';
 
 import { firebaseService } from './firebase-services';
@@ -311,14 +312,17 @@ export class ProgressService {
 
     // Update difficulty progression
     const currentLevel = trackProgress.proficiencyLevel;
-    trackProgress.difficultyProgression.current = currentLevel as any;
+    trackProgress.difficultyProgression.current = currentLevel as MissionDifficulty;
 
     if (averageScore >= 85 && missionsCompleted >= 5) {
-      const levels = ['beginner', 'intermediate', 'advanced', 'expert'];
-      const currentIndex = levels.indexOf(currentLevel);
-      if (currentIndex < levels.length - 1) {
-        trackProgress.difficultyProgression.recommended = levels[currentIndex + 1] as any;
-        trackProgress.difficultyProgression.readyForAdvancement = true;
+      const levels: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+      const currentIndex = levels.indexOf(currentLevel as MissionDifficulty);
+      if (currentIndex >= 0 && currentIndex < levels.length - 1) {
+        const nextLevel = levels[currentIndex + 1];
+        if (nextLevel) {
+          trackProgress.difficultyProgression.recommended = nextLevel;
+          trackProgress.difficultyProgression.readyForAdvancement = true;
+        }
       }
     }
   }

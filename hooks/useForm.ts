@@ -89,7 +89,7 @@ export interface UseFormReturn<T> {
  * @param config Form configuration options
  * @returns Form state and management functions
  */
-export function useForm<T extends Record<string, any>>(config: UseFormConfig<T>): UseFormReturn<T> {
+export function useForm<T extends Record<string, unknown>>(config: UseFormConfig<T>): UseFormReturn<T> {
   const {
     initialData,
     validationSchema,

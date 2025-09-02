@@ -23,11 +23,53 @@ import {
   Timestamp,
   writeBatch,
   onSnapshot as _onSnapshot,
+  DocumentData,
 } from 'firebase/firestore';
+
+import { User, UserStats, TopicProgress, MockTestLog } from '../types/exam';
 
 import { db } from './firebase';
 import { serviceContainer, PerformanceMonitor, ConsoleLogger } from './service-layer';
 import { Result, createSuccess, createError, LoadingState as _LoadingState } from './types-utils';
+
+// Local interfaces for service-specific data
+interface RecommendationsData {
+  recommendations?: unknown[];
+  expiresAt?: { toDate(): Date };
+}
+
+interface MissionData {
+  id?: string | undefined;
+  track?: string | undefined;
+  difficulty?: string | undefined;
+  completedAt?: { toDate(): Date } | undefined;
+  results?:
+    | {
+        finalScore?: number | undefined;
+        totalTime?: number | undefined;
+      }
+    | undefined;
+  status?: string | undefined;
+  createdAt?: { toDate(): Date } | undefined;
+}
+
+interface TrackBreakdown {
+  exam: number;
+  course_tech: number;
+}
+
+interface DifficultyBreakdown {
+  beginner: number;
+  intermediate: number;
+  advanced: number;
+  expert: number;
+}
+
+interface TrendData {
+  date: Date;
+  score: number;
+  timeSpent: number;
+}
 
 // ============================================================================
 // ENHANCED ERROR HANDLING & RETRY LOGIC
@@ -143,7 +185,7 @@ class CacheService {
       return null;
     }
 
-    return entry.data;
+    return entry.data as T;
   }
 
   delete(key: string): void {
@@ -156,16 +198,27 @@ class CacheService {
 
   private cleanup(): void {
     const now = Date.now();
-    for (const [key, entry] of this.cache.entries()) {
+    const keysToDelete: string[] = [];
+
+    this.cache.forEach((entry, key) => {
       if (now - entry.timestamp > entry.ttl) {
-        this.cache.delete(key);
+        keysToDelete.push(key);
       }
-    }
+    });
+
+    keysToDelete.forEach(key => this.cache.delete(key));
   }
 
   destroy(): void {
     clearInterval(this.cleanupInterval);
     this.clear();
+  }
+
+  getStats(): { size: number; keys: string[] } {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys()),
+    };
   }
 }
 
@@ -232,7 +285,7 @@ class FirebaseService {
   /**
    * Enhanced document write with cache invalidation
    */
-  async setDocument<T>(
+  async setDocument<T extends DocumentData>(
     collectionPath: string,
     docId: string,
     data: T,
@@ -243,7 +296,7 @@ class FirebaseService {
     try {
       await this.monitor.measure(`setDocument:${collectionPath}:${docId}`, async () => {
         const docRef = doc(db, collectionPath, docId);
-        await setDoc(docRef, data as any, { merge });
+        await setDoc(docRef, data, { merge });
       });
 
       // Invalidate cache
@@ -364,7 +417,7 @@ class FirebaseService {
 
         // Add where conditions
         for (const condition of whereConditions) {
-          q = query(q, where(condition.field, condition.operator, condition.value));
+          q = query(q, where(condition.field, condition.operator as any, condition.value));
         }
 
         // Add order by conditions
@@ -423,7 +476,7 @@ class FirebaseService {
               break;
             case 'update':
               batch.update(docRef, {
-                ...op.data,
+                ...safeSpread(op.data),
                 updatedAt: Timestamp.fromDate(new Date()),
               });
               break;
@@ -452,11 +505,7 @@ class FirebaseService {
    * Get cache statistics
    */
   getCacheStats(): { size: number; keys: string[] } {
-    const { cache } = this.cache as any;
-    return {
-      size: cache.size,
-      keys: Array.from(cache.keys()),
-    };
+    return this.cache.getStats();
   }
 
   /**
@@ -484,12 +533,78 @@ serviceContainer.register('CacheService', firebaseService.cache);
 // ============================================================================
 
 /**
+ * Utility function to safely spread unknown objects
+ */
+function safeSpread(obj: unknown): Record<string, unknown> {
+  return obj && typeof obj === 'object' && obj !== null && !Array.isArray(obj) ? (obj as Record<string, unknown>) : {};
+}
+
+/**
+ * Type guard to check if an unknown object has mission-like properties
+ */
+function isMissionLike(obj: unknown): obj is Record<string, unknown> {
+  return !!(obj && typeof obj === 'object' && obj !== null && !Array.isArray(obj));
+}
+
+/**
+ * Safely extract mission properties with defaults
+ */
+function extractMissionData(mission: unknown): MissionData {
+  if (!isMissionLike(mission)) {
+    return {};
+  }
+
+  const missionObj = mission;
+  return {
+    id: typeof missionObj.id === 'string' ? missionObj.id : undefined,
+    track: typeof missionObj.track === 'string' ? missionObj.track : undefined,
+    difficulty: typeof missionObj.difficulty === 'string' ? missionObj.difficulty : undefined,
+    completedAt:
+      missionObj.completedAt && typeof missionObj.completedAt === 'object' && 'toDate' in missionObj.completedAt
+        ? (missionObj.completedAt as { toDate(): Date })
+        : undefined,
+    results:
+      missionObj.results && typeof missionObj.results === 'object'
+        ? (missionObj.results as { finalScore?: number; totalTime?: number })
+        : undefined,
+    status: typeof missionObj.status === 'string' ? missionObj.status : undefined,
+    createdAt:
+      missionObj.createdAt && typeof missionObj.createdAt === 'object' && 'toDate' in missionObj.createdAt
+        ? (missionObj.createdAt as { toDate(): Date })
+        : undefined,
+  };
+}
+
+/**
+ * Safely extract session properties with defaults
+ */
+function extractSessionData(session: unknown): {
+  duration?: number | undefined;
+  progress?: { accuracy?: number } | undefined;
+  learningTrack?: string | undefined;
+} {
+  if (!isMissionLike(session)) {
+    return {};
+  }
+
+  const sessionObj = session;
+  return {
+    duration: typeof sessionObj.duration === 'number' ? sessionObj.duration : undefined,
+    progress:
+      sessionObj.progress && typeof sessionObj.progress === 'object'
+        ? (sessionObj.progress as { accuracy?: number })
+        : undefined,
+    learningTrack: typeof sessionObj.learningTrack === 'string' ? sessionObj.learningTrack : undefined,
+  };
+}
+
+/**
  * Enhanced user operations
  */
 export const userService = {
   async create(userId: string, userData: unknown): Promise<Result<void>> {
     const userDoc = {
-      ...userData,
+      ...safeSpread(userData),
       userId,
       createdAt: Timestamp.fromDate(new Date()),
       onboardingComplete: false,
@@ -506,12 +621,12 @@ export const userService = {
     return firebaseService.setDocument('users', userId, userDoc);
   },
 
-  async get(userId: string): Promise<Result<any | null>> {
+  async get(userId: string): Promise<Result<User | null>> {
     return firebaseService.getDocument('users', userId);
   },
 
   async update(userId: string, updates: unknown): Promise<Result<void>> {
-    return firebaseService.updateDocument('users', userId, updates);
+    return firebaseService.updateDocument('users', userId, safeSpread(updates));
   },
 
   async getProgress(userId: string): Promise<Result<unknown[]>> {
@@ -521,7 +636,7 @@ export const userService = {
     });
   },
 
-  async getStats(userId: string): Promise<Result<any | null>> {
+  async getStats(userId: string): Promise<Result<UserStats | null>> {
     const userResult = await this.get(userId);
     if (!userResult.success) {
       return userResult;
@@ -538,14 +653,17 @@ export const dailyLogService = {
   async create(userId: string, logData: unknown): Promise<Result<string>> {
     const logId = doc(collection(db, `users/${userId}/dailyLogs`)).id;
     const dailyLog = {
-      ...logData,
+      ...safeSpread(logData),
       id: logId,
       createdAt: Timestamp.fromDate(new Date()),
     };
 
     const result = await firebaseService.setDocument(`users/${userId}/dailyLogs`, logId, dailyLog);
 
-    return result.success ? createSuccess(logId) : result;
+    if (result.success) {
+      return createSuccess(logId);
+    }
+    return createError(result.error);
   },
 
   async getLogs(userId: string, days = 30): Promise<Result<unknown[]>> {
@@ -566,7 +684,7 @@ export const dailyLogService = {
 export const progressService = {
   async updateTopic(userId: string, topicId: string, progress: unknown): Promise<Result<void>> {
     const progressData = {
-      ...progress,
+      ...safeSpread(progress),
       topicId,
       lastStudied: Timestamp.fromDate(new Date()),
     };
@@ -574,7 +692,7 @@ export const progressService = {
     return firebaseService.setDocument(`users/${userId}/progress`, topicId, progressData, { merge: true });
   },
 
-  async getTopic(userId: string, topicId: string): Promise<Result<any | null>> {
+  async getTopic(userId: string, topicId: string): Promise<Result<TopicProgress | null>> {
     return firebaseService.getDocument(`users/${userId}/progress`, topicId);
   },
 
@@ -607,7 +725,10 @@ export const revisionService = {
 
     // Get current revision count
     const currentProgress = await firebaseService.getDocument(`users/${userId}/progress`, topicId);
-    const currentRevisionCount = (currentProgress.data as any)?.revisionCount ?? 0;
+    const currentRevisionCount =
+      currentProgress.success && currentProgress.data
+        ? ((currentProgress.data as TopicProgress).revisionCount ?? 0)
+        : 0;
 
     return firebaseService.updateDocument(`users/${userId}/progress`, topicId, {
       lastRevised: now,
@@ -625,14 +746,17 @@ export const mockTestService = {
   async create(userId: string, testData: unknown): Promise<Result<string>> {
     const testId = doc(collection(db, `users/${userId}/logs_mocks`)).id;
     const mockTest = {
-      ...testData,
+      ...safeSpread(testData),
       id: testId,
       createdAt: Timestamp.fromDate(new Date()),
     };
 
     const result = await firebaseService.setDocument(`users/${userId}/logs_mocks`, testId, mockTest);
 
-    return result.success ? createSuccess(testId) : result;
+    if (result.success) {
+      return createSuccess(testId);
+    }
+    return createError(result.error);
   },
 
   async getTests(userId: string, limit = 10): Promise<Result<unknown[]>> {
@@ -642,7 +766,7 @@ export const mockTestService = {
     });
   },
 
-  async getTest(userId: string, testId: string): Promise<Result<any | null>> {
+  async getTest(userId: string, testId: string): Promise<Result<MockTestLog | null>> {
     return firebaseService.getDocument(`users/${userId}/logs_mocks`, testId);
   },
 };
@@ -664,11 +788,12 @@ export const insightsService = {
 export const missionFirebaseService = {
   async saveTemplate(userId: string, template: unknown): Promise<Result<void>> {
     try {
-      const templateId = template.id ?? doc(collection(db, `users/${userId}/mission-templates`)).id;
-      return firebaseService.setDocument(`users/${userId}/mission-templates`, templateId, {
-        ...template,
+      const safeTemplate = safeSpread(template);
+      const templateId = safeTemplate.id ?? doc(collection(db, `users/${userId}/mission-templates`)).id;
+      return firebaseService.setDocument(`users/${userId}/mission-templates`, templateId as string, {
+        ...safeTemplate,
         id: templateId,
-        createdAt: template.createdAt ?? Timestamp.fromDate(new Date()),
+        createdAt: safeTemplate.createdAt ?? Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       });
     } catch (error) {
@@ -678,7 +803,7 @@ export const missionFirebaseService = {
 
   async getTemplates(userId: string, track?: string): Promise<Result<unknown[]>> {
     try {
-      const options: unknown = {
+      const options: Parameters<typeof firebaseService.queryCollection>[1] = {
         useCache: true,
         cacheTTL: 600000, // 10 minutes
       };
@@ -695,17 +820,25 @@ export const missionFirebaseService = {
 
   async saveActiveMission(userId: string, mission: unknown): Promise<Result<string>> {
     try {
-      const missionId = mission.id ?? doc(collection(db, `users/${userId}/active-missions`)).id;
+      const safeMission = safeSpread(mission);
+      const missionId = safeMission.id ?? doc(collection(db, `users/${userId}/active-missions`)).id;
       const missionData = {
-        ...mission,
+        ...safeMission,
         id: missionId,
-        createdAt: mission.createdAt ?? Timestamp.fromDate(new Date()),
+        createdAt: safeMission.createdAt ?? Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       };
 
-      const result = await firebaseService.setDocument(`users/${userId}/active-missions`, missionId, missionData);
+      const result = await firebaseService.setDocument(
+        `users/${userId}/active-missions`,
+        missionId as string,
+        missionData
+      );
 
-      return result.success ? createSuccess(missionId) : result;
+      if (result.success) {
+        return createSuccess(missionId as string);
+      }
+      return createError(result.error);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to save active mission'));
     }
@@ -726,9 +859,12 @@ export const missionFirebaseService = {
 
   async updateMissionProgress(userId: string, missionId: string, progress: unknown): Promise<Result<void>> {
     try {
-      const status = progress.completionPercentage >= 100 ? 'completed' : 'in_progress';
+      const safeProgress = safeSpread(progress);
+      const completionPercentage =
+        typeof safeProgress.completionPercentage === 'number' ? safeProgress.completionPercentage : 0;
+      const status = completionPercentage >= 100 ? 'completed' : 'in_progress';
       return firebaseService.updateDocument(`users/${userId}/active-missions`, missionId, {
-        progress,
+        progress: safeProgress,
         status,
         updatedAt: Timestamp.fromDate(new Date()),
       });
@@ -746,7 +882,7 @@ export const missionFirebaseService = {
 
       // Move to history and update status using batch operation
       const completedMission = {
-        ...mission.data,
+        ...safeSpread(mission.data),
         status: 'completed',
         results,
         completedAt: Timestamp.fromDate(new Date()),
@@ -817,10 +953,11 @@ export const missionFirebaseService = {
 
       const missions = historyResult.data;
       const periodMissions = missions.filter((mission: unknown) => {
-        if (!mission.completedAt) {
+        const missionData = extractMissionData(mission);
+        if (!missionData.completedAt) {
           return false;
         }
-        const completedAt = mission.completedAt.toDate();
+        const completedAt = missionData.completedAt.toDate();
         return completedAt >= period.startDate && completedAt <= period.endDate;
       });
 
@@ -828,10 +965,15 @@ export const missionFirebaseService = {
         totalMissions: periodMissions.length,
         averageScore:
           periodMissions.length > 0
-            ? periodMissions.reduce((sum: number, m: unknown) => sum + (m.results?.finalScore ?? 0), 0) /
-              periodMissions.length
+            ? periodMissions.reduce((sum: number, m: unknown) => {
+                const missionData = extractMissionData(m);
+                return sum + (missionData.results?.finalScore ?? 0);
+              }, 0) / periodMissions.length
             : 0,
-        totalTimeSpent: periodMissions.reduce((sum: number, m: unknown) => sum + (m.results?.totalTime ?? 0), 0),
+        totalTimeSpent: periodMissions.reduce((sum: number, m: unknown) => {
+          const missionData = extractMissionData(m);
+          return sum + (missionData.results?.totalTime ?? 0);
+        }, 0),
         trackBreakdown: this.calculateTrackBreakdown(periodMissions),
         difficultyBreakdown: this.calculateDifficultyBreakdown(periodMissions),
         trends: this.calculateTrends(periodMissions),
@@ -844,35 +986,49 @@ export const missionFirebaseService = {
     }
   },
 
-  calculateTrackBreakdown(missions: unknown[]): unknown {
+  calculateTrackBreakdown(missions: unknown[]): TrackBreakdown {
     const breakdown = { exam: 0, course_tech: 0 };
     missions.forEach((mission: unknown) => {
-      if (mission.track && breakdown.hasOwnProperty(mission.track)) {
-        breakdown[mission.track as keyof typeof breakdown]++;
+      const missionData = extractMissionData(mission);
+      if (missionData.track && breakdown.hasOwnProperty(missionData.track)) {
+        breakdown[missionData.track as keyof TrackBreakdown]++;
       }
     });
     return breakdown;
   },
 
-  calculateDifficultyBreakdown(missions: unknown[]): unknown {
+  calculateDifficultyBreakdown(missions: unknown[]): DifficultyBreakdown {
     const breakdown = { beginner: 0, intermediate: 0, advanced: 0, expert: 0 };
     missions.forEach((mission: unknown) => {
-      if (mission.difficulty && breakdown.hasOwnProperty(mission.difficulty)) {
-        breakdown[mission.difficulty as keyof typeof breakdown]++;
+      const missionData = extractMissionData(mission);
+      if (missionData.difficulty && breakdown.hasOwnProperty(missionData.difficulty)) {
+        breakdown[missionData.difficulty as keyof DifficultyBreakdown]++;
       }
     });
     return breakdown;
   },
 
-  calculateTrends(missions: unknown[]): unknown[] {
+  calculateTrends(missions: unknown[]): TrendData[] {
     return missions
-      .filter((mission: unknown) => mission.completedAt && mission.results)
-      .sort((a: unknown, b: unknown) => a.completedAt.toDate().getTime() - b.completedAt.toDate().getTime())
-      .map((mission: unknown) => ({
-        date: mission.completedAt.toDate(),
-        score: mission.results?.finalScore ?? 0,
-        timeSpent: mission.results?.totalTime ?? 0,
-      }));
+      .filter((mission: unknown) => {
+        const missionData = extractMissionData(mission);
+        return missionData.completedAt && missionData.results;
+      })
+      .sort((a: unknown, b: unknown) => {
+        const missionA = extractMissionData(a);
+        const missionB = extractMissionData(b);
+        const timeA = missionA.completedAt?.toDate().getTime() ?? 0;
+        const timeB = missionB.completedAt?.toDate().getTime() ?? 0;
+        return timeA - timeB;
+      })
+      .map((mission: unknown) => {
+        const missionData = extractMissionData(mission);
+        return {
+          date: missionData.completedAt?.toDate() ?? new Date(),
+          score: missionData.results?.finalScore ?? 0,
+          timeSpent: missionData.results?.totalTime ?? 0,
+        };
+      });
   },
 
   clearMissionCache(userId: string): void {
@@ -892,7 +1048,7 @@ export const microLearningFirebaseService = {
   async saveSession(userId: string, session: unknown): Promise<Result<string>> {
     const sessionId = doc(collection(db, `users/${userId}/micro-learning-sessions`)).id;
     const sessionData = {
-      ...session,
+      ...safeSpread(session),
       id: sessionId,
       createdAt: Timestamp.fromDate(new Date()),
       updatedAt: Timestamp.fromDate(new Date()),
@@ -900,7 +1056,10 @@ export const microLearningFirebaseService = {
 
     const result = await firebaseService.setDocument(`users/${userId}/micro-learning-sessions`, sessionId, sessionData);
 
-    return result.success ? createSuccess(sessionId) : result;
+    if (result.success) {
+      return createSuccess(sessionId);
+    }
+    return createError(result.error);
   },
 
   async getSessionHistory(userId: string, limit = 20): Promise<Result<unknown[]>> {
@@ -933,7 +1092,7 @@ export const microLearningFirebaseService = {
       return createSuccess([]);
     }
 
-    const data = result.data as any;
+    const data = result.data as RecommendationsData;
 
     // Check if recommendations are expired
     const now = new Date();
@@ -956,7 +1115,7 @@ export const microLearningFirebaseService = {
 
   async saveUserPreferences(userId: string, preferences: unknown): Promise<Result<void>> {
     return firebaseService.setDocument(`users/${userId}/micro-learning`, 'preferences', {
-      ...preferences,
+      ...safeSpread(preferences),
       updatedAt: Timestamp.fromDate(new Date()),
     });
   },
@@ -986,14 +1145,29 @@ export const microLearningFirebaseService = {
     const analytics = {
       period,
       totalSessions: sessions.length,
-      totalTimeSpent: sessions.reduce((sum: number, s: unknown) => sum + (s.duration ?? 0), 0),
+      totalTimeSpent: sessions.reduce((sum: number, s: unknown) => {
+        const sessionData = extractSessionData(s);
+        return sum + (sessionData.duration ?? 0);
+      }, 0),
       averageAccuracy:
         sessions.length > 0
-          ? sessions.reduce((sum: number, s: unknown) => sum + (s.progress?.accuracy ?? 0), 0) / sessions.length
+          ? sessions
+              .map((s: unknown) => {
+                const sessionData = extractSessionData(s);
+                return sessionData.progress?.accuracy ?? 0;
+              })
+              .filter((accuracy: number) => typeof accuracy === 'number')
+              .reduce((sum: number, accuracy: number) => sum + accuracy, 0) / sessions.length
           : 0,
       trackBreakdown: {
-        exam: sessions.filter((s: unknown) => s.learningTrack === 'exam').length,
-        course_tech: sessions.filter((s: unknown) => s.learningTrack === 'course_tech').length,
+        exam: sessions.filter((s: unknown) => {
+          const sessionData = extractSessionData(s);
+          return sessionData.learningTrack === 'exam';
+        }).length,
+        course_tech: sessions.filter((s: unknown) => {
+          const sessionData = extractSessionData(s);
+          return sessionData.learningTrack === 'course_tech';
+        }).length,
       },
       generatedAt: new Date(),
     };

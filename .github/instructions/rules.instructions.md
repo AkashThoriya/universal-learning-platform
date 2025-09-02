@@ -1,0 +1,13 @@
+---
+applyTo: '**'
+---
+
+Step 1 : You must first analyse all the related files, connect dots and understand the overall architecture of the project before making changes.
+
+Step 2 : Ensure that any new code is well-documented and includes appropriate jsdoc comments.
+
+Step 3 : Follow the existing code style and conventions used throughout the project.
+
+Step 4 : You must respect .eslintrc.json and .prettierrc rules.
+
+Step 5 : Update all related md files to reflect any changes made to the codebase.

@@ -46,7 +46,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/contexts/AuthContext';
-import { useForm } from '@/hooks/useForm';
+import { useForm, UseFormReturn } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { createUser, saveSyllabus } from '@/lib/firebase-utils';
@@ -99,6 +99,9 @@ interface OnboardingFormData {
       healthCheckReminders: boolean;
     };
   };
+
+  // Index signature to satisfy Record<string, unknown> constraint
+  [key: string]: string | number | boolean | object | undefined;
 }
 
 /**
@@ -137,19 +140,38 @@ const onboardingSchema = z.object({
     .refine(() => {
       return true; // Custom validation in component
     }),
-  syllabus: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-    tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-    topics: z.array(z.object({
-      id: z.string(),
-      name: z.string(),
-      subtopics: z.array(z.string()).optional().transform(val => val ?? undefined),
-      estimatedHours: z.number().optional().transform(val => val ?? undefined),
-    })),
-    estimatedHours: z.number().optional().transform(val => val ?? undefined),
-    isCustom: z.boolean().optional().transform(val => val ?? undefined),
-  })).min(1, 'At least one subject is required').max(20, 'Maximum 20 subjects allowed'),
+  syllabus: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+        topics: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            subtopics: z
+              .array(z.string())
+              .optional()
+              .transform(val => val ?? undefined),
+            estimatedHours: z
+              .number()
+              .optional()
+              .transform(val => val ?? undefined),
+          })
+        ),
+        estimatedHours: z
+          .number()
+          .optional()
+          .transform(val => val ?? undefined),
+        isCustom: z
+          .boolean()
+          .optional()
+          .transform(val => val ?? undefined),
+      })
+    )
+    .min(1, 'At least one subject is required')
+    .max(20, 'Maximum 20 subjects allowed'),
   preferences: z.object({
     dailyStudyGoalMinutes: z
       .number()
@@ -379,7 +401,7 @@ export default function OnboardingSetupPage() {
       setSelectedExam(null);
       logInfo('Custom exam selected', { isCustomExam: form.data.isCustomExam });
     }
-  }, [form.data.selectedExamId, form.data.isCustomExam]);
+  }, [form.data.selectedExamId, form.data.isCustomExam, form]);
 
   // Filter exams based on search query
   const filteredExams = EXAMS_DATA.filter(
@@ -564,7 +586,7 @@ export default function OnboardingSetupPage() {
     (subjectId: string, tier: 1 | 2 | 3) => {
       logInfo('Updating subject tier', { subjectId, tier });
 
-      const updatedSyllabus = form.data.syllabus.map((subject) =>
+      const updatedSyllabus = form.data.syllabus.map(subject =>
         subject.id === subjectId ? { ...subject, tier } : subject
       ) as SyllabusSubject[];
       form.updateField('syllabus', updatedSyllabus);
@@ -590,7 +612,7 @@ export default function OnboardingSetupPage() {
     (subjectId: string) => {
       logInfo('Removing subject from syllabus', { subjectId });
 
-      const updatedSyllabus = form.data.syllabus.filter((subject) => subject.id !== subjectId) as SyllabusSubject[];
+      const updatedSyllabus = form.data.syllabus.filter(subject => subject.id !== subjectId) as SyllabusSubject[];
       form.updateField('syllabus', updatedSyllabus);
 
       logInfo('Subject removed', {
@@ -612,7 +634,7 @@ export default function OnboardingSetupPage() {
     if (!user) {
       const errorMsg = 'You must be logged in to complete setup.';
       logError('Onboarding completion failed - no user', { error: errorMsg });
-      form.setError('_form' as keyof OnboardingFormData, {
+      form.setError('_form' as any, {
         message: errorMsg,
         type: 'server',
         path: '_form',
@@ -801,7 +823,7 @@ export default function OnboardingSetupPage() {
         }
       }
 
-      form.setError('_form' as keyof OnboardingFormData, {
+      form.setError('_form' as any, {
         message: userFriendlyMessage,
         type: 'server',
         path: '_form',
@@ -811,7 +833,7 @@ export default function OnboardingSetupPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [user, form, validateStep]);
+  }, [user, form, validateStep, multiStep.currentStep]);
 
   // Keyboard navigation support
   useEffect(() => {
@@ -851,12 +873,12 @@ export default function OnboardingSetupPage() {
     try {
       switch (multiStep.currentStep) {
         case 1:
-          return <PersonaDetectionStep form={form as any} />;
+          return <PersonaDetectionStep form={form as UseFormReturn<OnboardingFormData>} />;
 
         case 2:
           return (
             <PersonalInfoStep
-              form={form as any}
+              form={form as UseFormReturn<OnboardingFormData>}
               filteredExams={filteredExams}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -868,7 +890,7 @@ export default function OnboardingSetupPage() {
         case 3:
           return (
             <SyllabusManagementStep
-              form={form as any}
+              form={form as UseFormReturn<OnboardingFormData>}
               onUpdateSubjectTier={updateSubjectTier}
               onAddSubject={addCustomSubject}
               onRemoveSubject={removeSubject}
@@ -876,7 +898,7 @@ export default function OnboardingSetupPage() {
           );
 
         case 4:
-          return <PreferencesStep form={form as any} />;
+          return <PreferencesStep form={form as UseFormReturn<OnboardingFormData>} />;
 
         default:
           return (

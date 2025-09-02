@@ -147,7 +147,7 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
     operation: () => Promise<U>,
     attempts: number = this.config.retryAttempts ?? 3
   ): Promise<U> {
-    let lastError: Error;
+    let lastError: Error | undefined;
 
     for (let i = 0; i < attempts; i++) {
       try {
@@ -161,7 +161,11 @@ export abstract class AbstractService<T, ID = string> implements BaseService<T, 
       }
     }
 
-    throw lastError!;
+    if (!lastError) {
+      throw new Error('Operation failed without error details');
+    }
+
+    throw lastError;
   }
 
   /**
@@ -228,7 +232,10 @@ export class ServiceContainer {
 
     // Create new instance from factory
     if (this.factories.has(name)) {
-      const factory = this.factories.get(name)!;
+      const factory = this.factories.get(name);
+      if (!factory) {
+        throw new Error(`Factory for '${name}' not found`);
+      }
       const instance = factory();
       this.services.set(name, instance);
       return instance as T;

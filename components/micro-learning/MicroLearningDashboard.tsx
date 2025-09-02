@@ -15,7 +15,7 @@ import {
   AlertCircle,
   RefreshCw,
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -69,7 +69,7 @@ export function MicroLearningDashboard({
 
   const activeUserId = userId ?? user?.uid;
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!activeUserId) {
       setError('User authentication required');
       setIsLoading(false);
@@ -114,11 +114,11 @@ export function MicroLearningDashboard({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [activeUserId]);
 
   useEffect(() => {
     loadDashboardData();
-  }, [activeUserId]);
+  }, [loadDashboardData]);
 
   const handleStartSession = async (recommendation: SessionRecommendation) => {
     if (!onStartSession) {
