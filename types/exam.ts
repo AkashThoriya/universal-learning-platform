@@ -152,6 +152,8 @@ export interface SyllabusTopic {
   subtopics?: string[];
   /** Estimated study time for this topic in hours (optional) */
   estimatedHours?: number;
+  /** Detailed description or notes for the topic (optional) */
+  description?: string;
 }
 
 /**

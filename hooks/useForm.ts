@@ -101,15 +101,6 @@ export function useForm<T extends Record<string, unknown>>(config: UseFormConfig
     onFormEvent,
   } = config;
 
-  logInfo('useForm hook initialized', {
-    storageKey,
-    persistData,
-    validateOnChange,
-    validateOnBlur,
-    hasValidationSchema: !!validationSchema,
-    debounceMs,
-  });
-
   // State management
   const [data, setDataState] = useState<T>(() => {
     if (persistData && typeof window !== 'undefined') {
@@ -144,6 +135,18 @@ export function useForm<T extends Record<string, unknown>>(config: UseFormConfig
 
   // Refs for debouncing
   const debounceRef = useRef<Record<string, NodeJS.Timeout>>({});
+
+  // Log form initialization once
+  useEffect(() => {
+    logInfo('useForm hook initialized', {
+      storageKey,
+      persistData,
+      validateOnChange,
+      validateOnBlur,
+      hasValidationSchema: !!validationSchema,
+      debounceMs,
+    });
+  }, [storageKey, persistData, validateOnChange, validateOnBlur, validationSchema, debounceMs]);
 
   // Persist data to localStorage when it changes
   useEffect(() => {

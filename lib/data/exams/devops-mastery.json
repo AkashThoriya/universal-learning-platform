@@ -1,0 +1,268 @@
+{
+  "id": "devops_mastery",
+  "name": "DevOps Mastery",
+  "description": "Comprehensive DevOps learning path covering fundamentals, tools, and advanced practices",
+  "category": "Computer Science",
+  "stages": [
+    {
+      "id": "foundation",
+      "name": "Foundation Assessment",
+      "totalMarks": 100,
+      "duration": 120,
+      "sections": [
+        {
+          "id": "devops_fundamentals",
+          "name": "DevOps Fundamentals",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "linux_basics",
+          "name": "Linux & Shell Scripting",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "version_control",
+          "name": "Version Control & Programming",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "cicd_containers",
+          "name": "CI/CD & Containerization",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced Skills Assessment",
+      "totalMarks": 150,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "orchestration",
+          "name": "Container Orchestration",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        },
+        {
+          "id": "infrastructure_code",
+          "name": "Infrastructure as Code",
+          "maxMarks": 35,
+          "maxTime": 45,
+          "negativeMarking": 0
+        },
+        {
+          "id": "monitoring_gitops",
+          "name": "Monitoring & GitOps",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        },
+        {
+          "id": "interview_readiness",
+          "name": "Interview Preparation",
+          "maxMarks": 35,
+          "maxTime": 35,
+          "negativeMarking": 0
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "devops_prerequisites",
+      "name": "DevOps Prerequisites",
+      "tier": 1,
+      "estimatedHours": 390,
+      "topics": [
+        { "id": "devops_culture", "name": "DevOps Culture & Methodology", "estimatedHours": 120 },
+        { "id": "networking_fundamentals", "name": "Networking Fundamentals", "estimatedHours": 90 },
+        { "id": "application_architecture", "name": "Application Architecture Basics", "estimatedHours": 90 },
+        { "id": "collaboration_tools", "name": "Collaboration & Communication Tools", "estimatedHours": 90 }
+      ]
+    },
+    {
+      "id": "devops_fundamentals",
+      "name": "Fundamentals of DevOps",
+      "tier": 1,
+      "estimatedHours": 150,
+      "topics": [
+        { "id": "devops_principles", "name": "DevOps Principles & Practices", "estimatedHours": 60 },
+        { "id": "sdlc_integration", "name": "SDLC & DevOps Integration", "estimatedHours": 45 },
+        { "id": "automation_basics", "name": "Automation Fundamentals", "estimatedHours": 45 }
+      ]
+    },
+    {
+      "id": "linux_administration",
+      "name": "Linux for Beginners",
+      "tier": 1,
+      "estimatedHours": 315,
+      "topics": [
+        { "id": "linux_basics", "name": "Linux Operating System Basics", "estimatedHours": 90 },
+        { "id": "file_system", "name": "File System & Directory Structure", "estimatedHours": 60 },
+        { "id": "user_permissions", "name": "User Management & Permissions", "estimatedHours": 75 },
+        { "id": "system_administration", "name": "System Administration Tasks", "estimatedHours": 90 }
+      ]
+    },
+    {
+      "id": "shell_scripting",
+      "name": "Shell Scripts for Beginners",
+      "tier": 1,
+      "estimatedHours": 120,
+      "topics": [
+        { "id": "bash_basics", "name": "Bash Scripting Fundamentals", "estimatedHours": 45 },
+        { "id": "script_automation", "name": "Automation Scripts & Cron Jobs", "estimatedHours": 45 },
+        { "id": "advanced_scripting", "name": "Advanced Scripting Techniques", "estimatedHours": 30 }
+      ]
+    },
+    {
+      "id": "golang_programming",
+      "name": "Golang Programming",
+      "tier": 2,
+      "estimatedHours": 255,
+      "topics": [
+        { "id": "go_syntax", "name": "Go Language Syntax & Basics", "estimatedHours": 75 },
+        { "id": "go_concurrency", "name": "Goroutines & Concurrency", "estimatedHours": 60 },
+        { "id": "go_web_development", "name": "Web Development with Go", "estimatedHours": 60 },
+        { "id": "go_microservices", "name": "Microservices in Go", "estimatedHours": 60 }
+      ]
+    },
+    {
+      "id": "python_basics",
+      "name": "Python Basics Course",
+      "tier": 2,
+      "estimatedHours": 90,
+      "topics": [
+        { "id": "python_syntax", "name": "Python Syntax & Data Types", "estimatedHours": 30 },
+        { "id": "python_automation", "name": "Python for Automation", "estimatedHours": 30 },
+        { "id": "python_libraries", "name": "Essential Python Libraries", "estimatedHours": 30 }
+      ]
+    },
+    {
+      "id": "version_control",
+      "name": "Git for Beginners",
+      "tier": 1,
+      "estimatedHours": 75,
+      "topics": [
+        { "id": "git_basics", "name": "Git Fundamentals & Commands", "estimatedHours": 30 },
+        { "id": "git_branching", "name": "Branching & Merging Strategies", "estimatedHours": 25 },
+        { "id": "git_collaboration", "name": "Collaborative Git Workflows", "estimatedHours": 20 }
+      ]
+    },
+    {
+      "id": "cicd_tools",
+      "name": "Jenkins For Beginners",
+      "tier": 1,
+      "estimatedHours": 260,
+      "topics": [
+        { "id": "jenkins_installation", "name": "Jenkins Installation & Setup", "estimatedHours": 60 },
+        { "id": "jenkins_pipelines", "name": "Jenkins Pipelines & Jobs", "estimatedHours": 90 },
+        { "id": "jenkins_integration", "name": "Jenkins Integration & Plugins", "estimatedHours": 60 },
+        { "id": "jenkins_deployment", "name": "Automated Deployment with Jenkins", "estimatedHours": 50 }
+      ]
+    },
+    {
+      "id": "containerization",
+      "name": "Docker for Absolute Beginners",
+      "tier": 1,
+      "estimatedHours": 240,
+      "topics": [
+        { "id": "docker_fundamentals", "name": "Docker Fundamentals & Architecture", "estimatedHours": 60 },
+        { "id": "docker_images", "name": "Docker Images & Containers", "estimatedHours": 60 },
+        { "id": "dockerfile_creation", "name": "Dockerfile Creation & Best Practices", "estimatedHours": 60 },
+        { "id": "docker_compose", "name": "Docker Compose & Multi-container Apps", "estimatedHours": 60 }
+      ]
+    },
+    {
+      "id": "orchestration",
+      "name": "Kubernetes for Beginners",
+      "tier": 1,
+      "estimatedHours": 360,
+      "topics": [
+        { "id": "kubernetes_architecture", "name": "Kubernetes Architecture & Components", "estimatedHours": 90 },
+        { "id": "pods_services", "name": "Pods, Services & Deployments", "estimatedHours": 90 },
+        { "id": "kubernetes_networking", "name": "Kubernetes Networking & Storage", "estimatedHours": 90 },
+        { "id": "kubernetes_monitoring", "name": "Monitoring & Troubleshooting", "estimatedHours": 90 }
+      ]
+    },
+    {
+      "id": "infrastructure_code",
+      "name": "Terraform for Beginners",
+      "tier": 1,
+      "estimatedHours": 285,
+      "topics": [
+        { "id": "terraform_basics", "name": "Terraform Fundamentals & HCL", "estimatedHours": 75 },
+        { "id": "terraform_providers", "name": "Terraform Providers & Resources", "estimatedHours": 75 },
+        { "id": "terraform_state", "name": "State Management & Remote Backend", "estimatedHours": 60 },
+        { "id": "terraform_modules", "name": "Terraform Modules & Best Practices", "estimatedHours": 75 }
+      ]
+    },
+    {
+      "id": "package_management",
+      "name": "Helm for Beginners",
+      "tier": 2,
+      "estimatedHours": 135,
+      "topics": [
+        { "id": "helm_fundamentals", "name": "Helm Charts & Templates", "estimatedHours": 60 },
+        { "id": "helm_deployment", "name": "Application Deployment with Helm", "estimatedHours": 45 },
+        { "id": "helm_management", "name": "Helm Repository Management", "estimatedHours": 30 }
+      ]
+    },
+    {
+      "id": "service_mesh",
+      "name": "Istio Service Mesh",
+      "tier": 2,
+      "estimatedHours": 165,
+      "topics": [
+        { "id": "istio_architecture", "name": "Istio Architecture & Components", "estimatedHours": 60 },
+        { "id": "traffic_management", "name": "Traffic Management & Security", "estimatedHours": 60 },
+        { "id": "observability", "name": "Observability & Monitoring", "estimatedHours": 45 }
+      ]
+    },
+    {
+      "id": "gitops",
+      "name": "GitOps with ArgoCD",
+      "tier": 2,
+      "estimatedHours": 360,
+      "topics": [
+        { "id": "gitops_principles", "name": "GitOps Principles & Workflow", "estimatedHours": 90 },
+        { "id": "argocd_setup", "name": "ArgoCD Installation & Configuration", "estimatedHours": 90 },
+        { "id": "argocd_applications", "name": "Application Deployment with ArgoCD", "estimatedHours": 90 },
+        { "id": "argocd_advanced", "name": "Advanced ArgoCD Features", "estimatedHours": 90 }
+      ]
+    },
+    {
+      "id": "monitoring_observability",
+      "name": "Prometheus Certified Associate (PCA)",
+      "tier": 2,
+      "estimatedHours": 405,
+      "topics": [
+        { "id": "prometheus_fundamentals", "name": "Prometheus Architecture & Setup", "estimatedHours": 105 },
+        { "id": "metrics_collection", "name": "Metrics Collection & PromQL", "estimatedHours": 120 },
+        { "id": "alerting_grafana", "name": "Alerting & Grafana Integration", "estimatedHours": 90 },
+        { "id": "prometheus_production", "name": "Production Deployment & Scaling", "estimatedHours": 90 }
+      ]
+    },
+    {
+      "id": "interview_preparation",
+      "name": "DevOps Interview Preparation Course",
+      "tier": 1,
+      "estimatedHours": 330,
+      "topics": [
+        { "id": "technical_concepts", "name": "Core Technical Concepts Review", "estimatedHours": 120 },
+        { "id": "scenario_based", "name": "Scenario-based Problem Solving", "estimatedHours": 90 },
+        { "id": "system_design", "name": "DevOps System Design Questions", "estimatedHours": 60 },
+        { "id": "behavioral_questions", "name": "Behavioral & Cultural Fit Questions", "estimatedHours": 60 }
+      ]
+    }
+  ]
+}

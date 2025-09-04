@@ -2,10 +2,10 @@
   "name": "exam-strategy-engine",
   "version": "1.0.0",
   "private": true,
-  "description": "A strategic operating system for competitive exam preparation that transforms unstructured studying into a data-driven, adaptive process with AI-powered insights.",
+  "description": "A strategic operating system for learning and skill development that transforms unstructured studying into a data-driven, adaptive process with AI-powered insights.",
   "keywords": [
-    "exam preparation",
-    "competitive exams",
+    "learning platform",
+    "skill development",
     "AI tutoring",
     "adaptive learning"
   ],

@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-import { GraduationCap, Briefcase, Code, Users, TrendingUp, BookOpen, Plus } from 'lucide-react';
+import { GraduationCap, Briefcase, Code, Users, TrendingUp, BookOpen } from 'lucide-react';
 
 import type { UserPersonaType } from '@/types/exam';
 
@@ -147,12 +147,20 @@ export interface ExamCategory {
  */
 export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
   {
+    id: 'computer-science',
+    name: 'Computer Science',
+    icon: Code,
+    count: 3,
+    color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    description: 'DevOps, DSA, SQL, and programming courses',
+  },
+  {
     id: 'civil-services',
     name: 'Civil Services',
     icon: Users,
     count: 15,
     color: 'bg-blue-50 text-blue-700 border-blue-200',
-    description: 'UPSC, State PCS, and other administrative services',
+    description: 'UPSC, State PCS, and administrative services',
   },
   {
     id: 'banking',
@@ -160,7 +168,7 @@ export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
     icon: TrendingUp,
     count: 12,
     color: 'bg-green-50 text-green-700 border-green-200',
-    description: 'Bank PO, Clerk, and financial service exams',
+    description: 'Bank PO, Clerk, and financial services',
   },
   {
     id: 'engineering',
@@ -168,15 +176,7 @@ export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
     icon: BookOpen,
     count: 8,
     color: 'bg-purple-50 text-purple-700 border-purple-200',
-    description: 'JEE, GATE, and technical competitive exams',
-  },
-  {
-    id: 'medical',
-    name: 'Medical',
-    icon: Plus,
-    count: 6,
-    color: 'bg-red-50 text-red-700 border-red-200',
-    description: 'NEET, AIIMS, and medical entrance exams',
+    description: 'JEE, GATE, and technical competitions',
   },
 ] as const;
 

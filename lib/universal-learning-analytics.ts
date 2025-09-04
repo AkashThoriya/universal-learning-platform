@@ -231,18 +231,23 @@ export class UniversalLearningAnalytics {
    */
   private async getExamProgress(userId: string) {
     try {
-      // Get completed sessions from missions
+      // Simplified query to avoid index requirements
+      // Get recent missions and filter in memory
       const missionsCollection = collection(db, 'users', userId, 'missions');
-      const completedMissionsQuery = query(
+      const recentMissionsQuery = query(
         missionsCollection,
         where('status', '==', 'completed'),
-        where('track', 'in', ['exam', 'course_tech']),
         orderBy('completedAt', 'desc'),
         limit(100)
       );
 
-      const snapshot = await getDocs(completedMissionsQuery);
-      const completedMissions = snapshot.docs.map(doc => doc.data());
+      const snapshot = await getDocs(recentMissionsQuery);
+      const allCompletedMissions = snapshot.docs.map(doc => doc.data());
+      
+      // Filter for exam and course_tech tracks in memory
+      const completedMissions = allCompletedMissions.filter(mission => 
+        mission.track === 'exam' || mission.track === 'course_tech'
+      );
 
       // Calculate metrics
       const totalStudyTime = completedMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent || 0), 0);

@@ -199,7 +199,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-                Comprehensive AI-powered tools for exam preparation and custom learning goals
+                Comprehensive AI-powered tools for learning and personal development
               </p>
             </div>
 
@@ -676,7 +676,7 @@ export default function HomePage() {
             <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-blue-200/50 dark:border-blue-800/50 mx-4 shadow-lg">
               <h3 className="text-xl sm:text-2xl font-bold mb-4 text-blue-800 dark:text-blue-200">🎯 Our Mission</h3>
               <p className="text-base sm:text-lg text-muted-foreground">
-                To democratize exam preparation by providing world-class tools and insights to every student, regardless
+                To democratize learning by providing world-class tools and insights to every student, regardless
                 of their economic background. Your success is our success.
               </p>
             </div>

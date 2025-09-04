@@ -1,0 +1,109 @@
+{
+  "id": "upsc_cse_prelims",
+  "name": "UPSC CSE - Prelims",
+  "description": "Union Public Service Commission Civil Services Examination - Preliminary",
+  "category": "Civil Services",
+  "stages": [
+    {
+      "id": "prelims",
+      "name": "Preliminary Examination",
+      "totalMarks": 400,
+      "duration": 240,
+      "sections": [
+        {
+          "id": "gs_paper_1",
+          "name": "General Studies Paper I",
+          "maxMarks": 200,
+          "maxTime": 120,
+          "negativeMarking": 0.33
+        },
+        {
+          "id": "csat",
+          "name": "Civil Services Aptitude Test (CSAT)",
+          "maxMarks": 200,
+          "maxTime": 120,
+          "negativeMarking": 0.33
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "history",
+      "name": "History",
+      "tier": 1,
+      "estimatedHours": 120,
+      "topics": [
+        { "id": "ancient_history", "name": "Ancient History", "estimatedHours": 40 },
+        { "id": "medieval_history", "name": "Medieval History", "estimatedHours": 30 },
+        { "id": "modern_history", "name": "Modern History", "estimatedHours": 50 }
+      ]
+    },
+    {
+      "id": "geography",
+      "name": "Geography",
+      "tier": 1,
+      "estimatedHours": 100,
+      "topics": [
+        { "id": "physical_geography", "name": "Physical Geography", "estimatedHours": 40 },
+        { "id": "human_geography", "name": "Human Geography", "estimatedHours": 30 },
+        { "id": "indian_geography", "name": "Indian Geography", "estimatedHours": 30 }
+      ]
+    },
+    {
+      "id": "polity",
+      "name": "Indian Polity",
+      "tier": 1,
+      "estimatedHours": 80,
+      "topics": [
+        { "id": "constitution", "name": "Constitution", "estimatedHours": 30 },
+        { "id": "governance", "name": "Governance", "estimatedHours": 25 },
+        { "id": "political_system", "name": "Political System", "estimatedHours": 25 }
+      ]
+    },
+    {
+      "id": "economics",
+      "name": "Economics",
+      "tier": 1,
+      "estimatedHours": 90,
+      "topics": [
+        { "id": "basic_economics", "name": "Basic Economics", "estimatedHours": 30 },
+        { "id": "indian_economy", "name": "Indian Economy", "estimatedHours": 40 },
+        { "id": "economic_development", "name": "Economic Development", "estimatedHours": 20 }
+      ]
+    },
+    {
+      "id": "environment",
+      "name": "Environment & Ecology",
+      "tier": 2,
+      "estimatedHours": 60,
+      "topics": [
+        { "id": "ecology", "name": "Ecology & Biodiversity", "estimatedHours": 25 },
+        { "id": "climate_change", "name": "Climate Change", "estimatedHours": 20 },
+        { "id": "environmental_issues", "name": "Environmental Issues", "estimatedHours": 15 }
+      ]
+    },
+    {
+      "id": "science_technology",
+      "name": "Science & Technology",
+      "tier": 2,
+      "estimatedHours": 70,
+      "topics": [
+        { "id": "general_science", "name": "General Science", "estimatedHours": 30 },
+        { "id": "space_technology", "name": "Space Technology", "estimatedHours": 20 },
+        { "id": "biotechnology", "name": "Biotechnology", "estimatedHours": 20 }
+      ]
+    },
+    {
+      "id": "current_affairs",
+      "name": "Current Affairs",
+      "tier": 1,
+      "estimatedHours": 100,
+      "topics": [
+        { "id": "national_current_affairs", "name": "National Current Affairs", "estimatedHours": 50 },
+        { "id": "international_current_affairs", "name": "International Current Affairs", "estimatedHours": 30 },
+        { "id": "sports_awards", "name": "Sports & Awards", "estimatedHours": 20 }
+      ]
+    }
+  ]
+}

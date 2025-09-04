@@ -307,7 +307,7 @@ export default function ProfilePage() {
     loadUserData();
   }, [user, form, toast]);
 
-  // Exam selection handler
+  // Learning path selection handler
   const handleExamSelect = useCallback(
     (examId: string) => {
       if (examId === 'custom') {
@@ -704,7 +704,7 @@ export default function ProfilePage() {
                       <BookOpen className="h-5 w-5 text-blue-600" />
                       <span>Exam Configuration</span>
                     </CardTitle>
-                    <CardDescription>Your target exam and timeline details</CardDescription>
+                    <CardDescription>Your learning path and timeline details</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Current Exam Display */}
@@ -728,12 +728,12 @@ export default function ProfilePage() {
                       </div>
                     )}
 
-                    {/* Exam Selection */}
+                    {/* Learning Path Selection */}
                     <div className="space-y-4">
-                      <Label>Target Exam *</Label>
+                      <Label>Learning Path *</Label>
                       <Select value={form.data.selectedExamId} onValueChange={handleExamSelect}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select your target exam" />
+                          <SelectValue placeholder="Select your learning path" />
                         </SelectTrigger>
                         <SelectContent>
                           {filteredExams.map(exam => (

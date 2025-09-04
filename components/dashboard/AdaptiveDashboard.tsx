@@ -23,7 +23,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalyticsDashboard';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,8 +31,9 @@ import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { customLearningService } from '@/lib/firebase-services';
+import { customLearningService, missionFirebaseService } from '@/lib/firebase-services';
 import { logError, logInfo, measurePerformance } from '@/lib/logger';
+import { progressService } from '@/lib/progress-service';
 import { cn } from '@/lib/utils';
 
 interface DashboardStats {
@@ -171,70 +172,133 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         });
 
         try {
-          // Mock data - replace with actual Firebase calls
-          const mockStats: DashboardStats = {
-            totalStudyTime: 165,
-            completedSessions: 52,
-            currentStreak: 8,
-            weeklyGoalProgress: 78,
-            activeMissions: 4,
-            completedTopics: 18,
-            customGoalsActive: 2,
-            customGoalsCompleted: 1,
-            customLearningHours: 24,
+          if (!user?.uid) {
+            // No user, use empty stats
+            setStats({
+              totalStudyTime: 0,
+              completedSessions: 0,
+              currentStreak: 0,
+              weeklyGoalProgress: 0,
+              activeMissions: 0,
+              completedTopics: 0,
+              customGoalsActive: 0,
+              customGoalsCompleted: 0,
+              customLearningHours: 0,
+            });
+            setRecentAchievements([]);
+            setMotivationalMessage(getMotivationalMessage(timeOfDay, 0));
+            setIsLoading(false);
+            return;
+          }
+
+          // Fetch real user data
+          const [progressResult, activeMissionsResult] = await Promise.all([
+            progressService.getUserProgress(user.uid),
+            missionFirebaseService.getActiveMissions(user.uid)
+          ]);
+
+          // Process progress data
+          let realStats: DashboardStats = {
+            totalStudyTime: 0,
+            completedSessions: 0,
+            currentStreak: 0,
+            weeklyGoalProgress: 0,
+            activeMissions: 0,
+            completedTopics: 0,
+            customGoalsActive: 0,
+            customGoalsCompleted: 0,
+            customLearningHours: 0,
           };
 
-          const mockAchievements: Achievement[] = [
-            {
-              id: '1',
+          if (progressResult.success && progressResult.data) {
+            const progress = progressResult.data;
+            realStats = {
+              totalStudyTime: Math.round(progress.overallProgress.totalTimeInvested / 60), // Convert minutes to hours
+              completedSessions: progress.overallProgress.totalMissionsCompleted,
+              currentStreak: progress.overallProgress.currentStreak,
+              weeklyGoalProgress: Math.min(progress.overallProgress.consistencyRating, 100),
+              activeMissions: 0,
+              completedTopics: progress.trackProgress.exam.masteredSkills.length + progress.trackProgress.course_tech.masteredSkills.length,
+              customGoalsActive: 0,
+              customGoalsCompleted: 0,
+              customLearningHours: Math.round((progress.trackProgress.exam.timeInvested + progress.trackProgress.course_tech.timeInvested) / 60),
+            };
+          }
+
+          // Add active missions count
+          if (activeMissionsResult.success && activeMissionsResult.data) {
+            realStats.activeMissions = activeMissionsResult.data.length;
+          }
+
+          // Setup achievements based on real data
+          const mockAchievements: Achievement[] = [];
+          
+          // Only show achievements if user has meaningful progress
+          // Week Warrior: requires 7+ consecutive days
+          if (realStats.currentStreak >= 7) {
+            mockAchievements.push({
+              id: 'week_warrior',
               title: 'Week Warrior',
-              description: 'Completed 7 consecutive days of study',
+              description: 'Maintained a 7-day learning streak',
               icon: Flame,
               earnedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
               rarity: 'rare',
-            },
-            {
-              id: '2',
-              title: 'First Steps',
-              description: 'Completed your first study session',
+            });
+          }
+          
+          // First Steps: only if user has completed at least 3 sessions (not just 1)
+          if (realStats.completedSessions >= 3 && realStats.completedSessions <= 5) {
+            mockAchievements.push({
+              id: 'first_steps',
+              title: 'Getting Started',
+              description: 'Completed your first 3 study sessions',
               icon: Award,
               earnedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
               rarity: 'common',
-            },
-          ];
-
-          // Load custom goals if user is authenticated
-          if (user?.uid) {
-            const customGoalsResult = await customLearningService.getUserCustomGoals(user.uid);
-            if (customGoalsResult.success) {
-              setCustomGoals(customGoalsResult.data);
-
-              // Update stats with real custom learning data
-              const activeGoals = customGoalsResult.data.filter((goal: any) => goal.isActive).length;
-              const completedGoals = customGoalsResult.data.filter(
-                (goal: any) => goal.progress.completedMissions === goal.progress.totalMissions
-              ).length;
-
-              setStats(prevStats => ({
-                ...prevStats,
-                ...mockStats,
-                customGoalsActive: activeGoals,
-                customGoalsCompleted: completedGoals,
-              }));
-            } else {
-              setStats(mockStats);
-            }
-          } else {
-            setStats(mockStats);
+            });
           }
 
-          setRecentAchievements(mockAchievements);
-          setMotivationalMessage(getMotivationalMessage(timeOfDay, mockStats.currentStreak));
+          // Study Champion: for users with 10+ completed sessions
+          if (realStats.completedSessions >= 10) {
+            mockAchievements.push({
+              id: 'study_champion',
+              title: 'Study Champion',
+              description: 'Completed 10 study sessions',
+              icon: Trophy,
+              earnedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+              rarity: 'epic',
+            });
+          }
+
+          // Only show the most recent achievement to avoid spam
+          const recentAchievements = mockAchievements.slice(-1);
+
+          // Load custom goals if user is authenticated
+          const customGoalsResult = await customLearningService.getUserCustomGoals(user.uid);
+          if (customGoalsResult.success) {
+            setCustomGoals(customGoalsResult.data);
+
+            // Update stats with real custom learning data
+            const activeGoals = customGoalsResult.data.filter((goal: any) => goal.isActive).length;
+            const completedGoals = customGoalsResult.data.filter(
+              (goal: any) => goal.progress.completedMissions === goal.progress.totalMissions
+            ).length;
+
+            realStats = {
+              ...realStats,
+              customGoalsActive: activeGoals,
+              customGoalsCompleted: completedGoals,
+            };
+          }
+
+          setStats(realStats);
+          setRecentAchievements(recentAchievements);
+          setMotivationalMessage(getMotivationalMessage(timeOfDay, realStats.currentStreak));
 
           logInfo('Dashboard data loaded successfully', {
             userId: user?.uid ?? 'no-user',
-            stats: mockStats,
-            achievementCount: mockAchievements.length,
+            stats: realStats,
+            achievementCount: recentAchievements.length,
             timeOfDay,
           });
         } catch (error) {
@@ -242,6 +306,22 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             userId: user?.uid ?? 'no-user',
             error: error instanceof Error ? error.message : 'Unknown error',
           });
+          
+          // Fallback to empty data on error
+          const fallbackStats: DashboardStats = {
+            totalStudyTime: 0,
+            completedSessions: 0,
+            currentStreak: 0,
+            weeklyGoalProgress: 0,
+            activeMissions: 0,
+            completedTopics: 0,
+            customGoalsActive: 0,
+            customGoalsCompleted: 0,
+            customLearningHours: 0,
+          };
+          setStats(fallbackStats);
+          setRecentAchievements([]);
+          setMotivationalMessage(getMotivationalMessage(timeOfDay, 0));
         } finally {
           setIsLoading(false);
         }
@@ -410,29 +490,77 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       {/* Celebration Alert for Achievements */}
       {recentAchievements.length > 0 && recentAchievements[0] && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
+          initial={{ opacity: 0, scale: 0.95, y: -20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ delay: 0.5, type: "spring", damping: 15 }}
         >
-          <Alert className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
-            <Trophy className="h-4 w-4 text-yellow-600" />
-            <AlertDescription>
-              <div className="flex items-center justify-between">
-                <div>
-                  <strong>New Achievement Unlocked!</strong> {recentAchievements[0].title} 🎉
+          <Alert className="bg-gradient-to-r from-yellow-50 via-orange-50 to-yellow-50 border-2 border-yellow-300 shadow-lg relative overflow-hidden">
+            {/* Animated background sparkles */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-2 left-4 text-yellow-400 animate-pulse">✨</div>
+              <div className="absolute top-6 right-6 text-orange-400 animate-pulse delay-200">⭐</div>
+              <div className="absolute bottom-3 left-8 text-yellow-500 animate-pulse delay-500">🎉</div>
+              <div className="absolute bottom-2 right-12 text-orange-500 animate-pulse delay-700">🏆</div>
+            </div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-md">
+                  <Trophy className="h-6 w-6 text-white" />
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    // TODO: Implement achievement details modal
-                    // For now, do nothing instead of console.log
-                  }}
-                >
-                  View All
-                </Button>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                      🎉 Achievement Unlocked!
+                    </h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-600 hover:text-gray-800 hover:bg-white/50"
+                      onClick={() => setRecentAchievements([])}
+                    >
+                      ✕
+                    </Button>
+                  </div>
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className="flex items-center space-x-2">
+                      {(() => {
+                        const IconComponent = recentAchievements[0].icon;
+                        return <IconComponent className="h-5 w-5 text-orange-600" />;
+                      })()}
+                      <span className="font-semibold text-gray-900">{recentAchievements[0].title}</span>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      recentAchievements[0].rarity === 'legendary' ? 'bg-purple-100 text-purple-800' :
+                      recentAchievements[0].rarity === 'epic' ? 'bg-red-100 text-red-800' :
+                      recentAchievements[0].rarity === 'rare' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {recentAchievements[0].rarity}
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-3">
+                    {recentAchievements[0].description}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">
+                      Earned {recentAchievements[0].earnedAt.toLocaleDateString()} at {recentAchievements[0].earnedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-white/80 hover:bg-white border-orange-200 text-orange-700 hover:text-orange-800"
+                      onClick={() => {
+                        // TODO: Navigate to achievements page or show modal
+                        setRecentAchievements([]);
+                      }}
+                    >
+                      View All Achievements
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </AlertDescription>
+            </div>
           </Alert>
         </motion.div>
       )}

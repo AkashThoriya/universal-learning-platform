@@ -1,0 +1,76 @@
+{
+  "id": "sbi_po",
+  "name": "SBI PO",
+  "description": "State Bank of India Probationary Officer",
+  "category": "Banking",
+  "stages": [
+    {
+      "id": "prelims",
+      "name": "Preliminary Examination",
+      "totalMarks": 100,
+      "duration": 60,
+      "sections": [
+        {
+          "id": "english_language",
+          "name": "English Language",
+          "maxMarks": 30,
+          "maxTime": 20,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "quantitative_aptitude",
+          "name": "Quantitative Aptitude",
+          "maxMarks": 35,
+          "maxTime": 20,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "reasoning_ability",
+          "name": "Reasoning Ability",
+          "maxMarks": 35,
+          "maxTime": 20,
+          "negativeMarking": 0.25
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "quantitative_aptitude",
+      "name": "Quantitative Aptitude",
+      "tier": 1,
+      "estimatedHours": 80,
+      "topics": [
+        { "id": "simplification", "name": "Simplification", "estimatedHours": 15 },
+        { "id": "percentage", "name": "Percentage", "estimatedHours": 12 },
+        { "id": "ratio_proportion", "name": "Ratio & Proportion", "estimatedHours": 15 },
+        { "id": "time_work", "name": "Time & Work", "estimatedHours": 18 },
+        { "id": "profit_loss", "name": "Profit & Loss", "estimatedHours": 12 },
+        { "id": "interest", "name": "Simple & Compound Interest", "estimatedHours": 8 }
+      ]
+    },
+    {
+      "id": "reasoning_ability",
+      "name": "Reasoning Ability",
+      "tier": 1,
+      "estimatedHours": 70,
+      "topics": [
+        { "id": "seating_arrangement", "name": "Seating Arrangement", "estimatedHours": 25 },
+        { "id": "blood_relations", "name": "Blood Relations", "estimatedHours": 15 },
+        { "id": "coding_decoding", "name": "Coding-Decoding", "estimatedHours": 15 },
+        { "id": "direction_sense", "name": "Direction Sense", "estimatedHours": 15 }
+      ]
+    },
+    {
+      "id": "english_language",
+      "name": "English Language",
+      "tier": 1,
+      "estimatedHours": 60,
+      "topics": [
+        { "id": "reading_comprehension", "name": "Reading Comprehension", "estimatedHours": 25 },
+        { "id": "grammar", "name": "Grammar", "estimatedHours": 20 },
+        { "id": "vocabulary", "name": "Vocabulary", "estimatedHours": 15 }
+      ]
+    }
+  ]
+}

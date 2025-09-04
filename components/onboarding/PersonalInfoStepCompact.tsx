@@ -1,7 +1,7 @@
 /**
  * @fileoverview Enhanced Personal Info Step - Premium UX Implementation
  *
- * A sophisticated personal information and exam selection component with:
+ * A sophisticated personal information and learning path selection component with:
  * - Advanced search and filtering capabilities
  * - Intelligent exam recommendations
  * - Enhanced accessibility and validation
@@ -21,7 +21,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { UseFormReturn } from '@/hooks/useForm';
 import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
 import { Exam, SyllabusSubject, UserPersona } from '@/types/exam';
@@ -127,7 +126,7 @@ export function PersonalInfoStepCompact({
   onExamSelect,
   selectedExam,
 }: PersonalInfoStepProps) {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>('computer-science');
   const [showAllExams, setShowAllExams] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [showExamDetails] = useState<string | null>(null);
@@ -206,17 +205,20 @@ export function PersonalInfoStepCompact({
 
   // Enhanced custom exam handler
   const handleCustomExam = useCallback(() => {
-    onExamSelect('custom');
+    try {
+      onExamSelect('custom');
 
-    // Analytics
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'custom_exam_selected', {
-        source: 'manual_selection',
-      });
+      // Analytics
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'custom_exam_selected', {
+          event_category: 'onboarding',
+          event_label: 'custom_exam',
+        });
+      }
+    } catch (error) {
+      console.error('Error selecting custom exam:', error);
     }
-  }, [onExamSelect]);
-
-  // Calculate min date (7 days from now)
+  }, [onExamSelect]);  // Calculate min date (7 days from now)
   const minDate = new Date();
   minDate.setDate(minDate.getDate() + 7);
   const minDateString = minDate.toISOString().split('T')[0];
@@ -235,10 +237,10 @@ export function PersonalInfoStepCompact({
           <span className="text-sm font-medium">Step 2 of 4</span>
         </div>
         <h2 id="personal-info-title" className="text-2xl font-bold text-gray-900">
-          Set up your exam goals
+          Set up your learning goals
         </h2>
         <p className="text-gray-600 max-w-lg mx-auto">
-          Tell us about yourself and choose your target exam to create a personalized study plan
+          Tell us about yourself and choose your learning path to create a personalized study plan
         </p>
       </div>
 
@@ -274,31 +276,24 @@ export function PersonalInfoStepCompact({
         </CardContent>
       </Card>
 
-      {/* Enhanced Exam Selection */}
+      {/* Enhanced Learning Path Selection */}
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
+          <div className="mb-4">
+            <div className="flex items-center space-x-2 mb-2">
               <BookOpen className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">Which exam are you preparing for?</Label>
+              <Label className="text-lg font-semibold">What would you like to learn?</Label>
             </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Info className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Choose the exam you're targeting. We'll customize everything accordingly.</p>
-              </TooltipContent>
-            </Tooltip>
+            <p className="text-sm text-gray-600">
+              Choose your learning path. We'll provide a pre-structured curriculum that you can fully customize later - add, remove, or modify subjects and topics according to your specific needs.
+            </p>
           </div>
 
           {/* Enhanced Search */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" aria-hidden="true" />
             <Input
-              placeholder="Search for your exam (e.g., UPSC, JEE, NEET)..."
+              placeholder="Search for your learning path (e.g., UPSC, JEE, DevOps, SQL, Data Structures)..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -323,7 +318,7 @@ export function PersonalInfoStepCompact({
               <div className="flex items-center justify-between mb-3">
                 <Label className="text-sm font-medium">Popular Categories</Label>
                 <Badge variant="outline" className="text-xs">
-                  {filteredExams.length} total exams
+                  {filteredExams.length} learning paths
                 </Badge>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -350,7 +345,7 @@ export function PersonalInfoStepCompact({
                         <h3 className="font-medium text-sm mb-1">{category.name}</h3>
                         <p className="text-xs text-gray-600 mb-2 line-clamp-2">{category.description}</p>
                         <Badge variant="secondary" className="text-xs">
-                          {examCount} exams
+                          {examCount} paths
                         </Badge>
                       </CardContent>
                     </Card>
@@ -361,7 +356,7 @@ export function PersonalInfoStepCompact({
               {activeCategory && (
                 <div className="mt-3 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    Showing {displayExams.length} exams in{' '}
+                    Showing {displayExams.length} learning paths in{' '}
                     {POPULAR_EXAM_CATEGORIES.find(c => c.id === activeCategory)?.name}
                   </p>
                 </div>
@@ -376,8 +371,8 @@ export function PersonalInfoStepCompact({
                 {searchQuery
                   ? `Search Results (${filteredExams.length})`
                   : activeCategory
-                    ? `${POPULAR_EXAM_CATEGORIES.find(c => c.id === activeCategory)?.name} Exams`
-                    : 'Available Exams'}
+                    ? `${POPULAR_EXAM_CATEGORIES.find(c => c.id === activeCategory)?.name} Learning Paths`
+                    : 'Available Learning Paths'}
               </Label>
               {displayExams.length < filteredExams.length && (
                 <Button
@@ -402,7 +397,13 @@ export function PersonalInfoStepCompact({
                         ? 'border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
-                    onClick={() => onExamSelect(exam.id)}
+                    onClick={() => {
+                      try {
+                        onExamSelect(exam.id);
+                      } catch (error) {
+                        console.error('Error selecting exam:', error);
+                      }
+                    }}
                     role="button"
                     tabIndex={0}
                     aria-pressed={isSelected}
@@ -488,6 +489,16 @@ export function PersonalInfoStepCompact({
           </div>
         </CardContent>
       </Card>
+
+      {/* Customization Information */}
+      {form.data.selectedExamId && !form.data.isCustomExam && (
+        <Alert className="border-blue-200 bg-blue-50">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            <strong>Fully Customizable:</strong> The provided syllabus is just a starting point. You can add, remove, or modify subjects and topics after setup to match your specific preparation needs.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Enhanced Exam Date */}
       {form.data.selectedExamId && (
@@ -613,7 +624,7 @@ export function PersonalInfoStepCompact({
             </div>
 
             <Alert className="mt-4 border-purple-200 bg-purple-50">
-              <Info className="h-4 w-4 text-purple-600" />
+              <AlertCircle className="h-4 w-4 text-purple-600" />
               <AlertDescription className="text-purple-800">
                 You'll be able to create a custom syllabus in the next step. We'll help you organize subjects based on
                 your specific exam requirements.
@@ -644,7 +655,7 @@ export function PersonalInfoStepCompact({
                       <p className="text-gray-700">{form.data.displayName}</p>
                     </div>
                     <div className="bg-white/70 p-3 rounded-lg">
-                      <h4 className="font-medium text-gray-800 mb-1">Target Exam</h4>
+                      <h4 className="font-medium text-gray-800 mb-1">Learning Path</h4>
                       <p className="text-gray-700">{selectedExam?.name ?? form.data.customExam?.name}</p>
                       {(selectedExam?.category ?? form.data.customExam?.category) && (
                         <Badge variant="outline" className="mt-1 text-xs">
@@ -711,7 +722,7 @@ export function PersonalInfoStepCompact({
               <p className="font-medium">Please complete the following:</p>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 {validationErrors.displayName && <li>Enter a valid name</li>}
-                {!form.data.selectedExamId && <li>Select your target exam</li>}
+                {!form.data.selectedExamId && <li>Select your learning path</li>}
                 {validationErrors.examDate && <li>Set a valid exam date</li>}
                 {form.data.isCustomExam && !form.data.customExam?.name && <li>Enter custom exam name</li>}
               </ul>

@@ -55,7 +55,7 @@ interface OnboardingFormData {
 }
 
 /**
- * Personal Information & Exam Selection Step
+ * Personal Information & Learning Path Selection Step
  */
 interface PersonalInfoStepProps {
   form: UseFormReturn<unknown>;
@@ -83,10 +83,10 @@ export function PersonalInfoStep({
       <CardHeader className="px-0 pt-0">
         <div className="flex items-center space-x-2">
           <User className="h-6 w-6 text-blue-600" />
-          <CardTitle>Personal Information & Exam Selection</CardTitle>
+          <CardTitle>Personal Information & Learning Path Selection</CardTitle>
         </div>
         <CardDescription>
-          Tell us about yourself and choose your target exam to create a personalized strategy.
+          Tell us about yourself and choose your learning path to create a personalized strategy.
         </CardDescription>
       </CardHeader>
 
@@ -114,7 +114,7 @@ export function PersonalInfoStep({
 
       {/* Exam Search */}
       <div className="space-y-4">
-        <Label className="text-sm font-medium">Target Exam *</Label>
+        <Label className="text-sm font-medium">Learning Path *</Label>
 
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -193,7 +193,7 @@ export function PersonalInfoStep({
       {formData?.selectedExamId && (
         <div className="space-y-2">
           <Label htmlFor="examDate" className="text-sm font-medium">
-            Target Exam Date *
+            Target Date *
           </Label>
           <div className="relative">
             <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />

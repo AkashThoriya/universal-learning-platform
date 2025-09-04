@@ -53,7 +53,7 @@ import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
 import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { customLearningService } from '@/lib/firebase-services';
 import { logger, logError, logInfo } from '@/lib/logger';
-import { Exam, SyllabusSubject, User as UserType, UserPersona } from '@/types/exam';
+import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, UserPersona } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
@@ -217,8 +217,8 @@ const STEP_INFO = [
     estimatedTime: '2 minutes',
   },
   {
-    title: 'Exam Selection',
-    description: 'Choose your target exam and set your timeline',
+    title: 'Learning Path Selection',
+    description: 'Choose your learning path and set your timeline',
     helpText: "Select the exam you're preparing for and when you plan to take it.",
     icon: '📚',
     estimatedTime: '3 minutes',
@@ -239,7 +239,7 @@ const STEP_INFO = [
   },
   {
     title: 'Custom Learning Goals',
-    description: 'Set up your personal learning goals beyond exam preparation',
+    description: 'Set up your personal learning goals beyond structured courses',
     helpText: 'Create goals for skills, technologies, or knowledge you want to develop alongside your exam prep.',
     icon: '🎯',
     estimatedTime: '4 minutes',
@@ -250,9 +250,12 @@ const STEP_INFO = [
  * Enhanced Onboarding Setup Page Component with Premium Features
  */
 export default function OnboardingSetupPage() {
-  logInfo('Onboarding setup page initialized', { timestamp: new Date().toISOString() });
-
   const { user } = useAuth();
+
+  // Initialize component once
+  useEffect(() => {
+    logInfo('Onboarding setup page initialized', { timestamp: new Date().toISOString() });
+  }, []);
 
   // Log user authentication status
   useEffect(() => {
@@ -561,42 +564,53 @@ export default function OnboardingSetupPage() {
     multiStep.goToPrevious();
   }, [multiStep]);
 
-  // Exam selection handler with analytics
+  // Learning path selection handler with analytics
   const handleExamSelect = useCallback(
     (examId: string) => {
-      logInfo('Exam selection initiated', { examId, isCustom: examId === 'custom' });
+      try {
+        logInfo('Learning path selection initiated', { examId, isCustom: examId === 'custom' });
 
-      if (examId === 'custom') {
-        form.updateFields({
-          selectedExamId: 'custom',
-          isCustomExam: true,
-          syllabus: [],
-        });
-        logInfo('Custom exam configured', { syllabusCleared: true });
-      } else {
-        const exam = getExamById(examId);
-        if (exam) {
+        if (examId === 'custom') {
           form.updateFields({
-            selectedExamId: examId,
-            isCustomExam: false,
-            syllabus: exam.defaultSyllabus,
+            selectedExamId: 'custom',
+            isCustomExam: true,
+            syllabus: [],
           });
-          logInfo('Predefined exam configured', {
-            examId,
-            examName: exam.name,
-            syllabusSubjects: exam.defaultSyllabus?.length ?? 0,
-          });
+          logInfo('Custom exam configured', { syllabusCleared: true });
         } else {
-          logger.error('Exam not found during selection', { examId });
+          const exam = getExamById(examId);
+          if (exam) {
+            form.updateFields({
+              selectedExamId: examId,
+              isCustomExam: false,
+              syllabus: exam.defaultSyllabus || [],
+            });
+            logInfo('Predefined exam configured', {
+              examId,
+              examName: exam.name,
+              syllabusSubjects: exam.defaultSyllabus?.length ?? 0,
+            });
+          } else {
+            logError('Exam not found during selection', { examId });
+            // Handle gracefully instead of crashing
+            return;
+          }
         }
-      }
 
-      // Analytics
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'exam_selected', {
-          exam_id: examId,
-          is_custom: examId === 'custom',
+        // Analytics
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', 'exam_selected', {
+            exam_id: examId,
+            is_custom: examId === 'custom',
+          });
+        }
+      } catch (error) {
+        logError('Error in learning path selection', { 
+          examId, 
+          error: error instanceof Error ? error.message : 'Unknown error' 
         });
+        // Optionally show user-friendly error message
+        console.error('Failed to select exam:', error);
       }
     },
     [form]
@@ -640,6 +654,100 @@ export default function OnboardingSetupPage() {
         subjectId,
         remainingSubjects: updatedSyllabus.length,
       });
+    },
+    [form]
+  );
+
+  // Topic management functions
+  const addTopic = useCallback(
+    (subjectId: string, topicName?: string) => {
+      const newTopicId = `topic-${Date.now()}`;
+      logInfo('Adding topic to subject', { subjectId, topicId: newTopicId, topicName });
+
+      const newTopic: SyllabusTopic = {
+        id: newTopicId,
+        name: topicName || 'New Topic',
+        estimatedHours: 5,
+      };
+
+      const updatedSyllabus = form.data.syllabus.map(subject =>
+        subject.id === subjectId
+          ? { ...subject, topics: [...subject.topics, newTopic] }
+          : subject
+      ) as SyllabusSubject[];
+
+      form.updateField('syllabus', updatedSyllabus);
+
+      logInfo('Topic added successfully', {
+        subjectId,
+        topicId: newTopicId,
+        totalTopics: updatedSyllabus.find(s => s.id === subjectId)?.topics.length,
+      });
+    },
+    [form]
+  );
+
+  const removeTopic = useCallback(
+    (subjectId: string, topicId: string) => {
+      logInfo('Removing topic from subject', { subjectId, topicId });
+
+      const updatedSyllabus = form.data.syllabus.map(subject =>
+        subject.id === subjectId
+          ? { ...subject, topics: subject.topics.filter(topic => topic.id !== topicId) }
+          : subject
+      ) as SyllabusSubject[];
+
+      form.updateField('syllabus', updatedSyllabus);
+
+      logInfo('Topic removed successfully', {
+        subjectId,
+        topicId,
+        remainingTopics: updatedSyllabus.find(s => s.id === subjectId)?.topics.length,
+      });
+    },
+    [form]
+  );
+
+  const updateTopic = useCallback(
+    (subjectId: string, topicId: string, updates: Partial<SyllabusTopic>) => {
+      logInfo('Updating topic', { subjectId, topicId, updates });
+
+      const updatedSyllabus = form.data.syllabus.map(subject =>
+        subject.id === subjectId
+          ? {
+              ...subject,
+              topics: subject.topics.map(topic =>
+                topic.id === topicId ? { ...topic, ...updates } : topic
+              ),
+            }
+          : subject
+      ) as SyllabusSubject[];
+
+      form.updateField('syllabus', updatedSyllabus);
+
+      logInfo('Topic updated successfully', { subjectId, topicId });
+    },
+    [form]
+  );
+
+  const reorderTopics = useCallback(
+    (subjectId: string, topicIds: string[]) => {
+      logInfo('Reordering topics', { subjectId, newOrder: topicIds });
+
+      const updatedSyllabus = form.data.syllabus.map(subject => {
+        if (subject.id === subjectId) {
+          const reorderedTopics = topicIds
+            .map(topicId => subject.topics.find(topic => topic.id === topicId))
+            .filter(Boolean) as SyllabusTopic[];
+          
+          return { ...subject, topics: reorderedTopics };
+        }
+        return subject;
+      }) as SyllabusSubject[];
+
+      form.updateField('syllabus', updatedSyllabus);
+
+      logInfo('Topics reordered successfully', { subjectId, newTopicCount: topicIds.length });
     },
     [form]
   );
@@ -938,6 +1046,10 @@ export default function OnboardingSetupPage() {
               onUpdateSubjectTier={updateSubjectTier}
               onAddSubject={addCustomSubject}
               onRemoveSubject={removeSubject}
+              onAddTopic={addTopic}
+              onRemoveTopic={removeTopic}
+              onUpdateTopic={updateTopic}
+              onReorderTopics={reorderTopics}
             />
           );
 

@@ -48,7 +48,7 @@ interface StepProgressIndicatorProps {
  * <StepProgressIndicator
  *   currentStep={2}
  *   totalSteps={4}
- *   stepLabels={['Personal Info', 'Exam Selection', 'Syllabus', 'Settings']}
+ *   stepLabels={['Personal Info', 'Learning Path', 'Curriculum', 'Settings']}
  *   showStepNumbers={true}
  * />
  * ```

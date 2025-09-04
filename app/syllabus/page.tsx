@@ -1,8 +1,33 @@
 'use client';
 
-import { BookOpen, ChevronRight, Search, Filter, Grid, List, Clock, Target, TrendingUp } from 'lucide-react';
+import { 
+  BookOpen, 
+  ChevronRight, 
+  Search, 
+  Filter, 
+  Grid, 
+  List, 
+  Clock, 
+  Target, 
+  TrendingUp, 
+  Plus, 
+  Edit3, 
+  Trash2, 
+  Save, 
+  X, 
+  Settings, 
+  ChevronDown,
+  GripVertical,
+  Eye,
+  EyeOff,
+  Layers,
+  MoreHorizontal,
+  ArrowUpDown,
+  Timer,
+  Info
+} from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
@@ -12,10 +37,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
-import { getSyllabus, getAllProgress } from '@/lib/firebase-utils';
+import { getSyllabus, getAllProgress, saveSyllabus } from '@/lib/firebase-utils';
 import { logInfo, logError } from '@/lib/logger';
-import { SyllabusSubject, TopicProgress } from '@/types/exam';
+import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
+import { useToast } from '@/hooks/use-toast';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -23,6 +60,7 @@ const MEDIUM_MASTERY_THRESHOLD = 50;
 
 export default function SyllabusPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [progress, setProgress] = useState<TopicProgress[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +69,19 @@ export default function SyllabusPage() {
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'subjects' | 'topics'>('subjects');
+  
+  // Enhanced edit state management
+  const [editMode, setEditMode] = useState(false);
+  const [editingSubject, setEditingSubject] = useState<string | null>(null);
+  const [editingTopic, setEditingTopic] = useState<string | null>(null);
+  const [tempSubjectName, setTempSubjectName] = useState('');
+  const [tempTopicName, setTempTopicName] = useState('');
+  const [tempTopicHours, setTempTopicHours] = useState<number>(5);
+  const [tempTopicDescription, setTempTopicDescription] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [showTopicDetails, setShowTopicDetails] = useState<Set<string>>(new Set());
+  const [bulkEditMode, setBulkEditMode] = useState(false);
+  const [selectedTopics, setSelectedTopics] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +118,232 @@ export default function SyllabusPage() {
 
     fetchData();
   }, [user]);
+
+  // Save syllabus changes to Firebase
+  const saveSyllabusChanges = useCallback(async () => {
+    if (!user) return;
+
+    setSaving(true);
+    try {
+      await saveSyllabus(user.uid, syllabus);
+      logInfo('Syllabus updated successfully', { 
+        userId: user.uid, 
+        subjectCount: syllabus.length 
+      });
+      
+      toast({
+        title: "Syllabus Updated",
+        description: "Your syllabus changes have been saved successfully.",
+      });
+    } catch (error) {
+      logError('Error updating syllabus', {
+        error: error instanceof Error ? error.message : String(error),
+        userId: user.uid,
+      });
+      
+      toast({
+        title: "Error",
+        description: "Failed to save syllabus changes. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  }, [user, syllabus, toast]);
+
+  // Subject management functions
+  const updateSubjectTier = useCallback((subjectId: string, tier: 1 | 2 | 3) => {
+    setSyllabus(prev => 
+      prev.map(subject =>
+        subject.id === subjectId ? { ...subject, tier } : subject
+      )
+    );
+  }, []);
+
+  const addCustomSubject = useCallback(() => {
+    const newSubjectId = `custom-${Date.now()}`;
+    const newSubject: SyllabusSubject = {
+      id: newSubjectId,
+      name: 'New Subject',
+      tier: 2,
+      topics: [],
+      isCustom: true,
+    };
+    setSyllabus(prev => [...prev, newSubject]);
+    setExpandedSubjects(prev => new Set([...prev, newSubjectId]));
+    setEditingSubject(newSubjectId);
+    setTempSubjectName('New Subject');
+  }, []);
+
+  const removeSubject = useCallback((subjectId: string) => {
+    setSyllabus(prev => prev.filter(subject => subject.id !== subjectId));
+  }, []);
+
+  // Enhanced topic management functions
+  const addTopic = useCallback((subjectId: string, topicData?: Partial<SyllabusTopic>) => {
+    const newTopicId = `topic-${Date.now()}`;
+    const newTopic: SyllabusTopic = {
+      id: newTopicId,
+      name: topicData?.name || 'New Topic',
+      estimatedHours: topicData?.estimatedHours || 5,
+      ...(topicData?.description && { description: topicData.description }),
+      subtopics: topicData?.subtopics || [],
+    };
+
+    setSyllabus(prev =>
+      prev.map(subject =>
+        subject.id === subjectId
+          ? { ...subject, topics: [...subject.topics, newTopic] }
+          : subject
+      )
+    );
+
+    // Auto-expand the subject and start editing the new topic
+    setExpandedSubjects(prev => new Set([...prev, subjectId]));
+    setEditingTopic(newTopicId);
+    setTempTopicName(newTopic.name);
+    setTempTopicHours(newTopic.estimatedHours || 5);
+    setTempTopicDescription(newTopic.description || '');
+
+    toast({
+      title: "Topic Added",
+      description: `New topic "${newTopic.name}" has been added.`,
+    });
+  }, [toast]);
+
+  const removeTopic = useCallback((subjectId: string, topicId: string) => {
+    setSyllabus(prev =>
+      prev.map(subject =>
+        subject.id === subjectId
+          ? { ...subject, topics: subject.topics.filter(topic => topic.id !== topicId) }
+          : subject
+      )
+    );
+
+    toast({
+      title: "Topic Removed",
+      description: "Topic has been successfully removed.",
+    });
+  }, [toast]);
+
+  const updateTopic = useCallback((subjectId: string, topicId: string, updates: Partial<SyllabusTopic>) => {
+    setSyllabus(prev =>
+      prev.map(subject =>
+        subject.id === subjectId
+          ? {
+              ...subject,
+              topics: subject.topics.map(topic =>
+                topic.id === topicId ? { ...topic, ...updates } : topic
+              ),
+            }
+          : subject
+      )
+    );
+  }, []);
+
+  const duplicateTopic = useCallback((subjectId: string, topicId: string) => {
+    const subject = syllabus.find(s => s.id === subjectId);
+    const topic = subject?.topics.find(t => t.id === topicId);
+    
+    if (topic) {
+      const duplicatedTopic = {
+        ...topic,
+        id: `topic-${Date.now()}`,
+        name: `${topic.name} (Copy)`,
+      };
+      
+      addTopic(subjectId, duplicatedTopic);
+      
+      toast({
+        title: "Topic Duplicated",
+        description: `"${topic.name}" has been duplicated.`,
+      });
+    }
+  }, [syllabus, addTopic, toast]);
+
+  // Enhanced edit state management
+  const startEditingSubject = useCallback((subjectId: string, currentName: string) => {
+    setEditingSubject(subjectId);
+    setTempSubjectName(currentName);
+  }, []);
+
+  const saveSubjectName = useCallback((subjectId: string) => {
+    if (tempSubjectName.trim()) {
+      setSyllabus(prev =>
+        prev.map(subject =>
+          subject.id === subjectId ? { ...subject, name: tempSubjectName.trim() } : subject
+        )
+      );
+      
+      toast({
+        title: "Subject Updated",
+        description: `Subject name updated to "${tempSubjectName.trim()}".`,
+      });
+    }
+    setEditingSubject(null);
+    setTempSubjectName('');
+  }, [tempSubjectName, toast]);
+
+  const startEditingTopic = useCallback((topicId: string, topic: SyllabusTopic) => {
+    setEditingTopic(topicId);
+    setTempTopicName(topic.name);
+    setTempTopicHours(topic.estimatedHours || 5);
+    setTempTopicDescription(topic.description || '');
+  }, []);
+
+  const saveTopicChanges = useCallback((subjectId: string, topicId: string) => {
+    if (tempTopicName.trim()) {
+      const updates: Partial<SyllabusTopic> = {
+        name: tempTopicName.trim(),
+        estimatedHours: tempTopicHours,
+        ...(tempTopicDescription.trim() && { description: tempTopicDescription.trim() }),
+      };
+      
+      updateTopic(subjectId, topicId, updates);
+      
+      toast({
+        title: "Topic Updated",
+        description: `Topic "${tempTopicName.trim()}" has been updated.`,
+      });
+    }
+    setEditingTopic(null);
+    setTempTopicName('');
+    setTempTopicHours(5);
+    setTempTopicDescription('');
+  }, [tempTopicName, tempTopicHours, tempTopicDescription, updateTopic, toast]);
+
+  const cancelEditing = useCallback(() => {
+    setEditingSubject(null);
+    setEditingTopic(null);
+    setTempSubjectName('');
+    setTempTopicName('');
+    setTempTopicHours(5);
+    setTempTopicDescription('');
+  }, []);
+
+  const toggleTopicDetails = useCallback((topicId: string) => {
+    setShowTopicDetails(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(topicId)) {
+        newSet.delete(topicId);
+      } else {
+        newSet.add(topicId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const toggleTopicSelection = useCallback((topicId: string) => {
+    setSelectedTopics(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(topicId)) {
+        newSet.delete(topicId);
+      } else {
+        newSet.add(topicId);
+      }
+      return newSet;
+    });
+  }, []);
 
   const toggleSubjectExpansion = (subjectId: string) => {
     const newExpanded = new Set(expandedSubjects);
@@ -230,8 +507,8 @@ export default function SyllabusPage() {
         <Navigation />
 
         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
-          {/* Header */}
-          <div className="text-center space-y-4">
+          {/* Enhanced Header */}
+          <div className="text-center space-y-6">
             <div className="inline-block">
               <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
                 📚 Syllabus Management
@@ -239,6 +516,73 @@ export default function SyllabusPage() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Strategic Syllabus Overview</h1>
             <p className="text-muted-foreground text-lg">Manage your study priorities and track mastery progress</p>
+            
+            {/* Enhanced Edit Mode Controls */}
+            <div className="flex justify-center items-center flex-wrap gap-4">
+              <Button
+                variant={editMode ? "default" : "outline"}
+                onClick={() => {
+                  setEditMode(!editMode);
+                  if (editMode) {
+                    cancelEditing();
+                    setBulkEditMode(false);
+                    setSelectedTopics(new Set());
+                  }
+                }}
+                className="flex items-center space-x-2"
+              >
+                <Settings className="h-4 w-4" />
+                <span>{editMode ? 'Exit Edit Mode' : 'Edit Syllabus'}</span>
+              </Button>
+              
+              {editMode && (
+                <>
+                  <Button
+                    variant={bulkEditMode ? "default" : "outline"}
+                    onClick={() => {
+                      setBulkEditMode(!bulkEditMode);
+                      setSelectedTopics(new Set());
+                    }}
+                    className="flex items-center space-x-2"
+                  >
+                    <Layers className="h-4 w-4" />
+                    <span>{bulkEditMode ? 'Exit Bulk Edit' : 'Bulk Edit'}</span>
+                  </Button>
+                  
+                  <Button
+                    onClick={saveSyllabusChanges}
+                    disabled={saving}
+                    className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Bulk Edit Actions */}
+            {editMode && bulkEditMode && selectedTopics.size > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+                <div className="text-sm font-medium text-blue-900">
+                  {selectedTopics.size} topic{selectedTopics.size > 1 ? 's' : ''} selected
+                </div>
+                <div className="flex justify-center items-center gap-2">
+                  <Button size="sm" variant="outline">
+                    <Timer className="h-3 w-3 mr-1" />
+                    Set Hours
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <ArrowUpDown className="h-3 w-3 mr-1" />
+                    Move to Subject
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete Selected
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* View Mode Toggle */}
@@ -415,6 +759,50 @@ export default function SyllabusPage() {
           {/* Content based on view mode */}
           {viewMode === 'subjects' ? (
             <>
+              {/* Enhanced Edit Mode Controls */}
+              {editMode && (
+                <div className="space-y-4">
+                  <Alert className="border-blue-200 bg-blue-50">
+                    <Info className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800">
+                      <div className="space-y-2">
+                        <p><strong>Edit Mode Active:</strong> You can now comprehensively manage your syllabus.</p>
+                        <div className="text-sm space-y-1">
+                          <p>• <strong>Topics:</strong> Add, edit, duplicate, and organize with detailed descriptions</p>
+                          <p>• <strong>Time Estimates:</strong> Set study hours for each topic</p>
+                          <p>• <strong>Bulk Actions:</strong> Select multiple topics for batch operations</p>
+                          <p>• <strong>Drag & Drop:</strong> Reorder topics within subjects</p>
+                        </div>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                  
+                  <div className="flex justify-center space-x-4">
+                    <Button
+                      variant="outline"
+                      onClick={addCustomSubject}
+                      className="flex items-center space-x-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span>Add Custom Subject</span>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        // Expand all subjects for better editing
+                        const allSubjectIds = syllabus.map(s => s.id);
+                        setExpandedSubjects(new Set(allSubjectIds));
+                      }}
+                      className="flex items-center space-x-2"
+                    >
+                      <Layers className="h-4 w-4" />
+                      <span>Expand All</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {/* Subjects List */}
               <div className="space-y-4">
                 {filteredSyllabus.map(subject => {
@@ -424,78 +812,460 @@ export default function SyllabusPage() {
                   return (
                     <Card key={subject.id} className="overflow-hidden">
                       <CardHeader
-                        className="cursor-pointer hover:bg-gray-50 transition-colors"
-                        onClick={() => toggleSubjectExpansion(subject.id)}
+                        className={`transition-colors ${editMode ? 'p-4' : 'cursor-pointer hover:bg-gray-50'}`}
+                        onClick={editMode ? undefined : () => toggleSubjectExpansion(subject.id)}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <ChevronRight className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-                            <div>
-                              <CardTitle className="text-xl">{subject.name}</CardTitle>
-                              <CardDescription>
-                                {subject.topics.length} topics • {getTierLabel(subject.tier)}
-                              </CardDescription>
+                          <div className="flex items-center space-x-4 flex-1">
+                            {!editMode && (
+                              <ChevronRight className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                            )}
+                            {editMode && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => toggleSubjectExpansion(subject.id)}
+                                className="p-1 h-auto"
+                              >
+                                {isExpanded ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                              </Button>
+                            )}
+                            
+                            <div className="flex-1">
+                              {editMode && editingSubject === subject.id ? (
+                                <div className="flex items-center space-x-2">
+                                  <Input
+                                    value={tempSubjectName}
+                                    onChange={e => setTempSubjectName(e.target.value)}
+                                    className="flex-1"
+                                    autoFocus
+                                    onKeyDown={e => {
+                                      if (e.key === 'Enter') {
+                                        saveSubjectName(subject.id);
+                                      }
+                                      if (e.key === 'Escape') {
+                                        cancelEditing();
+                                      }
+                                    }}
+                                  />
+                                  <Button size="sm" variant="outline" onClick={() => saveSubjectName(subject.id)}>
+                                    <Save className="h-4 w-4" />
+                                  </Button>
+                                  <Button size="sm" variant="outline" onClick={cancelEditing}>
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-2">
+                                  <div>
+                                    <CardTitle className="text-xl">{subject.name}</CardTitle>
+                                    <CardDescription>
+                                      {subject.topics.length} topics • {getTierLabel(subject.tier)}
+                                    </CardDescription>
+                                  </div>
+                                  {editMode && (
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => startEditingSubject(subject.id, subject.name)}
+                                      className="p-1 h-auto"
+                                    >
+                                      <Edit3 className="h-3 w-3" />
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </div>
 
                           <div className="flex items-center space-x-4">
-                            <div className="text-right">
-                              <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>
-                                {subjectMastery}%
-                              </p>
-                              <p className="text-sm text-muted-foreground">Mastery</p>
-                            </div>
-                            <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
+                            {editMode ? (
+                              <>
+                                {/* Tier Selection */}
+                                <Select
+                                  value={subject.tier.toString()}
+                                  onValueChange={value => updateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
+                                >
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="1">
+                                      <Badge className="bg-red-100 text-red-800 border-red-200">Tier 1</Badge>
+                                    </SelectItem>
+                                    <SelectItem value="2">
+                                      <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Tier 2</Badge>
+                                    </SelectItem>
+                                    <SelectItem value="3">
+                                      <Badge className="bg-green-100 text-green-800 border-green-200">Tier 3</Badge>
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                {/* Remove Subject Button */}
+                                {subject.isCustom && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => removeSubject(subject.id)}
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <div className="text-right">
+                                  <p className={`text-lg font-bold ${getMasteryColor(subjectMastery)}`}>
+                                    {subjectMastery}%
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">Mastery</p>
+                                </div>
+                                <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
+                              </>
+                            )}
                           </div>
                         </div>
 
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm text-muted-foreground">Subject Progress</span>
-                            <span className="text-sm font-medium">{subjectMastery}%</span>
+                        {!editMode && (
+                          <div className="mt-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm text-muted-foreground">Subject Progress</span>
+                              <span className="text-sm font-medium">{subjectMastery}%</span>
+                            </div>
+                            <Progress value={subjectMastery} className="h-2" />
                           </div>
-                          <Progress value={subjectMastery} className="h-2" />
-                        </div>
+                        )}
                       </CardHeader>
 
                       {isExpanded && (
                         <CardContent className="pt-0">
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {subject.topics.map(topic => {
-                              const topicProgress = getTopicProgress(topic.id);
-                              const masteryScore = topicProgress?.masteryScore ?? 0;
+                          {editMode ? (
+                            <div className="space-y-6">
+                              <Separator />
+                              
+                              {/* Topic Management Header */}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <h5 className="font-semibold text-gray-800">Topic Management</h5>
+                                  <Badge variant="outline" className="text-xs">
+                                    {subject.topics.length} topic{subject.topics.length !== 1 ? 's' : ''}
+                                  </Badge>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => addTopic(subject.id)}
+                                    className="flex items-center space-x-1"
+                                  >
+                                    <Plus className="h-3 w-3" />
+                                    <span>Add Topic</span>
+                                  </Button>
+                                  
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button size="sm" variant="ghost">
+                                        <MoreHorizontal className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem onClick={() => addTopic(subject.id, { name: 'Quick Topic', estimatedHours: 3 })}>
+                                        <Plus className="h-3 w-3 mr-2" />
+                                        Quick Add Topic
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem>
+                                        <ArrowUpDown className="h-3 w-3 mr-2" />
+                                        Reorder Topics
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Timer className="h-3 w-3 mr-2" />
+                                        Bulk Set Hours
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </div>
 
-                              return (
-                                <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
-                                  <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                                    <CardContent className="p-4">
-                                      <div className="space-y-3">
-                                        <div>
-                                          <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
+                              {/* Topics List */}
+                              {subject.topics && subject.topics.length > 0 ? (
+                                <div className="space-y-3">
+                                  {subject.topics.map((topic: SyllabusTopic) => {
+                                    const isEditing = editingTopic === topic.id;
+                                    const isSelected = selectedTopics.has(topic.id);
+                                    const showDetails = showTopicDetails.has(topic.id);
+                                    
+                                    return (
+                                      <div
+                                        key={topic.id}
+                                        className={`group relative bg-white border-2 rounded-lg transition-all duration-200 ${
+                                          isSelected 
+                                            ? 'border-blue-500 bg-blue-50' 
+                                            : isEditing 
+                                            ? 'border-green-500 bg-green-50' 
+                                            : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                                        }`}
+                                      >
+                                        {/* Topic Header */}
+                                        <div className="flex items-center justify-between p-4">
+                                          <div className="flex items-center space-x-3 flex-1">
+                                            {/* Drag Handle */}
+                                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                              <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
+                                            </div>
+                                            
+                                            {/* Bulk Select Checkbox */}
+                                            {bulkEditMode && (
+                                              <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => toggleTopicSelection(topic.id)}
+                                                className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                                              />
+                                            )}
+
+                                            {/* Topic Content */}
+                                            <div className="flex-1 min-w-0">
+                                              {isEditing ? (
+                                                <div className="space-y-3">
+                                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                    <div className="md:col-span-2">
+                                                      <Label htmlFor={`topic-name-${topic.id}`} className="text-xs font-medium text-gray-700">
+                                                        Topic Name
+                                                      </Label>
+                                                      <Input
+                                                        id={`topic-name-${topic.id}`}
+                                                        value={tempTopicName}
+                                                        onChange={e => setTempTopicName(e.target.value)}
+                                                        placeholder="Enter topic name..."
+                                                        autoFocus
+                                                        onKeyDown={e => {
+                                                          if (e.key === 'Enter') {
+                                                            saveTopicChanges(subject.id, topic.id);
+                                                          }
+                                                          if (e.key === 'Escape') {
+                                                            cancelEditing();
+                                                          }
+                                                        }}
+                                                      />
+                                                    </div>
+                                                    <div>
+                                                      <Label htmlFor={`topic-hours-${topic.id}`} className="text-xs font-medium text-gray-700">
+                                                        Est. Hours
+                                                      </Label>
+                                                      <Input
+                                                        id={`topic-hours-${topic.id}`}
+                                                        type="number"
+                                                        min="1"
+                                                        max="100"
+                                                        value={tempTopicHours}
+                                                        onChange={e => setTempTopicHours(Number(e.target.value))}
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  
+                                                  <div>
+                                                    <Label htmlFor={`topic-desc-${topic.id}`} className="text-xs font-medium text-gray-700">
+                                                      Description (Optional)
+                                                    </Label>
+                                                    <Textarea
+                                                      id={`topic-desc-${topic.id}`}
+                                                      value={tempTopicDescription}
+                                                      onChange={e => setTempTopicDescription(e.target.value)}
+                                                      placeholder="Add topic description, key points, or notes..."
+                                                      rows={2}
+                                                      className="resize-none"
+                                                    />
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <div className="space-y-1">
+                                                  <div className="flex items-center space-x-2">
+                                                    <h6 className="font-medium text-gray-900 truncate">{topic.name}</h6>
+                                                    {topic.estimatedHours && (
+                                                      <Badge variant="secondary" className="text-xs">
+                                                        {topic.estimatedHours}h
+                                                      </Badge>
+                                                    )}
+                                                  </div>
+                                                  {topic.description && (
+                                                    <p className="text-sm text-gray-600 line-clamp-2">{topic.description}</p>
+                                                  )}
+                                                  {!showDetails && (topic.subtopics?.length || 0) > 0 && (
+                                                    <p className="text-xs text-gray-500">
+                                                      {topic.subtopics?.length} subtopic{(topic.subtopics?.length || 0) !== 1 ? 's' : ''}
+                                                    </p>
+                                                  )}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Topic Actions */}
+                                          <div className="flex items-center space-x-1">
+                                            {isEditing ? (
+                                              <>
+                                                <Button
+                                                  size="sm"
+                                                  onClick={() => saveTopicChanges(subject.id, topic.id)}
+                                                  className="bg-green-600 hover:bg-green-700 text-white px-3"
+                                                >
+                                                  <Save className="h-3 w-3 mr-1" />
+                                                  Save
+                                                </Button>
+                                                <Button
+                                                  size="sm"
+                                                  variant="outline"
+                                                  onClick={cancelEditing}
+                                                >
+                                                  <X className="h-3 w-3" />
+                                                </Button>
+                                              </>
+                                            ) : (
+                                              <>
+                                                <Button
+                                                  size="sm"
+                                                  variant="ghost"
+                                                  onClick={() => toggleTopicDetails(topic.id)}
+                                                  className="p-1"
+                                                >
+                                                  {showDetails ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                                                </Button>
+                                                
+                                                <DropdownMenu>
+                                                  <DropdownMenuTrigger asChild>
+                                                    <Button size="sm" variant="ghost" className="p-1">
+                                                      <MoreHorizontal className="h-3 w-3" />
+                                                    </Button>
+                                                  </DropdownMenuTrigger>
+                                                  <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onClick={() => startEditingTopic(topic.id, topic)}>
+                                                      <Edit3 className="h-3 w-3 mr-2" />
+                                                      Edit Topic
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => duplicateTopic(subject.id, topic.id)}>
+                                                      <Plus className="h-3 w-3 mr-2" />
+                                                      Duplicate
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem 
+                                                      onClick={() => removeTopic(subject.id, topic.id)}
+                                                      className="text-red-600 focus:text-red-600"
+                                                    >
+                                                      <Trash2 className="h-3 w-3 mr-2" />
+                                                      Delete
+                                                    </DropdownMenuItem>
+                                                  </DropdownMenuContent>
+                                                </DropdownMenu>
+                                              </>
+                                            )}
+                                          </div>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
-                                          <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
-                                            {masteryScore}% mastery
-                                          </span>
-                                          <ChevronRight className="h-4 w-4 text-gray-400" />
-                                        </div>
-
-                                        <Progress value={masteryScore} className="h-1" />
-
-                                        {topicProgress?.lastRevised && (
-                                          <p className="text-xs text-muted-foreground">
-                                            Last studied:{' '}
-                                            {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
-                                          </p>
+                                        {/* Expanded Topic Details */}
+                                        {showDetails && !isEditing && (
+                                          <div className="border-t bg-gray-50 p-4 space-y-3">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                              <div>
+                                                <span className="font-medium text-gray-700">Estimated Study Time:</span>
+                                                <p className="text-gray-600">{topic.estimatedHours || 'Not set'} hours</p>
+                                              </div>
+                                              <div>
+                                                <span className="font-medium text-gray-700">Progress:</span>
+                                                <p className="text-gray-600">Not started</p>
+                                              </div>
+                                            </div>
+                                            
+                                            {topic.subtopics && topic.subtopics.length > 0 && (
+                                              <div>
+                                                <span className="font-medium text-gray-700 text-sm">Subtopics:</span>
+                                                <div className="mt-1 flex flex-wrap gap-1">
+                                                  {topic.subtopics.map((subtopic, idx) => (
+                                                    <Badge key={idx} variant="outline" className="text-xs">
+                                                      {subtopic}
+                                                    </Badge>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+                                            
+                                            {topic.description && (
+                                              <div>
+                                                <span className="font-medium text-gray-700 text-sm">Description:</span>
+                                                <p className="text-gray-600 text-sm mt-1">{topic.description}</p>
+                                              </div>
+                                            )}
+                                          </div>
                                         )}
                                       </div>
-                                    </CardContent>
-                                  </Card>
-                                </Link>
-                              );
-                            })}
-                          </div>
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+                                  <BookOpen className="h-8 w-8 text-gray-400 mx-auto mb-3" />
+                                  <h4 className="font-medium text-gray-700 mb-2">No topics yet</h4>
+                                  <p className="text-sm text-gray-600 mb-4">
+                                    Start building your study plan by adding topics to this subject.
+                                  </p>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => addTopic(subject.id)}
+                                    className="flex items-center space-x-1"
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add First Topic</span>
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {subject.topics.map(topic => {
+                                const topicProgress = getTopicProgress(topic.id);
+                                const masteryScore = topicProgress?.masteryScore ?? 0;
+
+                                return (
+                                  <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
+                                    <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                                      <CardContent className="p-4">
+                                        <div className="space-y-3">
+                                          <div>
+                                            <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
+                                            {topic.estimatedHours && (
+                                              <p className="text-xs text-gray-500 mt-1">{topic.estimatedHours} hours</p>
+                                            )}
+                                          </div>
+
+                                          <div className="flex items-center justify-between">
+                                            <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
+                                              {masteryScore}% mastery
+                                            </span>
+                                            <ChevronRight className="h-4 w-4 text-gray-400" />
+                                          </div>
+
+                                          <Progress value={masteryScore} className="h-1" />
+
+                                          {topicProgress?.lastRevised && (
+                                            <p className="text-xs text-muted-foreground">
+                                              Last studied:{' '}
+                                              {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
+                                            </p>
+                                          )}
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          )}
                         </CardContent>
                       )}
                     </Card>

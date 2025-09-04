@@ -235,7 +235,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
           Custom Learning Goals
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Set up your personal learning goals beyond exam preparation. Whether it's mastering a new technology,
+          Set up your personal learning goals beyond structured courses. Whether it's mastering a new technology,
           learning a language, or developing a skill, create goals that matter to you.
         </p>
       </div>
@@ -298,7 +298,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
               <BookOpen className="h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No learning goals yet</h3>
               <p className="text-gray-600 mb-6 max-w-md">
-                Create your first custom learning goal to get started with personalized learning beyond exam preparation.
+                Create your first custom learning goal to get started with personalized learning beyond structured courses.
               </p>
             </CardContent>
           </Card>

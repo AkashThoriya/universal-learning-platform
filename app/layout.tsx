@@ -11,14 +11,14 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Exam Strategy Engine - Universal Exam Preparation Platform',
+    default: 'Exam Strategy Engine - Universal Learning Platform',
     template: '%s | Exam Strategy Engine',
   },
   description:
-    'A strategic operating system for competitive exam preparation that transforms unstructured studying into a data-driven, adaptive process with AI-powered insights.',
+    'A strategic operating system for learning and skill development that transforms unstructured studying into a data-driven, adaptive process with AI-powered insights.',
   keywords: [
-    'exam preparation',
-    'competitive exams',
+    'learning platform',
+    'skill development',
     'UPSC preparation',
     'IBPS banking exams',
     'SSC exams',
@@ -49,24 +49,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://examstrategyengine.com',
-    title: 'Exam Strategy Engine - Universal Exam Preparation Platform',
+    title: 'Exam Strategy Engine - Universal Learning Platform',
     description:
-      'Transform your exam preparation with AI-powered adaptive learning, strategic planning, and data-driven insights.',
+      'Transform your learning with AI-powered adaptive systems, strategic planning, and data-driven insights.',
     siteName: 'Exam Strategy Engine',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Exam Strategy Engine - Strategic Exam Preparation Platform',
+        alt: 'Exam Strategy Engine - Strategic Learning Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Exam Strategy Engine - Universal Exam Preparation Platform',
+    title: 'Exam Strategy Engine - Universal Learning Platform',
     description:
-      'Transform your exam preparation with AI-powered adaptive learning, strategic planning, and data-driven insights.',
+      'Transform your learning with AI-powered adaptive systems, strategic planning, and data-driven insights.',
     images: ['/twitter-image.png'],
     creator: '@examstrategyengine',
   },

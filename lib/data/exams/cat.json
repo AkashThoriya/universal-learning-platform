@@ -1,0 +1,73 @@
+{
+  "id": "cat",
+  "name": "CAT",
+  "description": "Common Admission Test for MBA programs",
+  "category": "Management",
+  "stages": [
+    {
+      "id": "cat_exam",
+      "name": "CAT Examination",
+      "totalMarks": 300,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "varc",
+          "name": "Verbal Ability and Reading Comprehension",
+          "maxMarks": 100,
+          "maxTime": 60,
+          "negativeMarking": 1
+        },
+        {
+          "id": "dilr",
+          "name": "Data Interpretation and Logical Reasoning",
+          "maxMarks": 100,
+          "maxTime": 60,
+          "negativeMarking": 1
+        },
+        {
+          "id": "qa",
+          "name": "Quantitative Ability",
+          "maxMarks": 100,
+          "maxTime": 60,
+          "negativeMarking": 1
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "quantitative_ability",
+      "name": "Quantitative Ability",
+      "tier": 1,
+      "estimatedHours": 120,
+      "topics": [
+        { "id": "arithmetic", "name": "Arithmetic", "estimatedHours": 40 },
+        { "id": "algebra", "name": "Algebra", "estimatedHours": 30 },
+        { "id": "geometry", "name": "Geometry", "estimatedHours": 30 },
+        { "id": "number_system", "name": "Number System", "estimatedHours": 20 }
+      ]
+    },
+    {
+      "id": "data_interpretation",
+      "name": "Data Interpretation and Logical Reasoning",
+      "tier": 1,
+      "estimatedHours": 100,
+      "topics": [
+        { "id": "data_interpretation", "name": "Data Interpretation", "estimatedHours": 50 },
+        { "id": "logical_reasoning", "name": "Logical Reasoning", "estimatedHours": 30 },
+        { "id": "puzzles", "name": "Puzzles", "estimatedHours": 20 }
+      ]
+    },
+    {
+      "id": "verbal_ability",
+      "name": "Verbal Ability and Reading Comprehension",
+      "tier": 1,
+      "estimatedHours": 80,
+      "topics": [
+        { "id": "reading_comprehension", "name": "Reading Comprehension", "estimatedHours": 40 },
+        { "id": "verbal_ability", "name": "Verbal Ability", "estimatedHours": 25 },
+        { "id": "grammar", "name": "Grammar", "estimatedHours": 15 }
+      ]
+    }
+  ]
+}

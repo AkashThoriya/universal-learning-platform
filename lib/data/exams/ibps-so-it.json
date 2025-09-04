@@ -1,0 +1,151 @@
+{
+  "id": "ibps_so_it",
+  "name": "IBPS SO - IT Officer",
+  "description": "Institute of Banking Personnel Selection Specialist Officer - Information Technology",
+  "category": "Banking",
+  "stages": [
+    {
+      "id": "prelims",
+      "name": "Preliminary Examination",
+      "totalMarks": 125,
+      "duration": 45,
+      "sections": [
+        {
+          "id": "reasoning",
+          "name": "Reasoning",
+          "maxMarks": 50,
+          "maxTime": 45,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "english",
+          "name": "English Language",
+          "maxMarks": 25,
+          "maxTime": 45,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "quantitative_aptitude",
+          "name": "Quantitative Aptitude",
+          "maxMarks": 50,
+          "maxTime": 45,
+          "negativeMarking": 0.25
+        }
+      ]
+    },
+    {
+      "id": "mains",
+      "name": "Main Examination",
+      "totalMarks": 300,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "reasoning_computer",
+          "name": "Reasoning & Computer Aptitude",
+          "maxMarks": 50,
+          "maxTime": 45,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "general_banking",
+          "name": "General/Economy/Banking Awareness",
+          "maxMarks": 50,
+          "maxTime": 35,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "english_language",
+          "name": "English Language",
+          "maxMarks": 50,
+          "maxTime": 40,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "quantitative_aptitude_main",
+          "name": "Quantitative Aptitude",
+          "maxMarks": 50,
+          "maxTime": 45,
+          "negativeMarking": 0.25
+        },
+        {
+          "id": "professional_knowledge",
+          "name": "Professional Knowledge (IT)",
+          "maxMarks": 60,
+          "maxTime": 45,
+          "negativeMarking": 0.25
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "quantitative_aptitude",
+      "name": "Quantitative Aptitude",
+      "tier": 1,
+      "estimatedHours": 80,
+      "topics": [
+        { "id": "data_interpretation", "name": "Data Interpretation", "estimatedHours": 25 },
+        { "id": "arithmetic", "name": "Arithmetic", "estimatedHours": 30 },
+        { "id": "algebra", "name": "Algebra", "estimatedHours": 15 },
+        { "id": "geometry", "name": "Geometry", "estimatedHours": 10 }
+      ]
+    },
+    {
+      "id": "reasoning",
+      "name": "Reasoning",
+      "tier": 1,
+      "estimatedHours": 70,
+      "topics": [
+        { "id": "logical_reasoning", "name": "Logical Reasoning", "estimatedHours": 25 },
+        { "id": "puzzles_seating", "name": "Puzzles & Seating Arrangement", "estimatedHours": 30 },
+        { "id": "blood_relations", "name": "Blood Relations", "estimatedHours": 15 }
+      ]
+    },
+    {
+      "id": "english",
+      "name": "English Language",
+      "tier": 1,
+      "estimatedHours": 60,
+      "topics": [
+        { "id": "reading_comprehension", "name": "Reading Comprehension", "estimatedHours": 25 },
+        { "id": "grammar", "name": "Grammar", "estimatedHours": 20 },
+        { "id": "vocabulary", "name": "Vocabulary", "estimatedHours": 15 }
+      ]
+    },
+    {
+      "id": "computer_knowledge",
+      "name": "Computer Knowledge",
+      "tier": 2,
+      "estimatedHours": 50,
+      "topics": [
+        { "id": "computer_basics", "name": "Computer Basics", "estimatedHours": 15 },
+        { "id": "internet_networking", "name": "Internet & Networking", "estimatedHours": 20 },
+        { "id": "ms_office", "name": "MS Office", "estimatedHours": 15 }
+      ]
+    },
+    {
+      "id": "professional_knowledge",
+      "name": "Professional Knowledge (IT)",
+      "tier": 1,
+      "estimatedHours": 120,
+      "topics": [
+        { "id": "programming", "name": "Programming Languages", "estimatedHours": 30 },
+        { "id": "database_management", "name": "Database Management", "estimatedHours": 25 },
+        { "id": "networking", "name": "Computer Networks", "estimatedHours": 25 },
+        { "id": "operating_systems", "name": "Operating Systems", "estimatedHours": 20 },
+        { "id": "software_engineering", "name": "Software Engineering", "estimatedHours": 20 }
+      ]
+    },
+    {
+      "id": "banking_awareness",
+      "name": "Banking Awareness",
+      "tier": 2,
+      "estimatedHours": 40,
+      "topics": [
+        { "id": "banking_basics", "name": "Banking Basics", "estimatedHours": 15 },
+        { "id": "rbi_functions", "name": "RBI Functions", "estimatedHours": 15 },
+        { "id": "financial_institutions", "name": "Financial Institutions", "estimatedHours": 10 }
+      ]
+    }
+  ]
+}

@@ -20,6 +20,9 @@ import {
   Edit3,
   Save,
   X,
+  ChevronDown,
+  ChevronRight,
+  GripVertical,
 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -33,7 +36,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from '@/hooks/useForm';
-import { SyllabusSubject, UserPersona } from '@/types/exam';
+import { SyllabusSubject, SyllabusTopic, UserPersona } from '@/types/exam';
 
 /**
  * Form data interface for onboarding
@@ -77,6 +80,10 @@ interface SyllabusManagementStepProps {
   onUpdateSubjectTier: (subjectId: string, tier: 1 | 2 | 3) => void;
   onAddSubject: () => void;
   onRemoveSubject: (subjectId: string) => void;
+  onAddTopic: (subjectId: string, topicName?: string) => void;
+  onRemoveTopic: (subjectId: string, topicId: string) => void;
+  onUpdateTopic: (subjectId: string, topicId: string, updates: Partial<SyllabusTopic>) => void;
+  onReorderTopics: (subjectId: string, topicIds: string[]) => void;
 }
 
 export function SyllabusManagementStep({
@@ -84,9 +91,17 @@ export function SyllabusManagementStep({
   onUpdateSubjectTier,
   onAddSubject,
   onRemoveSubject,
+  onAddTopic,
+  onRemoveTopic,
+  onUpdateTopic,
+  onReorderTopics: _onReorderTopics, // Renamed with underscore to indicate intentional non-use
 }: SyllabusManagementStepProps) {
+  // Note: onReorderTopics is available for future drag-and-drop functionality
   const [editingSubject, setEditingSubject] = useState<string | null>(null);
   const [tempSubjectName, setTempSubjectName] = useState('');
+  const [editingTopic, setEditingTopic] = useState<string | null>(null);
+  const [tempTopicName, setTempTopicName] = useState('');
+  const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
 
   const startEditing = (subjectId: string, currentName: string) => {
     setEditingSubject(subjectId);
@@ -107,6 +122,34 @@ export function SyllabusManagementStep({
   const cancelEditing = () => {
     setEditingSubject(null);
     setTempSubjectName('');
+  };
+
+  const startEditingTopic = (topicId: string, currentName: string) => {
+    setEditingTopic(topicId);
+    setTempTopicName(currentName);
+  };
+
+  const saveTopicName = (subjectId: string, topicId: string) => {
+    if (tempTopicName.trim()) {
+      onUpdateTopic(subjectId, topicId, { name: tempTopicName.trim() });
+    }
+    setEditingTopic(null);
+    setTempTopicName('');
+  };
+
+  const cancelEditingTopic = () => {
+    setEditingTopic(null);
+    setTempTopicName('');
+  };
+
+  const toggleSubjectExpansion = (subjectId: string) => {
+    const newExpanded = new Set(expandedSubjects);
+    if (newExpanded.has(subjectId)) {
+      newExpanded.delete(subjectId);
+    } else {
+      newExpanded.add(subjectId);
+    }
+    setExpandedSubjects(newExpanded);
   };
 
   const getTierColor = (tier: number) => {
@@ -202,88 +245,210 @@ export function SyllabusManagementStep({
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="space-y-2">
-            {form.data.syllabus.map((subject: SyllabusSubject) => (
-              <div
-                key={subject.id}
-                className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-sm transition-shadow"
-              >
-                <div className="flex-1">
-                  {editingSubject === subject.id ? (
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        value={tempSubjectName}
-                        onChange={e => setTempSubjectName(e.target.value)}
-                        className="flex-1"
-                        autoFocus
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') {
-                            saveSubjectName(subject.id);
-                          }
-                          if (e.key === 'Escape') {
-                            cancelEditing();
-                          }
-                        }}
-                      />
-                      <Button size="sm" variant="outline" onClick={() => saveSubjectName(subject.id)}>
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={cancelEditing}>
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-3">
-                      <span className="font-medium">{subject.name}</span>
+          <div className="space-y-3">
+            {form.data.syllabus.map((subject: SyllabusSubject) => {
+              const isExpanded = expandedSubjects.has(subject.id);
+              return (
+                <div
+                  key={subject.id}
+                  className="bg-white border rounded-lg overflow-hidden hover:shadow-sm transition-shadow"
+                >
+                  {/* Subject Header */}
+                  <div className="flex items-center justify-between p-4">
+                    <div className="flex items-center space-x-3 flex-1">
+                      {/* Expand/Collapse Button */}
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => startEditing(subject.id, subject.name)}
+                        onClick={() => toggleSubjectExpansion(subject.id)}
                         className="p-1 h-auto"
                       >
-                        <Edit3 className="h-3 w-3" />
+                        {isExpanded ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
                       </Button>
-                      {subject.topics && (
-                        <span className="text-sm text-gray-600">({subject.topics.length} topics)</span>
+
+                      {/* Subject Name */}
+                      <div className="flex-1">
+                        {editingSubject === subject.id ? (
+                          <div className="flex items-center space-x-2">
+                            <Input
+                              value={tempSubjectName}
+                              onChange={e => setTempSubjectName(e.target.value)}
+                              className="flex-1"
+                              autoFocus
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                  saveSubjectName(subject.id);
+                                }
+                                if (e.key === 'Escape') {
+                                  cancelEditing();
+                                }
+                              }}
+                            />
+                            <Button size="sm" variant="outline" onClick={() => saveSubjectName(subject.id)}>
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={cancelEditing}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium">{subject.name}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => startEditing(subject.id, subject.name)}
+                              className="p-1 h-auto"
+                            >
+                              <Edit3 className="h-3 w-3" />
+                            </Button>
+                            <span className="text-sm text-gray-600">
+                              ({subject.topics?.length || 0} topics)
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      {/* Tier Selection */}
+                      <Select
+                        value={subject.tier.toString()}
+                        onValueChange={value => onUpdateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">
+                            <Badge className={getTierColor(1)}>Tier 1</Badge>
+                          </SelectItem>
+                          <SelectItem value="2">
+                            <Badge className={getTierColor(2)}>Tier 2</Badge>
+                          </SelectItem>
+                          <SelectItem value="3">
+                            <Badge className={getTierColor(3)}>Tier 3</Badge>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {/* Remove Subject Button */}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onRemoveSubject(subject.id)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Topics Section */}
+                  {isExpanded && (
+                    <div className="border-t bg-gray-50 p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="font-medium text-sm text-gray-700">Topics</h5>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onAddTopic(subject.id)}
+                          className="text-xs"
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          Add Topic
+                        </Button>
+                      </div>
+
+                      {subject.topics && subject.topics.length > 0 ? (
+                        <div className="space-y-2">
+                          {subject.topics.map((topic: SyllabusTopic) => (
+                            <div
+                              key={topic.id}
+                              className="flex items-center justify-between p-3 bg-white border rounded-md hover:shadow-sm transition-shadow"
+                            >
+                              <div className="flex items-center space-x-2 flex-1">
+                                <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
+                                {editingTopic === topic.id ? (
+                                  <div className="flex items-center space-x-2 flex-1">
+                                    <Input
+                                      value={tempTopicName}
+                                      onChange={e => setTempTopicName(e.target.value)}
+                                      className="flex-1 text-sm"
+                                      autoFocus
+                                      onKeyDown={e => {
+                                        if (e.key === 'Enter') {
+                                          saveTopicName(subject.id, topic.id);
+                                        }
+                                        if (e.key === 'Escape') {
+                                          cancelEditingTopic();
+                                        }
+                                      }}
+                                    />
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => saveTopicName(subject.id, topic.id)}
+                                    >
+                                      <Save className="h-3 w-3" />
+                                    </Button>
+                                    <Button size="sm" variant="outline" onClick={cancelEditingTopic}>
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center space-x-2 flex-1">
+                                    <span className="text-sm">{topic.name}</span>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => startEditingTopic(topic.id, topic.name)}
+                                      className="p-1 h-auto"
+                                    >
+                                      <Edit3 className="h-3 w-3" />
+                                    </Button>
+                                    {topic.estimatedHours && (
+                                      <span className="text-xs text-gray-500">
+                                        ({topic.estimatedHours}h)
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => onRemoveTopic(subject.id, topic.id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
+                          <Plus className="h-6 w-6 text-gray-400 mx-auto mb-2" />
+                          <p className="text-sm text-gray-600 mb-2">No topics yet</p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => onAddTopic(subject.id)}
+                          >
+                            Add First Topic
+                          </Button>
+                        </div>
                       )}
                     </div>
                   )}
                 </div>
-
-                <div className="flex items-center space-x-3">
-                  {/* Tier Selection */}
-                  <Select
-                    value={subject.tier.toString()}
-                    onValueChange={value => onUpdateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
-                  >
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">
-                        <Badge className={getTierColor(1)}>Tier 1</Badge>
-                      </SelectItem>
-                      <SelectItem value="2">
-                        <Badge className={getTierColor(2)}>Tier 2</Badge>
-                      </SelectItem>
-                      <SelectItem value="3">
-                        <Badge className={getTierColor(3)}>Tier 3</Badge>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {/* Remove Button */}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => onRemoveSubject(subject.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -299,8 +464,16 @@ export function SyllabusManagementStep({
       <Alert className="border-blue-200 bg-blue-50">
         <Info className="h-4 w-4 text-blue-600" />
         <AlertDescription className="text-blue-800">
-          <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects for optimal time
-          allocation and maximum score potential.
+          <div className="space-y-2">
+            <p>
+              <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects for optimal time
+              allocation and maximum score potential.
+            </p>
+            <p>
+              <strong>Topic Management:</strong> Click the arrow next to each subject to expand and manage individual topics. 
+              You can add custom topics, remove irrelevant ones, and edit names to match your specific needs.
+            </p>
+          </div>
         </AlertDescription>
       </Alert>
     </CardContent>

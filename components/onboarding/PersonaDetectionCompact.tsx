@@ -24,6 +24,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
+import { debounce } from '@/lib/types-utils';
 import {
   PERSONA_OPTIONS,
   STUDY_TIME_PREFERENCES,
@@ -137,11 +138,10 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
     }
   }, [selectedPersona]);
 
-  // Enhanced study goal change with validation
-  const handleStudyGoalChange = useCallback(
-    (hours: number[]) => {
-      const newHours = hours[0] ?? 2;
-
+  // Debounced update to form state to prevent excessive re-renders
+  const debouncedFormUpdate = useCallback(
+    debounce((...args: unknown[]) => {
+      const newHours = args[0] as number;
       logInfo('Study goal changed in persona detection', {
         newHours,
         newMinutes: newHours * 60,
@@ -169,8 +169,19 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
         ...(form.data.preferences ?? {}),
         dailyStudyGoalMinutes: newHours * 60,
       });
+    }, 300),
+    [form, selectedPersona, setValidationErrors]
+  );
+
+  // Enhanced study goal change with validation and debouncing
+  const handleStudyGoalChange = useCallback(
+    (hours: number[]) => {
+      const newHours = hours[0] ?? 2;
+      
+      // Debounce the form update to prevent excessive re-renders
+      debouncedFormUpdate(newHours);
     },
-    [form, selectedPersona]
+    [debouncedFormUpdate]
   );
 
   // Enhanced study time preference change

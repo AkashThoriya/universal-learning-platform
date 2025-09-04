@@ -303,7 +303,7 @@ export default function MissionsPage() {
                       Welcome to the Adaptive Mission System!
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      Your personalized dual-track learning system combines exam preparation and technical skills
+                      Your personalized dual-track learning system combines structured learning and skill development
                       development. Each mission is adapted to your learning style and current proficiency level.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

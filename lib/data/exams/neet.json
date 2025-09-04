@@ -1,0 +1,76 @@
+{
+  "id": "neet",
+  "name": "NEET",
+  "description": "National Eligibility cum Entrance Test",
+  "category": "Entrance",
+  "stages": [
+    {
+      "id": "neet_exam",
+      "name": "NEET Examination",
+      "totalMarks": 720,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "physics",
+          "name": "Physics",
+          "maxMarks": 180,
+          "maxTime": 60,
+          "negativeMarking": 1
+        },
+        {
+          "id": "chemistry",
+          "name": "Chemistry",
+          "maxMarks": 180,
+          "maxTime": 60,
+          "negativeMarking": 1
+        },
+        {
+          "id": "biology",
+          "name": "Biology (Botany + Zoology)",
+          "maxMarks": 360,
+          "maxTime": 60,
+          "negativeMarking": 1
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "physics",
+      "name": "Physics",
+      "tier": 1,
+      "estimatedHours": 200,
+      "topics": [
+        { "id": "mechanics", "name": "Mechanics & Gravitation", "estimatedHours": 60 },
+        { "id": "thermodynamics", "name": "Heat & Thermodynamics", "estimatedHours": 30 },
+        { "id": "waves_sound", "name": "Oscillations & Waves", "estimatedHours": 40 },
+        { "id": "electricity", "name": "Electricity & Magnetism", "estimatedHours": 35 },
+        { "id": "optics", "name": "Optics & Modern Physics", "estimatedHours": 35 }
+      ]
+    },
+    {
+      "id": "chemistry",
+      "name": "Chemistry",
+      "tier": 1,
+      "estimatedHours": 180,
+      "topics": [
+        { "id": "organic_chemistry", "name": "Organic Chemistry", "estimatedHours": 70 },
+        { "id": "inorganic_chemistry", "name": "Inorganic Chemistry", "estimatedHours": 60 },
+        { "id": "physical_chemistry", "name": "Physical Chemistry", "estimatedHours": 50 }
+      ]
+    },
+    {
+      "id": "biology",
+      "name": "Biology (Botany + Zoology)",
+      "tier": 1,
+      "estimatedHours": 280,
+      "topics": [
+        { "id": "human_physiology", "name": "Human Physiology & Anatomy", "estimatedHours": 90 },
+        { "id": "plant_physiology", "name": "Plant Physiology & Anatomy", "estimatedHours": 70 },
+        { "id": "genetics", "name": "Genetics & Evolution", "estimatedHours": 60 },
+        { "id": "ecology", "name": "Ecology & Environment", "estimatedHours": 30 },
+        { "id": "biotechnology", "name": "Biotechnology & Molecular Biology", "estimatedHours": 30 }
+      ]
+    }
+  ]
+}
