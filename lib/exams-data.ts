@@ -15,6 +15,7 @@ import { Exam } from '@/types/exam';
 import cat from './data/exams/cat.json';
 import devOpsMastery from './data/exams/devops-mastery.json';
 import dsaByStriver from './data/exams/dsa-by-striver.json';
+import dsaByNamastedev from './data/exams/dsa-by-namastedev.json';
 import gateCse from './data/exams/gate-cse.json';
 import ibpsSoIt from './data/exams/ibps-so-it.json';
 import jeeMain from './data/exams/jee-main.json';
@@ -28,7 +29,7 @@ import upscCsePrelims from './data/exams/upsc-cse-prelims.json';
 /**
  * Array of predefined exams with complete syllabus data
  * Includes major competitive exams across different categories:
- * - Computer Science: DevOps, Data Structures & Algorithms, SQL
+ * - Computer Science: DevOps, Data Structures & Algorithms (Striver & namastedev), SQL
  * - Civil Services: UPSC CSE, UPSC CDS, State PCS
  * - Banking: IBPS PO, IBPS Clerk, SBI PO
  * - Engineering: GATE, IES, State Engineering Services
@@ -63,6 +64,7 @@ export const EXAMS_DATA: Exam[] = [
   rrbNtpc as Exam,
   devOpsMastery as Exam,
   dsaByStriver as Exam,
+  dsaByNamastedev as Exam,
   sqlMastery as Exam,
 ];
 
