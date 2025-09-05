@@ -41,10 +41,26 @@
       "tier": 1,
       "estimatedHours": 120,
       "topics": [
-        { "id": "arithmetic", "name": "Arithmetic", "estimatedHours": 40 },
-        { "id": "algebra", "name": "Algebra", "estimatedHours": 30 },
-        { "id": "geometry", "name": "Geometry", "estimatedHours": 30 },
-        { "id": "number_system", "name": "Number System", "estimatedHours": 20 }
+        {
+          "id": "arithmetic",
+          "name": "Arithmetic",
+          "estimatedHours": 40
+        },
+        {
+          "id": "algebra",
+          "name": "Algebra",
+          "estimatedHours": 30
+        },
+        {
+          "id": "geometry",
+          "name": "Geometry",
+          "estimatedHours": 30
+        },
+        {
+          "id": "number_system",
+          "name": "Number System",
+          "estimatedHours": 20
+        }
       ]
     },
     {
@@ -53,9 +69,21 @@
       "tier": 1,
       "estimatedHours": 100,
       "topics": [
-        { "id": "data_interpretation", "name": "Data Interpretation", "estimatedHours": 50 },
-        { "id": "logical_reasoning", "name": "Logical Reasoning", "estimatedHours": 30 },
-        { "id": "puzzles", "name": "Puzzles", "estimatedHours": 20 }
+        {
+          "id": "data_interpretation",
+          "name": "Data Interpretation",
+          "estimatedHours": 50
+        },
+        {
+          "id": "logical_reasoning",
+          "name": "Logical Reasoning",
+          "estimatedHours": 30
+        },
+        {
+          "id": "puzzles",
+          "name": "Puzzles",
+          "estimatedHours": 20
+        }
       ]
     },
     {
@@ -64,10 +92,23 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "reading_comprehension", "name": "Reading Comprehension", "estimatedHours": 40 },
-        { "id": "verbal_ability", "name": "Verbal Ability", "estimatedHours": 25 },
-        { "id": "grammar", "name": "Grammar", "estimatedHours": 15 }
+        {
+          "id": "reading_comprehension",
+          "name": "Reading Comprehension",
+          "estimatedHours": 40
+        },
+        {
+          "id": "verbal_ability",
+          "name": "Verbal Ability",
+          "estimatedHours": 25
+        },
+        {
+          "id": "grammar",
+          "name": "Grammar",
+          "estimatedHours": 15
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 600
 }

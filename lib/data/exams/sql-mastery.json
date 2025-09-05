@@ -113,10 +113,26 @@
       "tier": 1,
       "estimatedHours": 1,
       "topics": [
-        { "id": "introduction", "name": "Introduction to SQL", "estimatedHours": 0.3 },
-        { "id": "mysql_installation", "name": "Installing MySQL (Mac & Windows)", "estimatedHours": 0.3 },
-        { "id": "database_setup", "name": "Creating the Databases", "estimatedHours": 0.2 },
-        { "id": "course_overview", "name": "What You'll Learn & Learning Paths", "estimatedHours": 0.2 }
+        {
+          "id": "introduction",
+          "name": "Introduction to SQL",
+          "estimatedHours": 0.3
+        },
+        {
+          "id": "mysql_installation",
+          "name": "Installing MySQL (Mac & Windows)",
+          "estimatedHours": 0.3
+        },
+        {
+          "id": "database_setup",
+          "name": "Creating the Databases",
+          "estimatedHours": 0.2
+        },
+        {
+          "id": "course_overview",
+          "name": "What You'll Learn & Learning Paths",
+          "estimatedHours": 0.2
+        }
       ]
     },
     {
@@ -125,17 +141,61 @@
       "tier": 1,
       "estimatedHours": 1,
       "topics": [
-        { "id": "select_statement", "name": "The SELECT Statement", "estimatedHours": 0.1 },
-        { "id": "select_clause", "name": "The SELECT Clause", "estimatedHours": 0.1 },
-        { "id": "where_clause", "name": "The WHERE Clause", "estimatedHours": 0.1 },
-        { "id": "logical_operators", "name": "The AND, OR and NOT Operators", "estimatedHours": 0.1 },
-        { "id": "in_operator", "name": "The IN Operator", "estimatedHours": 0.05 },
-        { "id": "between_operator", "name": "The BETWEEN Operator", "estimatedHours": 0.05 },
-        { "id": "like_operator", "name": "The LIKE Operator", "estimatedHours": 0.1 },
-        { "id": "regexp_operator", "name": "The REGEXP Operator", "estimatedHours": 0.15 },
-        { "id": "is_null_operator", "name": "The IS NULL Operator", "estimatedHours": 0.05 },
-        { "id": "order_by_clause", "name": "The ORDER BY Clause", "estimatedHours": 0.12 },
-        { "id": "limit_clause", "name": "The LIMIT Clause", "estimatedHours": 0.06 }
+        {
+          "id": "select_statement",
+          "name": "The SELECT Statement",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "select_clause",
+          "name": "The SELECT Clause",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "where_clause",
+          "name": "The WHERE Clause",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "logical_operators",
+          "name": "The AND, OR and NOT Operators",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "in_operator",
+          "name": "The IN Operator",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "between_operator",
+          "name": "The BETWEEN Operator",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "like_operator",
+          "name": "The LIKE Operator",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "regexp_operator",
+          "name": "The REGEXP Operator",
+          "estimatedHours": 0.15
+        },
+        {
+          "id": "is_null_operator",
+          "name": "The IS NULL Operator",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "order_by_clause",
+          "name": "The ORDER BY Clause",
+          "estimatedHours": 0.12
+        },
+        {
+          "id": "limit_clause",
+          "name": "The LIMIT Clause",
+          "estimatedHours": 0.06
+        }
       ]
     },
     {
@@ -144,19 +204,71 @@
       "tier": 1,
       "estimatedHours": 1,
       "topics": [
-        { "id": "inner_joins", "name": "Inner Joins", "estimatedHours": 0.14 },
-        { "id": "joining_databases", "name": "Joining Across Databases", "estimatedHours": 0.05 },
-        { "id": "self_joins", "name": "Self Joins", "estimatedHours": 0.07 },
-        { "id": "multiple_table_joins", "name": "Joining Multiple Tables", "estimatedHours": 0.11 },
-        { "id": "compound_joins", "name": "Compound Join Conditions", "estimatedHours": 0.06 },
-        { "id": "implicit_joins", "name": "Implicit Join Syntax", "estimatedHours": 0.04 },
-        { "id": "outer_joins", "name": "Outer Joins", "estimatedHours": 0.11 },
-        { "id": "multiple_outer_joins", "name": "Outer Join Between Multiple Tables", "estimatedHours": 0.1 },
-        { "id": "self_outer_joins", "name": "Self Outer Joins", "estimatedHours": 0.04 },
-        { "id": "using_clause", "name": "The USING Clause", "estimatedHours": 0.09 },
-        { "id": "natural_joins", "name": "Natural Joins", "estimatedHours": 0.02 },
-        { "id": "cross_joins", "name": "Cross Joins", "estimatedHours": 0.05 },
-        { "id": "unions", "name": "Unions", "estimatedHours": 0.14 }
+        {
+          "id": "inner_joins",
+          "name": "Inner Joins",
+          "estimatedHours": 0.14
+        },
+        {
+          "id": "joining_databases",
+          "name": "Joining Across Databases",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "self_joins",
+          "name": "Self Joins",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "multiple_table_joins",
+          "name": "Joining Multiple Tables",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "compound_joins",
+          "name": "Compound Join Conditions",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "implicit_joins",
+          "name": "Implicit Join Syntax",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "outer_joins",
+          "name": "Outer Joins",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "multiple_outer_joins",
+          "name": "Outer Join Between Multiple Tables",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "self_outer_joins",
+          "name": "Self Outer Joins",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "using_clause",
+          "name": "The USING Clause",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "natural_joins",
+          "name": "Natural Joins",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "cross_joins",
+          "name": "Cross Joins",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "unions",
+          "name": "Unions",
+          "estimatedHours": 0.14
+        }
       ]
     },
     {
@@ -165,16 +277,56 @@
       "tier": 1,
       "estimatedHours": 0.7,
       "topics": [
-        { "id": "column_attributes", "name": "Column Attributes", "estimatedHours": 0.06 },
-        { "id": "inserting_row", "name": "Inserting a Row", "estimatedHours": 0.1 },
-        { "id": "inserting_multiple_rows", "name": "Inserting Multiple Rows", "estimatedHours": 0.05 },
-        { "id": "hierarchical_rows", "name": "Inserting Hierarchical Rows", "estimatedHours": 0.1 },
-        { "id": "copy_table", "name": "Creating a Copy of a Table", "estimatedHours": 0.15 },
-        { "id": "updating_single_row", "name": "Updating a Single Row", "estimatedHours": 0.07 },
-        { "id": "updating_multiple_rows", "name": "Updating Multiple Rows", "estimatedHours": 0.05 },
-        { "id": "subqueries_updates", "name": "Using Subqueries in Updates", "estimatedHours": 0.09 },
-        { "id": "deleting_rows", "name": "Deleting Rows", "estimatedHours": 0.02 },
-        { "id": "restoring_databases", "name": "Restoring the Databases", "estimatedHours": 0.02 }
+        {
+          "id": "column_attributes",
+          "name": "Column Attributes",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "inserting_row",
+          "name": "Inserting a Row",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "inserting_multiple_rows",
+          "name": "Inserting Multiple Rows",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "hierarchical_rows",
+          "name": "Inserting Hierarchical Rows",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "copy_table",
+          "name": "Creating a Copy of a Table",
+          "estimatedHours": 0.15
+        },
+        {
+          "id": "updating_single_row",
+          "name": "Updating a Single Row",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "updating_multiple_rows",
+          "name": "Updating Multiple Rows",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "subqueries_updates",
+          "name": "Using Subqueries in Updates",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "deleting_rows",
+          "name": "Deleting Rows",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "restoring_databases",
+          "name": "Restoring the Databases",
+          "estimatedHours": 0.02
+        }
       ]
     },
     {
@@ -183,10 +335,26 @@
       "tier": 1,
       "estimatedHours": 0.52,
       "topics": [
-        { "id": "aggregate_functions", "name": "Aggregate Functions", "estimatedHours": 0.16 },
-        { "id": "group_by_clause", "name": "The GROUP BY Clause", "estimatedHours": 0.12 },
-        { "id": "having_clause", "name": "The HAVING Clause", "estimatedHours": 0.15 },
-        { "id": "rollup_operator", "name": "The ROLLUP Operator", "estimatedHours": 0.08 }
+        {
+          "id": "aggregate_functions",
+          "name": "Aggregate Functions",
+          "estimatedHours": 0.16
+        },
+        {
+          "id": "group_by_clause",
+          "name": "The GROUP BY Clause",
+          "estimatedHours": 0.12
+        },
+        {
+          "id": "having_clause",
+          "name": "The HAVING Clause",
+          "estimatedHours": 0.15
+        },
+        {
+          "id": "rollup_operator",
+          "name": "The ROLLUP Operator",
+          "estimatedHours": 0.08
+        }
       ]
     },
     {
@@ -195,16 +363,56 @@
       "tier": 2,
       "estimatedHours": 0.65,
       "topics": [
-        { "id": "subqueries_intro", "name": "Introduction to Subqueries", "estimatedHours": 0.02 },
-        { "id": "subqueries", "name": "Subqueries", "estimatedHours": 0.04 },
-        { "id": "in_operator_subqueries", "name": "The IN Operator with Subqueries", "estimatedHours": 0.06 },
-        { "id": "subqueries_vs_joins", "name": "Subqueries vs Joins", "estimatedHours": 0.09 },
-        { "id": "all_keyword", "name": "The ALL Keyword", "estimatedHours": 0.08 },
-        { "id": "any_keyword", "name": "The ANY Keyword", "estimatedHours": 0.04 },
-        { "id": "correlated_subqueries", "name": "Correlated Subqueries", "estimatedHours": 0.09 },
-        { "id": "exists_operator", "name": "The EXISTS Operator", "estimatedHours": 0.09 },
-        { "id": "subqueries_select", "name": "Subqueries in the SELECT Clause", "estimatedHours": 0.07 },
-        { "id": "subqueries_from", "name": "Subqueries in the FROM Clause", "estimatedHours": 0.05 }
+        {
+          "id": "subqueries_intro",
+          "name": "Introduction to Subqueries",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "subqueries",
+          "name": "Subqueries",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "in_operator_subqueries",
+          "name": "The IN Operator with Subqueries",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "subqueries_vs_joins",
+          "name": "Subqueries vs Joins",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "all_keyword",
+          "name": "The ALL Keyword",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "any_keyword",
+          "name": "The ANY Keyword",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "correlated_subqueries",
+          "name": "Correlated Subqueries",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "exists_operator",
+          "name": "The EXISTS Operator",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "subqueries_select",
+          "name": "Subqueries in the SELECT Clause",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "subqueries_from",
+          "name": "Subqueries in the FROM Clause",
+          "estimatedHours": 0.05
+        }
       ]
     },
     {
@@ -213,14 +421,46 @@
       "tier": 1,
       "estimatedHours": 0.53,
       "topics": [
-        { "id": "numeric_functions", "name": "Numeric Functions", "estimatedHours": 0.05 },
-        { "id": "string_functions", "name": "String Functions", "estimatedHours": 0.1 },
-        { "id": "date_functions", "name": "Date Functions in MySQL", "estimatedHours": 0.07 },
-        { "id": "formatting_dates", "name": "Formatting Dates and Times", "estimatedHours": 0.04 },
-        { "id": "calculating_dates", "name": "Calculating Dates and Times", "estimatedHours": 0.05 },
-        { "id": "ifnull_coalesce", "name": "The IFNULL and COALESCE Functions", "estimatedHours": 0.06 },
-        { "id": "if_function", "name": "The IF Function", "estimatedHours": 0.08 },
-        { "id": "case_operator", "name": "The CASE Operator", "estimatedHours": 0.09 }
+        {
+          "id": "numeric_functions",
+          "name": "Numeric Functions",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "string_functions",
+          "name": "String Functions",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "date_functions",
+          "name": "Date Functions in MySQL",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "formatting_dates",
+          "name": "Formatting Dates and Times",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "calculating_dates",
+          "name": "Calculating Dates and Times",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "ifnull_coalesce",
+          "name": "The IFNULL and COALESCE Functions",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "if_function",
+          "name": "The IF Function",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "case_operator",
+          "name": "The CASE Operator",
+          "estimatedHours": 0.09
+        }
       ]
     },
     {
@@ -229,11 +469,31 @@
       "tier": 2,
       "estimatedHours": 0.32,
       "topics": [
-        { "id": "creating_views", "name": "Creating Views", "estimatedHours": 0.09 },
-        { "id": "altering_dropping_views", "name": "Altering or Dropping Views", "estimatedHours": 0.05 },
-        { "id": "updatable_views", "name": "Updatable Views", "estimatedHours": 0.09 },
-        { "id": "with_check_option", "name": "THE WITH OPTION CHECK Clause", "estimatedHours": 0.04 },
-        { "id": "views_benefits", "name": "Other Benefits of Views", "estimatedHours": 0.04 }
+        {
+          "id": "creating_views",
+          "name": "Creating Views",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "altering_dropping_views",
+          "name": "Altering or Dropping Views",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "updatable_views",
+          "name": "Updatable Views",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "with_check_option",
+          "name": "THE WITH OPTION CHECK Clause",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "views_benefits",
+          "name": "Other Benefits of Views",
+          "estimatedHours": 0.04
+        }
       ]
     },
     {
@@ -242,17 +502,61 @@
       "tier": 2,
       "estimatedHours": 0.82,
       "topics": [
-        { "id": "stored_procedures_intro", "name": "What are Stored Procedures", "estimatedHours": 0.04 },
-        { "id": "creating_procedures", "name": "Creating a Stored Procedure", "estimatedHours": 0.09 },
-        { "id": "procedures_workbench", "name": "Creating Procedures Using MySQLWorkbench", "estimatedHours": 0.02 },
-        { "id": "dropping_procedures", "name": "Dropping Stored Procedures", "estimatedHours": 0.04 },
-        { "id": "parameters", "name": "Parameters", "estimatedHours": 0.09 },
-        { "id": "default_parameters", "name": "Parameters with Default Value", "estimatedHours": 0.14 },
-        { "id": "parameter_validation", "name": "Parameter Validation", "estimatedHours": 0.11 },
-        { "id": "output_parameters", "name": "Output Parameters", "estimatedHours": 0.07 },
-        { "id": "variables", "name": "Variables", "estimatedHours": 0.08 },
-        { "id": "functions", "name": "Functions", "estimatedHours": 0.11 },
-        { "id": "conventions", "name": "Other Conventions", "estimatedHours": 0.03 }
+        {
+          "id": "stored_procedures_intro",
+          "name": "What are Stored Procedures",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "creating_procedures",
+          "name": "Creating a Stored Procedure",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "procedures_workbench",
+          "name": "Creating Procedures Using MySQLWorkbench",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "dropping_procedures",
+          "name": "Dropping Stored Procedures",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "parameters",
+          "name": "Parameters",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "default_parameters",
+          "name": "Parameters with Default Value",
+          "estimatedHours": 0.14
+        },
+        {
+          "id": "parameter_validation",
+          "name": "Parameter Validation",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "output_parameters",
+          "name": "Output Parameters",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "variables",
+          "name": "Variables",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "functions",
+          "name": "Functions",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "conventions",
+          "name": "Other Conventions",
+          "estimatedHours": 0.03
+        }
       ]
     },
     {
@@ -261,12 +565,36 @@
       "tier": 2,
       "estimatedHours": 0.35,
       "topics": [
-        { "id": "triggers", "name": "Triggers", "estimatedHours": 0.13 },
-        { "id": "viewing_triggers", "name": "Viewing Triggers", "estimatedHours": 0.02 },
-        { "id": "dropping_triggers", "name": "Dropping Triggers", "estimatedHours": 0.01 },
-        { "id": "auditing_triggers", "name": "Using Triggers for Auditing", "estimatedHours": 0.08 },
-        { "id": "events", "name": "Events", "estimatedHours": 0.08 },
-        { "id": "managing_events", "name": "Viewing, Dropping and Altering Events", "estimatedHours": 0.03 }
+        {
+          "id": "triggers",
+          "name": "Triggers",
+          "estimatedHours": 0.13
+        },
+        {
+          "id": "viewing_triggers",
+          "name": "Viewing Triggers",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "dropping_triggers",
+          "name": "Dropping Triggers",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "auditing_triggers",
+          "name": "Using Triggers for Auditing",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "events",
+          "name": "Events",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "managing_events",
+          "name": "Viewing, Dropping and Altering Events",
+          "estimatedHours": 0.03
+        }
       ]
     },
     {
@@ -275,16 +603,56 @@
       "tier": 2,
       "estimatedHours": 0.73,
       "topics": [
-        { "id": "transactions_intro", "name": "Transactions", "estimatedHours": 0.05 },
-        { "id": "creating_transactions", "name": "Creating Transactions", "estimatedHours": 0.09 },
-        { "id": "concurrency_locking", "name": "Concurrency and Locking", "estimatedHours": 0.07 },
-        { "id": "concurrency_problems", "name": "Concurrency Problems", "estimatedHours": 0.12 },
-        { "id": "isolation_levels", "name": "Transaction Isolation Levels", "estimatedHours": 0.1 },
-        { "id": "read_uncommitted", "name": "READ UNCOMMITTED Isolation Level", "estimatedHours": 0.06 },
-        { "id": "read_committed", "name": "READ COMMITTED Isolation Level", "estimatedHours": 0.05 },
-        { "id": "repeatable_read", "name": "REPEATABLE READ Isolation Level", "estimatedHours": 0.06 },
-        { "id": "serializable", "name": "SERIALIZABLE Isolation Level", "estimatedHours": 0.04 },
-        { "id": "deadlocks", "name": "Deadlocks", "estimatedHours": 0.1 }
+        {
+          "id": "transactions_intro",
+          "name": "Transactions",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "creating_transactions",
+          "name": "Creating Transactions",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "concurrency_locking",
+          "name": "Concurrency and Locking",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "concurrency_problems",
+          "name": "Concurrency Problems",
+          "estimatedHours": 0.12
+        },
+        {
+          "id": "isolation_levels",
+          "name": "Transaction Isolation Levels",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "read_uncommitted",
+          "name": "READ UNCOMMITTED Isolation Level",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "read_committed",
+          "name": "READ COMMITTED Isolation Level",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "repeatable_read",
+          "name": "REPEATABLE READ Isolation Level",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "serializable",
+          "name": "SERIALIZABLE Isolation Level",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "deadlocks",
+          "name": "Deadlocks",
+          "estimatedHours": 0.1
+        }
       ]
     },
     {
@@ -293,15 +661,51 @@
       "tier": 1,
       "estimatedHours": 0.4,
       "topics": [
-        { "id": "data_types_intro", "name": "Introduction to Data Types", "estimatedHours": 0.01 },
-        { "id": "string_types", "name": "String Types", "estimatedHours": 0.04 },
-        { "id": "integer_types", "name": "Integer Types", "estimatedHours": 0.05 },
-        { "id": "floating_point_types", "name": "Fixed-point and Floating-point Types", "estimatedHours": 0.03 },
-        { "id": "boolean_types", "name": "Boolean Types", "estimatedHours": 0.01 },
-        { "id": "enum_set_types", "name": "Enum and Set Types", "estimatedHours": 0.06 },
-        { "id": "date_time_types", "name": "Date and Time Types", "estimatedHours": 0.01 },
-        { "id": "blob_types", "name": "Blob Types", "estimatedHours": 0.02 },
-        { "id": "json_type", "name": "JSON Type", "estimatedHours": 0.17 }
+        {
+          "id": "data_types_intro",
+          "name": "Introduction to Data Types",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "string_types",
+          "name": "String Types",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "integer_types",
+          "name": "Integer Types",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "floating_point_types",
+          "name": "Fixed-point and Floating-point Types",
+          "estimatedHours": 0.03
+        },
+        {
+          "id": "boolean_types",
+          "name": "Boolean Types",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "enum_set_types",
+          "name": "Enum and Set Types",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "date_time_types",
+          "name": "Date and Time Types",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "blob_types",
+          "name": "Blob Types",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "json_type",
+          "name": "JSON Type",
+          "estimatedHours": 0.17
+        }
       ]
     },
     {
@@ -310,41 +714,161 @@
       "tier": 2,
       "estimatedHours": 2,
       "topics": [
-        { "id": "design_intro", "name": "Introduction to Database Design", "estimatedHours": 0.02 },
-        { "id": "data_modelling", "name": "Data Modelling", "estimatedHours": 0.04 },
-        { "id": "conceptual_models", "name": "Conceptual Models", "estimatedHours": 0.08 },
-        { "id": "logical_models", "name": "Logical Models", "estimatedHours": 0.12 },
-        { "id": "physical_models", "name": "Physical Models", "estimatedHours": 0.11 },
-        { "id": "primary_keys", "name": "Primary Keys", "estimatedHours": 0.06 },
-        { "id": "foreign_keys", "name": "Foreign Keys", "estimatedHours": 0.1 },
-        { "id": "foreign_key_constraints", "name": "Foreign Key Constraints", "estimatedHours": 0.09 },
-        { "id": "normalization", "name": "Normalization", "estimatedHours": 0.02 },
-        { "id": "first_normal_form", "name": "1NF- First Normal Form", "estimatedHours": 0.05 },
-        { "id": "link_tables", "name": "Link Tables", "estimatedHours": 0.07 },
-        { "id": "second_normal_form", "name": "2NF- Second Normal Form", "estimatedHours": 0.11 },
-        { "id": "third_normal_form", "name": "3NF- Third Normal Form", "estimatedHours": 0.03 },
-        { "id": "pragmatic_advice", "name": "My Pragmatic Advice", "estimatedHours": 0.05 },
-        { "id": "model_universe", "name": "Don't Model the Universe", "estimatedHours": 0.07 },
-        { "id": "forward_engineering", "name": "Forward Engineering a Model", "estimatedHours": 0.04 },
-        { "id": "synchronizing_model", "name": "Synchronizing a Model with a Database", "estimatedHours": 0.08 },
-        { "id": "reverse_engineering", "name": "Reverse Engineering a Database", "estimatedHours": 0.05 },
-        { "id": "flight_booking_project", "name": "Project- Flight Booking System", "estimatedHours": 0.01 },
-        { "id": "flight_booking_conceptual", "name": "Solution- Conceptual Model", "estimatedHours": 0.13 },
-        { "id": "flight_booking_logical", "name": "Solution- Logical Model", "estimatedHours": 0.15 },
-        { "id": "video_rental_project", "name": "Project - Video Rental Application", "estimatedHours": 0.02 },
-        { "id": "video_rental_conceptual", "name": "Solution- Conceptual Model", "estimatedHours": 0.12 },
-        { "id": "video_rental_logical", "name": "Solution- Logical Model", "estimatedHours": 0.14 },
-        { "id": "creating_databases", "name": "Creating and Dropping Databases", "estimatedHours": 0.03 },
-        { "id": "creating_tables", "name": "Creating Tables", "estimatedHours": 0.05 },
-        { "id": "altering_tables", "name": "Altering Tables", "estimatedHours": 0.05 },
-        { "id": "creating_relationships", "name": "Creating Relationships", "estimatedHours": 0.08 },
+        {
+          "id": "design_intro",
+          "name": "Introduction to Database Design",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "data_modelling",
+          "name": "Data Modelling",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "conceptual_models",
+          "name": "Conceptual Models",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "logical_models",
+          "name": "Logical Models",
+          "estimatedHours": 0.12
+        },
+        {
+          "id": "physical_models",
+          "name": "Physical Models",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "primary_keys",
+          "name": "Primary Keys",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "foreign_keys",
+          "name": "Foreign Keys",
+          "estimatedHours": 0.1
+        },
+        {
+          "id": "foreign_key_constraints",
+          "name": "Foreign Key Constraints",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "normalization",
+          "name": "Normalization",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "first_normal_form",
+          "name": "1NF- First Normal Form",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "link_tables",
+          "name": "Link Tables",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "second_normal_form",
+          "name": "2NF- Second Normal Form",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "third_normal_form",
+          "name": "3NF- Third Normal Form",
+          "estimatedHours": 0.03
+        },
+        {
+          "id": "pragmatic_advice",
+          "name": "My Pragmatic Advice",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "model_universe",
+          "name": "Don't Model the Universe",
+          "estimatedHours": 0.07
+        },
+        {
+          "id": "forward_engineering",
+          "name": "Forward Engineering a Model",
+          "estimatedHours": 0.04
+        },
+        {
+          "id": "synchronizing_model",
+          "name": "Synchronizing a Model with a Database",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "reverse_engineering",
+          "name": "Reverse Engineering a Database",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "flight_booking_project",
+          "name": "Project- Flight Booking System",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "flight_booking_conceptual",
+          "name": "Solution- Conceptual Model",
+          "estimatedHours": 0.13
+        },
+        {
+          "id": "flight_booking_logical",
+          "name": "Solution- Logical Model",
+          "estimatedHours": 0.15
+        },
+        {
+          "id": "video_rental_project",
+          "name": "Project - Video Rental Application",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "video_rental_conceptual",
+          "name": "Solution- Conceptual Model",
+          "estimatedHours": 0.12
+        },
+        {
+          "id": "video_rental_logical",
+          "name": "Solution- Logical Model",
+          "estimatedHours": 0.14
+        },
+        {
+          "id": "creating_databases",
+          "name": "Creating and Dropping Databases",
+          "estimatedHours": 0.03
+        },
+        {
+          "id": "creating_tables",
+          "name": "Creating Tables",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "altering_tables",
+          "name": "Altering Tables",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "creating_relationships",
+          "name": "Creating Relationships",
+          "estimatedHours": 0.08
+        },
         {
           "id": "altering_constraints",
           "name": "Altering Primary and Foreign Key Constraints",
           "estimatedHours": 0.04
         },
-        { "id": "character_sets", "name": "Character Sets and Collations", "estimatedHours": 0.11 },
-        { "id": "storage_engines", "name": "Storage Engines", "estimatedHours": 0.04 }
+        {
+          "id": "character_sets",
+          "name": "Character Sets and Collations",
+          "estimatedHours": 0.11
+        },
+        {
+          "id": "storage_engines",
+          "name": "Storage Engines",
+          "estimatedHours": 0.04
+        }
       ]
     },
     {
@@ -353,18 +877,66 @@
       "tier": 2,
       "estimatedHours": 0.88,
       "topics": [
-        { "id": "indexing_intro", "name": "Introduction to Indexing", "estimatedHours": 0.01 },
-        { "id": "indexes", "name": "Indexes", "estimatedHours": 0.05 },
-        { "id": "creating_indexes", "name": "Creating Indexes", "estimatedHours": 0.08 },
-        { "id": "viewing_indexes", "name": "Viewing Indexes", "estimatedHours": 0.06 },
-        { "id": "prefix_indexes", "name": "Prefix Indexes", "estimatedHours": 0.06 },
-        { "id": "fulltext_indexes", "name": "Full-text Indexes", "estimatedHours": 0.13 },
-        { "id": "composite_indexes", "name": "Composite Indexes", "estimatedHours": 0.09 },
-        { "id": "index_column_order", "name": "Order of Columns in Composite Indexes", "estimatedHours": 0.15 },
-        { "id": "ignored_indexes", "name": "When Indexes are Ignored", "estimatedHours": 0.08 },
-        { "id": "indexes_sorting", "name": "Using Indexes for Sorting", "estimatedHours": 0.12 },
-        { "id": "covering_indexes", "name": "Covering Indexes", "estimatedHours": 0.03 },
-        { "id": "index_maintenance", "name": "Index Maintenance", "estimatedHours": 0.02 }
+        {
+          "id": "indexing_intro",
+          "name": "Introduction to Indexing",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "indexes",
+          "name": "Indexes",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "creating_indexes",
+          "name": "Creating Indexes",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "viewing_indexes",
+          "name": "Viewing Indexes",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "prefix_indexes",
+          "name": "Prefix Indexes",
+          "estimatedHours": 0.06
+        },
+        {
+          "id": "fulltext_indexes",
+          "name": "Full-text Indexes",
+          "estimatedHours": 0.13
+        },
+        {
+          "id": "composite_indexes",
+          "name": "Composite Indexes",
+          "estimatedHours": 0.09
+        },
+        {
+          "id": "index_column_order",
+          "name": "Order of Columns in Composite Indexes",
+          "estimatedHours": 0.15
+        },
+        {
+          "id": "ignored_indexes",
+          "name": "When Indexes are Ignored",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "indexes_sorting",
+          "name": "Using Indexes for Sorting",
+          "estimatedHours": 0.12
+        },
+        {
+          "id": "covering_indexes",
+          "name": "Covering Indexes",
+          "estimatedHours": 0.03
+        },
+        {
+          "id": "index_maintenance",
+          "name": "Index Maintenance",
+          "estimatedHours": 0.02
+        }
       ]
     },
     {
@@ -373,14 +945,46 @@
       "tier": 2,
       "estimatedHours": 0.25,
       "topics": [
-        { "id": "security_intro", "name": "Introduction to Database Security", "estimatedHours": 0.01 },
-        { "id": "creating_users", "name": "Creating a User", "estimatedHours": 0.05 },
-        { "id": "viewing_users", "name": "Viewing Users", "estimatedHours": 0.02 },
-        { "id": "dropping_users", "name": "Dropping Users", "estimatedHours": 0.01 },
-        { "id": "changing_passwords", "name": "Changing Passwords", "estimatedHours": 0.02 },
-        { "id": "granting_privileges", "name": "Granting Privileges", "estimatedHours": 0.08 },
-        { "id": "viewing_privileges", "name": "Viewing Privileges", "estimatedHours": 0.03 },
-        { "id": "revoking_privileges", "name": "Revoking Privileges", "estimatedHours": 0.02 }
+        {
+          "id": "security_intro",
+          "name": "Introduction to Database Security",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "creating_users",
+          "name": "Creating a User",
+          "estimatedHours": 0.05
+        },
+        {
+          "id": "viewing_users",
+          "name": "Viewing Users",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "dropping_users",
+          "name": "Dropping Users",
+          "estimatedHours": 0.01
+        },
+        {
+          "id": "changing_passwords",
+          "name": "Changing Passwords",
+          "estimatedHours": 0.02
+        },
+        {
+          "id": "granting_privileges",
+          "name": "Granting Privileges",
+          "estimatedHours": 0.08
+        },
+        {
+          "id": "viewing_privileges",
+          "name": "Viewing Privileges",
+          "estimatedHours": 0.03
+        },
+        {
+          "id": "revoking_privileges",
+          "name": "Revoking Privileges",
+          "estimatedHours": 0.02
+        }
       ]
     },
     {
@@ -394,9 +998,18 @@
           "name": "Easy Problems (175, 181-183, 196-197, 511, 584, 586-588, 595, 596, 607, 610, 613, 619-620, 626-627, 1050, 1068)",
           "estimatedHours": 1
         },
-        { "id": "medium_problems", "name": "Medium Problems (176-178, 180, 184, 608, 1045)", "estimatedHours": 1.2 },
-        { "id": "hard_problems", "name": "Hard Problems (185, 262)", "estimatedHours": 0.8 }
+        {
+          "id": "medium_problems",
+          "name": "Medium Problems (176-178, 180, 184, 608, 1045)",
+          "estimatedHours": 1.2
+        },
+        {
+          "id": "hard_problems",
+          "name": "Hard Problems (185, 262)",
+          "estimatedHours": 0.8
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 28.439999999999987
 }

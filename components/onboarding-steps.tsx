@@ -192,8 +192,8 @@ export function PersonalInfoStep({
       {/* Exam Date */}
       {formData?.selectedExamId && (
         <div className="space-y-2">
-          <Label htmlFor="examDate" className="text-sm font-medium">
-            Target Date *
+                    <Label htmlFor="examDate" className="text-sm font-medium">
+            Target Completion Date *
           </Label>
           <div className="relative">
             <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />

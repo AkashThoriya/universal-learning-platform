@@ -30,9 +30,8 @@ import {
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { z } from 'zod';
 
-import { PersonaDetectionStep } from '@/components/onboarding/PersonaDetectionCompact';
-import { PersonalInfoStep } from '@/components/onboarding/PersonalInfoStepCompact';
-import { CustomLearningStep } from '@/components/onboarding/CustomLearningStep';
+import { BasicInfoStep } from '@/components/onboarding/BasicInfoStep';
+import { PersonaScheduleStep } from '@/components/onboarding/PersonaScheduleStep';
 import { SyllabusManagementStep, PreferencesStep } from '@/components/onboarding-steps-2';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -85,7 +84,7 @@ interface OnboardingFormData {
   // Step 4: Syllabus Configuration
   syllabus: SyllabusSubject[];
 
-  // Step 5: Study Preferences
+  // Step 4: Study Preferences
   preferences: {
     dailyStudyGoalMinutes: number;
     preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
@@ -136,13 +135,13 @@ const onboardingSchema = z.object({
   selectedExamId: z.string().min(1, 'Please select an exam'),
   examDate: z
     .string()
-    .min(1, 'Exam date is required')
+    .min(1, 'Target completion date is required')
     .refine(date => {
       const examDate = new Date(date);
       const today = new Date();
       const minDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
       return examDate >= minDate;
-    }, 'Exam date must be at least 7 days from today'),
+    }, 'Target completion date must be at least 7 days from today'),
   isCustomExam: z.boolean(),
   customExam: z
     .object({
@@ -210,17 +209,17 @@ const onboardingSchema = z.object({
  */
 const STEP_INFO = [
   {
-    title: 'Personal Profile',
-    description: 'Tell us about yourself to personalize your experience',
-    helpText: 'This helps us customize study recommendations based on your lifestyle and schedule.',
+    title: 'Basic Information',
+    description: 'Tell us your name and choose your learning path',
+    helpText: 'This helps us understand what you want to learn and how to address you.',
     icon: '👤',
     estimatedTime: '2 minutes',
   },
   {
-    title: 'Learning Path Selection',
-    description: 'Choose your learning path and set your timeline',
-    helpText: "Select the exam you're preparing for and when you plan to take it.",
-    icon: '📚',
+    title: 'Learning Style & Schedule',
+    description: 'Set up your persona, study capacity, and target timeline',
+    helpText: 'We create a personalized schedule based on your lifestyle and availability.',
+    icon: '�',
     estimatedTime: '3 minutes',
   },
   {
@@ -236,13 +235,6 @@ const STEP_INFO = [
     helpText: 'Set up your daily goals and how you want to be reminded.',
     icon: '⚙️',
     estimatedTime: '3 minutes',
-  },
-  {
-    title: 'Custom Learning Goals',
-    description: 'Set up your personal learning goals beyond structured courses',
-    helpText: 'Create goals for skills, technologies, or knowledge you want to develop alongside your exam prep.',
-    icon: '🎯',
-    estimatedTime: '4 minutes',
   },
 ];
 
@@ -287,7 +279,7 @@ export default function OnboardingSetupPage() {
   const announceStepChange = useCallback((step: number) => {
     const stepInfo = STEP_INFO[step - 1];
     if (announceRef.current && stepInfo) {
-      announceRef.current.textContent = `Now on step ${step} of 5: ${stepInfo.title}. ${stepInfo.description}`;
+      announceRef.current.textContent = `Now on step ${step} of 4: ${stepInfo.title}. ${stepInfo.description}`;
     }
   }, []);
 
@@ -337,7 +329,7 @@ export default function OnboardingSetupPage() {
 
   // Enhanced multi-step form management with analytics
   const multiStep = useMultiStepForm({
-    totalSteps: 5,
+    totalSteps: 4,
     persistState: true,
     storageKey: 'onboarding-progress-v2',
     onStepChange: (current, previous) => {
@@ -425,7 +417,7 @@ export default function OnboardingSetupPage() {
       setSelectedExam(null);
       logInfo('Custom exam selected', { isCustomExam: form.data.isCustomExam });
     }
-  }, [form.data.selectedExamId, form.data.isCustomExam, form]);
+  }, [form.data.selectedExamId, form.data.isCustomExam]);
 
   // Filter exams based on search query
   const filteredExams = EXAMS_DATA.filter(
@@ -445,42 +437,46 @@ export default function OnboardingSetupPage() {
 
       switch (step) {
         case 1:
-          if (!form.data.userPersona?.type) {
-            errors.persona = 'Please select your profile type';
-          }
-          break;
-
-        case 2:
+          // Step 1: Basic Info (Name + Course Selection)
           if (form.data.displayName.length < 2) {
             errors.displayName = 'Name must be at least 2 characters';
           }
           if (!form.data.selectedExamId) {
-            errors.exam = 'Please select an exam';
+            errors.exam = 'Please select a learning path';
+          }
+          if (form.data.isCustomExam && !form.data.customExam.name) {
+            errors.customExam = 'Please enter a name for your custom course';
+          }
+          break;
+
+        case 2:
+          // Step 2: Persona + Schedule (Persona + Daily Hours + Target Date)
+          if (!form.data.userPersona?.type) {
+            errors.persona = 'Please select your profile type';
+          }
+          if (!form.data.preferences?.dailyStudyGoalMinutes || form.data.preferences.dailyStudyGoalMinutes < 60) {
+            errors.studyGoal = 'Please set your daily study hours (minimum 1 hour)';
           }
           if (!form.data.examDate) {
-            errors.examDate = 'Please set your exam date';
+            errors.examDate = 'Please set your target completion date';
           } else {
             const examDate = new Date(form.data.examDate);
             const minDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             if (examDate < minDate) {
-              errors.examDate = 'Exam date must be at least 7 days from today';
+              errors.examDate = 'Target completion date must be at least 7 days from today';
             }
-          }
-          if (form.data.isCustomExam && !form.data.customExam.name) {
-            errors.customExam = 'Please enter a name for your custom exam';
           }
           break;
 
         case 3:
+          // Step 3: Syllabus Management
           if (form.data.syllabus.length === 0) {
             errors.syllabus = 'Please add at least one subject';
           }
           break;
 
         case 4:
-          if (form.data.preferences.dailyStudyGoalMinutes < 60) {
-            errors.studyGoal = 'Daily study goal must be at least 1 hour';
-          }
+          // Step 4: Study Preferences
           if (
             !form.data.preferences.tierDefinitions[1] ||
             !form.data.preferences.tierDefinitions[2] ||
@@ -529,12 +525,10 @@ export default function OnboardingSetupPage() {
 
   // Enhanced navigation handlers with accessibility
   const handleNext = useCallback(async () => {
-    logInfo('Attempting to navigate to next step', {
-      currentStep: multiStep.currentStep,
-      totalSteps: 5,
-    });
-
-    const isValid = await validateStep(multiStep.currentStep);
+      logInfo('Attempting to navigate to next step', {
+        currentStep: multiStep.currentStep,
+        totalSteps: 4,
+      });    const isValid = await validateStep(multiStep.currentStep);
     if (isValid) {
       setValidationErrors({});
       multiStep.goToNext();
@@ -1025,16 +1019,21 @@ export default function OnboardingSetupPage() {
     try {
       switch (multiStep.currentStep) {
         case 1:
-          return <PersonaDetectionStep form={form as UseFormReturn<OnboardingFormData>} />;
-
-        case 2:
           return (
-            <PersonalInfoStep
+            <BasicInfoStep
               form={form as UseFormReturn<OnboardingFormData>}
               filteredExams={filteredExams}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               onExamSelect={handleExamSelect}
+              selectedExam={selectedExam}
+            />
+          );
+
+        case 2:
+          return (
+            <PersonaScheduleStep
+              form={form as UseFormReturn<OnboardingFormData>}
               selectedExam={selectedExam}
             />
           );
@@ -1055,9 +1054,6 @@ export default function OnboardingSetupPage() {
 
         case 4:
           return <PreferencesStep form={form as UseFormReturn<OnboardingFormData>} />;
-
-        case 5:
-          return <CustomLearningStep form={form as UseFormReturn<OnboardingFormData>} />;
 
         default:
           return (
@@ -1314,7 +1310,7 @@ export default function OnboardingSetupPage() {
                     <strong>Exam:</strong> {selectedExam?.name ?? form.data.customExam?.name}
                   </p>
                   <p>
-                    <strong>Exam Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}
+                    <strong>Target Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}
                   </p>
                 </div>
               </div>

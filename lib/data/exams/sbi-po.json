@@ -41,12 +41,36 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "simplification", "name": "Simplification", "estimatedHours": 15 },
-        { "id": "percentage", "name": "Percentage", "estimatedHours": 12 },
-        { "id": "ratio_proportion", "name": "Ratio & Proportion", "estimatedHours": 15 },
-        { "id": "time_work", "name": "Time & Work", "estimatedHours": 18 },
-        { "id": "profit_loss", "name": "Profit & Loss", "estimatedHours": 12 },
-        { "id": "interest", "name": "Simple & Compound Interest", "estimatedHours": 8 }
+        {
+          "id": "simplification",
+          "name": "Simplification",
+          "estimatedHours": 15
+        },
+        {
+          "id": "percentage",
+          "name": "Percentage",
+          "estimatedHours": 12
+        },
+        {
+          "id": "ratio_proportion",
+          "name": "Ratio & Proportion",
+          "estimatedHours": 15
+        },
+        {
+          "id": "time_work",
+          "name": "Time & Work",
+          "estimatedHours": 18
+        },
+        {
+          "id": "profit_loss",
+          "name": "Profit & Loss",
+          "estimatedHours": 12
+        },
+        {
+          "id": "interest",
+          "name": "Simple & Compound Interest",
+          "estimatedHours": 8
+        }
       ]
     },
     {
@@ -55,10 +79,26 @@
       "tier": 1,
       "estimatedHours": 70,
       "topics": [
-        { "id": "seating_arrangement", "name": "Seating Arrangement", "estimatedHours": 25 },
-        { "id": "blood_relations", "name": "Blood Relations", "estimatedHours": 15 },
-        { "id": "coding_decoding", "name": "Coding-Decoding", "estimatedHours": 15 },
-        { "id": "direction_sense", "name": "Direction Sense", "estimatedHours": 15 }
+        {
+          "id": "seating_arrangement",
+          "name": "Seating Arrangement",
+          "estimatedHours": 25
+        },
+        {
+          "id": "blood_relations",
+          "name": "Blood Relations",
+          "estimatedHours": 15
+        },
+        {
+          "id": "coding_decoding",
+          "name": "Coding-Decoding",
+          "estimatedHours": 15
+        },
+        {
+          "id": "direction_sense",
+          "name": "Direction Sense",
+          "estimatedHours": 15
+        }
       ]
     },
     {
@@ -67,10 +107,23 @@
       "tier": 1,
       "estimatedHours": 60,
       "topics": [
-        { "id": "reading_comprehension", "name": "Reading Comprehension", "estimatedHours": 25 },
-        { "id": "grammar", "name": "Grammar", "estimatedHours": 20 },
-        { "id": "vocabulary", "name": "Vocabulary", "estimatedHours": 15 }
+        {
+          "id": "reading_comprehension",
+          "name": "Reading Comprehension",
+          "estimatedHours": 25
+        },
+        {
+          "id": "grammar",
+          "name": "Grammar",
+          "estimatedHours": 20
+        },
+        {
+          "id": "vocabulary",
+          "name": "Vocabulary",
+          "estimatedHours": 15
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 420
 }

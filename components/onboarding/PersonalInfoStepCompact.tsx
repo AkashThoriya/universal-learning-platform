@@ -12,7 +12,7 @@
  * @version 3.0.0
  */
 
-import { User, Search, Calendar, BookOpen, Plus, CheckCircle, Clock, AlertCircle, Star, X, Info } from 'lucide-react';
+import { User, Search, Calendar, BookOpen, Plus, CheckCircle, Clock, AlertCircle, Star, X, Info, Target } from 'lucide-react';
 import React, { useState, useMemo, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
 import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
 import { Exam, SyllabusSubject, UserPersona } from '@/types/exam';
@@ -96,7 +97,7 @@ const validateName = (name: string): string | null => {
 
 const validateExamDate = (date: string): string | null => {
   if (!date) {
-    return 'Please select your exam date';
+    return 'Please select your target completion date';
   }
 
   const examDate = new Date(date);
@@ -104,15 +105,31 @@ const validateExamDate = (date: string): string | null => {
   const minDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
 
   if (examDate < minDate) {
-    return 'Exam date must be at least 7 days from today';
+    return 'Target date must be at least 7 days from today';
   }
 
   const maxDate = new Date(today.getTime() + 2 * 365 * 24 * 60 * 60 * 1000); // 2 years from now
   if (examDate > maxDate) {
-    return 'Please select a more realistic exam date (within 2 years)';
+    return 'Please select a more realistic target date (within 2 years)';
   }
 
   return null;
+};
+
+/**
+ * Calculate recommended completion date based on total hours and daily study time
+ */
+const calculateRecommendedDate = (totalHours: number, dailyStudyMinutes: number): Date => {
+  const dailyStudyHours = dailyStudyMinutes / 60;
+  const daysNeeded = Math.ceil(totalHours / dailyStudyHours);
+  
+  // Add buffer time (20% extra) for realistic planning
+  const daysWithBuffer = Math.ceil(daysNeeded * 1.2);
+  
+  const today = new Date();
+  const recommendedDate = new Date(today.getTime() + daysWithBuffer * 24 * 60 * 60 * 1000);
+  
+  return recommendedDate;
 };
 
 /**
@@ -130,6 +147,24 @@ export function PersonalInfoStepCompact({
   const [showAllExams, setShowAllExams] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [showExamDetails] = useState<string | null>(null);
+
+  // Category color mapping to ensure Tailwind classes are included
+  const getCategoryClasses = useCallback((categoryId: string, isActive: boolean) => {
+    if (!isActive) return '';
+    
+    switch (categoryId) {
+      case 'computer-science':
+        return 'bg-purple-50 text-purple-700 border-purple-200';
+      case 'civil-services':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'banking':
+        return 'bg-green-50 text-green-700 border-green-200';
+      case 'engineering':
+        return 'bg-orange-50 text-orange-700 border-orange-200';
+      default:
+        return 'bg-gray-50 text-gray-700 border-gray-200';
+    }
+  }, []);
 
   // Enhanced name validation with real-time feedback
   const handleNameChange = useCallback(
@@ -170,8 +205,8 @@ export function PersonalInfoStepCompact({
         const today = new Date();
         const daysToExam = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-        window.gtag('event', 'exam_date_selected', {
-          days_to_exam: daysToExam,
+        window.gtag('event', 'target_date_selected', {
+          days_to_completion: daysToExam,
           exam_id: form.data.selectedExamId,
         });
       }
@@ -326,13 +361,14 @@ export function PersonalInfoStepCompact({
                   const Icon = category.icon;
                   const isActive = activeCategory === category.id;
                   const examCount = examsByCategory[category.id]?.length ?? 0;
+                  const activeClasses = getCategoryClasses(category.id, isActive);
 
                   return (
                     <Card
                       key={category.id}
-                      className={`cursor-pointer transition-all duration-200 hover:shadow-md border ${
+                      className={`cursor-pointer transition-all duration-200 hover:shadow-md border-2 ${
                         isActive
-                          ? `${category.color} shadow-md transform scale-105`
+                          ? `shadow-md transform scale-105 ${activeClasses}`
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => setActiveCategory(isActive ? null : category.id)}
@@ -341,7 +377,7 @@ export function PersonalInfoStepCompact({
                       aria-pressed={isActive}
                     >
                       <CardContent className="p-4 text-center">
-                        <Icon className="h-6 w-6 mx-auto mb-2" />
+                        <Icon className={`h-6 w-6 mx-auto mb-2 ${isActive ? 'text-current' : 'text-gray-600'}`} />
                         <h3 className="font-medium text-sm mb-1">{category.name}</h3>
                         <p className="text-xs text-gray-600 mb-2 line-clamp-2">{category.description}</p>
                         <Badge variant="secondary" className="text-xs">
@@ -374,16 +410,26 @@ export function PersonalInfoStepCompact({
                     ? `${POPULAR_EXAM_CATEGORIES.find(c => c.id === activeCategory)?.name} Learning Paths`
                     : 'Available Learning Paths'}
               </Label>
-              {displayExams.length < filteredExams.length && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowAllExams(!showAllExams)}
-                  className="text-blue-600"
-                >
-                  {showAllExams ? 'Show Less' : `Show All (${filteredExams.length})`}
-                </Button>
-              )}
+              {(() => {
+                // Calculate the total available exams for current context
+                const totalAvailable = searchQuery 
+                  ? filteredExams.length 
+                  : activeCategory && examsByCategory[activeCategory] 
+                    ? examsByCategory[activeCategory].length 
+                    : filteredExams.length;
+                
+                // Show button if there are more exams than currently displayed
+                return displayExams.length < totalAvailable && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAllExams(!showAllExams)}
+                    className="text-blue-600"
+                  >
+                    {showAllExams ? 'Show Less' : `Show All (${totalAvailable})`}
+                  </Button>
+                );
+              })()}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -435,7 +481,7 @@ export function PersonalInfoStepCompact({
                       {/* Show more details on hover/selection */}
                       {(isSelected || showExamDetails === exam.id) && exam.stages && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
-                          <p className="text-xs text-gray-600 mb-1">Exam Structure:</p>
+                          <p className="text-xs text-gray-600 mb-1">Assessment Stages:</p>
                           <div className="flex flex-wrap gap-1">
                             {exam.stages.slice(0, 3).map((stage, index) => (
                               <Badge key={index} variant="outline" className="text-xs">
@@ -500,14 +546,82 @@ export function PersonalInfoStepCompact({
         </Alert>
       )}
 
-      {/* Enhanced Exam Date */}
+      {/* Daily Study Hours Selection */}
       {form.data.selectedExamId && (
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <Target className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <Label className="text-lg font-semibold">
+                How many hours can you realistically study daily?
+              </Label>
+            </div>
+            <div className="space-y-4">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
+                <div className="text-center mb-4">
+                  <div className="text-3xl font-bold text-blue-700 mb-1">
+                    {Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)}h{' '}
+                    {(form.data.preferences?.dailyStudyGoalMinutes ?? 240) % 60}m
+                  </div>
+                  <p className="text-blue-600 text-sm">per day</p>
+                </div>
+
+                <div className="px-4 space-y-4">
+                  <Slider
+                    value={[Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)]}
+                    onValueChange={([hours]) => {
+                      if (hours !== undefined) {
+                        const totalMinutes = hours * 60;
+                        form.updateField('preferences', {
+                          ...(form.data.preferences ?? {}),
+                          dailyStudyGoalMinutes: totalMinutes,
+                        });
+                      }
+                    }}
+                    min={1}
+                    max={12}
+                    step={0.5}
+                    className="w-full"
+                    aria-label="Daily study hours"
+                  />
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>1h</span>
+                    <span>6h</span>
+                    <span>12h</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-blue-600">
+                    {(() => {
+                      const hours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60);
+                      if (hours <= 2) {
+                        return 'Light study routine - perfect for busy schedules';
+                      }
+                      if (hours <= 4) {
+                        return 'Balanced approach - ideal for working professionals';
+                      }
+                      if (hours <= 6) {
+                        return 'Intensive preparation - great for dedicated students';
+                      }
+                      return 'Maximum effort - for accelerated learning';
+                    })()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Enhanced Exam Date */}
+      {form.data.selectedExamId && form.data.preferences?.dailyStudyGoalMinutes && (
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-4">
               <Calendar className="h-5 w-5 text-blue-600" aria-hidden="true" />
               <Label htmlFor="exam-date" className="text-lg font-semibold">
-                When is your exam?
+                What's your target completion date?
               </Label>
             </div>
             <div className="space-y-4">
@@ -533,6 +647,64 @@ export function PersonalInfoStepCompact({
                 )}
               </div>
 
+              {/* Smart Date Recommendation */}
+              {selectedExam && selectedExam.totalEstimatedHours && form.data.preferences?.dailyStudyGoalMinutes && (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Star className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium text-green-800">AI Recommendation</span>
+                  </div>
+                  {(() => {
+                    const recommendedDate = calculateRecommendedDate(
+                      selectedExam.totalEstimatedHours,
+                      form.data.preferences.dailyStudyGoalMinutes
+                    );
+                    const dailyHours = Math.round((form.data.preferences.dailyStudyGoalMinutes / 60) * 10) / 10;
+                    const daysNeeded = Math.ceil(selectedExam.totalEstimatedHours / dailyHours);
+                    
+                    return (
+                      <div className="space-y-2">
+                        <p className="text-sm text-green-700">
+                          Based on <strong>{selectedExam.totalEstimatedHours} hours</strong> of content and your 
+                          <strong> {dailyHours}h daily</strong> study plan:
+                        </p>
+                        <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-200">
+                          <div>
+                            <p className="text-sm font-medium text-green-800">
+                              Recommended: {recommendedDate.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </p>
+                            <p className="text-xs text-green-600">
+                              ~{Math.ceil(daysNeeded * 1.2)} days with buffer time
+                            </p>
+                            <p className="text-xs text-green-600 mt-1 leading-relaxed">
+                              This date gives you {daysNeeded} days of pure study time plus a 20% buffer 
+                              ({Math.ceil(daysNeeded * 0.2)} extra days) for breaks, revision, and unexpected delays.
+                            </p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-700 border-green-300 hover:bg-green-50"
+                            onClick={() => {
+                              const dateString = recommendedDate.toISOString().split('T')[0];
+                              if (dateString) {
+                                handleDateChange(dateString);
+                              }
+                            }}
+                          >
+                            Use This Date
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
               {form.data.examDate && !validationErrors.examDate && (
                 <div className="flex items-center space-x-2 text-sm bg-blue-50 p-3 rounded-lg">
                   <Clock className="h-4 w-4 text-blue-600" />
@@ -544,13 +716,13 @@ export function PersonalInfoStepCompact({
                       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
                       if (diffDays < 30) {
-                        return `${diffDays} days to prepare - Intensive mode recommended`;
+                        return `${diffDays} days to complete - Intensive mode recommended`;
                       } else if (diffDays < 180) {
                         const months = Math.floor(diffDays / 30);
-                        return `${months} month${months > 1 ? 's' : ''} to prepare - Perfect timeline`;
+                        return `${months} month${months > 1 ? 's' : ''} to complete - Perfect timeline`;
                       }
                       const months = Math.floor(diffDays / 30);
-                      return `${months} months to prepare - Comprehensive preparation possible`;
+                      return `${months} months to complete - Comprehensive preparation possible`;
                     })()}
                   </span>
                 </div>

@@ -41,10 +41,26 @@
       "tier": 1,
       "estimatedHours": 250,
       "topics": [
-        { "id": "mechanics", "name": "Mechanics & Laws of Motion", "estimatedHours": 80 },
-        { "id": "thermodynamics", "name": "Thermodynamics & Kinetic Theory", "estimatedHours": 40 },
-        { "id": "waves_optics", "name": "Waves, Optics & Sound", "estimatedHours": 60 },
-        { "id": "electricity_magnetism", "name": "Current Electricity & Magnetism", "estimatedHours": 70 }
+        {
+          "id": "mechanics",
+          "name": "Mechanics & Laws of Motion",
+          "estimatedHours": 80
+        },
+        {
+          "id": "thermodynamics",
+          "name": "Thermodynamics & Kinetic Theory",
+          "estimatedHours": 40
+        },
+        {
+          "id": "waves_optics",
+          "name": "Waves, Optics & Sound",
+          "estimatedHours": 60
+        },
+        {
+          "id": "electricity_magnetism",
+          "name": "Current Electricity & Magnetism",
+          "estimatedHours": 70
+        }
       ]
     },
     {
@@ -53,9 +69,21 @@
       "tier": 1,
       "estimatedHours": 220,
       "topics": [
-        { "id": "physical_chemistry", "name": "Physical Chemistry", "estimatedHours": 80 },
-        { "id": "inorganic_chemistry", "name": "Inorganic Chemistry", "estimatedHours": 70 },
-        { "id": "organic_chemistry", "name": "Organic Chemistry", "estimatedHours": 70 }
+        {
+          "id": "physical_chemistry",
+          "name": "Physical Chemistry",
+          "estimatedHours": 80
+        },
+        {
+          "id": "inorganic_chemistry",
+          "name": "Inorganic Chemistry",
+          "estimatedHours": 70
+        },
+        {
+          "id": "organic_chemistry",
+          "name": "Organic Chemistry",
+          "estimatedHours": 70
+        }
       ]
     },
     {
@@ -64,11 +92,28 @@
       "tier": 1,
       "estimatedHours": 200,
       "topics": [
-        { "id": "algebra", "name": "Algebra & Complex Numbers", "estimatedHours": 70 },
-        { "id": "coordinate_geometry", "name": "Coordinate Geometry", "estimatedHours": 50 },
-        { "id": "calculus", "name": "Differential & Integral Calculus", "estimatedHours": 50 },
-        { "id": "trigonometry", "name": "Trigonometry & Statistics", "estimatedHours": 30 }
+        {
+          "id": "algebra",
+          "name": "Algebra & Complex Numbers",
+          "estimatedHours": 70
+        },
+        {
+          "id": "coordinate_geometry",
+          "name": "Coordinate Geometry",
+          "estimatedHours": 50
+        },
+        {
+          "id": "calculus",
+          "name": "Differential & Integral Calculus",
+          "estimatedHours": 50
+        },
+        {
+          "id": "trigonometry",
+          "name": "Trigonometry & Statistics",
+          "estimatedHours": 30
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 1340
 }

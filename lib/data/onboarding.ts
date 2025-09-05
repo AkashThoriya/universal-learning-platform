@@ -37,7 +37,7 @@ export interface PersonaOption {
 export const PERSONA_OPTIONS: readonly PersonaOption[] = [
   {
     id: 'student' as UserPersonaType,
-    icon: GraduationCap,
+    icon: BookOpen,
     title: 'Student',
     description: 'Full-time study focus with flexible schedule',
     longDescription: 'Dedicated time for comprehensive preparation with access to structured learning resources',
@@ -151,7 +151,7 @@ export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
     name: 'Computer Science',
     icon: Code,
     count: 3,
-    color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    color: 'bg-purple-50 text-purple-700 border-purple-200',
     description: 'DevOps, DSA, SQL, and programming courses',
   },
   {
@@ -175,7 +175,7 @@ export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
     name: 'Engineering',
     icon: BookOpen,
     count: 8,
-    color: 'bg-purple-50 text-purple-700 border-purple-200',
+    color: 'bg-orange-50 text-orange-700 border-orange-200',
     description: 'JEE, GATE, and technical competitions',
   },
 ] as const;

@@ -48,11 +48,31 @@
       "tier": 1,
       "estimatedHours": 100,
       "topics": [
-        { "id": "analogies", "name": "Analogies & Similarities", "estimatedHours": 25 },
-        { "id": "pattern_recognition", "name": "Pattern Recognition", "estimatedHours": 20 },
-        { "id": "space_visualization", "name": "Space Visualization", "estimatedHours": 20 },
-        { "id": "problem_solving", "name": "Problem Solving & Analysis", "estimatedHours": 20 },
-        { "id": "decision_making", "name": "Decision Making", "estimatedHours": 15 }
+        {
+          "id": "analogies",
+          "name": "Analogies & Similarities",
+          "estimatedHours": 25
+        },
+        {
+          "id": "pattern_recognition",
+          "name": "Pattern Recognition",
+          "estimatedHours": 20
+        },
+        {
+          "id": "space_visualization",
+          "name": "Space Visualization",
+          "estimatedHours": 20
+        },
+        {
+          "id": "problem_solving",
+          "name": "Problem Solving & Analysis",
+          "estimatedHours": 20
+        },
+        {
+          "id": "decision_making",
+          "name": "Decision Making",
+          "estimatedHours": 15
+        }
       ]
     },
     {
@@ -61,10 +81,26 @@
       "tier": 1,
       "estimatedHours": 120,
       "topics": [
-        { "id": "arithmetic", "name": "Number Systems & Arithmetic", "estimatedHours": 40 },
-        { "id": "algebra", "name": "Algebra & Basic Mathematics", "estimatedHours": 30 },
-        { "id": "geometry", "name": "Geometry & Mensuration", "estimatedHours": 25 },
-        { "id": "data_interpretation", "name": "Data Interpretation", "estimatedHours": 25 }
+        {
+          "id": "arithmetic",
+          "name": "Number Systems & Arithmetic",
+          "estimatedHours": 40
+        },
+        {
+          "id": "algebra",
+          "name": "Algebra & Basic Mathematics",
+          "estimatedHours": 30
+        },
+        {
+          "id": "geometry",
+          "name": "Geometry & Mensuration",
+          "estimatedHours": 25
+        },
+        {
+          "id": "data_interpretation",
+          "name": "Data Interpretation",
+          "estimatedHours": 25
+        }
       ]
     },
     {
@@ -73,9 +109,21 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "reading_comprehension", "name": "Reading Comprehension", "estimatedHours": 30 },
-        { "id": "grammar", "name": "Grammar & Usage", "estimatedHours": 25 },
-        { "id": "vocabulary", "name": "Vocabulary & Synonyms", "estimatedHours": 25 }
+        {
+          "id": "reading_comprehension",
+          "name": "Reading Comprehension",
+          "estimatedHours": 30
+        },
+        {
+          "id": "grammar",
+          "name": "Grammar & Usage",
+          "estimatedHours": 25
+        },
+        {
+          "id": "vocabulary",
+          "name": "Vocabulary & Synonyms",
+          "estimatedHours": 25
+        }
       ]
     },
     {
@@ -84,12 +132,33 @@
       "tier": 1,
       "estimatedHours": 150,
       "topics": [
-        { "id": "current_affairs", "name": "Current Affairs", "estimatedHours": 40 },
-        { "id": "history", "name": "Indian History & Culture", "estimatedHours": 30 },
-        { "id": "geography", "name": "Geography & Environment", "estimatedHours": 30 },
-        { "id": "polity", "name": "Indian Polity & Constitution", "estimatedHours": 25 },
-        { "id": "economics", "name": "Economics & Finance", "estimatedHours": 25 }
+        {
+          "id": "current_affairs",
+          "name": "Current Affairs",
+          "estimatedHours": 40
+        },
+        {
+          "id": "history",
+          "name": "Indian History & Culture",
+          "estimatedHours": 30
+        },
+        {
+          "id": "geography",
+          "name": "Geography & Environment",
+          "estimatedHours": 30
+        },
+        {
+          "id": "polity",
+          "name": "Indian Polity & Constitution",
+          "estimatedHours": 25
+        },
+        {
+          "id": "economics",
+          "name": "Economics & Finance",
+          "estimatedHours": 25
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 900
 }

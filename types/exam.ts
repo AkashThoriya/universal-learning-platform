@@ -41,6 +41,8 @@ export interface Exam {
   stages: ExamStage[];
   /** Default syllabus structure for this exam */
   defaultSyllabus: SyllabusSubject[];
+  /** Total estimated hours to complete all subjects and topics, optional */
+  totalEstimatedHours?: number;
 }
 
 /**

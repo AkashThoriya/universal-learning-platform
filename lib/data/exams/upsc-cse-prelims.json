@@ -34,9 +34,21 @@
       "tier": 1,
       "estimatedHours": 120,
       "topics": [
-        { "id": "ancient_history", "name": "Ancient History", "estimatedHours": 40 },
-        { "id": "medieval_history", "name": "Medieval History", "estimatedHours": 30 },
-        { "id": "modern_history", "name": "Modern History", "estimatedHours": 50 }
+        {
+          "id": "ancient_history",
+          "name": "Ancient History",
+          "estimatedHours": 40
+        },
+        {
+          "id": "medieval_history",
+          "name": "Medieval History",
+          "estimatedHours": 30
+        },
+        {
+          "id": "modern_history",
+          "name": "Modern History",
+          "estimatedHours": 50
+        }
       ]
     },
     {
@@ -45,9 +57,21 @@
       "tier": 1,
       "estimatedHours": 100,
       "topics": [
-        { "id": "physical_geography", "name": "Physical Geography", "estimatedHours": 40 },
-        { "id": "human_geography", "name": "Human Geography", "estimatedHours": 30 },
-        { "id": "indian_geography", "name": "Indian Geography", "estimatedHours": 30 }
+        {
+          "id": "physical_geography",
+          "name": "Physical Geography",
+          "estimatedHours": 40
+        },
+        {
+          "id": "human_geography",
+          "name": "Human Geography",
+          "estimatedHours": 30
+        },
+        {
+          "id": "indian_geography",
+          "name": "Indian Geography",
+          "estimatedHours": 30
+        }
       ]
     },
     {
@@ -56,9 +80,21 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "constitution", "name": "Constitution", "estimatedHours": 30 },
-        { "id": "governance", "name": "Governance", "estimatedHours": 25 },
-        { "id": "political_system", "name": "Political System", "estimatedHours": 25 }
+        {
+          "id": "constitution",
+          "name": "Constitution",
+          "estimatedHours": 30
+        },
+        {
+          "id": "governance",
+          "name": "Governance",
+          "estimatedHours": 25
+        },
+        {
+          "id": "political_system",
+          "name": "Political System",
+          "estimatedHours": 25
+        }
       ]
     },
     {
@@ -67,9 +103,21 @@
       "tier": 1,
       "estimatedHours": 90,
       "topics": [
-        { "id": "basic_economics", "name": "Basic Economics", "estimatedHours": 30 },
-        { "id": "indian_economy", "name": "Indian Economy", "estimatedHours": 40 },
-        { "id": "economic_development", "name": "Economic Development", "estimatedHours": 20 }
+        {
+          "id": "basic_economics",
+          "name": "Basic Economics",
+          "estimatedHours": 30
+        },
+        {
+          "id": "indian_economy",
+          "name": "Indian Economy",
+          "estimatedHours": 40
+        },
+        {
+          "id": "economic_development",
+          "name": "Economic Development",
+          "estimatedHours": 20
+        }
       ]
     },
     {
@@ -78,9 +126,21 @@
       "tier": 2,
       "estimatedHours": 60,
       "topics": [
-        { "id": "ecology", "name": "Ecology & Biodiversity", "estimatedHours": 25 },
-        { "id": "climate_change", "name": "Climate Change", "estimatedHours": 20 },
-        { "id": "environmental_issues", "name": "Environmental Issues", "estimatedHours": 15 }
+        {
+          "id": "ecology",
+          "name": "Ecology & Biodiversity",
+          "estimatedHours": 25
+        },
+        {
+          "id": "climate_change",
+          "name": "Climate Change",
+          "estimatedHours": 20
+        },
+        {
+          "id": "environmental_issues",
+          "name": "Environmental Issues",
+          "estimatedHours": 15
+        }
       ]
     },
     {
@@ -89,9 +149,21 @@
       "tier": 2,
       "estimatedHours": 70,
       "topics": [
-        { "id": "general_science", "name": "General Science", "estimatedHours": 30 },
-        { "id": "space_technology", "name": "Space Technology", "estimatedHours": 20 },
-        { "id": "biotechnology", "name": "Biotechnology", "estimatedHours": 20 }
+        {
+          "id": "general_science",
+          "name": "General Science",
+          "estimatedHours": 30
+        },
+        {
+          "id": "space_technology",
+          "name": "Space Technology",
+          "estimatedHours": 20
+        },
+        {
+          "id": "biotechnology",
+          "name": "Biotechnology",
+          "estimatedHours": 20
+        }
       ]
     },
     {
@@ -100,10 +172,23 @@
       "tier": 1,
       "estimatedHours": 100,
       "topics": [
-        { "id": "national_current_affairs", "name": "National Current Affairs", "estimatedHours": 50 },
-        { "id": "international_current_affairs", "name": "International Current Affairs", "estimatedHours": 30 },
-        { "id": "sports_awards", "name": "Sports & Awards", "estimatedHours": 20 }
+        {
+          "id": "national_current_affairs",
+          "name": "National Current Affairs",
+          "estimatedHours": 50
+        },
+        {
+          "id": "international_current_affairs",
+          "name": "International Current Affairs",
+          "estimatedHours": 30
+        },
+        {
+          "id": "sports_awards",
+          "name": "Sports & Awards",
+          "estimatedHours": 20
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 1240
 }

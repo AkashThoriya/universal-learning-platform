@@ -70,10 +70,26 @@
       "tier": 1,
       "estimatedHours": 120,
       "topics": [
-        { "id": "current_affairs", "name": "Current Affairs (National & International)", "estimatedHours": 40 },
-        { "id": "indian_history", "name": "Indian History & Freedom Struggle", "estimatedHours": 30 },
-        { "id": "geography", "name": "Geography (Physical, Economic & Political)", "estimatedHours": 25 },
-        { "id": "polity", "name": "Indian Polity & Constitution", "estimatedHours": 25 }
+        {
+          "id": "current_affairs",
+          "name": "Current Affairs (National & International)",
+          "estimatedHours": 40
+        },
+        {
+          "id": "indian_history",
+          "name": "Indian History & Freedom Struggle",
+          "estimatedHours": 30
+        },
+        {
+          "id": "geography",
+          "name": "Geography (Physical, Economic & Political)",
+          "estimatedHours": 25
+        },
+        {
+          "id": "polity",
+          "name": "Indian Polity & Constitution",
+          "estimatedHours": 25
+        }
       ]
     },
     {
@@ -82,10 +98,26 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "arithmetic", "name": "Number System & Arithmetic", "estimatedHours": 30 },
-        { "id": "algebra", "name": "Algebra & Basic Equations", "estimatedHours": 20 },
-        { "id": "geometry", "name": "Geometry & Mensuration", "estimatedHours": 20 },
-        { "id": "statistics", "name": "Data Interpretation & Statistics", "estimatedHours": 10 }
+        {
+          "id": "arithmetic",
+          "name": "Number System & Arithmetic",
+          "estimatedHours": 30
+        },
+        {
+          "id": "algebra",
+          "name": "Algebra & Basic Equations",
+          "estimatedHours": 20
+        },
+        {
+          "id": "geometry",
+          "name": "Geometry & Mensuration",
+          "estimatedHours": 20
+        },
+        {
+          "id": "statistics",
+          "name": "Data Interpretation & Statistics",
+          "estimatedHours": 10
+        }
       ]
     },
     {
@@ -94,10 +126,23 @@
       "tier": 1,
       "estimatedHours": 70,
       "topics": [
-        { "id": "logical_reasoning", "name": "Logical & Analytical Reasoning", "estimatedHours": 25 },
-        { "id": "verbal_reasoning", "name": "Verbal & Non-Verbal Reasoning", "estimatedHours": 25 },
-        { "id": "puzzles", "name": "Puzzles & Problem Solving", "estimatedHours": 20 }
+        {
+          "id": "logical_reasoning",
+          "name": "Logical & Analytical Reasoning",
+          "estimatedHours": 25
+        },
+        {
+          "id": "verbal_reasoning",
+          "name": "Verbal & Non-Verbal Reasoning",
+          "estimatedHours": 25
+        },
+        {
+          "id": "puzzles",
+          "name": "Puzzles & Problem Solving",
+          "estimatedHours": 20
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 540
 }

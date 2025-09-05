@@ -34,9 +34,21 @@
       "tier": 1,
       "estimatedHours": 100,
       "topics": [
-        { "id": "programming_concepts", "name": "Programming Concepts", "estimatedHours": 30 },
-        { "id": "data_structures", "name": "Data Structures", "estimatedHours": 40 },
-        { "id": "algorithms", "name": "Algorithms", "estimatedHours": 30 }
+        {
+          "id": "programming_concepts",
+          "name": "Programming Concepts",
+          "estimatedHours": 30
+        },
+        {
+          "id": "data_structures",
+          "name": "Data Structures",
+          "estimatedHours": 40
+        },
+        {
+          "id": "algorithms",
+          "name": "Algorithms",
+          "estimatedHours": 30
+        }
       ]
     },
     {
@@ -45,9 +57,21 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "digital_logic", "name": "Digital Logic", "estimatedHours": 25 },
-        { "id": "computer_organization", "name": "Computer Organization", "estimatedHours": 30 },
-        { "id": "memory_hierarchy", "name": "Memory Hierarchy", "estimatedHours": 25 }
+        {
+          "id": "digital_logic",
+          "name": "Digital Logic",
+          "estimatedHours": 25
+        },
+        {
+          "id": "computer_organization",
+          "name": "Computer Organization",
+          "estimatedHours": 30
+        },
+        {
+          "id": "memory_hierarchy",
+          "name": "Memory Hierarchy",
+          "estimatedHours": 25
+        }
       ]
     },
     {
@@ -56,9 +80,21 @@
       "tier": 1,
       "estimatedHours": 70,
       "topics": [
-        { "id": "process_management", "name": "Process Management", "estimatedHours": 25 },
-        { "id": "memory_management", "name": "Memory Management", "estimatedHours": 25 },
-        { "id": "file_systems", "name": "File Systems", "estimatedHours": 20 }
+        {
+          "id": "process_management",
+          "name": "Process Management",
+          "estimatedHours": 25
+        },
+        {
+          "id": "memory_management",
+          "name": "Memory Management",
+          "estimatedHours": 25
+        },
+        {
+          "id": "file_systems",
+          "name": "File Systems",
+          "estimatedHours": 20
+        }
       ]
     },
     {
@@ -67,10 +103,26 @@
       "tier": 1,
       "estimatedHours": 60,
       "topics": [
-        { "id": "er_model", "name": "ER Model", "estimatedHours": 15 },
-        { "id": "relational_model", "name": "Relational Model", "estimatedHours": 20 },
-        { "id": "sql", "name": "SQL", "estimatedHours": 15 },
-        { "id": "normalization", "name": "Normalization", "estimatedHours": 10 }
+        {
+          "id": "er_model",
+          "name": "ER Model",
+          "estimatedHours": 15
+        },
+        {
+          "id": "relational_model",
+          "name": "Relational Model",
+          "estimatedHours": 20
+        },
+        {
+          "id": "sql",
+          "name": "SQL",
+          "estimatedHours": 15
+        },
+        {
+          "id": "normalization",
+          "name": "Normalization",
+          "estimatedHours": 10
+        }
       ]
     },
     {
@@ -79,9 +131,21 @@
       "tier": 2,
       "estimatedHours": 50,
       "topics": [
-        { "id": "osi_model", "name": "OSI Model", "estimatedHours": 15 },
-        { "id": "tcp_ip", "name": "TCP/IP", "estimatedHours": 20 },
-        { "id": "routing", "name": "Routing Algorithms", "estimatedHours": 15 }
+        {
+          "id": "osi_model",
+          "name": "OSI Model",
+          "estimatedHours": 15
+        },
+        {
+          "id": "tcp_ip",
+          "name": "TCP/IP",
+          "estimatedHours": 20
+        },
+        {
+          "id": "routing",
+          "name": "Routing Algorithms",
+          "estimatedHours": 15
+        }
       ]
     },
     {
@@ -90,10 +154,23 @@
       "tier": 2,
       "estimatedHours": 60,
       "topics": [
-        { "id": "finite_automata", "name": "Finite Automata", "estimatedHours": 20 },
-        { "id": "context_free_grammar", "name": "Context Free Grammar", "estimatedHours": 20 },
-        { "id": "turing_machines", "name": "Turing Machines", "estimatedHours": 20 }
+        {
+          "id": "finite_automata",
+          "name": "Finite Automata",
+          "estimatedHours": 20
+        },
+        {
+          "id": "context_free_grammar",
+          "name": "Context Free Grammar",
+          "estimatedHours": 20
+        },
+        {
+          "id": "turing_machines",
+          "name": "Turing Machines",
+          "estimatedHours": 20
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 840
 }

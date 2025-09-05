@@ -77,11 +77,31 @@
       "tier": 1,
       "estimatedHours": 80,
       "topics": [
-        { "id": "language_basics", "name": "Language Basics (12/12)", "estimatedHours": 20 },
-        { "id": "logic_building_patterns", "name": "Logic Building (Patterns) (2/2)", "estimatedHours": 10 },
-        { "id": "patterns", "name": "Patterns (8/22)", "estimatedHours": 25 },
-        { "id": "time_complexity", "name": "Time Complexity (0/1)", "estimatedHours": 8 },
-        { "id": "stl_collections", "name": "STL and Collections (0/2)", "estimatedHours": 12 }
+        {
+          "id": "language_basics",
+          "name": "Language Basics (12/12)",
+          "estimatedHours": 20
+        },
+        {
+          "id": "logic_building_patterns",
+          "name": "Logic Building (Patterns) (2/2)",
+          "estimatedHours": 10
+        },
+        {
+          "id": "patterns",
+          "name": "Patterns (8/22)",
+          "estimatedHours": 25
+        },
+        {
+          "id": "time_complexity",
+          "name": "Time Complexity (0/1)",
+          "estimatedHours": 8
+        },
+        {
+          "id": "stl_collections",
+          "name": "STL and Collections (0/2)",
+          "estimatedHours": 12
+        }
       ]
     },
     {
@@ -90,10 +110,30 @@
       "tier": 1,
       "estimatedHours": 32,
       "topics": [
-        { "id": "basic_maths_overview", "name": "Basic Maths", "estimatedHours": 8, "description": "Overview of basic mathematical concepts" },
-        { "id": "basic_arrays_overview", "name": "Basic Arrays", "estimatedHours": 8, "description": "Overview of basic array operations" },
-        { "id": "basic_hashing_overview", "name": "Basic Hashing", "estimatedHours": 8, "description": "Overview of basic hashing concepts" },
-        { "id": "basic_string_overview", "name": "Basic String", "estimatedHours": 8, "description": "Overview of basic string operations" }
+        {
+          "id": "basic_maths_overview",
+          "name": "Basic Maths",
+          "estimatedHours": 8,
+          "description": "Overview of basic mathematical concepts"
+        },
+        {
+          "id": "basic_arrays_overview",
+          "name": "Basic Arrays",
+          "estimatedHours": 8,
+          "description": "Overview of basic array operations"
+        },
+        {
+          "id": "basic_hashing_overview",
+          "name": "Basic Hashing",
+          "estimatedHours": 8,
+          "description": "Overview of basic hashing concepts"
+        },
+        {
+          "id": "basic_string_overview",
+          "name": "Basic String",
+          "estimatedHours": 8,
+          "description": "Overview of basic string operations"
+        }
       ]
     },
     {
@@ -102,19 +142,71 @@
       "tier": 1,
       "estimatedHours": 65,
       "topics": [
-        { "id": "count_digits", "name": "Count all Digits of a Number", "estimatedHours": 5 },
-        { "id": "count_odd_digits", "name": "Count number of odd digits in a number", "estimatedHours": 5 },
-        { "id": "reverse_number", "name": "Reverse a number", "estimatedHours": 5 },
-        { "id": "palindrome_number", "name": "Palindrome Number", "estimatedHours": 5 },
-        { "id": "largest_digit", "name": "Return the Largest Digit in a Number", "estimatedHours": 5 },
-        { "id": "factorial", "name": "Factorial of a given number", "estimatedHours": 5 },
-        { "id": "armstrong_number", "name": "Check if the Number is Armstrong", "estimatedHours": 5 },
-        { "id": "perfect_number", "name": "Check for Perfect Number", "estimatedHours": 5 },
-        { "id": "prime_number", "name": "Check for Prime Number", "estimatedHours": 5 },
-        { "id": "count_primes", "name": "Count of Prime Numbers till N", "estimatedHours": 5 },
-        { "id": "gcd", "name": "GCD of Two Numbers", "estimatedHours": 5 },
-        { "id": "lcm", "name": "LCM of two numbers", "estimatedHours": 5 },
-        { "id": "divisors", "name": "Divisors of a Number", "estimatedHours": 5 }
+        {
+          "id": "count_digits",
+          "name": "Count all Digits of a Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "count_odd_digits",
+          "name": "Count number of odd digits in a number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "reverse_number",
+          "name": "Reverse a number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "palindrome_number",
+          "name": "Palindrome Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "largest_digit",
+          "name": "Return the Largest Digit in a Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "factorial",
+          "name": "Factorial of a given number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "armstrong_number",
+          "name": "Check if the Number is Armstrong",
+          "estimatedHours": 5
+        },
+        {
+          "id": "perfect_number",
+          "name": "Check for Perfect Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "prime_number",
+          "name": "Check for Prime Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "count_primes",
+          "name": "Count of Prime Numbers till N",
+          "estimatedHours": 5
+        },
+        {
+          "id": "gcd",
+          "name": "GCD of Two Numbers",
+          "estimatedHours": 5
+        },
+        {
+          "id": "lcm",
+          "name": "LCM of two numbers",
+          "estimatedHours": 5
+        },
+        {
+          "id": "divisors",
+          "name": "Divisors of a Number",
+          "estimatedHours": 5
+        }
       ]
     },
     {
@@ -123,10 +215,26 @@
       "tier": 1,
       "estimatedHours": 20,
       "topics": [
-        { "id": "sum_array_elements", "name": "Sum of Array Elements", "estimatedHours": 5 },
-        { "id": "count_odd_numbers", "name": "Count of odd numbers in array", "estimatedHours": 5 },
-        { "id": "check_array_sorted", "name": "Check if the Array is Sorted I", "estimatedHours": 5 },
-        { "id": "reverse_array", "name": "Reverse an array", "estimatedHours": 5 }
+        {
+          "id": "sum_array_elements",
+          "name": "Sum of Array Elements",
+          "estimatedHours": 5
+        },
+        {
+          "id": "count_odd_numbers",
+          "name": "Count of odd numbers in array",
+          "estimatedHours": 5
+        },
+        {
+          "id": "check_array_sorted",
+          "name": "Check if the Array is Sorted I",
+          "estimatedHours": 5
+        },
+        {
+          "id": "reverse_array",
+          "name": "Reverse an array",
+          "estimatedHours": 5
+        }
       ]
     },
     {
@@ -135,9 +243,21 @@
       "tier": 1,
       "estimatedHours": 15,
       "topics": [
-        { "id": "highest_occurring_element", "name": "Highest Occurring Element in an Array", "estimatedHours": 5 },
-        { "id": "second_highest_occurring", "name": "Second Highest Occurring Element", "estimatedHours": 5 },
-        { "id": "sum_highest_lowest_frequency", "name": "Sum of Highest and Lowest Frequency", "estimatedHours": 5 }
+        {
+          "id": "highest_occurring_element",
+          "name": "Highest Occurring Element in an Array",
+          "estimatedHours": 5
+        },
+        {
+          "id": "second_highest_occurring",
+          "name": "Second Highest Occurring Element",
+          "estimatedHours": 5
+        },
+        {
+          "id": "sum_highest_lowest_frequency",
+          "name": "Sum of Highest and Lowest Frequency",
+          "estimatedHours": 5
+        }
       ]
     },
     {
@@ -146,14 +266,46 @@
       "tier": 1,
       "estimatedHours": 40,
       "topics": [
-        { "id": "reverse_string_ii", "name": "Reverse a String II", "estimatedHours": 5 },
-        { "id": "palindrome_check", "name": "Palindrome Check", "estimatedHours": 5 },
-        { "id": "largest_odd_number", "name": "Largest Odd Number in a String", "estimatedHours": 5 },
-        { "id": "longest_common_prefix", "name": "Longest Common Prefix", "estimatedHours": 5 },
-        { "id": "isomorphic_string", "name": "Isomorphic String", "estimatedHours": 5 },
-        { "id": "rotate_string", "name": "Rotate String", "estimatedHours": 5 },
-        { "id": "valid_anagram", "name": "Valid Anagram", "estimatedHours": 5 },
-        { "id": "sort_characters_frequency", "name": "Sort Characters by Frequency", "estimatedHours": 5 }
+        {
+          "id": "reverse_string_ii",
+          "name": "Reverse a String II",
+          "estimatedHours": 5
+        },
+        {
+          "id": "palindrome_check",
+          "name": "Palindrome Check",
+          "estimatedHours": 5
+        },
+        {
+          "id": "largest_odd_number",
+          "name": "Largest Odd Number in a String",
+          "estimatedHours": 5
+        },
+        {
+          "id": "longest_common_prefix",
+          "name": "Longest Common Prefix",
+          "estimatedHours": 5
+        },
+        {
+          "id": "isomorphic_string",
+          "name": "Isomorphic String",
+          "estimatedHours": 5
+        },
+        {
+          "id": "rotate_string",
+          "name": "Rotate String",
+          "estimatedHours": 5
+        },
+        {
+          "id": "valid_anagram",
+          "name": "Valid Anagram",
+          "estimatedHours": 5
+        },
+        {
+          "id": "sort_characters_frequency",
+          "name": "Sort Characters by Frequency",
+          "estimatedHours": 5
+        }
       ]
     },
     {
@@ -162,18 +314,66 @@
       "tier": 1,
       "estimatedHours": 60,
       "topics": [
-        { "id": "recursion_theory", "name": "Recursion Theory", "estimatedHours": 5 },
-        { "id": "recursion_concepts_parameters", "name": "Recursion Concepts with Parameters", "estimatedHours": 5 },
-        { "id": "sum_first_n_numbers", "name": "Sum of First N Numbers", "estimatedHours": 5 },
-        { "id": "factorial_recursion", "name": "Factorial of a Given Number", "estimatedHours": 5 },
-        { "id": "sum_array_elements_recursion", "name": "Sum of Array Elements", "estimatedHours": 5 },
-        { "id": "reverse_string_recursion", "name": "Reverse a String I", "estimatedHours": 5 },
-        { "id": "palindrome_recursion", "name": "Check if String is Palindrome or Not", "estimatedHours": 5 },
-        { "id": "prime_recursion", "name": "Check if a Number is Prime or Not", "estimatedHours": 5 },
-        { "id": "reverse_array_recursion", "name": "Reverse an array", "estimatedHours": 5 },
-        { "id": "array_sorted_recursion", "name": "Check if the Array is Sorted II", "estimatedHours": 5 },
-        { "id": "sum_digits_recursion", "name": "Sum of Digits in a Given Number", "estimatedHours": 5 },
-        { "id": "fibonacci_recursion", "name": "Fibonacci Number", "estimatedHours": 5 }
+        {
+          "id": "recursion_theory",
+          "name": "Recursion Theory",
+          "estimatedHours": 5
+        },
+        {
+          "id": "recursion_concepts_parameters",
+          "name": "Recursion Concepts with Parameters",
+          "estimatedHours": 5
+        },
+        {
+          "id": "sum_first_n_numbers",
+          "name": "Sum of First N Numbers",
+          "estimatedHours": 5
+        },
+        {
+          "id": "factorial_recursion",
+          "name": "Factorial of a Given Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "sum_array_elements_recursion",
+          "name": "Sum of Array Elements",
+          "estimatedHours": 5
+        },
+        {
+          "id": "reverse_string_recursion",
+          "name": "Reverse a String I",
+          "estimatedHours": 5
+        },
+        {
+          "id": "palindrome_recursion",
+          "name": "Check if String is Palindrome or Not",
+          "estimatedHours": 5
+        },
+        {
+          "id": "prime_recursion",
+          "name": "Check if a Number is Prime or Not",
+          "estimatedHours": 5
+        },
+        {
+          "id": "reverse_array_recursion",
+          "name": "Reverse an array",
+          "estimatedHours": 5
+        },
+        {
+          "id": "array_sorted_recursion",
+          "name": "Check if the Array is Sorted II",
+          "estimatedHours": 5
+        },
+        {
+          "id": "sum_digits_recursion",
+          "name": "Sum of Digits in a Given Number",
+          "estimatedHours": 5
+        },
+        {
+          "id": "fibonacci_recursion",
+          "name": "Fibonacci Number",
+          "estimatedHours": 5
+        }
       ]
     },
     {
@@ -182,11 +382,36 @@
       "tier": 1,
       "estimatedHours": 40,
       "topics": [
-        { "id": "selection_sort", "name": "Selection Sort", "estimatedHours": 8, "description": "Selection sort algorithm implementation and analysis" },
-        { "id": "bubble_sort", "name": "Bubble Sort", "estimatedHours": 8, "description": "Bubble sort algorithm implementation and analysis" },
-        { "id": "insertion_sorting", "name": "Insertion Sorting", "estimatedHours": 8, "description": "Insertion sort algorithm implementation and analysis" },
-        { "id": "merge_sorting", "name": "Merge Sorting", "estimatedHours": 8, "description": "Merge sort algorithm implementation and analysis" },
-        { "id": "quick_sorting", "name": "Quick Sorting", "estimatedHours": 8, "description": "Quick sort algorithm implementation and analysis" }
+        {
+          "id": "selection_sort",
+          "name": "Selection Sort",
+          "estimatedHours": 8,
+          "description": "Selection sort algorithm implementation and analysis"
+        },
+        {
+          "id": "bubble_sort",
+          "name": "Bubble Sort",
+          "estimatedHours": 8,
+          "description": "Bubble sort algorithm implementation and analysis"
+        },
+        {
+          "id": "insertion_sorting",
+          "name": "Insertion Sorting",
+          "estimatedHours": 8,
+          "description": "Insertion sort algorithm implementation and analysis"
+        },
+        {
+          "id": "merge_sorting",
+          "name": "Merge Sorting",
+          "estimatedHours": 8,
+          "description": "Merge sort algorithm implementation and analysis"
+        },
+        {
+          "id": "quick_sorting",
+          "name": "Quick Sorting",
+          "estimatedHours": 8,
+          "description": "Quick sort algorithm implementation and analysis"
+        }
       ]
     },
     {
@@ -195,10 +420,30 @@
       "tier": 1,
       "estimatedHours": 130,
       "topics": [
-        { "id": "array_fundamentals", "name": "Fundamentals (0/6)", "estimatedHours": 30, "description": "Basic array operations and fundamentals" },
-        { "id": "array_logic_building", "name": "Logic Building (0/5)", "estimatedHours": 25, "description": "Building logical thinking with arrays" },
-        { "id": "array_faqs_medium", "name": "FAQs(Medium) (0/13)", "estimatedHours": 45, "description": "Medium difficulty frequently asked questions" },
-        { "id": "array_faqs_hard", "name": "FAQs(Hard) (0/7)", "estimatedHours": 30, "description": "Hard difficulty frequently asked questions" }
+        {
+          "id": "array_fundamentals",
+          "name": "Fundamentals (0/6)",
+          "estimatedHours": 30,
+          "description": "Basic array operations and fundamentals"
+        },
+        {
+          "id": "array_logic_building",
+          "name": "Logic Building (0/5)",
+          "estimatedHours": 25,
+          "description": "Building logical thinking with arrays"
+        },
+        {
+          "id": "array_faqs_medium",
+          "name": "FAQs(Medium) (0/13)",
+          "estimatedHours": 45,
+          "description": "Medium difficulty frequently asked questions"
+        },
+        {
+          "id": "array_faqs_hard",
+          "name": "FAQs(Hard) (0/7)",
+          "estimatedHours": 30,
+          "description": "Hard difficulty frequently asked questions"
+        }
       ]
     },
     {
@@ -207,8 +452,18 @@
       "tier": 1,
       "estimatedHours": 25,
       "topics": [
-        { "id": "hashing_theory", "name": "Theory (0/1)", "estimatedHours": 8, "description": "Hashing fundamentals and theory" },
-        { "id": "hashing_faqs", "name": "FAQs (0/4)", "estimatedHours": 17, "description": "Frequently asked hashing problems" }
+        {
+          "id": "hashing_theory",
+          "name": "Theory (0/1)",
+          "estimatedHours": 8,
+          "description": "Hashing fundamentals and theory"
+        },
+        {
+          "id": "hashing_faqs",
+          "name": "FAQs (0/4)",
+          "estimatedHours": 17,
+          "description": "Frequently asked hashing problems"
+        }
       ]
     },
     {
@@ -217,11 +472,36 @@
       "tier": 1,
       "estimatedHours": 115,
       "topics": [
-        { "id": "binary_search_fundamentals", "name": "Fundamentals (0/3)", "estimatedHours": 15, "description": "Search X in sorted array, Lower Bound, Upper Bound" },
-        { "id": "binary_search_logic", "name": "Logic Building (0/8)", "estimatedHours": 30, "description": "Search insert position, Floor and Ceil in Sorted Array, First and last occurrence, Search in rotated sorted array-I, Search in rotated sorted array-II, Find minimum in Rotated Sorted Array, Find out how many times the array is rotated, Single element in sorted array" },
-        { "id": "binary_search_answers", "name": "On answers (0/5)", "estimatedHours": 25, "description": "Find square root of a number, Find Nth root of a number, Find the smallest divisor, Koko eating bananas, Minimum days to make M bouquets" },
-        { "id": "binary_search_faqs", "name": "FAQs (0/7)", "estimatedHours": 30, "description": "Aggressive Cows, Book Allocation Problem, Find peak element, Median of 2 sorted arrays, Minimize Max Distance to Gas Station, Kth element of 2 sorted arrays, Split array - largest sum" },
-        { "id": "binary_search_2d", "name": "2D Arrays (0/5)", "estimatedHours": 15, "description": "Binary search on 2D arrays" }
+        {
+          "id": "binary_search_fundamentals",
+          "name": "Fundamentals (0/3)",
+          "estimatedHours": 15,
+          "description": "Search X in sorted array, Lower Bound, Upper Bound"
+        },
+        {
+          "id": "binary_search_logic",
+          "name": "Logic Building (0/8)",
+          "estimatedHours": 30,
+          "description": "Search insert position, Floor and Ceil in Sorted Array, First and last occurrence, Search in rotated sorted array-I, Search in rotated sorted array-II, Find minimum in Rotated Sorted Array, Find out how many times the array is rotated, Single element in sorted array"
+        },
+        {
+          "id": "binary_search_answers",
+          "name": "On answers (0/5)",
+          "estimatedHours": 25,
+          "description": "Find square root of a number, Find Nth root of a number, Find the smallest divisor, Koko eating bananas, Minimum days to make M bouquets"
+        },
+        {
+          "id": "binary_search_faqs",
+          "name": "FAQs (0/7)",
+          "estimatedHours": 30,
+          "description": "Aggressive Cows, Book Allocation Problem, Find peak element, Median of 2 sorted arrays, Minimize Max Distance to Gas Station, Kth element of 2 sorted arrays, Split array - largest sum"
+        },
+        {
+          "id": "binary_search_2d",
+          "name": "2D Arrays (0/5)",
+          "estimatedHours": 15,
+          "description": "Binary search on 2D arrays"
+        }
       ]
     },
     {
@@ -230,11 +510,36 @@
       "tier": 1,
       "estimatedHours": 85,
       "topics": [
-        { "id": "recursion_implementation", "name": "Implementation Problems (0/3)", "estimatedHours": 15, "description": "Pow(x,n), Generate Parentheses, Power Set" },
-        { "id": "subsequence_patterns", "name": "Subsequence Pattern Problems (0/2)", "estimatedHours": 10, "description": "Check if there exists a subsequence with sum K, Count all subsequences with sum K" },
-        { "id": "recursion_medium", "name": "FAQs (Medium) (0/5)", "estimatedHours": 25, "description": "Combination Sum, Combination Sum II, Subsets I, Subsets II, Combination Sum III" },
-        { "id": "recursion_hard_single", "name": "Hard (0/1)", "estimatedHours": 8, "description": "Letter Combinations of a Phone Number" },
-        { "id": "recursion_hard_faqs", "name": "FAQs (Hard) (0/6)", "estimatedHours": 27, "description": "Palindrome partitioning, Word Search, N Queen, Rat in a Maze, M Coloring Problem, Sudoku Solver" }
+        {
+          "id": "recursion_implementation",
+          "name": "Implementation Problems (0/3)",
+          "estimatedHours": 15,
+          "description": "Pow(x,n), Generate Parentheses, Power Set"
+        },
+        {
+          "id": "subsequence_patterns",
+          "name": "Subsequence Pattern Problems (0/2)",
+          "estimatedHours": 10,
+          "description": "Check if there exists a subsequence with sum K, Count all subsequences with sum K"
+        },
+        {
+          "id": "recursion_medium",
+          "name": "FAQs (Medium) (0/5)",
+          "estimatedHours": 25,
+          "description": "Combination Sum, Combination Sum II, Subsets I, Subsets II, Combination Sum III"
+        },
+        {
+          "id": "recursion_hard_single",
+          "name": "Hard (0/1)",
+          "estimatedHours": 8,
+          "description": "Letter Combinations of a Phone Number"
+        },
+        {
+          "id": "recursion_hard_faqs",
+          "name": "FAQs (Hard) (0/6)",
+          "estimatedHours": 27,
+          "description": "Palindrome partitioning, Word Search, N Queen, Rat in a Maze, M Coloring Problem, Sudoku Solver"
+        }
       ]
     },
     {
@@ -243,12 +548,42 @@
       "tier": 1,
       "estimatedHours": 155,
       "topics": [
-        { "id": "singly_linked_list", "name": "Fundamentals (Single LL) (0/12)", "estimatedHours": 35, "description": "Introduction to Singly LinkedList, Traversal in Linked List, Deletion in Linked List, Insertion in Linked List, Deletion of the head of LL, Deletion of the tail of LL, Deletion of the Kth element of LL, Delete the element with value X, Insertion at the head of LL, Insertion at the tail of LL, Insertion at the Kth position of LL, Insertion before the value X in LL" },
-        { "id": "doubly_linked_list", "name": "Fundamentals (Doubly LL) (0/12)", "estimatedHours": 35, "description": "Introduction to Doubly LL, Deletion in Doubly LL, Insertion in DLL, Convert Array to DLL, Delete head of DLL, Delete Tail of DLL, Delete Kth Element of DLL, Removing given node in DLL, Insert node before head in DLL, Insert node before tail in DLL, Insert node before (kth node) in DLL, Insert before given node in DLL" },
-        { "id": "linked_list_logic", "name": "Logic Building (0/5)", "estimatedHours": 20, "description": "Add two numbers in LL, Segregate odd and even nodes in LL, Sort a LL of 0's 1's and 2's, Remove Nth node from the back of the LL, Reverse a LL" },
-        { "id": "linked_list_medium", "name": "FAQs (Medium) (0/8)", "estimatedHours": 30, "description": "Add one to a number represented by LL, Find Middle of Linked List, Delete the middle node in LL, Check if LL is palindrome or not, Find the intersection point of Y LL, Detect a loop in LL, Find the starting point in LL, Length of loop in LL" },
-        { "id": "linked_list_hard", "name": "FAQs (Hard) (0/6)", "estimatedHours": 25, "description": "Reverse LL in group of given size K, Rotate a LL, Merge two Sorted Lists, Flattening of LL, Sort LL, Clone a LL with random and next pointer" },
-        { "id": "doubly_ll_faqs", "name": "FAQS (DLL) (0/2)", "estimatedHours": 10, "description": "Delete all occurrences of a key in DLL, Remove duplicated from sorted DLL" }
+        {
+          "id": "singly_linked_list",
+          "name": "Fundamentals (Single LL) (0/12)",
+          "estimatedHours": 35,
+          "description": "Introduction to Singly LinkedList, Traversal in Linked List, Deletion in Linked List, Insertion in Linked List, Deletion of the head of LL, Deletion of the tail of LL, Deletion of the Kth element of LL, Delete the element with value X, Insertion at the head of LL, Insertion at the tail of LL, Insertion at the Kth position of LL, Insertion before the value X in LL"
+        },
+        {
+          "id": "doubly_linked_list",
+          "name": "Fundamentals (Doubly LL) (0/12)",
+          "estimatedHours": 35,
+          "description": "Introduction to Doubly LL, Deletion in Doubly LL, Insertion in DLL, Convert Array to DLL, Delete head of DLL, Delete Tail of DLL, Delete Kth Element of DLL, Removing given node in DLL, Insert node before head in DLL, Insert node before tail in DLL, Insert node before (kth node) in DLL, Insert before given node in DLL"
+        },
+        {
+          "id": "linked_list_logic",
+          "name": "Logic Building (0/5)",
+          "estimatedHours": 20,
+          "description": "Add two numbers in LL, Segregate odd and even nodes in LL, Sort a LL of 0's 1's and 2's, Remove Nth node from the back of the LL, Reverse a LL"
+        },
+        {
+          "id": "linked_list_medium",
+          "name": "FAQs (Medium) (0/8)",
+          "estimatedHours": 30,
+          "description": "Add one to a number represented by LL, Find Middle of Linked List, Delete the middle node in LL, Check if LL is palindrome or not, Find the intersection point of Y LL, Detect a loop in LL, Find the starting point in LL, Length of loop in LL"
+        },
+        {
+          "id": "linked_list_hard",
+          "name": "FAQs (Hard) (0/6)",
+          "estimatedHours": 25,
+          "description": "Reverse LL in group of given size K, Rotate a LL, Merge two Sorted Lists, Flattening of LL, Sort LL, Clone a LL with random and next pointer"
+        },
+        {
+          "id": "doubly_ll_faqs",
+          "name": "FAQS (DLL) (0/2)",
+          "estimatedHours": 10,
+          "description": "Delete all occurrences of a key in DLL, Remove duplicated from sorted DLL"
+        }
       ]
     },
     {
@@ -257,8 +592,18 @@
       "tier": 2,
       "estimatedHours": 30,
       "topics": [
-        { "id": "bit_theory", "name": "Theory (0/1)", "estimatedHours": 8, "description": "Introduction to Bits and Tricks" },
-        { "id": "bit_problems", "name": "Problems (0/7)", "estimatedHours": 22, "description": "Minimum Bit Flips to Convert Number, Single Number - I, Single Number - II, Single Number - III, Divide two numbers without multiplication and division, Power Set Bit Manipulation, XOR of numbers in a given range" }
+        {
+          "id": "bit_theory",
+          "name": "Theory (0/1)",
+          "estimatedHours": 8,
+          "description": "Introduction to Bits and Tricks"
+        },
+        {
+          "id": "bit_problems",
+          "name": "Problems (0/7)",
+          "estimatedHours": 22,
+          "description": "Minimum Bit Flips to Convert Number, Single Number - I, Single Number - II, Single Number - III, Divide two numbers without multiplication and division, Power Set Bit Manipulation, XOR of numbers in a given range"
+        }
       ]
     },
     {
@@ -267,9 +612,24 @@
       "tier": 2,
       "estimatedHours": 55,
       "topics": [
-        { "id": "greedy_easy", "name": "Easy (0/3)", "estimatedHours": 12, "description": "Assign Cookies, Lemonade Change, Jump Game - I" },
-        { "id": "scheduling_intervals", "name": "Scheduling and Interval Problems (0/6)", "estimatedHours": 30, "description": "Shortest Job First, Job sequencing Problem, N meetings in one room, Non-overlapping Intervals, Insert Interval, Minimum number of platforms required for a railway" },
-        { "id": "greedy_hard", "name": "Hard (0/2)", "estimatedHours": 13, "description": "Valid Paranthesis Checker, Candy" }
+        {
+          "id": "greedy_easy",
+          "name": "Easy (0/3)",
+          "estimatedHours": 12,
+          "description": "Assign Cookies, Lemonade Change, Jump Game - I"
+        },
+        {
+          "id": "scheduling_intervals",
+          "name": "Scheduling and Interval Problems (0/6)",
+          "estimatedHours": 30,
+          "description": "Shortest Job First, Job sequencing Problem, N meetings in one room, Non-overlapping Intervals, Insert Interval, Minimum number of platforms required for a railway"
+        },
+        {
+          "id": "greedy_hard",
+          "name": "Hard (0/2)",
+          "estimatedHours": 13,
+          "description": "Valid Paranthesis Checker, Candy"
+        }
       ]
     },
     {
@@ -278,10 +638,30 @@
       "tier": 2,
       "estimatedHours": 50,
       "topics": [
-        { "id": "sliding_window_theory", "name": "Pattern and Template (0/1)", "estimatedHours": 5, "description": "Theory" },
-        { "id": "constant_window", "name": "Constant Window (0/1)", "estimatedHours": 5, "description": "Maximum Points You Can Obtain from Cards" },
-        { "id": "longest_smallest_window", "name": "Longest and Smallest Window Problems (0/6)", "estimatedHours": 25, "description": "Longest Substring Without Repeating Characters, Max Consecutive Ones III, Fruit Into Baskets, Longest Substring With At Most K Distinct Characters, Longest Repeating Character Replacement, Minimum Window Substring" },
-        { "id": "counting_subarrays", "name": "Counting Subarrays / Substrings Problems (0/3)", "estimatedHours": 15, "description": "Number of Substrings Containing All Three Characters, Binary Subarrays With Sum, Count number of Nice subarrays" }
+        {
+          "id": "sliding_window_theory",
+          "name": "Pattern and Template (0/1)",
+          "estimatedHours": 5,
+          "description": "Theory"
+        },
+        {
+          "id": "constant_window",
+          "name": "Constant Window (0/1)",
+          "estimatedHours": 5,
+          "description": "Maximum Points You Can Obtain from Cards"
+        },
+        {
+          "id": "longest_smallest_window",
+          "name": "Longest and Smallest Window Problems (0/6)",
+          "estimatedHours": 25,
+          "description": "Longest Substring Without Repeating Characters, Max Consecutive Ones III, Fruit Into Baskets, Longest Substring With At Most K Distinct Characters, Longest Repeating Character Replacement, Minimum Window Substring"
+        },
+        {
+          "id": "counting_subarrays",
+          "name": "Counting Subarrays / Substrings Problems (0/3)",
+          "estimatedHours": 15,
+          "description": "Number of Substrings Containing All Three Characters, Binary Subarrays With Sum, Count number of Nice subarrays"
+        }
       ]
     },
     {
@@ -290,9 +670,24 @@
       "tier": 1,
       "estimatedHours": 115,
       "topics": [
-        { "id": "stack_queue_implementation", "name": "Implementation (0/8)", "estimatedHours": 35, "description": "Implementation using different DS, Implement Stack using Arrays, Implement Queue using Arrays, Implement Stack using Queue, Implement Queue using Stack, Implement stack using Linkedlist, Implement queue using Linkedlist, Balanced Paranthesis" },
-        { "id": "monotonic_stack", "name": "Monotonic Stack (0/6)", "estimatedHours": 35, "description": "Next Greater Element, Next Greater Element - 2, Asteroid Collision, Sum of Subarray Minimums, Sum of Subarray Ranges, Remove K Digits" },
-        { "id": "stack_queue_faqs", "name": "FAQs (0/9)", "estimatedHours": 45, "description": "Implement Min Stack, Sliding Window Maximum, Trapping Rainwater, Largest rectangle in a histogram, Maximum Rectangles, Stock span problem, Celebrity Problem, LRU Cache, LFU Cache" }
+        {
+          "id": "stack_queue_implementation",
+          "name": "Implementation (0/8)",
+          "estimatedHours": 35,
+          "description": "Implementation using different DS, Implement Stack using Arrays, Implement Queue using Arrays, Implement Stack using Queue, Implement Queue using Stack, Implement stack using Linkedlist, Implement queue using Linkedlist, Balanced Paranthesis"
+        },
+        {
+          "id": "monotonic_stack",
+          "name": "Monotonic Stack (0/6)",
+          "estimatedHours": 35,
+          "description": "Next Greater Element, Next Greater Element - 2, Asteroid Collision, Sum of Subarray Minimums, Sum of Subarray Ranges, Remove K Digits"
+        },
+        {
+          "id": "stack_queue_faqs",
+          "name": "FAQs (0/9)",
+          "estimatedHours": 45,
+          "description": "Implement Min Stack, Sliding Window Maximum, Trapping Rainwater, Largest rectangle in a histogram, Maximum Rectangles, Stock span problem, Celebrity Problem, LRU Cache, LFU Cache"
+        }
       ]
     },
     {
@@ -301,11 +696,36 @@
       "tier": 1,
       "estimatedHours": 145,
       "topics": [
-        { "id": "tree_traversals", "name": "Theory/Traversals (0/6)", "estimatedHours": 25, "description": "Introduction, Inorder Traversal, Preorder Traversal, Postorder Traversal, Level Order Traversal, Pre, Post, Inorder in one traversal" },
-        { "id": "tree_medium", "name": "Medium Problems (0/6)", "estimatedHours": 25, "description": "Maximum Depth in BT, Check if two trees are identical or not, Check for balanced binary tree, Diameter of Binary Tree, Maximum path sum, Check for symmetrical BTs" },
-        { "id": "tree_faqs", "name": "FAQs (0/12)", "estimatedHours": 55, "description": "Zig Zag or Spiral Traversal, Boundary Traversal, Vertical Order Traversal, Top View of BT, Bottom view of BT, Right/Left View of BT, Print root to node path in BT, LCA in BT, Maximum Width of BT, Print all nodes at a distance of K in BT, Minimum time taken to burn the BT from a given Node, Count total nodes in a complete BT" },
-        { "id": "tree_construction", "name": "Construction Problems (0/4)", "estimatedHours": 25, "description": "Requirements needed to construct a unique BT, Construct a BT from Preorder and Inorder, Construct a BT from Postorder and Inorder, Serialize and De-serialize BT" },
-        { "id": "morris_traversal", "name": "Traversal in Constant Space (0/2)", "estimatedHours": 15, "description": "Morris Inorder Traversal, Morris Preorder Traversal" }
+        {
+          "id": "tree_traversals",
+          "name": "Theory/Traversals (0/6)",
+          "estimatedHours": 25,
+          "description": "Introduction, Inorder Traversal, Preorder Traversal, Postorder Traversal, Level Order Traversal, Pre, Post, Inorder in one traversal"
+        },
+        {
+          "id": "tree_medium",
+          "name": "Medium Problems (0/6)",
+          "estimatedHours": 25,
+          "description": "Maximum Depth in BT, Check if two trees are identical or not, Check for balanced binary tree, Diameter of Binary Tree, Maximum path sum, Check for symmetrical BTs"
+        },
+        {
+          "id": "tree_faqs",
+          "name": "FAQs (0/12)",
+          "estimatedHours": 55,
+          "description": "Zig Zag or Spiral Traversal, Boundary Traversal, Vertical Order Traversal, Top View of BT, Bottom view of BT, Right/Left View of BT, Print root to node path in BT, LCA in BT, Maximum Width of BT, Print all nodes at a distance of K in BT, Minimum time taken to burn the BT from a given Node, Count total nodes in a complete BT"
+        },
+        {
+          "id": "tree_construction",
+          "name": "Construction Problems (0/4)",
+          "estimatedHours": 25,
+          "description": "Requirements needed to construct a unique BT, Construct a BT from Preorder and Inorder, Construct a BT from Postorder and Inorder, Serialize and De-serialize BT"
+        },
+        {
+          "id": "morris_traversal",
+          "name": "Traversal in Constant Space (0/2)",
+          "estimatedHours": 15,
+          "description": "Morris Inorder Traversal, Morris Preorder Traversal"
+        }
       ]
     },
     {
@@ -314,9 +734,24 @@
       "tier": 2,
       "estimatedHours": 70,
       "topics": [
-        { "id": "bst_basics", "name": "Theory and Basics (0/3)", "estimatedHours": 15, "description": "Introduction to BST, Search in BST, Floor and Ceil in a BST" },
-        { "id": "bst_medium", "name": "Medium (0/7)", "estimatedHours": 35, "description": "Insert a given node in BST, Delete a node in BST, Kth Smallest and Largest element in BST, Check if a tree is a BST or not, LCA in BST, Construct a BST from a preorder traversal, Inorder successor and predecessor in BST" },
-        { "id": "bst_faqs", "name": "FAQs (0/4)", "estimatedHours": 20, "description": "BST iterator, Two sum in BST, Correct BST with two nodes swapped, Largest BST in Binary Tree" }
+        {
+          "id": "bst_basics",
+          "name": "Theory and Basics (0/3)",
+          "estimatedHours": 15,
+          "description": "Introduction to BST, Search in BST, Floor and Ceil in a BST"
+        },
+        {
+          "id": "bst_medium",
+          "name": "Medium (0/7)",
+          "estimatedHours": 35,
+          "description": "Insert a given node in BST, Delete a node in BST, Kth Smallest and Largest element in BST, Check if a tree is a BST or not, LCA in BST, Construct a BST from a preorder traversal, Inorder successor and predecessor in BST"
+        },
+        {
+          "id": "bst_faqs",
+          "name": "FAQs (0/4)",
+          "estimatedHours": 20,
+          "description": "BST iterator, Two sum in BST, Correct BST with two nodes swapped, Largest BST in Binary Tree"
+        }
       ]
     },
     {
@@ -325,8 +760,18 @@
       "tier": 2,
       "estimatedHours": 50,
       "topics": [
-        { "id": "heap_implementation", "name": "Theory and Implementation (0/9)", "estimatedHours": 40, "description": "Heaps (Theory Video), Heapify Algorithm, Build heap from a given Array, Implement Min Heap, Implement Max Heap, Check if an array represents a min heap, Convert Min Heap to Max Heap, Heap Sort, K-th Largest element in an array" },
-        { "id": "heap_faqs", "name": "FAQs (0/1)", "estimatedHours": 10, "description": "Kth largest element in a stream of running integers" }
+        {
+          "id": "heap_implementation",
+          "name": "Theory and Implementation (0/9)",
+          "estimatedHours": 40,
+          "description": "Heaps (Theory Video), Heapify Algorithm, Build heap from a given Array, Implement Min Heap, Implement Max Heap, Check if an array represents a min heap, Convert Min Heap to Max Heap, Heap Sort, K-th Largest element in an array"
+        },
+        {
+          "id": "heap_faqs",
+          "name": "FAQs (0/1)",
+          "estimatedHours": 10,
+          "description": "Kth largest element in a stream of running integers"
+        }
       ]
     },
     {
@@ -335,14 +780,54 @@
       "tier": 1,
       "estimatedHours": 220,
       "topics": [
-        { "id": "graph_theory", "name": "Theory and traversals (0/3)", "estimatedHours": 15, "description": "Introduction to Graph, Connected Components, Traversal Techniques" },
-        { "id": "graph_traversal_problems", "name": "Traversal Problems (0/8)", "estimatedHours": 35, "description": "Number of provinces, Number of islands, Flood fill algorithm, Number of enclaves, Rotten Oranges, Distance of nearest cell having one, Surrounded Regions, Number of distinct islands" },
-        { "id": "graph_cycles", "name": "Cycles (0/4)", "estimatedHours": 25, "description": "Detect a cycle in an undirected graph, Bipartite graph, Topological sort or Kahn's algorithm, Detect a cycle in a directed graph" },
-        { "id": "graph_hard", "name": "Hard Problems (0/8)", "estimatedHours": 35, "description": "Find eventual safe states, Course Schedule I, Course Schedule II, Alien Dictionary, Shortest path in DAG, Shortest path in undirected graph with unit weights, Word ladder I, Word ladder II" },
-        { "id": "shortest_path", "name": "Shortest Path Algorithms (0/10)", "estimatedHours": 50, "description": "Dijkstra's algorithm, Print Shortest Path, Shortest Distance in a Binary Maze, Path with minimum effort, Cheapest flight within K stops, Minimum multiplications to reach end, Number of ways to arrive at destination, Bellman ford algorithm, Floyd warshall algorithm, Find the city with the smallest number of neighbors" },
-        { "id": "mst", "name": "Minimum Spanning Tree (0/3)", "estimatedHours": 20, "description": "MST theory, Disjoint Set, Find the MST weight" },
-        { "id": "graph_hard_2", "name": "Hard Problems II (0/5)", "estimatedHours": 25, "description": "Number of operations to make network connected, Accounts merge, Number of islands II, Making a large island, Most stones removed with same row or column" },
-        { "id": "additional_algorithms", "name": "Additional Algorithms (0/3)", "estimatedHours": 15, "description": "Kosaraju's algorithm, Bridges in graph, Articulation point in graph" }
+        {
+          "id": "graph_theory",
+          "name": "Theory and traversals (0/3)",
+          "estimatedHours": 15,
+          "description": "Introduction to Graph, Connected Components, Traversal Techniques"
+        },
+        {
+          "id": "graph_traversal_problems",
+          "name": "Traversal Problems (0/8)",
+          "estimatedHours": 35,
+          "description": "Number of provinces, Number of islands, Flood fill algorithm, Number of enclaves, Rotten Oranges, Distance of nearest cell having one, Surrounded Regions, Number of distinct islands"
+        },
+        {
+          "id": "graph_cycles",
+          "name": "Cycles (0/4)",
+          "estimatedHours": 25,
+          "description": "Detect a cycle in an undirected graph, Bipartite graph, Topological sort or Kahn's algorithm, Detect a cycle in a directed graph"
+        },
+        {
+          "id": "graph_hard",
+          "name": "Hard Problems (0/8)",
+          "estimatedHours": 35,
+          "description": "Find eventual safe states, Course Schedule I, Course Schedule II, Alien Dictionary, Shortest path in DAG, Shortest path in undirected graph with unit weights, Word ladder I, Word ladder II"
+        },
+        {
+          "id": "shortest_path",
+          "name": "Shortest Path Algorithms (0/10)",
+          "estimatedHours": 50,
+          "description": "Dijkstra's algorithm, Print Shortest Path, Shortest Distance in a Binary Maze, Path with minimum effort, Cheapest flight within K stops, Minimum multiplications to reach end, Number of ways to arrive at destination, Bellman ford algorithm, Floyd warshall algorithm, Find the city with the smallest number of neighbors"
+        },
+        {
+          "id": "mst",
+          "name": "Minimum Spanning Tree (0/3)",
+          "estimatedHours": 20,
+          "description": "MST theory, Disjoint Set, Find the MST weight"
+        },
+        {
+          "id": "graph_hard_2",
+          "name": "Hard Problems II (0/5)",
+          "estimatedHours": 25,
+          "description": "Number of operations to make network connected, Accounts merge, Number of islands II, Making a large island, Most stones removed with same row or column"
+        },
+        {
+          "id": "additional_algorithms",
+          "name": "Additional Algorithms (0/3)",
+          "estimatedHours": 15,
+          "description": "Kosaraju's algorithm, Bridges in graph, Articulation point in graph"
+        }
       ]
     },
     {
@@ -351,15 +836,60 @@
       "tier": 1,
       "estimatedHours": 255,
       "topics": [
-        { "id": "dp_introduction", "name": "Introduction (0/1)", "estimatedHours": 5, "description": "Introduction to DP" },
-        { "id": "dp_1d", "name": "1D DP (0/5)", "estimatedHours": 25, "description": "Climbing stairs, Frog Jump, Frog jump with K distances, Maximum sum of non adjacent elements, House robber" },
-        { "id": "dp_2d", "name": "2D DP (0/1)", "estimatedHours": 8, "description": "Ninja's training" },
-        { "id": "dp_grids", "name": "DP on grids (0/5)", "estimatedHours": 25, "description": "Grid unique paths, Unique paths II, Minimum Falling Path Sum, Triangle, Cherry pickup II" },
-        { "id": "dp_stocks", "name": "DP on stocks (0/5)", "estimatedHours": 25, "description": "Best time to buy and sell stock, Best time to buy and sell stock II, Best time to buy and sell stock III, Best time to buy and sell stock IV, Best time to buy and sell stock with transaction fees" },
-        { "id": "dp_subsequences", "name": "DP on subsequences (0/11)", "estimatedHours": 55, "description": "Subset sum equals to target, Partition equal subset sum, Partition a set into two subsets with minimum absolute sum difference, Count subsets with sum K, Count partitions with given difference, 0 and 1 Knapsack, Minimum coins, Target sum, Coin change II, Unbounded knapsack, Rod cutting problem" },
-        { "id": "dp_lis", "name": "LIS (0/6)", "estimatedHours": 30, "description": "Longest Increasing Subsequence, Print Longest Increasing Subsequence, Largest Divisible Subset, Longest String Chain, Longest Bitonic Subsequence, Number of Longest Increasing Subsequences" },
-        { "id": "dp_strings", "name": "DP on strings (0/9)", "estimatedHours": 45, "description": "Longest common subsequence, Longest common substring, Longest palindromic subsequence, Minimum insertions to make string palindrome, Minimum insertions or deletions to convert string A to B, Shortest common supersequence, Distinct subsequences, Edit distance, Wildcard matching" },
-        { "id": "dp_mcm", "name": "MCM DP (0/4)", "estimatedHours": 25, "description": "Matrix chain multiplication, Minimum cost to cut the stick, Burst balloons, Palindrome partitioning II" }
+        {
+          "id": "dp_introduction",
+          "name": "Introduction (0/1)",
+          "estimatedHours": 5,
+          "description": "Introduction to DP"
+        },
+        {
+          "id": "dp_1d",
+          "name": "1D DP (0/5)",
+          "estimatedHours": 25,
+          "description": "Climbing stairs, Frog Jump, Frog jump with K distances, Maximum sum of non adjacent elements, House robber"
+        },
+        {
+          "id": "dp_2d",
+          "name": "2D DP (0/1)",
+          "estimatedHours": 8,
+          "description": "Ninja's training"
+        },
+        {
+          "id": "dp_grids",
+          "name": "DP on grids (0/5)",
+          "estimatedHours": 25,
+          "description": "Grid unique paths, Unique paths II, Minimum Falling Path Sum, Triangle, Cherry pickup II"
+        },
+        {
+          "id": "dp_stocks",
+          "name": "DP on stocks (0/5)",
+          "estimatedHours": 25,
+          "description": "Best time to buy and sell stock, Best time to buy and sell stock II, Best time to buy and sell stock III, Best time to buy and sell stock IV, Best time to buy and sell stock with transaction fees"
+        },
+        {
+          "id": "dp_subsequences",
+          "name": "DP on subsequences (0/11)",
+          "estimatedHours": 55,
+          "description": "Subset sum equals to target, Partition equal subset sum, Partition a set into two subsets with minimum absolute sum difference, Count subsets with sum K, Count partitions with given difference, 0 and 1 Knapsack, Minimum coins, Target sum, Coin change II, Unbounded knapsack, Rod cutting problem"
+        },
+        {
+          "id": "dp_lis",
+          "name": "LIS (0/6)",
+          "estimatedHours": 30,
+          "description": "Longest Increasing Subsequence, Print Longest Increasing Subsequence, Largest Divisible Subset, Longest String Chain, Longest Bitonic Subsequence, Number of Longest Increasing Subsequences"
+        },
+        {
+          "id": "dp_strings",
+          "name": "DP on strings (0/9)",
+          "estimatedHours": 45,
+          "description": "Longest common subsequence, Longest common substring, Longest palindromic subsequence, Minimum insertions to make string palindrome, Minimum insertions or deletions to convert string A to B, Shortest common supersequence, Distinct subsequences, Edit distance, Wildcard matching"
+        },
+        {
+          "id": "dp_mcm",
+          "name": "MCM DP (0/4)",
+          "estimatedHours": 25,
+          "description": "Matrix chain multiplication, Minimum cost to cut the stick, Burst balloons, Palindrome partitioning II"
+        }
       ]
     },
     {
@@ -368,8 +898,18 @@
       "tier": 2,
       "estimatedHours": 30,
       "topics": [
-        { "id": "trie_theory", "name": "Theory (0/2)", "estimatedHours": 10, "description": "Trie Implementation and Operations, Trie Implementation and Advanced Operations" },
-        { "id": "trie_problems", "name": "Problems (0/4)", "estimatedHours": 20, "description": "Longest word with all prefixes, Number of distinct substrings in a string, Maximum XOR of two numbers in an array, Maximum Xor with an element from an array" }
+        {
+          "id": "trie_theory",
+          "name": "Theory (0/2)",
+          "estimatedHours": 10,
+          "description": "Trie Implementation and Operations, Trie Implementation and Advanced Operations"
+        },
+        {
+          "id": "trie_problems",
+          "name": "Problems (0/4)",
+          "estimatedHours": 20,
+          "description": "Longest word with all prefixes, Number of distinct substrings in a string, Maximum XOR of two numbers in an array, Maximum Xor with an element from an array"
+        }
       ]
     },
     {
@@ -378,8 +918,18 @@
       "tier": 2,
       "estimatedHours": 40,
       "topics": [
-        { "id": "strings_medium", "name": "Medium Problems (0/3)", "estimatedHours": 15, "description": "Reverse every word in a string, Minimum number of bracket reversals to make an expression balanced, Count and say" },
-        { "id": "strings_advanced_algo", "name": "Advanced Problems (Less asked) (0/5)", "estimatedHours": 25, "description": "Rabin Karp Algorithm, Z function, KMP Algorithm or LPS array, Shortest Palindrome, Longest happy prefix" }
+        {
+          "id": "strings_medium",
+          "name": "Medium Problems (0/3)",
+          "estimatedHours": 15,
+          "description": "Reverse every word in a string, Minimum number of bracket reversals to make an expression balanced, Count and say"
+        },
+        {
+          "id": "strings_advanced_algo",
+          "name": "Advanced Problems (Less asked) (0/5)",
+          "estimatedHours": 25,
+          "description": "Rabin Karp Algorithm, Z function, KMP Algorithm or LPS array, Shortest Palindrome, Longest happy prefix"
+        }
       ]
     },
     {
@@ -388,8 +938,14 @@
       "tier": 2,
       "estimatedHours": 15,
       "topics": [
-        { "id": "sieve_eratosthenes", "name": "Sieve of Eratosthenes (0/3)", "estimatedHours": 15, "description": "Print all primes till N, Prime factorisation of a Number, Count primes in range L to R" }
+        {
+          "id": "sieve_eratosthenes",
+          "name": "Sieve of Eratosthenes (0/3)",
+          "estimatedHours": 15,
+          "description": "Print all primes till N, Prime factorisation of a Number, Count primes in range L to R"
+        }
       ]
     }
-  ]
+  ],
+  "totalEstimatedHours": 3857
 }
