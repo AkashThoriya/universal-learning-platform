@@ -74,7 +74,7 @@ Each exam JSON file should follow this structure:
 ## Categories
 
 Current supported categories:
-- **Technology**: Programming, DevOps, Database courses
+- **Computer Science**: Programming (React, etc.), DevOps, Database courses, Data Structures & Algorithms
 - **Banking**: Banking sector competitive exams
 - **Civil Services**: Government service exams
 - **Engineering**: Technical engineering exams

@@ -1,0 +1,807 @@
+{
+  "id": "nodejs_by_namastedev",
+  "name": "NodeJS by Namastedev",
+  "description": "Comprehensive Node.js course by namastedev covering fundamentals to advanced backend development, including Express, MongoDB, authentication, real-time features, and production deployment",
+  "category": "Computer Science",
+  "totalEstimatedHours": 107,
+  "stages": [
+    {
+      "id": "fundamentals",
+      "name": "NodeJS Fundamentals Assessment",
+      "totalMarks": 100,
+      "duration": 120,
+      "sections": [
+        {
+          "id": "nodejs_basics",
+          "name": "NodeJS Core Concepts",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "modules_require",
+          "name": "Modules & Require System",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "async_programming",
+          "name": "Asynchronous Programming & Event Loop",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "libuv_v8",
+          "name": "libuv & V8 Engine",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "backend_development",
+      "name": "Backend Development Assessment",
+      "totalMarks": 150,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "express_server",
+          "name": "Express Server & Routing",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        },
+        {
+          "id": "middlewares_handlers",
+          "name": "Middlewares & Error Handlers",
+          "maxMarks": 35,
+          "maxTime": 40,
+          "negativeMarking": 0
+        },
+        {
+          "id": "database_mongodb",
+          "name": "Database Integration & MongoDB",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        },
+        {
+          "id": "apis_validation",
+          "name": "API Development & Data Validation",
+          "maxMarks": 35,
+          "maxTime": 40,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "advanced_features",
+      "name": "Advanced Features Assessment",
+      "totalMarks": 200,
+      "duration": 240,
+      "sections": [
+        {
+          "id": "authentication_security",
+          "name": "Authentication & Security",
+          "maxMarks": 60,
+          "maxTime": 70,
+          "negativeMarking": 0
+        },
+        {
+          "id": "database_optimization",
+          "name": "Database Optimization & Complex Queries",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        },
+        {
+          "id": "realtime_features",
+          "name": "Real-time Features & WebSockets",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        },
+        {
+          "id": "payment_integration",
+          "name": "Payment Gateway Integration",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "production_deployment",
+      "name": "Production Deployment Assessment",
+      "totalMarks": 150,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "aws_deployment",
+          "name": "AWS Deployment & Server Configuration",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        },
+        {
+          "id": "nginx_domain",
+          "name": "Nginx Configuration & Domain Setup",
+          "maxMarks": 40,
+          "maxTime": 45,
+          "negativeMarking": 0
+        },
+        {
+          "id": "email_cron",
+          "name": "Email Services & Cron Jobs",
+          "maxMarks": 35,
+          "maxTime": 40,
+          "negativeMarking": 0
+        },
+        {
+          "id": "security_env",
+          "name": "Security & Environment Management",
+          "maxMarks": 25,
+          "maxTime": 35,
+          "negativeMarking": 0
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "nodejs_fundamentals",
+      "name": "NodeJS Fundamentals",
+      "tier": 1,
+      "estimatedHours": 30.5,
+      "topics": [
+        {
+          "id": "welcome_intro",
+          "name": "Season 1 Episode 00: Welcome to NamasteNodeJS",
+          "estimatedHours": 1.5,
+          "description": "Introduction to the course, roadmap, and what you'll learn in this comprehensive NodeJS journey",
+          "subtopics": [
+            "Course Overview and Roadmap",
+            "Prerequisites and Setup",
+            "Community and Resources",
+            "Learning Approach"
+          ]
+        },
+        {
+          "id": "nodejs_introduction",
+          "name": "Season 1 Episode 01: Introduction to NodeJS",
+          "estimatedHours": 2,
+          "description": "Understanding what NodeJS is, its history, and why it's revolutionary for JavaScript development",
+          "subtopics": [
+            "What is NodeJS?",
+            "History and Evolution",
+            "NodeJS vs Browser JavaScript",
+            "Use Cases and Applications"
+          ]
+        },
+        {
+          "id": "js_on_server",
+          "name": "Season 1 Episode 02: JS on Server",
+          "estimatedHours": 2,
+          "description": "Understanding how JavaScript runs on the server-side and the differences from client-side execution",
+          "subtopics": [
+            "Server-side JavaScript Execution",
+            "Differences from Browser Environment",
+            "Global Objects in NodeJS",
+            "File System Access"
+          ]
+        },
+        {
+          "id": "write_code",
+          "name": "Season 1 Episode 03: Let's write code",
+          "estimatedHours": 2,
+          "description": "Writing your first NodeJS programs and understanding the development workflow",
+          "subtopics": [
+            "Setting up Development Environment",
+            "Writing First NodeJS Program",
+            "Running NodeJS Scripts",
+            "Debugging Basics"
+          ]
+        },
+        {
+          "id": "modules_require",
+          "name": "Season 1 Episode 04: module.export & require",
+          "estimatedHours": 2,
+          "description": "Understanding NodeJS module system, exports, and require mechanism",
+          "subtopics": [
+            "CommonJS Module System",
+            "module.exports vs exports",
+            "require() Function",
+            "Module Resolution",
+            "Creating Custom Modules"
+          ]
+        },
+        {
+          "id": "nodejs_github",
+          "name": "Season 1 Episode 05: Diving into the NodeJS github repo",
+          "estimatedHours": 2,
+          "description": "Exploring NodeJS source code, understanding its architecture and contribution process",
+          "subtopics": [
+            "NodeJS Repository Structure",
+            "C++ and JavaScript Integration",
+            "Understanding NodeJS Architecture",
+            "Open Source Contribution Process"
+          ]
+        },
+        {
+          "id": "libuv_async",
+          "name": "Season 1 Episode 06: libuv & async IO",
+          "estimatedHours": 2.5,
+          "description": "Deep dive into libuv library and asynchronous I/O operations in NodeJS",
+          "subtopics": [
+            "What is libuv?",
+            "Asynchronous I/O Concepts",
+            "Non-blocking Operations",
+            "Cross-platform Compatibility"
+          ]
+        },
+        {
+          "id": "sync_async_timeout",
+          "name": "Season 1 Episode 07: sync, async, setTimeoutZero - code",
+          "estimatedHours": 2.5,
+          "description": "Understanding synchronous vs asynchronous code execution and timeout mechanisms",
+          "subtopics": [
+            "Synchronous Code Execution",
+            "Asynchronous Code Patterns",
+            "setTimeout and setImmediate",
+            "Event Loop Timing",
+            "Practical Examples"
+          ]
+        },
+        {
+          "id": "v8_engine",
+          "name": "Season 1 Episode 08: Deep dive into v8 JS Engine",
+          "estimatedHours": 2.5,
+          "description": "Understanding V8 JavaScript engine, compilation, and optimization processes",
+          "subtopics": [
+            "V8 Engine Architecture",
+            "Just-in-Time Compilation",
+            "Memory Management",
+            "Garbage Collection",
+            "Performance Optimization"
+          ]
+        },
+        {
+          "id": "libuv_event_loop",
+          "name": "Season 1 Episode 09: libuv & Event Loop",
+          "estimatedHours": 2.5,
+          "description": "Comprehensive understanding of the event loop and its phases",
+          "subtopics": [
+            "Event Loop Architecture",
+            "Event Loop Phases",
+            "Callback Queue",
+            "Microtasks vs Macrotasks",
+            "Event Loop Debugging"
+          ]
+        },
+        {
+          "id": "thread_pool",
+          "name": "Season 1 Episode 10: Thread pool in libuv",
+          "estimatedHours": 2,
+          "description": "Understanding thread pool concepts and their role in NodeJS operations",
+          "subtopics": [
+            "Thread Pool Basics",
+            "File System Operations",
+            "CPU-Intensive Tasks",
+            "Thread Pool Size Configuration",
+            "Performance Implications"
+          ]
+        },
+        {
+          "id": "creating_server",
+          "name": "Season 1 Episode 11: Creating a Server",
+          "estimatedHours": 2.5,
+          "description": "Building your first HTTP server using NodeJS built-in modules",
+          "subtopics": [
+            "HTTP Module",
+            "Creating Basic Server",
+            "Request and Response Objects",
+            "Handling Different Routes",
+            "Server Configuration"
+          ]
+        },
+        {
+          "id": "databases_intro",
+          "name": "Season 1 Episode 12: Databases - SQL & NoSQL",
+          "estimatedHours": 2,
+          "description": "Introduction to databases, understanding SQL vs NoSQL paradigms",
+          "subtopics": [
+            "Database Fundamentals",
+            "SQL vs NoSQL Comparison",
+            "When to Use Each Type",
+            "Popular Database Options",
+            "Database Design Principles"
+          ]
+        },
+        {
+          "id": "mongodb_setup",
+          "name": "Season 1 Episode 13: Creating a database & mongodb",
+          "estimatedHours": 2.5,
+          "description": "Setting up MongoDB and understanding document-based database concepts",
+          "subtopics": [
+            "MongoDB Installation and Setup",
+            "Document-based Storage",
+            "Collections and Documents",
+            "Basic CRUD Operations",
+            "MongoDB Compass Introduction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "project_development",
+      "name": "Backend Development & Project Architecture",
+      "tier": 1,
+      "estimatedHours": 36.5,
+      "topics": [
+        {
+          "id": "project_intro",
+          "name": "Season 2 Episode 00: Introduction to Project",
+          "estimatedHours": 1.5,
+          "description": "Overview of the DevTinder project that will be built throughout the course",
+          "subtopics": [
+            "Project Overview - DevTinder",
+            "Features and Functionality",
+            "Technology Stack",
+            "Development Timeline"
+          ]
+        },
+        {
+          "id": "architecture_patterns",
+          "name": "Season 2 Episode 01: Microservices vs Monolith",
+          "estimatedHours": 2,
+          "description": "Understanding different architectural patterns and how to approach project building",
+          "subtopics": [
+            "Monolithic Architecture",
+            "Microservices Architecture",
+            "Pros and Cons of Each",
+            "When to Choose What",
+            "Project Structure Planning"
+          ]
+        },
+        {
+          "id": "planning_design",
+          "name": "Season 2 Episode 02: Features, HLD, LLD & Planning",
+          "estimatedHours": 2,
+          "description": "High-level and low-level design concepts, feature planning and system architecture",
+          "subtopics": [
+            "High-Level Design (HLD)",
+            "Low-Level Design (LLD)",
+            "Feature Breakdown",
+            "System Architecture Planning",
+            "Database Design"
+          ]
+        },
+        {
+          "id": "express_server",
+          "name": "Season 2 Episode 03: Creating our Express Server",
+          "estimatedHours": 2,
+          "description": "Setting up Express.js server and understanding the Express framework",
+          "subtopics": [
+            "Express.js Introduction",
+            "Server Setup and Configuration",
+            "Basic Routing",
+            "Express Application Structure",
+            "Development Server Setup"
+          ]
+        },
+        {
+          "id": "routing_handlers",
+          "name": "Season 2 Episode 04: Routing and Request Handlers",
+          "estimatedHours": 2.5,
+          "description": "Advanced routing concepts and request handling in Express",
+          "subtopics": [
+            "Advanced Routing Patterns",
+            "Route Parameters",
+            "Query Parameters",
+            "Request Body Handling",
+            "Response Methods"
+          ]
+        },
+        {
+          "id": "middlewares_errors",
+          "name": "Season 2 Episode 05: Middlewares & Error Handlers",
+          "estimatedHours": 2.5,
+          "description": "Understanding middleware concept and implementing error handling",
+          "subtopics": [
+            "Middleware Concepts",
+            "Built-in Middlewares",
+            "Custom Middleware Creation",
+            "Error Handling Middleware",
+            "Middleware Chain"
+          ]
+        },
+        {
+          "id": "database_mongoose",
+          "name": "Season 2 Episode 06: Database, Schema & Models | Mongoose",
+          "estimatedHours": 3,
+          "description": "Integrating MongoDB with Express using Mongoose ODM",
+          "subtopics": [
+            "Mongoose Introduction",
+            "Schema Definition",
+            "Model Creation",
+            "Database Connection",
+            "Schema Validation"
+          ]
+        },
+        {
+          "id": "apis_development",
+          "name": "Season 2 Episode 07: Diving into the APIs",
+          "estimatedHours": 2.5,
+          "description": "Building RESTful APIs and understanding API design principles",
+          "subtopics": [
+            "RESTful API Principles",
+            "HTTP Methods",
+            "API Endpoints Design",
+            "Request/Response Structure",
+            "API Testing"
+          ]
+        },
+        {
+          "id": "data_validation",
+          "name": "Season 2 Episode 08: Data Sanitization & Schema Validations",
+          "estimatedHours": 2.5,
+          "description": "Implementing data validation and sanitization for security",
+          "subtopics": [
+            "Input Validation",
+            "Data Sanitization",
+            "Schema Validation Rules",
+            "Custom Validators",
+            "Error Handling for Validation"
+          ]
+        },
+        {
+          "id": "password_encryption",
+          "name": "Season 2 Episode 09: Encrypting Passwords",
+          "estimatedHours": 2,
+          "description": "Implementing secure password hashing and encryption",
+          "subtopics": [
+            "Password Security Concepts",
+            "Hashing vs Encryption",
+            "bcrypt Implementation",
+            "Salt and Rounds",
+            "Password Comparison"
+          ]
+        },
+        {
+          "id": "auth_jwt_cookies",
+          "name": "Season 2 Episode 10: Authentication, JWT & Cookies",
+          "estimatedHours": 3,
+          "description": "Implementing authentication using JWT tokens and cookie management",
+          "subtopics": [
+            "Authentication vs Authorization",
+            "JWT Token Concepts",
+            "Token Creation and Verification",
+            "Cookie Management",
+            "Session Management"
+          ]
+        },
+        {
+          "id": "apis_router",
+          "name": "Season 2 Episode 11: Diving into the APIs and express Router",
+          "estimatedHours": 2.5,
+          "description": "Advanced API development and Express Router for modular routing",
+          "subtopics": [
+            "Express Router",
+            "Modular Routing",
+            "Route Organization",
+            "API Versioning",
+            "Route Protection"
+          ]
+        },
+        {
+          "id": "db_queries_indexes",
+          "name": "Season 2 Episode 12: Logical DB Query & Compound Indexes",
+          "estimatedHours": 3,
+          "description": "Advanced database queries and performance optimization with indexes",
+          "subtopics": [
+            "Complex MongoDB Queries",
+            "Aggregation Pipeline",
+            "Database Indexes",
+            "Compound Indexes",
+            "Query Performance Optimization"
+          ]
+        },
+        {
+          "id": "populate_apis",
+          "name": "Season 2 Episode 13: ref, Populate & Thought process of writing APIs",
+          "estimatedHours": 2.5,
+          "description": "Database relationships, population, and API design thinking",
+          "subtopics": [
+            "MongoDB References",
+            "Populate Functionality",
+            "Relationship Management",
+            "API Design Patterns",
+            "Performance Considerations"
+          ]
+        },
+        {
+          "id": "feed_pagination",
+          "name": "Season 2 Episode 14: Building Feed API & Pagination",
+          "estimatedHours": 3,
+          "description": "Building complex feed APIs with pagination and filtering",
+          "subtopics": [
+            "Feed Algorithm Design",
+            "Pagination Implementation",
+            "Skip and Limit",
+            "Cursor-based Pagination",
+            "Feed Optimization"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ui_development",
+      "name": "DevTinder UI Development",
+      "tier": 2,
+      "estimatedHours": 10,
+      "topics": [
+        {
+          "id": "devtinder_ui_1",
+          "name": "Season 2 Episode 15: DevTinder UI - Part 1",
+          "estimatedHours": 2,
+          "description": "Starting the frontend development for DevTinder application",
+          "subtopics": [
+            "Frontend Setup",
+            "Project Structure",
+            "Component Architecture",
+            "Initial UI Components"
+          ]
+        },
+        {
+          "id": "devtinder_ui_2",
+          "name": "Season 2 Episode 16: DevTinder UI - Part 2",
+          "estimatedHours": 2,
+          "description": "Continuing UI development with more complex components",
+          "subtopics": [
+            "Advanced Components",
+            "State Management",
+            "API Integration",
+            "User Authentication UI"
+          ]
+        },
+        {
+          "id": "devtinder_ui_3",
+          "name": "Season 2 Episode 17: DevTinder UI - Part 3",
+          "estimatedHours": 2,
+          "description": "Building core features and user interactions",
+          "subtopics": [
+            "Core Feature Implementation",
+            "User Interactions",
+            "Form Handling",
+            "Real-time Updates"
+          ]
+        },
+        {
+          "id": "devtinder_ui_4",
+          "name": "Season 2 Episode 18: DevTinder UI - Part 4",
+          "estimatedHours": 2,
+          "description": "Advanced UI features and user experience improvements",
+          "subtopics": [
+            "Advanced UI Features",
+            "User Experience Optimization",
+            "Performance Improvements",
+            "Mobile Responsiveness"
+          ]
+        },
+        {
+          "id": "devtinder_ui_5",
+          "name": "Season 2 Episode 19: DevTinder UI - Part 5",
+          "estimatedHours": 2,
+          "description": "Finalizing the UI and connecting all components",
+          "subtopics": [
+            "Final UI Polish",
+            "Component Integration",
+            "Testing and Debugging",
+            "UI/UX Best Practices"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deployment_production",
+      "name": "Production Deployment & DevOps",
+      "tier": 1,
+      "estimatedHours": 20,
+      "topics": [
+        {
+          "id": "aws_frontend_deployment",
+          "name": "Season 3 Episode 01: Launching AWS Instance and deploying frontend",
+          "estimatedHours": 2.5,
+          "description": "Setting up AWS EC2 instance and deploying frontend application",
+          "subtopics": [
+            "AWS EC2 Setup",
+            "Instance Configuration",
+            "Frontend Deployment",
+            "Security Groups",
+            "SSH Access"
+          ]
+        },
+        {
+          "id": "nginx_backend_deployment",
+          "name": "Season 3 Episode 02: Nginx & Backend Node App Deployment",
+          "estimatedHours": 2.5,
+          "description": "Configuring Nginx as reverse proxy and deploying NodeJS backend",
+          "subtopics": [
+            "Nginx Installation and Configuration",
+            "Reverse Proxy Setup",
+            "NodeJS App Deployment",
+            "Process Management",
+            "Load Balancing"
+          ]
+        },
+        {
+          "id": "custom_domain",
+          "name": "Season 3 Episode 03: Adding a Custom Domain Name",
+          "estimatedHours": 2,
+          "description": "Setting up custom domain and SSL certificates",
+          "subtopics": [
+            "Domain Registration",
+            "DNS Configuration",
+            "SSL Certificate Setup",
+            "Domain Mapping",
+            "HTTPS Configuration"
+          ]
+        },
+        {
+          "id": "email_services",
+          "name": "Season 3 Episode 04: Sending Emails using Amazon SES",
+          "estimatedHours": 2,
+          "description": "Implementing email functionality using AWS Simple Email Service",
+          "subtopics": [
+            "AWS SES Setup",
+            "Email Templates",
+            "SMTP Configuration",
+            "Email Verification",
+            "Bounce and Complaint Handling"
+          ]
+        },
+        {
+          "id": "env_security",
+          "name": "Season 3 Episode 05: Keeping Our Credentials Safe Using dotenv Files",
+          "estimatedHours": 1.5,
+          "description": "Environment variable management and security best practices",
+          "subtopics": [
+            "Environment Variables",
+            "dotenv Configuration",
+            "Secret Management",
+            "Production vs Development Config",
+            "Security Best Practices"
+          ]
+        },
+        {
+          "id": "cron_jobs",
+          "name": "Season 3 Episode 06: Scheduling Cron Jobs",
+          "estimatedHours": 2,
+          "description": "Implementing scheduled tasks and background jobs",
+          "subtopics": [
+            "Cron Job Concepts",
+            "Task Scheduling",
+            "Background Processing",
+            "Job Queues",
+            "Error Handling in Jobs"
+          ]
+        },
+        {
+          "id": "payment_gateway",
+          "name": "Season 3 Episode 07: Payment Gateway Integration ft. Razorpay",
+          "estimatedHours": 2.5,
+          "description": "Integrating payment processing with Razorpay",
+          "subtopics": [
+            "Payment Gateway Setup",
+            "Razorpay Integration",
+            "Payment Processing",
+            "Webhook Handling",
+            "Payment Security"
+          ]
+        },
+        {
+          "id": "websockets",
+          "name": "Season 3 Episode 08: Web Sockets & socket.io",
+          "estimatedHours": 2.5,
+          "description": "Implementing real-time communication with WebSockets",
+          "subtopics": [
+            "WebSocket Concepts",
+            "Socket.io Setup",
+            "Real-time Communication",
+            "Event Handling",
+            "Connection Management"
+          ]
+        },
+        {
+          "id": "live_chat",
+          "name": "Season 3 Episode 09: Building Real-time Live Chat Feature",
+          "estimatedHours": 2.5,
+          "description": "Building a complete real-time chat system",
+          "subtopics": [
+            "Chat Architecture",
+            "Message Broadcasting",
+            "User Presence",
+            "Chat History",
+            "Message Persistence"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advanced_production_skills",
+      "name": "Advanced Production & Optimization",
+      "tier": 2,
+      "estimatedHours": 10,
+      "topics": [
+        {
+          "id": "nginx_optimization",
+          "name": "Nginx Configuration Optimization",
+          "estimatedHours": 2,
+          "description": "Advanced Nginx configuration and performance optimization",
+          "subtopics": [
+            "Nginx Performance Tuning",
+            "Caching Strategies",
+            "Compression Configuration",
+            "Rate Limiting",
+            "Security Headers"
+          ]
+        },
+        {
+          "id": "monitoring_logging",
+          "name": "Production Monitoring & Logging",
+          "estimatedHours": 2,
+          "description": "Implementing comprehensive monitoring and logging solutions",
+          "subtopics": [
+            "Application Monitoring",
+            "Log Management",
+            "Error Tracking",
+            "Performance Metrics",
+            "Alerting Systems"
+          ]
+        },
+        {
+          "id": "scalability_optimization",
+          "name": "Scalability & Performance Optimization",
+          "estimatedHours": 2.5,
+          "description": "Optimizing application for scale and performance",
+          "subtopics": [
+            "Code Optimization",
+            "Database Performance",
+            "Caching Strategies",
+            "Load Testing",
+            "Horizontal Scaling"
+          ]
+        },
+        {
+          "id": "security_hardening",
+          "name": "Security Hardening & Best Practices",
+          "estimatedHours": 2,
+          "description": "Implementing security best practices and hardening",
+          "subtopics": [
+            "Security Vulnerabilities",
+            "Input Validation",
+            "SQL Injection Prevention",
+            "XSS Protection",
+            "CSRF Protection"
+          ]
+        },
+        {
+          "id": "ci_cd_automation",
+          "name": "CI/CD & Deployment Automation",
+          "estimatedHours": 1.5,
+          "description": "Setting up continuous integration and deployment pipelines",
+          "subtopics": [
+            "CI/CD Concepts",
+            "Automated Testing",
+            "Deployment Pipelines",
+            "Version Control Integration",
+            "Rollback Strategies"
+          ]
+        }
+      ]
+    }
+  ]
+}

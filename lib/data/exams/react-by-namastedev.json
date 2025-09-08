@@ -1,0 +1,505 @@
+{
+  "id": "react_by_namastedev",
+  "name": "React by Namastedev",
+  "description": "Comprehensive React.js course by namastedev covering fundamentals to advanced concepts including hooks, state management, testing, and real-world project development",
+  "category": "Computer Science",
+  "totalEstimatedHours": 68.82,
+  "stages": [
+    {
+      "id": "foundation",
+      "name": "React Foundation Assessment",
+      "totalMarks": 100,
+      "duration": 120,
+      "sections": [
+        {
+          "id": "react_basics",
+          "name": "React Fundamentals & JSX",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "components_props",
+          "name": "Components & Props",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "bundlers_setup",
+          "name": "Bundlers & Project Setup",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        },
+        {
+          "id": "basic_state",
+          "name": "Basic State Management",
+          "maxMarks": 25,
+          "maxTime": 30,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "intermediate",
+      "name": "Intermediate React Assessment",
+      "totalMarks": 150,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "hooks_advanced",
+          "name": "React Hooks & Advanced Patterns",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        },
+        {
+          "id": "api_integration",
+          "name": "API Integration & Data Fetching",
+          "maxMarks": 35,
+          "maxTime": 40,
+          "negativeMarking": 0
+        },
+        {
+          "id": "routing_navigation",
+          "name": "Routing & Navigation",
+          "maxMarks": 40,
+          "maxTime": 50,
+          "negativeMarking": 0
+        },
+        {
+          "id": "class_components",
+          "name": "Class Components & Lifecycle",
+          "maxMarks": 35,
+          "maxTime": 40,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced React Assessment",
+      "totalMarks": 200,
+      "duration": 240,
+      "sections": [
+        {
+          "id": "optimization",
+          "name": "Performance Optimization",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        },
+        {
+          "id": "styling_ui",
+          "name": "Styling & UI Components",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        },
+        {
+          "id": "state_management",
+          "name": "Redux & State Management",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        },
+        {
+          "id": "testing",
+          "name": "Testing in React",
+          "maxMarks": 50,
+          "maxTime": 60,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "projects",
+      "name": "Real-world Projects Assessment",
+      "totalMarks": 250,
+      "duration": 300,
+      "sections": [
+        {
+          "id": "netflix_gpt",
+          "name": "NetflixGPT Project",
+          "maxMarks": 100,
+          "maxTime": 120,
+          "negativeMarking": 0
+        },
+        {
+          "id": "youtube_clone",
+          "name": "YouTube Clone Project",
+          "maxMarks": 75,
+          "maxTime": 90,
+          "negativeMarking": 0
+        },
+        {
+          "id": "devtinder",
+          "name": "DevTinder UI Project",
+          "maxMarks": 75,
+          "maxTime": 90,
+          "negativeMarking": 0
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "react_fundamentals",
+      "name": "React Fundamentals",
+      "tier": 1,
+      "estimatedHours": 10.26,
+      "topics": [
+        {
+          "id": "inception",
+          "name": "Episode 1: Inception - Introduction to React",
+          "estimatedHours": 1.65,
+          "description": "Introduction to React, setting up development environment, understanding the React ecosystem",
+          "subtopics": [
+            "What is React?",
+            "React vs Other Frameworks",
+            "Setting up Development Environment",
+            "Understanding the React Ecosystem"
+          ]
+        },
+        {
+          "id": "igniting_app",
+          "name": "Episode 2: Igniting our App - Build Tools & Bundlers",
+          "estimatedHours": 2.208,
+          "description": "Understanding build tools, bundlers like Parcel/Webpack, and setting up a React project",
+          "subtopics": [
+            "Understanding Bundlers",
+            "Parcel vs Webpack",
+            "Setting up React Project",
+            "Understanding package.json",
+            "NPM Scripts"
+          ]
+        },
+        {
+          "id": "laying_foundation",
+          "name": "Episode 3: Laying the Foundation - JSX & Components",
+          "estimatedHours": 2,
+          "description": "Deep dive into JSX, creating React components, and understanding the virtual DOM",
+          "subtopics": [
+            "What is JSX?",
+            "Creating React Components",
+            "Functional vs Class Components",
+            "Virtual DOM Concepts",
+            "React.createElement"
+          ]
+        },
+        {
+          "id": "show_me_code",
+          "name": "Episode 4: Talk is Cheap, Show Me the Code - Building UI",
+          "estimatedHours": 2.242,
+          "description": "Building actual UI components, props, and creating reusable components",
+          "subtopics": [
+            "Building Food Ordering App UI",
+            "Understanding Props",
+            "Component Composition",
+            "Reusable Components",
+            "Component Structure"
+          ]
+        },
+        {
+          "id": "lets_get_hooked",
+          "name": "Episode 5: Let's Get Hooked - React Hooks Introduction",
+          "estimatedHours": 2.155,
+          "description": "Introduction to React Hooks, useState, and functional component state management",
+          "subtopics": [
+            "What are React Hooks?",
+            "useState Hook",
+            "Rules of Hooks",
+            "Functional vs Class Components",
+            "State Management Basics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "intermediate_react",
+      "name": "Intermediate React Concepts",
+      "tier": 1,
+      "estimatedHours": 11.5,
+      "topics": [
+        {
+          "id": "exploring_world",
+          "name": "Episode 6: Exploring the World - API Integration",
+          "estimatedHours": 2.379,
+          "description": "Making API calls, useEffect hook, handling asynchronous operations, and CORS",
+          "subtopics": [
+            "useEffect Hook",
+            "Making API Calls",
+            "Handling Async Operations",
+            "Understanding CORS",
+            "Error Handling in API Calls"
+          ]
+        },
+        {
+          "id": "api_issues_resolution",
+          "name": "Episode 6.1 & 6.2: API Issues Resolution",
+          "estimatedHours": 0.777,
+          "description": "Resolving Swiggy API issues and CORS plugin problems",
+          "subtopics": [
+            "Swiggy API Integration",
+            "CORS Plugin Setup",
+            "Mock API Implementation",
+            "Debugging API Issues"
+          ]
+        },
+        {
+          "id": "finding_path",
+          "name": "Episode 7: Finding the Path - React Router",
+          "estimatedHours": 2.307,
+          "description": "Implementing client-side routing with React Router",
+          "subtopics": [
+            "React Router Setup",
+            "Client-side Routing",
+            "Route Parameters",
+            "Nested Routing",
+            "Navigation Components"
+          ]
+        },
+        {
+          "id": "get_classy",
+          "name": "Episode 8: Let's Get Classy - Class Components",
+          "estimatedHours": 2.771,
+          "description": "Understanding class components, lifecycle methods, and component patterns",
+          "subtopics": [
+            "Class Components Syntax",
+            "Component Lifecycle Methods",
+            "componentDidMount",
+            "componentDidUpdate",
+            "componentWillUnmount",
+            "this.state and this.setState"
+          ]
+        },
+        {
+          "id": "optimizing_app",
+          "name": "Episode 9: Optimizing our App - Performance",
+          "estimatedHours": 1.636,
+          "description": "Performance optimization techniques, lazy loading, and code splitting",
+          "subtopics": [
+            "Code Splitting",
+            "Lazy Loading",
+            "Suspense Component",
+            "Performance Best Practices",
+            "Bundle Analysis"
+          ]
+        },
+        {
+          "id": "styling_ui",
+          "name": "Episode 10: Jo Dikhta Hai, Vo Bikta Hai - Styling",
+          "estimatedHours": 1.626,
+          "description": "Styling React applications, CSS-in-JS, and UI libraries",
+          "subtopics": [
+            "CSS in React",
+            "Styled Components",
+            "CSS Modules",
+            "Tailwind CSS",
+            "Material-UI"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advanced_react",
+      "name": "Advanced React Concepts",
+      "tier": 1,
+      "estimatedHours": 21.56,
+      "topics": [
+        {
+          "id": "data_new_oil",
+          "name": "Episode 11: Data is the New Oil - State Management",
+          "estimatedHours": 3.133,
+          "description": "Advanced state management patterns, prop drilling solutions, and context API",
+          "subtopics": [
+            "Prop Drilling Problems",
+            "Context API",
+            "useContext Hook",
+            "State Management Patterns",
+            "Data Flow in React"
+          ]
+        },
+        {
+          "id": "build_store",
+          "name": "Episode 12: Let's Build Our Store - Redux",
+          "estimatedHours": 2.659,
+          "description": "Introduction to Redux, Redux Toolkit, and state management with Redux",
+          "subtopics": [
+            "What is Redux?",
+            "Redux Store",
+            "Actions and Reducers",
+            "Redux Toolkit",
+            "useSelector and useDispatch"
+          ]
+        },
+        {
+          "id": "time_for_test",
+          "name": "Episode 13: Time for Test - Testing in React",
+          "estimatedHours": 4.167,
+          "description": "Testing React applications, Jest, React Testing Library, and test-driven development",
+          "subtopics": [
+            "Introduction to Testing",
+            "Jest Framework",
+            "React Testing Library",
+            "Writing Unit Tests",
+            "Integration Testing",
+            "Test-Driven Development"
+          ]
+        },
+        {
+          "id": "netflixgpt_beginning",
+          "name": "Episode 14: NetflixGPT - The Beginning",
+          "estimatedHours": 3.919,
+          "description": "Starting a complex project, project architecture, and advanced React patterns",
+          "subtopics": [
+            "Project Architecture",
+            "Advanced React Patterns",
+            "Authentication in React",
+            "Firebase Integration",
+            "Project Structure"
+          ]
+        },
+        {
+          "id": "netflixgpt_core",
+          "name": "Episode 15: NetflixGPT - Building the Core",
+          "estimatedHours": 3.606,
+          "description": "Building core features, API integration, and complex state management",
+          "subtopics": [
+            "Complex API Integration",
+            "Multiple API Handling",
+            "Advanced State Management",
+            "Error Boundaries",
+            "Performance Optimization"
+          ]
+        },
+        {
+          "id": "netflixgpt_wrap",
+          "name": "Episode 16: NetflixGPT - Wrapping Up",
+          "estimatedHours": 4.073,
+          "description": "Finalizing the project, deployment, and production best practices",
+          "subtopics": [
+            "Project Finalization",
+            "Deployment Strategies",
+            "Production Best Practices",
+            "Performance Monitoring",
+            "Security Considerations"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bonus_projects",
+      "name": "Bonus Projects & Advanced Topics",
+      "tier": 2,
+      "estimatedHours": 17.5,
+      "topics": [
+        {
+          "id": "youtube_project",
+          "name": "Machine Coding Interview & YouTube Project",
+          "estimatedHours": 6,
+          "description": "Building YouTube clone, machine coding interview preparation, and advanced features",
+          "subtopics": [
+            "Machine Coding Interview Prep",
+            "YouTube Clone Development",
+            "Advanced Features Implementation",
+            "Project Optimization",
+            "Video Streaming Concepts"
+          ]
+        },
+        {
+          "id": "advanced_hooks",
+          "name": "Advanced React Hooks",
+          "estimatedHours": 1.5,
+          "description": "Deep dive into useMemo, useCallback, useRef, and performance optimization hooks",
+          "subtopics": [
+            "useMemo Hook",
+            "useCallback Hook",
+            "useRef Hook",
+            "Performance Optimization",
+            "When to Use Each Hook"
+          ]
+        },
+        {
+          "id": "devtinder_project",
+          "name": "DevTinder UI Project",
+          "estimatedHours": 10,
+          "description": "Building a complete dating app UI for developers with modern React patterns",
+          "subtopics": [
+            "Complex UI Development",
+            "State Management in Large Apps",
+            "Component Design Patterns",
+            "Responsive Design",
+            "Modern React Patterns",
+            "UI/UX Best Practices",
+            "Animation in React",
+            "Form Handling",
+            "Data Validation",
+            "Performance Optimization"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "practical_skills",
+      "name": "Practical Development Skills",
+      "tier": 2,
+      "estimatedHours": 8,
+      "topics": [
+        {
+          "id": "debugging_troubleshooting",
+          "name": "Debugging & Troubleshooting",
+          "estimatedHours": 2,
+          "description": "Essential debugging skills and troubleshooting common React issues",
+          "subtopics": [
+            "React Developer Tools",
+            "Console Debugging",
+            "Common Error Patterns",
+            "Performance Debugging",
+            "Network Issues"
+          ]
+        },
+        {
+          "id": "best_practices",
+          "name": "React Best Practices",
+          "estimatedHours": 2,
+          "description": "Industry best practices, code organization, and maintainable React code",
+          "subtopics": [
+            "Code Organization",
+            "Component Design Principles",
+            "Performance Best Practices",
+            "Accessibility in React",
+            "SEO Considerations"
+          ]
+        },
+        {
+          "id": "deployment_production",
+          "name": "Deployment & Production",
+          "estimatedHours": 2,
+          "description": "Deploying React applications and production considerations",
+          "subtopics": [
+            "Build Process",
+            "Environment Variables",
+            "Deployment Platforms",
+            "CI/CD Pipelines",
+            "Monitoring and Analytics"
+          ]
+        },
+        {
+          "id": "interview_preparation",
+          "name": "Interview Preparation",
+          "estimatedHours": 2,
+          "description": "React interview questions, coding challenges, and career preparation",
+          "subtopics": [
+            "Common Interview Questions",
+            "Coding Challenges",
+            "System Design for React",
+            "Portfolio Development",
+            "Resume Building"
+          ]
+        }
+      ]
+    }
+  ]
+}

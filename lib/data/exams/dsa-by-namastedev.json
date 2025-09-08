@@ -75,18 +75,18 @@
       "id": "introduction",
       "name": "Introduction",
       "tier": 1,
-      "estimatedHours": 4,
+      "estimatedHours": 0.7,
       "topics": [
         {
           "id": "course_introduction",
           "name": "Introduction",
-          "estimatedHours": 2,
+          "estimatedHours": 0.546,
           "description": "Learn how to navigate the course and what you'll cover"
         },
         {
           "id": "language_choice",
           "name": "Which language?",
-          "estimatedHours": 2,
+          "estimatedHours": 0.152,
           "description": "Learn how to choose your preferred programming language for the course"
         }
       ]
@@ -95,72 +95,72 @@
       "id": "warm_up",
       "name": "Warm Up",
       "tier": 1,
-      "estimatedHours": 32,
+      "estimatedHours": 6.91,
       "topics": [
         {
           "id": "warm_up_introduction",
           "name": "Warm Up - Introduction",
-          "estimatedHours": 2,
+          "estimatedHours": 0.066,
           "description": "Warm-up session for diving into DSA concepts"
         },
         {
           "id": "programming_101",
           "name": "Programming 101",
-          "estimatedHours": 3,
+          "estimatedHours": 0.778,
           "description": "Learn the basics of programming with simple concepts explained clearly"
         },
         {
           "id": "function_if_else",
           "name": "Function, if-else",
-          "estimatedHours": 3,
+          "estimatedHours": 0.468,
           "description": "Master functions and conditional logic with if-else statements"
         },
         {
           "id": "loops_01",
           "name": "Loops 01",
-          "estimatedHours": 3,
+          "estimatedHours": 0.843,
           "description": "Learn looping constructs to repeat code effectively"
         },
         {
           "id": "loops_02",
           "name": "Loops 02",
-          "estimatedHours": 3,
+          "estimatedHours": 1.048,
           "description": "Deep dive into advanced loop techniques and nested loops"
         },
         {
           "id": "second_largest",
           "name": "Second Largest",
-          "estimatedHours": 2,
+          "estimatedHours": 0.635,
           "description": "Find the second largest number in an array efficiently"
         },
         {
           "id": "loop_in_loop",
           "name": "Loop in Loop",
-          "estimatedHours": 3,
+          "estimatedHours": 0.735,
           "description": "Learn how to implement nested loops for complex patterns"
         },
         {
           "id": "star_pattern",
           "name": "Star Pattern",
-          "estimatedHours": 4,
+          "estimatedHours": 1.156,
           "description": "Draw star patterns using nested loops for practice"
         },
         {
           "id": "count_digit",
           "name": "Count Digit",
-          "estimatedHours": 3,
+          "estimatedHours": 0.409,
           "description": "Count the number of digits in an integer"
         },
         {
           "id": "palindrome",
           "name": "Palindrome",
-          "estimatedHours": 3,
+          "estimatedHours": 0.425,
           "description": "Check if a string or number is a palindrome"
         },
         {
           "id": "reverse_integer",
           "name": "Reverse Integer",
-          "estimatedHours": 3,
+          "estimatedHours": 0.343,
           "description": "Reverse the digits of an integer programmatically"
         }
       ]
@@ -169,12 +169,12 @@
       "id": "time_space_complexity",
       "name": "Time/Space Complexity",
       "tier": 1,
-      "estimatedHours": 8,
+      "estimatedHours": 1.49,
       "topics": [
         {
           "id": "time_space_complexity_analysis",
           "name": "Time & Space Complexity",
-          "estimatedHours": 8,
+          "estimatedHours": 1.492,
           "description": "Understand how to analyze code performance using time complexity"
         }
       ]
@@ -183,60 +183,60 @@
       "id": "arrays_easy_medium",
       "name": "Arrays - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 45,
+      "estimatedHours": 4.06,
       "topics": [
         {
           "id": "remove_duplicates",
           "name": "Remove Duplicates",
-          "estimatedHours": 4,
+          "estimatedHours": 0.751,
           "description": "Remove duplicate elements from a sorted array"
         },
         {
           "id": "remove_element",
           "name": "Remove Element",
-          "estimatedHours": 4,
+          "estimatedHours": 0.379,
           "description": "Remove specific elements from an array"
         },
         {
           "id": "reverse_string",
           "name": "Reverse String",
-          "estimatedHours": 3,
+          "estimatedHours": 0.446,
           "description": "Reverse the characters of a string"
         },
         {
           "id": "best_time_buy_sell_stocks",
           "name": "Best Time to Buy and Sell Stocks",
-          "estimatedHours": 6,
+          "estimatedHours": 0.471,
           "description": "Maximize profit from stock prices using smart strategy"
         },
         {
           "id": "merge_sorted_arrays",
           "name": "Merge Sorted Arrays",
-          "estimatedHours": 5,
+          "estimatedHours": 0.693,
           "description": "Merge two sorted arrays into one sorted array"
         },
         {
           "id": "move_zeros",
           "name": "Move Zeros",
-          "estimatedHours": 4,
+          "estimatedHours": 0.442,
           "description": "Move all zeros to the end of the array without changing order"
         },
         {
           "id": "max_consecutive_ones",
           "name": "Max Consecutive Ones",
-          "estimatedHours": 4,
+          "estimatedHours": 0.275,
           "description": "Find the maximum streak of 1s in a binary array"
         },
         {
           "id": "missing_number",
           "name": "Missing Number",
-          "estimatedHours": 5,
+          "estimatedHours": 0.282,
           "description": "Find the missing number in a sequence from 1 to N"
         },
         {
           "id": "single_number",
           "name": "Single Number",
-          "estimatedHours": 5,
+          "estimatedHours": 0.323,
           "description": "Find the unique element in an array where all others are repeated"
         }
       ]
@@ -245,42 +245,42 @@
       "id": "recursion_easy_medium",
       "name": "Recursion - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 30,
+      "estimatedHours": 3.66,
       "topics": [
         {
           "id": "recursion_101",
           "name": "Recursion 101",
-          "estimatedHours": 5,
+          "estimatedHours": 1.17,
           "description": "Understand the basics of recursion with clear explanations and examples"
         },
         {
           "id": "sum_first_n_numbers",
           "name": "Sum of first n numbers",
-          "estimatedHours": 4,
+          "estimatedHours": 0.621,
           "description": "Calculate the sum of the first n natural numbers using recursion"
         },
         {
           "id": "sum_array_numbers",
           "name": "Sum of all numbers in Array",
-          "estimatedHours": 4,
+          "estimatedHours": 0.5,
           "description": "Find the sum of all elements in an array using simple logic"
         },
         {
           "id": "factorial_n",
           "name": "Factorial of n",
-          "estimatedHours": 4,
+          "estimatedHours": 0.149,
           "description": "Learn how to calculate factorials using recursion"
         },
         {
           "id": "power_of_two",
           "name": "Power of Two",
-          "estimatedHours": 5,
+          "estimatedHours": 0.162,
           "description": "Solve Power of Two problem with recursion and logic"
         },
         {
           "id": "recursion_masterclass",
           "name": "Recursion Masterclass",
-          "estimatedHours": 8,
+          "estimatedHours": 1.06,
           "description": "Master recursion with deep insights, patterns, and examples"
         }
       ]
@@ -289,42 +289,42 @@
       "id": "searching_sorting_easy_medium",
       "name": "Searching & Sorting - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 36,
+      "estimatedHours": 4.07,
       "topics": [
         {
           "id": "linear_search",
           "name": "Linear Search",
-          "estimatedHours": 4,
+          "estimatedHours": 0.136,
           "description": "Find an element in an array using linear search"
         },
         {
           "id": "binary_search",
           "name": "Binary Search",
-          "estimatedHours": 6,
+          "estimatedHours": 0.657,
           "description": "Find an element in a sorted array using binary search"
         },
         {
           "id": "bubble_sort",
           "name": "Bubble Sort",
-          "estimatedHours": 5,
+          "estimatedHours": 0.806,
           "description": "Sort an array using the bubble sort algorithm"
         },
         {
           "id": "selection_sort",
           "name": "Selection Sort",
-          "estimatedHours": 5,
+          "estimatedHours": 0.329,
           "description": "Sort an array using the selection sort algorithm"
         },
         {
           "id": "insertion_sort",
           "name": "Insertion Sort",
-          "estimatedHours": 6,
+          "estimatedHours": 0.573,
           "description": "Sort an array using the insertion sort algorithm"
         },
         {
           "id": "merge_sort",
           "name": "Merge Sort",
-          "estimatedHours": 10,
+          "estimatedHours": 1.572,
           "description": "Learn how Merge Sort works using recursion and divide & conquer"
         }
       ]
@@ -333,126 +333,126 @@
       "id": "linked_list_easy_medium",
       "name": "Linked List - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 88,
+      "estimatedHours": 9.56,
       "topics": [
         {
           "id": "introduction_linked_list",
           "name": "Introduction to Linked List",
-          "estimatedHours": 4,
+          "estimatedHours": 0.466,
           "description": "Get started with the basics of Linked Lists"
         },
         {
           "id": "design_linked_list",
           "name": "Design Linked List",
-          "estimatedHours": 6,
+          "estimatedHours": 0.352,
           "description": "Learn how to design and implement your own Linked List"
         },
         {
           "id": "adding_nodes_linked_list",
           "name": "Adding Nodes to Linked List",
-          "estimatedHours": 5,
+          "estimatedHours": 0.775,
           "description": "Learn to insert nodes into a Linked List at various positions"
         },
         {
           "id": "deleting_nodes_linked_list",
           "name": "Deleting Nodes in Linked List",
-          "estimatedHours": 5,
+          "estimatedHours": 0.339,
           "description": "Understand node deletion in a Linked List"
         },
         {
           "id": "middle_linked_list",
           "name": "Middle of Linked List",
-          "estimatedHours": 4,
+          "estimatedHours": 0.355,
           "description": "Find the middle element in a Linked List efficiently"
         },
         {
           "id": "reverse_linked_list",
           "name": "Reverse Linked List",
-          "estimatedHours": 6,
+          "estimatedHours": 0.409,
           "description": "Reverse a Linked List in-place using iteration"
         },
         {
           "id": "linked_list_cycle_hash_table",
           "name": "Linked List Cycle - Hash Table",
-          "estimatedHours": 4,
+          "estimatedHours": 0.442,
           "description": "Detect cycles in a Linked List using extra space"
         },
         {
           "id": "linked_list_cycle_floyd",
           "name": "Linked List Cycle - Floyd's Algorithm",
-          "estimatedHours": 6,
+          "estimatedHours": 0.492,
           "description": "Detect cycles with Floyd's Tortoise & Hare algorithm"
         },
         {
           "id": "palindrome_linked_list",
           "name": "Palindrome Linked List",
-          "estimatedHours": 5,
+          "estimatedHours": 0.759,
           "description": "Check if a Linked List is a palindrome"
         },
         {
           "id": "intersection_two_linked_lists",
           "name": "Intersection of two Linked Lists",
-          "estimatedHours": 5,
+          "estimatedHours": 0.369,
           "description": "Find the intersection node of two Linked Lists"
         },
         {
           "id": "remove_linked_list_elements",
           "name": "Remove Linked List Elements",
-          "estimatedHours": 4,
+          "estimatedHours": 0.343,
           "description": "Remove nodes with a specific value from a Linked List"
         },
         {
           "id": "remove_nth_node_end_two_pass",
           "name": "Remove nth node from end of List - Two Pass",
-          "estimatedHours": 4,
+          "estimatedHours": 0.353,
           "description": "Remove the nth node from the end using a two-pass method"
         },
         {
           "id": "remove_nth_node_end_one_pass",
           "name": "Remove nth Node from end - One Pass",
-          "estimatedHours": 5,
+          "estimatedHours": 0.474,
           "description": "Remove the nth node from the end in one pass using two pointers"
         },
         {
           "id": "remove_duplicates_sorted_list",
           "name": "Remove Duplicates from Sorted List",
-          "estimatedHours": 4,
+          "estimatedHours": 0.262,
           "description": "Remove consecutive duplicates from a sorted Linked List"
         },
         {
           "id": "odd_even_linked_list",
           "name": "Odd Even Linked List",
-          "estimatedHours": 5,
+          "estimatedHours": 0.39,
           "description": "Rearrange nodes based on their position (odd/even index)"
         },
         {
           "id": "add_two_numbers",
           "name": "Add Two Numbers",
-          "estimatedHours": 6,
+          "estimatedHours": 0.727,
           "description": "Add two numbers represented as Linked Lists"
         },
         {
           "id": "merge_two_sorted_lists",
           "name": "Merge Two Sorted Lists",
-          "estimatedHours": 5,
+          "estimatedHours": 0.611,
           "description": "Merge two sorted Linked Lists into one"
         },
         {
           "id": "rotate_list",
           "name": "Rotate List",
-          "estimatedHours": 5,
+          "estimatedHours": 0.498,
           "description": "Rotate a Linked List to the right by k places"
         },
         {
           "id": "swap_nodes_pairs_iterative",
           "name": "Swap Nodes in Pairs - Iterative Approach",
-          "estimatedHours": 5,
+          "estimatedHours": 0.616,
           "description": "Swap every two adjacent nodes in a Linked List iteratively"
         },
         {
           "id": "swap_nodes_pairs_recursive",
           "name": "Swap Nodes in Pair - Recursive Approach",
-          "estimatedHours": 5,
+          "estimatedHours": 0.526,
           "description": "Recursively swap every two adjacent nodes in a Linked List"
         }
       ]
@@ -461,96 +461,96 @@
       "id": "strings_easy_medium",
       "name": "Strings - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 64,
+      "estimatedHours": 7.81,
       "topics": [
         {
           "id": "length_last_word_two_loops",
           "name": "Length of Last Word - Approach 1 - Two Loops",
-          "estimatedHours": 3,
+          "estimatedHours": 0.674,
           "description": "Find the length of the last word using a basic loop approach"
         },
         {
           "id": "length_last_word_one_loop",
           "name": "Length of Last Word - Approach 2 - One Loop",
-          "estimatedHours": 3,
+          "estimatedHours": 0.438,
           "description": "Optimized one-pass solution to find the last word's length"
         },
         {
           "id": "find_words_containing_character",
           "name": "Find Words Containing Character",
-          "estimatedHours": 4,
+          "estimatedHours": 0.366,
           "description": "Find words from a list that contain a specific character"
         },
         {
           "id": "jewels_stones",
           "name": "Jewels and Stones",
-          "estimatedHours": 4,
+          "estimatedHours": 0.64,
           "description": "Count how many stones are also jewels"
         },
         {
           "id": "find_most_frequent_vowel_consonant",
           "name": "Find Most Frequent Vowel and Consonant",
-          "estimatedHours": 5,
+          "estimatedHours": 0.804,
           "description": "Identify the most frequent vowel and consonant in a string"
         },
         {
           "id": "split_string_balanced",
           "name": "Split a String in Balanced Strings",
-          "estimatedHours": 4,
+          "estimatedHours": 0.394,
           "description": "Split a string into maximum balanced substrings"
         },
         {
           "id": "reverse_string_ii",
           "name": "Reverse String II",
-          "estimatedHours": 4,
+          "estimatedHours": 0.819,
           "description": "Reverse parts of a string based on a pattern"
         },
         {
           "id": "valid_palindrome_extra_space",
           "name": "Valid Palindrome - Approach 1 - Extra Space",
-          "estimatedHours": 4,
+          "estimatedHours": 0.403,
           "description": "Check palindrome by cleaning and reversing a string"
         },
         {
           "id": "valid_palindrome_two_pointers",
           "name": "Valid Palindrome - Approach 2 - Two Pointers",
-          "estimatedHours": 5,
+          "estimatedHours": 0.405,
           "description": "Use two-pointer technique to validate palindrome"
         },
         {
           "id": "largest_odd_number_string",
           "name": "Largest Odd Number in a String",
-          "estimatedHours": 4,
+          "estimatedHours": 0.25,
           "description": "Find the largest odd number that can be formed from a string"
         },
         {
           "id": "longest_common_prefix",
           "name": "Longest Common Prefix",
-          "estimatedHours": 5,
+          "estimatedHours": 0.41,
           "description": "Find the longest common starting substring among strings"
         },
         {
           "id": "valid_anagram",
           "name": "Valid Anagram",
-          "estimatedHours": 4,
+          "estimatedHours": 0.683,
           "description": "Check if two strings are anagrams of each other"
         },
         {
           "id": "isomorphic_strings",
           "name": "Isomorphic Strings",
-          "estimatedHours": 5,
+          "estimatedHours": 0.665,
           "description": "Check if two strings have a one-to-one character mapping"
         },
         {
           "id": "group_anagrams_sorted_key",
           "name": "Group Anagrams - Approach 1 - Sorted Key",
-          "estimatedHours": 5,
+          "estimatedHours": 0.365,
           "description": "Group words that are anagrams using sorted string keys"
         },
         {
           "id": "group_anagrams_hashed_key",
           "name": "Group Anagrams - Approach 2 - Hashed Key",
-          "estimatedHours": 5,
+          "estimatedHours": 0.492,
           "description": "Group anagrams using character frequency hash as key"
         }
       ]
@@ -559,91 +559,91 @@
       "id": "stack_queues",
       "name": "Stack and Queues",
       "tier": 2,
-      "estimatedHours": 56,
+      "estimatedHours": 8.49,
       "topics": [
         {
           "id": "introduction_stacks_queues",
           "name": "Introduction to Stacks & Queues",
-          "estimatedHours": 4,
+          "estimatedHours": 0.59,
           "description": "Get introduced to the fundamentals of Stacks and Queues"
         },
         {
           "id": "playing_stacks_queues",
           "name": "Playing with Stacks & Queues",
-          "estimatedHours": 4,
+          "estimatedHours": 0.387,
           "description": "Explore basic operations on stacks and queues hands-on"
         },
         {
           "id": "implement_stack_two_queues",
           "name": "Implement Stack using Two Queues",
-          "estimatedHours": 4,
+          "estimatedHours": 0.932,
           "description": "Build a stack using two queues"
         },
         {
           "id": "implement_stack_one_queue",
           "name": "Implement Stack using One Queue",
-          "estimatedHours": 4,
+          "estimatedHours": 0.224,
           "description": "Implement a stack using a single queue cleverly"
         },
         {
           "id": "implement_queue_stacks",
           "name": "Implement Queue using Stacks",
-          "estimatedHours": 4,
+          "estimatedHours": 0.73,
           "description": "Simulate a queue using two stacks"
         },
         {
           "id": "valid_parentheses",
           "name": "Valid Parentheses",
-          "estimatedHours": 4,
+          "estimatedHours": 0.428,
           "description": "Check if a string of parentheses is valid"
         },
         {
           "id": "min_stack",
           "name": "Min Stack",
-          "estimatedHours": 5,
+          "estimatedHours": 0.486,
           "description": "Design a stack that supports retrieving the minimum in O(1)"
         },
         {
           "id": "remove_outermost_parentheses_stack",
           "name": "Remove Outermost Parentheses - Using Stack",
-          "estimatedHours": 4,
+          "estimatedHours": 0.726,
           "description": "Remove outermost parentheses using a stack-based approach"
         },
         {
           "id": "remove_outermost_parentheses_no_stack",
           "name": "Remove Outermost Parentheses - without Stack",
-          "estimatedHours": 4,
+          "estimatedHours": 0.218,
           "description": "Remove outer parentheses without using a stack"
         },
         {
           "id": "evaluate_reverse_polish_notation",
           "name": "Evaluate Reverse Polish Notation",
-          "estimatedHours": 5,
+          "estimatedHours": 0.854,
           "description": "Evaluate mathematical expressions in postfix notation"
         },
         {
           "id": "next_greater_element",
           "name": "Next Greater Element",
-          "estimatedHours": 5,
+          "estimatedHours": 0.929,
           "description": "Find the next greater element for each number in an array"
         },
         {
           "id": "daily_temperatures",
           "name": "Daily Temperatures",
-          "estimatedHours": 5,
+          "estimatedHours": 0.514,
           "description": "Find how many days until a warmer temperature"
         },
         {
           "id": "next_greater_element_ii",
           "name": "Next Greater Element - II",
-          "estimatedHours": 5,
+          "estimatedHours": 0.658,
           "description": "Solve the circular version of Next Greater Element"
         },
         {
           "id": "rotting_oranges",
           "name": "Rotting Oranges",
-          "estimatedHours": 5,
-          "description": "Simulate the rotting process of oranges using BFS"
+          "estimatedHours": 0.817,
+          "description": "BFS algorithm to find time for all oranges to rot"
         }
       ]
     },
@@ -651,78 +651,78 @@
       "id": "binary_search_algorithm",
       "name": "Binary Search Algorithm",
       "tier": 3,
-      "estimatedHours": 52,
+      "estimatedHours": 6.99,
       "topics": [
         {
           "id": "square_root_x",
           "name": "Square Root of X",
-          "estimatedHours": 4,
+          "estimatedHours": 0.612,
           "description": "Find the square root of a number using binary search"
         },
         {
           "id": "best_practice_finding_middle",
           "name": "Best Practice - Finding Middle Element",
-          "estimatedHours": 3,
+          "estimatedHours": 0.109,
           "description": "Learn the safe and optimal way to find the middle index"
         },
         {
           "id": "guess_higher_lower",
           "name": "Guess Higher or Lower",
-          "estimatedHours": 4,
+          "estimatedHours": 0.207,
           "description": "Use binary search to guess a hidden number"
         },
         {
           "id": "search_rotated_sorted_array",
           "name": "Search in Rotated Sorted Array",
-          "estimatedHours": 6,
+          "estimatedHours": 0.972,
           "description": "Search an element in a rotated sorted array"
         },
         {
           "id": "first_bad_version",
           "name": "First Bad Version",
-          "estimatedHours": 4,
+          "estimatedHours": 0.554,
           "description": "Identify the first bad version using binary search"
         },
         {
           "id": "find_peak_element",
           "name": "Find Peak Element",
-          "estimatedHours": 5,
+          "estimatedHours": 0.703,
           "description": "Locate a peak element using binary search"
         },
         {
           "id": "find_minimum_rotated_sorted_array",
           "name": "Find Minimum in Rotated Sorted Array",
-          "estimatedHours": 5,
+          "estimatedHours": 0.708,
           "description": "Find the smallest element in a rotated sorted array"
         },
         {
           "id": "find_first_last_position_sorted_array",
           "name": "Find First & Last Position in Sorted Array",
-          "estimatedHours": 5,
+          "estimatedHours": 0.619,
           "description": "Find the first and last index of a target in a sorted array"
         },
         {
           "id": "find_first_last_position_approach_2",
           "name": "Find First & Last Position in Sorted Array - Approach 2",
-          "estimatedHours": 4,
+          "estimatedHours": 0.325,
           "description": "Optimized approach for finding first and last index of target"
         },
         {
           "id": "find_peak_mountain_array",
           "name": "Find Peak in a Mountain Array",
-          "estimatedHours": 4,
+          "estimatedHours": 0.452,
           "description": "Find the peak element in a mountain-shaped array"
         },
         {
           "id": "single_element_sorted_array",
           "name": "Single Element in a Sorted Array",
-          "estimatedHours": 4,
+          "estimatedHours": 0.842,
           "description": "Find the single non-duplicate element in a sorted array"
         },
         {
           "id": "find_k_closest_elements",
           "name": "Find k Closest Elements",
-          "estimatedHours": 4,
+          "estimatedHours": 0.888,
           "description": "Find the k elements closest to a target in a sorted array"
         }
       ]
@@ -731,84 +731,84 @@
       "id": "two_pointers_sliding_window",
       "name": "Two Pointers & Sliding Window",
       "tier": 3,
-      "estimatedHours": 60,
+      "estimatedHours": 8.42,
       "topics": [
         {
           "id": "two_sum",
           "name": "Two Sum",
-          "estimatedHours": 4,
+          "estimatedHours": 0.506,
           "description": "Find two numbers that add up to a target using hashing"
         },
         {
           "id": "two_sum_ii_sorted",
           "name": "Two Sum II - Input Array Is Sorted",
-          "estimatedHours": 4,
+          "estimatedHours": 0.358,
           "description": "Solve Two Sum with a sorted array using two pointers"
         },
         {
           "id": "is_subsequence",
           "name": "Is Subsequence",
-          "estimatedHours": 4,
+          "estimatedHours": 0.237,
           "description": "Check if one string is a subsequence of another"
         },
         {
           "id": "find_index_first_occurrence_string",
           "name": "Find Index of First Occurrence in String",
-          "estimatedHours": 4,
+          "estimatedHours": 0.383,
           "description": "Locate the first occurrence of a substring in a string"
         },
         {
           "id": "kmp_algorithm",
           "name": "KMP (Knuth-Morris-Pratt) Algorithm",
-          "estimatedHours": 8,
+          "estimatedHours": 1.249,
           "description": "Efficient substring search using the KMP algorithm"
         },
         {
           "id": "intersection_two_linked_lists_two_pointers",
           "name": "Intersection of Two Linked Lists - Two Pointers",
-          "estimatedHours": 5,
+          "estimatedHours": 0.58,
           "description": "Find the intersection node of two linked lists using two pointers"
         },
         {
           "id": "container_most_water",
           "name": "Container with Most Water",
-          "estimatedHours": 5,
+          "estimatedHours": 0.371,
           "description": "Maximize water between two lines using two pointers"
         },
         {
           "id": "three_sum",
           "name": "Three Sum",
-          "estimatedHours": 6,
+          "estimatedHours": 0.493,
           "description": "Find all unique triplets that sum to zero"
         },
         {
           "id": "trapping_rain_water",
           "name": "Trapping Rain Water",
-          "estimatedHours": 6,
+          "estimatedHours": 0.805,
           "description": "Calculate how much water can be trapped after rain"
         },
         {
           "id": "longest_substring_without_repeating",
           "name": "Longest Substring Without Repeating Characters",
-          "estimatedHours": 5,
+          "estimatedHours": 0.969,
           "description": "Find the longest substring with all unique characters"
         },
         {
           "id": "longest_repeating_character_replacement",
           "name": "Longest Repeating Character Replacement",
-          "estimatedHours": 5,
+          "estimatedHours": 0.972,
           "description": "Maximize the length of a repeating character substring"
         },
         {
           "id": "permutation_in_string",
           "name": "Permutation in String",
-          "estimatedHours": 5,
+          "estimatedHours": 0.668,
           "description": "Check if one string contains a permutation of another"
         },
         {
           "id": "sliding_window_maximum",
           "name": "Sliding Window Maximum",
-          "estimatedHours": 5,
+          "estimatedHours": 0.827,
           "description": "Find the max value in every window of size k"
         }
       ]
@@ -817,162 +817,162 @@
       "id": "binary_tree",
       "name": "Binary Tree",
       "tier": 3,
-      "estimatedHours": 92,
+      "estimatedHours": 11.86,
       "topics": [
         {
           "id": "introduction_trees",
           "name": "Introduction to Trees",
-          "estimatedHours": 4,
+          "estimatedHours": 0.484,
           "description": "Understand what trees are and their core properties"
         },
         {
           "id": "binary_tree_traversals_explained",
           "name": "Binary Tree - Traversals Explained",
-          "estimatedHours": 4,
+          "estimatedHours": 0.576,
           "description": "Explore preorder, inorder, and postorder tree traversals"
         },
         {
           "id": "preorder_traversal_recursive",
           "name": "Preorder Traversal - Recursive Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.684,
           "description": "Perform preorder traversal using recursion"
         },
         {
           "id": "inorder_postorder_recursive",
           "name": "Inorder & PostOrder - Recursive Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.226,
           "description": "Implement inorder and postorder recursively"
         },
         {
           "id": "preorder_traversal_iterative",
           "name": "Preorder Traversal - Iterative Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.592,
           "description": "Use a stack to perform preorder traversal iteratively"
         },
         {
           "id": "inorder_traversal_iterative",
           "name": "Inorder Traversal - Iterative Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.546,
           "description": "Inorder traversal using a stack instead of recursion"
         },
         {
           "id": "postorder_iterative_two_stacks",
           "name": "Postorder - Iterative Approach - 2 Stacks",
-          "estimatedHours": 4,
+          "estimatedHours": 0.549,
           "description": "Use two stacks for iterative postorder traversal"
         },
         {
           "id": "postorder_iterative_one_stack",
           "name": "Postorder - Iterative Approach - One Stack",
-          "estimatedHours": 4,
+          "estimatedHours": 0.856,
           "description": "Efficient postorder traversal using just one stack"
         },
         {
           "id": "dfs_bfs_binary_tree",
           "name": "DFS and BFS in Binary Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.452,
           "description": "Understand DFS vs BFS in binary trees"
         },
         {
           "id": "level_order_traversal_queue",
           "name": "Level Order Traversal - Queue - BFS",
-          "estimatedHours": 4,
+          "estimatedHours": 0.545,
           "description": "Implement level order traversal using a queue"
         },
         {
           "id": "level_order_traversal_recursive",
           "name": "Level Order Traversal - Recursive Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.411,
           "description": "Perform level order traversal recursively"
         },
         {
           "id": "maximum_depth_binary_tree",
           "name": "Maximum Depth of Binary Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.844,
           "description": "Find the max depth of a binary tree"
         },
         {
           "id": "path_sum",
           "name": "Path Sum",
-          "estimatedHours": 4,
+          "estimatedHours": 0.508,
           "description": "Check if a path adds up to a target sum"
         },
         {
           "id": "symmetric_tree_recursive",
           "name": "Symmetric Tree - Recursive Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.254,
           "description": "Check if a binary tree is symmetric using recursion"
         },
         {
           "id": "symmetric_tree_iterative",
           "name": "Symmetric Tree - Iterative Approach",
-          "estimatedHours": 4,
+          "estimatedHours": 0.35,
           "description": "Check symmetry in a binary tree using BFS"
         },
         {
           "id": "invert_binary_tree",
           "name": "Invert a Binary Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.145,
           "description": "Flip a binary tree by swapping left and right nodes"
         },
         {
           "id": "same_tree",
           "name": "Same Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.131,
           "description": "Check if two binary trees are exactly the same"
         },
         {
           "id": "balanced_binary_tree",
           "name": "Balanced Binary Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.239,
           "description": "Check if a binary tree is height-balanced"
         },
         {
           "id": "diameter_binary_tree",
           "name": "Diameter of a Binary Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.379,
           "description": "Find the longest path between any two nodes"
         },
         {
           "id": "zigzag_level_order_traversal",
           "name": "Zigzag Level Order Traversal",
-          "estimatedHours": 4,
+          "estimatedHours": 0.294,
           "description": "Traverse a binary tree in zigzag order"
         },
         {
           "id": "subtree_another_tree",
           "name": "Subtree of another Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.786,
           "description": "Check if one binary tree is a subtree of another"
         },
         {
           "id": "lowest_common_ancestor",
           "name": "Lowest Common Ancestor",
-          "estimatedHours": 4,
+          "estimatedHours": 0.464,
           "description": "Find the lowest common ancestor of two nodes"
         },
         {
           "id": "binary_tree_right_side_view",
           "name": "Binary Tree Right Side View",
-          "estimatedHours": 4,
+          "estimatedHours": 0.235,
           "description": "Print the nodes visible from the right side"
         },
         {
           "id": "count_good_nodes_binary_tree",
           "name": "Count Good Nodes in Binary Tree",
-          "estimatedHours": 4,
+          "estimatedHours": 0.362,
           "description": "Count nodes that are greater than all previous nodes on the path"
         },
         {
           "id": "populating_next_right_pointers",
           "name": "Populating Next Right Pointers in Each Node",
-          "estimatedHours": 4,
+          "estimatedHours": 0.352,
           "description": "Connect each node to its next right node in the same level"
         },
         {
           "id": "binary_tree_maximum_path_sum",
           "name": "Binary Tree Maximum Path Sum",
-          "estimatedHours": 6,
+          "estimatedHours": 0.592,
           "description": "Find the path in a tree with the maximum sum"
         }
       ]
@@ -981,42 +981,42 @@
       "id": "binary_search_tree",
       "name": "Binary Search Tree",
       "tier": 3,
-      "estimatedHours": 30,
+      "estimatedHours": 1.95,
       "topics": [
         {
           "id": "binary_search_tree_introduction",
           "name": "Binary Search Tree - Introduction",
-          "estimatedHours": 5,
+          "estimatedHours": 0.3,
           "description": "Learn the basics of Binary Search Trees"
         },
         {
           "id": "valid_binary_search_tree",
           "name": "Valid Binary Search Tree",
-          "estimatedHours": 5,
+          "estimatedHours": 0.516,
           "description": "Check if a tree is a valid BST"
         },
         {
           "id": "search_in_bst",
           "name": "Search in a BST",
-          "estimatedHours": 4,
+          "estimatedHours": 0.293,
           "description": "Search for a value in a Binary Search Tree"
         },
         {
           "id": "insert_into_bst",
           "name": "Insert into a BST",
-          "estimatedHours": 5,
+          "estimatedHours": 0.265,
           "description": "Insert a new node in a BST"
         },
         {
           "id": "kth_smallest_element",
           "name": "Kth Smallest Element",
-          "estimatedHours": 5,
+          "estimatedHours": 0.244,
           "description": "Find the kth smallest element in BST"
         },
         {
           "id": "lowest_common_ancestor_bst",
           "name": "Lowest Common Ancestor of a BST",
-          "estimatedHours": 6,
+          "estimatedHours": 0.333,
           "description": "Find the lowest common ancestor in a Binary Search Tree"
         }
       ]
@@ -1025,90 +1025,90 @@
       "id": "heap_priority_queue",
       "name": "Heap / Priority Queue",
       "tier": 3,
-      "estimatedHours": 60,
+      "estimatedHours": 8.77,
       "topics": [
         {
           "id": "introduction_heaps",
           "name": "Introduction to Heaps",
-          "estimatedHours": 5,
+          "estimatedHours": 0.592,
           "description": "Understand the fundamentals of Heaps"
         },
         {
           "id": "creating_heap",
           "name": "Creating a Heap",
-          "estimatedHours": 5,
+          "estimatedHours": 0.848,
           "description": "Learn how to build a heap from an array"
         },
         {
           "id": "inserting_node_heap",
           "name": "Inserting a node in Heap",
-          "estimatedHours": 4,
+          "estimatedHours": 0.856,
           "description": "Insert an element into a heap and maintain the heap property"
         },
         {
           "id": "extracting_values_heap_heapify_down",
           "name": "Extracting Values in Heap & HeapifyDown",
-          "estimatedHours": 5,
+          "estimatedHours": 0.776,
           "description": "Remove the root and restore heap order"
         },
         {
           "id": "heap_sort_algorithm",
           "name": "Heap Sort Algorithm",
-          "estimatedHours": 5,
+          "estimatedHours": 0.807,
           "description": "Understand the Heap Sort algorithm step-by-step"
         },
         {
           "id": "heap_sort_code",
           "name": "Heap Sort Code",
-          "estimatedHours": 4,
+          "estimatedHours": 0.636,
           "description": "Implement Heap Sort in code"
         },
         {
           "id": "heap_sort_dive_deep",
           "name": "Heap Sort - Dive Deep",
-          "estimatedHours": 4,
+          "estimatedHours": 0.503,
           "description": "Explore advanced insights into Heap Sort"
         },
         {
           "id": "priority_queues_introduction",
           "name": "Priority Queues - Introduction",
-          "estimatedHours": 4,
+          "estimatedHours": 0.664,
           "description": "Learn how priority queues work using heaps"
         },
         {
           "id": "priority_queue_code",
           "name": "Priority Queue Code",
-          "estimatedHours": 4,
+          "estimatedHours": 0.436,
           "description": "Implement a priority queue in code"
         },
         {
           "id": "kth_largest_element_array",
           "name": "Kth Largest Element in an Array",
-          "estimatedHours": 4,
+          "estimatedHours": 0.548,
           "description": "Find the kth largest element using a heap"
         },
         {
           "id": "kth_largest_element_stream",
           "name": "Kth Largest Element in a Stream",
-          "estimatedHours": 4,
+          "estimatedHours": 0.359,
           "description": "Maintain the kth largest value as numbers stream in"
         },
         {
           "id": "last_stone_weight",
           "name": "Last Stone Weight",
-          "estimatedHours": 4,
+          "estimatedHours": 0.483,
           "description": "Simulate a stone smashing game using heaps"
         },
         {
           "id": "top_k_frequent_elements",
           "name": "Top K Frequent Elements",
-          "estimatedHours": 4,
+          "estimatedHours": 0.547,
           "description": "Find the k most frequent elements in an array"
         },
         {
           "id": "kth_smallest_element_sorted_matrix",
           "name": "Kth Smallest Element in a Sorted Matrix",
-          "estimatedHours": 4,
+          "estimatedHours": 0.71,
           "description": "Find the kth smallest element in a sorted matrix"
         }
       ]
@@ -1117,120 +1117,120 @@
       "id": "hashing",
       "name": "Hashing",
       "tier": 3,
-      "estimatedHours": 68,
+      "estimatedHours": 11.84,
       "topics": [
         {
           "id": "linked_list_cycle_hash_table_hashing",
           "name": "Linked List Cycle - Hash Table",
-          "estimatedHours": 4,
+          "estimatedHours": 0.442,
           "description": "Detect cycles in a Linked List using extra space"
         },
         {
           "id": "palindrome_linked_list_hashing",
           "name": "Palindrome Linked List",
-          "estimatedHours": 4,
+          "estimatedHours": 0.759,
           "description": "Check if a Linked List is a palindrome"
         },
         {
           "id": "intersection_two_linked_lists_two_pointers_hashing",
           "name": "Intersection of Two Linked Lists - Two Pointers",
-          "estimatedHours": 4,
+          "estimatedHours": 0.58,
           "description": "Find the intersection node of two linked lists using two pointers"
         },
         {
           "id": "remove_duplicates_sorted_list_hashing",
           "name": "Remove Duplicates from Sorted List",
-          "estimatedHours": 4,
+          "estimatedHours": 0.262,
           "description": "Remove consecutive duplicates from a sorted Linked List"
         },
         {
           "id": "find_words_containing_character_hashing",
           "name": "Find Words Containing Character",
-          "estimatedHours": 4,
+          "estimatedHours": 0.366,
           "description": "Find words from a list that contain a specific character"
         },
         {
           "id": "jewels_stones_hashing",
           "name": "Jewels and Stones",
-          "estimatedHours": 4,
+          "estimatedHours": 0.64,
           "description": "Count how many stones are also jewels"
         },
         {
           "id": "find_most_frequent_vowel_consonant_hashing",
           "name": "Find Most Frequent Vowel and Consonant",
-          "estimatedHours": 4,
+          "estimatedHours": 0.804,
           "description": "Identify the most frequent vowel and consonant in a string"
         },
         {
           "id": "valid_palindrome_extra_space_hashing",
           "name": "Valid Palindrome - Approach 1 - Extra Space",
-          "estimatedHours": 4,
+          "estimatedHours": 0.403,
           "description": "Check palindrome by cleaning and reversing a string"
         },
         {
           "id": "valid_anagram_hashing",
           "name": "Valid Anagram",
-          "estimatedHours": 4,
+          "estimatedHours": 0.683,
           "description": "Check if two strings are anagrams of each other"
         },
         {
           "id": "isomorphic_strings_hashing",
           "name": "Isomorphic Strings",
-          "estimatedHours": 4,
+          "estimatedHours": 0.665,
           "description": "Check if two strings have a one-to-one character mapping"
         },
         {
           "id": "group_anagrams_sorted_key_hashing",
           "name": "Group Anagrams - Approach 1 - Sorted Key",
-          "estimatedHours": 4,
+          "estimatedHours": 0.365,
           "description": "Group words that are anagrams using sorted string keys"
         },
         {
           "id": "group_anagrams_hashed_key_hashing",
           "name": "Group Anagrams - Approach 2 - Hashed Key",
-          "estimatedHours": 4,
+          "estimatedHours": 0.492,
           "description": "Group anagrams using character frequency hash as key"
         },
         {
           "id": "next_greater_element_hashing",
           "name": "Next Greater Element",
-          "estimatedHours": 4,
+          "estimatedHours": 0.929,
           "description": "Find the next greater element for each number in an array"
         },
         {
           "id": "two_sum_ii_sorted_hashing",
           "name": "Two Sum II - Input Array Is Sorted",
-          "estimatedHours": 4,
+          "estimatedHours": 0.358,
           "description": "Solve Two Sum with a sorted array using two pointers"
         },
         {
           "id": "find_index_first_occurrence_string_hashing",
           "name": "Find Index of First Occurrence in String",
-          "estimatedHours": 4,
+          "estimatedHours": 0.383,
           "description": "Locate the first occurrence of a substring in a string"
         },
         {
           "id": "kmp_algorithm_hashing",
           "name": "KMP (Knuth-Morris-Pratt) Algorithm",
-          "estimatedHours": 6,
+          "estimatedHours": 1.249,
           "description": "Efficient substring search using the KMP algorithm"
         },
         {
           "id": "permutation_in_string_hashing",
           "name": "Permutation in String",
-          "estimatedHours": 4,
+          "estimatedHours": 0.668,
           "description": "Check if one string contains a permutation of another"
         },
         {
           "id": "longest_substring_without_repeating_hashing",
           "name": "Longest Substring Without Repeating Characters",
-          "estimatedHours": 4,
+          "estimatedHours": 0.969,
           "description": "Find the longest substring with all unique characters"
         },
         {
           "id": "sliding_window_maximum_hashing",
           "name": "Sliding Window Maximum",
-          "estimatedHours": 4,
+          "estimatedHours": 0.827,
           "description": "Find the max value in every window of size k"
         }
       ]
@@ -1239,84 +1239,84 @@
       "id": "backtracking",
       "name": "Backtracking",
       "tier": 4,
-      "estimatedHours": 65,
+      "estimatedHours": 8.96,
       "topics": [
         {
           "id": "introduction_backtracking",
           "name": "Introduction to Backtracking",
-          "estimatedHours": 5,
+          "estimatedHours": 0.834,
           "description": "Understand the core concept of backtracking"
         },
         {
           "id": "subsets_power_set",
           "name": "Subsets - The Power Set",
-          "estimatedHours": 5,
+          "estimatedHours": 0.79,
           "description": "Generate all subsets of a set"
         },
         {
           "id": "combinations",
           "name": "Combinations",
-          "estimatedHours": 5,
+          "estimatedHours": 0.707,
           "description": "Find all combinations of numbers"
         },
         {
           "id": "permutations",
           "name": "Permutations",
-          "estimatedHours": 5,
+          "estimatedHours": 0.429,
           "description": "Generate all permutations of a list"
         },
         {
           "id": "subset_ii",
           "name": "Subset - II",
-          "estimatedHours": 5,
+          "estimatedHours": 0.446,
           "description": "Subsets with duplicate elements"
         },
         {
           "id": "combination_sum",
           "name": "Combination Sum",
-          "estimatedHours": 5,
+          "estimatedHours": 0.753,
           "description": "Find all combinations that sum to a target"
         },
         {
           "id": "combination_sum_ii",
           "name": "Combination Sum - II",
-          "estimatedHours": 5,
+          "estimatedHours": 0.5,
           "description": "Combination sum with single-use elements"
         },
         {
           "id": "combination_sum_iii",
           "name": "Combination Sum - III",
-          "estimatedHours": 5,
+          "estimatedHours": 0.459,
           "description": "Find k numbers that sum to n"
         },
         {
           "id": "letter_combinations_phone_number",
           "name": "Letter Combinations of a Phone Number",
-          "estimatedHours": 5,
+          "estimatedHours": 0.459,
           "description": "Generate letter combinations from digits"
         },
         {
           "id": "permutations_ii",
           "name": "Permutations - II",
-          "estimatedHours": 5,
+          "estimatedHours": 0.564,
           "description": "Unique permutations with duplicates"
         },
         {
           "id": "palindrome_partitioning",
           "name": "Palindrome Partitioning",
-          "estimatedHours": 5,
+          "estimatedHours": 0.795,
           "description": "Partition a string into palindromes"
         },
         {
           "id": "word_search",
           "name": "Word Search",
-          "estimatedHours": 5,
+          "estimatedHours": 0.881,
           "description": "Search a word in a grid"
         },
         {
           "id": "n_queens",
           "name": "N Queens",
-          "estimatedHours": 5,
+          "estimatedHours": 1.339,
           "description": "Place queens safely on a chessboard"
         }
       ]
@@ -1325,40 +1325,40 @@
       "id": "greedy_algorithm",
       "name": "Greedy Algorithm",
       "tier": 4,
-      "estimatedHours": 25,
+      "estimatedHours": 1.98,
       "topics": [
         {
           "id": "introduction_greedy_algorithm",
           "name": "Introduction to Greedy Algorithm",
-          "estimatedHours": 5,
+          "estimatedHours": 0.705,
           "description": "Learn the basics of the Greedy Algorithm technique with simple examples"
         },
         {
           "id": "two_city_scheduling",
           "name": "Two City Scheduling",
-          "estimatedHours": 5,
+          "estimatedHours": 0.384,
           "description": "Solve the classic Two City Scheduling problem using a greedy approach"
         },
         {
           "id": "assign_cookies",
           "name": "Assign Cookies",
-          "estimatedHours": 5,
+          "estimatedHours": 0.27,
           "description": "Understand how to maximize content children by assigning cookies efficiently"
         },
         {
           "id": "lemonade_change",
           "name": "Lemonade Change",
-          "estimatedHours": 5,
+          "estimatedHours": 0.333,
           "description": "Learn how to apply greedy techniques to manage change in the Lemonade Stand problem"
         },
         {
           "id": "best_time_buy_sell_stock_ii",
           "name": "Best Time to Buy and Sell Stock - II",
-          "estimatedHours": 5,
+          "estimatedHours": 0.289,
           "description": "Master stock trading with multiple transactions using greedy techniques"
         }
       ]
     }
   ],
-  "totalEstimatedHours": 1671
+  "totalEstimatedHours": 107.52
 }
