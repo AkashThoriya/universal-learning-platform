@@ -112,18 +112,17 @@ This platform is built on **enterprise-grade** design principles with intelligen
 
 **Quick Access**:
 
-- 📱 **[PWA Implementation Guide](./docs/PWA-IMPLEMENTATION.md)** - Progressive Web App documentation and deployment guide
-- 📌 **[Project Status](./docs/PROJECT-STATUS.md)** - Current implementation status including PWA readiness
-- 🏗️ **[Database Architecture](./docs/DATABASE-ARCHITECTURE.md)** - Firebase integration and data patterns
-- 🎨 **[UI Components](./docs/UI-COMPONENTS.md)** - Component library and design system documentation
-- 🛠️ **[Implementation Guide](./docs/IMPLEMENTATION-GUIDE.md)** - Technical implementation guidelines and best practices
+-- � **[Documentation Hub](./docs/README.md)** - Full docs hub and index (`docs/INDEX.md`)
+-- 📌 **[Project Status](./docs/core/PROJECT-STATUS.md)** - Current implementation status including PWA readiness
+-- 🏗️ **[Database Architecture](./docs/architecture/DATABASE-ARCHITECTURE.md)** - Firebase integration and data patterns
+-- 🛠️ **[Implementation Guide](./docs/core/IMPLEMENTATION-GUIDE.md)** - Technical implementation guidelines and best practices
 
 ### **Development Resources**
 
-- **PWA Documentation**: See [docs/PWA-IMPLEMENTATION.md](./docs/PWA-IMPLEMENTATION.md) for complete Progressive Web App implementation guide
-- **Project Status**: Review [docs/PROJECT-STATUS.md](./docs/PROJECT-STATUS.md) for current development status and PWA readiness
-- **Technical Implementation**: Check [docs/IMPLEMENTATION-GUIDE.md](./docs/IMPLEMENTATION-GUIDE.md) for development best practices
-- **Architecture Documentation**: Review [docs/DATABASE-ARCHITECTURE.md](./docs/DATABASE-ARCHITECTURE.md) for Firebase patterns and data design
+-- **Documentation**: See `docs/INDEX.md` or the docs hub at `docs/README.md` for full documentation
+-- **Project Status**: Review [docs/core/PROJECT-STATUS.md](./docs/core/PROJECT-STATUS.md) for current development status and PWA readiness
+-- **Technical Implementation**: Check [docs/core/IMPLEMENTATION-GUIDE.md](./docs/core/IMPLEMENTATION-GUIDE.md) for development best practices
+-- **Architecture Documentation**: Review [docs/architecture/DATABASE-ARCHITECTURE.md](./docs/architecture/DATABASE-ARCHITECTURE.md) for Firebase patterns and data design
 
 ## Technology Stack
 
@@ -875,7 +874,7 @@ _Join thousands of users who are already experiencing the future of learning!_
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT terms declared in `package.json`.
 
 ## Acknowledgments
 
