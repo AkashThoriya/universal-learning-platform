@@ -1545,7 +1545,7 @@ const JOURNEY_COLLECTIONS = {
  * Enhanced Adaptive Testing Firebase Service
  * Integrates with existing Firebase infrastructure for adaptive testing
  */
-export const adaptiveTestingFirebaseService = {
+const adaptiveTestingFirebaseService = {
   /**
    * Create a new adaptive test
    */
@@ -2003,7 +2003,7 @@ export const adaptiveTestingFirebaseService = {
  * Journey Planning Firebase Service
  * Integrates with existing Firebase infrastructure for journey management
  */
-export const journeyFirebaseService = {
+const journeyFirebaseService = {
   /**
    * Create a new journey
    */
