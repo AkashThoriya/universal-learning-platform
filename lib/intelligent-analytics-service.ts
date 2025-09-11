@@ -735,9 +735,8 @@ export class IntelligentAnalyticsService {
 
     // Safe persona construction with type guard
     const defaultPersona: UserPersona = { type: 'student' };
-    const validPersona = persona && typeof persona.type === 'string' 
-      ? (persona as unknown as UserPersona) 
-      : defaultPersona;
+    const validPersona =
+      persona && typeof persona.type === 'string' ? (persona as unknown as UserPersona) : defaultPersona;
 
     return {
       persona: validPersona,

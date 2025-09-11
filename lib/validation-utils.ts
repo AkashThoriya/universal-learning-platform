@@ -182,7 +182,9 @@ export function sanitizeObject(obj: Record<string, unknown>): Record<string, unk
       sanitized[key] = value;
     } else if (Array.isArray(value)) {
       sanitized[key] = value.map(item =>
-        typeof item === 'object' && item !== null ? sanitizeObject(item as Record<string, unknown>) : sanitizeText(String(item))
+        typeof item === 'object' && item !== null
+          ? sanitizeObject(item as Record<string, unknown>)
+          : sanitizeText(String(item))
       );
     } else if (value && typeof value === 'object') {
       sanitized[key] = sanitizeObject(value as Record<string, unknown>);

@@ -263,11 +263,7 @@ export function SyllabusManagementStep({
                         onClick={() => toggleSubjectExpansion(subject.id)}
                         className="p-1 h-auto"
                       >
-                        {isExpanded ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        )}
+                        {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </Button>
 
                       {/* Subject Name */}
@@ -306,9 +302,7 @@ export function SyllabusManagementStep({
                             >
                               <Edit3 className="h-3 w-3" />
                             </Button>
-                            <span className="text-sm text-gray-600">
-                              ({subject.topics?.length || 0} topics)
-                            </span>
+                            <span className="text-sm text-gray-600">({subject.topics?.length || 0} topics)</span>
                           </div>
                         )}
                       </div>
@@ -353,12 +347,7 @@ export function SyllabusManagementStep({
                     <div className="border-t bg-gray-50 p-4">
                       <div className="flex items-center justify-between mb-3">
                         <h5 className="font-medium text-sm text-gray-700">Topics</h5>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onAddTopic(subject.id)}
-                          className="text-xs"
-                        >
+                        <Button size="sm" variant="outline" onClick={() => onAddTopic(subject.id)} className="text-xs">
                           <Plus className="h-3 w-3 mr-1" />
                           Add Topic
                         </Button>
@@ -412,9 +401,7 @@ export function SyllabusManagementStep({
                                       <Edit3 className="h-3 w-3" />
                                     </Button>
                                     {topic.estimatedHours && (
-                                      <span className="text-xs text-gray-500">
-                                        ({topic.estimatedHours}h)
-                                      </span>
+                                      <span className="text-xs text-gray-500">({topic.estimatedHours}h)</span>
                                     )}
                                   </div>
                                 )}
@@ -435,11 +422,7 @@ export function SyllabusManagementStep({
                         <div className="text-center py-6 border-2 border-dashed border-gray-300 rounded-lg">
                           <Plus className="h-6 w-6 text-gray-400 mx-auto mb-2" />
                           <p className="text-sm text-gray-600 mb-2">No topics yet</p>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => onAddTopic(subject.id)}
-                          >
+                          <Button size="sm" variant="outline" onClick={() => onAddTopic(subject.id)}>
                             Add First Topic
                           </Button>
                         </div>
@@ -470,8 +453,8 @@ export function SyllabusManagementStep({
               allocation and maximum score potential.
             </p>
             <p>
-              <strong>Topic Management:</strong> Click the arrow next to each subject to expand and manage individual topics. 
-              You can add custom topics, remove irrelevant ones, and edit names to match your specific needs.
+              <strong>Topic Management:</strong> Click the arrow next to each subject to expand and manage individual
+              topics. You can add custom topics, remove irrelevant ones, and edit names to match your specific needs.
             </p>
           </div>
         </AlertDescription>

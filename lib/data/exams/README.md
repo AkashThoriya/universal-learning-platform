@@ -5,6 +5,7 @@ This directory contains JSON data files for all supported exams in the Exam Stra
 ## Structure
 
 Each JSON file represents a complete exam with:
+
 - **Exam metadata**: ID, name, description, category
 - **Stages**: Different phases of the exam (e.g., Prelims, Mains, Interview)
 - **Sections**: Subdivisions within each stage
@@ -15,6 +16,7 @@ Each JSON file represents a complete exam with:
 Files should be named using kebab-case following the pattern: `{exam-identifier}.json`
 
 Examples:
+
 - `upsc-cse-prelims.json` - UPSC Civil Services Examination (Prelims)
 - `sql-mastery.json` - SQL Mastery Course
 - `devops-mastery.json` - DevOps Mastery Course
@@ -74,6 +76,7 @@ Each exam JSON file should follow this structure:
 ## Categories
 
 Current supported categories:
+
 - **Computer Science**: Programming (React, etc.), DevOps, Database courses, Data Structures & Algorithms
 - **Banking**: Banking sector competitive exams
 - **Civil Services**: Government service exams

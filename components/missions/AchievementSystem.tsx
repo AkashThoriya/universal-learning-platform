@@ -360,12 +360,7 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
               <div>
                 <h3 className="font-semibold text-purple-800">Rank</h3>
                 <div className="text-2xl font-bold text-purple-900">
-                  {totalPoints >= 1000 
-                    ? 'Gold' 
-                    : totalPoints >= 500 
-                      ? 'Silver' 
-                      : 'Bronze'
-                  }
+                  {totalPoints >= 1000 ? 'Gold' : totalPoints >= 500 ? 'Silver' : 'Bronze'}
                 </div>
               </div>
             </div>
@@ -456,7 +451,10 @@ export function AchievementSystem({ className = '', onAchievementClick }: Achiev
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={value => setSortBy(value as 'name' | 'points' | 'progress' | 'date')}>
+              <Select
+                value={sortBy}
+                onValueChange={value => setSortBy(value as 'name' | 'points' | 'progress' | 'date')}
+              >
                 <SelectTrigger className="w-36">
                   <SelectValue />
                 </SelectTrigger>

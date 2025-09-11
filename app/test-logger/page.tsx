@@ -65,7 +65,7 @@ export default function TestLoggerPage() {
   const getTotalErrors = (section: 'quant' | 'reasoning' | 'english' | 'pk') => {
     const maxScore = 50;
     let actualScore;
-    
+
     if (section === 'quant') {
       actualScore = quantScore;
     } else if (section === 'reasoning') {
@@ -75,7 +75,7 @@ export default function TestLoggerPage() {
     } else {
       actualScore = pkScore;
     }
-    
+
     return maxScore - actualScore;
   };
 
@@ -183,11 +183,15 @@ export default function TestLoggerPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="test-date-input" className="text-sm font-medium">Test Date</label>
+                    <label htmlFor="test-date-input" className="text-sm font-medium">
+                      Test Date
+                    </label>
                     <Input id="test-date-input" type="date" value={date} onChange={e => setDate(e.target.value)} />
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="platform-select" className="text-sm font-medium">Platform</label>
+                    <label htmlFor="platform-select" className="text-sm font-medium">
+                      Platform
+                    </label>
                     <Select value={platform} onValueChange={setPlatform}>
                       <SelectTrigger id="platform-select">
                         <SelectValue placeholder="Select platform" />
@@ -203,7 +207,9 @@ export default function TestLoggerPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="test-type-select" className="text-sm font-medium">Test Type</label>
+                  <label htmlFor="test-type-select" className="text-sm font-medium">
+                    Test Type
+                  </label>
                   <Select value={type} onValueChange={setType}>
                     <SelectTrigger id="test-type-select">
                       <SelectValue placeholder="Select test type" />
@@ -264,7 +270,9 @@ export default function TestLoggerPage() {
                     <h4 className="font-semibold mb-3">{section.label}</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label htmlFor={`score-${index}`} className="text-sm font-medium">Score (out of 50)</label>
+                        <label htmlFor={`score-${index}`} className="text-sm font-medium">
+                          Score (out of 50)
+                        </label>
                         <Input
                           id={`score-${index}`}
                           type="number"
@@ -275,7 +283,9 @@ export default function TestLoggerPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <label htmlFor={`time-${index}`} className="text-sm font-medium">Time Taken (minutes)</label>
+                        <label htmlFor={`time-${index}`} className="text-sm font-medium">
+                          Time Taken (minutes)
+                        </label>
                         <Input
                           id={`time-${index}`}
                           type="number"

@@ -1,6 +1,7 @@
 # 📋 Exam Strategy Engine - Documentation Hub
 
 ## 🎯 **START HERE** - Essential Documents
+
 # 📋 Exam Strategy Engine — Documentation Hub
 
 This `docs/` folder contains the project's documentation. I've reorganized the hub to accurately list and categorize every markdown file currently present in the folder and added a lightweight, navigable index at `docs/INDEX.md`.
@@ -25,5 +26,4 @@ Please open `docs/INDEX.md` for a categorized list of files and short descriptio
 
 ---
 
-_This README now reflects the actual contents of the `docs/` folder and points to `docs/INDEX.md` for a complete, categorized listing._
-	- 63% reduction in code violations and formatting automation in place
+_This README now reflects the actual contents of the `docs/` folder and points to `docs/INDEX.md` for a complete, categorized listing._ - 63% reduction in code violations and formatting automation in place

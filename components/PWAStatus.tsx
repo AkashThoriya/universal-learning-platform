@@ -393,13 +393,7 @@ export function PWAStatus() {
               <CardDescription>Progressive Web App readiness and features</CardDescription>
             </div>
             <Badge
-              variant={
-                overallScore >= 80 
-                  ? 'default' 
-                  : overallScore >= 60 
-                    ? 'secondary' 
-                    : 'destructive'
-              }
+              variant={overallScore >= 80 ? 'default' : overallScore >= 60 ? 'secondary' : 'destructive'}
               className="text-lg px-3 py-1"
             >
               {overallScore}%

@@ -49,8 +49,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useForm, UseFormReturn } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
-import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { customLearningService } from '@/lib/firebase-services';
+import { createUser, saveSyllabus } from '@/lib/firebase-utils';
 import { logger, logError, logInfo } from '@/lib/logger';
 import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, UserPersona } from '@/types/exam';
 
@@ -525,10 +525,11 @@ export default function OnboardingSetupPage() {
 
   // Enhanced navigation handlers with accessibility
   const handleNext = useCallback(async () => {
-      logInfo('Attempting to navigate to next step', {
-        currentStep: multiStep.currentStep,
-        totalSteps: 4,
-      });    const isValid = await validateStep(multiStep.currentStep);
+    logInfo('Attempting to navigate to next step', {
+      currentStep: multiStep.currentStep,
+      totalSteps: 4,
+    });
+    const isValid = await validateStep(multiStep.currentStep);
     if (isValid) {
       setValidationErrors({});
       multiStep.goToNext();
@@ -599,9 +600,9 @@ export default function OnboardingSetupPage() {
           });
         }
       } catch (error) {
-        logError('Error in learning path selection', { 
-          examId, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        logError('Error in learning path selection', {
+          examId,
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
         // Optionally show user-friendly error message
         console.error('Failed to select exam:', error);
@@ -665,9 +666,7 @@ export default function OnboardingSetupPage() {
       };
 
       const updatedSyllabus = form.data.syllabus.map(subject =>
-        subject.id === subjectId
-          ? { ...subject, topics: [...subject.topics, newTopic] }
-          : subject
+        subject.id === subjectId ? { ...subject, topics: [...subject.topics, newTopic] } : subject
       ) as SyllabusSubject[];
 
       form.updateField('syllabus', updatedSyllabus);
@@ -710,9 +709,7 @@ export default function OnboardingSetupPage() {
         subject.id === subjectId
           ? {
               ...subject,
-              topics: subject.topics.map(topic =>
-                topic.id === topicId ? { ...topic, ...updates } : topic
-              ),
+              topics: subject.topics.map(topic => (topic.id === topicId ? { ...topic, ...updates } : topic)),
             }
           : subject
       ) as SyllabusSubject[];
@@ -733,7 +730,7 @@ export default function OnboardingSetupPage() {
           const reorderedTopics = topicIds
             .map(topicId => subject.topics.find(topic => topic.id === topicId))
             .filter(Boolean) as SyllabusTopic[];
-          
+
           return { ...subject, topics: reorderedTopics };
         }
         return subject;
@@ -1031,12 +1028,7 @@ export default function OnboardingSetupPage() {
           );
 
         case 2:
-          return (
-            <PersonaScheduleStep
-              form={form as UseFormReturn<OnboardingFormData>}
-              selectedExam={selectedExam}
-            />
-          );
+          return <PersonaScheduleStep form={form as UseFormReturn<OnboardingFormData>} selectedExam={selectedExam} />;
 
         case 3:
           return (

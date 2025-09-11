@@ -24,7 +24,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
-import { debounce } from '@/lib/types-utils';
 import {
   PERSONA_OPTIONS,
   STUDY_TIME_PREFERENCES,
@@ -32,6 +31,7 @@ import {
   validateStudyHours,
 } from '@/lib/data/onboarding';
 import { logInfo, logger } from '@/lib/logger';
+import { debounce } from '@/lib/types-utils';
 import { UserPersona, UserPersonaType, SyllabusSubject } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
@@ -177,7 +177,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const handleStudyGoalChange = useCallback(
     (hours: number[]) => {
       const newHours = hours[0] ?? 2;
-      
+
       // Debounce the form update to prevent excessive re-renders
       debouncedFormUpdate(newHours);
     },

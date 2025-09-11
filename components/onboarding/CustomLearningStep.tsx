@@ -78,9 +78,7 @@ interface CustomLearningStepProps {
  * Custom Learning Goals Step Component
  */
 export function CustomLearningStep({ form }: CustomLearningStepProps) {
-  const [goals, setGoals] = useState<CustomLearningGoal[]>(
-    form.data.customLearningGoals || []
-  );
+  const [goals, setGoals] = useState<CustomLearningGoal[]>(form.data.customLearningGoals || []);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<CustomLearningGoal | null>(null);
 
@@ -121,7 +119,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
 
     const updatedGoals = [...goals, goal];
     setGoals(updatedGoals);
-    
+
     // Update form data
     form.updateFields({ customLearningGoals: updatedGoals });
 
@@ -161,7 +159,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
       return;
     }
 
-    const updatedGoals = goals.map((goal) =>
+    const updatedGoals = goals.map(goal =>
       goal.id === editingGoal.id
         ? {
             ...goal,
@@ -195,7 +193,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
    * Handle deleting a goal
    */
   const handleDeleteGoal = (goalId: string) => {
-    const updatedGoals = goals.filter((goal) => goal.id !== goalId);
+    const updatedGoals = goals.filter(goal => goal.id !== goalId);
     setGoals(updatedGoals);
     form.updateFields({ customLearningGoals: updatedGoals });
   };
@@ -231,9 +229,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
             <Target className="h-8 w-8 text-blue-600" />
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">
-          Custom Learning Goals
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900">Custom Learning Goals</h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Set up your personal learning goals beyond structured courses. Whether it's mastering a new technology,
           learning a language, or developing a skill, create goals that matter to you.
@@ -244,26 +240,19 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
       <div className="space-y-4">
         {goals.length > 0 ? (
           <div className="grid gap-4">
-            {goals.map((goal) => (
+            {goals.map(goal => (
               <Card key={goal.id} className="border-l-4 border-l-blue-500">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
                       <CardTitle className="text-lg font-semibold">{goal.title}</CardTitle>
-                      {goal.description && (
-                        <p className="text-sm text-gray-600">{goal.description}</p>
-                      )}
+                      {goal.description && <p className="text-sm text-gray-600">{goal.description}</p>}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(goal.priority)}`}>
                         {goal.priority}
                       </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditGoal(goal)}
-                        className="h-8 w-8 p-0"
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => handleEditGoal(goal)} className="h-8 w-8 p-0">
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
@@ -285,7 +274,9 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
                     </div>
                     <div className="flex items-center gap-1">
                       <Target className="h-4 w-4" />
-                      <span>{goal.targetValue} {goal.unit}</span>
+                      <span>
+                        {goal.targetValue} {goal.unit}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -298,18 +289,15 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
               <BookOpen className="h-12 w-12 text-gray-400 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No learning goals yet</h3>
               <p className="text-gray-600 mb-6 max-w-md">
-                Create your first custom learning goal to get started with personalized learning beyond structured courses.
+                Create your first custom learning goal to get started with personalized learning beyond structured
+                courses.
               </p>
             </CardContent>
           </Card>
         )}
 
         {/* Add Goal Button */}
-        <Button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="w-full"
-          variant="outline"
-        >
+        <Button onClick={() => setIsCreateDialogOpen(true)} className="w-full" variant="outline">
           <Plus className="h-4 w-4 mr-2" />
           Add Learning Goal
         </Button>
@@ -319,12 +307,8 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>
-              {editingGoal ? 'Edit Learning Goal' : 'Create Learning Goal'}
-            </DialogTitle>
-            <DialogDescription>
-              Define what you want to learn and set a measurable target.
-            </DialogDescription>
+            <DialogTitle>{editingGoal ? 'Edit Learning Goal' : 'Create Learning Goal'}</DialogTitle>
+            <DialogDescription>Define what you want to learn and set a measurable target.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -333,7 +317,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
               <Input
                 id="title"
                 value={newGoal.title}
-                onChange={(e) => setNewGoal({ ...newGoal, title: e.target.value })}
+                onChange={e => setNewGoal({ ...newGoal, title: e.target.value })}
                 placeholder="e.g., Master Docker & Kubernetes"
                 className="mt-1"
               />
@@ -344,7 +328,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
               <Textarea
                 id="description"
                 value={newGoal.description}
-                onChange={(e) => setNewGoal({ ...newGoal, description: e.target.value })}
+                onChange={e => setNewGoal({ ...newGoal, description: e.target.value })}
                 placeholder="Describe what you want to achieve..."
                 className="mt-1"
                 rows={3}
@@ -354,12 +338,12 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="category">Category</Label>
-                <Select value={newGoal.category} onValueChange={(value) => setNewGoal({ ...newGoal, category: value })}>
+                <Select value={newGoal.category} onValueChange={value => setNewGoal({ ...newGoal, category: value })}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {LEARNING_CATEGORIES.map((category) => (
+                    {LEARNING_CATEGORIES.map(category => (
                       <SelectItem key={category.value} value={category.value}>
                         {category.label}
                       </SelectItem>
@@ -370,7 +354,10 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
 
               <div>
                 <Label htmlFor="priority">Priority</Label>
-                <Select value={newGoal.priority} onValueChange={(value) => setNewGoal({ ...newGoal, priority: value as any })}>
+                <Select
+                  value={newGoal.priority}
+                  onValueChange={value => setNewGoal({ ...newGoal, priority: value as any })}
+                >
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
@@ -390,7 +377,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
                   id="targetValue"
                   type="number"
                   value={newGoal.targetValue}
-                  onChange={(e) => setNewGoal({ ...newGoal, targetValue: parseInt(e.target.value) || 0 })}
+                  onChange={e => setNewGoal({ ...newGoal, targetValue: parseInt(e.target.value) || 0 })}
                   placeholder="0"
                   className="mt-1"
                   min="1"
@@ -399,12 +386,12 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
 
               <div>
                 <Label htmlFor="unit">Unit</Label>
-                <Select value={newGoal.unit} onValueChange={(value) => setNewGoal({ ...newGoal, unit: value })}>
+                <Select value={newGoal.unit} onValueChange={value => setNewGoal({ ...newGoal, unit: value })}>
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {LEARNING_UNITS.map((unit) => (
+                    {LEARNING_UNITS.map(unit => (
                       <SelectItem key={unit.value} value={unit.value}>
                         {unit.label}
                       </SelectItem>
@@ -419,7 +406,7 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={editingGoal ? handleUpdateGoal : handleCreateGoal}
               disabled={!newGoal.title.trim() || !newGoal.category}
             >

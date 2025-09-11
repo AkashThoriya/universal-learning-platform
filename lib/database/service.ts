@@ -202,7 +202,9 @@ export class DatabaseMigration {
         throw new Error('Failed to get source IDs');
       }
 
-      const sourceIds = new Set(sourceResult.data.map((doc: unknown) => (doc as Record<string, unknown> & { id: string }).id));
+      const sourceIds = new Set(
+        sourceResult.data.map((doc: unknown) => (doc as Record<string, unknown> & { id: string }).id)
+      );
       const missingIds: string[] = [];
 
       // Check if each source document exists in target

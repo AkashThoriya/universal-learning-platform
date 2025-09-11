@@ -24,7 +24,7 @@ class ConfigValidator {
       key =>
         typedConfig.connection &&
         typeof typedConfig.connection[key] === 'string' &&
-        (typedConfig.connection[key] as string).length > 0
+        typedConfig.connection[key].length > 0
     );
   }
 
@@ -50,7 +50,7 @@ class ConfigValidator {
       key =>
         typedConfig.connection &&
         typeof typedConfig.connection[key] === 'string' &&
-        (typedConfig.connection[key] as string).length > 0
+        typedConfig.connection[key].length > 0
     );
   }
 

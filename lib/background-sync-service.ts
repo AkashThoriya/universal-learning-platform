@@ -415,8 +415,8 @@ class BackgroundSyncService {
         const queue = JSON.parse(stored);
         this.syncQueue = queue.map((item: any) => ({
           ...(item && typeof item === 'object' ? item : {}),
-          timestamp: new Date((item as any)?.timestamp || Date.now()),
-          lastAttempt: (item as any)?.lastAttempt ? new Date((item as any).lastAttempt) : undefined,
+          timestamp: new Date(item?.timestamp || Date.now()),
+          lastAttempt: item?.lastAttempt ? new Date(item.lastAttempt) : undefined,
         }));
       }
     } catch (error) {
@@ -455,7 +455,7 @@ class BackgroundSyncService {
 
       conflicts.push({
         ...(conflict && typeof conflict === 'object' ? conflict : {}),
-        timestamp: (conflict as any)?.timestamp?.toISOString() || new Date().toISOString(),
+        timestamp: conflict?.timestamp?.toISOString() || new Date().toISOString(),
       });
 
       localStorage.setItem('sync_conflicts', JSON.stringify(conflicts));

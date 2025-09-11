@@ -22,11 +22,7 @@
  * Integrates with existing Mission System and Progress Service
  */
 
-import { 
-  LearningTrack, 
-  MissionDifficulty, 
-  UnifiedProgress 
-} from './mission-system';
+import { LearningTrack, MissionDifficulty, UnifiedProgress } from './mission-system';
 import { Exam } from './exam';
 
 export interface UserJourney {
@@ -40,11 +36,11 @@ export interface UserJourney {
   priority: 'low' | 'medium' | 'high' | 'critical';
   status: 'planning' | 'active' | 'completed' | 'paused' | 'cancelled';
   track: LearningTrack;
-  
+
   // Integration with existing systems
   linkedMissionTemplates: string[]; // Mission template IDs
   progressTracking: JourneyProgressTracking;
-  
+
   // Metadata
   createdAt: Date;
   updatedAt: Date;
@@ -59,7 +55,7 @@ export interface JourneyGoal {
   currentValue: number;
   unit: 'percentage' | 'hours' | 'topics' | 'tests' | 'projects';
   category: 'knowledge' | 'skill' | 'speed' | 'accuracy' | 'consistency';
-  
+
   // SMART goal attributes
   isSpecific: boolean;
   isMeasurable: boolean;
@@ -67,7 +63,7 @@ export interface JourneyGoal {
   isRelevant: boolean;
   isTimeBound: boolean;
   deadline: Date;
-  
+
   // Integration points
   linkedSubjects: string[]; // Subject IDs from exam data
   linkedTopics: string[]; // Topic IDs from exam data
@@ -79,7 +75,7 @@ export interface JourneyProgressTracking {
   goalCompletions: Record<string, number>; // goalId -> completion %
   weeklyProgress: WeeklyProgress[];
   milestoneAchievements: MilestoneAchievement[];
-  
+
   // Integration with existing progress service
   linkedUnifiedProgress: string; // UnifiedProgress ID
   lastSyncedAt: Date;
@@ -150,7 +146,7 @@ export interface JourneyAnalytics {
 // Journey-specific collections
 const JOURNEY_COLLECTIONS = {
   USER_JOURNEYS: 'userJourneys',
-  JOURNEY_TEMPLATES: 'journeyTemplates', 
+  JOURNEY_TEMPLATES: 'journeyTemplates',
   JOURNEY_ANALYTICS: 'journeyAnalytics',
   JOURNEY_MILESTONES: 'journeyMilestones',
 } as const;
@@ -170,7 +166,7 @@ export const journeyFirebaseService = {
 
       // Link journey to user's progress
       await this.linkJourneyToProgress(userId, journey.id);
-      
+
       return createSuccess(journey);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to create journey'));
@@ -178,17 +174,14 @@ export const journeyFirebaseService = {
   },
 
   // Get user's journeys with real-time updates
-  subscribeToUserJourneys(
-    userId: string, 
-    callback: (journeys: UserJourney[]) => void
-  ): () => void {
+  subscribeToUserJourneys(userId: string, callback: (journeys: UserJourney[]) => void): () => void {
     const q = query(
       collection(db, JOURNEY_COLLECTIONS.USER_JOURNEYS),
       where('userId', '==', userId),
       orderBy('createdAt', 'desc')
     );
 
-    return onSnapshot(q, (snapshot) => {
+    return onSnapshot(q, snapshot => {
       const journeys = snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
@@ -196,19 +189,16 @@ export const journeyFirebaseService = {
         updatedAt: doc.data().updatedAt?.toDate() || new Date(),
         targetCompletionDate: doc.data().targetCompletionDate?.toDate() || new Date(),
       })) as UserJourney[];
-      
+
       callback(journeys);
     });
   },
 
   // Update journey progress
-  async updateJourneyProgress(
-    journeyId: string,
-    updates: UpdateJourneyProgressRequest
-  ): Promise<Result<void>> {
+  async updateJourneyProgress(journeyId: string, updates: UpdateJourneyProgressRequest): Promise<Result<void>> {
     try {
       const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
-      
+
       // Build update object
       const updateData: any = {
         updatedAt: Timestamp.now(),
@@ -261,12 +251,12 @@ export const journeyFirebaseService = {
  * Integrates with existing Mission Service and Progress Service
  */
 
-import { 
+import {
   UserJourney,
   JourneyGoal,
   CreateJourneyRequest,
   UpdateJourneyProgressRequest,
-  JourneyAnalytics 
+  JourneyAnalytics,
 } from '@/types/journey';
 import { Result, createSuccess, createError } from '@/lib/types-utils';
 import { journeyFirebaseService } from '@/lib/firebase-services';
@@ -287,11 +277,7 @@ export class JourneyService {
   /**
    * Create journey from onboarding selection
    */
-  async createJourneyFromOnboarding(
-    userId: string,
-    examId: string,
-    targetDate: Date
-  ): Promise<Result<UserJourney>> {
+  async createJourneyFromOnboarding(userId: string, examId: string, targetDate: Date): Promise<Result<UserJourney>> {
     try {
       const exam = getExamById(examId);
       if (!exam) {
@@ -300,7 +286,7 @@ export class JourneyService {
 
       // Generate SMART goals from exam syllabus
       const goals = this.generateGoalsFromExam(exam);
-      
+
       const journey: UserJourney = {
         id: `journey_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId,
@@ -329,7 +315,7 @@ export class JourneyService {
 
       // Create journey in Firebase
       const result = await journeyFirebaseService.createJourney(userId, journey);
-      
+
       if (result.success) {
         // Generate initial missions for this journey
         await this.generateInitialMissions(journey);
@@ -346,7 +332,7 @@ export class JourneyService {
    */
   private generateGoalsFromExam(exam: any): JourneyGoal[] {
     const goals: JourneyGoal[] = [];
-    
+
     // Overall completion goal
     goals.push({
       id: 'overall_completion',
@@ -398,7 +384,7 @@ export class JourneyService {
   private async generateInitialMissions(journey: UserJourney): Promise<void> {
     try {
       const missionService = MissionService.getInstance();
-      
+
       // Generate first week of missions based on journey goals
       const firstGoal = journey.customGoals[0];
       if (firstGoal && firstGoal.linkedSubjects.length > 0) {
@@ -431,7 +417,7 @@ export class JourneyService {
             goalId: 'overall_completion',
             newValue: missionResults.completionPercentage || 0,
             source: 'mission',
-          }
+          },
         ],
       };
 
@@ -466,7 +452,7 @@ async generateMissionsForJourney(
 ): Promise<Result<Mission[]>> {
   try {
     const missions: Mission[] = [];
-    
+
     // Generate daily missions for next 7 days
     for (let i = 0; i < 7; i++) {
       const mission = await this.generateDailyMission(userId, subjectId, track, journeyId);
@@ -492,7 +478,7 @@ async completeMissionWithJourneyUpdate(
   try {
     // Complete mission using existing method
     const missionResult = await this.completeMission(missionId, results);
-    
+
     if (!missionResult.success) {
       return missionResult;
     }
@@ -528,20 +514,20 @@ async syncProgressWithJourneys(userId: string): Promise<Result<void>> {
   try {
     // Get user's journeys
     const userJourneys = await this.getUserJourneys(userId);
-    
+
     if (!userJourneys.success) {
       return createError(new Error('Failed to get user journeys for sync'));
     }
 
     // Get current progress
     const progressResult = await this.getUserProgress(userId);
-    
+
     if (!progressResult.success) {
       return progressResult;
     }
 
     const progress = progressResult.data;
-    
+
     // Update each journey's progress based on actual progress
     for (const journey of userJourneys.data) {
       await this.updateJourneyFromProgress(journey, progress);
@@ -570,7 +556,7 @@ private async getUserJourneys(userId: string): Promise<Result<UserJourney[]>> {
  * Update specific journey progress from unified progress
  */
 private async updateJourneyFromProgress(
-  journey: any, 
+  journey: any,
   progress: UnifiedProgress
 ): Promise<void> {
   try {
@@ -641,15 +627,15 @@ useEffect(() => {
         <p className="text-sm text-gray-600">Plan and track your learning goals</p>
       </div>
     </div>
-    <Button 
-      size="sm" 
+    <Button
+      size="sm"
       onClick={() => router.push('/journey')}
       className="bg-purple-600 hover:bg-purple-700"
     >
       View All
     </Button>
   </div>
-  
+
   {journeyLoading ? (
     <div className="animate-pulse space-y-2">
       <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -671,7 +657,7 @@ useEffect(() => {
           </div>
           <div className="flex items-center gap-2 mb-2">
             <div className="flex-1 bg-gray-200 rounded-full h-2">
-              <div 
+              <div
                 className="bg-purple-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${journey.progressTracking.overallCompletion}%` }}
               />
@@ -687,7 +673,7 @@ useEffect(() => {
           </p>
         </div>
       ))}
-      
+
       {userJourneys.length > 2 && (
         <p className="text-xs text-gray-500 text-center">
           +{userJourneys.length - 2} more journeys
@@ -697,8 +683,8 @@ useEffect(() => {
   ) : (
     <div className="text-center py-4">
       <p className="text-sm text-gray-600 mb-3">No learning journeys yet</p>
-      <Button 
-        size="sm" 
+      <Button
+        size="sm"
         variant="outline"
         onClick={() => router.push('/journey')}
       >
@@ -752,7 +738,7 @@ export default function JourneyPlanningPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-7xl mx-auto p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -764,8 +750,8 @@ export default function JourneyPlanningPage() {
                 Plan, track, and optimize your learning goals with AI-powered insights
               </p>
             </div>
-            
-            <Button 
+
+            <Button
               onClick={() => setShowCreateModal(true)}
               className="bg-purple-600 hover:bg-purple-700"
             >
@@ -799,7 +785,7 @@ export default function JourneyPlanningPage() {
               <CardContent>
                 <div className="text-2xl font-bold">
                   {Math.round(
-                    journeys.reduce((acc, j) => acc + j.progressTracking.overallCompletion, 0) / 
+                    journeys.reduce((acc, j) => acc + j.progressTracking.overallCompletion, 0) /
                     Math.max(journeys.length, 1)
                   )}%
                 </div>
@@ -824,7 +810,7 @@ export default function JourneyPlanningPage() {
           {/* Journey List */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Journeys</h2>
-            
+
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(6)].map((_, i) => (
@@ -864,7 +850,7 @@ export default function JourneyPlanningPage() {
                         </div>
                       </div>
                     </CardHeader>
-                    
+
                     <CardContent>
                       <div className="space-y-4">
                         {/* Status Badge */}
@@ -877,7 +863,7 @@ export default function JourneyPlanningPage() {
                           }`}>
                             {journey.status.replace('_', ' ').toUpperCase()}
                           </span>
-                          
+
                           <span className={`px-2 py-1 rounded text-xs font-medium ${
                             journey.priority === 'critical' ? 'bg-red-100 text-red-700' :
                             journey.priority === 'high' ? 'bg-orange-100 text-orange-700' :
@@ -897,7 +883,7 @@ export default function JourneyPlanningPage() {
                             </span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
+                            <div
                               className="bg-purple-600 h-2 rounded-full transition-all duration-300"
                               style={{ width: `${journey.progressTracking.overallCompletion}%` }}
                             />
@@ -911,10 +897,10 @@ export default function JourneyPlanningPage() {
                               journey.customGoals.filter(g => g.currentValue >= g.targetValue).length
                             } completed
                           </p>
-                          
+
                           <div className="flex flex-wrap gap-1">
                             {journey.customGoals.slice(0, 3).map((goal) => (
-                              <span 
+                              <span
                                 key={goal.id}
                                 className="px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-700"
                               >
@@ -934,7 +920,7 @@ export default function JourneyPlanningPage() {
                           <span className="text-gray-600">
                             Due: {new Date(journey.targetCompletionDate).toLocaleDateString()}
                           </span>
-                          
+
                           <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
                             <Play className="h-3 w-3 mr-1" />
                             Continue
@@ -1000,15 +986,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Play, 
-  Pause, 
-  Edit, 
-  Trash2, 
-  Target, 
+import {
+  Play,
+  Pause,
+  Edit,
+  Trash2,
+  Target,
   Calendar,
   TrendingUp,
-  CheckCircle 
+  CheckCircle
 } from 'lucide-react';
 import { UserJourney } from '@/types/journey';
 
@@ -1020,12 +1006,12 @@ interface JourneyCardProps {
   onPause?: (journeyId: string) => void;
 }
 
-export function JourneyCard({ 
-  journey, 
-  onEdit, 
-  onDelete, 
-  onStart, 
-  onPause 
+export function JourneyCard({
+  journey,
+  onEdit,
+  onDelete,
+  onStart,
+  onPause
 }: JourneyCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -1034,7 +1020,7 @@ export function JourneyCard({
   ).length;
 
   const daysUntilDeadline = Math.ceil(
-    (new Date(journey.targetCompletionDate).getTime() - new Date().getTime()) / 
+    (new Date(journey.targetCompletionDate).getTime() - new Date().getTime()) /
     (1000 * 60 * 60 * 24)
   );
 
@@ -1070,17 +1056,17 @@ export function JourneyCard({
               {journey.description}
             </p>
           </div>
-          
+
           <div className="flex items-center gap-2 ml-4">
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="ghost"
               onClick={() => onEdit?.(journey)}
             >
               <Edit className="h-4 w-4" />
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="ghost"
               className="text-red-600 hover:text-red-700"
               onClick={() => onDelete?.(journey.id)}
@@ -1114,8 +1100,8 @@ export function JourneyCard({
               {journey.progressTracking.overallCompletion}%
             </span>
           </div>
-          <Progress 
-            value={journey.progressTracking.overallCompletion} 
+          <Progress
+            value={journey.progressTracking.overallCompletion}
             className="h-2"
           />
         </div>
@@ -1131,7 +1117,7 @@ export function JourneyCard({
             </div>
             <div className="text-xs text-gray-600">Goals</div>
           </div>
-          
+
           <div className="text-center">
             <div className="flex items-center justify-center mb-1">
               <Calendar className="h-4 w-4 text-orange-600" />
@@ -1141,7 +1127,7 @@ export function JourneyCard({
             </div>
             <div className="text-xs text-gray-600">Days Left</div>
           </div>
-          
+
           <div className="text-center">
             <div className="flex items-center justify-center mb-1">
               <TrendingUp className="h-4 w-4 text-green-600" />
@@ -1157,22 +1143,22 @@ export function JourneyCard({
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">Recent Goals</span>
-            <button 
+            <button
               onClick={() => setIsExpanded(!isExpanded)}
               className="text-xs text-purple-600 hover:text-purple-700"
             >
               {isExpanded ? 'Show Less' : 'Show All'}
             </button>
           </div>
-          
+
           <div className="space-y-2">
             {(isExpanded ? journey.customGoals : journey.customGoals.slice(0, 2)).map((goal) => (
               <div key={goal.id} className="flex items-center justify-between p-2 bg-white rounded border">
                 <div className="flex items-center gap-2">
-                  <CheckCircle 
+                  <CheckCircle
                     className={`h-4 w-4 ${
-                      goal.currentValue >= goal.targetValue 
-                        ? 'text-green-600' 
+                      goal.currentValue >= goal.targetValue
+                        ? 'text-green-600'
                         : 'text-gray-400'
                     }`}
                   />
@@ -1184,7 +1170,7 @@ export function JourneyCard({
               </div>
             ))}
           </div>
-          
+
           {!isExpanded && journey.customGoals.length > 2 && (
             <p className="text-xs text-gray-500 mt-2">
               +{journey.customGoals.length - 2} more goals
@@ -1195,8 +1181,8 @@ export function JourneyCard({
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2 border-t">
           {journey.status === 'active' ? (
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="outline"
               onClick={() => onPause?.(journey.id)}
               className="flex-1"
@@ -1205,8 +1191,8 @@ export function JourneyCard({
               Pause
             </Button>
           ) : journey.status === 'paused' ? (
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={() => onStart?.(journey.id)}
               className="flex-1 bg-purple-600 hover:bg-purple-700"
             >
@@ -1214,8 +1200,8 @@ export function JourneyCard({
               Resume
             </Button>
           ) : (
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={() => onStart?.(journey.id)}
               className="flex-1 bg-purple-600 hover:bg-purple-700"
             >
@@ -1223,9 +1209,9 @@ export function JourneyCard({
               Start
             </Button>
           )}
-          
-          <Button 
-            size="sm" 
+
+          <Button
+            size="sm"
             variant="outline"
             onClick={() => onEdit?.(journey)}
           >
@@ -1278,7 +1264,7 @@ export function CreateJourneyModal({ isOpen, onClose, onSuccess }: CreateJourney
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'basic' | 'exam' | 'goals' | 'timeline'>('basic');
-  
+
   // Form data
   const [formData, setFormData] = useState<Partial<CreateJourneyRequest>>({
     title: '',
@@ -1288,7 +1274,7 @@ export function CreateJourneyModal({ isOpen, onClose, onSuccess }: CreateJourney
     priority: 'medium',
     track: 'exam',
   });
-  
+
   const [targetDate, setTargetDate] = useState<Date>();
   const [newGoal, setNewGoal] = useState<Partial<JourneyGoal>>({
     title: '',
@@ -1569,7 +1555,7 @@ export function CreateJourneyModal({ isOpen, onClose, onSuccess }: CreateJourney
               {/* Add New Goal Form */}
               <div className="border rounded-lg p-4 space-y-3">
                 <h5 className="text-sm font-medium text-gray-700">Add New Goal:</h5>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Input
@@ -1583,9 +1569,9 @@ export function CreateJourneyModal({ isOpen, onClose, onSuccess }: CreateJourney
                       type="number"
                       placeholder="Target value"
                       value={newGoal.targetValue}
-                      onChange={(e) => setNewGoal(prev => ({ 
-                        ...prev, 
-                        targetValue: parseInt(e.target.value) || 0 
+                      onChange={(e) => setNewGoal(prev => ({
+                        ...prev,
+                        targetValue: parseInt(e.target.value) || 0
                       }))}
                     />
                   </div>
@@ -1725,7 +1711,7 @@ export function CreateJourneyModal({ isOpen, onClose, onSuccess }: CreateJourney
               <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
-              
+
               {step === 'timeline' ? (
                 <Button
                   onClick={handleSubmit}
@@ -1770,12 +1756,12 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Target, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  TrendingUp, 
+import {
+  Target,
+  Plus,
+  Edit,
+  Trash2,
+  TrendingUp,
   Calendar,
   CheckCircle2,
   AlertCircle,
@@ -1808,7 +1794,7 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
           source: 'manual',
         }],
       });
-      
+
       onUpdate?.();
     } catch (error) {
       console.error('Failed to update goal progress:', error);
@@ -1828,7 +1814,7 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
     const now = new Date();
     const deadline = new Date(goal.deadline);
     const daysLeft = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (progress >= 100) return { status: 'completed', color: 'green', icon: CheckCircle2 };
     if (daysLeft < 0) return { status: 'overdue', color: 'red', icon: AlertCircle };
     if (daysLeft <= 7) return { status: 'urgent', color: 'orange', icon: Clock };
@@ -1872,14 +1858,14 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
               </div>
               <div className="text-sm text-blue-600">Total Goals</div>
             </div>
-            
+
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">
                 {goals.filter(g => g.currentValue >= g.targetValue).length}
               </div>
               <div className="text-sm text-green-600">Completed</div>
             </div>
-            
+
             <div className="text-center p-4 bg-orange-50 rounded-lg">
               <div className="text-2xl font-bold text-orange-600">
                 {goals.filter(g => {
@@ -1889,7 +1875,7 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
               </div>
               <div className="text-sm text-orange-600">Urgent</div>
             </div>
-            
+
             <div className="text-center p-4 bg-purple-50 rounded-lg">
               <div className="text-2xl font-bold text-purple-600">
                 {Math.round(goals.reduce((acc, g) => acc + (g.currentValue / g.targetValue * 100), 0) / Math.max(goals.length, 1))}%
@@ -1919,11 +1905,11 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
                         {goal.category}
                       </Badge>
                     </div>
-                    
+
                     {goal.description && (
                       <p className="text-gray-600 text-sm mb-3">{goal.description}</p>
                     )}
-                    
+
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
@@ -1935,7 +1921,7 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
@@ -1958,9 +1944,9 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
                       {progressPercentage.toFixed(1)}%
                     </span>
                   </div>
-                  
+
                   <Progress value={progressPercentage} className="h-2" />
-                  
+
                   <div className="flex items-center justify-between">
                     {isEditing ? (
                       <div className="flex items-center gap-2">
@@ -1998,9 +1984,9 @@ export function GoalManagement({ journey, onUpdate }: GoalManagementProps) {
                         Current: <span className="font-medium">{goal.currentValue}</span> / {goal.targetValue} {goal.unit}
                       </span>
                     )}
-                    
-                    <Badge 
-                      variant="outline" 
+
+                    <Badge
+                      variant="outline"
                       className={`text-${color}-700 border-${color}-200 bg-${color}-50`}
                     >
                       {status.replace('_', ' ')}
@@ -2064,11 +2050,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { 
-  TrendingUp, 
-  Calendar, 
-  Target, 
-  Clock, 
+import {
+  TrendingUp,
+  Calendar,
+  Target,
+  Clock,
   AlertTriangle,
   CheckCircle,
   BarChart3,
@@ -2091,17 +2077,17 @@ export function JourneyAnalytics({ journey }: JourneyAnalyticsProps) {
       const now = new Date();
       const startDate = new Date(journey.createdAt);
       const targetDate = new Date(journey.targetCompletionDate);
-      
+
       const totalDays = Math.ceil((targetDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
       const elapsedDays = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
       const remainingDays = Math.max(0, totalDays - elapsedDays);
-      
+
       const completedGoals = journey.customGoals.filter(g => g.currentValue >= g.targetValue).length;
       const totalGoals = journey.customGoals.length;
-      
+
       const expectedProgress = (elapsedDays / totalDays) * 100;
       const actualProgress = journey.progressTracking.overallCompletion;
-      
+
       const weeklyHours = journey.progressTracking.weeklyProgress.reduce(
         (acc, week) => acc + week.hoursStudied, 0
       ) / Math.max(journey.progressTracking.weeklyProgress.length, 1);
@@ -2135,7 +2121,7 @@ export function JourneyAnalytics({ journey }: JourneyAnalyticsProps) {
         averageWeeklyHours: weeklyHours,
         goalCompletionVelocity: completedGoals / Math.max(elapsedDays / 7, 1),
         predictedCompletionDate: new Date(
-          startDate.getTime() + 
+          startDate.getTime() +
           (totalDays * (100 / Math.max(actualProgress, 1))) * 24 * 60 * 60 * 1000
         ),
         riskFactors,
@@ -2289,7 +2275,7 @@ export function JourneyAnalytics({ journey }: JourneyAnalyticsProps) {
                     Based on current pace and progress rate
                   </p>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 border rounded-lg">
                     <div className="text-sm text-gray-600">Original Target</div>
@@ -2358,7 +2344,7 @@ export function JourneyAnalytics({ journey }: JourneyAnalyticsProps) {
                     <span className="text-sm text-purple-800">{rec}</span>
                   </div>
                 ))}
-                
+
                 {analytics.recommendations.length === 0 && (
                   <div className="text-center py-6 text-gray-500">
                     <PieChart className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -2429,7 +2415,7 @@ const handleStartJourney = async (journeyId: string) => {
         />
       ))}
     </div>
-    
+
     {/* Selected Journey Details */}
     {selectedJourney && (
       <Card className="mt-8">
@@ -2476,8 +2462,8 @@ const handleStartJourney = async (journeyId: string) => {
             </div>
           )}
           {activeTab === 'goals' && (
-            <GoalManagement 
-              journey={selectedJourney} 
+            <GoalManagement
+              journey={selectedJourney}
               onUpdate={handleJourneyUpdate}
             />
           )}
@@ -2515,7 +2501,7 @@ const navigationItems = [
     name: 'Journey Planning',
     href: '/journey',
     icon: Map,
-    description: 'Plan and track your learning goals'
+    description: 'Plan and track your learning goals',
   },
   // ... other items
 ];
@@ -2536,7 +2522,7 @@ import { useRouter } from 'next/navigation';
 const handleOnboardingComplete = async (data: OnboardingData) => {
   try {
     // ... existing onboarding logic
-    
+
     // Create journey if exam is selected
     if (data.selectedExam && data.targetDate) {
       const journeyResult = await journeyService.createJourneyFromOnboarding(
@@ -2544,14 +2530,14 @@ const handleOnboardingComplete = async (data: OnboardingData) => {
         data.selectedExam,
         data.targetDate
       );
-      
+
       if (journeyResult.success) {
         // Navigate to journey page to show the created journey
         router.push('/journey');
         return;
       }
     }
-    
+
     // Default navigation to dashboard
     router.push('/dashboard');
   } catch (error) {
@@ -2589,11 +2575,7 @@ describe('JourneyService', () => {
       const examId = EXAMS_DATA[0].id;
       const targetDate = new Date('2024-12-31');
 
-      const result = await journeyService.createJourneyFromOnboarding(
-        userId,
-        examId,
-        targetDate
-      );
+      const result = await journeyService.createJourneyFromOnboarding(userId, examId, targetDate);
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -2609,11 +2591,7 @@ describe('JourneyService', () => {
       const invalidExamId = 'invalid-exam';
       const targetDate = new Date('2024-12-31');
 
-      const result = await journeyService.createJourneyFromOnboarding(
-        userId,
-        invalidExamId,
-        targetDate
-      );
+      const result = await journeyService.createJourneyFromOnboarding(userId, invalidExamId, targetDate);
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -2628,7 +2606,7 @@ describe('JourneyService', () => {
       const goals = (journeyService as any).generateGoalsFromExam(exam);
 
       expect(goals.length).toBeGreaterThan(0);
-      
+
       goals.forEach((goal: any) => {
         expect(goal.isSpecific).toBe(true);
         expect(goal.isMeasurable).toBe(true);
@@ -2643,9 +2621,10 @@ describe('JourneyService', () => {
 });
 ```
 
-**Testing Checklist**: 
+**Testing Checklist**:
+
 - ✅ Journey creation flow
-- ✅ Goal management CRUD operations  
+- ✅ Goal management CRUD operations
 - ✅ Progress tracking updates
 - ✅ Firebase integration
 - ✅ Mission service integration
@@ -2663,18 +2642,21 @@ describe('JourneyService', () => {
 ## Test Coverage Summary
 
 ### ✅ Unit Tests (95% Coverage)
+
 - Journey Service: All methods tested
 - Goal Management: CRUD operations verified
 - Progress Tracking: Sync functionality confirmed
 - Firebase Integration: Connection and data flow validated
 
 ### ✅ Integration Tests (90% Coverage)
+
 - Mission System Integration: Journey-linked missions generating correctly
 - Progress Service Sync: Real-time progress updates working
 - Dashboard Integration: Journey cards displaying with live data
 - Onboarding Flow: Journey creation from exam selection functional
 
 ### ✅ End-to-End Tests (85% Coverage)
+
 - Complete journey creation workflow
 - Goal progress updates reflected in UI
 - Analytics calculations accurate
@@ -2683,12 +2665,14 @@ describe('JourneyService', () => {
 ## Performance Metrics
 
 ### Frontend Performance
+
 - Journey page load time: < 2 seconds
 - Goal updates: < 500ms response time
 - Real-time updates: < 100ms latency
 - Component re-renders optimized with React.memo
 
-### Backend Performance  
+### Backend Performance
+
 - Journey creation: < 1 second
 - Progress updates: < 300ms
 - Analytics calculation: < 2 seconds
@@ -2697,11 +2681,13 @@ describe('JourneyService', () => {
 ## Known Issues & Resolutions
 
 ### Fixed Issues
+
 1. ✅ **Mission-Journey Linking**: Fixed circular dependency between services
 2. ✅ **Real-time Updates**: Optimized Firebase subscriptions to prevent memory leaks
 3. ✅ **Goal Progress Calculation**: Corrected percentage calculations for different units
 
 ### Pending Improvements
+
 1. 🔄 **Offline Support**: Journey data caching for offline viewing
 2. 🔄 **Advanced Analytics**: Machine learning predictions for completion dates
 3. 🔄 **Collaboration**: Share journeys with mentors/study partners
@@ -2709,16 +2695,19 @@ describe('JourneyService', () => {
 ## Integration Success Metrics
 
 ### Mission System Integration
+
 - ✅ Journeys automatically generate aligned missions
 - ✅ Mission completion updates journey progress
 - ✅ Journey goals influence mission difficulty
 
-### Progress Service Integration  
+### Progress Service Integration
+
 - ✅ UnifiedProgress reflects journey achievements
 - ✅ Weekly progress syncs with journey tracking
 - ✅ Cross-track progress attribution working
 
 ### Dashboard Integration
+
 - ✅ Journey cards show live progress
 - ✅ Quick actions functional (start/pause/edit)
 - ✅ Analytics preview working
@@ -2743,16 +2732,19 @@ All tests passing, performance within targets, integrations validated.
 Instead of static goal tracking, our system becomes an **intelligent learning coach** that:
 
 **Predictive Journey Analytics**
+
 - Analyzes user's current pace vs. target deadlines to predict completion probability
 - Identifies potential roadblocks before they become problems (e.g., "Based on your Physics mission pattern, you may struggle with Thermodynamics in Week 8")
 - Provides personalized timeline adjustments: "Consider extending your Chemistry goal by 2 weeks to reduce stress and improve retention"
 
 **Smart Study Pattern Recognition**
+
 - Learns when users are most productive (e.g., "Your Monday morning mission scores are 23% higher - schedule challenging topics then")
 - Detects burnout patterns early: "Your response times have increased 40% this week - time for a study break?"
 - Suggests optimal study schedules based on individual performance data
 
 **Contextual Goal Optimization**
+
 ```
 Traditional Goal: "Complete 80% of Physics syllabus by December"
 AI-Enhanced Goal: "Master Mechanics (your strength) by November, then tackle Thermodynamics with extra support in December"
@@ -2763,17 +2755,20 @@ AI-Enhanced Goal: "Master Mechanics (your strength) by November, then tackle The
 #### Social Learning Integration
 
 **Mentor & Peer System Integration**
+
 - Journey sharing with study partners, mentors, or family members
 - **Progress Celebrations**: Automatic sharing of milestone achievements
 - **Accountability Partners**: Optional check-ins and encouragement messages
 - **Study Group Coordination**: Align journeys with classmates for group study sessions
 
 **Community-Driven Insights**
+
 - "Students with similar goals typically need 3 extra weeks for Organic Chemistry"
 - "85% of successful users add daily review sessions in Month 2"
 - **Anonymous benchmarking**: See how your progress compares without revealing identity
 
 #### Smart Collaboration UI/UX
+
 ```
 Journey Dashboard Enhancement:
 ┌─────────────────────────────────────┐
@@ -2796,11 +2791,13 @@ Journey Dashboard Enhancement:
 #### Progressive Web App Integration
 
 **Smart Sync Strategy**
+
 - **Offline Goal Updates**: Mark goals complete even without internet
 - **Intelligent Sync Conflicts**: Smart resolution when offline changes conflict with online data
 - **Background Progress Tracking**: Continue tracking study time offline, sync when reconnected
 
 **Mobile-First Journey Management**
+
 ```
 Mobile Journey Interface Priority:
 1. Quick goal check-ins (swipe to update progress)
@@ -2810,6 +2807,7 @@ Mobile Journey Interface Priority:
 ```
 
 **Cross-Device Continuity**
+
 - Start journey planning on desktop → Continue on mobile seamlessly
 - Push notifications for goal deadlines across all devices
 - Sync study session timers between devices
@@ -2819,11 +2817,13 @@ Mobile Journey Interface Priority:
 #### Gamification & Motivation System
 
 **Journey Achievement System**
+
 - **Journey Badges**: "Marathon Learner" (6+ month journey), "Goal Crusher" (100% goal completion rate)
 - **Milestone Celebrations**: Custom animations and messages for major achievements
 - **Progress Streaks**: Daily, weekly, and monthly learning consistency rewards
 
 **Personalized Motivation Engine**
+
 ```
 Motivation Message Examples:
 - Morning: "Ready to tackle Day 47 of your Chemistry journey? Yesterday's mission success shows you're on fire! 🔥"
@@ -2834,11 +2834,13 @@ Motivation Message Examples:
 #### Accessibility-First Design
 
 **Universal Design Principles**
+
 - **Visual Impairments**: High contrast mode, screen reader optimization for all journey data
 - **Motor Limitations**: Large touch targets, voice-controlled goal updates
 - **Cognitive Accessibility**: Simple language options, progress visualization alternatives
 
 **Adaptive Interface Intelligence**
+
 - Learns user interaction patterns to optimize interface layout
 - Reduces cognitive load by highlighting most relevant information
 - Adapts complexity based on user expertise (beginner vs. power user modes)
@@ -2848,6 +2850,7 @@ Motivation Message Examples:
 #### Seamless Data Flow Design
 
 **Real-Time Progress Synchronization**
+
 ```
 Mission Completed → Journey Goal Auto-Update → Progress Service Sync → Dashboard Refresh
      ↓
@@ -2855,18 +2858,21 @@ Analytics Update → AI Recommendations → Next Mission Suggestions
 ```
 
 **Cross-System Intelligence**
+
 - **Mission Difficulty Auto-Adjustment**: Poor journey progress → Easier missions suggested
-- **Smart Test Timing**: Journey milestones trigger adaptive testing recommendations  
+- **Smart Test Timing**: Journey milestones trigger adaptive testing recommendations
 - **Predictive Resource Allocation**: Journey deadline approaching → Increased mission frequency suggestions
 
 #### Integration Best Practices
 
 **Database Design Philosophy**
+
 - **Single Source of Truth**: All progress data flows through existing Progress Service
 - **Lightweight Extensions**: Journey data enhances rather than duplicates existing structures
 - **Backwards Compatibility**: System works perfectly even if journey features are disabled
 
 **API Design Consistency**
+
 - All journey endpoints follow existing mission/progress API patterns
 - Reuse existing authentication, validation, and error handling
 - Maintain response time targets (<500ms for all journey operations)
@@ -2874,16 +2880,19 @@ Analytics Update → AI Recommendations → Next Mission Suggestions
 ### 🚀 Production-Ready Implementation Strategy
 
 #### Phase 1: Core Foundation (Week 1)
+
 1. **Database Schema**: Extend existing collections with journey-specific fields
 2. **Basic Service Layer**: Add journey methods to existing services (mission, progress, firebase)
 3. **Simple UI Components**: Journey cards on dashboard, basic goal management
 
-#### Phase 2: Smart Features (Week 2)  
+#### Phase 2: Smart Features (Week 2)
+
 1. **AI Integration**: Predictive analytics and intelligent recommendations
 2. **Advanced UI**: Multi-step journey creation, detailed analytics dashboard
 3. **Cross-System Sync**: Perfect integration with missions and progress tracking
 
 #### Phase 3: Premium Experience (Week 3)
+
 1. **Collaboration Features**: Sharing, mentoring, community insights
 2. **Offline Capabilities**: PWA optimization, smart sync, background tracking
 3. **Gamification**: Achievement system, motivation engine, celebration animations
@@ -2891,16 +2900,19 @@ Analytics Update → AI Recommendations → Next Mission Suggestions
 ### 🎯 Success Metrics & Validation
 
 **User Engagement Metrics**
+
 - Journey completion rate: Target 75%+ (vs. typical 45% for goal-setting apps)
 - Daily active usage: Target 15-minute increase from journey-related activities
 - Cross-system usage: 90%+ of journey users should actively use missions
 
 **Integration Success Indicators**
+
 - Zero performance degradation in existing features
 - Sub-2-second load times for all journey interfaces
 - 95%+ uptime for real-time sync between systems
 
 **Learning Outcome Improvements**
+
 - 25%+ improvement in exam scores for journey users vs. non-journey users
 - 40%+ increase in study consistency (measured via mission completion patterns)
 - 60%+ reduction in goal abandonment rates
@@ -2921,11 +2933,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Users, 
-  Share2, 
-  MessageCircle, 
-  ThumbsUp, 
+import {
+  Users,
+  Share2,
+  MessageCircle,
+  ThumbsUp,
   Plus,
   Crown,
   Eye,
@@ -3040,7 +3052,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
       // Send invitation
       // This would integrate with your email service and Firebase
       console.log('Sending invitation:', inviteData);
-      
+
       // Add to pending invitations
       setShowInviteModal(false);
       setInviteData({ email: '', role: 'peer', message: '' });
@@ -3112,7 +3124,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
     const diff = now.getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor(diff / (1000 * 60 * 60));
-    
+
     if (days > 0) return `${days}d ago`;
     if (hours > 0) return `${hours}h ago`;
     return 'Just now';
@@ -3129,8 +3141,8 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
               Collaboration
             </CardTitle>
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => setShowInviteModal(true)}
               >
@@ -3195,7 +3207,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="text-right">
                     <Badge variant="outline" className="text-xs">
                       {collaborator.role}
@@ -3206,7 +3218,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                   </div>
                 </div>
               ))}
-              
+
               {collaborators.length === 1 && (
                 <div className="text-center py-6 text-gray-500">
                   <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -3237,7 +3249,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                   rows={3}
                 />
                 <div className="flex gap-2">
-                  <Button 
+                  <Button
                     size="sm"
                     onClick={handleAddComment}
                     disabled={!newComment.trim()}
@@ -3255,8 +3267,8 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
               {/* Comments List */}
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {comments.map((comment) => (
-                  <div 
-                    key={comment.id} 
+                  <div
+                    key={comment.id}
                     className={`p-4 border-l-4 rounded-lg ${getCommentTypeColor(comment.type)}`}
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -3279,7 +3291,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                           </div>
                         </div>
                       </div>
-                      
+
                       <Button
                         variant="ghost"
                         size="sm"
@@ -3292,9 +3304,9 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                         <span className="text-xs">{comment.likes.length}</span>
                       </Button>
                     </div>
-                    
+
                     <p className="text-sm text-gray-800 mb-2">{comment.content}</p>
-                    
+
                     {comment.relatedGoalId && (
                       <div className="text-xs text-gray-600">
                         Related to: {journey.customGoals.find(g => g.id === comment.relatedGoalId)?.title}
@@ -3302,7 +3314,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                     )}
                   </div>
                 ))}
-                
+
                 {comments.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
                     <MessageCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
@@ -3321,7 +3333,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md">
             <h2 className="text-xl font-semibold mb-4">Invite Collaborator</h2>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -3342,9 +3354,9 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
                 <select
                   className="w-full p-2 border rounded-md"
                   value={inviteData.role}
-                  onChange={(e) => setInviteData(prev => ({ 
-                    ...prev, 
-                    role: e.target.value as JourneyCollaborator['role'] 
+                  onChange={(e) => setInviteData(prev => ({
+                    ...prev,
+                    role: e.target.value as JourneyCollaborator['role']
                   }))}
                 >
                   <option value="viewer">Viewer - Can view progress only</option>
@@ -3370,7 +3382,7 @@ export function JourneyCollaboration({ journey, onUpdate }: JourneyCollaboration
               <Button variant="outline" onClick={() => setShowInviteModal(false)}>
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={handleInviteCollaborator}
                 disabled={loading || !inviteData.email}
               >
@@ -3438,7 +3450,7 @@ export class JourneyOfflineService {
       };
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(offlineData));
-      
+
       // Also cache in IndexedDB for larger datasets
       await this.cacheInIndexedDB(offlineData);
 
@@ -3454,13 +3466,13 @@ export class JourneyOfflineService {
   async getCachedJourneyData(): Promise<Result<UserJourney[]>> {
     try {
       const cached = localStorage.getItem(this.STORAGE_KEY);
-      
+
       if (!cached) {
         return createError(new Error('No cached journey data available'));
       }
 
       const offlineData: OfflineJourneyData = JSON.parse(cached);
-      
+
       // Check if cache is still valid
       if (Date.now() - offlineData.lastSyncTimestamp > this.CACHE_DURATION) {
         return createError(new Error('Cached data is outdated'));
@@ -3475,11 +3487,7 @@ export class JourneyOfflineService {
   /**
    * Update journey progress offline
    */
-  async updateJourneyProgressOffline(
-    journeyId: string,
-    goalId: string,
-    newValue: number
-  ): Promise<Result<void>> {
+  async updateJourneyProgressOffline(journeyId: string, goalId: string, newValue: number): Promise<Result<void>> {
     try {
       // Get current cached data
       const cachedResult = await this.getCachedJourneyData();
@@ -3492,7 +3500,7 @@ export class JourneyOfflineService {
         if (journey.id === journeyId) {
           return {
             ...journey,
-            customGoals: journey.customGoals.map(goal => 
+            customGoals: journey.customGoals.map(goal =>
               goal.id === goalId ? { ...goal, currentValue: newValue } : goal
             ),
             updatedAt: new Date(),
@@ -3522,10 +3530,7 @@ export class JourneyOfflineService {
   /**
    * Add offline comment or milestone
    */
-  async addOfflineUpdate(
-    type: OfflineUpdate['type'],
-    data: any
-  ): Promise<Result<void>> {
+  async addOfflineUpdate(type: OfflineUpdate['type'], data: any): Promise<Result<void>> {
     try {
       await this.queueUpdate({
         id: `${type}_${Date.now()}`,
@@ -3596,7 +3601,7 @@ export class JourneyOfflineService {
       const isOffline = !navigator.onLine;
       const hasCache = await this.isOfflineModeAvailable();
       const pendingUpdates = (await this.getPendingUpdates()).length;
-      
+
       let lastSync: Date | null = null;
       const cached = localStorage.getItem(this.STORAGE_KEY);
       if (cached) {
@@ -3625,21 +3630,21 @@ export class JourneyOfflineService {
   private async cacheInIndexedDB(data: OfflineJourneyData): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('JourneyCache', 1);
-      
+
       request.onerror = () => reject(new Error('Failed to open IndexedDB'));
-      
-      request.onsuccess = (event) => {
+
+      request.onsuccess = event => {
         const db = (event.target as IDBOpenDBRequest).result;
         const transaction = db.transaction(['journeys'], 'readwrite');
         const store = transaction.objectStore('journeys');
-        
+
         store.put(data, 'main');
-        
+
         transaction.oncomplete = () => resolve();
         transaction.onerror = () => reject(new Error('Failed to cache in IndexedDB'));
       };
-      
-      request.onupgradeneeded = (event) => {
+
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
         db.createObjectStore('journeys');
       };
@@ -3652,7 +3657,7 @@ export class JourneyOfflineService {
 
     const offlineData: OfflineJourneyData = JSON.parse(cached);
     offlineData.pendingUpdates.push(update);
-    
+
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(offlineData));
   }
 
@@ -3692,7 +3697,7 @@ export class JourneyOfflineService {
     offlineData.pendingUpdates = offlineData.pendingUpdates.map(update =>
       update.id === updateId ? { ...update, synced: true } : update
     );
-    
+
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(offlineData));
   }
 
@@ -3701,12 +3706,12 @@ export class JourneyOfflineService {
     if (!cached) return;
 
     const offlineData: OfflineJourneyData = JSON.parse(cached);
-    const cutoffTime = Date.now() - (7 * 24 * 60 * 60 * 1000); // 7 days ago
-    
-    offlineData.pendingUpdates = offlineData.pendingUpdates.filter(update =>
-      !update.synced || update.timestamp > cutoffTime
+    const cutoffTime = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days ago
+
+    offlineData.pendingUpdates = offlineData.pendingUpdates.filter(
+      update => !update.synced || update.timestamp > cutoffTime
     );
-    
+
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(offlineData));
   }
 
@@ -3733,8 +3738,9 @@ This completes Phase 2 (Days 3-4) of the Journey Planning implementation. The sy
 ✅ **Offline Support** - Full offline capabilities with sync when reconnected
 
 **Phase 3 (Days 5-7)** continues with advanced features including:
+
 - **Machine Learning Integration** - Predictive analytics and intelligent recommendations
-- **Collaboration System** - Multi-user journey planning with roles and permissions  
+- **Collaboration System** - Multi-user journey planning with roles and permissions
 - **Offline Capabilities** - Full offline support with background sync
 - **Advanced Analytics** - Deep insights and pattern recognition
 - **Production Optimization** - Performance tuning and deployment readiness
@@ -3778,4 +3784,3 @@ The **Journey Planning System** integrates seamlessly with our existing architec
 3. **Journey Components** (`components/journey/`) - UI components for planning and tracking
 4. **Journey Page** (`app/journey/page.tsx`) - Main journey planning interface
 5. **Dashboard Integration** - Add journey widgets to existing dashboard
-

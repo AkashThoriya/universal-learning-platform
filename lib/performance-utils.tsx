@@ -137,8 +137,8 @@ function createLazyComponent<T extends React.ComponentType<Record<string, unknow
   };
 
   // Expose preload method with proper typing
-  const typedComponent = WrappedComponent as React.ComponentType<React.ComponentProps<T>> & { 
-    preload: () => Promise<{ default: T }> 
+  const typedComponent = WrappedComponent as React.ComponentType<React.ComponentProps<T>> & {
+    preload: () => Promise<{ default: T }>;
   };
   typedComponent.preload = importFn;
 

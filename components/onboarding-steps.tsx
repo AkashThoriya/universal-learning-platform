@@ -192,7 +192,7 @@ export function PersonalInfoStep({
       {/* Exam Date */}
       {formData?.selectedExamId && (
         <div className="space-y-2">
-                    <Label htmlFor="examDate" className="text-sm font-medium">
+          <Label htmlFor="examDate" className="text-sm font-medium">
             Target Completion Date *
           </Label>
           <div className="relative">
@@ -437,13 +437,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
                 <span className="text-sm text-gray-600 ml-2">({subject.topics.length} topics)</span>
               </div>
               <div className="text-right">
-                <Badge variant={
-                  subject.tier === 1 
-                    ? 'destructive' 
-                    : subject.tier === 2 
-                      ? 'default' 
-                      : 'secondary'
-                }>
+                <Badge variant={subject.tier === 1 ? 'destructive' : subject.tier === 2 ? 'default' : 'secondary'}>
                   Tier {subject.tier}
                 </Badge>
                 <div className="text-sm text-gray-600">{subject.estimatedHours ?? 0}h</div>

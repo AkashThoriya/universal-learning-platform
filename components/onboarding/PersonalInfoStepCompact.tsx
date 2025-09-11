@@ -12,7 +12,20 @@
  * @version 3.0.0
  */
 
-import { User, Search, Calendar, BookOpen, Plus, CheckCircle, Clock, AlertCircle, Star, X, Info, Target } from 'lucide-react';
+import {
+  User,
+  Search,
+  Calendar,
+  BookOpen,
+  Plus,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Star,
+  X,
+  Info,
+  Target,
+} from 'lucide-react';
 import React, { useState, useMemo, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -122,13 +135,13 @@ const validateExamDate = (date: string): string | null => {
 const calculateRecommendedDate = (totalHours: number, dailyStudyMinutes: number): Date => {
   const dailyStudyHours = dailyStudyMinutes / 60;
   const daysNeeded = Math.ceil(totalHours / dailyStudyHours);
-  
+
   // Add buffer time (20% extra) for realistic planning
   const daysWithBuffer = Math.ceil(daysNeeded * 1.2);
-  
+
   const today = new Date();
   const recommendedDate = new Date(today.getTime() + daysWithBuffer * 24 * 60 * 60 * 1000);
-  
+
   return recommendedDate;
 };
 
@@ -150,8 +163,10 @@ export function PersonalInfoStepCompact({
 
   // Category color mapping to ensure Tailwind classes are included
   const getCategoryClasses = useCallback((categoryId: string, isActive: boolean) => {
-    if (!isActive) return '';
-    
+    if (!isActive) {
+      return '';
+    }
+
     switch (categoryId) {
       case 'computer-science':
         return 'bg-purple-50 text-purple-700 border-purple-200';
@@ -253,7 +268,7 @@ export function PersonalInfoStepCompact({
     } catch (error) {
       console.error('Error selecting custom exam:', error);
     }
-  }, [onExamSelect]);  // Calculate min date (7 days from now)
+  }, [onExamSelect]); // Calculate min date (7 days from now)
   const minDate = new Date();
   minDate.setDate(minDate.getDate() + 7);
   const minDateString = minDate.toISOString().split('T')[0];
@@ -320,7 +335,8 @@ export function PersonalInfoStepCompact({
               <Label className="text-lg font-semibold">What would you like to learn?</Label>
             </div>
             <p className="text-sm text-gray-600">
-              Choose your learning path. We'll provide a pre-structured curriculum that you can fully customize later - add, remove, or modify subjects and topics according to your specific needs.
+              Choose your learning path. We'll provide a pre-structured curriculum that you can fully customize later -
+              add, remove, or modify subjects and topics according to your specific needs.
             </p>
           </div>
 
@@ -412,22 +428,24 @@ export function PersonalInfoStepCompact({
               </Label>
               {(() => {
                 // Calculate the total available exams for current context
-                const totalAvailable = searchQuery 
-                  ? filteredExams.length 
-                  : activeCategory && examsByCategory[activeCategory] 
-                    ? examsByCategory[activeCategory].length 
+                const totalAvailable = searchQuery
+                  ? filteredExams.length
+                  : activeCategory && examsByCategory[activeCategory]
+                    ? examsByCategory[activeCategory].length
                     : filteredExams.length;
-                
+
                 // Show button if there are more exams than currently displayed
-                return displayExams.length < totalAvailable && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowAllExams(!showAllExams)}
-                    className="text-blue-600"
-                  >
-                    {showAllExams ? 'Show Less' : `Show All (${totalAvailable})`}
-                  </Button>
+                return (
+                  displayExams.length < totalAvailable && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowAllExams(!showAllExams)}
+                      className="text-blue-600"
+                    >
+                      {showAllExams ? 'Show Less' : `Show All (${totalAvailable})`}
+                    </Button>
+                  )
                 );
               })()}
             </div>
@@ -541,7 +559,8 @@ export function PersonalInfoStepCompact({
         <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
-            <strong>Fully Customizable:</strong> The provided syllabus is just a starting point. You can add, remove, or modify subjects and topics after setup to match your specific preparation needs.
+            <strong>Fully Customizable:</strong> The provided syllabus is just a starting point. You can add, remove, or
+            modify subjects and topics after setup to match your specific preparation needs.
           </AlertDescription>
         </Alert>
       )}
@@ -552,9 +571,7 @@ export function PersonalInfoStepCompact({
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-4">
               <Target className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">
-                How many hours can you realistically study daily?
-              </Label>
+              <Label className="text-lg font-semibold">How many hours can you realistically study daily?</Label>
             </div>
             <div className="space-y-4">
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
@@ -648,7 +665,7 @@ export function PersonalInfoStepCompact({
               </div>
 
               {/* Smart Date Recommendation */}
-              {selectedExam && selectedExam.totalEstimatedHours && form.data.preferences?.dailyStudyGoalMinutes && (
+              {selectedExam?.totalEstimatedHours && form.data.preferences?.dailyStudyGoalMinutes && (
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center space-x-2 mb-2">
                     <Star className="h-4 w-4 text-green-600" />
@@ -661,17 +678,18 @@ export function PersonalInfoStepCompact({
                     );
                     const dailyHours = Math.round((form.data.preferences.dailyStudyGoalMinutes / 60) * 10) / 10;
                     const daysNeeded = Math.ceil(selectedExam.totalEstimatedHours / dailyHours);
-                    
+
                     return (
                       <div className="space-y-2">
                         <p className="text-sm text-green-700">
-                          Based on <strong>{selectedExam.totalEstimatedHours} hours</strong> of content and your 
+                          Based on <strong>{selectedExam.totalEstimatedHours} hours</strong> of content and your
                           <strong> {dailyHours}h daily</strong> study plan:
                         </p>
                         <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-200">
                           <div>
                             <p className="text-sm font-medium text-green-800">
-                              Recommended: {recommendedDate.toLocaleDateString('en-US', {
+                              Recommended:{' '}
+                              {recommendedDate.toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
@@ -681,8 +699,8 @@ export function PersonalInfoStepCompact({
                               ~{Math.ceil(daysNeeded * 1.2)} days with buffer time
                             </p>
                             <p className="text-xs text-green-600 mt-1 leading-relaxed">
-                              This date gives you {daysNeeded} days of pure study time plus a 20% buffer 
-                              ({Math.ceil(daysNeeded * 0.2)} extra days) for breaks, revision, and unexpected delays.
+                              This date gives you {daysNeeded} days of pure study time plus a 20% buffer (
+                              {Math.ceil(daysNeeded * 0.2)} extra days) for breaks, revision, and unexpected delays.
                             </p>
                           </div>
                           <Button

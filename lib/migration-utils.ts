@@ -30,20 +30,24 @@ export function isValidUser(data: unknown): data is User {
   if (typeof data !== 'object' || data === null) {
     return false;
   }
-  
+
   const typedData = data as Record<string, unknown>;
   const currentExam = typedData.currentExam as Record<string, unknown>;
-  
+
   return (
     typeof typedData.userId === 'string' &&
     typeof typedData.email === 'string' &&
     typeof typedData.displayName === 'string' &&
-    typeof currentExam === 'object' && currentExam !== null &&
+    typeof currentExam === 'object' &&
+    currentExam !== null &&
     typeof currentExam.id === 'string' &&
     typeof typedData.onboardingComplete === 'boolean' &&
-    typeof typedData.createdAt === 'object' && typedData.createdAt !== null &&
-    typeof typedData.settings === 'object' && typedData.settings !== null &&
-    typeof typedData.stats === 'object' && typedData.stats !== null
+    typeof typedData.createdAt === 'object' &&
+    typedData.createdAt !== null &&
+    typeof typedData.settings === 'object' &&
+    typedData.settings !== null &&
+    typeof typedData.stats === 'object' &&
+    typedData.stats !== null
   );
 }
 
@@ -52,8 +56,8 @@ export function isValidUser(data: unknown): data is User {
  */
 export function migrateLegacyUserData(legacyData: unknown): User {
   const typedLegacyData = legacyData as Record<string, unknown>;
-  const settings = typedLegacyData.settings as Record<string, unknown> || {};
-  
+  const settings = (typedLegacyData.settings as Record<string, unknown>) || {};
+
   return {
     userId: typedLegacyData.userId as string,
     email: typedLegacyData.email as string,

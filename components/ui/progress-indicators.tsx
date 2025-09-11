@@ -119,11 +119,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
                 key={step}
                 className={cn(
                   'h-2 w-8 rounded-full transition-colors',
-                  status === 'completed' 
-                    ? 'bg-green-600' 
-                    : status === 'current' 
-                      ? 'bg-blue-600' 
-                      : 'bg-gray-300'
+                  status === 'completed' ? 'bg-green-600' : status === 'current' ? 'bg-blue-600' : 'bg-gray-300'
                 )}
               />
             );

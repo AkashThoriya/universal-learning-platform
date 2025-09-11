@@ -23,6 +23,8 @@ import {
   Menu,
   X,
   Zap,
+  Brain,
+  Map,
   type LucideIcon,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -107,6 +109,20 @@ export default function Navigation() {
       description: 'Daily and weekly goals',
     },
     {
+      href: '/test',
+      label: 'Adaptive Testing',
+      icon: Brain,
+      isActive: isActiveGroup(['/test']),
+      description: 'Intelligent personalized assessments',
+    },
+    {
+      href: '/journey',
+      label: 'Journey Planning',
+      icon: Map,
+      isActive: isActiveGroup(['/journey']),
+      description: 'Plan your learning path and track progress',
+    },
+    {
       href: '/micro-learning',
       label: 'Micro-Learning',
       icon: Zap,
@@ -161,8 +177,8 @@ export default function Navigation() {
   );
 
   // Group navigation items for better organization
-  const primaryNavItems = navItems.slice(0, 4); // Dashboard, Analytics, Missions, Micro-Learning
-  const secondaryNavItems = navItems.slice(4); // Syllabus, Daily Log, Mock Tests
+  const primaryNavItems = navItems.slice(0, 6); // Dashboard, Analytics, Missions, Adaptive Testing, Journey Planning, Micro-Learning
+  const secondaryNavItems = navItems.slice(6); // Syllabus, Daily Log, Mock Tests
 
   return (
     <nav
@@ -183,9 +199,7 @@ export default function Navigation() {
                 <Target className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-200" />
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
               </div>
-              <span className="text-lg font-bold text-gradient hidden sm:block">
-                ESE
-              </span>
+              <span className="text-lg font-bold text-gradient hidden sm:block">ESE</span>
             </Link>
           </div>
 
@@ -204,7 +218,11 @@ export default function Navigation() {
                   <item.icon className="h-4 w-4 mr-1.5" />
                   <span className="hidden xl:inline">{item.label}</span>
                   <span className="xl:hidden">
-                    {item.label === 'Micro-Learning' ? 'Micro' : item.label}
+                    {item.label === 'Micro-Learning'
+                      ? 'Micro'
+                      : item.label === 'Adaptive Testing'
+                        ? 'Testing'
+                        : item.label}
                   </span>
                   {item.badge && (
                     <Badge
@@ -235,9 +253,9 @@ export default function Navigation() {
             </div>
 
             {/* Notifications - Only show dot when there are actual notifications */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="hidden sm:flex relative h-8 w-8 rounded-full hover:bg-white/10"
               title="Notifications"
             >
@@ -251,9 +269,7 @@ export default function Navigation() {
             {/* User Profile - Minimal */}
             <div className="flex items-center space-x-1">
               <div className="hidden lg:block text-right">
-                <p className="text-sm font-medium truncate max-w-24">
-                  {user?.displayName?.split(' ')[0] ?? 'User'}
-                </p>
+                <p className="text-sm font-medium truncate max-w-24">{user?.displayName?.split(' ')[0] ?? 'User'}</p>
               </div>
               <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full">
                 <User className="h-4 w-4" />
@@ -288,14 +304,10 @@ export default function Navigation() {
         {isMobileMenuOpen && (
           <div className="py-4 space-y-2 border-t border-white/10">
             {/* All nav items for mobile */}
-            <div className="lg:hidden space-y-2">
-              {navItems.map(renderNavItem)}
-            </div>
+            <div className="lg:hidden space-y-2">{navItems.map(renderNavItem)}</div>
 
             {/* Secondary nav items for desktop "More" menu */}
-            <div className="hidden lg:block space-y-2">
-              {secondaryNavItems.map(renderNavItem)}
-            </div>
+            <div className="hidden lg:block space-y-2">{secondaryNavItems.map(renderNavItem)}</div>
 
             {/* Mobile user actions */}
             <div className="lg:hidden pt-4 mt-4 border-t border-white/10 space-y-2">

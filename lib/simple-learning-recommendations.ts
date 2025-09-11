@@ -78,7 +78,7 @@ class SimpleLearningRecommendationsService {
         {
           id: 'weekly-review',
           title: 'Implement Weekly Progress Reviews',
-          description: 'Review your learning progress weekly to identify what\'s working and adjust your approach.',
+          description: "Review your learning progress weekly to identify what's working and adjust your approach.",
           priority: 'medium',
           category: 'study_habits',
           actionable: true,

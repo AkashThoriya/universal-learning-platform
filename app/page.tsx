@@ -145,11 +145,12 @@ export default function HomePage() {
 
             <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed px-4">
               Transform chaotic studying into strategic, data-driven learning.{' '}
-              <span className="block sm:inline">Whether targeting{' '}
-              <span className="font-semibold text-blue-600 dark:text-blue-400">competitive exams</span>{' '}
-              or{' '}
-              <span className="font-semibold text-purple-600 dark:text-purple-400">custom skills</span>{' '}
-              - our AI adapts to your style.</span>
+              <span className="block sm:inline">
+                Whether targeting{' '}
+                <span className="font-semibold text-blue-600 dark:text-blue-400">competitive exams</span> or{' '}
+                <span className="font-semibold text-purple-600 dark:text-purple-400">custom skills</span> - our AI
+                adapts to your style.
+              </span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8">
@@ -189,7 +190,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-slate-50 dark:from-gray-900 dark:via-blue-900 dark:to-slate-900">
             <div className="absolute inset-0 bg-grid-slate-100/30 [mask-image:linear-gradient(180deg,transparent,white,transparent)] dark:bg-grid-slate-700/20" />
           </div>
-          
+
           <div className="max-w-6xl mx-auto relative z-10">
             <div className="text-center mb-8 sm:mb-12">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
@@ -263,7 +264,10 @@ export default function HomePage() {
           </div>
 
           <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center relative z-10">
-            <Badge variant="secondary" className="mb-6 sm:mb-8 px-4 sm:px-6 py-2 sm:py-3 bg-white/80 backdrop-blur-sm border border-blue-200 text-sm sm:text-base">
+            <Badge
+              variant="secondary"
+              className="mb-6 sm:mb-8 px-4 sm:px-6 py-2 sm:py-3 bg-white/80 backdrop-blur-sm border border-blue-200 text-sm sm:text-base"
+            >
               <Trophy className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
               Global Impact
             </Badge>
@@ -286,7 +290,9 @@ export default function HomePage() {
                     <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       25K+
                     </div>
-                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Active Learners</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">
+                      Active Learners
+                    </div>
                     <div className="text-xs text-muted-foreground mt-1">Growing daily</div>
                   </CardContent>
                 </Card>
@@ -298,7 +304,9 @@ export default function HomePage() {
                     <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       150+
                     </div>
-                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Learning Goals</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">
+                      Learning Goals
+                    </div>
                     <div className="text-xs text-muted-foreground mt-1">Exams & Skills</div>
                   </CardContent>
                 </Card>
@@ -310,7 +318,9 @@ export default function HomePage() {
                     <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
                       98%
                     </div>
-                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Goal Achievement</div>
+                    <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">
+                      Goal Achievement
+                    </div>
                     <div className="text-xs text-muted-foreground mt-1">Proven results</div>
                   </CardContent>
                 </Card>
@@ -676,8 +686,8 @@ export default function HomePage() {
             <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-blue-200/50 dark:border-blue-800/50 mx-4 shadow-lg">
               <h3 className="text-xl sm:text-2xl font-bold mb-4 text-blue-800 dark:text-blue-200">🎯 Our Mission</h3>
               <p className="text-base sm:text-lg text-muted-foreground">
-                To democratize learning by providing world-class tools and insights to every student, regardless
-                of their economic background. Your success is our success.
+                To democratize learning by providing world-class tools and insights to every student, regardless of
+                their economic background. Your success is our success.
               </p>
             </div>
           </div>
@@ -757,7 +767,8 @@ export default function HomePage() {
                   <span className="text-base sm:text-lg font-bold">Universal Learning Platform</span>
                 </div>
                 <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
-                  Transforming learning with strategic intelligence and data-driven insights. Whether mastering exams or custom skills, your success is our mission.
+                  Transforming learning with strategic intelligence and data-driven insights. Whether mastering exams or
+                  custom skills, your success is our mission.
                 </p>
               </div>
 

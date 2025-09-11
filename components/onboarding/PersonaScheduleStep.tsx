@@ -3,7 +3,7 @@
  *
  * Second step combining:
  * - Persona detection (student/professional/freelancer)
- * - Daily study hours capacity  
+ * - Daily study hours capacity
  * - Smart date calculation with AI recommendations
  *
  * @author Exam Strategy Engine Team
@@ -12,14 +12,8 @@
 
 'use client';
 
+import { User, Clock, Calendar, AlertCircle, CheckCircle } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
-import { 
-  User, 
-  Clock, 
-  Calendar, 
-  AlertCircle,
-  CheckCircle
-} from 'lucide-react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -29,11 +23,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
+import { PERSONA_OPTIONS, getDefaultStudyHours } from '@/lib/data/onboarding';
 import { Exam, UserPersona, UserPersonaType, SyllabusSubject } from '@/types/exam';
-import { 
-  PERSONA_OPTIONS, 
-  getDefaultStudyHours 
-} from '@/lib/data/onboarding';
 
 // Interface for Google Analytics gtag function
 declare global {
@@ -113,13 +104,13 @@ const validateExamDate = (date: string): string | null => {
 const calculateRecommendedDate = (totalHours: number, dailyStudyMinutes: number): Date => {
   const dailyStudyHours = dailyStudyMinutes / 60;
   const daysNeeded = Math.ceil(totalHours / dailyStudyHours);
-  
+
   // Add buffer time (20% extra) for realistic planning
   const daysWithBuffer = Math.ceil(daysNeeded * 1.2);
-  
+
   const today = new Date();
   const recommendedDate = new Date(today.getTime() + daysWithBuffer * 24 * 60 * 60 * 1000);
-  
+
   return recommendedDate;
 };
 
@@ -127,25 +118,25 @@ const calculateRecommendedDate = (totalHours: number, dailyStudyMinutes: number)
  * Calculate recommended completion date with weekend schedule support
  */
 const calculateRecommendedDateWithWeekends = (
-  totalHours: number, 
-  weekdayMinutes: number, 
+  totalHours: number,
+  weekdayMinutes: number,
   weekendMinutes: number
 ): Date => {
   const weekdayHours = weekdayMinutes / 60;
   const weekendHours = weekendMinutes / 60;
-  
+
   // Calculate hours per week (5 weekdays + 2 weekend days)
-  const hoursPerWeek = (weekdayHours * 5) + (weekendHours * 2);
-  
+  const hoursPerWeek = weekdayHours * 5 + weekendHours * 2;
+
   // Calculate weeks needed
   const weeksNeeded = Math.ceil(totalHours / hoursPerWeek);
-  
+
   // Add buffer time (20% extra)
   const weeksWithBuffer = Math.ceil(weeksNeeded * 1.2);
-  
+
   const today = new Date();
   const recommendedDate = new Date(today.getTime() + weeksWithBuffer * 7 * 24 * 60 * 60 * 1000);
-  
+
   return recommendedDate;
 };
 
@@ -163,17 +154,17 @@ const checkTargetDateRealism = (
   const target = new Date(targetDate);
   const today = new Date();
   const daysAvailable = Math.ceil((target.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
-  
+
   let hoursNeeded;
   if (useWeekendSchedule && weekdayMinutes && weekendMinutes) {
     const weeksAvailable = Math.floor(daysAvailable / 7);
     const extraDays = daysAvailable % 7;
-    
+
     // Calculate available study hours
     const weekdayHours = weekdayMinutes / 60;
     const weekendHours = weekendMinutes / 60;
-    const totalAvailableHours = (weeksAvailable * (weekdayHours * 5 + weekendHours * 2)) + (extraDays * weekdayHours);
-    
+    const totalAvailableHours = weeksAvailable * (weekdayHours * 5 + weekendHours * 2) + extraDays * weekdayHours;
+
     hoursNeeded = totalHours / totalAvailableHours;
   } else if (dailyMinutes) {
     const dailyHours = dailyMinutes / 60;
@@ -182,34 +173,34 @@ const checkTargetDateRealism = (
   } else {
     return { isRealistic: false, recommendation: 'Please set your study schedule first.' };
   }
-  
-  if (hoursNeeded <= 0.8) { // 80% or less of available time needed
-    return { 
-      isRealistic: true, 
-      recommendation: 'Perfect! Your target date is very achievable with some buffer time for breaks and revision.' 
+
+  if (hoursNeeded <= 0.8) {
+    // 80% or less of available time needed
+    return {
+      isRealistic: true,
+      recommendation: 'Perfect! Your target date is very achievable with some buffer time for breaks and revision.',
     };
-  } else if (hoursNeeded <= 1.0) { // Exactly the available time needed
-    return { 
-      isRealistic: true, 
-      recommendation: 'Your target is achievable, but it will require consistent daily effort. Consider adding a few weeks buffer.' 
-    };
-  } else { // More time needed than available
-    const shortfallDays = Math.ceil((hoursNeeded - 1) * daysAvailable);
-    return { 
-      isRealistic: false, 
-      daysShort: shortfallDays,
-      recommendation: `Your target date is quite ambitious. Consider extending by ${shortfallDays} days or increasing your daily study hours.` 
+  } else if (hoursNeeded <= 1.0) {
+    // Exactly the available time needed
+    return {
+      isRealistic: true,
+      recommendation:
+        'Your target is achievable, but it will require consistent daily effort. Consider adding a few weeks buffer.',
     };
   }
+  // More time needed than available
+  const shortfallDays = Math.ceil((hoursNeeded - 1) * daysAvailable);
+  return {
+    isRealistic: false,
+    daysShort: shortfallDays,
+    recommendation: `Your target date is quite ambitious. Consider extending by ${shortfallDays} days or increasing your daily study hours.`,
+  };
 };
 
 /**
  * Persona & Schedule setup step component - Step 2 of onboarding
  */
-export function PersonaScheduleStep({
-  form,
-  selectedExam,
-}: PersonaScheduleStepProps) {
+export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepProps) {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [useWeekendSchedule, setUseWeekendSchedule] = useState(false);
   const [weekdayHours, setWeekdayHours] = useState(4);
@@ -220,7 +211,7 @@ export function PersonaScheduleStep({
     if (!useWeekendSchedule) {
       return Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60);
     }
-    return ((weekdayHours * 5) + (weekendHours * 2)) / 7;
+    return (weekdayHours * 5 + weekendHours * 2) / 7;
   }, [useWeekendSchedule, weekdayHours, weekendHours, form.data.preferences?.dailyStudyGoalMinutes]);
 
   // Helper function to update form data when weekend schedule changes
@@ -238,7 +229,9 @@ export function PersonaScheduleStep({
   const handlePersonaSelect = useCallback(
     (personaType: UserPersonaType) => {
       const selectedPersona = PERSONA_OPTIONS.find(p => p.id === personaType);
-      if (!selectedPersona) return;
+      if (!selectedPersona) {
+        return;
+      }
 
       // Update persona
       form.updateField('userPersona', {
@@ -248,11 +241,11 @@ export function PersonaScheduleStep({
       // Set default study hours based on persona
       const defaultHours = getDefaultStudyHours(personaType);
       const defaultMinutes = defaultHours * 60;
-      
+
       // Update local state for weekend schedule
       setWeekdayHours(defaultHours);
       setWeekendHours(Math.min(defaultHours + 2, 8)); // Add 2h for weekends, max 8h
-      
+
       form.updateField('preferences', {
         ...(form.data.preferences ?? {}),
         dailyStudyGoalMinutes: defaultMinutes,
@@ -325,27 +318,23 @@ export function PersonaScheduleStep({
         <CardContent className="p-6">
           <div className="flex items-center space-x-2 mb-4">
             <User className="h-5 w-5 text-blue-600" aria-hidden="true" />
-            <Label className="text-lg font-semibold">
-              Which describes you best?
-            </Label>
+            <Label className="text-lg font-semibold">Which describes you best?</Label>
           </div>
-          <p className="text-sm text-gray-600 mb-6">
-            This helps us recommend realistic study goals and schedules.
-          </p>
+          <p className="text-sm text-gray-600 mb-6">This helps us recommend realistic study goals and schedules.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {PERSONA_OPTIONS.map(persona => (
               <Card
                 key={persona.id}
                 className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  form.data.userPersona?.type === persona.id
-                    ? 'ring-2 ring-blue-500 bg-blue-50'
-                    : 'hover:bg-gray-50'
+                  form.data.userPersona?.type === persona.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
                 }`}
                 onClick={() => handlePersonaSelect(persona.id)}
               >
                 <CardContent className="p-6 text-center">
-                  <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${persona.color} flex items-center justify-center`}>
+                  <div
+                    className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${persona.color} flex items-center justify-center`}
+                  >
                     <persona.icon className="h-8 w-8 text-white" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">{persona.title}</h3>
@@ -372,17 +361,15 @@ export function PersonaScheduleStep({
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-4">
               <Clock className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">
-                How many hours can you realistically study?
-              </Label>
+              <Label className="text-lg font-semibold">How many hours can you realistically study?</Label>
             </div>
-            
+
             {/* Schedule Type Selection */}
             <div className="space-y-4 mb-6">
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   type="button"
-                  variant={!useWeekendSchedule ? "default" : "outline"}
+                  variant={!useWeekendSchedule ? 'default' : 'outline'}
                   onClick={() => {
                     setUseWeekendSchedule(false);
                     // Reset to uniform daily schedule
@@ -396,7 +383,7 @@ export function PersonaScheduleStep({
                 </Button>
                 <Button
                   type="button"
-                  variant={useWeekendSchedule ? "default" : "outline"}
+                  variant={useWeekendSchedule ? 'default' : 'outline'}
                   onClick={() => {
                     setUseWeekendSchedule(true);
                     updateFormWithSchedule();
@@ -467,9 +454,7 @@ export function PersonaScheduleStep({
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
                   <h4 className="font-semibold text-gray-900 mb-3">Monday - Friday</h4>
                   <div className="text-center mb-4">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {weekdayHours}h
-                    </div>
+                    <div className="text-2xl font-bold text-blue-600">{weekdayHours}h</div>
                     <div className="text-sm text-blue-600 mt-1">Weekday Study Goal</div>
                   </div>
 
@@ -479,7 +464,7 @@ export function PersonaScheduleStep({
                       if (hours !== undefined) {
                         setWeekdayHours(hours);
                         // Update form with new average
-                        const avgMinutes = ((hours * 5) + (weekendHours * 2)) / 7 * 60;
+                        const avgMinutes = ((hours * 5 + weekendHours * 2) / 7) * 60;
                         form.updateField('preferences', {
                           ...(form.data.preferences ?? {}),
                           dailyStudyGoalMinutes: Math.round(avgMinutes),
@@ -503,9 +488,7 @@ export function PersonaScheduleStep({
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6">
                   <h4 className="font-semibold text-gray-900 mb-3">Saturday - Sunday</h4>
                   <div className="text-center mb-4">
-                    <div className="text-2xl font-bold text-green-600">
-                      {weekendHours}h
-                    </div>
+                    <div className="text-2xl font-bold text-green-600">{weekendHours}h</div>
                     <div className="text-sm text-green-600 mt-1">Weekend Study Goal</div>
                   </div>
 
@@ -515,7 +498,7 @@ export function PersonaScheduleStep({
                       if (hours !== undefined) {
                         setWeekendHours(hours);
                         // Update form with new average
-                        const avgMinutes = ((weekdayHours * 5) + (hours * 2)) / 7 * 60;
+                        const avgMinutes = ((weekdayHours * 5 + hours * 2) / 7) * 60;
                         form.updateField('preferences', {
                           ...(form.data.preferences ?? {}),
                           dailyStudyGoalMinutes: Math.round(avgMinutes),
@@ -539,10 +522,10 @@ export function PersonaScheduleStep({
                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4">
                   <div className="text-center">
                     <div className="text-lg font-semibold text-purple-600">
-                      Weekly Total: {((weekdayHours * 5) + (weekendHours * 2)).toFixed(1)}h
+                      Weekly Total: {(weekdayHours * 5 + weekendHours * 2).toFixed(1)}h
                     </div>
                     <div className="text-sm text-purple-600 mt-1">
-                      Average: {(((weekdayHours * 5) + (weekendHours * 2)) / 7).toFixed(1)}h per day
+                      Average: {((weekdayHours * 5 + weekendHours * 2) / 7).toFixed(1)}h per day
                     </div>
                   </div>
                 </div>
@@ -558,9 +541,7 @@ export function PersonaScheduleStep({
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-4">
               <Calendar className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">
-                When is your target completion date?
-              </Label>
+              <Label className="text-lg font-semibold">When is your target completion date?</Label>
             </div>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -585,59 +566,65 @@ export function PersonaScheduleStep({
               </div>
 
               {/* AI Analysis of Target Date */}
-              {selectedExam && selectedExam.totalEstimatedHours && form.data.examDate && !validationErrors.examDate && (
+              {selectedExam?.totalEstimatedHours && form.data.examDate && !validationErrors.examDate && (
                 <div className="space-y-4">
                   {(() => {
-                    const targetAnalysis = useWeekendSchedule ? 
-                      checkTargetDateRealism(
-                        form.data.examDate,
-                        selectedExam.totalEstimatedHours,
-                        true,
-                        weekdayHours * 60,
-                        weekendHours * 60
-                      ) :
-                      checkTargetDateRealism(
-                        form.data.examDate,
-                        selectedExam.totalEstimatedHours,
-                        false,
-                        undefined,
-                        undefined,
-                        form.data.preferences?.dailyStudyGoalMinutes
-                      );
+                    const targetAnalysis = useWeekendSchedule
+                      ? checkTargetDateRealism(
+                          form.data.examDate,
+                          selectedExam.totalEstimatedHours,
+                          true,
+                          weekdayHours * 60,
+                          weekendHours * 60
+                        )
+                      : checkTargetDateRealism(
+                          form.data.examDate,
+                          selectedExam.totalEstimatedHours,
+                          false,
+                          undefined,
+                          undefined,
+                          form.data.preferences?.dailyStudyGoalMinutes
+                        );
 
-                    const recommendedDate = useWeekendSchedule ?
-                      calculateRecommendedDateWithWeekends(
-                        selectedExam.totalEstimatedHours,
-                        weekdayHours * 60,
-                        weekendHours * 60
-                      ) :
-                      calculateRecommendedDate(
-                        selectedExam.totalEstimatedHours,
-                        form.data.preferences?.dailyStudyGoalMinutes ?? 240
-                      );
+                    const recommendedDate = useWeekendSchedule
+                      ? calculateRecommendedDateWithWeekends(
+                          selectedExam.totalEstimatedHours,
+                          weekdayHours * 60,
+                          weekendHours * 60
+                        )
+                      : calculateRecommendedDate(
+                          selectedExam.totalEstimatedHours,
+                          form.data.preferences?.dailyStudyGoalMinutes ?? 240
+                        );
 
                     return (
-                      <div className={`border rounded-lg p-4 ${
-                        targetAnalysis.isRealistic ? 
-                        'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200' : 
-                        'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
-                      }`}>
+                      <div
+                        className={`border rounded-lg p-4 ${
+                          targetAnalysis.isRealistic
+                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
+                            : 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
+                        }`}
+                      >
                         <div className="flex items-center space-x-2 mb-3">
                           {targetAnalysis.isRealistic ? (
                             <CheckCircle className="h-5 w-5 text-green-600" />
                           ) : (
                             <AlertCircle className="h-5 w-5 text-orange-600" />
                           )}
-                          <span className={`font-medium ${
-                            targetAnalysis.isRealistic ? 'text-green-800' : 'text-orange-800'
-                          }`}>
+                          <span
+                            className={`font-medium ${
+                              targetAnalysis.isRealistic ? 'text-green-800' : 'text-orange-800'
+                            }`}
+                          >
                             {targetAnalysis.isRealistic ? 'Target Achievable!' : 'Target Analysis'}
                           </span>
                         </div>
-                        
-                        <p className={`text-sm mb-3 ${
-                          targetAnalysis.isRealistic ? 'text-green-700' : 'text-orange-700'
-                        }`}>
+
+                        <p
+                          className={`text-sm mb-3 ${
+                            targetAnalysis.isRealistic ? 'text-green-700' : 'text-orange-700'
+                          }`}
+                        >
                           {targetAnalysis.recommendation}
                         </p>
 
@@ -649,11 +636,9 @@ export function PersonaScheduleStep({
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-gray-600">Your schedule:</span>
                             <span className="font-medium">
-                              {useWeekendSchedule ? (
-                                `${weekdayHours}h weekdays, ${weekendHours}h weekends`
-                              ) : (
-                                `${Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)}h daily`
-                              )}
+                              {useWeekendSchedule
+                                ? `${weekdayHours}h weekdays, ${weekendHours}h weekends`
+                                : `${Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)}h daily`}
                             </span>
                           </div>
                           <div className="flex justify-between items-center text-sm">
@@ -696,51 +681,45 @@ export function PersonaScheduleStep({
       )}
 
       {/* Progress Summary */}
-      {form.data.userPersona?.type && 
-       form.data.preferences?.dailyStudyGoalMinutes &&
-       form.data.examDate && 
-       !validationErrors.examDate && (
-        <Card className="border-green-200 bg-gradient-to-r from-green-50 via-blue-50 to-purple-50">
-          <CardContent className="p-6">
-            <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1">
-                  Perfect! Your personalized schedule is ready
-                </h3>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <div>
-                    <strong>Profile:</strong> {PERSONA_OPTIONS.find(p => p.id === form.data.userPersona?.type)?.title}
-                  </div>
-                  <div>
-                    <strong>Schedule:</strong> {
-                      useWeekendSchedule ? (
-                        `${weekdayHours}h weekdays, ${weekendHours}h weekends`
-                      ) : (
-                        `${Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 0) / 60)}h daily`
-                      )
-                    }
-                  </div>
-                  <div>
-                    <strong>Target Date:</strong> {new Date(form.data.examDate).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
+      {form.data.userPersona?.type &&
+        form.data.preferences?.dailyStudyGoalMinutes &&
+        form.data.examDate &&
+        !validationErrors.examDate && (
+          <Card className="border-green-200 bg-gradient-to-r from-green-50 via-blue-50 to-purple-50">
+            <CardContent className="p-6">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 mb-1">Perfect! Your personalized schedule is ready</h3>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <div>
+                      <strong>Profile:</strong> {PERSONA_OPTIONS.find(p => p.id === form.data.userPersona?.type)?.title}
+                    </div>
+                    <div>
+                      <strong>Schedule:</strong>{' '}
+                      {useWeekendSchedule
+                        ? `${weekdayHours}h weekdays, ${weekendHours}h weekends`
+                        : `${Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 0) / 60)}h daily`}
+                    </div>
+                    <div>
+                      <strong>Target Date:</strong>{' '}
+                      {new Date(form.data.examDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        )}
 
       {/* Validation Summary */}
-      {(!form.data.userPersona?.type || 
-        !form.data.preferences?.dailyStudyGoalMinutes ||
-        validationErrors.examDate) && (
+      {(!form.data.userPersona?.type || !form.data.preferences?.dailyStudyGoalMinutes || validationErrors.examDate) && (
         <Alert className="border-amber-200 bg-amber-50">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-800">

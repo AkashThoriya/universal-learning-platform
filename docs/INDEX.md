@@ -23,9 +23,14 @@ This index catalogs the markdown files in `docs/` and provides a short descripti
 - `integrations/GOOGLE-AUTH-SETUP.md` — Instructions for configuring Google auth in Firebase and the app.
 - `integrations/ESLINT-RESOLUTION-STRATEGY.md` — Troubleshooting common linting issues and project ESLint rules.
 
+## Deployment & Configuration (docs/deployment)
+
+- `deployment/ENVIRONMENT-CONFIGURATION.md` — Complete environment variables guide including LLM integration setup.
+- `deployment/FIREBASE-SECURITY-RULES.md` — Comprehensive Firestore security rules for all collections and features.
+
 ## Reference (docs/reference)
 
-- `reference/issues.md` — Open issues, decisions, and proposed improvements.
+- `reference/issues.md` — Comprehensive system analysis with 20 identified issues and resolutions.
 
 ## Getting Started
 
@@ -35,4 +40,4 @@ This index catalogs the markdown files in `docs/` and provides a short descripti
 
 ---
 
-_Last updated: 2025-09-09 — If you add or remove files in `docs/`, update this index to keep the hub accurate._
+_Last updated: 2025-01-11 — If you add or remove files in `docs/`, update this index to keep the hub accurate._

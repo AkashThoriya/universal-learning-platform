@@ -21,11 +21,13 @@ lib/data/
 ## File Types
 
 ### JSON Files (`exams/` directory)
+
 - **Purpose**: Static exam data with complete syllabus structures
 - **Format**: Structured JSON following the exam schema
 - **Usage**: Imported into TypeScript modules for type-safe access
 
 ### TypeScript Files (root `data/` directory)
+
 - **Purpose**: Utilities, templates, and dynamic data processing
 - **Format**: TypeScript modules with proper type definitions
 - **Usage**: Imported throughout the application for data operations
@@ -40,11 +42,13 @@ lib/data/
 ## Adding New Data
 
 ### For Exam Data
+
 1. Create a new JSON file in the `exams/` directory
 2. Follow the schema documented in `exams/README.md`
 3. Import and register the exam in `lib/exams-data.ts`
 
 ### For Utility Data
+
 1. Create or update TypeScript files in the root `data/` directory
 2. Ensure proper type definitions
 3. Export through `index.ts` if needed for broader access

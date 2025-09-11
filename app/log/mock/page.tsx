@@ -334,7 +334,12 @@ export default function MockTestLogPage() {
                     <label htmlFor="test-type" className="text-sm font-medium">
                       Test Type
                     </label>
-                    <Select value={type} onValueChange={value => setType(value as 'full_length' | 'sectional' | 'topic_wise' | 'previous_year')}>
+                    <Select
+                      value={type}
+                      onValueChange={value =>
+                        setType(value as 'full_length' | 'sectional' | 'topic_wise' | 'previous_year')
+                      }
+                    >
                       <SelectTrigger id="test-type">
                         <SelectValue placeholder="Select test type" />
                       </SelectTrigger>
@@ -377,7 +382,7 @@ export default function MockTestLogPage() {
                             type="number"
                             min="0"
                             max={section?.maxMarks}
-                            value={section?.id ? scores[section.id] ?? 0 : 0}
+                            value={section?.id ? (scores[section.id] ?? 0) : 0}
                             onChange={e =>
                               section?.id &&
                               setScores(prev => ({
@@ -399,7 +404,7 @@ export default function MockTestLogPage() {
                           type="number"
                           min="0"
                           max={section?.maxTime}
-                          value={section?.id ? timeTaken[section.id] ?? 0 : 0}
+                          value={section?.id ? (timeTaken[section.id] ?? 0) : 0}
                           onChange={e =>
                             section?.id &&
                             setTimeTaken(prev => ({
@@ -673,7 +678,10 @@ export default function MockTestLogPage() {
                       <label htmlFor="time-of-day" className="text-sm font-medium">
                         Time of Day
                       </label>
-                      <Select value={timeOfDay} onValueChange={value => setTimeOfDay(value as 'morning' | 'afternoon' | 'evening' | 'night')}>
+                      <Select
+                        value={timeOfDay}
+                        onValueChange={value => setTimeOfDay(value as 'morning' | 'afternoon' | 'evening' | 'night')}
+                      >
                         <SelectTrigger id="time-of-day">
                           <SelectValue />
                         </SelectTrigger>

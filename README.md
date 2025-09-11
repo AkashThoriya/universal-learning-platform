@@ -1,6 +1,7 @@
 # Exam Strategy Engine - Universal Learning Platform for Students & Working Professionals
 
 <!-- Badges: replace URLs with your CI/coverage/release endpoints -->
+
 [![build](https://img.shields.io/badge/build-pending-lightgrey.svg)](#)
 [![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey.svg)](#)
 [![release](https://img.shields.io/badge/release-v0.0.0-lightgrey.svg)](#)
@@ -127,16 +128,26 @@ This platform is built on **enterprise-grade** design principles with intelligen
 ## Technology Stack
 
 - **Next.js 15.5.0** (App Router) - Latest React features with optimized routing and performance
-- **TypeScript Strict Mode** - strong type safety with comprehensive interface definitions
+- **TypeScript Strict Mode** - Strong type safety with comprehensive interface definitions
 - **Firebase Firestore** - Real-time NoSQL database with enhanced service layer and intelligent caching
 - **Firebase Auth** - Secure authentication with session management and user protection
+- **Gemini AI Integration** - AI-powered question generation for adaptive testing (NEW)
 - **Tailwind CSS** - Modern utility-first CSS with custom design system
 - **shadcn/ui** - Premium React components with accessibility built-in
 - **Recharts** - Interactive data visualization with real-time updates
 - **React Hook Form + Zod** - Type-safe form validation with comprehensive error handling
 - **Lucide React** - Beautiful, consistent icon system
+- **Framer Motion** - Advanced animations and micro-interactions
 
 ## Enhanced Architecture
+
+### **🚀 Latest Features**
+
+- **🧠 Adaptive Testing System** - AI-powered question generation with IRT-based difficulty adaptation
+- **🗺️ Journey Planning System** - SMART goal setting with progress tracking and analytics
+- **🤖 LLM Integration** - Gemini AI for dynamic question generation and content adaptation
+- **🔗 System Integration** - Seamless data flow between missions, journeys, and testing systems
+- **🔐 Enterprise Security** - Comprehensive Firestore security rules and data protection
 
 ### **Production-Grade Features**
 
@@ -152,7 +163,8 @@ This platform is built on **enterprise-grade** design principles with intelligen
 ### Prerequisites
 
 - Node.js 18+ and npm
-- Firebase account
+- Firebase account (for database and authentication)
+- **Gemini API key** (required for adaptive testing AI features)
 - Git
 
 ### Installation
@@ -180,20 +192,14 @@ This platform is built on **enterprise-grade** design principles with intelligen
 4. **Configure environment variables**
 
    ```bash
-   cp .env.example .env.local
+   npm run setup
    ```
 
-   Fill in your Firebase configuration in `.env.local`:
+   Then edit `.env` with your actual keys:
+   - **Firebase Config**: From [Firebase Console](https://console.firebase.google.com) → Project Settings
+   - **Gemini API Key**: From [Google AI Studio](https://makersuite.google.com/app/apikey) ⚠️ **Required**
 
-   ```env
-   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-   NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
-   ```
+   **⚠️ Critical**: The **Gemini API key is required** for the Adaptive Testing System to function properly.
 
 5. **Run the development server**
 
@@ -229,7 +235,11 @@ This platform is built on **enterprise-grade** design principles with intelligen
 
 ### 4. Configure Security Rules
 
-Replace the default Firestore rules with:
+**⚠️ Important**: Use the comprehensive security rules that support all features including Adaptive Testing and Journey Planning.
+
+See [`docs/deployment/FIREBASE-SECURITY-RULES.md`](docs/deployment/FIREBASE-SECURITY-RULES.md) for complete rules.
+
+Quick setup - replace the default Firestore rules with:
 
 ```javascript
 rules_version = '2';
@@ -634,24 +644,36 @@ CMD ["npm", "start"]
 
 ## Environment Variables
 
-Required environment variables for the application:
+### Quick Setup
 
-```env
-# Firebase Configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
+1. **Setup environment variables:**
 
-# Optional: Firebase Analytics
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+   ```bash
+   npm run setup
+   ```
 
-# Optional: Development
-NODE_ENV=development
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+2. **Fill in your keys in `.env`:**
+   - **Firebase Config**: Get from [Firebase Console](https://console.firebase.google.com) → Project Settings
+   - **Gemini API Key**: Get from [Google AI Studio](https://makersuite.google.com/app/apikey) ⚠️ **Required**
+   - **VAPID Keys** (optional): Generate with `npx web-push generate-vapid-keys`
+
+### Required vs Optional Variables
+
+| Variable Type       | Required?   | Purpose                        |
+| ------------------- | ----------- | ------------------------------ |
+| **Firebase Config** | ✅ Required | Database & Authentication      |
+| **Gemini API Key**  | ✅ Required | AI-powered question generation |
+| **VAPID Keys**      | ⚪ Optional | Push notifications (PWA)       |
+| **Error Reporting** | ⚪ Optional | Production monitoring          |
+
+**📋 Environment Setup Checklist:**
+
+- [ ] Run `npm run setup` to copy template
+- [ ] Add Firebase configuration to `.env`
+- [ ] Add Gemini API key to `.env` ⚠️ **Critical for adaptive testing**
+- [ ] Test with `npm run dev`
+
+📚 **Need help?** See detailed setup in [`docs/deployment/ENVIRONMENT-CONFIGURATION.md`](docs/deployment/ENVIRONMENT-CONFIGURATION.md)
 
 ## API Documentation
 

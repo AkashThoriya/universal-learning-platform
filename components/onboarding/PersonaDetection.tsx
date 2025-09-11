@@ -299,7 +299,10 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
  * Work schedule input component for working professionals
  */
 function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
-  const workDays: Array<{ id: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'; label: string }> = [
+  const workDays: Array<{
+    id: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    label: string;
+  }> = [
     { id: 'monday', label: 'Monday' },
     { id: 'tuesday', label: 'Tuesday' },
     { id: 'wednesday', label: 'Wednesday' },

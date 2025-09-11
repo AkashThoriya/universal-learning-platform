@@ -153,7 +153,15 @@ export function MicroLearningSession({
 
       onComplete?.(performance);
     }
-  }, [session, startTime, topicId, onComplete, calculateAccuracy, calculateEngagementScore, identifyAreasForImprovement]);
+  }, [
+    session,
+    startTime,
+    topicId,
+    onComplete,
+    calculateAccuracy,
+    calculateEngagementScore,
+    identifyAreasForImprovement,
+  ]);
 
   const startSession = useCallback(() => {
     setIsPlaying(true);

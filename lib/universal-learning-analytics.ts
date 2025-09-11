@@ -3,7 +3,7 @@
  *
  * Provides comprehensive analytics and insights across all learning tracks:
  * - Exam preparation analytics
- * - Custom learning goal analytics  
+ * - Custom learning goal analytics
  * - Unified progress tracking
  * - Learning recommendations
  * - Performance insights
@@ -140,10 +140,10 @@ export class UniversalLearningAnalytics {
     try {
       // Get exam preparation progress
       const examProgress = await this.getExamProgress(userId);
-      
+
       // Get custom learning progress
       const customProgress = await this.getCustomLearningProgress(userId);
-      
+
       // Calculate unified metrics
       const unifiedMetrics = this.calculateUnifiedMetrics(examProgress, customProgress);
 
@@ -243,10 +243,10 @@ export class UniversalLearningAnalytics {
 
       const snapshot = await getDocs(recentMissionsQuery);
       const allCompletedMissions = snapshot.docs.map(doc => doc.data());
-      
+
       // Filter for exam and course_tech tracks in memory
-      const completedMissions = allCompletedMissions.filter(mission => 
-        mission.track === 'exam' || mission.track === 'course_tech'
+      const completedMissions = allCompletedMissions.filter(
+        mission => mission.track === 'exam' || mission.track === 'course_tech'
       );
 
       // Calculate metrics
@@ -302,7 +302,8 @@ export class UniversalLearningAnalytics {
       // Calculate metrics
       const activeGoals = customGoals.filter(goal => goal.isActive !== false).length;
       const completedGoals = customGoals.filter(goal => goal.status === 'completed').length;
-      const totalLearningHours = customMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent || 0), 0) / 60;
+      const totalLearningHours =
+        customMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent || 0), 0) / 60;
       const skillCategories = [...new Set(customGoals.map(goal => goal.category))];
       const averageCompletionRate = this.calculateAverageCompletionRate(customGoals);
       const goalProgress = customGoals.map(goal => ({
@@ -337,15 +338,15 @@ export class UniversalLearningAnalytics {
    * Calculate unified metrics across all learning tracks
    */
   private calculateUnifiedMetrics(examProgress: any, customProgress: any) {
-    const totalLearningTime = examProgress.totalStudyTime + (customProgress.totalLearningHours * 60);
+    const totalLearningTime = examProgress.totalStudyTime + customProgress.totalLearningHours * 60;
     const learningStreak = Math.max(examProgress.currentStreak, 0);
-    
+
     // Calculate overall progress as a weighted average
     const examWeight = 0.6; // Slightly higher weight for exam preparation
     const customWeight = 0.4;
     const examProgressPercent = examProgress.weeklyGoalProgress || 0;
     const customProgressPercent = customProgress.averageCompletionRate || 0;
-    const overallProgress = (examProgressPercent * examWeight) + (customProgressPercent * customWeight);
+    const overallProgress = examProgressPercent * examWeight + customProgressPercent * customWeight;
 
     // Mock weekly targets (in real implementation, get from user preferences)
     const weeklyTarget = 1800; // 30 hours per week
@@ -403,7 +404,7 @@ export class UniversalLearningAnalytics {
     const totalProgress = goals.reduce((sum, goal) => {
       const completed = goal.progress?.completedMissions || 0;
       const total = goal.progress?.totalMissions || 1;
-      return sum + (completed / total);
+      return sum + completed / total;
     }, 0);
     return (totalProgress / goals.length) * 100;
   }
@@ -460,7 +461,7 @@ export class UniversalLearningAnalytics {
   private async generateRecommendations(userId: string): Promise<any[]> {
     try {
       const recommendationsResult = await simpleLearningRecommendationsService.generateBasicRecommendations(userId);
-      
+
       if (recommendationsResult.success && recommendationsResult.data) {
         return recommendationsResult.data.map(rec => ({
           type: 'time_management' as const,

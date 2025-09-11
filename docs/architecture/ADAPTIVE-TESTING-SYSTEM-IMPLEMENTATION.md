@@ -9,21 +9,25 @@
 Our Adaptive Testing System builds upon the existing architecture:
 
 **🔗 Mission System Integration** (`lib/mission-service.ts` - 1357 lines)
+
 - Leverages existing mission generation for test question creation
-- Uses persona-aware difficulty adjustment mechanisms  
+- Uses persona-aware difficulty adjustment mechanisms
 - Integrates with mission completion tracking for adaptive responses
 
 **🔗 Progress Service Integration** (`lib/progress-service.ts` - 359 lines)
+
 - Extends UnifiedProgress with adaptive test metrics
 - Syncs with existing TrackProgress system for cross-system analytics
 - Maintains consistency with mission-based progress tracking
 
 **🔗 Firebase Services Integration** (`lib/firebase-services.ts` - 1500 lines)
+
 - Extends existing Firebase collections with test data
 - Leverages existing real-time subscriptions and performance monitoring
 - Uses established error handling and retry mechanisms
 
 **🔗 Dashboard Integration** (`app/dashboard/page.tsx`)
+
 - Adds adaptive testing widgets to existing AdaptiveDashboard component
 - Maintains consistency with current Navigation and AuthGuard patterns
 - Integrates with existing analytics and progress displays
@@ -36,7 +40,7 @@ Our Adaptive Testing System builds upon the existing architecture:
 4. **Test Analytics** (`components/analytics/TestAnalytics.tsx`) - Integration with existing analytics
 5. **Test Dashboard** (`app/test/page.tsx`) - Main testing interface
 
----
+## Note: We will use GEMINI APIs to generate questions and validate answers based on selected topics/subjects. In future we might switch to different LLM, so integrate in such a way that we don't need to change much code.
 
 ## Phase 1: Foundation & Algorithm Core (Days 1-2)
 
@@ -52,12 +56,7 @@ Our Adaptive Testing System builds upon the existing architecture:
  * Integrates with existing Mission System, Progress Service, and Journey Planning
  */
 
-import { 
-  LearningTrack, 
-  MissionDifficulty, 
-  UnifiedProgress,
-  SubjectData 
-} from './mission-system';
+import { LearningTrack, MissionDifficulty, UnifiedProgress, SubjectData } from './mission-system';
 import { UserJourney } from './journey';
 
 export interface AdaptiveTest {
@@ -65,12 +64,12 @@ export interface AdaptiveTest {
   userId: string;
   title: string;
   description: string;
-  
+
   // Integration with existing systems
   linkedJourneyId?: string; // Links to Journey Planning system
   linkedSubjects: string[]; // Subject IDs from exam data
   track: LearningTrack; // Consistent with mission system
-  
+
   // Test configuration
   totalQuestions: number;
   estimatedDuration: number; // minutes
@@ -78,22 +77,22 @@ export interface AdaptiveTest {
     min: MissionDifficulty;
     max: MissionDifficulty;
   };
-  
+
   // Adaptive algorithm settings
   algorithmType: 'CAT' | 'MAP' | 'HYBRID'; // Computer Adaptive Testing types
   convergenceThreshold: number; // When to stop adapting
   initialDifficulty: MissionDifficulty;
-  
+
   // Test state
   status: 'draft' | 'active' | 'completed' | 'paused' | 'archived';
   currentQuestion: number;
   questions: AdaptiveQuestion[];
   responses: TestResponse[];
-  
+
   // Performance tracking
   performance: TestPerformance;
   adaptiveMetrics: AdaptiveMetrics;
-  
+
   // Metadata
   createdAt: Date;
   updatedAt: Date;
@@ -108,23 +107,23 @@ export interface AdaptiveQuestion {
   options?: QuestionOption[];
   correctAnswers: string[]; // Support multiple correct answers
   explanation: string;
-  
+
   // Adaptive properties
   difficulty: MissionDifficulty;
   discriminationIndex: number; // How well question differentiates ability levels
   guessingParameter: number; // Probability of correct guess
-  
+
   // Content classification
   subject: string;
   topic: string;
   subtopic?: string;
   bloomsLevel: 'remember' | 'understand' | 'apply' | 'analyze' | 'evaluate' | 'create';
-  
+
   // Performance data
   timesAsked: number;
   averageResponseTime: number;
   successRate: number;
-  
+
   // Integration markers
   linkedMissionId?: string; // Links to mission system
   tags: string[];
@@ -144,7 +143,7 @@ export interface TestResponse {
   responseTime: number; // milliseconds
   confidence?: number; // 1-5 scale, optional
   timestamp: Date;
-  
+
   // Adaptive algorithm data
   estimatedAbility: number; // User ability estimate at time of response
   questionDifficulty: MissionDifficulty;
@@ -157,12 +156,12 @@ export interface TestPerformance {
   accuracy: number; // 0-100
   averageResponseTime: number;
   totalTime: number;
-  
+
   // Detailed analytics
   subjectPerformance: Record<string, SubjectPerformance>;
   difficultyPerformance: Record<MissionDifficulty, DifficultyPerformance>;
   bloomsPerformance: Record<string, number>;
-  
+
   // Adaptive insights
   finalAbilityEstimate: number;
   abilityConfidenceInterval: [number, number];
@@ -191,7 +190,7 @@ export interface AdaptiveMetrics {
   questionUtilization: number; // Percentage of optimal questions used
   abilityEstimateStability: number; // How stable the final estimate is
   convergenceHistory: AbilityEstimate[];
-  
+
   // Integration with existing progress system
   progressImpact: {
     missionDifficultyAdjustment: number;
@@ -215,12 +214,12 @@ export interface QuestionBank {
   subjects: string[];
   totalQuestions: number;
   difficultyDistribution: Record<MissionDifficulty, number>;
-  
+
   // Quality metrics
   averageDiscrimination: number;
   calibrationStatus: 'uncalibrated' | 'calibrating' | 'calibrated';
   lastCalibrated: Date;
-  
+
   // Integration
   linkedExamIds: string[]; // From existing exam data
   createdFrom: 'syllabus' | 'manual' | 'ai_generated';
@@ -233,18 +232,18 @@ export interface TestSession {
   userId: string;
   startedAt: Date;
   lastActivity: Date;
-  
+
   // Session state
   currentQuestionIndex: number;
   timeRemaining: number; // milliseconds
   isPaused: boolean;
   pauseReasons: string[];
-  
+
   // Real-time adaptation data
   currentAbilityEstimate: number;
   currentStandardError: number;
   nextQuestionPreview?: AdaptiveQuestion;
-  
+
   // Performance tracking
   sessionMetrics: {
     questionsAnswered: number;
@@ -338,21 +337,21 @@ export interface TestRecommendation {
  * Implements Computer Adaptive Testing (CAT) algorithms with mission system integration
  */
 
-import { 
+import {
   AdaptiveQuestion,
   TestResponse,
   AbilityEstimate,
   AdaptiveMetrics,
-  MissionDifficulty 
+  MissionDifficulty,
 } from '@/types/adaptive-testing';
 
 export class AdaptiveAlgorithm {
   private static readonly DIFFICULTY_SCORES = {
-    'beginner': 0.2,
-    'easy': 0.4,
-    'medium': 0.6,
-    'hard': 0.8,
-    'expert': 1.0
+    beginner: 0.2,
+    easy: 0.4,
+    medium: 0.6,
+    hard: 0.8,
+    expert: 1.0,
   };
 
   /**
@@ -393,13 +392,11 @@ export class AdaptiveAlgorithm {
         const discrimination = question.discriminationIndex;
         const guessing = question.guessingParameter;
 
-        const probability = this.calculateResponseProbability(
-          ability, difficulty, discrimination, guessing
-        );
+        const probability = this.calculateResponseProbability(ability, difficulty, discrimination, guessing);
 
         // First derivative (score function)
-        const scoreTerm = discrimination * (1 - guessing) * 
-          Math.exp(-discrimination * (ability - difficulty)) / 
+        const scoreTerm =
+          (discrimination * (1 - guessing) * Math.exp(-discrimination * (ability - difficulty))) /
           Math.pow(1 + Math.exp(-discrimination * (ability - difficulty)), 2);
 
         if (response.isCorrect) {
@@ -440,12 +437,10 @@ export class AdaptiveAlgorithm {
       const discrimination = question.discriminationIndex;
       const guessing = question.guessingParameter;
 
-      const probability = this.calculateResponseProbability(
-        ability, difficulty, discrimination, guessing
-      );
+      const probability = this.calculateResponseProbability(ability, difficulty, discrimination, guessing);
 
-      const scoreTerm = discrimination * (1 - guessing) * 
-        Math.exp(-discrimination * (ability - difficulty)) / 
+      const scoreTerm =
+        (discrimination * (1 - guessing) * Math.exp(-discrimination * (ability - difficulty))) /
         Math.pow(1 + Math.exp(-discrimination * (ability - difficulty)), 2);
 
       const information = Math.pow(scoreTerm, 2) / (probability * (1 - probability));
@@ -483,8 +478,7 @@ export class AdaptiveAlgorithm {
       }
 
       // Difficulty constraints
-      if (constraints?.difficultyConstraints && 
-          !constraints.difficultyConstraints.includes(question.difficulty)) {
+      if (constraints?.difficultyConstraints && !constraints.difficultyConstraints.includes(question.difficulty)) {
         return false;
       }
 
@@ -497,21 +491,21 @@ export class AdaptiveAlgorithm {
       const discrimination = question.discriminationIndex;
       const guessing = question.guessingParameter;
 
-      const probability = this.calculateResponseProbability(
-        currentAbility, difficulty, discrimination, guessing
-      );
+      const probability = this.calculateResponseProbability(currentAbility, difficulty, discrimination, guessing);
 
       // Information = discrimination^2 * P(1-P) / (guessing + (1-guessing) * P)^2
       const information = Math.pow(discrimination, 2) * probability * (1 - probability);
-      
+
       // Apply subject distribution weighting if specified
       let subjectWeight = 1.0;
       if (constraints?.subjectDistribution) {
         const desiredProportion = constraints.subjectDistribution[question.subject] || 0;
         const currentProportion = this.calculateCurrentSubjectProportion(
-          question.subject, previousResponses, availableQuestions
+          question.subject,
+          previousResponses,
+          availableQuestions
         );
-        
+
         // Favor questions from underrepresented subjects
         subjectWeight = desiredProportion > currentProportion ? 1.5 : 0.8;
       }
@@ -520,13 +514,13 @@ export class AdaptiveAlgorithm {
         question,
         score: information * subjectWeight,
         information,
-        subjectWeight
+        subjectWeight,
       };
     });
 
     // Select question with highest information value
     questionScores.sort((a, b) => b.score - a.score);
-    
+
     return questionScores.length > 0 ? questionScores[0].question : null;
   }
 
@@ -542,7 +536,7 @@ export class AdaptiveAlgorithm {
   ): boolean {
     // Always continue if below minimum questions
     if (responses.length < 5) return true;
-    
+
     // Stop if reached maximum questions
     if (responses.length >= maxQuestions) return false;
 
@@ -577,12 +571,12 @@ export class AdaptiveAlgorithm {
       const partialResponses = responses.slice(0, index + 1);
       const ability = this.estimateAbility(partialResponses, questions);
       const standardError = this.calculateStandardError(partialResponses, questions, ability);
-      
+
       return {
         timestamp: responses[index].timestamp,
         estimate: ability,
         standardError,
-        questionNumber: index + 1
+        questionNumber: index + 1,
       };
     });
 
@@ -599,8 +593,8 @@ export class AdaptiveAlgorithm {
 
     // Ability estimate stability
     const finalEstimates = convergenceHistory.slice(-3);
-    const abilityEstimateStability = finalEstimates.length > 1 ? 
-      1 - this.calculateVariability(finalEstimates.map(e => e.estimate)) : 0;
+    const abilityEstimateStability =
+      finalEstimates.length > 1 ? 1 - this.calculateVariability(finalEstimates.map(e => e.estimate)) : 0;
 
     return {
       algorithmEfficiency,
@@ -610,33 +604,33 @@ export class AdaptiveAlgorithm {
       progressImpact: {
         missionDifficultyAdjustment: this.calculateMissionDifficultyImpact(finalAbility),
         journeyGoalUpdate: this.calculateJourneyGoalImpact(responses, questions),
-        trackProgressContribution: this.calculateTrackProgressContribution(responses)
-      }
+        trackProgressContribution: this.calculateTrackProgressContribution(responses),
+      },
     };
   }
 
   // Helper methods
   private static calculateCurrentSubjectProportion(
-    subject: string, 
-    responses: TestResponse[], 
+    subject: string,
+    responses: TestResponse[],
     questions: AdaptiveQuestion[]
   ): number {
     if (responses.length === 0) return 0;
-    
+
     const subjectResponses = responses.filter(response => {
       const question = questions.find(q => q.id === response.questionId);
       return question?.subject === subject;
     });
-    
+
     return subjectResponses.length / responses.length;
   }
 
   private static calculateVariability(values: number[]): number {
     if (values.length < 2) return 0;
-    
+
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
     const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
-    
+
     return Math.sqrt(variance);
   }
 
@@ -652,10 +646,7 @@ export class AdaptiveAlgorithm {
     return Math.max(-0.2, Math.min(0.2, finalAbility * 0.1));
   }
 
-  private static calculateJourneyGoalImpact(
-    responses: TestResponse[], 
-    questions: AdaptiveQuestion[]
-  ): number {
+  private static calculateJourneyGoalImpact(responses: TestResponse[], questions: AdaptiveQuestion[]): number {
     // Calculate how test results should impact journey goal progress
     const accuracy = responses.filter(r => r.isCorrect).length / responses.length;
     return Math.max(0, Math.min(1, accuracy * 1.2 - 0.1));
@@ -667,7 +658,7 @@ export class AdaptiveAlgorithm {
       const timeBonus = response.responseTime < 30000 ? 0.1 : 0; // Under 30 seconds
       return sum + (response.isCorrect ? 1 : 0) + timeBonus;
     }, 0);
-    
+
     return responseQuality / (responses.length * 1.1); // Normalize with time bonus
   }
 }
@@ -687,7 +678,7 @@ export class SpecializedAdaptiveAlgorithms {
     targetDifficulties: MissionDifficulty[]
   ): AdaptiveQuestion | null {
     // Favor questions that align with recent mission difficulties
-    const missionAlignedQuestions = availableQuestions.filter(question => 
+    const missionAlignedQuestions = availableQuestions.filter(question =>
       targetDifficulties.includes(question.difficulty)
     );
 
@@ -710,10 +701,8 @@ export class SpecializedAdaptiveAlgorithms {
   ): AdaptiveQuestion | null {
     // Extract subjects from journey goals
     const journeySubjects = journeyGoals.flatMap(goal => goal.linkedSubjects || []);
-    
-    const journeyAlignedQuestions = availableQuestions.filter(question =>
-      journeySubjects.includes(question.subject)
-    );
+
+    const journeyAlignedQuestions = availableQuestions.filter(question => journeySubjects.includes(question.subject));
 
     const subjectDistribution: Record<string, number> = {};
     journeySubjects.forEach(subject => {
@@ -763,7 +752,7 @@ export const adaptiveTestingFirebaseService = {
       if (test.linkedJourneyId) {
         await this.linkTestToJourney(test.id, test.linkedJourneyId);
       }
-      
+
       return createSuccess(test);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to create adaptive test'));
@@ -789,9 +778,8 @@ export const adaptiveTestingFirebaseService = {
   // Submit a test response
   async submitTestResponse(response: TestResponse): Promise<Result<void>> {
     try {
-      const responseRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES, 
-        `${response.questionId}_${Date.now()}`);
-      
+      const responseRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES, `${response.questionId}_${Date.now()}`);
+
       await setDoc(responseRef, {
         ...response,
         timestamp: Timestamp.fromDate(response.timestamp),
@@ -799,7 +787,7 @@ export const adaptiveTestingFirebaseService = {
 
       // Update test session with real-time data
       await this.updateTestSession(response);
-      
+
       return createSuccess(undefined);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to submit test response'));
@@ -807,17 +795,14 @@ export const adaptiveTestingFirebaseService = {
   },
 
   // Get user's adaptive tests with real-time updates
-  subscribeToUserTests(
-    userId: string, 
-    callback: (tests: AdaptiveTest[]) => void
-  ): () => void {
+  subscribeToUserTests(userId: string, callback: (tests: AdaptiveTest[]) => void): () => void {
     const q = query(
       collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
       where('userId', '==', userId),
       orderBy('createdAt', 'desc')
     );
 
-    return onSnapshot(q, (snapshot) => {
+    return onSnapshot(q, snapshot => {
       const tests = snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
@@ -825,7 +810,7 @@ export const adaptiveTestingFirebaseService = {
         updatedAt: doc.data().updatedAt?.toDate() || new Date(),
         completedAt: doc.data().completedAt?.toDate() || null,
       })) as AdaptiveTest[];
-      
+
       callback(tests);
     });
   },
@@ -888,10 +873,7 @@ export const adaptiveTestingFirebaseService = {
   },
 
   // Analytics and reporting
-  async getTestAnalytics(
-    userId: string,
-    dateRange?: { start: Date; end: Date }
-  ): Promise<Result<any>> {
+  async getTestAnalytics(userId: string, dateRange?: { start: Date; end: Date }): Promise<Result<any>> {
     try {
       // Implementation for comprehensive test analytics
       // Would aggregate data from multiple collections
@@ -915,7 +897,7 @@ export const adaptiveTestingFirebaseService = {
  * Integrates with existing Mission System, Progress Service, and Journey Planning
  */
 
-import { 
+import {
   AdaptiveTest,
   AdaptiveQuestion,
   TestSession,
@@ -924,7 +906,7 @@ import {
   StartTestSessionRequest,
   SubmitResponseRequest,
   TestPerformance,
-  AdaptiveMetrics
+  AdaptiveMetrics,
 } from '@/types/adaptive-testing';
 import { Result, createSuccess, createError } from '@/lib/types-utils';
 import { adaptiveTestingFirebaseService } from '@/lib/firebase-services';
@@ -961,7 +943,7 @@ export class AdaptiveTestingService {
       }
 
       const journey = journeyResult.data;
-      
+
       // Generate test aligned with journey goals
       const test: AdaptiveTest = {
         id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -1009,10 +991,7 @@ export class AdaptiveTestingService {
   /**
    * Start an adaptive test session
    */
-  async startTestSession(
-    userId: string,
-    request: StartTestSessionRequest
-  ): Promise<Result<TestSession>> {
+  async startTestSession(userId: string, request: StartTestSessionRequest): Promise<Result<TestSession>> {
     try {
       // Get test details
       const testResult = await this.getTestById(request.testId);
@@ -1056,10 +1035,10 @@ export class AdaptiveTestingService {
 
       // Store session
       this.activeSessions.set(session.id, session);
-      
+
       // Save to Firebase
       const result = await adaptiveTestingFirebaseService.startTestSession(session);
-      
+
       return result;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to start test session'));
@@ -1092,7 +1071,7 @@ export class AdaptiveTestingService {
 
       // Evaluate response
       const isCorrect = this.evaluateResponse(question, request.answer);
-      
+
       // Create response record
       const response: TestResponse = {
         questionId: request.questionId,
@@ -1140,30 +1119,26 @@ export class AdaptiveTestingService {
 
       if (shouldContinue) {
         // Select next question using adaptive algorithm
-        const availableQuestions = test.questions.filter(q => 
-          !test.responses.some(r => r.questionId === q.id)
-        );
+        const availableQuestions = test.questions.filter(q => !test.responses.some(r => r.questionId === q.id));
 
         if (test.linkedJourneyId) {
           // Use journey-focused selection if linked to journey
           const journeyResult = await this.getJourneyDetails(test.linkedJourneyId);
           if (journeyResult.success) {
-            nextQuestion = SpecializedAdaptiveAlgorithms.journeyFocusedSelection(
-              availableQuestions,
-              newAbility,
-              journeyResult.data.customGoals,
-              test.responses
-            ) || undefined;
+            nextQuestion =
+              SpecializedAdaptiveAlgorithms.journeyFocusedSelection(
+                availableQuestions,
+                newAbility,
+                journeyResult.data.customGoals,
+                test.responses
+              ) || undefined;
           }
         }
 
         // Fallback to standard adaptive selection
         if (!nextQuestion) {
-          nextQuestion = AdaptiveAlgorithm.selectNextQuestion(
-            availableQuestions,
-            newAbility,
-            test.responses
-          ) || undefined;
+          nextQuestion =
+            AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) || undefined;
         }
 
         session.nextQuestionPreview = nextQuestion;
@@ -1172,7 +1147,7 @@ export class AdaptiveTestingService {
         testCompleted = true;
         test.status = 'completed';
         test.completedAt = new Date();
-        
+
         // Calculate final performance
         test.performance = this.calculateTestPerformance(test.responses, test.questions);
         test.adaptiveMetrics = AdaptiveAlgorithm.generateAdaptiveMetrics(
@@ -1194,7 +1169,6 @@ export class AdaptiveTestingService {
         testCompleted,
         performance: testCompleted ? test.performance : undefined,
       });
-
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to submit response'));
     }
@@ -1212,19 +1186,19 @@ export class AdaptiveTestingService {
       }
 
       const { journeys, missions, progress } = progressResult.data;
-      
+
       const recommendations: TestRecommendation[] = [];
 
       // Analyze each active journey for test opportunities
       for (const journey of journeys.filter(j => j.status === 'active')) {
         // Find goals that need assessment
-        const assessableGoals = journey.customGoals.filter(goal => 
-          goal.currentValue < goal.targetValue * 0.8 // Less than 80% complete
+        const assessableGoals = journey.customGoals.filter(
+          goal => goal.currentValue < goal.targetValue * 0.8 // Less than 80% complete
         );
 
         if (assessableGoals.length > 0) {
           const testId = `adaptive_${journey.id}_${Date.now()}`;
-          
+
           recommendations.push({
             testId,
             title: `${journey.title} - Progress Assessment`,
@@ -1233,7 +1207,7 @@ export class AdaptiveTestingService {
             reasons: [
               `${assessableGoals.length} goals need progress validation`,
               'Adaptive testing will optimize your study plan',
-              'Current progress suggests readiness for assessment'
+              'Current progress suggests readiness for assessment',
             ],
             estimatedBenefit: {
               abilityImprovement: 0.15,
@@ -1318,14 +1292,15 @@ export class AdaptiveTestingService {
     const correctAnswers = question.correctAnswers;
 
     // Check if all correct answers are provided and no incorrect ones
-    return correctAnswers.length === userAnswers.length && 
-           correctAnswers.every(correct => userAnswers.includes(correct));
+    return (
+      correctAnswers.length === userAnswers.length && correctAnswers.every(correct => userAnswers.includes(correct))
+    );
   }
 
   private updateFatigueIndicators(session: TestSession, responseTime: number): void {
     // Track response time pattern to detect fatigue
     session.sessionMetrics.fatigueIndicators.push(responseTime);
-    
+
     // Keep only last 5 response times
     if (session.sessionMetrics.fatigueIndicators.length > 5) {
       session.sessionMetrics.fatigueIndicators.shift();
@@ -1344,13 +1319,11 @@ export class AdaptiveTestingService {
     // Calculate subject-wise performance
     const subjectPerformance: Record<string, any> = {};
     const subjects = [...new Set(questions.map(q => q.subject))];
-    
+
     subjects.forEach(subject => {
       const subjectQuestions = questions.filter(q => q.subject === subject);
-      const subjectResponses = responses.filter(r => 
-        subjectQuestions.some(q => q.id === r.questionId)
-      );
-      
+      const subjectResponses = responses.filter(r => subjectQuestions.some(q => q.id === r.questionId));
+
       if (subjectResponses.length > 0) {
         const subjectCorrect = subjectResponses.filter(r => r.isCorrect).length;
         subjectPerformance[subject] = {
@@ -1367,13 +1340,11 @@ export class AdaptiveTestingService {
     // Calculate difficulty-wise performance
     const difficultyPerformance: Record<string, any> = {};
     const difficulties = ['easy', 'medium', 'hard', 'expert'];
-    
+
     difficulties.forEach(difficulty => {
       const difficultyQuestions = questions.filter(q => q.difficulty === difficulty);
-      const difficultyResponses = responses.filter(r =>
-        difficultyQuestions.some(q => q.id === r.questionId)
-      );
-      
+      const difficultyResponses = responses.filter(r => difficultyQuestions.some(q => q.id === r.questionId));
+
       if (difficultyResponses.length > 0) {
         const difficultyCorrect = difficultyResponses.filter(r => r.isCorrect).length;
         difficultyPerformance[difficulty] = {
@@ -1389,13 +1360,11 @@ export class AdaptiveTestingService {
     // Calculate Bloom's taxonomy performance
     const bloomsPerformance: Record<string, number> = {};
     const bloomsLevels = ['remember', 'understand', 'apply', 'analyze', 'evaluate', 'create'];
-    
+
     bloomsLevels.forEach(level => {
       const levelQuestions = questions.filter(q => q.bloomsLevel === level);
-      const levelResponses = responses.filter(r =>
-        levelQuestions.some(q => q.id === r.questionId)
-      );
-      
+      const levelResponses = responses.filter(r => levelQuestions.some(q => q.id === r.questionId));
+
       if (levelResponses.length > 0) {
         const levelCorrect = levelResponses.filter(r => r.isCorrect).length;
         bloomsPerformance[level] = (levelCorrect / levelResponses.length) * 100;
@@ -1417,7 +1386,7 @@ export class AdaptiveTestingService {
       finalAbilityEstimate,
       abilityConfidenceInterval: [
         finalAbilityEstimate - 1.96 * standardError,
-        finalAbilityEstimate + 1.96 * standardError
+        finalAbilityEstimate + 1.96 * standardError,
       ],
       standardError,
     };
@@ -1441,7 +1410,6 @@ export class AdaptiveTestingService {
       // Update progress service
       const progressService = ProgressService.getInstance();
       await this.updateTrackProgress(test, userId);
-
     } catch (error) {
       console.error('Failed to update integrated systems:', error);
     }
@@ -1525,7 +1493,7 @@ async updateProgressFromAdaptiveTest(
     }
 
     const progress = progressResult.data;
-    
+
     // Update track-specific progress
     const trackKey = testMetadata.track;
     if (progress.trackProgress[trackKey]) {
@@ -1533,9 +1501,9 @@ async updateProgressFromAdaptiveTest(
       const existingScore = progress.trackProgress[trackKey].averageScore;
       const testScore = testResults.accuracy;
       const testWeight = 0.3; // 30% weight for test results
-      
+
       const newAverageScore = (existingScore * (1 - testWeight)) + (testScore * testWeight);
-      
+
       progress.trackProgress[trackKey] = {
         ...progress.trackProgress[trackKey],
         averageScore: newAverageScore,
@@ -1566,12 +1534,12 @@ async updateProgressFromAdaptiveTest(
 
       const currentSubjectProgress = progress.subjectProgress[subjectId];
       const testSubjectScore = subjectPerf.accuracy;
-      
+
       // Update subject scores with exponential moving average
       const alpha = 0.4; // Learning rate
-      currentSubjectProgress.averageScore = 
+      currentSubjectProgress.averageScore =
         (1 - alpha) * currentSubjectProgress.averageScore + alpha * testSubjectScore;
-      
+
       // Update weak/strong areas based on test performance
       if (testSubjectScore < 70) {
         if (!currentSubjectProgress.weakAreas.includes(subjectId)) {
@@ -1647,7 +1615,7 @@ async getAdaptiveTestRecommendations(userId: string): Promise<Result<TestRecomme
     // Add general assessment if no specific weaknesses
     if (recommendations.length === 0) {
       const overallScore = Object.values(progress.subjectProgress)
-        .reduce((sum, subj) => sum + subj.averageScore, 0) / 
+        .reduce((sum, subj) => sum + subj.averageScore, 0) /
         Object.values(progress.subjectProgress).length;
 
       recommendations.push({
@@ -1682,7 +1650,7 @@ async getAdaptiveTestRecommendations(userId: string): Promise<Result<TestRecomme
 private calculateAdaptiveTestingLevel(testResults: TestPerformance): string {
   const ability = testResults.finalAbilityEstimate;
   const accuracy = testResults.accuracy;
-  
+
   if (ability > 0.8 && accuracy > 90) return 'Expert';
   if (ability > 0.5 && accuracy > 80) return 'Advanced';
   if (ability > 0.2 && accuracy > 70) return 'Intermediate';
@@ -1715,15 +1683,15 @@ async adjustMissionDifficultyFromTest(
 
     const abilityEstimate = testResults.finalAbilityEstimate;
     const confidence = 1 - testResults.standardError; // Higher confidence = lower standard error
-    
+
     // Calculate difficulty adjustment factor
     let difficultyAdjustment = 0;
-    
+
     if (abilityEstimate > 0.5 && confidence > 0.8) {
       // High ability, high confidence -> increase difficulty
       difficultyAdjustment = 0.2;
     } else if (abilityEstimate < -0.5 && confidence > 0.8) {
-      // Low ability, high confidence -> decrease difficulty  
+      // Low ability, high confidence -> decrease difficulty
       difficultyAdjustment = -0.2;
     } else if (testResults.accuracy > 85) {
       // High accuracy -> slight increase
@@ -1764,8 +1732,8 @@ async adjustMissionDifficultyFromTest(
 
     for (const subjectId of weakSubjects) {
       await this.generateTargetedMissionsForWeakness(
-        userId, 
-        subjectId, 
+        userId,
+        subjectId,
         testResults.subjectPerformance[subjectId],
         testMetadata.track
       );
@@ -1792,7 +1760,7 @@ async generateTargetedMissionsForWeakness(
 ): Promise<Result<Mission[]>> {
   try {
     const missions: Mission[] = [];
-    
+
     // Generate easier missions to build confidence
     const confidenceMission = await this.generateSpecificMission(
       userId,
@@ -1862,7 +1830,7 @@ async generateTestPreparationMissions(
   try {
     const missions: Mission[] = [];
     const daysUntilTest = Math.ceil((upcomingTest.scheduledDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    
+
     // Generate review missions for each subject
     for (const subjectId of upcomingTest.subjects) {
       // Quick review mission (day before test)
@@ -1931,15 +1899,15 @@ private calculateNewDifficultyPreference(
 ): MissionDifficulty {
   const difficultyLevels: MissionDifficulty[] = ['beginner', 'easy', 'medium', 'hard', 'expert'];
   const currentIndex = difficultyLevels.indexOf(currentPreference);
-  
+
   let newIndex = currentIndex;
-  
+
   if (adjustment > 0.15) {
     newIndex = Math.min(difficultyLevels.length - 1, currentIndex + 1);
   } else if (adjustment < -0.15) {
     newIndex = Math.max(0, currentIndex - 1);
   }
-  
+
   return difficultyLevels[newIndex];
 }
 
@@ -1971,11 +1939,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Play, 
-  Pause, 
-  Clock, 
-  Brain, 
+import {
+  Play,
+  Pause,
+  Clock,
+  Brain,
   Target,
   TrendingUp,
   BarChart3,
@@ -2040,7 +2008,7 @@ export default function AdaptiveTestPage() {
       if (sessionResult.success) {
         setActiveSession(sessionResult.data);
         setView('active_test');
-        
+
         // Update URL without page reload
         const newUrl = `/test?testId=${test.id}&sessionId=${sessionResult.data.id}`;
         window.history.pushState(null, '', newUrl);
@@ -2077,7 +2045,7 @@ export default function AdaptiveTestPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        
+
         <div className="max-w-7xl mx-auto p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -2089,8 +2057,8 @@ export default function AdaptiveTestPage() {
                 AI-powered assessments that adapt to your knowledge level in real-time
               </p>
             </div>
-            
-            <Button 
+
+            <Button
               onClick={() => router.push('/test/create')}
               className="bg-blue-600 hover:bg-blue-700"
             >
@@ -2126,7 +2094,7 @@ export default function AdaptiveTestPage() {
                   {Math.round(
                     tests
                       .filter(t => t.status === 'completed')
-                      .reduce((acc, t) => acc + t.performance.accuracy, 0) / 
+                      .reduce((acc, t) => acc + t.performance.accuracy, 0) /
                     Math.max(tests.filter(t => t.status === 'completed').length, 1)
                   )}%
                 </div>
@@ -2164,7 +2132,7 @@ export default function AdaptiveTestPage() {
           {/* Test List */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Your Tests</h2>
-            
+
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[...Array(4)].map((_, i) => (
@@ -2194,9 +2162,9 @@ export default function AdaptiveTestPage() {
                             {test.description}
                           </p>
                         </div>
-                        
-                        <Badge 
-                          variant="outline" 
+
+                        <Badge
+                          variant="outline"
                           className={`${
                             test.status === 'completed' ? 'border-green-500 text-green-700' :
                             test.status === 'active' ? 'border-blue-500 text-blue-700' :
@@ -2207,7 +2175,7 @@ export default function AdaptiveTestPage() {
                         </Badge>
                       </div>
                     </CardHeader>
-                    
+
                     <CardContent>
                       <div className="space-y-4">
                         {/* Test Configuration */}
@@ -2296,7 +2264,7 @@ export default function AdaptiveTestPage() {
                         {/* Action Button */}
                         <div className="pt-2">
                           {test.status === 'draft' || test.status === 'active' ? (
-                            <Button 
+                            <Button
                               onClick={() => handleStartTest(test)}
                               disabled={loading}
                               className="w-full bg-blue-600 hover:bg-blue-700"
@@ -2306,7 +2274,7 @@ export default function AdaptiveTestPage() {
                             </Button>
                           ) : test.status === 'completed' ? (
                             <div className="flex gap-2">
-                              <Button 
+                              <Button
                                 variant="outline"
                                 onClick={() => router.push(`/test/${test.id}/results`)}
                                 className="flex-1"
@@ -2314,7 +2282,7 @@ export default function AdaptiveTestPage() {
                                 <BarChart3 className="h-4 w-4 mr-2" />
                                 View Results
                               </Button>
-                              <Button 
+                              <Button
                                 onClick={() => handleStartTest(test)}
                                 className="flex-1 bg-green-600 hover:bg-green-700"
                               >
@@ -2355,12 +2323,12 @@ export default function AdaptiveTestPage() {
 }
 
 // Active Test Interface Component
-function ActiveTestInterface({ 
-  session, 
-  onComplete 
-}: { 
-  session: TestSession; 
-  onComplete: () => void; 
+function ActiveTestInterface({
+  session,
+  onComplete
+}: {
+  session: TestSession;
+  onComplete: () => void;
 }) {
   const { user } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState<AdaptiveQuestion | null>(null);
@@ -2403,7 +2371,7 @@ function ActiveTestInterface({
     setLoading(true);
     try {
       const responseTime = session.sessionMetrics.averageResponseTime || 30000; // Default 30s
-      
+
       const result = await adaptiveTestingService.submitResponse(user.uid, {
         sessionId: session.id,
         questionId: currentQuestion.id,
@@ -2456,7 +2424,7 @@ function ActiveTestInterface({
                 <Brain className="h-5 w-5 text-blue-600" />
                 <span className="font-medium">Adaptive Test</span>
               </div>
-              
+
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <Target className="h-4 w-4" />
                 Question {session.currentQuestionIndex + 1}
@@ -2470,7 +2438,7 @@ function ActiveTestInterface({
                   {formatTime(timeRemaining)}
                 </span>
               </div>
-              
+
               <Button variant="outline" size="sm">
                 <Pause className="h-4 w-4" />
               </Button>
@@ -2493,7 +2461,7 @@ function ActiveTestInterface({
               </div>
             </div>
           </CardHeader>
-          
+
           <CardContent>
             <div className="space-y-6">
               {/* Question Content */}
@@ -2632,16 +2600,19 @@ Our Adaptive Testing System follows a **seamless integration approach** where ev
 #### 🔄 Data Flow Integration Strategy
 
 **Mission System ↔ Adaptive Testing**
+
 - When users complete adaptive tests, results automatically adjust their mission difficulty preferences
 - Poor performance in specific subjects triggers targeted mission generation for those areas
 - Mission completion data feeds back to improve test question selection and difficulty estimation
 
-**Journey Planning ↔ Adaptive Testing**  
+**Journey Planning ↔ Adaptive Testing**
+
 - Journey goals automatically generate suggested adaptive tests to measure progress
 - Test results update journey goal completion percentages in real-time
 - Journey deadlines influence test scheduling recommendations and urgency levels
 
 **Progress Service ↔ Adaptive Testing**
+
 - Test results become part of the unified progress tracking system
 - Subject-wise performance from tests enhances the existing progress analytics
 - Weekly progress reports include adaptive testing insights alongside mission data
@@ -2649,16 +2620,19 @@ Our Adaptive Testing System follows a **seamless integration approach** where ev
 #### 🎨 UI/UX Design Principles
 
 **1. Contextual Testing Experience**
+
 ```
 Current Dashboard → Test Recommendation → Seamless Test Taking → Instant Results → Updated Progress
 ```
 
 **2. Progressive Disclosure Interface**
+
 - **Level 1**: Simple "Quick Test" buttons on dashboard for immediate engagement
-- **Level 2**: Detailed test configuration for power users who want customization  
+- **Level 2**: Detailed test configuration for power users who want customization
 - **Level 3**: Advanced analytics and historical performance for deep insights
 
 **3. Confidence-Building Design**
+
 - Tests start with easier questions to build user confidence
 - Progress indicators show not just completion, but ability improvement
 - Positive reinforcement messages based on performance trends, not just raw scores
@@ -2671,16 +2645,19 @@ Current Dashboard → Test Recommendation → Seamless Test Taking → Instant R
 
 **Contextual Awareness**
 The system analyzes user's current journey goals, recent mission performance, and subject weaknesses to suggest perfectly timed tests. For example:
+
 - If user struggles with "Organic Chemistry" in recent missions → System suggests targeted chemistry adaptive test
 - If journey goal is "Complete 80% Physics syllabus by December" → System calculates optimal test intervals to measure progress
 
 **Adaptive Question Bank Management**
 Instead of static question pools, our system maintains dynamic question difficulty based on:
+
 - Real user response patterns from your actual users
 - Integration with your existing exam syllabus from `exams-data.ts`
 - Mission performance correlation (questions that align with successful mission topics)
 
 **Smart Scheduling Integration**
+
 - Tests appear as dashboard recommendations when users are most likely to perform well (based on their mission completion patterns)
 - Integration with journey timelines to ensure tests align with study phases
 - Respects user's existing mission schedules to avoid cognitive overload
@@ -2688,6 +2665,7 @@ Instead of static question pools, our system maintains dynamic question difficul
 #### 🎯 UI/UX for Test Recommendations
 
 **Dashboard Integration Design**
+
 ```
 ┌─ Existing Mission Cards ─┐  ┌─ NEW: Smart Test Card ─┐
 │ Today's Missions        │  │ 📊 Recommended Test    │
@@ -2699,6 +2677,7 @@ Instead of static question pools, our system maintains dynamic question difficul
 ```
 
 **One-Click Test Experience**
+
 - Click recommendation → Instant test start (no configuration needed)
 - System pre-selects optimal settings based on user context
 - Emergency pause/resume for real-world interruptions
@@ -2713,11 +2692,13 @@ Instead of static question pools, our system maintains dynamic question difficul
 The interface adapts not just based on correct/wrong answers, but on user confidence and response patterns:
 
 **Visual Feedback System**
+
 - Questions get progressively more challenging, but UI celebrates each step
 - Real-time ability meter shows improvement, not just completion percentage
 - Subtle animations reinforce positive learning momentum
 
 **Smart Pacing Algorithm**
+
 - Detects when users are rushing (very fast responses) → Shows encouraging slow-down message
 - Identifies fatigue patterns (slower responses over time) → Suggests breaks or shorter tests
 - Balances challenge with achievability to maintain engagement
@@ -2725,10 +2706,11 @@ The interface adapts not just based on correct/wrong answers, but on user confid
 #### 🎨 Adaptive UI Components
 
 **Dynamic Question Interface**
+
 ```
 ┌─────────────────────────────────────────┐
 │ Question 8 of ~15 | Your Level: Rising ⬆️ │
-├─────────────────────────────────────────┤  
+├─────────────────────────────────────────┤
 │ [Question content adapts to user level] │
 │                                         │
 │ 🟢 Confidence: ●●●○○ (Optional)        │
@@ -2738,6 +2720,7 @@ The interface adapts not just based on correct/wrong answers, but on user confid
 ```
 
 **Intelligent Difficulty Indicators**
+
 - Never show raw "difficulty" to users (demotivating)
 - Show progress as "mastery level" or "learning growth"
 - Use encouraging language: "Building expertise..." instead of "Hard question"
@@ -2752,6 +2735,7 @@ The interface adapts not just based on correct/wrong answers, but on user confid
 Your existing dashboard gets enhanced with adaptive testing insights seamlessly integrated:
 
 **Subject Mastery Visualization**
+
 ```
 Physics Progress (Enhanced with Adaptive Testing):
 ├─ Mission Completion: 78% ✅
@@ -2761,6 +2745,7 @@ Physics Progress (Enhanced with Adaptive Testing):
 ```
 
 **Cross-System Learning Insights**
+
 - Mission performance vs. Test performance correlation analysis
 - Journey goal progress acceleration through testing
 - Weak area identification that spans both missions and tests
@@ -2771,10 +2756,11 @@ Physics Progress (Enhanced with Adaptive Testing):
 The system provides contextual recommendations that bridge all three systems:
 
 1. **Mission Recommendations**: "Based on your test results, try Advanced Physics missions"
-2. **Journey Adjustments**: "Your chemistry progress is ahead of schedule - consider advancing your journey goal"  
+2. **Journey Adjustments**: "Your chemistry progress is ahead of schedule - consider advancing your journey goal"
 3. **Study Strategy**: "Your morning test performance is 23% better - schedule important tests before noon"
 
 **Predictive Analytics UI**
+
 - Journey completion probability updates in real-time based on test performance
 - Mission difficulty auto-adjusts based on demonstrated ability in tests
 - Early warning system for journey goals at risk
@@ -2789,10 +2775,11 @@ The system provides contextual recommendations that bridge all three systems:
 Users shouldn't feel like they're using three separate systems. The integration should feel like one intelligent learning companion:
 
 **Natural Learning Flow**
+
 ```
 Morning: Dashboard shows personalized daily plan
 ├─ 2 Physics Missions (Medium difficulty based on last test)
-├─ 1 Quick Chemistry Test (15 mins - measures recent progress)  
+├─ 1 Quick Chemistry Test (15 mins - measures recent progress)
 └─ Journey Check-in (automated based on test+mission results)
 
 Evening: Progress celebration
@@ -2802,6 +2789,7 @@ Evening: Progress celebration
 ```
 
 **Contextual Help & Guidance**
+
 - First-time test takers get guided onboarding that explains how tests enhance their journey
 - Advanced users get power-user features like custom test creation
 - System learns user preferences for test frequency and timing
@@ -2809,16 +2797,19 @@ Evening: Progress celebration
 #### 🎨 Premium User Experience Features
 
 **Smart Notifications**
+
 - "Great job on today's missions! Ready for a quick test to lock in your learning?"
 - "Your Physics journey goal needs attention - here's a targeted 10-minute test"
 - "You've been crushing Chemistry - time for a challenge test?"
 
 **Gamification Integration**
+
 - Test completion contributes to existing mission streaks
 - Journey milestones unlock advanced test features
 - Cross-system achievements: "Mission Master + Test Champion = Learning Legend"
 
 **Accessibility & Inclusivity**
+
 - Tests adapt to different learning styles (visual, analytical, practical)
 - Multiple input methods for different question types
 - Time accommodations based on individual patterns
@@ -2828,16 +2819,19 @@ Evening: Progress celebration
 ## 🎯 Implementation Priorities & Best Practices
 
 ### Phase 1: Core Integration (Week 1)
+
 1. **Data Model Integration** - Extend existing Firebase collections cleanly
-2. **Service Layer Enhancement** - Add adaptive testing methods to existing services  
+2. **Service Layer Enhancement** - Add adaptive testing methods to existing services
 3. **Basic UI Components** - Simple test cards on dashboard
 
 ### Phase 2: Smart Features (Week 2)
+
 1. **Recommendation Engine** - Context-aware test suggestions
 2. **Adaptive Interface** - Real-time question difficulty adjustment
 3. **Progress Integration** - Seamless cross-system analytics
 
 ### Phase 3: Advanced UX (Week 3)
+
 1. **Predictive Analytics** - Journey success probability
 2. **Intelligent Automation** - Auto-scheduling and smart notifications
 3. **Performance Optimization** - Sub-second response times
@@ -2845,16 +2839,19 @@ Evening: Progress celebration
 ### 🔧 Technical Integration Guidelines
 
 **Database Strategy**
+
 - Extend existing collections rather than creating parallel systems
 - Maintain referential integrity between journeys, missions, and tests
 - Use Firebase real-time listeners for instant UI updates
 
 **API Design Philosophy**
+
 - All new endpoints follow existing patterns in your codebase
 - Reuse existing authentication and error handling
 - Maintain consistency with current mission/progress API structure
 
-**UI Component Strategy**  
+**UI Component Strategy**
+
 - Build on existing design system (shadcn/ui components)
 - Follow current color scheme and typography
 - Responsive design matching current mobile-first approach

@@ -116,7 +116,7 @@ class DatabaseCacheService {
     const times = this.queryMetrics.get(collection);
     if (times) {
       times.push(time);
-    
+
       // Keep only last 100 queries per collection
       if (times.length > 100) {
         times.splice(0, times.length - 100);

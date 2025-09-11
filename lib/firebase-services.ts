@@ -26,11 +26,39 @@ import {
   DocumentData,
 } from 'firebase/firestore';
 
+import {
+  AdaptiveTest,
+  TestSession,
+  TestResponse,
+  AdaptiveQuestion,
+  QuestionBank,
+  TestAnalyticsData,
+  TestRecommendation,
+} from '@/types/adaptive-testing';
+import {
+  UserJourney,
+  JourneyGoal,
+  CreateJourneyRequest,
+  UpdateJourneyProgressRequest,
+  JourneyAnalytics,
+  JourneyCollaborator,
+  JourneyComment,
+  JourneyInvitation,
+  JourneyTemplate,
+  WeeklyProgress,
+  MilestoneAchievement,
+} from '@/types/journey';
+import { MissionDifficulty } from '@/types/mission-system';
+
 import { User, UserStats, TopicProgress, MockTestLog } from '../types/exam';
 
 import { db } from './firebase';
 import { serviceContainer, PerformanceMonitor, ConsoleLogger } from './service-layer';
 import { Result, createSuccess, createError, LoadingState as _LoadingState } from './types-utils';
+
+// ============================================================================
+// ADAPTIVE TESTING FIREBASE SERVICE
+// ============================================================================
 
 // Local interfaces for service-specific data
 interface RecommendationsData {
@@ -1489,11 +1517,884 @@ export const customLearningService = {
   },
 };
 
+// Adaptive Testing collections
+const ADAPTIVE_TESTING_COLLECTIONS = {
+  ADAPTIVE_TESTS: 'adaptiveTests',
+  TEST_SESSIONS: 'testSessions',
+  QUESTION_BANKS: 'questionBanks',
+  TEST_RESPONSES: 'testResponses',
+  ADAPTIVE_ANALYTICS: 'adaptiveAnalytics',
+  QUESTION_BANK_ITEMS: 'questionBankItems',
+  TEST_JOURNEY_LINKS: 'testJourneyLinks',
+  USER_TEST_PREFERENCES: 'userTestPreferences',
+} as const;
+
+// Journey Planning collections
+const JOURNEY_COLLECTIONS = {
+  USER_JOURNEYS: 'userJourneys',
+  JOURNEY_TEMPLATES: 'journeyTemplates',
+  JOURNEY_ANALYTICS: 'journeyAnalytics',
+  JOURNEY_MILESTONES: 'journeyMilestones',
+  JOURNEY_COLLABORATORS: 'journeyCollaborators',
+  JOURNEY_COMMENTS: 'journeyComments',
+  JOURNEY_INVITATIONS: 'journeyInvitations',
+  WEEKLY_PROGRESS: 'weeklyProgress',
+} as const;
+
+/**
+ * Enhanced Adaptive Testing Firebase Service
+ * Integrates with existing Firebase infrastructure for adaptive testing
+ */
+export const adaptiveTestingFirebaseService = {
+  /**
+   * Create a new adaptive test
+   */
+  async createAdaptiveTest(userId: string, test: AdaptiveTest): Promise<Result<AdaptiveTest>> {
+    try {
+      const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, test.id);
+      await setDoc(testRef, {
+        ...test,
+        createdAt: Timestamp.fromDate(test.createdAt),
+        updatedAt: Timestamp.fromDate(test.updatedAt),
+        completedAt: test.completedAt ? Timestamp.fromDate(test.completedAt) : null,
+      });
+
+      // Link to user's progress if applicable
+      if (test.linkedJourneyId) {
+        await this.linkTestToJourney(test.id, test.linkedJourneyId);
+      }
+
+      return createSuccess(test);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create adaptive test'));
+    }
+  },
+
+  /**
+   * Start a test session
+   */
+  async startTestSession(sessionData: TestSession): Promise<Result<TestSession>> {
+    try {
+      const sessionRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS, sessionData.id);
+      await setDoc(sessionRef, {
+        ...sessionData,
+        startedAt: Timestamp.fromDate(sessionData.startedAt),
+        lastActivity: Timestamp.fromDate(sessionData.lastActivity),
+      });
+
+      return createSuccess(sessionData);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to start test session'));
+    }
+  },
+
+  /**
+   * Submit a test response
+   */
+  async submitTestResponse(response: TestResponse): Promise<Result<void>> {
+    try {
+      const responseRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES, `${response.questionId}_${Date.now()}`);
+
+      await setDoc(responseRef, {
+        ...response,
+        timestamp: Timestamp.fromDate(response.timestamp),
+      });
+
+      // Update test session with real-time data
+      await this.updateTestSession(response);
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to submit test response'));
+    }
+  },
+
+  /**
+   * Get user's adaptive tests with real-time updates
+   */
+  subscribeToUserTests(userId: string, callback: (tests: AdaptiveTest[]) => void): () => void {
+    const q = query(
+      collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
+
+    return _onSnapshot(q, snapshot => {
+      const tests = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+        completedAt: doc.data().completedAt?.toDate() || null,
+      })) as AdaptiveTest[];
+
+      callback(tests);
+    });
+  },
+
+  /**
+   * Get question bank for test generation
+   */
+  async getQuestionBank(
+    subjects: string[],
+    difficulties: MissionDifficulty[],
+    limit = 100
+  ): Promise<Result<AdaptiveQuestion[]>> {
+    try {
+      const questionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS);
+      const q = query(
+        questionsRef,
+        where('subject', 'in', subjects.slice(0, 10)), // Firestore limit
+        where('difficulty', 'in', difficulties),
+        orderBy('discriminationIndex', 'desc'),
+        orderBy('successRate', 'asc'),
+        limit(limit)
+      );
+
+      const snapshot = await getDocs(q);
+      const questions = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as AdaptiveQuestion[];
+
+      return createSuccess(questions);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get question bank'));
+    }
+  },
+
+  /**
+   * Get adaptive test by ID
+   */
+  async getAdaptiveTest(testId: string): Promise<Result<AdaptiveTest | null>> {
+    try {
+      const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, testId);
+      const testSnap = await getDoc(testRef);
+
+      if (!testSnap.exists()) {
+        return createSuccess(null);
+      }
+
+      const testData = testSnap.data();
+      const test: AdaptiveTest = {
+        ...testData,
+        id: testId,
+        createdAt: testData.createdAt?.toDate() || new Date(),
+        updatedAt: testData.updatedAt?.toDate() || new Date(),
+        completedAt: testData.completedAt?.toDate() || null,
+      } as AdaptiveTest;
+
+      return createSuccess(test);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get adaptive test'));
+    }
+  },
+
+  /**
+   * Update test session during test
+   */
+  async updateTestSession(response: TestResponse): Promise<Result<void>> {
+    try {
+      // Find session by looking for active sessions with the question's test
+      const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
+      const q = query(sessionsRef, where('isPaused', '==', false), orderBy('lastActivity', 'desc'), limit(1));
+
+      const snapshot = await getDocs(q);
+      if (snapshot.empty) {
+        return createError(new Error('No active session found'));
+      }
+
+      const sessionDoc = snapshot.docs[0];
+      const sessionRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS, sessionDoc.id);
+
+      await updateDoc(sessionRef, {
+        lastActivity: Timestamp.fromDate(new Date()),
+        currentAbilityEstimate: response.estimatedAbility,
+        'sessionMetrics.questionsAnswered': sessionDoc.data().sessionMetrics?.questionsAnswered + 1 || 1,
+        'sessionMetrics.averageResponseTime': response.responseTime,
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update test session'));
+    }
+  },
+
+  /**
+   * Complete a test and update all related data
+   */
+  async completeTest(testId: string, performance: any, metrics: any): Promise<Result<void>> {
+    try {
+      const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, testId);
+
+      await updateDoc(testRef, {
+        status: 'completed',
+        completedAt: Timestamp.fromDate(new Date()),
+        updatedAt: Timestamp.fromDate(new Date()),
+        performance,
+        adaptiveMetrics: metrics,
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to complete test'));
+    }
+  },
+
+  /**
+   * Link test to journey planning system
+   */
+  async linkTestToJourney(testId: string, journeyId: string): Promise<Result<void>> {
+    try {
+      const linkRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_JOURNEY_LINKS, `${testId}_${journeyId}`);
+      await setDoc(linkRef, {
+        testId,
+        journeyId,
+        linkedAt: Timestamp.now(),
+        status: 'active',
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to link test to journey'));
+    }
+  },
+
+  /**
+   * Get test recommendations for a user
+   */
+  async getTestRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
+    try {
+      // This would integrate with the recommendation engine
+      // For now, return a placeholder implementation
+      const recommendations: TestRecommendation[] = [
+        {
+          testId: `recommended_${Date.now()}`,
+          title: 'Weekly Progress Assessment',
+          description: 'Evaluate your progress this week across all subjects',
+          confidence: 0.85,
+          reasons: ['Consistent study pattern detected', 'Time for progress validation'],
+          estimatedBenefit: {
+            abilityImprovement: 0.15,
+            weaknessAddressing: ['Current affairs', 'Quantitative aptitude'],
+            journeyAlignment: 0.9,
+          },
+          optimalTiming: {
+            recommendedDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+            dependsOn: ['Complete pending missions'],
+          },
+        },
+      ];
+
+      return createSuccess(recommendations);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get test recommendations'));
+    }
+  },
+
+  /**
+   * Analytics and reporting
+   */
+  async getTestAnalytics(userId: string, dateRange?: { start: Date; end: Date }): Promise<Result<TestAnalyticsData>> {
+    try {
+      const endDate = dateRange?.end || new Date();
+      const startDate = dateRange?.start || new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      // Get user's tests in the date range
+      const testsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS);
+      const q = query(
+        testsRef,
+        where('userId', '==', userId),
+        where('completedAt', '>=', Timestamp.fromDate(startDate)),
+        where('completedAt', '<=', Timestamp.fromDate(endDate)),
+        orderBy('completedAt', 'desc')
+      );
+
+      const snapshot = await getDocs(q);
+      const tests = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+        completedAt: doc.data().completedAt?.toDate(),
+      }));
+
+      // Calculate analytics
+      const analytics: TestAnalyticsData = {
+        userId,
+        period: { startDate, endDate },
+        overallMetrics: {
+          testsCompleted: tests.length,
+          averageAccuracy: tests.reduce((sum, test) => sum + (test.performance?.accuracy || 0), 0) / tests.length || 0,
+          averageAbilityEstimate:
+            tests.reduce((sum, test) => sum + (test.performance?.finalAbilityEstimate || 0), 0) / tests.length || 0,
+          totalTimeSpent: tests.reduce((sum, test) => sum + (test.performance?.totalTime || 0), 0),
+          improvementTrend: 'stable', // This would be calculated based on historical data
+        },
+        subjectAnalytics: [],
+        adaptiveInsights: {
+          optimalTestFrequency: 3,
+          bestPerformanceTimeOfDay: 'morning',
+          strongSubjects: [],
+          weakSubjects: [],
+          nextRecommendedTest: {
+            testId: `next_${Date.now()}`,
+            title: 'Suggested Next Test',
+            description: 'Based on your recent performance',
+            confidence: 0.7,
+            reasons: ['Maintain learning momentum'],
+            estimatedBenefit: {
+              abilityImprovement: 0.1,
+              weaknessAddressing: [],
+              journeyAlignment: 0.8,
+            },
+            optimalTiming: {
+              recommendedDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+              dependsOn: [],
+            },
+          },
+        },
+      };
+
+      return createSuccess(analytics);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get test analytics'));
+    }
+  },
+
+  /**
+   * Save question bank for future use
+   */
+  async saveQuestionBank(questionBank: QuestionBank): Promise<Result<void>> {
+    try {
+      const bankRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANKS, questionBank.id);
+      await setDoc(bankRef, {
+        ...questionBank,
+        lastCalibrated: Timestamp.fromDate(questionBank.lastCalibrated),
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to save question bank'));
+    }
+  },
+
+  /**
+   * Save individual questions to the question bank
+   */
+  async saveQuestions(questions: AdaptiveQuestion[]): Promise<Result<void>> {
+    try {
+      const batch = writeBatch(db);
+
+      questions.forEach(question => {
+        const questionRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS, question.id);
+        batch.set(questionRef, question);
+      });
+
+      await batch.commit();
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to save questions'));
+    }
+  },
+
+  /**
+   * Get test session by ID
+   */
+  async getTestSession(sessionId: string): Promise<Result<TestSession | null>> {
+    try {
+      const sessionRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS, sessionId);
+      const sessionSnap = await getDoc(sessionRef);
+
+      if (!sessionSnap.exists()) {
+        return createSuccess(null);
+      }
+
+      const sessionData = sessionSnap.data();
+      const session: TestSession = {
+        ...sessionData,
+        id: sessionId,
+        startedAt: sessionData.startedAt?.toDate() || new Date(),
+        lastActivity: sessionData.lastActivity?.toDate() || new Date(),
+      } as TestSession;
+
+      return createSuccess(session);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get test session'));
+    }
+  },
+
+  /**
+   * Update test progress and status
+   */
+  async updateTest(testId: string, updates: Partial<AdaptiveTest>): Promise<Result<void>> {
+    try {
+      const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, testId);
+      const updateData = {
+        ...updates,
+        updatedAt: Timestamp.fromDate(new Date()),
+      };
+
+      await updateDoc(testRef, updateData);
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update test'));
+    }
+  },
+
+  /**
+   * Delete a test and all associated data
+   */
+  async deleteTest(testId: string): Promise<Result<void>> {
+    try {
+      const batch = writeBatch(db);
+
+      // Delete test
+      const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, testId);
+      batch.delete(testRef);
+
+      // Delete associated sessions
+      const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
+      const sessionsQuery = query(sessionsRef, where('testId', '==', testId));
+      const sessionsSnapshot = await getDocs(sessionsQuery);
+      sessionsSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      // Delete associated responses
+      const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
+      const responsesQuery = query(responsesRef, where('testId', '==', testId));
+      const responsesSnapshot = await getDocs(responsesQuery);
+      responsesSnapshot.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      await batch.commit();
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to delete test'));
+    }
+  },
+
+  /**
+   * Get all responses for a test
+   */
+  async getTestResponses(testId: string): Promise<Result<TestResponse[]>> {
+    try {
+      const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
+      const q = query(responsesRef, where('testId', '==', testId), orderBy('timestamp', 'asc'));
+
+      const snapshot = await getDocs(q);
+      const responses = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        timestamp: doc.data().timestamp?.toDate() || new Date(),
+      })) as TestResponse[];
+
+      return createSuccess(responses);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get test responses'));
+    }
+  },
+};
+
+// ============================================================================
+// JOURNEY PLANNING FIREBASE SERVICE
+// ============================================================================
+
+/**
+ * Journey Planning Firebase Service
+ * Integrates with existing Firebase infrastructure for journey management
+ */
+export const journeyFirebaseService = {
+  /**
+   * Create a new journey
+   */
+  async createJourney(userId: string, journey: UserJourney): Promise<Result<UserJourney>> {
+    try {
+      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journey.id);
+      await setDoc(journeyRef, {
+        ...journey,
+        createdAt: Timestamp.fromDate(journey.createdAt),
+        updatedAt: Timestamp.fromDate(journey.updatedAt),
+        targetCompletionDate: Timestamp.fromDate(journey.targetCompletionDate),
+        customGoals: journey.customGoals.map(goal => ({
+          ...goal,
+          deadline: Timestamp.fromDate(goal.deadline),
+        })),
+        progressTracking: {
+          ...journey.progressTracking,
+          lastSyncedAt: Timestamp.fromDate(journey.progressTracking.lastSyncedAt),
+          weeklyProgress: journey.progressTracking.weeklyProgress.map(week => ({
+            ...week,
+            weekStarting: Timestamp.fromDate(week.weekStarting),
+          })),
+          milestoneAchievements: journey.progressTracking.milestoneAchievements.map(milestone => ({
+            ...milestone,
+            achievedAt: Timestamp.fromDate(milestone.achievedAt),
+          })),
+        },
+      });
+
+      // Link journey to user's progress
+      await this.linkJourneyToProgress(userId, journey.id);
+
+      return createSuccess(journey);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create journey'));
+    }
+  },
+
+  /**
+   * Get user's journeys with real-time updates
+   */
+  subscribeToUserJourneys(userId: string, callback: (journeys: UserJourney[]) => void): () => void {
+    const q = query(
+      collection(db, JOURNEY_COLLECTIONS.USER_JOURNEYS),
+      where('userId', '==', userId),
+      orderBy('createdAt', 'desc')
+    );
+
+    return onSnapshot(q, snapshot => {
+      const journeys = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date(),
+          targetCompletionDate: data.targetCompletionDate?.toDate() || new Date(),
+          customGoals:
+            data.customGoals?.map((goal: any) => ({
+              ...goal,
+              deadline: goal.deadline?.toDate() || new Date(),
+            })) || [],
+          progressTracking: {
+            ...data.progressTracking,
+            lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() || new Date(),
+            weeklyProgress:
+              data.progressTracking?.weeklyProgress?.map((week: any) => ({
+                ...week,
+                weekStarting: week.weekStarting?.toDate() || new Date(),
+              })) || [],
+            milestoneAchievements:
+              data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
+                ...milestone,
+                achievedAt: milestone.achievedAt?.toDate() || new Date(),
+              })) || [],
+          },
+        };
+      }) as UserJourney[];
+
+      callback(journeys);
+    });
+  },
+
+  /**
+   * Update journey progress
+   */
+  async updateJourneyProgress(journeyId: string, updates: UpdateJourneyProgressRequest): Promise<Result<void>> {
+    try {
+      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
+
+      // Build update object
+      const updateData: any = {
+        updatedAt: Timestamp.now(),
+        'progressTracking.lastSyncedAt': Timestamp.now(),
+      };
+
+      // Update individual goals
+      updates.goalUpdates.forEach(update => {
+        updateData[`progressTracking.goalCompletions.${update.goalId}`] = update.newValue;
+      });
+
+      // Add weekly update if provided
+      if (updates.weeklyUpdate) {
+        updateData['progressTracking.weeklyProgress'] = arrayUnion({
+          ...updates.weeklyUpdate,
+          weekStarting: Timestamp.fromDate(updates.weeklyUpdate.weekStarting || new Date()),
+        });
+      }
+
+      await updateDoc(journeyRef, updateData);
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update journey progress'));
+    }
+  },
+
+  /**
+   * Get a specific journey
+   */
+  async getJourney(journeyId: string): Promise<Result<UserJourney>> {
+    try {
+      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
+      const journeyDoc = await getDoc(journeyRef);
+
+      if (!journeyDoc.exists()) {
+        return createError(new Error('Journey not found'));
+      }
+
+      const data = journeyDoc.data();
+      const journey: UserJourney = {
+        ...data,
+        id: journeyDoc.id,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+        targetCompletionDate: data.targetCompletionDate?.toDate() || new Date(),
+        customGoals:
+          data.customGoals?.map((goal: any) => ({
+            ...goal,
+            deadline: goal.deadline?.toDate() || new Date(),
+          })) || [],
+        progressTracking: {
+          ...data.progressTracking,
+          lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() || new Date(),
+          weeklyProgress:
+            data.progressTracking?.weeklyProgress?.map((week: any) => ({
+              ...week,
+              weekStarting: week.weekStarting?.toDate() || new Date(),
+            })) || [],
+          milestoneAchievements:
+            data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
+              ...milestone,
+              achievedAt: milestone.achievedAt?.toDate() || new Date(),
+            })) || [],
+        },
+      } as UserJourney;
+
+      return createSuccess(journey);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get journey'));
+    }
+  },
+
+  /**
+   * Update journey
+   */
+  async updateJourney(journeyId: string, updates: Partial<UserJourney>): Promise<Result<void>> {
+    try {
+      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
+      const updateData: any = {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      };
+
+      // Handle date fields
+      if (updates.targetCompletionDate) {
+        updateData.targetCompletionDate = Timestamp.fromDate(updates.targetCompletionDate);
+      }
+
+      if (updates.customGoals) {
+        updateData.customGoals = updates.customGoals.map(goal => ({
+          ...goal,
+          deadline: Timestamp.fromDate(goal.deadline),
+        }));
+      }
+
+      await updateDoc(journeyRef, updateData);
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update journey'));
+    }
+  },
+
+  /**
+   * Delete journey
+   */
+  async deleteJourney(journeyId: string): Promise<Result<void>> {
+    try {
+      // Delete the journey document
+      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
+      await deleteDoc(journeyRef);
+
+      // Clean up related data
+      await this.cleanupJourneyData(journeyId);
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to delete journey'));
+    }
+  },
+
+  /**
+   * Add milestone achievement
+   */
+  async addMilestoneAchievement(journeyId: string, milestone: MilestoneAchievement): Promise<Result<void>> {
+    try {
+      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
+      const milestoneWithTimestamp = {
+        ...milestone,
+        achievedAt: Timestamp.fromDate(milestone.achievedAt),
+      };
+
+      await updateDoc(journeyRef, {
+        'progressTracking.milestoneAchievements': arrayUnion(milestoneWithTimestamp),
+        updatedAt: Timestamp.now(),
+      });
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to add milestone achievement'));
+    }
+  },
+
+  /**
+   * Link journey to existing progress system
+   */
+  async linkJourneyToProgress(userId: string, journeyId: string): Promise<Result<void>> {
+    try {
+      const progressRef = doc(db, 'userProgress', userId);
+      await updateDoc(progressRef, {
+        linkedJourneys: arrayUnion(journeyId),
+        updatedAt: Timestamp.now(),
+      });
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to link journey to progress'));
+    }
+  },
+
+  /**
+   * Get journey analytics
+   */
+  async getJourneyAnalytics(journeyId: string): Promise<Result<JourneyAnalytics>> {
+    try {
+      const analyticsRef = doc(db, JOURNEY_COLLECTIONS.JOURNEY_ANALYTICS, journeyId);
+      const analyticsDoc = await getDoc(analyticsRef);
+
+      if (!analyticsDoc.exists()) {
+        // Generate analytics if not exists
+        return this.generateJourneyAnalytics(journeyId);
+      }
+
+      const data = analyticsDoc.data();
+      const analytics: JourneyAnalytics = {
+        ...data,
+        predictedCompletionDate: data.predictedCompletionDate?.toDate() || new Date(),
+      } as JourneyAnalytics;
+
+      return createSuccess(analytics);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get journey analytics'));
+    }
+  },
+
+  /**
+   * Generate journey analytics
+   */
+  async generateJourneyAnalytics(journeyId: string): Promise<Result<JourneyAnalytics>> {
+    try {
+      const journeyResult = await this.getJourney(journeyId);
+      if (!journeyResult.success) {
+        return journeyResult;
+      }
+
+      const journey = journeyResult.data;
+      const now = new Date();
+      const startDate = journey.createdAt;
+      const targetDate = journey.targetCompletionDate;
+
+      const totalDays = Math.ceil((targetDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const elapsedDays = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      const completedGoals = journey.customGoals.filter(g => g.currentValue >= g.targetValue).length;
+      const totalGoals = journey.customGoals.length;
+
+      const expectedProgress = (elapsedDays / totalDays) * 100;
+      const actualProgress = journey.progressTracking.overallCompletion;
+
+      const weeklyHours =
+        journey.progressTracking.weeklyProgress.reduce((acc, week) => acc + week.hoursStudied, 0) /
+        Math.max(journey.progressTracking.weeklyProgress.length, 1);
+
+      const riskFactors = [];
+      if (actualProgress < expectedProgress - 10) {
+        riskFactors.push('Behind schedule');
+      }
+      if (weeklyHours < 10) {
+        riskFactors.push('Low study hours');
+      }
+
+      const recommendations = [];
+      if (riskFactors.includes('Behind schedule')) {
+        recommendations.push('Increase daily study time');
+        recommendations.push('Focus on high-priority goals');
+      }
+
+      const analytics: JourneyAnalytics = {
+        journeyId,
+        completionRate: actualProgress,
+        averageWeeklyHours: weeklyHours,
+        goalCompletionVelocity: completedGoals / Math.max(elapsedDays / 7, 1),
+        predictedCompletionDate: new Date(
+          startDate.getTime() + totalDays * (100 / Math.max(actualProgress, 1)) * 24 * 60 * 60 * 1000
+        ),
+        riskFactors,
+        recommendations,
+        comparisonWithSimilarUsers: {
+          percentile: Math.min(95, Math.max(5, 50 + (actualProgress - expectedProgress))),
+          averageCompletionTime: totalDays * 1.2, // Simulated data
+        },
+      };
+
+      // Save analytics
+      const analyticsRef = doc(db, JOURNEY_COLLECTIONS.JOURNEY_ANALYTICS, journeyId);
+      await setDoc(analyticsRef, {
+        ...analytics,
+        predictedCompletionDate: Timestamp.fromDate(analytics.predictedCompletionDate),
+        updatedAt: Timestamp.now(),
+      });
+
+      return createSuccess(analytics);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate journey analytics'));
+    }
+  },
+
+  /**
+   * Clean up journey related data when journey is deleted
+   */
+  async cleanupJourneyData(journeyId: string): Promise<void> {
+    try {
+      // Clean up analytics
+      const analyticsRef = doc(db, JOURNEY_COLLECTIONS.JOURNEY_ANALYTICS, journeyId);
+      await deleteDoc(analyticsRef);
+
+      // Clean up collaborators
+      const collaboratorsQuery = query(
+        collection(db, JOURNEY_COLLECTIONS.JOURNEY_COLLABORATORS),
+        where('journeyId', '==', journeyId)
+      );
+      const collaboratorsSnapshot = await getDocs(collaboratorsQuery);
+      const collaboratorDeletions = collaboratorsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(collaboratorDeletions);
+
+      // Clean up comments
+      const commentsQuery = query(
+        collection(db, JOURNEY_COLLECTIONS.JOURNEY_COMMENTS),
+        where('journeyId', '==', journeyId)
+      );
+      const commentsSnapshot = await getDocs(commentsQuery);
+      const commentDeletions = commentsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(commentDeletions);
+
+      // Clean up invitations
+      const invitationsQuery = query(
+        collection(db, JOURNEY_COLLECTIONS.JOURNEY_INVITATIONS),
+        where('journeyId', '==', journeyId)
+      );
+      const invitationsSnapshot = await getDocs(invitationsQuery);
+      const invitationDeletions = invitationsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(invitationDeletions);
+    } catch (error) {
+      console.error('Error cleaning up journey data:', error);
+    }
+  },
+};
+
 // ============================================================================
 // EXPORTS
 // ============================================================================
 
-export { FirebaseService, CacheService, firebaseService };
+export { FirebaseService, CacheService, firebaseService, adaptiveTestingFirebaseService, journeyFirebaseService };
 
 // Export the enhanced firebase service as default
 export default firebaseService;

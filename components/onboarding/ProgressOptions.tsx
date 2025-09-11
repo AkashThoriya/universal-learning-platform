@@ -85,11 +85,7 @@ export const HeaderBreadcrumb = ({ currentStep, totalSteps }: { currentStep: num
               <div key={step} className="flex items-center">
                 <span
                   className={`${
-                    isCurrent 
-                      ? 'text-blue-600 font-semibold' 
-                      : isCompleted 
-                        ? 'text-green-600' 
-                        : 'text-gray-400'
+                    isCurrent ? 'text-blue-600 font-semibold' : isCompleted ? 'text-green-600' : 'text-gray-400'
                   }`}
                 >
                   {name}

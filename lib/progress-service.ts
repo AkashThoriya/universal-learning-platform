@@ -352,6 +352,424 @@ export class ProgressService {
       progress.overallProgress.longestStreak = progress.overallProgress.currentStreak;
     }
   }
+
+  /**
+   * Update progress based on adaptive test results
+   */
+  async updateProgressFromAdaptiveTest(
+    userId: string,
+    testResults: import('@/types/adaptive-testing').TestPerformance,
+    testMetadata: { subjects: string[]; track: import('@/types/mission-system').LearningTrack; algorithmType: string }
+  ): Promise<Result<void>> {
+    try {
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        return progressResult;
+      }
+
+      const progress = progressResult.data;
+
+      // Update track-specific progress
+      const trackKey = testMetadata.track === 'exam' ? 'exam' : 'course_tech';
+      if (progress.trackProgress[trackKey]) {
+        // Calculate weighted average with existing progress
+        const existingScore = progress.trackProgress[trackKey].averageScore;
+        const testScore = testResults.accuracy;
+        const testWeight = 0.3; // 30% weight for test results
+
+        const newAverageScore = existingScore * (1 - testWeight) + testScore * testWeight;
+
+        progress.trackProgress[trackKey] = {
+          ...progress.trackProgress[trackKey],
+          averageScore: newAverageScore,
+          testsCompleted: (progress.trackProgress[trackKey] as any).testsCompleted + 1 || 1,
+          lastTestDate: new Date(),
+          adaptiveTestMetrics: {
+            abilityEstimate: testResults.finalAbilityEstimate,
+            confidenceInterval: testResults.abilityConfidenceInterval,
+            standardError: testResults.standardError,
+          },
+        };
+      }
+
+      // Update subject-specific progress
+      for (const [subjectId, subjectPerf] of Object.entries(testResults.subjectPerformance)) {
+        if (!progress.subjectProgress) {
+          progress.subjectProgress = {};
+        }
+
+        if (!progress.subjectProgress[subjectId]) {
+          progress.subjectProgress[subjectId] = {
+            subjectId,
+            completion: 0,
+            timeSpent: 0,
+            averageScore: 0,
+            lastStudied: new Date(),
+            topicsCompleted: [],
+            weakAreas: [],
+            strongAreas: [],
+          };
+        }
+
+        const currentSubjectProgress = progress.subjectProgress[subjectId];
+        const testSubjectScore = (subjectPerf as any).accuracy;
+
+        // Update subject scores with exponential moving average
+        const alpha = 0.4; // Learning rate
+        currentSubjectProgress.averageScore =
+          (1 - alpha) * currentSubjectProgress.averageScore + alpha * testSubjectScore;
+
+        // Update weak/strong areas based on test performance
+        if (testSubjectScore < 70) {
+          if (!currentSubjectProgress.weakAreas.includes(subjectId)) {
+            currentSubjectProgress.weakAreas.push(subjectId);
+          }
+        } else if (testSubjectScore > 85) {
+          if (!currentSubjectProgress.strongAreas.includes(subjectId)) {
+            currentSubjectProgress.strongAreas.push(subjectId);
+          }
+          // Remove from weak areas if performance improved
+          currentSubjectProgress.weakAreas = currentSubjectProgress.weakAreas.filter(id => id !== subjectId);
+        }
+
+        currentSubjectProgress.lastStudied = new Date();
+      }
+
+      // Update overall metrics
+      progress.overallProgress = {
+        ...progress.overallProgress,
+        totalTestsCompleted: (progress.overallProgress as any).totalTestsCompleted + 1 || 1,
+        lastActivity: new Date(),
+        adaptiveTestingLevel: this.calculateAdaptiveTestingLevel(testResults),
+      };
+
+      // Save updated progress
+      progress.updatedAt = new Date();
+      const updateResult = await firebaseService.setDocument('userProgress', userId, progress);
+      return updateResult;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update progress from adaptive test'));
+    }
+  }
+
+  /**
+   * Get adaptive testing recommendations based on progress
+   */
+  async getAdaptiveTestRecommendations(
+    userId: string
+  ): Promise<Result<import('@/types/adaptive-testing').TestRecommendation[]>> {
+    try {
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        return progressResult;
+      }
+
+      const progress = progressResult.data;
+      const recommendations: import('@/types/adaptive-testing').TestRecommendation[] = [];
+
+      // Analyze weak areas for testing opportunities
+      if (progress.subjectProgress) {
+        for (const [subjectId, subjectProgress] of Object.entries(progress.subjectProgress)) {
+          if (subjectProgress.averageScore < 75 && subjectProgress.weakAreas.length > 0) {
+            recommendations.push({
+              testId: `weakness_test_${subjectId}`,
+              title: `${subjectId} Weakness Assessment`,
+              description: `Targeted adaptive test for improving weak areas in ${subjectId}`,
+              confidence: 0.8,
+              reasons: [
+                `Current score: ${subjectProgress.averageScore.toFixed(1)}% (below 75%)`,
+                `${subjectProgress.weakAreas.length} weak areas identified`,
+                'Adaptive testing can provide targeted improvement',
+              ],
+              estimatedBenefit: {
+                abilityImprovement: 0.2,
+                weaknessAddressing: subjectProgress.weakAreas,
+                journeyAlignment: 0.7,
+              },
+              optimalTiming: {
+                recommendedDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
+                dependsOn: [`Review ${subjectId} materials`, 'Complete pending missions'],
+              },
+            });
+          }
+        }
+      }
+
+      // Add general assessment if no specific weaknesses
+      if (recommendations.length === 0) {
+        const overallScore = progress.subjectProgress
+          ? Object.values(progress.subjectProgress).reduce((sum, subj) => sum + subj.averageScore, 0) /
+            Object.values(progress.subjectProgress).length
+          : 0;
+
+        recommendations.push({
+          testId: `comprehensive_assessment_${Date.now()}`,
+          title: 'Comprehensive Knowledge Assessment',
+          description: 'Evaluate your overall progress and identify growth opportunities',
+          confidence: 0.6,
+          reasons: [
+            `Overall performance: ${overallScore.toFixed(1)}%`,
+            'Regular assessment maintains learning momentum',
+            'Adaptive testing provides personalized insights',
+          ],
+          estimatedBenefit: {
+            abilityImprovement: 0.1,
+            weaknessAddressing: ['General knowledge gaps'],
+            journeyAlignment: 0.5,
+          },
+          optimalTiming: {
+            recommendedDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week
+            dependsOn: [],
+          },
+        });
+      }
+
+      return createSuccess(recommendations);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get adaptive test recommendations'));
+    }
+  }
+
+  /**
+   * Get comprehensive analytics including adaptive testing metrics
+   */
+  async getEnhancedAnalytics(userId: string): Promise<Result<any>> {
+    try {
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        return progressResult;
+      }
+
+      const progress = progressResult.data;
+
+      // Calculate enhanced analytics
+      const analytics = {
+        overallProgress: progress.overallProgress,
+        trackProgress: progress.trackProgress,
+        adaptiveTestingInsights: {
+          totalTestsCompleted: (progress.overallProgress as any).totalTestsCompleted || 0,
+          adaptiveTestingLevel: (progress.overallProgress as any).adaptiveTestingLevel || 'Beginner',
+          strongSubjects: progress.subjectProgress
+            ? Object.entries(progress.subjectProgress)
+                .filter(([_, subj]) => subj.averageScore > 85)
+                .map(([subjectId, _]) => subjectId)
+            : [],
+          weakSubjects: progress.subjectProgress
+            ? Object.entries(progress.subjectProgress)
+                .filter(([_, subj]) => subj.averageScore < 70)
+                .map(([subjectId, _]) => subjectId)
+            : [],
+          recommendedTestFrequency: this.calculateRecommendedTestFrequency(progress),
+        },
+        recommendations: await this.getAdaptiveTestRecommendations(userId),
+      };
+
+      return createSuccess(analytics);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get enhanced analytics'));
+    }
+  }
+
+  /**
+   * Update subject proficiency based on adaptive test results
+   */
+  async updateSubjectProficiency(
+    userId: string,
+    subjectId: string,
+    abilityEstimate: number,
+    confidence: number
+  ): Promise<Result<void>> {
+    try {
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        return progressResult;
+      }
+
+      const progress = progressResult.data;
+
+      if (!progress.subjectProgress) {
+        progress.subjectProgress = {};
+      }
+
+      if (!progress.subjectProgress[subjectId]) {
+        progress.subjectProgress[subjectId] = {
+          subjectId,
+          completion: 0,
+          timeSpent: 0,
+          averageScore: 0,
+          lastStudied: new Date(),
+          topicsCompleted: [],
+          weakAreas: [],
+          strongAreas: [],
+        };
+      }
+
+      const subjectProgress = progress.subjectProgress[subjectId];
+
+      // Update proficiency based on ability estimate
+      const proficiencyScore = Math.max(0, Math.min(100, (abilityEstimate + 2) * 25)); // Map -2 to +2 ability to 0-100 score
+      const weightedScore = subjectProgress.averageScore * 0.7 + proficiencyScore * 0.3; // 30% weight for new test
+
+      subjectProgress.averageScore = weightedScore;
+      subjectProgress.lastStudied = new Date();
+
+      // Add adaptive testing metadata
+      (subjectProgress as any).adaptiveMetrics = {
+        abilityEstimate,
+        confidence,
+        lastTestDate: new Date(),
+        proficiencyTrend: weightedScore > subjectProgress.averageScore ? 'improving' : 'stable',
+      };
+
+      // Save updated progress
+      progress.updatedAt = new Date();
+      const updateResult = await firebaseService.setDocument('userProgress', userId, progress);
+      return updateResult;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update subject proficiency'));
+    }
+  }
+
+  private calculateAdaptiveTestingLevel(testResults: import('@/types/adaptive-testing').TestPerformance): string {
+    const ability = testResults.finalAbilityEstimate;
+    const { accuracy } = testResults;
+
+    if (ability > 0.8 && accuracy > 90) {
+      return 'Expert';
+    }
+    if (ability > 0.5 && accuracy > 80) {
+      return 'Advanced';
+    }
+    if (ability > 0.2 && accuracy > 70) {
+      return 'Intermediate';
+    }
+    if (ability > -0.2 && accuracy > 60) {
+      return 'Developing';
+    }
+    return 'Beginner';
+  }
+
+  private calculateRecommendedTestFrequency(progress: UnifiedProgress): number {
+    // Calculate recommended test frequency in days based on user's learning pattern
+    const overallScore = progress.trackProgress.exam.averageScore;
+    const consistency = progress.overallProgress.consistencyRating;
+
+    // More frequent testing for lower scores or lower consistency
+    if (overallScore < 60 || consistency < 0.5) {
+      return 2; // Every 2 days
+    } else if (overallScore < 80 || consistency < 0.7) {
+      return 3; // Every 3 days
+    }
+    return 5; // Every 5 days
+  }
+
+  /**
+   * Link a journey to user progress
+   */
+  async linkJourney(userId: string, journeyId: string): Promise<Result<{ progressId: string }>> {
+    try {
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        return progressResult;
+      }
+
+      const progress = progressResult.data;
+
+      // Initialize journey tracking if not exists
+      if (!(progress as any).linkedJourneys) {
+        (progress as any).linkedJourneys = [];
+      }
+
+      // Add journey ID if not already linked
+      const linkedJourneys = (progress as any).linkedJourneys as string[];
+      if (!linkedJourneys.includes(journeyId)) {
+        linkedJourneys.push(journeyId);
+      }
+
+      // Initialize journey-specific progress tracking
+      if (!(progress as any).journeyProgress) {
+        (progress as any).journeyProgress = {};
+      }
+
+      (progress as any).journeyProgress[journeyId] = {
+        linkedAt: new Date(),
+        lastSync: new Date(),
+        contributedHours: 0,
+        contributedMissions: 0,
+        goalContributions: {},
+      };
+
+      progress.updatedAt = new Date();
+
+      const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
+      if (!saveResult.success) {
+        return saveResult;
+      }
+
+      return createSuccess({ progressId: userId });
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to link journey'));
+    }
+  }
+
+  /**
+   * Update journey progress from progress service
+   */
+  async updateJourneyProgress(
+    userId: string,
+    update: {
+      journeyId: string;
+      overallCompletion: number;
+      goalCompletions: Record<string, number>;
+      lastActivity: Date;
+    }
+  ): Promise<Result<void>> {
+    try {
+      const progressResult = await this.getUserProgress(userId);
+      if (!progressResult.success) {
+        return progressResult;
+      }
+
+      const progress = progressResult.data;
+
+      // Ensure journey progress tracking exists
+      if (!(progress as any).journeyProgress) {
+        (progress as any).journeyProgress = {};
+      }
+
+      if (!(progress as any).journeyProgress[update.journeyId]) {
+        (progress as any).journeyProgress[update.journeyId] = {
+          linkedAt: new Date(),
+          lastSync: new Date(),
+          contributedHours: 0,
+          contributedMissions: 0,
+          goalContributions: {},
+        };
+      }
+
+      const journeyProgress = (progress as any).journeyProgress[update.journeyId];
+
+      // Update journey-specific tracking
+      journeyProgress.lastSync = update.lastActivity;
+      journeyProgress.overallCompletion = update.overallCompletion;
+      journeyProgress.goalCompletions = update.goalCompletions;
+
+      // Update overall progress metrics based on journey contributions
+      const journeyWeight = Math.min(0.3, update.overallCompletion / 100); // Max 30% influence from any single journey
+
+      // Blend journey progress into overall progress
+      const currentOverall = progress.overallProgress.overallCompletionPercentage || 0;
+      progress.overallProgress.overallCompletionPercentage =
+        currentOverall * (1 - journeyWeight) + update.overallCompletion * journeyWeight;
+
+      progress.updatedAt = new Date();
+
+      const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
+      return saveResult;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update journey progress'));
+    }
+  }
 }
 
 // Export singleton instance

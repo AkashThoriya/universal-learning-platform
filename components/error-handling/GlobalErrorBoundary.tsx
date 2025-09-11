@@ -269,11 +269,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
     if (this.state.hasError && this.state.error) {
       // Use custom fallback if provided
       if (this.props.fallback && this.state.errorInfo) {
-        return this.props.fallback(
-          this.state.error, 
-          this.state.errorInfo, 
-          this.handleManualRetry
-        );
+        return this.props.fallback(this.state.error, this.state.errorInfo, this.handleManualRetry);
       }
 
       // Default error UI

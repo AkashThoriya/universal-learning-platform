@@ -10,5 +10,10 @@
   "arrowParens": "avoid",
   "endOfLine": "lf",
   "quoteProps": "as-needed",
-  "embeddedLanguageFormatting": "auto"
+  "embeddedLanguageFormatting": "auto",
+  "proseWrap": "preserve",
+  "insertPragma": false,
+  "requirePragma": false,
+  "vueIndentScriptAndStyle": false,
+  "singleAttributePerLine": false
 }

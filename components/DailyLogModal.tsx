@@ -154,8 +154,8 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
         if (result.success && result.data) {
           const topics: Topic[] = [];
           result.data.forEach((syllabusItem: SyllabusApiResponse) => {
-            syllabusItem.subjects?.forEach((subject) => {
-              subject.topics?.forEach((topic) => {
+            syllabusItem.subjects?.forEach(subject => {
+              subject.topics?.forEach(topic => {
                 topics.push({
                   id: topic.id,
                   name: topic.name,

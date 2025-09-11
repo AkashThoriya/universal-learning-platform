@@ -14,7 +14,7 @@ import { db } from '@/lib/firebase';
 import { logError, logInfo } from '@/lib/logger';
 
 // Achievement types and categories
-export type AchievementType = 
+export type AchievementType =
   | 'streak'
   | 'goal_completion'
   | 'skill_mastery'
@@ -65,11 +65,14 @@ export interface UserAchievementProgress {
   currentStreak: number;
   longestStreak: number;
   lastActivityDate: Date;
-  categoryProgress: Record<string, {
-    points: number;
-    count: number;
-    lastEarned: Date;
-  }>;
+  categoryProgress: Record<
+    string,
+    {
+      points: number;
+      count: number;
+      lastEarned: Date;
+    }
+  >;
 }
 
 /**
@@ -105,9 +108,7 @@ class LearningAchievementService {
         rarity: 'common',
         points: 10,
         category: 'universal',
-        criteria: [
-          { metric: 'sessions_completed', operator: 'gte', value: 1 }
-        ],
+        criteria: [{ metric: 'sessions_completed', operator: 'gte', value: 1 }],
       },
       {
         id: 'week_warrior',
@@ -118,9 +119,7 @@ class LearningAchievementService {
         rarity: 'rare',
         points: 50,
         category: 'universal',
-        criteria: [
-          { metric: 'learning_streak', operator: 'gte', value: 7 }
-        ],
+        criteria: [{ metric: 'learning_streak', operator: 'gte', value: 7 }],
       },
       {
         id: 'month_master',
@@ -131,9 +130,7 @@ class LearningAchievementService {
         rarity: 'epic',
         points: 200,
         category: 'universal',
-        criteria: [
-          { metric: 'learning_streak', operator: 'gte', value: 30 }
-        ],
+        criteria: [{ metric: 'learning_streak', operator: 'gte', value: 30 }],
       },
 
       // Goal Completion Achievements
@@ -146,9 +143,7 @@ class LearningAchievementService {
         rarity: 'common',
         points: 25,
         category: 'custom_learning',
-        criteria: [
-          { metric: 'goals_completed', operator: 'gte', value: 1 }
-        ],
+        criteria: [{ metric: 'goals_completed', operator: 'gte', value: 1 }],
       },
       {
         id: 'goal_crusher',
@@ -159,9 +154,7 @@ class LearningAchievementService {
         rarity: 'rare',
         points: 100,
         category: 'custom_learning',
-        criteria: [
-          { metric: 'goals_completed', operator: 'gte', value: 5 }
-        ],
+        criteria: [{ metric: 'goals_completed', operator: 'gte', value: 5 }],
       },
 
       // Time Milestone Achievements
@@ -175,7 +168,7 @@ class LearningAchievementService {
         points: 30,
         category: 'universal',
         criteria: [
-          { metric: 'total_learning_time', operator: 'gte', value: 600 } // 10 hours in minutes
+          { metric: 'total_learning_time', operator: 'gte', value: 600 }, // 10 hours in minutes
         ],
       },
       {
@@ -188,7 +181,7 @@ class LearningAchievementService {
         points: 250,
         category: 'universal',
         criteria: [
-          { metric: 'total_learning_time', operator: 'gte', value: 6000 } // 100 hours in minutes
+          { metric: 'total_learning_time', operator: 'gte', value: 6000 }, // 100 hours in minutes
         ],
       },
 
@@ -202,9 +195,7 @@ class LearningAchievementService {
         rarity: 'rare',
         points: 75,
         category: 'universal',
-        criteria: [
-          { metric: 'weekly_consistency', operator: 'gte', value: 90 }
-        ],
+        criteria: [{ metric: 'weekly_consistency', operator: 'gte', value: 90 }],
       },
 
       // Exam Preparation Achievements
@@ -217,9 +208,7 @@ class LearningAchievementService {
         rarity: 'common',
         points: 15,
         category: 'exam_prep',
-        criteria: [
-          { metric: 'exam_sessions_completed', operator: 'gte', value: 1 }
-        ],
+        criteria: [{ metric: 'exam_sessions_completed', operator: 'gte', value: 1 }],
       },
       {
         id: 'practice_perfectionist',
@@ -230,9 +219,7 @@ class LearningAchievementService {
         rarity: 'epic',
         points: 150,
         category: 'exam_prep',
-        criteria: [
-          { metric: 'practice_accuracy', operator: 'gte', value: 90 }
-        ],
+        criteria: [{ metric: 'practice_accuracy', operator: 'gte', value: 90 }],
       },
 
       // Special Achievements
@@ -245,9 +232,7 @@ class LearningAchievementService {
         rarity: 'rare',
         points: 40,
         category: 'universal',
-        criteria: [
-          { metric: 'early_session_completed', operator: 'eq', value: 1 }
-        ],
+        criteria: [{ metric: 'early_session_completed', operator: 'eq', value: 1 }],
       },
       {
         id: 'night_owl',
@@ -258,9 +243,7 @@ class LearningAchievementService {
         rarity: 'rare',
         points: 40,
         category: 'universal',
-        criteria: [
-          { metric: 'late_session_completed', operator: 'eq', value: 1 }
-        ],
+        criteria: [{ metric: 'late_session_completed', operator: 'eq', value: 1 }],
       },
     ];
   }
@@ -277,10 +260,7 @@ class LearningAchievementService {
       logInfo('Fetching user achievements', { userId });
 
       const achievementsCollection = collection(db, 'users', userId, 'achievements');
-      const achievementsQuery = query(
-        achievementsCollection,
-        orderBy('earnedAt', 'desc')
-      );
+      const achievementsQuery = query(achievementsCollection, orderBy('earnedAt', 'desc'));
 
       const snapshot = await getDocs(achievementsQuery);
       const achievements: LearningAchievement[] = snapshot.docs.map(doc => {
@@ -315,7 +295,10 @@ class LearningAchievementService {
   /**
    * Check for new achievements based on user activity
    */
-  async checkForNewAchievements(userId: string, userMetrics: Record<string, any>): Promise<{
+  async checkForNewAchievements(
+    userId: string,
+    userMetrics: Record<string, any>
+  ): Promise<{
     success: boolean;
     data?: LearningAchievement[];
     error?: Error;
@@ -345,12 +328,18 @@ class LearningAchievementService {
           }
 
           switch (criterion.operator) {
-            case 'gte': return metricValue >= criterion.value;
-            case 'lte': return metricValue <= criterion.value;
-            case 'gt': return metricValue > criterion.value;
-            case 'lt': return metricValue < criterion.value;
-            case 'eq': return metricValue === criterion.value;
-            default: return false;
+            case 'gte':
+              return metricValue >= criterion.value;
+            case 'lte':
+              return metricValue <= criterion.value;
+            case 'gt':
+              return metricValue > criterion.value;
+            case 'lt':
+              return metricValue < criterion.value;
+            case 'eq':
+              return metricValue === criterion.value;
+            default:
+              return false;
           }
         });
 
@@ -395,7 +384,7 @@ class LearningAchievementService {
   private async awardAchievement(userId: string, achievement: LearningAchievement): Promise<void> {
     try {
       const achievementsCollection = collection(db, 'users', userId, 'achievements');
-      
+
       await addDoc(achievementsCollection, {
         type: achievement.type,
         title: achievement.title,
@@ -408,8 +397,8 @@ class LearningAchievementService {
         metadata: achievement.metadata || {},
       });
 
-      logInfo('Achievement awarded', { 
-        userId, 
+      logInfo('Achievement awarded', {
+        userId,
         achievementId: achievement.id,
         title: achievement.title,
         points: achievement.points,
@@ -450,7 +439,7 @@ class LearningAchievementService {
         }
         categoryProgress[achievement.category].points += achievement.points;
         categoryProgress[achievement.category].count += 1;
-        
+
         if (achievement.earnedAt > categoryProgress[achievement.category].lastEarned) {
           categoryProgress[achievement.category].lastEarned = achievement.earnedAt;
         }
@@ -482,7 +471,10 @@ class LearningAchievementService {
   /**
    * Get upcoming achievements (achievements user is close to earning)
    */
-  async getUpcomingAchievements(userId: string, userMetrics: Record<string, any>): Promise<{
+  async getUpcomingAchievements(
+    userId: string,
+    userMetrics: Record<string, any>
+  ): Promise<{
     success: boolean;
     data?: Array<{
       definition: AchievementDefinition;

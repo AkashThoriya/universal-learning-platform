@@ -388,14 +388,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
             size="sm"
             onClick={() => handleTimeRangeChange(range)}
           >
-            {range === '7d' 
-              ? '7 Days' 
-              : range === '30d' 
-                ? '30 Days' 
-                : range === '90d' 
-                  ? '90 Days' 
-                  : '1 Year'
-            }
+            {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '90d' ? '90 Days' : '1 Year'}
           </Button>
         ))}
       </div>
@@ -444,7 +437,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       </div>
 
       {/* Main Analytics Tabs */}
-      <Tabs value={state.selectedMetric} onValueChange={value => handleMetricChange(value as 'performance' | 'efficiency' | 'progress' | 'predictions')}>
+      <Tabs
+        value={state.selectedMetric}
+        onValueChange={value => handleMetricChange(value as 'performance' | 'efficiency' | 'progress' | 'predictions')}
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="efficiency">Efficiency</TabsTrigger>

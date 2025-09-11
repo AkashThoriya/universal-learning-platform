@@ -484,8 +484,8 @@ export class RealTimeAnalyticsProcessor {
     const timeSpentData = events
       .filter(e => e.data.timeSpent && e.data.score)
       .map(e => {
-        const timeSpent = e.data.timeSpent;
-        const score = e.data.score;
+        const { timeSpent } = e.data;
+        const { score } = e.data;
         if (timeSpent === undefined || score === undefined) {
           // This should never happen due to the filter above, but provides safety
           throw new Error('Invalid time spent or score data');
@@ -581,7 +581,7 @@ export class RealTimeAnalyticsProcessor {
 
     const skillProgress = skillEvents.reduce(
       (acc, event) => {
-        const skillId = event.data.skillId;
+        const { skillId } = event.data;
         if (!skillId || typeof skillId !== 'string') {
           return acc;
         }
@@ -589,7 +589,7 @@ export class RealTimeAnalyticsProcessor {
         if (!acc[skillId]) {
           acc[skillId] = [];
         }
-        const completionRate = event.data.completionRate;
+        const { completionRate } = event.data;
         if (typeof completionRate === 'number') {
           acc[skillId].push(completionRate);
         }

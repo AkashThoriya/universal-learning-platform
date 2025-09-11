@@ -200,7 +200,7 @@ async function saveGoogleUserData(user: User, isNewUser: boolean): Promise<Googl
     displayName: user.displayName ?? 'Google User',
     photoURL: user.photoURL,
     provider: 'google',
-    createdAt: isNewUser ? now : (await getExistingUserData(user.uid))?.createdAt ?? now,
+    createdAt: isNewUser ? now : ((await getExistingUserData(user.uid))?.createdAt ?? now),
     updatedAt: now,
     lastSignInAt: now,
     onboardingComplete: isNewUser ? false : ((await getExistingUserData(user.uid))?.onboardingComplete ?? false),
@@ -219,7 +219,7 @@ async function saveGoogleUserData(user: User, isNewUser: boolean): Promise<Googl
           topicsCompleted: 0,
           totalTopics: 0,
         }
-      : (await getExistingUserData(user.uid))?.stats ?? {
+      : ((await getExistingUserData(user.uid))?.stats ?? {
           totalStudyHours: 0,
           currentStreak: 0,
           longestStreak: 0,
@@ -227,7 +227,7 @@ async function saveGoogleUserData(user: User, isNewUser: boolean): Promise<Googl
           averageScore: 0,
           topicsCompleted: 0,
           totalTopics: 0,
-        },
+        }),
   };
 
   // Save to Firestore

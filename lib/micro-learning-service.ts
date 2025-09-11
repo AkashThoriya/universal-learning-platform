@@ -98,7 +98,7 @@ export class MicroLearningService {
 
       if (!saveResult.success) {
         const errorMessage =
-          saveResult.error instanceof Error ? saveResult.error.message : saveResult.error ?? 'Failed to save session';
+          saveResult.error instanceof Error ? saveResult.error.message : (saveResult.error ?? 'Failed to save session');
         throw new Error(errorMessage);
       }
 
@@ -118,7 +118,7 @@ export class MicroLearningService {
 
       if (!result.success) {
         const errorMessage =
-          result.error instanceof Error ? result.error.message : result.error ?? 'Failed to get session history';
+          result.error instanceof Error ? result.error.message : (result.error ?? 'Failed to get session history');
         throw new Error(errorMessage);
       }
 
@@ -167,7 +167,7 @@ export class MicroLearningService {
 
       if (!result.success) {
         const errorMessage =
-          result.error instanceof Error ? result.error.message : result.error ?? 'Failed to update session progress';
+          result.error instanceof Error ? result.error.message : (result.error ?? 'Failed to update session progress');
         throw new Error(errorMessage);
       }
     } catch (error) {
@@ -244,7 +244,7 @@ export class MicroLearningService {
     return baseContent.map((content, index) => ({
       id: `content_${index}_${Date.now()}`,
       type: this.selectContentType(content, learningTrack),
-      content: content.body ?? (content.content ?? ''),
+      content: content.body ?? content.content ?? '',
       estimatedTime: content.estimatedTime ?? 120,
       learningTrack,
       personaAdaptations: this.generatePersonaAdaptations(content, persona, learningTrack),
@@ -483,7 +483,10 @@ export class MicroLearningService {
     return persona.type === 'freelancer' ? 'project' : 'assignment';
   }
 
-  private static selectContentType(content: BaseContentItem, learningTrack: 'exam' | 'course_tech'): MicroContent['type'] {
+  private static selectContentType(
+    content: BaseContentItem,
+    learningTrack: 'exam' | 'course_tech'
+  ): MicroContent['type'] {
     if (learningTrack === 'course_tech') {
       return content.hasCode ? 'code_snippet' : 'hands_on';
     }
@@ -589,7 +592,10 @@ export class MicroLearningService {
     return mockRecommendations;
   }
 
-  private static async getTopicContent(topicId: string, learningTrack: 'exam' | 'course_tech'): Promise<BaseContentItem[]> {
+  private static async getTopicContent(
+    topicId: string,
+    learningTrack: 'exam' | 'course_tech'
+  ): Promise<BaseContentItem[]> {
     // Mock implementation - replace with actual content fetching
     return [
       {

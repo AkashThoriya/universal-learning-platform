@@ -12,8 +12,8 @@
 
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
 import { Search, BookOpen, User, Plus, AlertCircle } from 'lucide-react';
+import React, { useState, useMemo, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -22,8 +22,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from '@/hooks/useForm';
-import { Exam, SyllabusSubject } from '@/types/exam';
 import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
+import { Exam, SyllabusSubject } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
@@ -109,8 +109,10 @@ export function BasicInfoStep({
 
   // Category color mapping
   const getCategoryClasses = useCallback((categoryId: string, isActive: boolean) => {
-    if (!isActive) return '';
-    
+    if (!isActive) {
+      return '';
+    }
+
     switch (categoryId) {
       case 'computer-science':
         return 'bg-purple-50 text-purple-700 border-purple-200';
@@ -242,9 +244,7 @@ export function BasicInfoStep({
           <div className="mb-4">
             <div className="flex items-center space-x-2 mb-2">
               <BookOpen className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">
-                What do you want to learn?
-              </Label>
+              <Label className="text-lg font-semibold">What do you want to learn?</Label>
             </div>
             <p className="text-sm text-gray-600">
               Choose your learning path. We'll provide a pre-structured curriculum that you can fully customize later.
@@ -262,12 +262,7 @@ export function BasicInfoStep({
               aria-label="Search exams"
             />
             {searchQuery && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-2 top-2"
-                onClick={() => setSearchQuery('')}
-              >
+              <Button variant="ghost" size="sm" className="absolute right-2 top-2" onClick={() => setSearchQuery('')}>
                 Clear
               </Button>
             )}
@@ -314,9 +309,7 @@ export function BasicInfoStep({
                 <Card
                   key={exam.id}
                   className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                    form.data.selectedExamId === exam.id
-                      ? 'ring-2 ring-blue-500 bg-blue-50'
-                      : 'hover:bg-gray-50'
+                    form.data.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
                   }`}
                   onClick={() => onExamSelect(exam.id)}
                 >
@@ -352,11 +345,7 @@ export function BasicInfoStep({
 
             {/* Show More Button */}
             {!showAllExams && displayExams.length < filteredExams.length && (
-              <Button
-                variant="outline"
-                onClick={() => setShowAllExams(true)}
-                className="w-full"
-              >
+              <Button variant="outline" onClick={() => setShowAllExams(true)} className="w-full">
                 Show {filteredExams.length - displayExams.length} more courses
               </Button>
             )}
@@ -379,9 +368,7 @@ export function BasicInfoStep({
           <CardContent className="p-6">
             <div className="flex items-center space-x-2 mb-4">
               <Plus className="h-5 w-5 text-purple-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold text-purple-900">
-                Custom Course Details
-              </Label>
+              <Label className="text-lg font-semibold text-purple-900">Custom Course Details</Label>
             </div>
             <div className="space-y-4">
               <div>
@@ -424,7 +411,8 @@ export function BasicInfoStep({
             <Alert className="mt-4 border-purple-200 bg-purple-50">
               <AlertCircle className="h-4 w-4 text-purple-600" />
               <AlertDescription className="text-purple-800">
-                You'll be able to add subjects and topics in the next steps. Our system will help you structure your learning path effectively.
+                You'll be able to add subjects and topics in the next steps. Our system will help you structure your
+                learning path effectively.
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -440,9 +428,7 @@ export function BasicInfoStep({
                 <User className="h-4 w-4 text-green-600" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1">
-                  Great start, {form.data.displayName}! 
-                </h3>
+                <h3 className="font-semibold text-gray-900 mb-1">Great start, {form.data.displayName}!</h3>
                 <p className="text-sm text-gray-600 mb-2">
                   You've selected{' '}
                   <span className="font-medium">

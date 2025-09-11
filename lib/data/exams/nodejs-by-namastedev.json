@@ -488,13 +488,7 @@
           "name": "Season 2 Episode 11: Diving into the APIs and express Router",
           "estimatedHours": 2.5,
           "description": "Advanced API development and Express Router for modular routing",
-          "subtopics": [
-            "Express Router",
-            "Modular Routing",
-            "Route Organization",
-            "API Versioning",
-            "Route Protection"
-          ]
+          "subtopics": ["Express Router", "Modular Routing", "Route Organization", "API Versioning", "Route Protection"]
         },
         {
           "id": "db_queries_indexes",
@@ -548,36 +542,21 @@
           "name": "Season 2 Episode 15: DevTinder UI - Part 1",
           "estimatedHours": 2,
           "description": "Starting the frontend development for DevTinder application",
-          "subtopics": [
-            "Frontend Setup",
-            "Project Structure",
-            "Component Architecture",
-            "Initial UI Components"
-          ]
+          "subtopics": ["Frontend Setup", "Project Structure", "Component Architecture", "Initial UI Components"]
         },
         {
           "id": "devtinder_ui_2",
           "name": "Season 2 Episode 16: DevTinder UI - Part 2",
           "estimatedHours": 2,
           "description": "Continuing UI development with more complex components",
-          "subtopics": [
-            "Advanced Components",
-            "State Management",
-            "API Integration",
-            "User Authentication UI"
-          ]
+          "subtopics": ["Advanced Components", "State Management", "API Integration", "User Authentication UI"]
         },
         {
           "id": "devtinder_ui_3",
           "name": "Season 2 Episode 17: DevTinder UI - Part 3",
           "estimatedHours": 2,
           "description": "Building core features and user interactions",
-          "subtopics": [
-            "Core Feature Implementation",
-            "User Interactions",
-            "Form Handling",
-            "Real-time Updates"
-          ]
+          "subtopics": ["Core Feature Implementation", "User Interactions", "Form Handling", "Real-time Updates"]
         },
         {
           "id": "devtinder_ui_4",
@@ -596,12 +575,7 @@
           "name": "Season 2 Episode 19: DevTinder UI - Part 5",
           "estimatedHours": 2,
           "description": "Finalizing the UI and connecting all components",
-          "subtopics": [
-            "Final UI Polish",
-            "Component Integration",
-            "Testing and Debugging",
-            "UI/UX Best Practices"
-          ]
+          "subtopics": ["Final UI Polish", "Component Integration", "Testing and Debugging", "UI/UX Best Practices"]
         }
       ]
     },

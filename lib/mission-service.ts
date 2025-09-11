@@ -1350,6 +1350,583 @@ export class MissionService {
   ): Promise<MissionTemplate[]> {
     return this.templateService.getTemplatesForTrack(userId, track, frequency, persona);
   }
+
+  /**
+   * Adjust mission difficulty based on adaptive test results
+   */
+  async adjustMissionDifficultyFromTest(
+    userId: string,
+    testResults: import('@/types/adaptive-testing').TestPerformance,
+    testMetadata: { subjects: string[]; track: LearningTrack }
+  ): Promise<Result<void>> {
+    try {
+      // Get current user persona
+      const persona = await this.getUserPersona(userId);
+      if (!persona.success) {
+        return persona;
+      }
+
+      const abilityEstimate = testResults.finalAbilityEstimate;
+      const confidence = 1 - testResults.standardError; // Higher confidence = lower standard error
+
+      // Calculate difficulty adjustment factor
+      let difficultyAdjustment = 0;
+
+      if (abilityEstimate > 0.5 && confidence > 0.8) {
+        // High ability, high confidence -> increase difficulty
+        difficultyAdjustment = 0.2;
+      } else if (abilityEstimate < -0.5 && confidence > 0.8) {
+        // Low ability, high confidence -> decrease difficulty
+        difficultyAdjustment = -0.2;
+      } else if (testResults.accuracy > 85) {
+        // High accuracy -> slight increase
+        difficultyAdjustment = 0.1;
+      } else if (testResults.accuracy < 60) {
+        // Low accuracy -> slight decrease
+        difficultyAdjustment = -0.1;
+      }
+
+      // Update persona preferences based on test performance
+      const updatedPersona = {
+        ...persona.data,
+        preferences: {
+          ...persona.data.preferences,
+          difficultyPreference: this.calculateNewDifficultyPreference(
+            persona.data.preferences?.difficultyPreference || 'medium',
+            difficultyAdjustment
+          ),
+          adaptiveTestingInfluence: confidence, // How much test results should influence missions
+        },
+        lastAdaptiveTestDate: new Date(),
+        testPerformanceHistory: [
+          ...((persona.data as any).testPerformanceHistory || []).slice(-4), // Keep last 5
+          {
+            date: new Date(),
+            abilityEstimate,
+            accuracy: testResults.accuracy,
+            subjects: testMetadata.subjects,
+            difficultyAdjustment,
+          },
+        ],
+      };
+
+      // Generate adaptive missions for weak subjects
+      const weakSubjects = Object.entries(testResults.subjectPerformance)
+        .filter(([_, perf]) => (perf as any).accuracy < 70)
+        .map(([subjectId, _]) => subjectId);
+
+      for (const subjectId of weakSubjects) {
+        await this.generateTargetedMissionsForWeakness(
+          userId,
+          subjectId,
+          testResults.subjectPerformance[subjectId] as any,
+          testMetadata.track
+        );
+      }
+
+      // Update user persona
+      await this.updateUserPersona(userId, updatedPersona);
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to adjust mission difficulty from test'));
+    }
+  }
+
+  /**
+   * Generate targeted missions for areas identified as weak in adaptive testing
+   */
+  async generateTargetedMissionsForWeakness(
+    userId: string,
+    subjectId: string,
+    subjectPerformance: any,
+    track: LearningTrack
+  ): Promise<Result<Mission[]>> {
+    try {
+      const missions: Mission[] = [];
+
+      // Generate easier missions to build confidence
+      const confidenceMission = await this.generateSpecificMission(
+        userId,
+        subjectId,
+        'easy', // Start with easier difficulty
+        {
+          focus: 'confidence_building',
+          targetAccuracy: 85, // Higher success rate for confidence
+          estimatedTime: 15, // Shorter sessions
+          adaptiveContext: {
+            triggeredByTest: true,
+            weakness: subjectPerformance.accuracy,
+            recommendedApproach: 'gradual_progression',
+          },
+        },
+        track
+      );
+
+      if (confidenceMission.success) {
+        missions.push(confidenceMission.data);
+      }
+
+      // Generate practice missions at current level
+      for (let i = 0; i < 3; i++) {
+        const practiceMission = await this.generateSpecificMission(
+          userId,
+          subjectId,
+          'medium',
+          {
+            focus: 'weakness_targeting',
+            targetAccuracy: 75,
+            estimatedTime: 20,
+            adaptiveContext: {
+              triggeredByTest: true,
+              weakness: subjectPerformance.accuracy,
+              sessionNumber: i + 1,
+            },
+          },
+          track
+        );
+
+        if (practiceMission.success) {
+          missions.push(practiceMission.data);
+        }
+      }
+
+      // Schedule missions over next week
+      missions.forEach((mission, index) => {
+        mission.scheduledAt = new Date(Date.now() + (index + 1) * 24 * 60 * 60 * 1000);
+        (mission as any).priority = 'high'; // High priority for weakness addressing
+      });
+
+      return createSuccess(missions);
+    } catch (error) {
+      return createError(
+        error instanceof Error ? error : new Error('Failed to generate targeted missions for weakness')
+      );
+    }
+  }
+
+  /**
+   * Create test-preparation missions before scheduled adaptive tests
+   */
+  async generateTestPreparationMissions(
+    userId: string,
+    upcomingTest: { subjects: string[]; scheduledDate: Date; track: LearningTrack }
+  ): Promise<Result<Mission[]>> {
+    try {
+      const missions: Mission[] = [];
+      const daysUntilTest = Math.ceil((upcomingTest.scheduledDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
+      // Generate review missions for each subject
+      for (const subjectId of upcomingTest.subjects) {
+        // Quick review mission (day before test)
+        const reviewMission = await this.generateSpecificMission(
+          userId,
+          subjectId,
+          'medium',
+          {
+            focus: 'test_preparation',
+            targetAccuracy: 80,
+            estimatedTime: 25,
+            adaptiveContext: {
+              testPreparation: true,
+              testDate: upcomingTest.scheduledDate,
+              reviewType: 'comprehensive',
+            },
+          },
+          upcomingTest.track
+        );
+
+        if (reviewMission.success) {
+          reviewMission.data.scheduledAt = new Date(upcomingTest.scheduledDate.getTime() - 24 * 60 * 60 * 1000);
+          (reviewMission.data as any).priority = 'high';
+          (reviewMission.data as any).tags = [...((reviewMission.data as any).tags || []), 'test-prep', 'review'];
+          missions.push(reviewMission.data);
+        }
+
+        // Practice missions (2-3 days before)
+        if (daysUntilTest > 2) {
+          const practiceMission = await this.generateSpecificMission(
+            userId,
+            subjectId,
+            'hard',
+            {
+              focus: 'test_simulation',
+              targetAccuracy: 75,
+              estimatedTime: 30,
+              adaptiveContext: {
+                testPreparation: true,
+                testDate: upcomingTest.scheduledDate,
+                reviewType: 'challenging_practice',
+              },
+            },
+            upcomingTest.track
+          );
+
+          if (practiceMission.success) {
+            practiceMission.data.scheduledAt = new Date(upcomingTest.scheduledDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+            (practiceMission.data as any).priority = 'medium';
+            (practiceMission.data as any).tags = [
+              ...((practiceMission.data as any).tags || []),
+              'test-prep',
+              'practice',
+            ];
+            missions.push(practiceMission.data);
+          }
+        }
+      }
+
+      return createSuccess(missions);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate test preparation missions'));
+    }
+  }
+
+  /**
+   * Get missions that align with adaptive testing goals
+   */
+  async getTestAlignedMissions(
+    userId: string,
+    testSubjects: string[],
+    targetDifficulty: MissionDifficulty,
+    count = 5
+  ): Promise<Result<Mission[]>> {
+    try {
+      // Get user's active missions
+      const activeMissionsResult = await missionFirebaseService.getActiveMissions(userId);
+      if (!activeMissionsResult.success) {
+        return activeMissionsResult;
+      }
+
+      const activeMissions = activeMissionsResult.data as Mission[];
+
+      // Filter missions that align with test subjects and difficulty
+      const alignedMissions = activeMissions
+        .filter((mission: Mission) => {
+          // Check if mission subjects overlap with test subjects
+          const missionSubjects = this.extractMissionSubjects(mission);
+          const hasOverlap = missionSubjects.some(subject => testSubjects.includes(subject));
+
+          // Check if difficulty is appropriate
+          const difficultyMatch = this.isDifficultyCompatible(mission.difficulty, targetDifficulty);
+
+          return hasOverlap && difficultyMatch;
+        })
+        .slice(0, count);
+
+      return createSuccess(alignedMissions);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get test aligned missions'));
+    }
+  }
+
+  /**
+   * Update mission recommendations based on test performance
+   */
+  async updateMissionRecommendations(
+    userId: string,
+    testResults: import('@/types/adaptive-testing').TestPerformance
+  ): Promise<Result<string[]>> {
+    try {
+      const recommendations: string[] = [];
+
+      // Analyze test performance patterns
+      const overallAccuracy = testResults.accuracy;
+      const responseTimePattern = testResults.averageResponseTime;
+
+      // Generate specific recommendations
+      if (overallAccuracy < 60) {
+        recommendations.push('Focus on foundational concepts with easier missions');
+        recommendations.push('Increase mission frequency to build consistency');
+      } else if (overallAccuracy > 85) {
+        recommendations.push('Consider advancing to more challenging missions');
+        recommendations.push('Explore advanced topics in strong subjects');
+      }
+
+      if (responseTimePattern > 90000) {
+        // More than 90 seconds average
+        recommendations.push('Practice with time-limited missions to improve speed');
+        recommendations.push('Focus on quick recall exercises');
+      }
+
+      // Subject-specific recommendations
+      Object.entries(testResults.subjectPerformance).forEach(([subject, performance]) => {
+        const subjectAccuracy = (performance as any).accuracy;
+        if (subjectAccuracy < 65) {
+          recommendations.push(`Prioritize ${subject} missions for the next week`);
+          recommendations.push(`Start with beginner-level ${subject} concepts`);
+        } else if (subjectAccuracy > 90) {
+          recommendations.push(`Consider advanced ${subject} missions`);
+        }
+      });
+
+      // Difficulty-specific recommendations
+      Object.entries(testResults.difficultyPerformance).forEach(([difficulty, performance]) => {
+        const difficultyAccuracy = (performance as any).accuracy;
+        if (difficultyAccuracy < 50) {
+          recommendations.push(`Spend more time on ${difficulty} level missions`);
+        }
+      });
+
+      return createSuccess(recommendations);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to update mission recommendations'));
+    }
+  }
+
+  // Private helper methods for adaptive testing integration
+
+  private calculateNewDifficultyPreference(
+    currentPreference: MissionDifficulty,
+    adjustment: number
+  ): MissionDifficulty {
+    const difficultyLevels: MissionDifficulty[] = ['beginner', 'easy', 'medium', 'hard', 'expert'];
+    const currentIndex = difficultyLevels.indexOf(currentPreference);
+
+    let newIndex = currentIndex;
+
+    if (adjustment > 0.15) {
+      newIndex = Math.min(difficultyLevels.length - 1, currentIndex + 1);
+    } else if (adjustment < -0.15) {
+      newIndex = Math.max(0, currentIndex - 1);
+    }
+
+    return difficultyLevels[newIndex];
+  }
+
+  private async generateSpecificMission(
+    userId: string,
+    subjectId: string,
+    difficulty: MissionDifficulty,
+    context: any,
+    track: LearningTrack
+  ): Promise<Result<Mission>> {
+    // This would use existing mission generation logic with adaptive context
+    // For now, return a mock mission
+    const mission: Mission = {
+      id: `mission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      userId,
+      templateId: 'adaptive_template',
+      track,
+      frequency: 'daily',
+      title: `Adaptive ${difficulty} mission for ${subjectId}`,
+      description: `Mission generated based on adaptive test results`,
+      difficulty,
+      estimatedDuration: context.estimatedTime || 20,
+      content: {
+        type: 'mock_questions',
+        examContent: {
+          questions: [],
+          timeLimit: context.estimatedTime || 20,
+          passingScore: context.targetAccuracy || 70,
+          instructions: `Focus on ${subjectId} with ${context.focus} approach`,
+        },
+      },
+      status: 'not_started',
+      scheduledAt: new Date(),
+      deadline: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      progress: {
+        completionPercentage: 0,
+        currentStep: 0,
+        totalSteps: 1,
+        timeSpent: 0,
+        stepProgress: [],
+        submissions: [],
+        metrics: {
+          accuracy: 0,
+          speed: 0,
+          consistency: 0,
+          engagement: 0,
+        },
+      },
+      personaOptimizations: {
+        persona: 'student',
+        timeAdjustments: {
+          preferredDuration: context.estimatedTime || 20,
+          maxDuration: (context.estimatedTime || 20) * 1.5,
+          breakIntervals: [10],
+        },
+        contentAdaptations: {
+          explanationLevel: 'detailed',
+          exampleComplexity: 'realistic',
+          contextType: 'academic',
+        },
+        motivationStrategies: {
+          rewardTypes: ['progress', 'badges'],
+          feedbackFrequency: 'step_by_step',
+          challengePreference: 'steady',
+        },
+        progressVisualization: {
+          chartTypes: ['bar', 'progress'],
+          detailLevel: 'detailed',
+          comparisons: ['self', 'goals'],
+        },
+      },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    return createSuccess(mission);
+  }
+
+  private extractMissionSubjects(mission: Mission): string[] {
+    // Extract subjects from mission content or metadata
+    // This would depend on the mission structure
+    return mission.content?.examContent?.questions.map(q => (q as any).subject).filter(Boolean) || [];
+  }
+
+  private isDifficultyCompatible(missionDifficulty: MissionDifficulty, targetDifficulty: MissionDifficulty): boolean {
+    const difficultyOrder = ['beginner', 'easy', 'medium', 'hard', 'expert'];
+    const missionIndex = difficultyOrder.indexOf(missionDifficulty);
+    const targetIndex = difficultyOrder.indexOf(targetDifficulty);
+
+    // Allow missions within ±1 difficulty level
+    return Math.abs(missionIndex - targetIndex) <= 1;
+  }
+
+  private async getUserPersona(userId: string): Promise<Result<any>> {
+    // This would integrate with the existing user persona system
+    // For now, return a mock persona
+    return createSuccess({
+      id: userId,
+      type: 'student',
+      preferences: {
+        difficultyPreference: 'medium' as MissionDifficulty,
+      },
+    });
+  }
+
+  private async updateUserPersona(userId: string, persona: any): Promise<Result<void>> {
+    // This would update the user persona in Firebase
+    // For now, just return success
+    return createSuccess(undefined);
+  }
+
+  /**
+   * Create a mission template for journey integration
+   */
+  async createMissionTemplate(templateData: {
+    title: string;
+    description: string;
+    type: 'study' | 'practice' | 'review';
+    difficulty: MissionDifficulty;
+    estimatedDuration: number;
+    subjects: string[];
+    track: LearningTrack;
+    journeyId?: string;
+  }): Promise<Result<MissionTemplate>> {
+    try {
+      const template: MissionTemplate = {
+        id: `template_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        track: templateData.track,
+        frequency: 'weekly',
+        title: templateData.title,
+        description: templateData.description,
+        difficulty: templateData.difficulty,
+        estimatedDuration: templateData.estimatedDuration,
+        aiGenerated: false,
+        content: {
+          type: templateData.type === 'practice' ? 'mock_questions' : 'study_plan',
+          examContent: {
+            questions: [],
+            timeLimit: templateData.estimatedDuration,
+            passingScore: 70,
+            instructions: templateData.description,
+          },
+        },
+        tags: [templateData.type, templateData.difficulty, ...(templateData.journeyId ? ['journey-linked'] : [])],
+        metadata: {
+          averageRating: 0,
+          completionRate: 0,
+          estimatedDuration: templateData.estimatedDuration,
+          tags: [templateData.type, templateData.difficulty],
+          subjects: templateData.subjects,
+          journeyId: templateData.journeyId,
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      return createSuccess(template);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create mission template'));
+    }
+  }
+
+  /**
+   * Activate a mission from a template for journey workflow
+   */
+  async activateMissionFromTemplate(userId: string, templateId: string): Promise<Result<Mission>> {
+    try {
+      // For now, create a mock mission based on template
+      // In a real implementation, this would fetch the template and create an active mission
+      const mission: Mission = {
+        id: `mission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId,
+        templateId,
+        track: 'certification',
+        frequency: 'weekly',
+        title: 'Journey-Generated Mission',
+        description: 'Mission activated from journey planning system',
+        difficulty: 'medium',
+        estimatedDuration: 30,
+        content: {
+          type: 'study_plan',
+          examContent: {
+            questions: [],
+            timeLimit: 30,
+            passingScore: 70,
+            instructions: 'Complete this mission as part of your learning journey',
+          },
+        },
+        status: 'not_started',
+        scheduledAt: new Date(),
+        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+        progress: {
+          completionPercentage: 0,
+          currentStep: 0,
+          totalSteps: 1,
+          timeSpent: 0,
+          stepProgress: [],
+          submissions: [],
+          metrics: {
+            accuracy: 0,
+            speed: 0,
+            consistency: 0,
+            engagement: 0,
+          },
+        },
+        personaOptimizations: {
+          persona: 'student',
+          timeAdjustments: {
+            preferredDuration: 30,
+            maxDuration: 45,
+            breakIntervals: [15],
+          },
+          contentAdaptations: {
+            explanationLevel: 'detailed',
+            exampleComplexity: 'realistic',
+            contextType: 'academic',
+          },
+          motivationStrategies: {
+            rewardTypes: ['progress', 'badges'],
+            feedbackFrequency: 'step_by_step',
+            challengePreference: 'steady',
+          },
+          progressVisualization: {
+            chartTypes: ['bar', 'progress'],
+            detailLevel: 'detailed',
+            comparisons: ['self', 'goals'],
+          },
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      return createSuccess(mission);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to activate mission from template'));
+    }
+  }
 }
 
 // Export the main service instance

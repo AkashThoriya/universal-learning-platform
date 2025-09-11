@@ -33,7 +33,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { universalLearningAnalytics, type UnifiedLearningProgress, type LearningInsights, type PerformanceComparison } from '@/lib/universal-learning-analytics';
+import {
+  universalLearningAnalytics,
+  type UnifiedLearningProgress,
+  type LearningInsights,
+  type PerformanceComparison,
+} from '@/lib/universal-learning-analytics';
 
 interface LearningAnalyticsDashboardProps {
   className?: string;
@@ -230,10 +235,7 @@ function OverviewSection({ progress }: { progress: UnifiedLearningProgress }) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{Math.round(progress.unified.overallProgress)}%</div>
-          <Progress 
-            value={progress.unified.overallProgress} 
-            className="mt-2 bg-white/20" 
-          />
+          <Progress value={progress.unified.overallProgress} className="mt-2 bg-white/20" />
         </CardContent>
       </Card>
 
@@ -333,11 +335,15 @@ function QuickInsightsSection({ insights }: { insights: LearningInsights }) {
           <div className="space-y-3">
             {insights.recommendations.slice(0, 3).map((rec, index) => (
               <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div className={`p-1 rounded-full ${
-                  rec.priority === 'high' ? 'bg-red-100 text-red-600' : 
-                  rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' : 
-                  'bg-green-100 text-green-600'
-                }`}>
+                <div
+                  className={`p-1 rounded-full ${
+                    rec.priority === 'high'
+                      ? 'bg-red-100 text-red-600'
+                      : rec.priority === 'medium'
+                        ? 'bg-yellow-100 text-yellow-600'
+                        : 'bg-green-100 text-green-600'
+                  }`}
+                >
                   <Lightbulb className="h-4 w-4" />
                 </div>
                 <div className="flex-1">
@@ -385,7 +391,10 @@ function DetailedProgressSection({ progress }: { progress: UnifiedLearningProgre
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Study Time</span>
-                <span>{Math.floor(progress.examPreparation.totalStudyTime / 60)}h {progress.examPreparation.totalStudyTime % 60}m</span>
+                <span>
+                  {Math.floor(progress.examPreparation.totalStudyTime / 60)}h{' '}
+                  {progress.examPreparation.totalStudyTime % 60}m
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Completed Sessions</span>
@@ -464,9 +473,9 @@ function DetailedProgressSection({ progress }: { progress: UnifiedLearningProgre
               <span className="text-sm text-gray-600">Achieved</span>
               <span className="font-medium">{Math.floor(progress.unified.weeklyAchieved / 60)}h</span>
             </div>
-            <Progress 
-              value={(progress.unified.weeklyAchieved / progress.unified.weeklyTarget) * 100} 
-              className="mt-2" 
+            <Progress
+              value={(progress.unified.weeklyAchieved / progress.unified.weeklyTarget) * 100}
+              className="mt-2"
             />
             <div className="flex flex-wrap gap-2 mt-4">
               {progress.unified.strengthAreas.map((area, index) => (
@@ -510,31 +519,31 @@ function LearningInsightsSection({ insights }: { insights: LearningInsights }) {
           <div className="space-y-4">
             {insights.recommendations.map((rec, index) => (
               <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
-                <div className={`p-2 rounded-full ${
-                  rec.priority === 'high' ? 'bg-red-100 text-red-600' : 
-                  rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' : 
-                  'bg-green-100 text-green-600'
-                }`}>
+                <div
+                  className={`p-2 rounded-full ${
+                    rec.priority === 'high'
+                      ? 'bg-red-100 text-red-600'
+                      : rec.priority === 'medium'
+                        ? 'bg-yellow-100 text-yellow-600'
+                        : 'bg-green-100 text-green-600'
+                  }`}
+                >
                   <Lightbulb className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-medium">{rec.title}</h4>
-                    <Badge variant={
-                      rec.priority === 'high' ? 'destructive' : 
-                      rec.priority === 'medium' ? 'default' : 
-                      'secondary'
-                    }>
+                    <Badge
+                      variant={
+                        rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'default' : 'secondary'
+                      }
+                    >
                       {rec.priority}
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-600">{rec.description}</p>
                 </div>
-                {rec.actionable && (
-                  <Button variant="outline">
-                    Apply
-                  </Button>
-                )}
+                {rec.actionable && <Button variant="outline">Apply</Button>}
               </div>
             ))}
           </div>

@@ -374,10 +374,17 @@ export const usePerformanceAnalytics = () => {
       startTiming(operationId);
       try {
         const result = await fn();
-        endTiming(operationId, category, { success: true, ...(metadata && typeof metadata === 'object' ? metadata : {}) });
+        endTiming(operationId, category, {
+          success: true,
+          ...(metadata && typeof metadata === 'object' ? metadata : {}),
+        });
         return result;
       } catch (error) {
-        endTiming(operationId, category, { success: false, error: (error as Error).message, ...(metadata && typeof metadata === 'object' ? metadata : {}) });
+        endTiming(operationId, category, {
+          success: false,
+          error: (error as Error).message,
+          ...(metadata && typeof metadata === 'object' ? metadata : {}),
+        });
         throw error;
       }
     },

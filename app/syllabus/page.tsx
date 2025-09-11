@@ -1,21 +1,21 @@
 'use client';
 
-import { 
-  BookOpen, 
-  ChevronRight, 
-  Search, 
-  Filter, 
-  Grid, 
-  List, 
-  Clock, 
-  Target, 
-  TrendingUp, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Save, 
-  X, 
-  Settings, 
+import {
+  BookOpen,
+  ChevronRight,
+  Search,
+  Filter,
+  Grid,
+  List,
+  Clock,
+  Target,
+  TrendingUp,
+  Plus,
+  Edit3,
+  Trash2,
+  Save,
+  X,
+  Settings,
   ChevronDown,
   GripVertical,
   Eye,
@@ -24,35 +24,35 @@ import {
   MoreHorizontal,
   ArrowUpDown,
   Timer,
-  Info
+  Info,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
+import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, getAllProgress, saveSyllabus } from '@/lib/firebase-utils';
 import { logInfo, logError } from '@/lib/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
-import { useToast } from '@/hooks/use-toast';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -69,7 +69,7 @@ export default function SyllabusPage() {
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'subjects' | 'topics'>('subjects');
-  
+
   // Enhanced edit state management
   const [editMode, setEditMode] = useState(false);
   const [editingSubject, setEditingSubject] = useState<string | null>(null);
@@ -121,30 +121,32 @@ export default function SyllabusPage() {
 
   // Save syllabus changes to Firebase
   const saveSyllabusChanges = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     setSaving(true);
     try {
       await saveSyllabus(user.uid, syllabus);
-      logInfo('Syllabus updated successfully', { 
-        userId: user.uid, 
-        subjectCount: syllabus.length 
+      logInfo('Syllabus updated successfully', {
+        userId: user.uid,
+        subjectCount: syllabus.length,
       });
-      
+
       toast({
-        title: "Syllabus Updated",
-        description: "Your syllabus changes have been saved successfully.",
+        title: 'Syllabus Updated',
+        description: 'Your syllabus changes have been saved successfully.',
       });
     } catch (error) {
       logError('Error updating syllabus', {
         error: error instanceof Error ? error.message : String(error),
         userId: user.uid,
       });
-      
+
       toast({
-        title: "Error",
-        description: "Failed to save syllabus changes. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save syllabus changes. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setSaving(false);
@@ -153,11 +155,7 @@ export default function SyllabusPage() {
 
   // Subject management functions
   const updateSubjectTier = useCallback((subjectId: string, tier: 1 | 2 | 3) => {
-    setSyllabus(prev => 
-      prev.map(subject =>
-        subject.id === subjectId ? { ...subject, tier } : subject
-      )
-    );
+    setSyllabus(prev => prev.map(subject => (subject.id === subjectId ? { ...subject, tier } : subject)));
   }, []);
 
   const addCustomSubject = useCallback(() => {
@@ -180,51 +178,55 @@ export default function SyllabusPage() {
   }, []);
 
   // Enhanced topic management functions
-  const addTopic = useCallback((subjectId: string, topicData?: Partial<SyllabusTopic>) => {
-    const newTopicId = `topic-${Date.now()}`;
-    const newTopic: SyllabusTopic = {
-      id: newTopicId,
-      name: topicData?.name || 'New Topic',
-      estimatedHours: topicData?.estimatedHours || 5,
-      ...(topicData?.description && { description: topicData.description }),
-      subtopics: topicData?.subtopics || [],
-    };
+  const addTopic = useCallback(
+    (subjectId: string, topicData?: Partial<SyllabusTopic>) => {
+      const newTopicId = `topic-${Date.now()}`;
+      const newTopic: SyllabusTopic = {
+        id: newTopicId,
+        name: topicData?.name || 'New Topic',
+        estimatedHours: topicData?.estimatedHours || 5,
+        ...(topicData?.description && { description: topicData.description }),
+        subtopics: topicData?.subtopics || [],
+      };
 
-    setSyllabus(prev =>
-      prev.map(subject =>
-        subject.id === subjectId
-          ? { ...subject, topics: [...subject.topics, newTopic] }
-          : subject
-      )
-    );
+      setSyllabus(prev =>
+        prev.map(subject =>
+          subject.id === subjectId ? { ...subject, topics: [...subject.topics, newTopic] } : subject
+        )
+      );
 
-    // Auto-expand the subject and start editing the new topic
-    setExpandedSubjects(prev => new Set([...prev, subjectId]));
-    setEditingTopic(newTopicId);
-    setTempTopicName(newTopic.name);
-    setTempTopicHours(newTopic.estimatedHours || 5);
-    setTempTopicDescription(newTopic.description || '');
+      // Auto-expand the subject and start editing the new topic
+      setExpandedSubjects(prev => new Set([...prev, subjectId]));
+      setEditingTopic(newTopicId);
+      setTempTopicName(newTopic.name);
+      setTempTopicHours(newTopic.estimatedHours || 5);
+      setTempTopicDescription(newTopic.description || '');
 
-    toast({
-      title: "Topic Added",
-      description: `New topic "${newTopic.name}" has been added.`,
-    });
-  }, [toast]);
+      toast({
+        title: 'Topic Added',
+        description: `New topic "${newTopic.name}" has been added.`,
+      });
+    },
+    [toast]
+  );
 
-  const removeTopic = useCallback((subjectId: string, topicId: string) => {
-    setSyllabus(prev =>
-      prev.map(subject =>
-        subject.id === subjectId
-          ? { ...subject, topics: subject.topics.filter(topic => topic.id !== topicId) }
-          : subject
-      )
-    );
+  const removeTopic = useCallback(
+    (subjectId: string, topicId: string) => {
+      setSyllabus(prev =>
+        prev.map(subject =>
+          subject.id === subjectId
+            ? { ...subject, topics: subject.topics.filter(topic => topic.id !== topicId) }
+            : subject
+        )
+      );
 
-    toast({
-      title: "Topic Removed",
-      description: "Topic has been successfully removed.",
-    });
-  }, [toast]);
+      toast({
+        title: 'Topic Removed',
+        description: 'Topic has been successfully removed.',
+      });
+    },
+    [toast]
+  );
 
   const updateTopic = useCallback((subjectId: string, topicId: string, updates: Partial<SyllabusTopic>) => {
     setSyllabus(prev =>
@@ -232,34 +234,35 @@ export default function SyllabusPage() {
         subject.id === subjectId
           ? {
               ...subject,
-              topics: subject.topics.map(topic =>
-                topic.id === topicId ? { ...topic, ...updates } : topic
-              ),
+              topics: subject.topics.map(topic => (topic.id === topicId ? { ...topic, ...updates } : topic)),
             }
           : subject
       )
     );
   }, []);
 
-  const duplicateTopic = useCallback((subjectId: string, topicId: string) => {
-    const subject = syllabus.find(s => s.id === subjectId);
-    const topic = subject?.topics.find(t => t.id === topicId);
-    
-    if (topic) {
-      const duplicatedTopic = {
-        ...topic,
-        id: `topic-${Date.now()}`,
-        name: `${topic.name} (Copy)`,
-      };
-      
-      addTopic(subjectId, duplicatedTopic);
-      
-      toast({
-        title: "Topic Duplicated",
-        description: `"${topic.name}" has been duplicated.`,
-      });
-    }
-  }, [syllabus, addTopic, toast]);
+  const duplicateTopic = useCallback(
+    (subjectId: string, topicId: string) => {
+      const subject = syllabus.find(s => s.id === subjectId);
+      const topic = subject?.topics.find(t => t.id === topicId);
+
+      if (topic) {
+        const duplicatedTopic = {
+          ...topic,
+          id: `topic-${Date.now()}`,
+          name: `${topic.name} (Copy)`,
+        };
+
+        addTopic(subjectId, duplicatedTopic);
+
+        toast({
+          title: 'Topic Duplicated',
+          description: `"${topic.name}" has been duplicated.`,
+        });
+      }
+    },
+    [syllabus, addTopic, toast]
+  );
 
   // Enhanced edit state management
   const startEditingSubject = useCallback((subjectId: string, currentName: string) => {
@@ -267,22 +270,23 @@ export default function SyllabusPage() {
     setTempSubjectName(currentName);
   }, []);
 
-  const saveSubjectName = useCallback((subjectId: string) => {
-    if (tempSubjectName.trim()) {
-      setSyllabus(prev =>
-        prev.map(subject =>
-          subject.id === subjectId ? { ...subject, name: tempSubjectName.trim() } : subject
-        )
-      );
-      
-      toast({
-        title: "Subject Updated",
-        description: `Subject name updated to "${tempSubjectName.trim()}".`,
-      });
-    }
-    setEditingSubject(null);
-    setTempSubjectName('');
-  }, [tempSubjectName, toast]);
+  const saveSubjectName = useCallback(
+    (subjectId: string) => {
+      if (tempSubjectName.trim()) {
+        setSyllabus(prev =>
+          prev.map(subject => (subject.id === subjectId ? { ...subject, name: tempSubjectName.trim() } : subject))
+        );
+
+        toast({
+          title: 'Subject Updated',
+          description: `Subject name updated to "${tempSubjectName.trim()}".`,
+        });
+      }
+      setEditingSubject(null);
+      setTempSubjectName('');
+    },
+    [tempSubjectName, toast]
+  );
 
   const startEditingTopic = useCallback((topicId: string, topic: SyllabusTopic) => {
     setEditingTopic(topicId);
@@ -291,26 +295,29 @@ export default function SyllabusPage() {
     setTempTopicDescription(topic.description || '');
   }, []);
 
-  const saveTopicChanges = useCallback((subjectId: string, topicId: string) => {
-    if (tempTopicName.trim()) {
-      const updates: Partial<SyllabusTopic> = {
-        name: tempTopicName.trim(),
-        estimatedHours: tempTopicHours,
-        ...(tempTopicDescription.trim() && { description: tempTopicDescription.trim() }),
-      };
-      
-      updateTopic(subjectId, topicId, updates);
-      
-      toast({
-        title: "Topic Updated",
-        description: `Topic "${tempTopicName.trim()}" has been updated.`,
-      });
-    }
-    setEditingTopic(null);
-    setTempTopicName('');
-    setTempTopicHours(5);
-    setTempTopicDescription('');
-  }, [tempTopicName, tempTopicHours, tempTopicDescription, updateTopic, toast]);
+  const saveTopicChanges = useCallback(
+    (subjectId: string, topicId: string) => {
+      if (tempTopicName.trim()) {
+        const updates: Partial<SyllabusTopic> = {
+          name: tempTopicName.trim(),
+          estimatedHours: tempTopicHours,
+          ...(tempTopicDescription.trim() && { description: tempTopicDescription.trim() }),
+        };
+
+        updateTopic(subjectId, topicId, updates);
+
+        toast({
+          title: 'Topic Updated',
+          description: `Topic "${tempTopicName.trim()}" has been updated.`,
+        });
+      }
+      setEditingTopic(null);
+      setTempTopicName('');
+      setTempTopicHours(5);
+      setTempTopicDescription('');
+    },
+    [tempTopicName, tempTopicHours, tempTopicDescription, updateTopic, toast]
+  );
 
   const cancelEditing = useCallback(() => {
     setEditingSubject(null);
@@ -516,11 +523,11 @@ export default function SyllabusPage() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Strategic Syllabus Overview</h1>
             <p className="text-muted-foreground text-lg">Manage your study priorities and track mastery progress</p>
-            
+
             {/* Enhanced Edit Mode Controls */}
             <div className="flex justify-center items-center flex-wrap gap-4">
               <Button
-                variant={editMode ? "default" : "outline"}
+                variant={editMode ? 'default' : 'outline'}
                 onClick={() => {
                   setEditMode(!editMode);
                   if (editMode) {
@@ -534,11 +541,11 @@ export default function SyllabusPage() {
                 <Settings className="h-4 w-4" />
                 <span>{editMode ? 'Exit Edit Mode' : 'Edit Syllabus'}</span>
               </Button>
-              
+
               {editMode && (
                 <>
                   <Button
-                    variant={bulkEditMode ? "default" : "outline"}
+                    variant={bulkEditMode ? 'default' : 'outline'}
                     onClick={() => {
                       setBulkEditMode(!bulkEditMode);
                       setSelectedTopics(new Set());
@@ -548,7 +555,7 @@ export default function SyllabusPage() {
                     <Layers className="h-4 w-4" />
                     <span>{bulkEditMode ? 'Exit Bulk Edit' : 'Bulk Edit'}</span>
                   </Button>
-                  
+
                   <Button
                     onClick={saveSyllabusChanges}
                     disabled={saving}
@@ -766,27 +773,33 @@ export default function SyllabusPage() {
                     <Info className="h-4 w-4 text-blue-600" />
                     <AlertDescription className="text-blue-800">
                       <div className="space-y-2">
-                        <p><strong>Edit Mode Active:</strong> You can now comprehensively manage your syllabus.</p>
+                        <p>
+                          <strong>Edit Mode Active:</strong> You can now comprehensively manage your syllabus.
+                        </p>
                         <div className="text-sm space-y-1">
-                          <p>• <strong>Topics:</strong> Add, edit, duplicate, and organize with detailed descriptions</p>
-                          <p>• <strong>Time Estimates:</strong> Set study hours for each topic</p>
-                          <p>• <strong>Bulk Actions:</strong> Select multiple topics for batch operations</p>
-                          <p>• <strong>Drag & Drop:</strong> Reorder topics within subjects</p>
+                          <p>
+                            • <strong>Topics:</strong> Add, edit, duplicate, and organize with detailed descriptions
+                          </p>
+                          <p>
+                            • <strong>Time Estimates:</strong> Set study hours for each topic
+                          </p>
+                          <p>
+                            • <strong>Bulk Actions:</strong> Select multiple topics for batch operations
+                          </p>
+                          <p>
+                            • <strong>Drag & Drop:</strong> Reorder topics within subjects
+                          </p>
                         </div>
                       </div>
                     </AlertDescription>
                   </Alert>
-                  
+
                   <div className="flex justify-center space-x-4">
-                    <Button
-                      variant="outline"
-                      onClick={addCustomSubject}
-                      className="flex items-center space-x-2"
-                    >
+                    <Button variant="outline" onClick={addCustomSubject} className="flex items-center space-x-2">
                       <Plus className="h-4 w-4" />
                       <span>Add Custom Subject</span>
                     </Button>
-                    
+
                     <Button
                       variant="outline"
                       onClick={() => {
@@ -818,7 +831,9 @@ export default function SyllabusPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4 flex-1">
                             {!editMode && (
-                              <ChevronRight className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                              <ChevronRight
+                                className={`h-5 w-5 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                              />
                             )}
                             {editMode && (
                               <Button
@@ -834,7 +849,7 @@ export default function SyllabusPage() {
                                 )}
                               </Button>
                             )}
-                            
+
                             <div className="flex-1">
                               {editMode && editingSubject === subject.id ? (
                                 <div className="flex items-center space-x-2">
@@ -948,7 +963,7 @@ export default function SyllabusPage() {
                           {editMode ? (
                             <div className="space-y-6">
                               <Separator />
-                              
+
                               {/* Topic Management Header */}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
@@ -967,7 +982,7 @@ export default function SyllabusPage() {
                                     <Plus className="h-3 w-3" />
                                     <span>Add Topic</span>
                                   </Button>
-                                  
+
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button size="sm" variant="ghost">
@@ -975,7 +990,9 @@ export default function SyllabusPage() {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                      <DropdownMenuItem onClick={() => addTopic(subject.id, { name: 'Quick Topic', estimatedHours: 3 })}>
+                                      <DropdownMenuItem
+                                        onClick={() => addTopic(subject.id, { name: 'Quick Topic', estimatedHours: 3 })}
+                                      >
                                         <Plus className="h-3 w-3 mr-2" />
                                         Quick Add Topic
                                       </DropdownMenuItem>
@@ -1000,16 +1017,16 @@ export default function SyllabusPage() {
                                     const isEditing = editingTopic === topic.id;
                                     const isSelected = selectedTopics.has(topic.id);
                                     const showDetails = showTopicDetails.has(topic.id);
-                                    
+
                                     return (
                                       <div
                                         key={topic.id}
                                         className={`group relative bg-white border-2 rounded-lg transition-all duration-200 ${
-                                          isSelected 
-                                            ? 'border-blue-500 bg-blue-50' 
-                                            : isEditing 
-                                            ? 'border-green-500 bg-green-50' 
-                                            : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                                          isSelected
+                                            ? 'border-blue-500 bg-blue-50'
+                                            : isEditing
+                                              ? 'border-green-500 bg-green-50'
+                                              : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                                         }`}
                                       >
                                         {/* Topic Header */}
@@ -1019,7 +1036,7 @@ export default function SyllabusPage() {
                                             <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                                               <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
                                             </div>
-                                            
+
                                             {/* Bulk Select Checkbox */}
                                             {bulkEditMode && (
                                               <input
@@ -1036,7 +1053,10 @@ export default function SyllabusPage() {
                                                 <div className="space-y-3">
                                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                     <div className="md:col-span-2">
-                                                      <Label htmlFor={`topic-name-${topic.id}`} className="text-xs font-medium text-gray-700">
+                                                      <Label
+                                                        htmlFor={`topic-name-${topic.id}`}
+                                                        className="text-xs font-medium text-gray-700"
+                                                      >
                                                         Topic Name
                                                       </Label>
                                                       <Input
@@ -1056,7 +1076,10 @@ export default function SyllabusPage() {
                                                       />
                                                     </div>
                                                     <div>
-                                                      <Label htmlFor={`topic-hours-${topic.id}`} className="text-xs font-medium text-gray-700">
+                                                      <Label
+                                                        htmlFor={`topic-hours-${topic.id}`}
+                                                        className="text-xs font-medium text-gray-700"
+                                                      >
                                                         Est. Hours
                                                       </Label>
                                                       <Input
@@ -1069,9 +1092,12 @@ export default function SyllabusPage() {
                                                       />
                                                     </div>
                                                   </div>
-                                                  
+
                                                   <div>
-                                                    <Label htmlFor={`topic-desc-${topic.id}`} className="text-xs font-medium text-gray-700">
+                                                    <Label
+                                                      htmlFor={`topic-desc-${topic.id}`}
+                                                      className="text-xs font-medium text-gray-700"
+                                                    >
                                                       Description (Optional)
                                                     </Label>
                                                     <Textarea
@@ -1095,11 +1121,14 @@ export default function SyllabusPage() {
                                                     )}
                                                   </div>
                                                   {topic.description && (
-                                                    <p className="text-sm text-gray-600 line-clamp-2">{topic.description}</p>
+                                                    <p className="text-sm text-gray-600 line-clamp-2">
+                                                      {topic.description}
+                                                    </p>
                                                   )}
                                                   {!showDetails && (topic.subtopics?.length || 0) > 0 && (
                                                     <p className="text-xs text-gray-500">
-                                                      {topic.subtopics?.length} subtopic{(topic.subtopics?.length || 0) !== 1 ? 's' : ''}
+                                                      {topic.subtopics?.length} subtopic
+                                                      {(topic.subtopics?.length || 0) !== 1 ? 's' : ''}
                                                     </p>
                                                   )}
                                                 </div>
@@ -1119,11 +1148,7 @@ export default function SyllabusPage() {
                                                   <Save className="h-3 w-3 mr-1" />
                                                   Save
                                                 </Button>
-                                                <Button
-                                                  size="sm"
-                                                  variant="outline"
-                                                  onClick={cancelEditing}
-                                                >
+                                                <Button size="sm" variant="outline" onClick={cancelEditing}>
                                                   <X className="h-3 w-3" />
                                                 </Button>
                                               </>
@@ -1135,9 +1160,13 @@ export default function SyllabusPage() {
                                                   onClick={() => toggleTopicDetails(topic.id)}
                                                   className="p-1"
                                                 >
-                                                  {showDetails ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                                                  {showDetails ? (
+                                                    <EyeOff className="h-3 w-3" />
+                                                  ) : (
+                                                    <Eye className="h-3 w-3" />
+                                                  )}
                                                 </Button>
-                                                
+
                                                 <DropdownMenu>
                                                   <DropdownMenuTrigger asChild>
                                                     <Button size="sm" variant="ghost" className="p-1">
@@ -1145,16 +1174,20 @@ export default function SyllabusPage() {
                                                     </Button>
                                                   </DropdownMenuTrigger>
                                                   <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={() => startEditingTopic(topic.id, topic)}>
+                                                    <DropdownMenuItem
+                                                      onClick={() => startEditingTopic(topic.id, topic)}
+                                                    >
                                                       <Edit3 className="h-3 w-3 mr-2" />
                                                       Edit Topic
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => duplicateTopic(subject.id, topic.id)}>
+                                                    <DropdownMenuItem
+                                                      onClick={() => duplicateTopic(subject.id, topic.id)}
+                                                    >
                                                       <Plus className="h-3 w-3 mr-2" />
                                                       Duplicate
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem 
+                                                    <DropdownMenuItem
                                                       onClick={() => removeTopic(subject.id, topic.id)}
                                                       className="text-red-600 focus:text-red-600"
                                                     >
@@ -1174,14 +1207,16 @@ export default function SyllabusPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                               <div>
                                                 <span className="font-medium text-gray-700">Estimated Study Time:</span>
-                                                <p className="text-gray-600">{topic.estimatedHours || 'Not set'} hours</p>
+                                                <p className="text-gray-600">
+                                                  {topic.estimatedHours || 'Not set'} hours
+                                                </p>
                                               </div>
                                               <div>
                                                 <span className="font-medium text-gray-700">Progress:</span>
                                                 <p className="text-gray-600">Not started</p>
                                               </div>
                                             </div>
-                                            
+
                                             {topic.subtopics && topic.subtopics.length > 0 && (
                                               <div>
                                                 <span className="font-medium text-gray-700 text-sm">Subtopics:</span>
@@ -1194,7 +1229,7 @@ export default function SyllabusPage() {
                                                 </div>
                                               </div>
                                             )}
-                                            
+
                                             {topic.description && (
                                               <div>
                                                 <span className="font-medium text-gray-700 text-sm">Description:</span>

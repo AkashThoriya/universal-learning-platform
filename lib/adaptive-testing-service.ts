@@ -1,0 +1,916 @@
+/**
+ * @fileoverview Adaptive Testing Service
+ * Integrates with existing Mission System, Progress Service, and Journey Planning
+ */
+
+import { AdaptiveAlgorithm, SpecializedAdaptiveAlgorithms } from '@/lib/adaptive-testing-algorithms';
+import { adaptiveTestingRecommendationEngine } from '@/lib/adaptive-testing-recommendation-engine';
+import { EXAMS_DATA } from '@/lib/exams-data';
+import { adaptiveTestingFirebaseService } from '@/lib/firebase-services';
+import { Result, createSuccess, createError } from '@/lib/types-utils';
+import {
+  AdaptiveTest,
+  AdaptiveQuestion,
+  TestSession,
+  TestResponse,
+  CreateAdaptiveTestRequest,
+  StartTestSessionRequest,
+  SubmitResponseRequest,
+  TestPerformance,
+  AdaptiveMetrics,
+  TestRecommendation,
+  TestAnalyticsData,
+  AdaptiveTestProgressUpdate,
+} from '@/types/adaptive-testing';
+import { LearningTrack, MissionDifficulty } from '@/types/mission-system';
+
+export class AdaptiveTestingService {
+  private static instance: AdaptiveTestingService;
+  private activeSessions: Map<string, TestSession> = new Map();
+
+  static getInstance(): AdaptiveTestingService {
+    if (!AdaptiveTestingService.instance) {
+      AdaptiveTestingService.instance = new AdaptiveTestingService();
+    }
+    return AdaptiveTestingService.instance;
+  }
+
+  /**
+   * Create adaptive test from journey alignment
+   */
+  async createTestFromJourney(
+    userId: string,
+    journeyId: string,
+    testConfig: Partial<CreateAdaptiveTestRequest>
+  ): Promise<Result<AdaptiveTest>> {
+    try {
+      // Get journey details to align test
+      const journeyResult = await this.getJourneyDetails(journeyId);
+      if (!journeyResult.success) {
+        return createError(new Error('Journey not found'));
+      }
+
+      const journey = journeyResult.data;
+
+      // Generate test aligned with journey goals
+      const test: AdaptiveTest = {
+        id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId,
+        title: testConfig.title || `${journey.title} - Adaptive Assessment`,
+        description: testConfig.description || `Adaptive test for ${journey.title} journey`,
+        ...(journeyId && { linkedJourneyId: journeyId }),
+        linkedSubjects: journey.customGoals?.flatMap((goal: any) => goal.linkedSubjects) || [],
+        track: journey.track || 'exam',
+        totalQuestions: testConfig.targetQuestions || 20,
+        estimatedDuration: (testConfig.targetQuestions || 20) * 2, // 2 minutes per question
+        difficultyRange: {
+          min: 'beginner',
+          max: 'expert',
+        },
+        algorithmType: testConfig.algorithmType || 'CAT',
+        convergenceThreshold: 0.3,
+        initialDifficulty: 'intermediate',
+        status: 'draft',
+        currentQuestion: 0,
+        questions: [],
+        responses: [],
+        performance: this.initializePerformance(),
+        adaptiveMetrics: this.initializeMetrics(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdFrom: 'journey',
+      };
+
+      // Generate question bank for this test
+      const questionsResult = await this.generateQuestionBank(test);
+      if (!questionsResult.success) {
+        return questionsResult;
+      }
+
+      test.questions = questionsResult.data;
+      test.status = 'active';
+
+      // Save to Firebase
+      return await adaptiveTestingFirebaseService.createAdaptiveTest(userId, test);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create test from journey'));
+    }
+  }
+
+  /**
+   * Create adaptive test from manual configuration
+   */
+  async createAdaptiveTest(userId: string, request: CreateAdaptiveTestRequest): Promise<Result<AdaptiveTest>> {
+    try {
+      const test: AdaptiveTest = {
+        id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        userId,
+        title: request.title,
+        description: request.description,
+        linkedJourneyId: request.linkedJourneyId,
+        linkedSubjects: request.subjects,
+        track: request.track,
+        totalQuestions: request.targetQuestions,
+        estimatedDuration: request.targetQuestions * 2, // 2 minutes per question
+        difficultyRange: {
+          min: 'beginner',
+          max: 'expert',
+        },
+        algorithmType: request.algorithmType,
+        convergenceThreshold: 0.3,
+        initialDifficulty: 'intermediate',
+        status: 'draft',
+        currentQuestion: 0,
+        questions: [],
+        responses: [],
+        performance: this.initializePerformance(),
+        adaptiveMetrics: this.initializeMetrics(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdFrom: 'manual',
+      };
+
+      // Generate question bank for this test
+      const questionsResult = await this.generateQuestionBank(test);
+      if (!questionsResult.success) {
+        return questionsResult;
+      }
+
+      test.questions = questionsResult.data;
+      test.status = 'active';
+
+      // Save to Firebase
+      return await adaptiveTestingFirebaseService.createAdaptiveTest(userId, test);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create adaptive test'));
+    }
+  }
+
+  /**
+   * Start an adaptive test session
+   */
+  async startTestSession(userId: string, request: StartTestSessionRequest): Promise<Result<TestSession>> {
+    try {
+      // Get test details
+      const testResult = await adaptiveTestingFirebaseService.getAdaptiveTest(request.testId);
+      if (!testResult.success || !testResult.data) {
+        return createError(new Error('Test not found'));
+      }
+
+      const test = testResult.data;
+
+      // Validate user permissions
+      if (test.userId !== userId) {
+        return createError(new Error('Unauthorized access to test'));
+      }
+
+      // Create session
+      const session: TestSession = {
+        id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        testId: request.testId,
+        userId,
+        startedAt: new Date(),
+        lastActivity: new Date(),
+        currentQuestionIndex: test.currentQuestion,
+        timeRemaining: (request.estimatedDuration || test.estimatedDuration) * 60 * 1000,
+        isPaused: false,
+        pauseReasons: [],
+        currentAbilityEstimate: 0,
+        currentStandardError: 1,
+        sessionMetrics: {
+          questionsAnswered: 0,
+          averageResponseTime: 0,
+          peakPerformanceTime: new Date(),
+          fatigueIndicators: [],
+        },
+      };
+
+      // Select first question
+      const firstQuestion = this.selectFirstQuestion(test);
+      if (firstQuestion) {
+        session.nextQuestionPreview = firstQuestion;
+      }
+
+      // Store session
+      this.activeSessions.set(session.id, session);
+
+      // Save to Firebase
+      const result = await adaptiveTestingFirebaseService.startTestSession(session);
+
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to start test session'));
+    }
+  }
+
+  /**
+   * Submit response and get next question
+   */
+  async submitResponse(
+    userId: string,
+    request: SubmitResponseRequest
+  ): Promise<Result<{ nextQuestion?: AdaptiveQuestion; testCompleted: boolean; performance?: TestPerformance }>> {
+    try {
+      const session = this.activeSessions.get(request.sessionId);
+      if (!session || session.userId !== userId) {
+        return createError(new Error('Invalid session'));
+      }
+
+      const testResult = await adaptiveTestingFirebaseService.getAdaptiveTest(session.testId);
+      if (!testResult.success || !testResult.data) {
+        return createError(new Error('Test not found'));
+      }
+
+      const test = testResult.data;
+      const question = test.questions.find(q => q.id === request.questionId);
+      if (!question) {
+        return createError(new Error('Question not found'));
+      }
+
+      // Evaluate response
+      const isCorrect = this.evaluateResponse(question, request.answer);
+
+      // Create response record
+      const response: TestResponse = {
+        questionId: request.questionId,
+        userAnswer: request.answer,
+        isCorrect,
+        responseTime: request.responseTime,
+        ...(request.confidence !== undefined && { confidence: request.confidence }),
+        timestamp: new Date(),
+        estimatedAbility: session.currentAbilityEstimate,
+        questionDifficulty: question.difficulty,
+        informationGained: 0, // Will be calculated
+      };
+
+      // Update test responses
+      test.responses.push(response);
+
+      // Update ability estimate using adaptive algorithm
+      const newAbility = AdaptiveAlgorithm.estimateAbility(test.responses, test.questions);
+      const standardError = AdaptiveAlgorithm.calculateStandardError(test.responses, test.questions, newAbility);
+
+      // Calculate information gained from this response
+      response.informationGained = Math.abs(newAbility - session.currentAbilityEstimate);
+
+      // Update session
+      session.currentAbilityEstimate = newAbility;
+      session.currentStandardError = standardError;
+      session.lastActivity = new Date();
+      session.sessionMetrics.questionsAnswered++;
+      session.currentQuestionIndex++;
+
+      // Update fatigue indicators
+      this.updateFatigueIndicators(session, request.responseTime);
+
+      // Determine if test should continue
+      const shouldContinue = AdaptiveAlgorithm.shouldContinueTesting(
+        test.responses,
+        test.questions,
+        newAbility,
+        test.totalQuestions,
+        test.convergenceThreshold
+      );
+
+      let nextQuestion: AdaptiveQuestion | undefined;
+      let testCompleted = false;
+
+      if (shouldContinue) {
+        // Select next question using adaptive algorithm
+        const availableQuestions = test.questions.filter(q => !test.responses.some(r => r.questionId === q.id));
+
+        if (test.linkedJourneyId) {
+          // Use journey-focused selection if linked to journey
+          const journeyResult = await this.getJourneyDetails(test.linkedJourneyId);
+          if (journeyResult.success) {
+            nextQuestion =
+              SpecializedAdaptiveAlgorithms.journeyFocusedSelection(
+                availableQuestions,
+                newAbility,
+                journeyResult.data.customGoals || [],
+                test.responses
+              ) || undefined;
+          }
+        }
+
+        // Fallback to standard adaptive selection
+        if (!nextQuestion) {
+          nextQuestion =
+            AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) || undefined;
+        }
+
+        session.nextQuestionPreview = nextQuestion;
+      } else {
+        // Test completed
+        testCompleted = true;
+        test.status = 'completed';
+        test.completedAt = new Date();
+        test.currentQuestion = test.responses.length;
+
+        // Calculate final performance
+        test.performance = this.calculateTestPerformance(test.responses, test.questions);
+        test.adaptiveMetrics = AdaptiveAlgorithm.generateAdaptiveMetrics(
+          test.responses,
+          test.questions,
+          newAbility,
+          test.algorithmType
+        );
+
+        // Update integrated systems
+        await this.updateIntegratedSystems(test, userId);
+
+        // Complete the test in Firebase
+        await adaptiveTestingFirebaseService.completeTest(test.id, test.performance, test.adaptiveMetrics);
+      }
+
+      // Save response to Firebase
+      await adaptiveTestingFirebaseService.submitTestResponse(response);
+
+      // Update test progress
+      await adaptiveTestingFirebaseService.updateTest(test.id, {
+        currentQuestion: test.currentQuestion,
+        responses: test.responses,
+        status: test.status,
+        updatedAt: new Date(),
+      });
+
+      return createSuccess({
+        nextQuestion,
+        testCompleted,
+        performance: testCompleted ? test.performance : undefined,
+      });
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to submit response'));
+    }
+  }
+
+  /**
+   * Generate personalized test recommendations using AI engine
+   */
+  async generateTestRecommendations(userId: string, maxRecommendations = 5): Promise<Result<TestRecommendation[]>> {
+    try {
+      const result = await adaptiveTestingRecommendationEngine.generateRecommendations(userId, maxRecommendations);
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate test recommendations'));
+    }
+  }
+
+  /**
+   * Generate quick test recommendations for immediate use
+   */
+  async generateQuickRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
+    try {
+      const result = await adaptiveTestingRecommendationEngine.generateQuickAssessmentRecommendations(userId, 3);
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate quick recommendations'));
+    }
+  }
+
+  /**
+   * Generate recommendations focused on weak areas
+   */
+  async generateWeakAreaRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
+    try {
+      const result = await adaptiveTestingRecommendationEngine.generateWeakAreaRecommendations(userId, 3);
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate weak area recommendations'));
+    }
+  }
+
+  /**
+   * Generate recommendations aligned with active missions
+   */
+  async generateMissionAlignedRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
+    try {
+      const result = await adaptiveTestingRecommendationEngine.generateMissionAlignedRecommendations(userId, 3);
+      return result;
+    } catch (error) {
+      return createError(
+        error instanceof Error ? error : new Error('Failed to generate mission-aligned recommendations')
+      );
+    }
+  }
+
+  /**
+   * Create a test from a recommendation
+   */
+  async createTestFromRecommendation(recommendation: TestRecommendation): Promise<Result<AdaptiveTest>> {
+    try {
+      const testConfig: CreateAdaptiveTestRequest = {
+        title: recommendation.title,
+        description: recommendation.description,
+        subjects: recommendation.subjects,
+        difficultyRange: recommendation.adaptiveConfig?.difficultyRange || { min: 'beginner', max: 'intermediate' },
+        algorithmType: recommendation.adaptiveConfig?.algorithmType || 'CAT',
+        convergenceCriteria: recommendation.adaptiveConfig?.convergenceCriteria || {
+          standardError: 0.3,
+          minQuestions: 10,
+          maxQuestions: recommendation.questionCount || 20,
+        },
+        totalQuestions: recommendation.questionCount || 20,
+        estimatedDuration: recommendation.estimatedDuration || 30,
+        tags: recommendation.tags || [],
+      };
+
+      const result = await adaptiveTestingFirebaseService.createAdaptiveTest(testConfig);
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create test from recommendation'));
+    }
+  }
+
+  /**
+   * Create a test from a template (for retakes)
+   */
+  async createTestFromTemplate(originalTest: AdaptiveTest): Promise<Result<AdaptiveTest>> {
+    try {
+      const testConfig: CreateAdaptiveTestRequest = {
+        title: `${originalTest.title} (Retake)`,
+        description: originalTest.description,
+        subjects: originalTest.linkedSubjects,
+        difficultyRange: originalTest.difficultyRange,
+        algorithmType: originalTest.algorithmType,
+        convergenceCriteria: originalTest.convergenceCriteria,
+        totalQuestions: originalTest.totalQuestions,
+        estimatedDuration: originalTest.estimatedDuration,
+        tags: [...(originalTest.tags || []), 'retake'],
+      };
+
+      const result = await adaptiveTestingFirebaseService.createAdaptiveTest(testConfig);
+      return result;
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create test from template'));
+    }
+  }
+
+  /**
+   * Get user's tests
+   */
+  async getUserTests(userId?: string): Promise<AdaptiveTest[]> {
+    try {
+      if (!userId) {
+        return [];
+      }
+
+      const result = await adaptiveTestingFirebaseService.getUserTests(userId);
+      return result.success ? result.data : [];
+    } catch (error) {
+      console.error('Error getting user tests:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get comprehensive test analytics
+   */
+  async getTestAnalytics(userId: string, dateRange?: { start: Date; end: Date }): Promise<Result<TestAnalyticsData>> {
+    try {
+      return await adaptiveTestingFirebaseService.getTestAnalytics(userId, dateRange);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get test analytics'));
+    }
+  }
+
+  /**
+   * Pause an active test session
+   */
+  async pauseTestSession(sessionId: string, reason: string): Promise<Result<void>> {
+    try {
+      const session = this.activeSessions.get(sessionId);
+      if (!session) {
+        return createError(new Error('Session not found'));
+      }
+
+      session.isPaused = true;
+      session.pauseReasons.push(reason);
+      session.lastActivity = new Date();
+
+      // Update in Firebase
+      const sessionResult = await adaptiveTestingFirebaseService.getTestSession(sessionId);
+      if (sessionResult.success && sessionResult.data) {
+        await adaptiveTestingFirebaseService.updateTest(sessionResult.data.testId, {
+          status: 'paused',
+          updatedAt: new Date(),
+        });
+      }
+
+      return createSuccess(undefined);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to pause test session'));
+    }
+  }
+
+  /**
+   * Resume a paused test session
+   */
+  async resumeTestSession(sessionId: string): Promise<Result<TestSession>> {
+    try {
+      const session = this.activeSessions.get(sessionId);
+      if (!session) {
+        return createError(new Error('Session not found'));
+      }
+
+      session.isPaused = false;
+      session.lastActivity = new Date();
+
+      // Update in Firebase
+      const sessionResult = await adaptiveTestingFirebaseService.getTestSession(sessionId);
+      if (sessionResult.success && sessionResult.data) {
+        await adaptiveTestingFirebaseService.updateTest(sessionResult.data.testId, {
+          status: 'active',
+          updatedAt: new Date(),
+        });
+      }
+
+      return createSuccess(session);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to resume test session'));
+    }
+  }
+
+  // Private helper methods
+
+  private async getJourneyDetails(journeyId: string): Promise<Result<any>> {
+    // Integration with journey service
+    try {
+      // This would call the journey service to get journey details
+      // For now, return a mock implementation
+      return createSuccess({
+        id: journeyId,
+        title: 'Sample Journey',
+        track: 'exam' as LearningTrack,
+        customGoals: [
+          {
+            linkedSubjects: ['Mathematics', 'Physics', 'Chemistry'],
+            title: 'Science Mastery',
+          },
+        ],
+      });
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get journey details'));
+    }
+  }
+
+  private async generateQuestionBank(test: AdaptiveTest): Promise<Result<AdaptiveQuestion[]>> {
+    try {
+      const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+
+      // First try to get questions from Firebase
+      const firebaseResult = await adaptiveTestingFirebaseService.getQuestionBank(
+        test.linkedSubjects,
+        difficulties,
+        test.totalQuestions * 3 // Get 3x questions for selection flexibility
+      );
+
+      if (firebaseResult.success && firebaseResult.data.length >= test.totalQuestions) {
+        return firebaseResult;
+      }
+
+      // If insufficient questions in Firebase, generate using LLM
+      const { llmService } = await import('@/lib/llm-service');
+
+      if (llmService.isAvailable()) {
+        const questionsNeeded = test.totalQuestions * 2; // Generate 2x for selection flexibility
+        const primaryDifficulty = this.determinePrimaryDifficulty(test);
+
+        const llmResult = await llmService.generateAdaptiveQuestions(
+          {
+            subjects: test.linkedSubjects,
+            topics: test.linkedTopics || [],
+            difficulty: primaryDifficulty,
+            questionCount: questionsNeeded,
+            questionType: 'multiple_choice',
+            examContext: test.examContext,
+            learningObjectives: test.learningObjectives,
+          },
+          {
+            provider: 'gemini',
+            temperature: 0.7,
+            includeExplanations: true,
+            difficultyProgression: true,
+            adaptive: true,
+          }
+        );
+
+        if (llmResult.success && llmResult.data) {
+          // Save generated questions to Firebase for future use
+          await this.saveGeneratedQuestions(llmResult.data, test.linkedSubjects);
+
+          // Combine with any existing Firebase questions
+          const allQuestions = [...(firebaseResult.data || []), ...llmResult.data];
+          return createSuccess(allQuestions);
+        }
+        console.warn('LLM question generation failed:', llmResult.error);
+      }
+
+      // Fallback: generate mock questions if LLM is not available
+      console.warn('Using mock questions as fallback for test generation');
+      const mockQuestions = this.generateMockQuestions(test.linkedSubjects, test.totalQuestions * 2);
+      return createSuccess(mockQuestions);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to generate question bank'));
+    }
+  }
+
+  private determinePrimaryDifficulty(test: AdaptiveTest): MissionDifficulty {
+    // Determine the most appropriate difficulty level for LLM question generation
+    // based on test configuration and target user ability
+    const { initialDifficulty, difficultyRange } = test;
+
+    // If initial difficulty is set, use it as primary
+    if (initialDifficulty) {
+      return initialDifficulty;
+    }
+
+    // Otherwise, choose the middle of the difficulty range
+    const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+    const minIndex = difficulties.indexOf(difficultyRange.min);
+    const maxIndex = difficulties.indexOf(difficultyRange.max);
+    const midIndex = Math.floor((minIndex + maxIndex) / 2);
+
+    return difficulties[midIndex] || 'intermediate';
+  }
+
+  private async saveGeneratedQuestions(questions: AdaptiveQuestion[], subjects: string[]): Promise<void> {
+    try {
+      // Save generated questions to Firebase for future reuse
+      // This helps build up a question bank over time
+      const saveResult = await adaptiveTestingFirebaseService.saveQuestions(questions);
+      if (!saveResult.success) {
+        console.warn('Failed to save questions:', saveResult.error);
+      }
+    } catch (error) {
+      // Don't fail the test if saving questions fails
+      console.warn('Failed to save generated questions to Firebase:', error);
+    }
+  }
+
+  private mapDifficultyToNumeric(difficulty: MissionDifficulty): number {
+    const mapping = {
+      beginner: 1,
+      intermediate: 2,
+      advanced: 3,
+      expert: 4,
+    };
+    return mapping[difficulty] || 2;
+  }
+
+  private generateMockQuestions(subjects: string[], count: number): AdaptiveQuestion[] {
+    const questions: AdaptiveQuestion[] = [];
+    const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+    const bloomsLevels = ['remember', 'understand', 'apply', 'analyze', 'evaluate', 'create'] as const;
+
+    for (let i = 0; i < count; i++) {
+      const subject = subjects[i % subjects.length];
+      const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+      const bloomsLevel = bloomsLevels[Math.floor(Math.random() * bloomsLevels.length)];
+
+      questions.push({
+        id: `q_${i + 1}_${Date.now()}`,
+        question: `Sample ${difficulty} question about ${subject} - Question ${i + 1}`,
+        options: ['A) Option A (Correct)', 'B) Option B', 'C) Option C', 'D) Option D'],
+        correctAnswer: 'A',
+        explanation: `This is the explanation for the ${subject} question.`,
+        difficulty: this.mapDifficultyToNumeric(difficulty),
+        discriminationIndex: 0.5 + Math.random() * 0.4, // 0.5 to 0.9
+        guessingParameter: 0.25, // Standard for 4-option MCQ
+        subject,
+        topics: [`${subject} Topic ${Math.floor(i / 5) + 1}`],
+        bloomsLevel,
+        timeLimit: 120, // 2 minutes
+        timesAsked: 0,
+        averageResponseTime: 60000, // 1 minute default
+        successRate: 0.5 + Math.random() * 0.4, // 50% to 90%
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'mock',
+        validated: false,
+        qualityScore: 0.7,
+        metaTags: [subject.toLowerCase(), difficulty, 'mock'],
+      });
+    }
+
+    return questions;
+  }
+
+  private selectFirstQuestion(test: AdaptiveTest): AdaptiveQuestion | null {
+    // Start with intermediate difficulty question from first subject
+    const intermediateQuestions = test.questions.filter(q => q.difficulty === 'intermediate');
+    return intermediateQuestions.length > 0 ? intermediateQuestions[0] : test.questions[0] || null;
+  }
+
+  private evaluateResponse(question: AdaptiveQuestion, userAnswer: string | string[]): boolean {
+    const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+    const { correctAnswers } = question;
+
+    // Check if all correct answers are provided and no incorrect ones
+    return (
+      correctAnswers.length === userAnswers.length && correctAnswers.every(correct => userAnswers.includes(correct))
+    );
+  }
+
+  private updateFatigueIndicators(session: TestSession, responseTime: number): void {
+    // Track response time pattern to detect fatigue
+    session.sessionMetrics.fatigueIndicators.push(responseTime);
+
+    // Keep only last 5 response times
+    if (session.sessionMetrics.fatigueIndicators.length > 5) {
+      session.sessionMetrics.fatigueIndicators.shift();
+    }
+
+    // Update average response time
+    const times = session.sessionMetrics.fatigueIndicators;
+    session.sessionMetrics.averageResponseTime = times.reduce((a, b) => a + b, 0) / times.length;
+  }
+
+  private calculateTestPerformance(responses: TestResponse[], questions: AdaptiveQuestion[]): TestPerformance {
+    const correctAnswers = responses.filter(r => r.isCorrect).length;
+    const totalTime = responses.reduce((sum, r) => sum + r.responseTime, 0);
+    const averageResponseTime = totalTime / responses.length;
+
+    // Calculate subject-wise performance
+    const subjectPerformance: Record<string, any> = {};
+    const subjects = [...new Set(questions.map(q => q.subject))];
+
+    subjects.forEach(subject => {
+      const subjectQuestions = questions.filter(q => q.subject === subject);
+      const subjectResponses = responses.filter(r => subjectQuestions.some(q => q.id === r.questionId));
+
+      if (subjectResponses.length > 0) {
+        const subjectCorrect = subjectResponses.filter(r => r.isCorrect).length;
+        subjectPerformance[subject] = {
+          subjectId: subject,
+          questionsAnswered: subjectResponses.length,
+          correctAnswers: subjectCorrect,
+          accuracy: (subjectCorrect / subjectResponses.length) * 100,
+          averageTime: subjectResponses.reduce((sum, r) => sum + r.responseTime, 0) / subjectResponses.length,
+          abilityEstimate: 0, // Would be calculated using IRT
+        };
+      }
+    });
+
+    // Calculate difficulty-wise performance
+    const difficultyPerformance: Record<string, any> = {};
+    const difficulties = ['beginner', 'intermediate', 'advanced', 'expert'];
+
+    difficulties.forEach(difficulty => {
+      const difficultyQuestions = questions.filter(q => q.difficulty === difficulty);
+      const difficultyResponses = responses.filter(r => difficultyQuestions.some(q => q.id === r.questionId));
+
+      if (difficultyResponses.length > 0) {
+        const difficultyCorrect = difficultyResponses.filter(r => r.isCorrect).length;
+        difficultyPerformance[difficulty] = {
+          difficulty: difficulty as MissionDifficulty,
+          questionsAnswered: difficultyResponses.length,
+          correctAnswers: difficultyCorrect,
+          accuracy: (difficultyCorrect / difficultyResponses.length) * 100,
+          averageTime: difficultyResponses.reduce((sum, r) => sum + r.responseTime, 0) / difficultyResponses.length,
+        };
+      }
+    });
+
+    // Calculate Bloom's taxonomy performance
+    const bloomsPerformance: Record<string, number> = {};
+    const bloomsLevels = ['remember', 'understand', 'apply', 'analyze', 'evaluate', 'create'];
+
+    bloomsLevels.forEach(level => {
+      const levelQuestions = questions.filter(q => q.bloomsLevel === level);
+      const levelResponses = responses.filter(r => levelQuestions.some(q => q.id === r.questionId));
+
+      if (levelResponses.length > 0) {
+        const levelCorrect = levelResponses.filter(r => r.isCorrect).length;
+        bloomsPerformance[level] = (levelCorrect / levelResponses.length) * 100;
+      }
+    });
+
+    const finalAbilityEstimate = AdaptiveAlgorithm.estimateAbility(responses, questions);
+    const standardError = AdaptiveAlgorithm.calculateStandardError(responses, questions, finalAbilityEstimate);
+
+    return {
+      totalQuestions: responses.length,
+      correctAnswers,
+      accuracy: (correctAnswers / responses.length) * 100,
+      averageResponseTime,
+      totalTime,
+      subjectPerformance,
+      difficultyPerformance,
+      bloomsPerformance,
+      finalAbilityEstimate,
+      abilityConfidenceInterval: [
+        finalAbilityEstimate - 1.96 * standardError,
+        finalAbilityEstimate + 1.96 * standardError,
+      ],
+      standardError,
+    };
+  }
+
+  private async updateIntegratedSystems(test: AdaptiveTest, userId: string): Promise<void> {
+    try {
+      // Update progress service with test results
+      if (test.performance && test.adaptiveMetrics) {
+        const progressUpdate: AdaptiveTestProgressUpdate = {
+          userId,
+          testResults: test.performance,
+          testMetadata: {
+            subjects: test.linkedSubjects,
+            track: test.track,
+            algorithmType: test.algorithmType,
+          },
+        };
+
+        // Update progress service with adaptive test results
+        const { progressService } = await import('@/lib/progress-service');
+        const progressResult = await progressService.updateProgressFromAdaptiveTest(progressUpdate);
+        if (!progressResult.success) {
+          console.warn('Failed to update progress from adaptive test:', progressResult.error);
+        }
+      }
+
+      // Update mission system based on test results
+      if (test.performance && test.adaptiveMetrics) {
+        const { missionService } = await import('@/lib/mission-service');
+        const testMetadata = {
+          subjects: test.linkedSubjects,
+          track: test.track,
+        };
+        const missionResult = await missionService.adjustMissionDifficultyFromTest(
+          userId,
+          test.performance,
+          testMetadata
+        );
+        if (!missionResult.success) {
+          console.warn('Failed to adjust mission difficulty from test:', missionResult.error);
+        }
+      }
+
+      // Update journey progress if linked
+      if (test.linkedJourneyId) {
+        await this.updateJourneyProgress(test);
+      }
+    } catch (error) {
+      console.error('Failed to update integrated systems:', error);
+    }
+  }
+
+  private async updateJourneyProgress(test: AdaptiveTest): Promise<void> {
+    // Integration with journey service to update progress based on test results
+    if (test.linkedJourneyId && test.performance && test.adaptiveMetrics) {
+      const goalUpdate = test.adaptiveMetrics.progressImpact.journeyGoalUpdate;
+      // This would call journey service to update goal progress
+      console.info(`Journey ${test.linkedJourneyId} progress updated by ${goalUpdate}`);
+    }
+  }
+
+  private async getUserProgressData(userId: string): Promise<Result<any>> {
+    // This would gather data from progress service
+    try {
+      return createSuccess({
+        progress: {
+          subjectProgress: {
+            Mathematics: { averageScore: 65 },
+            Physics: { averageScore: 78 },
+            Chemistry: { averageScore: 72 },
+          },
+        },
+      });
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('User progress data integration not implemented'));
+    }
+  }
+
+  private initializePerformance(): TestPerformance {
+    return {
+      totalQuestions: 0,
+      correctAnswers: 0,
+      accuracy: 0,
+      averageResponseTime: 0,
+      totalTime: 0,
+      subjectPerformance: {},
+      difficultyPerformance: {},
+      bloomsPerformance: {},
+      finalAbilityEstimate: 0,
+      abilityConfidenceInterval: [0, 0],
+      standardError: 1,
+    };
+  }
+
+  private initializeMetrics(): AdaptiveMetrics {
+    return {
+      algorithmEfficiency: 0,
+      questionUtilization: 0,
+      abilityEstimateStability: 0,
+      convergenceHistory: [],
+      progressImpact: {
+        missionDifficultyAdjustment: 0,
+        journeyGoalUpdate: 0,
+        trackProgressContribution: 0,
+      },
+    };
+  }
+}
+
+// Export singleton instance
+export const adaptiveTestingService = AdaptiveTestingService.getInstance();

@@ -9,13 +9,10 @@
  */
 
 import { logError, logInfo } from './logger';
-import type { 
-  LearningInsights,
-  UnifiedLearningProgress 
-} from './universal-learning-analytics';
+import type { LearningInsights, UnifiedLearningProgress } from './universal-learning-analytics';
 
 // Learning recommendation categories
-export type RecommendationType = 
+export type RecommendationType =
   | 'study_schedule'
   | 'topic_focus'
   | 'learning_method'
@@ -131,14 +128,14 @@ class LearningRecommendationsService {
       const recommendations: EnhancedLearningRecommendation[] = [];
 
       // Generate different types of recommendations
-      recommendations.push(...await this.generateScheduleRecommendations(context));
-      recommendations.push(...await this.generateTopicFocusRecommendations(context));
-      recommendations.push(...await this.generateLearningMethodRecommendations(context));
-      recommendations.push(...await this.generateGoalAdjustmentRecommendations(context));
-      recommendations.push(...await this.generateResourceRecommendations(context));
-      recommendations.push(...await this.generateTimeManagementRecommendations(context));
-      recommendations.push(...await this.generateSkillDevelopmentRecommendations(context));
-      recommendations.push(...await this.generatePerformanceOptimizationRecommendations(context));
+      recommendations.push(...(await this.generateScheduleRecommendations(context)));
+      recommendations.push(...(await this.generateTopicFocusRecommendations(context)));
+      recommendations.push(...(await this.generateLearningMethodRecommendations(context)));
+      recommendations.push(...(await this.generateGoalAdjustmentRecommendations(context)));
+      recommendations.push(...(await this.generateResourceRecommendations(context)));
+      recommendations.push(...(await this.generateTimeManagementRecommendations(context)));
+      recommendations.push(...(await this.generateSkillDevelopmentRecommendations(context)));
+      recommendations.push(...(await this.generatePerformanceOptimizationRecommendations(context)));
 
       // Sort by priority and expected impact
       const sortedRecommendations = this.prioritizeRecommendations(recommendations, context);
@@ -166,9 +163,7 @@ class LearningRecommendationsService {
   /**
    * Generate study schedule recommendations
    */
-  private async generateScheduleRecommendations(
-    context: LearningContext
-  ): Promise<EnhancedLearningRecommendation[]> {
+  private async generateScheduleRecommendations(context: LearningContext): Promise<EnhancedLearningRecommendation[]> {
     const recommendations: EnhancedLearningRecommendation[] = [];
 
     // Check for inconsistent study patterns
@@ -177,7 +172,8 @@ class LearningRecommendationsService {
         id: 'schedule-consistency',
         type: 'study_schedule',
         title: 'Improve Study Consistency',
-        description: 'Your study pattern shows inconsistency. Establish a regular study schedule to improve retention and progress.',
+        description:
+          'Your study pattern shows inconsistency. Establish a regular study schedule to improve retention and progress.',
         priority: 'high',
         actionable: true,
         category: 'study_schedule',
@@ -258,9 +254,7 @@ class LearningRecommendationsService {
   /**
    * Generate topic focus recommendations
    */
-  private async generateTopicFocusRecommendations(
-    context: LearningContext
-  ): Promise<EnhancedLearningRecommendation[]> {
+  private async generateTopicFocusRecommendations(context: LearningContext): Promise<EnhancedLearningRecommendation[]> {
     const recommendations: EnhancedLearningRecommendation[] = [];
 
     // Focus on weak areas for exam preparation
@@ -307,7 +301,8 @@ class LearningRecommendationsService {
         id: 'goal-prioritization',
         type: 'topic_focus',
         title: 'Focus on Fewer Goals Simultaneously',
-        description: 'You have many active learning goals. Focus on 2-3 primary goals for better progress and completion.',
+        description:
+          'You have many active learning goals. Focus on 2-3 primary goals for better progress and completion.',
         priority: 'medium',
         actionable: true,
         category: 'topic_focus',
@@ -356,7 +351,8 @@ class LearningRecommendationsService {
         id: 'active-learning',
         type: 'learning_method',
         title: 'Implement Active Learning Techniques',
-        description: 'Your retention rate suggests passive learning. Try active techniques like self-testing and teaching concepts aloud.',
+        description:
+          'Your retention rate suggests passive learning. Try active techniques like self-testing and teaching concepts aloud.',
         priority: 'high',
         actionable: true,
         category: 'learning_method',
@@ -399,7 +395,8 @@ class LearningRecommendationsService {
         id: 'pomodoro-technique',
         type: 'learning_method',
         title: 'Use the Pomodoro Technique',
-        description: 'Break study sessions into focused 25-minute intervals to improve concentration and prevent burnout.',
+        description:
+          'Break study sessions into focused 25-minute intervals to improve concentration and prevent burnout.',
         priority: 'medium',
         actionable: true,
         category: 'learning_method',
@@ -458,7 +455,8 @@ class LearningRecommendationsService {
           id: 'timeline-adjustment',
           type: 'goal_adjustment',
           title: 'Adjust Study Timeline and Expectations',
-          description: 'With limited time remaining, focus on high-impact topics and consider extending your preparation timeline.',
+          description:
+            'With limited time remaining, focus on high-impact topics and consider extending your preparation timeline.',
           priority: 'urgent',
           actionable: true,
           category: 'goal_adjustment',
@@ -497,9 +495,7 @@ class LearningRecommendationsService {
   /**
    * Generate resource recommendations
    */
-  private async generateResourceRecommendations(
-    context: LearningContext
-  ): Promise<EnhancedLearningRecommendation[]> {
+  private async generateResourceRecommendations(context: LearningContext): Promise<EnhancedLearningRecommendation[]> {
     const recommendations: EnhancedLearningRecommendation[] = [];
 
     // Suggest complementary learning resources
@@ -508,7 +504,8 @@ class LearningRecommendationsService {
         id: 'resource-diversification',
         type: 'resource_suggestion',
         title: 'Diversify Your Learning Resources',
-        description: 'Combine different types of learning materials (videos, articles, interactive content) for better understanding.',
+        description:
+          'Combine different types of learning materials (videos, articles, interactive content) for better understanding.',
         priority: 'low',
         actionable: true,
         category: 'resource_suggestion',
@@ -553,12 +550,14 @@ class LearningRecommendationsService {
 
     // Check for time allocation efficiency
     const totalWeeklyTime = Object.values(context.timeConstraints.weeklySchedule).reduce((a, b) => a + b, 0);
-    if (totalWeeklyTime < 300) { // Less than 5 hours per week
+    if (totalWeeklyTime < 300) {
+      // Less than 5 hours per week
       recommendations.push({
         id: 'time-allocation',
         type: 'time_management',
         title: 'Increase Weekly Learning Time',
-        description: 'Your current weekly learning time may be insufficient for your goals. Consider increasing to 7-10 hours per week.',
+        description:
+          'Your current weekly learning time may be insufficient for your goals. Consider increasing to 7-10 hours per week.',
         priority: 'medium',
         actionable: true,
         category: 'time_management',
@@ -607,7 +606,8 @@ class LearningRecommendationsService {
         id: 'meta-learning',
         type: 'skill_development',
         title: 'Develop Meta-Learning Skills',
-        description: 'Learn how to learn more effectively. This foundational skill will accelerate all your future learning.',
+        description:
+          'Learn how to learn more effectively. This foundational skill will accelerate all your future learning.',
         priority: 'medium',
         actionable: true,
         category: 'skill_development',
@@ -661,7 +661,8 @@ class LearningRecommendationsService {
         id: 'stress-management',
         type: 'performance_optimization',
         title: 'Implement Stress Management Techniques',
-        description: 'High stress levels can impair learning and memory. Practice relaxation techniques to optimize your learning capacity.',
+        description:
+          'High stress levels can impair learning and memory. Practice relaxation techniques to optimize your learning capacity.',
         priority: 'high',
         actionable: true,
         category: 'performance_optimization',
@@ -725,13 +726,11 @@ class LearningRecommendationsService {
 
     // Sort by priority, impact, and implementation ease
     return recommendations.sort((a, b) => {
-      const aScore = priorityWeights[a.priority] + 
-                    (impactWeights[a.expectedImpact] || 0) + 
-                    (60 - a.estimatedTimeToImplement); // Easier to implement = higher score
-      
-      const bScore = priorityWeights[b.priority] + 
-                    (impactWeights[b.expectedImpact] || 0) + 
-                    (60 - b.estimatedTimeToImplement);
+      const aScore =
+        priorityWeights[a.priority] + (impactWeights[a.expectedImpact] || 0) + (60 - a.estimatedTimeToImplement); // Easier to implement = higher score
+
+      const bScore =
+        priorityWeights[b.priority] + (impactWeights[b.expectedImpact] || 0) + (60 - b.estimatedTimeToImplement);
 
       return bScore - aScore;
     });

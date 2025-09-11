@@ -292,13 +292,7 @@
           "name": "Episode 10: Jo Dikhta Hai, Vo Bikta Hai - Styling",
           "estimatedHours": 1.626,
           "description": "Styling React applications, CSS-in-JS, and UI libraries",
-          "subtopics": [
-            "CSS in React",
-            "Styled Components",
-            "CSS Modules",
-            "Tailwind CSS",
-            "Material-UI"
-          ]
+          "subtopics": ["CSS in React", "Styled Components", "CSS Modules", "Tailwind CSS", "Material-UI"]
         }
       ]
     },
