@@ -96,10 +96,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     logInfo('Setting up Firebase auth state listener');
 
+    // Add a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      logInfo('Auth state check timeout - setting loading to false');
+      setLoading(false);
+    }, 10000); // 10 second timeout
+
     // Subscribe to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(
       auth,
       user => {
+        clearTimeout(timeoutId); // Clear timeout when auth state resolves
+
         if (user) {
           logInfo('User authenticated', {
             userId: user.uid,
@@ -122,6 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
       },
       error => {
+        clearTimeout(timeoutId); // Clear timeout on error
         logError('Firebase auth state change error', {
           error: error.message,
           errorType: error.name ?? 'unknown',
@@ -132,6 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Cleanup subscription on unmount
     return () => {
+      clearTimeout(timeoutId);
       logInfo('Cleaning up Firebase auth state listener');
       unsubscribe();
     };

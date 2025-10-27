@@ -767,7 +767,7 @@ export default function ProfilePage() {
                             <Label htmlFor="custom-exam-name">Exam Name *</Label>
                             <Input
                               id="custom-exam-name"
-                              value={form.data.customExam?.name ?? ''}
+                              value={form.data.customExam?.name || ''}
                               onChange={e =>
                                 form.updateField('customExam', {
                                   ...form.data.customExam,
@@ -781,7 +781,7 @@ export default function ProfilePage() {
                             <Label htmlFor="custom-exam-category">Category</Label>
                             <Input
                               id="custom-exam-category"
-                              value={form.data.customExam?.category ?? ''}
+                              value={form.data.customExam?.category || ''}
                               onChange={e =>
                                 form.updateField('customExam', {
                                   ...form.data.customExam,
@@ -795,7 +795,7 @@ export default function ProfilePage() {
                             <Label htmlFor="custom-exam-description">Description</Label>
                             <Textarea
                               id="custom-exam-description"
-                              value={form.data.customExam?.description ?? ''}
+                              value={form.data.customExam?.description || ''}
                               onChange={e =>
                                 form.updateField('customExam', {
                                   ...form.data.customExam,
@@ -1096,7 +1096,7 @@ export default function ProfilePage() {
                               value={interval}
                               onChange={e => {
                                 const newIntervals = [...form.data.preferences.revisionIntervals];
-                                newIntervals[index] = parseInt(e.target.value) ?? 1;
+                                newIntervals[index] = parseInt(e.target.value) || 1;
                                 form.updateField('preferences', {
                                   ...form.data.preferences,
                                   revisionIntervals: newIntervals,
@@ -1313,7 +1313,7 @@ export default function ProfilePage() {
                 <h3 className="font-semibold mb-2">Exam Configuration</h3>
                 <div className="bg-gray-50 p-3 rounded-lg space-y-1">
                   <p>
-                    <strong>Exam:</strong> {selectedExam?.name ?? form.data.customExam?.name}
+                    <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
                   </p>
                   <p>
                     <strong>Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}

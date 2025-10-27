@@ -382,7 +382,7 @@ export default function MockTestLogPage() {
                             type="number"
                             min="0"
                             max={section?.maxMarks}
-                            value={section?.id ? (scores[section.id] ?? 0) : 0}
+                            value={section?.id ? (scores[section.id] || 0) : 0}
                             onChange={e =>
                               section?.id &&
                               setScores(prev => ({
@@ -404,7 +404,7 @@ export default function MockTestLogPage() {
                           type="number"
                           min="0"
                           max={section?.maxTime}
-                          value={section?.id ? (timeTaken[section.id] ?? 0) : 0}
+                          value={section?.id ? (timeTaken[section.id] || 0) : 0}
                           onChange={e =>
                             section?.id &&
                             setTimeTaken(prev => ({

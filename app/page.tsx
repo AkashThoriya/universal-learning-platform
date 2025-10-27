@@ -48,26 +48,73 @@ export default function HomePage() {
       }
 
       try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.onboardingComplete) {
+        // Add timeout for Firebase operations
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Operation timeout')), 5000)
+        );
+
+        const userDocPromise = getDoc(doc(db, 'users', user.uid));
+
+        const userDoc = await Promise.race([userDocPromise, timeoutPromise]);
+
+        if (
+          userDoc &&
+          typeof userDoc === 'object' &&
+          'exists' in userDoc &&
+          typeof userDoc.exists === 'function' &&
+          userDoc.exists()
+        ) {
+          const userData = 'data' in userDoc && typeof userDoc.data === 'function' ? userDoc.data() : null;
+
+          // Check both onboardingComplete and onboardingCompleted for compatibility
+          const isOnboardingComplete = userData && (userData.onboardingComplete || userData.onboardingCompleted);
+
+          console.log('User onboarding status check:', {
+            userId: user.uid,
+            onboardingComplete: userData?.onboardingComplete,
+            onboardingCompleted: userData?.onboardingCompleted,
+            isComplete: isOnboardingComplete,
+            hasDisplayName: !!userData?.displayName,
+            hasSelectedExamId: !!userData?.selectedExamId,
+            hasPreferences: !!userData?.preferences,
+          });
+
+          if (isOnboardingComplete) {
+            console.log('Onboarding already completed, redirecting to dashboard');
             router.push('/dashboard');
           } else {
+            console.log('Onboarding not completed, redirecting to onboarding');
             router.push('/onboarding');
           }
         } else {
+          console.log('No user document found, redirecting to onboarding');
           router.push('/onboarding');
         }
       } catch (error) {
         console.error('Error checking user status:', error);
-        router.push('/onboarding');
+        // Fallback: if Firebase is having issues, still allow access
+        if (user) {
+          router.push('/dashboard');
+        }
       } finally {
         setChecking(false);
       }
     };
 
-    checkUserStatus();
+    // Add overall timeout for the entire check
+    const timeoutId = setTimeout(() => {
+      console.warn('User status check taking too long, proceeding with fallback');
+      setChecking(false);
+      if (user) {
+        router.push('/dashboard');
+      }
+    }, 8000);
+
+    checkUserStatus().finally(() => {
+      clearTimeout(timeoutId);
+    });
+
+    return () => clearTimeout(timeoutId);
   }, [user, loading, router]);
 
   if (loading || checking) {
@@ -790,11 +837,6 @@ export default function HomePage() {
                       Analytics
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/missions" className="hover:text-white transition-colors">
-                      Missions
-                    </Link>
-                  </li>
                 </ul>
               </div>
 
@@ -814,11 +856,6 @@ export default function HomePage() {
                   <li>
                     <Link href="/community" className="hover:text-white transition-colors">
                       Community
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/micro-learning" className="hover:text-white transition-colors">
-                      Micro Learning
                     </Link>
                   </li>
                 </ul>

@@ -62,6 +62,9 @@ interface OnboardingFormData {
       dailyGoalReminders: boolean;
       healthCheckReminders: boolean;
     };
+    useWeekendSchedule?: boolean;
+    weekdayStudyMinutes?: number;
+    weekendStudyMinutes?: number;
   };
   [key: string]: string | number | boolean | object | undefined;
 }
@@ -221,9 +224,24 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
       form.updateField('preferences', {
         ...(form.data.preferences ?? {}),
         dailyStudyGoalMinutes: Math.round(avgDailyMinutes),
+        useWeekendSchedule: true,
+        weekdayStudyMinutes: weekdayHours * 60,
+        weekendStudyMinutes: weekendHours * 60,
+      });
+    } else {
+      // Clear weekend schedule data when not using it
+      const {
+        useWeekendSchedule: _,
+        weekdayStudyMinutes: __,
+        weekendStudyMinutes: ___,
+        ...cleanPrefs
+      } = form.data.preferences || {};
+      form.updateField('preferences', {
+        ...cleanPrefs,
+        useWeekendSchedule: false,
       });
     }
-  }, [useWeekendSchedule, calculateAverageDailyHours, form]);
+  }, [useWeekendSchedule, calculateAverageDailyHours, weekdayHours, weekendHours, form]);
 
   // Enhanced persona selection
   const handlePersonaSelect = useCallback(
@@ -373,9 +391,20 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                   onClick={() => {
                     setUseWeekendSchedule(false);
                     // Reset to uniform daily schedule
-                    const currentHours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60);
+                    const currentHours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes || 240) / 60);
                     setWeekdayHours(currentHours);
                     setWeekendHours(currentHours);
+                    // Update form to clear weekend schedule data
+                    const {
+                      useWeekendSchedule: _,
+                      weekdayStudyMinutes: __,
+                      weekendStudyMinutes: ___,
+                      ...cleanPrefs
+                    } = form.data.preferences || {};
+                    form.updateField('preferences', {
+                      ...cleanPrefs,
+                      useWeekendSchedule: false,
+                    });
                   }}
                   className="flex-1"
                 >
@@ -407,7 +436,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                 </div>
 
                 <Slider
-                  value={[Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)]}
+                  value={[Math.floor((form.data.preferences?.dailyStudyGoalMinutes || 240) / 60)]}
                   onValueChange={([hours]) => {
                     if (hours !== undefined) {
                       const totalMinutes = hours * 60;
@@ -433,7 +462,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
 
                 <p className="text-sm text-blue-600 mt-4">
                   {(() => {
-                    const hours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60);
+                    const hours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes || 240) / 60);
                     if (hours <= 2) {
                       return 'Light study routine - perfect for busy schedules';
                     }
@@ -463,11 +492,14 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     onValueChange={([hours]) => {
                       if (hours !== undefined) {
                         setWeekdayHours(hours);
-                        // Update form with new average
+                        // Update form with new average and weekend schedule data
                         const avgMinutes = ((hours * 5 + weekendHours * 2) / 7) * 60;
                         form.updateField('preferences', {
                           ...(form.data.preferences ?? {}),
                           dailyStudyGoalMinutes: Math.round(avgMinutes),
+                          useWeekendSchedule: true,
+                          weekdayStudyMinutes: hours * 60,
+                          weekendStudyMinutes: weekendHours * 60,
                         });
                       }
                     }}
@@ -497,11 +529,14 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     onValueChange={([hours]) => {
                       if (hours !== undefined) {
                         setWeekendHours(hours);
-                        // Update form with new average
+                        // Update form with new average and weekend schedule data
                         const avgMinutes = ((weekdayHours * 5 + hours * 2) / 7) * 60;
                         form.updateField('preferences', {
                           ...(form.data.preferences ?? {}),
                           dailyStudyGoalMinutes: Math.round(avgMinutes),
+                          useWeekendSchedule: true,
+                          weekdayStudyMinutes: weekdayHours * 60,
+                          weekendStudyMinutes: hours * 60,
                         });
                       }
                     }}
@@ -653,23 +688,26 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                           </div>
                         </div>
 
-                        {!targetAnalysis.isRealistic && (
-                          <div className="mt-3 flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-orange-700 border-orange-300 hover:bg-orange-50"
-                              onClick={() => {
-                                const dateString = recommendedDate.toISOString().split('T')[0];
-                                if (dateString) {
-                                  handleDateChange(dateString);
-                                }
-                              }}
-                            >
-                              Use AI Suggestion
-                            </Button>
-                          </div>
-                        )}
+                        <div className="mt-3 flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-blue-700 border-blue-300 hover:bg-blue-50"
+                            onClick={() => {
+                              const dateString = recommendedDate.toISOString().split('T')[0];
+                              if (dateString) {
+                                handleDateChange(dateString);
+                              }
+                            }}
+                          >
+                            Use AI Suggestion
+                          </Button>
+                          {!targetAnalysis.isRealistic && (
+                            <div className="text-orange-700 text-sm font-medium">
+                              Recommended for realistic planning
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })()}

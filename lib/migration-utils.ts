@@ -234,16 +234,16 @@ export async function mockTestAnalysisExample(userId: string) {
       return;
     }
 
-    const recentTests = testsResult.data ?? [];
+    const recentTests = testsResult.data || [];
     // Calculate average score across recent tests
     const averageScore =
       recentTests.reduce((sum: number, test: unknown) => {
         const typedTest = test as Record<string, unknown>;
-        const totalScore = Object.values((typedTest.scores as Record<string, number>) ?? {}).reduce(
+        const totalScore = Object.values((typedTest.scores as Record<string, number>) || {}).reduce(
           (s: number, score: number) => s + score,
           0
         );
-        const maxScore = Object.values((typedTest.maxScores as Record<string, number>) ?? {}).reduce(
+        const maxScore = Object.values((typedTest.maxScores as Record<string, number>) || {}).reduce(
           (s: number, score: number) => s + score,
           0
         );

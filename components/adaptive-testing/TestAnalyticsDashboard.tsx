@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import {
   BarChart3,
   TrendingUp,
-  TrendingDown,
   Target,
   Clock,
   Brain,
@@ -14,7 +13,6 @@ import {
   CheckCircle2,
   XCircle,
   Activity,
-  PieChart,
   LineChart,
   Award,
   BookOpen,
@@ -32,7 +30,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { TestPerformance, AdaptiveMetrics, SubjectPerformance } from '@/types/adaptive-testing';
 
@@ -59,12 +57,6 @@ export default function TestAnalyticsDashboard({
     const minutes = Math.floor(ms / (1000 * 60));
     const seconds = Math.floor((ms % (1000 * 60)) / 1000);
     return `${minutes}m ${seconds}s`;
-  };
-
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
   const getPerformanceGrade = (accuracy: number) => {
@@ -194,7 +186,7 @@ export default function TestAnalyticsDashboard({
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Total Time</p>
                     <p className="text-2xl font-bold text-blue-600">{formatTime(performance.totalTime)}</p>
-                    <p className="text-sm text-gray-500">Avg: {formatTime(performance.averageTimePerQuestion)}</p>
+                    <p className="text-sm text-gray-500">Avg: {formatTime(performance.averageResponseTime)}</p>
                   </div>
                   <div className="p-3 bg-blue-100 rounded-full">
                     <Clock className="h-6 w-6 text-blue-600" />
@@ -289,16 +281,16 @@ export default function TestAnalyticsDashboard({
                         <Separator />
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Average Time per Question</span>
-                            <span className="font-medium">{formatTime(performance.averageTimePerQuestion)}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Final Ability Estimate</span>
                             <span className="font-medium">{performance.finalAbilityEstimate.toFixed(3)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Standard Error</span>
                             <span className="font-medium">{performance.standardError.toFixed(3)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Average Response Time</span>
+                            <span className="font-medium">{formatTime(performance.averageResponseTime)}</span>
                           </div>
                         </div>
                       </CardContent>
@@ -322,11 +314,11 @@ export default function TestAnalyticsDashboard({
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Fastest Question</span>
-                            <span className="font-medium">{formatTime(performance.averageTimePerQuestion * 0.6)}</span>
+                            <span className="font-medium">{formatTime(performance.averageResponseTime * 0.6)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Slowest Question</span>
-                            <span className="font-medium">{formatTime(performance.averageTimePerQuestion * 2.1)}</span>
+                            <span className="font-medium">{formatTime(performance.averageResponseTime * 2.1)}</span>
                           </div>
                         </div>
                       </CardContent>
@@ -339,7 +331,7 @@ export default function TestAnalyticsDashboard({
                     <div className="space-y-4">
                       {subjectPerformances.map((subject, index) => (
                         <motion.div
-                          key={subject.subject}
+                          key={subject.subjectId}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
@@ -348,7 +340,7 @@ export default function TestAnalyticsDashboard({
                             <CardContent className="p-6">
                               <div className="flex items-center justify-between mb-4">
                                 <div>
-                                  <h3 className="font-semibold text-gray-800">{subject.subject}</h3>
+                                  <h3 className="font-semibold text-gray-800">{subject.subjectId}</h3>
                                   <p className="text-sm text-gray-600">
                                     {subject.questionsAnswered} questions • {subject.accuracy.toFixed(1)}% accuracy
                                   </p>
@@ -435,12 +427,10 @@ export default function TestAnalyticsDashboard({
                         </Card>
                         <Card>
                           <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-green-600 mb-2">
-                              {adaptiveMetrics.questionsAnswered}
-                            </div>
+                            <div className="text-3xl font-bold text-green-600 mb-2">{performance.totalQuestions}</div>
                             <div className="text-sm text-gray-600">Questions Used</div>
                             <div className="text-xs text-gray-500 mt-1">
-                              vs {adaptiveMetrics.estimatedQuestionsNeeded} estimated
+                              Efficiency: {(adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
                             </div>
                           </CardContent>
                         </Card>
@@ -459,31 +449,18 @@ export default function TestAnalyticsDashboard({
                               <h4 className="font-medium text-gray-800">Performance Metrics</h4>
                               <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                  <span className="text-gray-600">Initial Ability Estimate</span>
-                                  <span className="font-medium">
-                                    {adaptiveMetrics.initialAbilityEstimate.toFixed(3)}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
                                   <span className="text-gray-600">Final Ability Estimate</span>
-                                  <span className="font-medium">{adaptiveMetrics.finalAbilityEstimate.toFixed(3)}</span>
+                                  <span className="font-medium">{performance.finalAbilityEstimate.toFixed(3)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-gray-600">Ability Change</span>
-                                  <span
-                                    className={cn(
-                                      'font-medium flex items-center gap-1',
-                                      adaptiveMetrics.finalAbilityEstimate > adaptiveMetrics.initialAbilityEstimate
-                                        ? 'text-green-600'
-                                        : 'text-red-600'
-                                    )}
-                                  >
-                                    {getChangeIcon(
-                                      adaptiveMetrics.finalAbilityEstimate - adaptiveMetrics.initialAbilityEstimate
-                                    )}
-                                    {Math.abs(
-                                      adaptiveMetrics.finalAbilityEstimate - adaptiveMetrics.initialAbilityEstimate
-                                    ).toFixed(3)}
+                                  <span className="text-gray-600">Standard Error</span>
+                                  <span className="font-medium">{performance.standardError.toFixed(3)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Confidence Interval</span>
+                                  <span className="font-medium">
+                                    [{performance.abilityConfidenceInterval[0].toFixed(2)},{' '}
+                                    {performance.abilityConfidenceInterval[1].toFixed(2)}]
                                   </span>
                                 </div>
                               </div>
@@ -493,21 +470,16 @@ export default function TestAnalyticsDashboard({
                               <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Questions Answered</span>
-                                  <span className="font-medium">{adaptiveMetrics.questionsAnswered}</span>
+                                  <span className="font-medium">{performance.totalQuestions}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-gray-600">Est. Questions Needed</span>
-                                  <span className="font-medium">{adaptiveMetrics.estimatedQuestionsNeeded}</span>
+                                  <span className="text-gray-600">Algorithm Efficiency</span>
+                                  <span className="font-medium">{adaptiveMetrics.algorithmEfficiency.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                  <span className="text-gray-600">Efficiency Gain</span>
+                                  <span className="text-gray-600">Question Utilization</span>
                                   <span className="font-medium text-green-600">
-                                    {(
-                                      (1 -
-                                        adaptiveMetrics.questionsAnswered / adaptiveMetrics.estimatedQuestionsNeeded) *
-                                      100
-                                    ).toFixed(0)}
-                                    %
+                                    {(adaptiveMetrics.questionUtilization * 100).toFixed(0)}%
                                   </span>
                                 </div>
                               </div>
@@ -570,7 +542,7 @@ export default function TestAnalyticsDashboard({
                       <CardContent className="space-y-4">
                         <div className="text-center p-4 bg-blue-50 rounded-lg">
                           <div className="text-xl font-bold text-blue-600">
-                            {formatTime(performance.averageTimePerQuestion)}
+                            {formatTime(performance.averageResponseTime)}
                           </div>
                           <div className="text-sm text-blue-700">Average per Question</div>
                         </div>
@@ -580,13 +552,10 @@ export default function TestAnalyticsDashboard({
                             <span className="font-medium">{formatTime(performance.totalTime)}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Est. Time Saved</span>
+                            <span className="text-gray-600">Est. Time Efficiency</span>
                             <span className="font-medium text-green-600">
                               {adaptiveMetrics
-                                ? formatTime(
-                                    (adaptiveMetrics.estimatedQuestionsNeeded - adaptiveMetrics.questionsAnswered) *
-                                      performance.averageTimePerQuestion
-                                  )
+                                ? `${(adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}% efficient`
                                 : 'N/A'}
                             </span>
                           </div>
@@ -627,7 +596,7 @@ export default function TestAnalyticsDashboard({
                 )}
 
                 {/* Timing Recommendations */}
-                {performance.averageTimePerQuestion > 180000 && (
+                {performance.averageResponseTime > 180000 && (
                   <Card className="border border-blue-200 bg-blue-50">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-2 mb-2">

@@ -241,7 +241,7 @@ async function generateScreenshots() {
   
   // Mobile screenshot  
   await page.setViewport({ width: 540, height: 720 });
-  await page.goto('http://localhost:3000/micro-learning');
+  await page.goto('http://localhost:3000/journey');
   await page.screenshot({ 
     path: 'public/screenshots/mobile-narrow.png',
     fullPage: false 

@@ -143,8 +143,6 @@ function createLazyComponent<T extends React.ComponentType<Record<string, unknow
   typedComponent.preload = importFn;
 
   return typedComponent;
-
-  return WrappedComponent;
 }
 
 /**

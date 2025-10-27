@@ -23,6 +23,7 @@ import {
   Timestamp,
   writeBatch,
   onSnapshot as _onSnapshot,
+  arrayUnion,
   DocumentData,
 } from 'firebase/firestore';
 
@@ -35,19 +36,7 @@ import {
   TestAnalyticsData,
   TestRecommendation,
 } from '@/types/adaptive-testing';
-import {
-  UserJourney,
-  JourneyGoal,
-  CreateJourneyRequest,
-  UpdateJourneyProgressRequest,
-  JourneyAnalytics,
-  JourneyCollaborator,
-  JourneyComment,
-  JourneyInvitation,
-  JourneyTemplate,
-  WeeklyProgress,
-  MilestoneAchievement,
-} from '@/types/journey';
+import { UserJourney, UpdateJourneyProgressRequest, JourneyAnalytics, MilestoneAchievement } from '@/types/journey';
 import { MissionDifficulty } from '@/types/mission-system';
 
 import { User, UserStats, TopicProgress, MockTestLog } from '../types/exam';
@@ -1230,7 +1219,7 @@ export const customLearningService = {
           title: `Custom Learning Mission`,
           description: `Custom learning mission for goal ${goalId}`,
           difficulty: 'intermediate',
-          estimatedDuration: content.reduce((sum: number, module: any) => sum + (module.estimatedTime || 30), 0),
+          estimatedDuration: content.reduce((sum: number, module: any) => sum + (module.estimatedTime ?? 30), 0),
           content: {
             type: 'custom_module',
             customContent: content,
@@ -1319,11 +1308,11 @@ export const customLearningService = {
           const data = docSnapshot.data();
           return {
             ...data,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
+            createdAt: data.createdAt?.toDate() ?? new Date(),
+            updatedAt: data.updatedAt?.toDate() ?? new Date(),
             progress: {
               ...data.progress,
-              estimatedCompletion: data.progress?.estimatedCompletion?.toDate() || new Date(),
+              estimatedCompletion: data.progress?.estimatedCompletion?.toDate() ?? new Date(),
             },
           };
         });
@@ -1377,16 +1366,24 @@ export const customLearningService = {
           const data = docSnapshot.data();
           return {
             ...data,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
-            scheduledAt: data.scheduledAt?.toDate() || new Date(),
-            deadline: data.deadline?.toDate() || new Date(),
+            createdAt: data.createdAt?.toDate() ?? new Date(),
+            updatedAt: data.updatedAt?.toDate() ?? new Date(),
+            scheduledAt: data.scheduledAt?.toDate() ?? new Date(),
+            deadline: data.deadline?.toDate() ?? new Date(),
           };
         });
       });
 
       return createSuccess(missions);
-    } catch (error) {
+    } catch (error: any) {
+      // Check if this is a Firebase index error
+      const isIndexError = error?.code === 'failed-precondition' && error?.message?.includes('index');
+
+      if (isIndexError) {
+        console.log('Firestore indexes are still building, returning empty custom missions', { userId, goalId });
+        return createSuccess([]);
+      }
+
       return createError(error instanceof Error ? error : new Error('Failed to get custom missions'));
     }
   },
@@ -1460,9 +1457,9 @@ export const customLearningService = {
           totalMissions: missions.length,
           completedMissions: missions.filter((mission: any) => mission.status === 'completed').length,
           totalLearningHours:
-            missions.reduce((sum: number, mission: any) => sum + (mission.progress?.timeSpent || 0), 0) / 60, // Convert to hours
+            missions.reduce((sum: number, mission: any) => sum + (mission.progress?.timeSpent ?? 0), 0) / 60, // Convert to hours
           categoriesActive: Array.from(new Set(goals.map((goal: any) => goal.category))),
-          streakDays: Math.max(...goals.map((goal: any) => goal.progress.currentStreak || 0)),
+          streakDays: Math.max(...goals.map((goal: any) => goal.progress.currentStreak ?? 0)),
           averageProgress:
             goals.length > 0
               ? (goals.reduce(
@@ -1502,16 +1499,24 @@ export const customLearningService = {
           const data = docSnapshot.data();
           return {
             ...data,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            updatedAt: data.updatedAt?.toDate() || new Date(),
-            scheduledAt: data.scheduledAt?.toDate() || new Date(),
-            deadline: data.deadline?.toDate() || new Date(),
+            createdAt: data.createdAt?.toDate() ?? new Date(),
+            updatedAt: data.updatedAt?.toDate() ?? new Date(),
+            scheduledAt: data.scheduledAt?.toDate() ?? new Date(),
+            deadline: data.deadline?.toDate() ?? new Date(),
           };
         });
       });
 
       return createSuccess(missions);
-    } catch (error) {
+    } catch (error: any) {
+      // Check if this is a Firebase index error
+      const isIndexError = error?.code === 'failed-precondition' && error?.message?.includes('index');
+
+      if (isIndexError) {
+        console.log('Firestore indexes are still building, returning empty custom missions list', { userId });
+        return createSuccess([]);
+      }
+
       return createError(error instanceof Error ? error : new Error('Failed to get all custom missions'));
     }
   },
@@ -1549,7 +1554,7 @@ const adaptiveTestingFirebaseService = {
   /**
    * Create a new adaptive test
    */
-  async createAdaptiveTest(userId: string, test: AdaptiveTest): Promise<Result<AdaptiveTest>> {
+  async createAdaptiveTest(_userId: string, test: AdaptiveTest): Promise<Result<AdaptiveTest>> {
     try {
       const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, test.id);
       await setDoc(testRef, {
@@ -1623,9 +1628,9 @@ const adaptiveTestingFirebaseService = {
       const tests = snapshot.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-        completedAt: doc.data().completedAt?.toDate() || null,
+        createdAt: doc.data().createdAt?.toDate() ?? new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() ?? new Date(),
+        completedAt: doc.data().completedAt?.toDate() ?? null,
       })) as AdaptiveTest[];
 
       callback(tests);
@@ -1638,7 +1643,7 @@ const adaptiveTestingFirebaseService = {
   async getQuestionBank(
     subjects: string[],
     difficulties: MissionDifficulty[],
-    limit = 100
+    maxQuestions = 100
   ): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const questionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS);
@@ -1648,7 +1653,7 @@ const adaptiveTestingFirebaseService = {
         where('difficulty', 'in', difficulties),
         orderBy('discriminationIndex', 'desc'),
         orderBy('successRate', 'asc'),
-        limit(limit)
+        limit(maxQuestions)
       );
 
       const snapshot = await getDocs(q);
@@ -1679,9 +1684,9 @@ const adaptiveTestingFirebaseService = {
       const test: AdaptiveTest = {
         ...testData,
         id: testId,
-        createdAt: testData.createdAt?.toDate() || new Date(),
-        updatedAt: testData.updatedAt?.toDate() || new Date(),
-        completedAt: testData.completedAt?.toDate() || null,
+        createdAt: testData.createdAt?.toDate() ?? new Date(),
+        updatedAt: testData.updatedAt?.toDate() ?? new Date(),
+        completedAt: testData.completedAt?.toDate() ?? null,
       } as AdaptiveTest;
 
       return createSuccess(test);
@@ -1705,12 +1710,16 @@ const adaptiveTestingFirebaseService = {
       }
 
       const sessionDoc = snapshot.docs[0];
+      if (!sessionDoc) {
+        return createError(new Error('Session document not found'));
+      }
+
       const sessionRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS, sessionDoc.id);
 
       await updateDoc(sessionRef, {
         lastActivity: Timestamp.fromDate(new Date()),
         currentAbilityEstimate: response.estimatedAbility,
-        'sessionMetrics.questionsAnswered': sessionDoc.data().sessionMetrics?.questionsAnswered + 1 || 1,
+        'sessionMetrics.questionsAnswered': (sessionDoc.data().sessionMetrics?.questionsAnswered ?? 0) + 1,
         'sessionMetrics.averageResponseTime': response.responseTime,
       });
 
@@ -1763,7 +1772,7 @@ const adaptiveTestingFirebaseService = {
   /**
    * Get test recommendations for a user
    */
-  async getTestRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
+  async getTestRecommendations(_userId: string): Promise<Result<TestRecommendation[]>> {
     try {
       // This would integrate with the recommendation engine
       // For now, return a placeholder implementation
@@ -1774,7 +1783,31 @@ const adaptiveTestingFirebaseService = {
           description: 'Evaluate your progress this week across all subjects',
           confidence: 0.85,
           reasons: ['Consistent study pattern detected', 'Time for progress validation'],
-          estimatedBenefit: {
+          subjects: ['Mathematics', 'General Knowledge'],
+          questionCount: 20,
+          estimatedDuration: 30,
+          tags: ['weekly', 'progress', 'assessment'],
+          priority: 'medium',
+          difficulty: 'intermediate',
+          adaptiveConfig: {
+            algorithmType: 'CAT',
+            convergenceCriteria: {
+              standardError: 0.3,
+              minQuestions: 10,
+              maxQuestions: 30,
+            },
+            difficultyRange: {
+              min: 'beginner',
+              max: 'advanced',
+            },
+          },
+          expectedBenefit: 'Assess current learning progress and identify areas for improvement',
+          missionAlignment: 0.9,
+          estimatedAccuracy: 0.85,
+          aiGenerated: true,
+          createdFrom: 'recommendation',
+          linkedMissions: [],
+          estimatedBenefit_old: {
             abilityImprovement: 0.15,
             weaknessAddressing: ['Current affairs', 'Quantitative aptitude'],
             journeyAlignment: 0.9,
@@ -1797,8 +1830,8 @@ const adaptiveTestingFirebaseService = {
    */
   async getTestAnalytics(userId: string, dateRange?: { start: Date; end: Date }): Promise<Result<TestAnalyticsData>> {
     try {
-      const endDate = dateRange?.end || new Date();
-      const startDate = dateRange?.start || new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const endDate = dateRange?.end ?? new Date();
+  const startDate = dateRange?.start ?? new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       // Get user's tests in the date range
       const testsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS);
@@ -1815,7 +1848,7 @@ const adaptiveTestingFirebaseService = {
         ...doc.data(),
         id: doc.id,
         completedAt: doc.data().completedAt?.toDate(),
-      }));
+      })) as AdaptiveTest[];
 
       // Calculate analytics
       const analytics: TestAnalyticsData = {
@@ -1823,10 +1856,9 @@ const adaptiveTestingFirebaseService = {
         period: { startDate, endDate },
         overallMetrics: {
           testsCompleted: tests.length,
-          averageAccuracy: tests.reduce((sum, test) => sum + (test.performance?.accuracy || 0), 0) / tests.length || 0,
-          averageAbilityEstimate:
-            tests.reduce((sum, test) => sum + (test.performance?.finalAbilityEstimate || 0), 0) / tests.length || 0,
-          totalTimeSpent: tests.reduce((sum, test) => sum + (test.performance?.totalTime || 0), 0),
+          averageAccuracy: (tests.length > 0 ? tests.reduce((sum, test) => sum + (test.performance?.accuracy ?? 0), 0) / tests.length : 0),
+          averageAbilityEstimate: (tests.length > 0 ? tests.reduce((sum, test) => sum + (test.performance?.finalAbilityEstimate ?? 0), 0) / tests.length : 0),
+          totalTimeSpent: tests.reduce((sum, test) => sum + (test.performance?.totalTime ?? 0), 0),
           improvementTrend: 'stable', // This would be calculated based on historical data
         },
         subjectAnalytics: [],
@@ -1841,7 +1873,31 @@ const adaptiveTestingFirebaseService = {
             description: 'Based on your recent performance',
             confidence: 0.7,
             reasons: ['Maintain learning momentum'],
-            estimatedBenefit: {
+            subjects: ['Mathematics'],
+            questionCount: 15,
+            estimatedDuration: 20,
+            tags: ['next', 'suggested'],
+            priority: 'medium',
+            difficulty: 'intermediate',
+            adaptiveConfig: {
+              algorithmType: 'CAT',
+              convergenceCriteria: {
+                standardError: 0.3,
+                minQuestions: 10,
+                maxQuestions: 20,
+              },
+              difficultyRange: {
+                min: 'beginner',
+                max: 'advanced',
+              },
+            },
+            expectedBenefit: 'Continue progress and maintain learning momentum',
+            missionAlignment: 0.8,
+            estimatedAccuracy: 0.75,
+            aiGenerated: true,
+            createdFrom: 'recommendation',
+            linkedMissions: [],
+            estimatedBenefit_old: {
               abilityImprovement: 0.1,
               weaknessAddressing: [],
               journeyAlignment: 0.8,
@@ -1912,8 +1968,8 @@ const adaptiveTestingFirebaseService = {
       const session: TestSession = {
         ...sessionData,
         id: sessionId,
-        startedAt: sessionData.startedAt?.toDate() || new Date(),
-        lastActivity: sessionData.lastActivity?.toDate() || new Date(),
+        startedAt: sessionData.startedAt?.toDate() ?? new Date(),
+        lastActivity: sessionData.lastActivity?.toDate() ?? new Date(),
       } as TestSession;
 
       return createSuccess(session);
@@ -1985,7 +2041,7 @@ const adaptiveTestingFirebaseService = {
       const snapshot = await getDocs(q);
       const responses = snapshot.docs.map(doc => ({
         ...doc.data(),
-        timestamp: doc.data().timestamp?.toDate() || new Date(),
+        timestamp: doc.data().timestamp?.toDate() ?? new Date(),
       })) as TestResponse[];
 
       return createSuccess(responses);
@@ -2052,33 +2108,33 @@ const journeyFirebaseService = {
       orderBy('createdAt', 'desc')
     );
 
-    return onSnapshot(q, snapshot => {
-      const journeys = snapshot.docs.map(doc => {
+    return _onSnapshot(q, (snapshot: any) => {
+      const journeys = snapshot.docs.map((doc: any) => {
         const data = doc.data();
         return {
           ...data,
           id: doc.id,
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date(),
-          targetCompletionDate: data.targetCompletionDate?.toDate() || new Date(),
+          createdAt: data.createdAt?.toDate() ?? new Date(),
+          updatedAt: data.updatedAt?.toDate() ?? new Date(),
+          targetCompletionDate: data.targetCompletionDate?.toDate() ?? new Date(),
           customGoals:
             data.customGoals?.map((goal: any) => ({
               ...goal,
-              deadline: goal.deadline?.toDate() || new Date(),
-            })) || [],
+              deadline: goal.deadline?.toDate() ?? new Date(),
+            })) ?? [],
           progressTracking: {
             ...data.progressTracking,
-            lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() || new Date(),
+            lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() ?? new Date(),
             weeklyProgress:
               data.progressTracking?.weeklyProgress?.map((week: any) => ({
                 ...week,
-                weekStarting: week.weekStarting?.toDate() || new Date(),
-              })) || [],
+                weekStarting: week.weekStarting?.toDate() ?? new Date(),
+              })) ?? [],
             milestoneAchievements:
               data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
                 ...milestone,
-                achievedAt: milestone.achievedAt?.toDate() || new Date(),
-              })) || [],
+                achievedAt: milestone.achievedAt?.toDate() ?? new Date(),
+              })) ?? [],
           },
         };
       }) as UserJourney[];
@@ -2109,7 +2165,7 @@ const journeyFirebaseService = {
       if (updates.weeklyUpdate) {
         updateData['progressTracking.weeklyProgress'] = arrayUnion({
           ...updates.weeklyUpdate,
-          weekStarting: Timestamp.fromDate(updates.weeklyUpdate.weekStarting || new Date()),
+          weekStarting: Timestamp.fromDate(updates.weeklyUpdate.weekStarting ?? new Date()),
         });
       }
 
@@ -2136,27 +2192,27 @@ const journeyFirebaseService = {
       const journey: UserJourney = {
         ...data,
         id: journeyDoc.id,
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-        targetCompletionDate: data.targetCompletionDate?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() ?? new Date(),
+        updatedAt: data.updatedAt?.toDate() ?? new Date(),
+        targetCompletionDate: data.targetCompletionDate?.toDate() ?? new Date(),
         customGoals:
           data.customGoals?.map((goal: any) => ({
             ...goal,
-            deadline: goal.deadline?.toDate() || new Date(),
-          })) || [],
+            deadline: goal.deadline?.toDate() ?? new Date(),
+          })) ?? [],
         progressTracking: {
           ...data.progressTracking,
-          lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() || new Date(),
+          lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() ?? new Date(),
           weeklyProgress:
             data.progressTracking?.weeklyProgress?.map((week: any) => ({
               ...week,
-              weekStarting: week.weekStarting?.toDate() || new Date(),
-            })) || [],
+              weekStarting: week.weekStarting?.toDate() ?? new Date(),
+            })) ?? [],
           milestoneAchievements:
             data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
               ...milestone,
-              achievedAt: milestone.achievedAt?.toDate() || new Date(),
-            })) || [],
+              achievedAt: milestone.achievedAt?.toDate() ?? new Date(),
+            })) ?? [],
         },
       } as UserJourney;
 
@@ -2268,7 +2324,7 @@ const journeyFirebaseService = {
       const data = analyticsDoc.data();
       const analytics: JourneyAnalytics = {
         ...data,
-        predictedCompletionDate: data.predictedCompletionDate?.toDate() || new Date(),
+        predictedCompletionDate: data.predictedCompletionDate?.toDate() ?? new Date(),
       } as JourneyAnalytics;
 
       return createSuccess(analytics);
@@ -2296,7 +2352,6 @@ const journeyFirebaseService = {
       const elapsedDays = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
       const completedGoals = journey.customGoals.filter(g => g.currentValue >= g.targetValue).length;
-      const totalGoals = journey.customGoals.length;
 
       const expectedProgress = (elapsedDays / totalDays) * 100;
       const actualProgress = journey.progressTracking.overallCompletion;

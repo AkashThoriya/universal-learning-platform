@@ -88,9 +88,9 @@ class MainDatabaseService extends DatabaseService {
 
   // Cache management
   clearCache() {
-    const provider = this.getProvider();
-    if ('cache' in provider && provider.cache && typeof provider.cache === 'object' && 'clear' in provider.cache) {
-      (provider.cache as { clear: () => void }).clear();
+    const providerInstance = this.getProvider();
+    if ('cache' in providerInstance && providerInstance.cache && typeof providerInstance.cache === 'object' && 'clear' in providerInstance.cache) {
+      (providerInstance.cache as { clear: () => void }).clear();
     }
   }
 }

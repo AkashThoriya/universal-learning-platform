@@ -196,9 +196,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         efficiency: trend.efficiency,
       })),
       distribution: [
-        { name: 'Exam Studies', value: state.analytics.examPerformance.totalMockTests, color: '#3b82f6' },
-        { name: 'Course Work', value: state.analytics.coursePerformance.totalAssignments, color: '#10b981' },
-        { name: 'Cross-Track', value: state.analytics.crossTrackInsights.learningTransfer.length, color: '#f59e0b' },
+        { name: 'Exam Studies', value: state.analytics.examPerformance?.totalMockTests ?? 0, color: '#3b82f6' },
+        { name: 'Course Work', value: state.analytics.coursePerformance?.totalAssignments ?? 0, color: '#10b981' },
+        {
+          name: 'Cross-Track',
+          value: state.analytics.crossTrackInsights?.learningTransfer?.length ?? 0,
+          color: '#f59e0b',
+        },
       ],
     };
   }, [state.analytics, state.selectedTimeRange]);
@@ -212,17 +216,19 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
 
     return {
       examSuccess: {
-        current: examPerformance.averageScore,
-        trend: examPerformance.scoreImprovement,
-        predicted: predictions.examSuccessProbability,
+        current: examPerformance?.averageScore ?? 0,
+        trend: examPerformance?.scoreImprovement ?? 0,
+        predicted: predictions?.examSuccessProbability ?? 0,
       },
       courseSuccess: {
-        current: coursePerformance.completionRate,
-        trend: coursePerformance.projectSuccessRate - coursePerformance.completionRate,
-        predicted: coursePerformance.projectSuccessRate,
+        current: coursePerformance?.completionRate ?? 0,
+        trend: (coursePerformance?.projectSuccessRate ?? 0) - (coursePerformance?.completionRate ?? 0),
+        predicted: coursePerformance?.projectSuccessRate ?? 0,
       },
       efficiency: {
-        current: Math.round((examPerformance.revisionEffectiveness + coursePerformance.codingEfficiency) / 2),
+        current: Math.round(
+          ((examPerformance?.revisionEffectiveness ?? 0) + (coursePerformance?.codingEfficiency ?? 0)) / 2
+        ),
         trend: 5.2, // Calculate from historical data
         predicted: 85,
       },
@@ -331,16 +337,32 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
     );
   }
 
-  if (!state.analytics) {
+  // Check if analytics is empty or has no meaningful data
+  const hasNoData =
+    !state.analytics ||
+    (state.analytics.examPerformance.totalMockTests === 0 &&
+      state.analytics.coursePerformance.totalAssignments === 0 &&
+      state.analytics.trends.daily.length === 0);
+
+  if (hasNoData) {
     return (
       <div className={`space-y-6 ${className}`}>
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No Analytics Data Yet</h3>
-            <p className="text-muted-foreground text-center max-w-md">
-              Start studying and taking mock tests to see your performance analytics here.
+            <p className="text-muted-foreground text-center max-w-md mb-6">
+              Start studying and taking mock tests to see your performance analytics here. You need to complete at least
+              a few study sessions to generate meaningful insights.
             </p>
+            <div className="flex gap-3">
+                            <Button onClick={() => (window.location.href = '/journey')} className="bg-blue-600 hover:bg-blue-700">
+                View Journey
+              </Button>
+              <Button onClick={() => (window.location.href = '/dashboard')} variant="outline">
+                Go to Dashboard
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -397,37 +419,37 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <PerformanceMetricCard
           title="Exam Performance"
-          value={performanceMetrics?.examSuccess.current ?? 0}
+          value={performanceMetrics?.examSuccess.current || 0}
           unit="%"
-          trend={performanceMetrics?.examSuccess.trend ?? 0}
-          predicted={performanceMetrics?.examSuccess.predicted ?? 0}
+          trend={performanceMetrics?.examSuccess.trend || 0}
+          predicted={performanceMetrics?.examSuccess.predicted || 0}
           icon={<Target className="h-4 w-4" />}
           color="blue"
         />
 
         <PerformanceMetricCard
           title="Course Progress"
-          value={performanceMetrics?.courseSuccess.current ?? 0}
+          value={performanceMetrics?.courseSuccess.current || 0}
           unit="%"
-          trend={performanceMetrics?.courseSuccess.trend ?? 0}
-          predicted={performanceMetrics?.courseSuccess.predicted ?? 0}
+          trend={performanceMetrics?.courseSuccess.trend || 0}
+          predicted={performanceMetrics?.courseSuccess.predicted || 0}
           icon={<Code className="h-4 w-4" />}
           color="green"
         />
 
         <PerformanceMetricCard
           title="Learning Efficiency"
-          value={performanceMetrics?.efficiency.current ?? 0}
+          value={performanceMetrics?.efficiency.current || 0}
           unit="%"
-          trend={performanceMetrics?.efficiency.trend ?? 0}
-          predicted={performanceMetrics?.efficiency.predicted ?? 0}
+          trend={performanceMetrics?.efficiency.trend || 0}
+          predicted={performanceMetrics?.efficiency.predicted || 0}
           icon={<Zap className="h-4 w-4" />}
           color="orange"
         />
 
         <PerformanceMetricCard
           title="Cross-Track Benefits"
-          value={state.analytics.crossTrackInsights.crossTrackBenefits.length}
+          value={state.analytics?.crossTrackInsights.crossTrackBenefits.length || 0}
           unit=" insights"
           trend={2.3}
           predicted={8}
@@ -462,7 +484,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={chartData?.performance ?? []}>
+                  <LineChart data={chartData?.performance || []}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />
@@ -488,7 +510,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPieChart>
                     <Pie
-                      data={chartData?.distribution ?? []}
+                      data={chartData?.distribution || []}
                       cx="50%"
                       cy="50%"
                       outerRadius={80}
@@ -510,15 +532,15 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
 
         {/* Other tabs would be implemented similarly */}
         <TabsContent value="efficiency">
-          <EfficiencyAnalytics analytics={state.analytics} />
+          {state.analytics && <EfficiencyAnalytics analytics={state.analytics} />}
         </TabsContent>
 
         <TabsContent value="progress">
-          <ProgressAnalytics analytics={state.analytics} />
+          {state.analytics && <ProgressAnalytics analytics={state.analytics} />}
         </TabsContent>
 
         <TabsContent value="predictions">
-          <PredictiveAnalytics analytics={state.analytics} />
+          {state.analytics && <PredictiveAnalytics analytics={state.analytics} />}
         </TabsContent>
       </Tabs>
 
@@ -529,7 +551,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       </div>
 
       {/* Cross-Track Insights */}
-      <CrossTrackInsights insights={state.analytics.crossTrackInsights} />
+      {state.analytics && <CrossTrackInsights insights={state.analytics.crossTrackInsights} />}
 
       {/* Last Updated Timestamp */}
       {state.lastUpdated && (

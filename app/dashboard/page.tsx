@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import AdaptiveDashboard from '@/components/dashboard/AdaptiveDashboard';
 import Navigation from '@/components/Navigation';
-import PWAInstallBanner from '@/components/PWAInstallBanner';
+// import PWAInstallBanner from '@/components/PWAInstallBanner'; // Disabled PWA
 import { logInfo } from '@/lib/logger';
 
 export default function Dashboard() {
@@ -20,7 +20,7 @@ export default function Dashboard() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        <PWAInstallBanner variant="inline" />
+        {/* <PWAInstallBanner variant="inline" /> */}
         <div className="max-w-7xl mx-auto p-6">
           <AdaptiveDashboard />
         </div>

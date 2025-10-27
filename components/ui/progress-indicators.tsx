@@ -72,7 +72,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
     return 'upcoming';
   };
 
-  const stepStatus = getStepStatus ?? defaultGetStepStatus;
+  const stepStatus = getStepStatus || defaultGetStepStatus;
 
   const getStepIcon = (step: number) => {
     const status = stepStatus(step, currentStep);
@@ -139,7 +139,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
           const step = index + 1;
           const isLast = step === totalSteps;
           const status = stepStatus(step, currentStep);
-          const label = stepLabels[index] ?? `Step ${step}`;
+          const label = stepLabels[index] || `Step ${step}`;
 
           return (
             <React.Fragment key={step}>
@@ -249,7 +249,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference;
 
-  const displayText = customText ?? (showPercentage ? `${Math.round(value)}%` : '');
+  const displayText = customText || (showPercentage ? `${Math.round(value)}%` : '');
 
   return (
     <div

@@ -59,7 +59,7 @@ export class LearningTemplateService {
    * @param difficulty - The difficulty level to filter by
    */
   static getTemplatesByDifficulty(difficulty: MissionDifficulty): LearningGoalTemplate[] {
-    return TEMPLATES_BY_DIFFICULTY[difficulty] || [];
+    return TEMPLATES_BY_DIFFICULTY[difficulty] ?? [];
   }
 
   /**

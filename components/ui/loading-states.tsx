@@ -346,7 +346,7 @@ export function ErrorDisplay({
   showDetails?: boolean;
   variant?: 'default' | 'compact' | 'inline';
 }) {
-  const errorMessage = typeof error === 'string' ? error : (error?.message ?? message);
+  const errorMessage = typeof error === 'string' ? error : (error?.message || message);
 
   if (variant === 'compact') {
     return (
@@ -525,7 +525,7 @@ export function ProgressiveLoader({
     <div className={`space-y-6 ${className}`}>
       <div className="text-center">
         <GradientSpinner size="large" className="mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">{stages[currentStage] ?? 'Loading...'}</h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">{stages[currentStage] || 'Loading...'}</h3>
         <p className="text-gray-600">Please wait while we prepare everything for you</p>
       </div>
 
@@ -595,12 +595,12 @@ export function SmartLoading({
 
   if (error) {
     return (
-      <div className={className}>{errorComponent ?? <ErrorDisplay error={error} {...(onRetry && { onRetry })} />}</div>
+      <div className={className}>{errorComponent || <ErrorDisplay error={error} {...(onRetry && { onRetry })} />}</div>
     );
   }
 
   if (isLoading && showLoading) {
-    return <div className={className}>{loadingComponent ?? <LoadingSpinner size="large" />}</div>;
+    return <div className={className}>{loadingComponent || <LoadingSpinner size="large" />}</div>;
   }
 
   if (isLoading) {
@@ -610,7 +610,7 @@ export function SmartLoading({
   if (isEmpty) {
     return (
       <div className={className}>
-        {emptyComponent ?? <EmptyState title="No data available" message="There's nothing to show here yet." />}
+        {emptyComponent || <EmptyState title="No data available" message="There's nothing to show here yet." />}
       </div>
     );
   }

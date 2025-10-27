@@ -377,7 +377,7 @@ export function BasicInfoStep({
                 </Label>
                 <Input
                   id="custom-name"
-                  value={form.data.customExam.name ?? ''}
+                  value={form.data.customExam.name || ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,
@@ -394,7 +394,7 @@ export function BasicInfoStep({
                 </Label>
                 <Textarea
                   id="custom-description"
-                  value={form.data.customExam.description ?? ''}
+                  value={form.data.customExam.description || ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,

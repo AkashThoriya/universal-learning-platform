@@ -178,7 +178,7 @@ export class RealTimeAnalyticsProcessor {
    * Process queued events
    */
   private async processEventQueue(): Promise<void> {
-    if (this.isProcessing ?? this.processingQueue.length === 0) {
+    if (this.isProcessing || this.processingQueue.length === 0) {
       return;
     }
 
@@ -298,7 +298,7 @@ export class RealTimeAnalyticsProcessor {
     // Analyze score trends
     const testCompletions = events.filter(e => e.eventType === 'mock_test_completed');
     if (testCompletions.length >= 3) {
-      const scores = testCompletions.map(e => e.data.score ?? 0);
+  const scores = testCompletions.map(e => e.data.score ?? 0);
       const trend = this.calculateTrend(scores);
 
       if (trend > 0.1) {
@@ -555,7 +555,7 @@ export class RealTimeAnalyticsProcessor {
     }
 
     const examEvents = events.filter(e => e.category === 'exam');
-    const testScores = examEvents.filter(e => e.eventType === 'mock_test_completed').map(e => e.data.score ?? 0);
+  const testScores = examEvents.filter(e => e.eventType === 'mock_test_completed').map(e => e.data.score ?? 0);
 
     if (testScores.length >= 2) {
       const avgScore = testScores.reduce((a, b) => a + b, 0) / testScores.length;
@@ -647,7 +647,7 @@ export class RealTimeAnalyticsProcessor {
     // Detect sudden performance drops
     const testEvents = events.filter(e => e.eventType === 'mock_test_completed');
     if (testEvents.length >= 3) {
-      const scores = testEvents.map(e => e.data.score ?? 0);
+  const scores = testEvents.map(e => e.data.score ?? 0);
       const recentScore = scores[scores.length - 1];
       const avgPreviousScores = scores.slice(0, -1).reduce((a, b) => a + b, 0) / (scores.length - 1);
 

@@ -165,7 +165,7 @@ export class UserRepository extends BaseRepository<User> {
 
   async findByEmail(email: string): Promise<DatabaseResult<User | null>> {
     const result = await this.findByField('email', email);
-    if ((!result.success || !result.data) ?? result.data.length === 0) {
+    if ((!result.success || !result.data) || result.data.length === 0) {
       return {
         success: true,
         data: null,

@@ -8,31 +8,25 @@ import {
   Clock,
   Star,
   Plus,
-  Filter,
   Search,
   BookOpen,
   Zap,
   Award,
   BarChart3,
   RefreshCw,
-  Settings,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import { AdaptiveTestCard, QuestionInterface, TestAnalyticsDashboard } from '@/components/adaptive-testing';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { adaptiveTestingService } from '@/lib/adaptive-testing-service';
-import { cn } from '@/lib/utils';
 import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
 
 interface TestOverviewStats {
@@ -45,7 +39,7 @@ interface TestOverviewStats {
 }
 
 export default function AdaptiveTestingPage() {
-  const router = useRouter();
+  const { user } = useAuth();
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -64,7 +58,7 @@ export default function AdaptiveTestingPage() {
   const [activeTest, setActiveTest] = useState<{
     test: AdaptiveTest;
     session: TestSession;
-    currentQuestion: AdaptiveQuestion;
+    currentQuestion: AdaptiveQuestion | null;
   } | null>(null);
   const [showResults, setShowResults] = useState<{
     test: AdaptiveTest;
@@ -112,15 +106,18 @@ export default function AdaptiveTestingPage() {
 
   const handleStartTest = async (testId: string) => {
     try {
-      const result = await adaptiveTestingService.startTestSession(testId);
+      if (!user?.uid) {
+        throw new Error('User not authenticated');
+      }
+      const result = await adaptiveTestingService.startTestSession(user.uid, { testId });
       if (result.success && result.data) {
         setActiveTest({
           test: tests.find(t => t.id === testId)!,
-          session: result.data.session,
-          currentQuestion: result.data.firstQuestion,
+          session: result.data,
+          currentQuestion: null, // Will be set by the first question request
         });
       } else {
-        throw new Error(result.error || 'Failed to start test');
+        throw new Error('Failed to start test');
       }
     } catch (error) {
       console.error('Error starting test:', error);
@@ -143,16 +140,19 @@ export default function AdaptiveTestingPage() {
     }
 
     try {
-      const result = await adaptiveTestingService.submitResponse({
+      if (!user?.uid) {
+        throw new Error('User not authenticated');
+      }
+      const result = await adaptiveTestingService.submitResponse(user.uid, {
         sessionId: activeTest.session.id,
         questionId,
-        selectedOptionId,
+        answer: selectedOptionId,
+        responseTime: timeSpent,
         confidence,
-        timeSpent,
       });
 
       if (result.success && result.data) {
-        if (result.data.completed) {
+        if (result.data.testCompleted) {
           // Test completed
           setShowResults({
             test: activeTest.test,
@@ -168,7 +168,7 @@ export default function AdaptiveTestingPage() {
           });
         }
       } else {
-        throw new Error(result.error || 'Failed to submit answer');
+        throw new Error('Failed to submit answer');
       }
     } catch (error) {
       console.error('Error submitting answer:', error);
@@ -191,6 +191,15 @@ export default function AdaptiveTestingPage() {
   };
 
   const handleRetakeTest = async (testId: string) => {
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'Please log in to retake a test.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       // Create a new test based on the existing one
       const originalTest = tests.find(t => t.id === testId);
@@ -198,7 +207,7 @@ export default function AdaptiveTestingPage() {
         return;
       }
 
-      const newTest = await adaptiveTestingService.createTestFromTemplate(originalTest);
+      const newTest = await adaptiveTestingService.createTestFromTemplate(user.uid, originalTest);
       if (newTest.success && newTest.data) {
         await loadTestsAndStats();
         handleStartTest(newTest.data.id);
@@ -214,14 +223,28 @@ export default function AdaptiveTestingPage() {
   };
 
   const generateRecommendedTest = async () => {
+    if (!user?.uid) {
+      toast({
+        title: 'Error',
+        description: 'Please log in to generate test recommendations.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
-      const recommendations = await adaptiveTestingService.generateTestRecommendations();
-      if (recommendations.length > 0) {
-        const newTest = await adaptiveTestingService.createTestFromRecommendation(recommendations[0]);
+      const recommendations = await adaptiveTestingService.generateTestRecommendations(user.uid);
+      if (recommendations.success && recommendations.data && recommendations.data.length > 0) {
+        const newTest = await adaptiveTestingService.createTestFromRecommendation(user.uid, recommendations.data[0]!);
         if (newTest.success && newTest.data) {
           await loadTestsAndStats();
           handleStartTest(newTest.data.id);
         }
+      } else {
+        toast({
+          title: 'Info',
+          description: 'No test recommendations available at this time.',
+        });
       }
     } catch (error) {
       console.error('Error generating recommended test:', error);
@@ -257,7 +280,7 @@ export default function AdaptiveTestingPage() {
   };
 
   // Show active test interface
-  if (activeTest) {
+  if (activeTest && activeTest.currentQuestion) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8">
         <div className="container mx-auto px-4">

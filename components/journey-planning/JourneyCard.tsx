@@ -5,8 +5,6 @@ import {
   Calendar,
   Target,
   TrendingUp,
-  Clock,
-  Users,
   Flag,
   MoreVertical,
   PlayCircle,
@@ -59,13 +57,6 @@ export default function JourneyCard({
     completed: 'bg-blue-100 text-blue-700 border-blue-200',
     paused: 'bg-yellow-100 text-yellow-700 border-yellow-200',
     cancelled: 'bg-red-100 text-red-700 border-red-200',
-  };
-
-  const priorityColors = {
-    low: 'text-gray-500',
-    medium: 'text-yellow-500',
-    high: 'text-orange-500',
-    critical: 'text-red-500',
   };
 
   const getStatusIcon = () => {
@@ -255,7 +246,7 @@ export default function JourneyCard({
               <div className="text-right">
                 <span className="text-sm font-medium text-gray-900">
                   {journey.progressTracking.weeklyProgress[journey.progressTracking.weeklyProgress.length - 1]
-                    ?.hoursStudied || 0}
+                    ?.hoursStudied ?? 0}
                   h studied
                 </span>
               </div>

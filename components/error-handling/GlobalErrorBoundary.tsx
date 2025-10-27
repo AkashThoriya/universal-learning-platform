@@ -204,7 +204,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
       this.props.onError?.(error, errorInfo, errorId);
 
       // Auto-retry for recoverable errors
-      if (this.isRecoverableError(error) && this.state.retryCount < (this.props.maxRetries ?? 3)) {
+      if (this.isRecoverableError(error) && this.state.retryCount < (this.props.maxRetries || 3)) {
         this.scheduleRetry();
       }
     } catch (reportingError) {
@@ -293,7 +293,7 @@ export class GlobalErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoun
               </div>
 
               {/* Error Details (Development only) */}
-              {(this.props.showDetails ?? process.env.NODE_ENV === 'development') && (
+              {(this.props.showDetails || process.env.NODE_ENV === 'development') && (
                 <Alert className="text-left">
                   <Bug className="h-4 w-4" />
                   <AlertDescription className="font-mono text-xs">
@@ -370,7 +370,7 @@ export function ComponentErrorBoundary({ children, fallback, onError }: Componen
       maxRetries={1}
       onError={error => onError?.(error)}
       fallback={() =>
-        fallback || (
+        fallback ?? (
           <Alert className="border-red-200 bg-red-50">
             <AlertTriangle className="h-4 w-4 text-red-600" />
             <AlertDescription className="text-red-800">

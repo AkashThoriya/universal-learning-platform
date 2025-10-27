@@ -19,17 +19,6 @@ interface QuickSessionConfig {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
 }
 
-interface MicroLearningRecommendation {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  track: 'exam' | 'course_tech';
-  subjectId: string;
-  topicId: string;
-}
-
 interface QuickSessionLauncherProps {
   userId?: string;
   sessions?: QuickSessionConfig[];
@@ -76,12 +65,12 @@ export function QuickSessionLauncher({
   autoLoadPersonalized = true,
 }: QuickSessionLauncherProps) {
   const { user } = useAuth();
-  const [displaySessions, setDisplaySessions] = useState<QuickSessionConfig[]>(sessions ?? defaultSessions);
+  const [displaySessions, setDisplaySessions] = useState<QuickSessionConfig[]>(sessions || defaultSessions);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startingSessionIndex, setStartingSessionIndex] = useState<number | null>(null);
 
-  const activeUserId = userId ?? user?.uid;
+  const activeUserId = userId || user?.uid;
 
   const loadPersonalizedSessions = useCallback(async () => {
     if (!activeUserId) {
@@ -93,24 +82,28 @@ export function QuickSessionLauncher({
       setError(null);
 
       // Load personalized recommendations from Firebase
-      const { MicroLearningService } = await import('@/lib/micro-learning-service');
-      const recommendations = await MicroLearningService.generatePersonalizedRecommendations(activeUserId);
+      const { simpleLearningRecommendationsService } = await import('@/lib/simple-learning-recommendations');
+      const recommendationsResult = await simpleLearningRecommendationsService.generateBasicRecommendations(activeUserId);
 
-      // Convert recommendations to quick session format
-      const personalizedSessions = (recommendations as MicroLearningRecommendation[]).map(rec => ({
-        id: rec.id,
-        title: rec.title,
-        description: rec.description,
-        duration: rec.duration,
-        difficulty: rec.difficulty,
-        track: rec.track,
-        subjectId: rec.subjectId,
-        topicId: rec.topicId,
-        icon: rec.track === 'exam' ? '📚' : '💻',
-        color: rec.track === 'exam' ? 'blue' : 'green',
-      }));
-
-      setDisplaySessions(personalizedSessions.length > 0 ? personalizedSessions : defaultSessions);
+      // Convert recommendations to quick session format if successful
+      if (recommendationsResult.success && recommendationsResult.data) {
+        const personalizedSessions = recommendationsResult.data.map((rec, index) => ({
+          id: rec.id,
+          title: rec.title,
+          description: rec.description,
+          duration: 15 + (index * 5), // Default durations: 15, 20, 25 minutes
+          difficulty: (rec.priority === 'high' ? 'beginner' : rec.priority === 'medium' ? 'intermediate' : 'advanced') as 'beginner' | 'intermediate' | 'advanced',
+          track: 'exam' as const,
+          subjectId: 'general',
+          topicId: rec.category,
+          icon: '📚',
+          color: 'blue',
+        }));
+        
+        setDisplaySessions(personalizedSessions.length > 0 ? personalizedSessions : defaultSessions);
+      } else {
+        setDisplaySessions(defaultSessions);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load personalized sessions');
       setDisplaySessions(defaultSessions);
@@ -244,8 +237,8 @@ export function QuickSessionLauncher({
             variant="outline"
             className="w-full text-blue-700 border-blue-300 hover:bg-blue-100 transition-colors duration-200"
             onClick={() => {
-              // Navigate to full micro-learning dashboard
-              window.location.href = '/micro-learning';
+              // Navigate to journey planning
+              window.location.href = '/journey';
             }}
           >
             <Target className="h-4 w-4 mr-2" />

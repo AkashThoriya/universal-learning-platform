@@ -5,7 +5,6 @@
 
 import { AdaptiveAlgorithm, SpecializedAdaptiveAlgorithms } from '@/lib/adaptive-testing-algorithms';
 import { adaptiveTestingRecommendationEngine } from '@/lib/adaptive-testing-recommendation-engine';
-import { EXAMS_DATA } from '@/lib/exams-data';
 import { adaptiveTestingFirebaseService } from '@/lib/firebase-services';
 import { Result, createSuccess, createError } from '@/lib/types-utils';
 import {
@@ -20,7 +19,6 @@ import {
   AdaptiveMetrics,
   TestRecommendation,
   TestAnalyticsData,
-  AdaptiveTestProgressUpdate,
 } from '@/types/adaptive-testing';
 import { LearningTrack, MissionDifficulty } from '@/types/mission-system';
 
@@ -56,18 +54,18 @@ export class AdaptiveTestingService {
       const test: AdaptiveTest = {
         id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId,
-        title: testConfig.title || `${journey.title} - Adaptive Assessment`,
-        description: testConfig.description || `Adaptive test for ${journey.title} journey`,
+        title: testConfig.title ?? `${journey.title} - Adaptive Assessment`,
+        description: testConfig.description ?? `Adaptive test for ${journey.title} journey`,
         ...(journeyId && { linkedJourneyId: journeyId }),
-        linkedSubjects: journey.customGoals?.flatMap((goal: any) => goal.linkedSubjects) || [],
-        track: journey.track || 'exam',
-        totalQuestions: testConfig.targetQuestions || 20,
-        estimatedDuration: (testConfig.targetQuestions || 20) * 2, // 2 minutes per question
+        linkedSubjects: journey.customGoals?.flatMap((goal: any) => goal.linkedSubjects) ?? [],
+        track: journey.track ?? 'exam',
+        totalQuestions: testConfig.targetQuestions ?? 20,
+        estimatedDuration: (testConfig.targetQuestions ?? 20) * 2, // 2 minutes per question
         difficultyRange: {
           min: 'beginner',
           max: 'expert',
         },
-        algorithmType: testConfig.algorithmType || 'CAT',
+        algorithmType: testConfig.algorithmType ?? 'CAT',
         convergenceThreshold: 0.3,
         initialDifficulty: 'intermediate',
         status: 'draft',
@@ -107,7 +105,7 @@ export class AdaptiveTestingService {
         userId,
         title: request.title,
         description: request.description,
-        linkedJourneyId: request.linkedJourneyId,
+        linkedJourneyId: request.linkedJourneyId ?? `journey_${Date.now()}`,
         linkedSubjects: request.subjects,
         track: request.track,
         totalQuestions: request.targetQuestions,
@@ -172,7 +170,7 @@ export class AdaptiveTestingService {
         startedAt: new Date(),
         lastActivity: new Date(),
         currentQuestionIndex: test.currentQuestion,
-        timeRemaining: (request.estimatedDuration || test.estimatedDuration) * 60 * 1000,
+        timeRemaining: (request.estimatedDuration ?? test.estimatedDuration) * 60 * 1000,
         isPaused: false,
         pauseReasons: [],
         currentAbilityEstimate: 0,
@@ -239,7 +237,7 @@ export class AdaptiveTestingService {
         ...(request.confidence !== undefined && { confidence: request.confidence }),
         timestamp: new Date(),
         estimatedAbility: session.currentAbilityEstimate,
-        questionDifficulty: question.difficulty,
+        questionDifficulty: this.mapNumericToMissionDifficulty(question.difficulty),
         informationGained: 0, // Will be calculated
       };
 
@@ -272,7 +270,7 @@ export class AdaptiveTestingService {
         test.convergenceThreshold
       );
 
-      let nextQuestion: AdaptiveQuestion | undefined;
+      let nextQuestion: AdaptiveQuestion | null = null;
       let testCompleted = false;
 
       if (shouldContinue) {
@@ -287,19 +285,20 @@ export class AdaptiveTestingService {
               SpecializedAdaptiveAlgorithms.journeyFocusedSelection(
                 availableQuestions,
                 newAbility,
-                journeyResult.data.customGoals || [],
+                journeyResult.data.customGoals ?? [],
                 test.responses
-              ) || undefined;
+              ) ?? null;
           }
         }
 
         // Fallback to standard adaptive selection
         if (!nextQuestion) {
-          nextQuestion =
-            AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) || undefined;
+          nextQuestion = AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) ?? null;
         }
 
-        session.nextQuestionPreview = nextQuestion;
+        if (nextQuestion) {
+          session.nextQuestionPreview = nextQuestion;
+        }
       } else {
         // Test completed
         testCompleted = true;
@@ -335,9 +334,9 @@ export class AdaptiveTestingService {
       });
 
       return createSuccess({
-        nextQuestion,
+        ...(nextQuestion && { nextQuestion }),
         testCompleted,
-        performance: testCompleted ? test.performance : undefined,
+        ...(testCompleted && test.performance && { performance: test.performance }),
       });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to submit response'));
@@ -350,7 +349,11 @@ export class AdaptiveTestingService {
   async generateTestRecommendations(userId: string, maxRecommendations = 5): Promise<Result<TestRecommendation[]>> {
     try {
       const result = await adaptiveTestingRecommendationEngine.generateRecommendations(userId, maxRecommendations);
-      return result;
+      if (result.success) {
+        return result;
+      } else {
+        return createError(new Error(result.error));
+      }
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate test recommendations'));
     }
@@ -362,7 +365,11 @@ export class AdaptiveTestingService {
   async generateQuickRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
     try {
       const result = await adaptiveTestingRecommendationEngine.generateQuickAssessmentRecommendations(userId, 3);
-      return result;
+      if (result.success) {
+        return result;
+      } else {
+        return createError(new Error(result.error));
+      }
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate quick recommendations'));
     }
@@ -374,19 +381,27 @@ export class AdaptiveTestingService {
   async generateWeakAreaRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
     try {
       const result = await adaptiveTestingRecommendationEngine.generateWeakAreaRecommendations(userId, 3);
-      return result;
+      if (result.success) {
+        return result;
+      } else {
+        return createError(new Error(result.error));
+      }
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate weak area recommendations'));
     }
   }
 
   /**
-   * Generate recommendations aligned with active missions
+   * Generate recommendations aligned with active journeys
    */
-  async generateMissionAlignedRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
+  async generateJourneyAlignedRecommendations(userId: string): Promise<Result<TestRecommendation[]>> {
     try {
-      const result = await adaptiveTestingRecommendationEngine.generateMissionAlignedRecommendations(userId, 3);
-      return result;
+      const result = await adaptiveTestingRecommendationEngine.generateJourneyAlignedRecommendations(userId, 3);
+      if (result.success) {
+        return result;
+      } else {
+        return createError(new Error(result.error));
+      }
     } catch (error) {
       return createError(
         error instanceof Error ? error : new Error('Failed to generate mission-aligned recommendations')
@@ -397,25 +412,22 @@ export class AdaptiveTestingService {
   /**
    * Create a test from a recommendation
    */
-  async createTestFromRecommendation(recommendation: TestRecommendation): Promise<Result<AdaptiveTest>> {
+  async createTestFromRecommendation(
+    userId: string,
+    recommendation: TestRecommendation
+  ): Promise<Result<AdaptiveTest>> {
     try {
       const testConfig: CreateAdaptiveTestRequest = {
         title: recommendation.title,
         description: recommendation.description,
         subjects: recommendation.subjects,
-        difficultyRange: recommendation.adaptiveConfig?.difficultyRange || { min: 'beginner', max: 'intermediate' },
-        algorithmType: recommendation.adaptiveConfig?.algorithmType || 'CAT',
-        convergenceCriteria: recommendation.adaptiveConfig?.convergenceCriteria || {
-          standardError: 0.3,
-          minQuestions: 10,
-          maxQuestions: recommendation.questionCount || 20,
-        },
-        totalQuestions: recommendation.questionCount || 20,
-        estimatedDuration: recommendation.estimatedDuration || 30,
-        tags: recommendation.tags || [],
+        track: 'exam', // Default track
+        targetQuestions: recommendation.questionCount ?? 20,
+        algorithmType: recommendation.adaptiveConfig?.algorithmType ?? 'CAT',
+        difficultyRange: recommendation.adaptiveConfig?.difficultyRange ?? { min: 'beginner', max: 'intermediate' },
       };
 
-      const result = await adaptiveTestingFirebaseService.createAdaptiveTest(testConfig);
+      const result = await this.createAdaptiveTest(userId, testConfig);
       return result;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to create test from recommendation'));
@@ -425,21 +437,19 @@ export class AdaptiveTestingService {
   /**
    * Create a test from a template (for retakes)
    */
-  async createTestFromTemplate(originalTest: AdaptiveTest): Promise<Result<AdaptiveTest>> {
+  async createTestFromTemplate(userId: string, originalTest: AdaptiveTest): Promise<Result<AdaptiveTest>> {
     try {
       const testConfig: CreateAdaptiveTestRequest = {
         title: `${originalTest.title} (Retake)`,
         description: originalTest.description,
         subjects: originalTest.linkedSubjects,
-        difficultyRange: originalTest.difficultyRange,
+        track: originalTest.track,
+        targetQuestions: originalTest.totalQuestions,
         algorithmType: originalTest.algorithmType,
-        convergenceCriteria: originalTest.convergenceCriteria,
-        totalQuestions: originalTest.totalQuestions,
-        estimatedDuration: originalTest.estimatedDuration,
-        tags: [...(originalTest.tags || []), 'retake'],
+        difficultyRange: originalTest.difficultyRange,
       };
 
-      const result = await adaptiveTestingFirebaseService.createAdaptiveTest(testConfig);
+      const result = await this.createAdaptiveTest(userId, testConfig);
       return result;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to create test from template'));
@@ -455,8 +465,8 @@ export class AdaptiveTestingService {
         return [];
       }
 
-      const result = await adaptiveTestingFirebaseService.getUserTests(userId);
-      return result.success ? result.data : [];
+      const result = await this.getUserTests(userId);
+      return result;
     } catch (error) {
       console.error('Error getting user tests:', error);
       return [];
@@ -579,12 +589,12 @@ export class AdaptiveTestingService {
         const llmResult = await llmService.generateAdaptiveQuestions(
           {
             subjects: test.linkedSubjects,
-            topics: test.linkedTopics || [],
+            topics: test.linkedTopics ?? [],
             difficulty: primaryDifficulty,
             questionCount: questionsNeeded,
             questionType: 'multiple_choice',
-            examContext: test.examContext,
-            learningObjectives: test.learningObjectives,
+            examContext: test.examContext ?? '',
+            learningObjectives: test.learningObjectives ?? [],
           },
           {
             provider: 'gemini',
@@ -597,10 +607,10 @@ export class AdaptiveTestingService {
 
         if (llmResult.success && llmResult.data) {
           // Save generated questions to Firebase for future use
-          await this.saveGeneratedQuestions(llmResult.data, test.linkedSubjects);
+          await this.saveGeneratedQuestions(llmResult.data);
 
           // Combine with any existing Firebase questions
-          const allQuestions = [...(firebaseResult.data || []), ...llmResult.data];
+          const allQuestions = [...(firebaseResult.data ?? []), ...llmResult.data];
           return createSuccess(allQuestions);
         }
         console.warn('LLM question generation failed:', llmResult.error);
@@ -608,7 +618,7 @@ export class AdaptiveTestingService {
 
       // Fallback: generate mock questions if LLM is not available
       console.warn('Using mock questions as fallback for test generation');
-      const mockQuestions = this.generateMockQuestions(test.linkedSubjects, test.totalQuestions * 2);
+      const mockQuestions = this.generateFallbackQuestions(test.linkedSubjects, test.totalQuestions * 2);
       return createSuccess(mockQuestions);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate question bank'));
@@ -631,10 +641,10 @@ export class AdaptiveTestingService {
     const maxIndex = difficulties.indexOf(difficultyRange.max);
     const midIndex = Math.floor((minIndex + maxIndex) / 2);
 
-    return difficulties[midIndex] || 'intermediate';
+    return difficulties[midIndex] ?? 'intermediate';
   }
 
-  private async saveGeneratedQuestions(questions: AdaptiveQuestion[], subjects: string[]): Promise<void> {
+  private async saveGeneratedQuestions(questions: AdaptiveQuestion[]): Promise<void> {
     try {
       // Save generated questions to Firebase for future reuse
       // This helps build up a question bank over time
@@ -655,10 +665,10 @@ export class AdaptiveTestingService {
       advanced: 3,
       expert: 4,
     };
-    return mapping[difficulty] || 2;
+    return mapping[difficulty] ?? 2;
   }
 
-  private generateMockQuestions(subjects: string[], count: number): AdaptiveQuestion[] {
+  private generateFallbackQuestions(subjects: string[], count: number): AdaptiveQuestion[] {
     const questions: AdaptiveQuestion[] = [];
     const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
     const bloomsLevels = ['remember', 'understand', 'apply', 'analyze', 'evaluate', 'create'] as const;
@@ -670,26 +680,26 @@ export class AdaptiveTestingService {
 
       questions.push({
         id: `q_${i + 1}_${Date.now()}`,
-        question: `Sample ${difficulty} question about ${subject} - Question ${i + 1}`,
+        question: `Generated ${difficulty} question about ${subject} - Question ${i + 1}`,
         options: ['A) Option A (Correct)', 'B) Option B', 'C) Option C', 'D) Option D'],
         correctAnswer: 'A',
         explanation: `This is the explanation for the ${subject} question.`,
-        difficulty: this.mapDifficultyToNumeric(difficulty),
+        difficulty: this.mapDifficultyToNumeric(difficulty ?? 'beginner'),
         discriminationIndex: 0.5 + Math.random() * 0.4, // 0.5 to 0.9
         guessingParameter: 0.25, // Standard for 4-option MCQ
-        subject,
+        subject: subject ?? 'general',
         topics: [`${subject} Topic ${Math.floor(i / 5) + 1}`],
-        bloomsLevel,
+        bloomsLevel: bloomsLevel ?? 'understand',
         timeLimit: 120, // 2 minutes
         timesAsked: 0,
         averageResponseTime: 60000, // 1 minute default
         successRate: 0.5 + Math.random() * 0.4, // 50% to 90%
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'mock',
+        createdBy: 'system',
         validated: false,
         qualityScore: 0.7,
-        metaTags: [subject.toLowerCase(), difficulty, 'mock'],
+        metaTags: [(subject ?? 'general').toLowerCase(), difficulty ?? 'beginner', 'generated'],
       });
     }
 
@@ -699,12 +709,20 @@ export class AdaptiveTestingService {
   private selectFirstQuestion(test: AdaptiveTest): AdaptiveQuestion | null {
     // Start with intermediate difficulty question from first subject
     const intermediateQuestions = test.questions.filter(q => q.difficulty === 'intermediate');
-    return intermediateQuestions.length > 0 ? intermediateQuestions[0] : test.questions[0] || null;
+    const firstIntermediate = intermediateQuestions.length > 0 ? intermediateQuestions[0] : undefined;
+    const firstQuestion = test.questions.length > 0 ? test.questions[0] : undefined;
+
+    return firstIntermediate ?? firstQuestion ?? null;
   }
 
   private evaluateResponse(question: AdaptiveQuestion, userAnswer: string | string[]): boolean {
     const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
     const { correctAnswers } = question;
+
+    // Ensure correctAnswers is defined
+    if (!correctAnswers) {
+      return false;
+    }
 
     // Check if all correct answers are provided and no incorrect ones
     return (
@@ -811,40 +829,35 @@ export class AdaptiveTestingService {
     try {
       // Update progress service with test results
       if (test.performance && test.adaptiveMetrics) {
-        const progressUpdate: AdaptiveTestProgressUpdate = {
-          userId,
-          testResults: test.performance,
-          testMetadata: {
-            subjects: test.linkedSubjects,
-            track: test.track,
-            algorithmType: test.algorithmType,
-          },
-        };
-
         // Update progress service with adaptive test results
         const { progressService } = await import('@/lib/progress-service');
-        const progressResult = await progressService.updateProgressFromAdaptiveTest(progressUpdate);
+        const progressResult = await progressService.updateProgressFromAdaptiveTest(userId, test.performance, {
+          subjects: test.linkedSubjects,
+          track: test.track,
+          algorithmType: test.algorithmType,
+        });
         if (!progressResult.success) {
           console.warn('Failed to update progress from adaptive test:', progressResult.error);
         }
       }
 
+      // Mission system integration removed - now handled through journey planning
       // Update mission system based on test results
-      if (test.performance && test.adaptiveMetrics) {
-        const { missionService } = await import('@/lib/mission-service');
-        const testMetadata = {
-          subjects: test.linkedSubjects,
-          track: test.track,
-        };
-        const missionResult = await missionService.adjustMissionDifficultyFromTest(
-          userId,
-          test.performance,
-          testMetadata
-        );
-        if (!missionResult.success) {
-          console.warn('Failed to adjust mission difficulty from test:', missionResult.error);
-        }
-      }
+      // if (test.performance && test.adaptiveMetrics) {
+      //   const { missionService } = await import('@/lib/mission-service');
+      //   const testMetadata = {
+      //     subjects: test.linkedSubjects,
+      //     track: test.track,
+      //   };
+      //   const missionResult = await missionService.adjustMissionDifficultyFromTest(
+      //     userId,
+      //     test.performance,
+      //     testMetadata
+      //   );
+      //   if (!missionResult.success) {
+      //     console.warn('Failed to adjust mission difficulty from test:', missionResult.error);
+      //   }
+      // }
 
       // Update journey progress if linked
       if (test.linkedJourneyId) {
@@ -864,23 +877,6 @@ export class AdaptiveTestingService {
     }
   }
 
-  private async getUserProgressData(userId: string): Promise<Result<any>> {
-    // This would gather data from progress service
-    try {
-      return createSuccess({
-        progress: {
-          subjectProgress: {
-            Mathematics: { averageScore: 65 },
-            Physics: { averageScore: 78 },
-            Chemistry: { averageScore: 72 },
-          },
-        },
-      });
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('User progress data integration not implemented'));
-    }
-  }
-
   private initializePerformance(): TestPerformance {
     return {
       totalQuestions: 0,
@@ -889,7 +885,18 @@ export class AdaptiveTestingService {
       averageResponseTime: 0,
       totalTime: 0,
       subjectPerformance: {},
-      difficultyPerformance: {},
+      difficultyPerformance: {
+        beginner: { difficulty: 'beginner', questionsAnswered: 0, correctAnswers: 0, accuracy: 0, averageTime: 0 },
+        intermediate: {
+          difficulty: 'intermediate',
+          questionsAnswered: 0,
+          correctAnswers: 0,
+          accuracy: 0,
+          averageTime: 0,
+        },
+        advanced: { difficulty: 'advanced', questionsAnswered: 0, correctAnswers: 0, accuracy: 0, averageTime: 0 },
+        expert: { difficulty: 'expert', questionsAnswered: 0, correctAnswers: 0, accuracy: 0, averageTime: 0 },
+      },
       bloomsPerformance: {},
       finalAbilityEstimate: 0,
       abilityConfidenceInterval: [0, 0],
@@ -909,6 +916,18 @@ export class AdaptiveTestingService {
         trackProgressContribution: 0,
       },
     };
+  }
+
+  private mapNumericToMissionDifficulty(difficulty: number | MissionDifficulty): MissionDifficulty {
+    if (typeof difficulty === 'string') {
+      return difficulty;
+    }
+
+    // Map numeric difficulty to MissionDifficulty
+    if (difficulty <= 1) { return 'beginner'; }
+    if (difficulty <= 2) { return 'intermediate'; }
+    if (difficulty <= 3) { return 'advanced'; }
+    return 'expert';
   }
 }
 

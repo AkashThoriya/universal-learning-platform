@@ -3,8 +3,8 @@
  * Integrates with existing Mission System and Progress Service
  */
 
-import { Exam } from './exam';
-import { LearningTrack, MissionDifficulty, UnifiedProgress } from './mission-system';
+// Unused import: import { Exam } from './exam';
+import { LearningTrack, MissionDifficulty } from './mission-system';
 
 export interface UserJourney {
   id: string;

@@ -183,10 +183,10 @@ export default function SyllabusPage() {
       const newTopicId = `topic-${Date.now()}`;
       const newTopic: SyllabusTopic = {
         id: newTopicId,
-        name: topicData?.name || 'New Topic',
-        estimatedHours: topicData?.estimatedHours || 5,
+        name: topicData?.name ?? 'New Topic',
+        estimatedHours: topicData?.estimatedHours ?? 5,
         ...(topicData?.description && { description: topicData.description }),
-        subtopics: topicData?.subtopics || [],
+        subtopics: topicData?.subtopics ?? [],
       };
 
       setSyllabus(prev =>
@@ -199,8 +199,8 @@ export default function SyllabusPage() {
       setExpandedSubjects(prev => new Set([...prev, subjectId]));
       setEditingTopic(newTopicId);
       setTempTopicName(newTopic.name);
-      setTempTopicHours(newTopic.estimatedHours || 5);
-      setTempTopicDescription(newTopic.description || '');
+      setTempTopicHours(newTopic.estimatedHours ?? 5);
+      setTempTopicDescription(newTopic.description ?? '');
 
       toast({
         title: 'Topic Added',
@@ -291,8 +291,8 @@ export default function SyllabusPage() {
   const startEditingTopic = useCallback((topicId: string, topic: SyllabusTopic) => {
     setEditingTopic(topicId);
     setTempTopicName(topic.name);
-    setTempTopicHours(topic.estimatedHours || 5);
-    setTempTopicDescription(topic.description || '');
+    setTempTopicHours(topic.estimatedHours ?? 5);
+    setTempTopicDescription(topic.description ?? '');
   }, []);
 
   const saveTopicChanges = useCallback(
@@ -374,7 +374,7 @@ export default function SyllabusPage() {
       return 0;
     }
 
-    const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore ?? 0), 0);
+    const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore || 0), 0);
     return Math.round(totalMastery / validProgresses.length);
   };
 
@@ -406,7 +406,7 @@ export default function SyllabusPage() {
     }
 
     return matchesSearch && matchesTier && matchesMastery;
-  });
+  }); // Keep natural order - first subjects appear at the top
 
   // Get all topics with subject information for topics view
   const getAllTopics = () => {
@@ -434,7 +434,7 @@ export default function SyllabusPage() {
     let matchesMastery = true;
     if (masteryFilter !== 'all') {
       const topicProgress = getTopicProgress(topic.id);
-      const masteryScore = topicProgress?.masteryScore ?? 0;
+      const masteryScore = topicProgress?.masteryScore || 0;
       switch (masteryFilter) {
         case 'low':
           matchesMastery = masteryScore < MEDIUM_MASTERY_THRESHOLD;
@@ -449,7 +449,7 @@ export default function SyllabusPage() {
     }
 
     return matchesSearch && matchesTier && matchesMastery;
-  });
+  }); // Keep natural order - first topics appear at the top
 
   const getTierColor = (tier: number) => {
     switch (tier) {
@@ -731,7 +731,7 @@ export default function SyllabusPage() {
                   <div>
                     <p className="text-2xl font-bold">
                       {Math.round(
-                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length ?? 1)
+                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
                       )}
                       %
                     </p>
@@ -1208,7 +1208,7 @@ export default function SyllabusPage() {
                                               <div>
                                                 <span className="font-medium text-gray-700">Estimated Study Time:</span>
                                                 <p className="text-gray-600">
-                                                  {topic.estimatedHours || 'Not set'} hours
+                                                  {topic.estimatedHours ?? 'Not set'} hours
                                                 </p>
                                               </div>
                                               <div>
@@ -1264,7 +1264,7 @@ export default function SyllabusPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                               {subject.topics.map(topic => {
                                 const topicProgress = getTopicProgress(topic.id);
-                                const masteryScore = topicProgress?.masteryScore ?? 0;
+                                const masteryScore = topicProgress?.masteryScore || 0;
 
                                 return (
                                   <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
@@ -1326,7 +1326,7 @@ export default function SyllabusPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredTopics.map(topic => {
                   const topicProgress = getTopicProgress(topic.id);
-                  const masteryScore = topicProgress?.masteryScore ?? 0;
+                  const masteryScore = topicProgress?.masteryScore || 0;
 
                   return (
                     <Link

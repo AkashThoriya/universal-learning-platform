@@ -727,10 +727,10 @@ class LearningRecommendationsService {
     // Sort by priority, impact, and implementation ease
     return recommendations.sort((a, b) => {
       const aScore =
-        priorityWeights[a.priority] + (impactWeights[a.expectedImpact] || 0) + (60 - a.estimatedTimeToImplement); // Easier to implement = higher score
+        priorityWeights[a.priority] + (impactWeights[a.expectedImpact] ?? 0) + (60 - a.estimatedTimeToImplement); // Easier to implement = higher score
 
       const bScore =
-        priorityWeights[b.priority] + (impactWeights[b.expectedImpact] || 0) + (60 - b.estimatedTimeToImplement);
+        priorityWeights[b.priority] + (impactWeights[b.expectedImpact] ?? 0) + (60 - b.estimatedTimeToImplement);
 
       return bScore - aScore;
     });

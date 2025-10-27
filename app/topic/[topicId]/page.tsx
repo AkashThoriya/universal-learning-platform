@@ -8,7 +8,6 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
-import { QuickSessionLauncher } from '@/components/micro-learning';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -414,32 +413,26 @@ export default function TopicPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <QuickSessionLauncher
-                userId={user?.uid ?? ''}
-                sessions={[
-                  {
-                    title: `${topic?.name} - Quick Review`,
-                    description: `15-minute focused session on ${topic?.name} concepts`,
-                    subjectId: subjectId ?? '',
-                    topicId,
-                    track: 'exam' as const,
-                    duration: 15,
-                    difficulty: 'intermediate' as const,
-                  },
-                  {
-                    title: `${topic?.name} - Practical Application`,
-                    description: `Apply ${topic?.name} in real banking scenarios`,
-                    subjectId: subjectId ?? '',
-                    topicId,
-                    track: 'course_tech' as const,
-                    duration: 20,
-                    difficulty: 'advanced' as const,
-                  },
-                ]}
-                onStartSession={(subjectId, topicId, track, duration) => {
-                  window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
-                }}
-              />
+              <div className="space-y-4">
+                <p className="text-sm text-blue-700">Ready to study this topic?</p>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={() => (window.location.href = '/syllabus')}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    View Full Syllabus
+                  </Button>
+                  <Button
+                    onClick={() => (window.location.href = '/test')}
+                    variant="outline"
+                    className="border-blue-300"
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Take Test
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

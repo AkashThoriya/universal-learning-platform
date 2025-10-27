@@ -87,7 +87,7 @@ interface PersonaDetectionStepProps {
  */
 export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   const [currentSubStep, setCurrentSubStep] = useState(1);
-  const [selectedPersona, setSelectedPersona] = useState<UserPersonaType | null>(form.data.userPersona?.type ?? null);
+  const [selectedPersona, setSelectedPersona] = useState<UserPersonaType | null>(form.data.userPersona?.type || null);
   const [showPersonaDetails, setShowPersonaDetails] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -176,7 +176,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
   // Enhanced study goal change with validation and debouncing
   const handleStudyGoalChange = useCallback(
     (hours: number[]) => {
-      const newHours = hours[0] ?? 2;
+      const newHours = hours[0] || 2;
 
       // Debounce the form update to prevent excessive re-renders
       debouncedFormUpdate(newHours);
@@ -203,7 +203,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
     [form, selectedPersona]
   );
 
-  const currentStudyHours = Math.round((form.data.preferences?.dailyStudyGoalMinutes ?? 120) / 60) || 2;
+  const currentStudyHours = Math.round((form.data.preferences?.dailyStudyGoalMinutes || 120) / 60) || 2;
   const selectedTimeSlot = form.data.preferences?.preferredStudyTime;
 
   return (

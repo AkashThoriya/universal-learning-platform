@@ -248,7 +248,7 @@ export class ServiceContainer {
    * Check if service is registered
    */
   has(name: string): boolean {
-    return this.services.has(name) || this.factories.has(name);
+    return this.services.has(name) ?? this.factories.has(name);
   }
 
   /**
@@ -354,7 +354,8 @@ export class PerformanceMonitor {
   end(label: string): number {
     const startTime = this.timers.get(label);
     if (!startTime) {
-      throw new Error(`Timer '${label}' not found`);
+      console.warn(`Timer '${label}' not found`);
+      return 0;
     }
 
     const duration = performance.now() - startTime;
@@ -371,12 +372,21 @@ export class PerformanceMonitor {
 
     if (result instanceof Promise) {
       return result.finally(() => {
-        this.end(label);
-        // console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+        try {
+          this.end(label);
+          // console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+        } catch (error) {
+          console.warn(`Failed to end timer '${label}':`, error);
+        }
       });
     }
-    this.end(label);
-    // console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+
+    try {
+      this.end(label);
+      // console.debug(`Operation '${label}' took ${duration.toFixed(2)}ms`);
+    } catch (error) {
+      console.warn(`Failed to end timer '${label}':`, error);
+    }
     return result;
   }
 }

@@ -306,7 +306,7 @@ function withLoading<P extends object>(WrappedComponent: ComponentType<P>): Comp
     return <WrappedComponent {...(restProps as P)} />;
   };
 
-  WithLoadingComponent.displayName = `withLoading(${WrappedComponent.displayName ?? WrappedComponent.name})`;
+  WithLoadingComponent.displayName = `withLoading(${WrappedComponent.displayName || WrappedComponent.name})`;
 
   return WithLoadingComponent;
 }
@@ -324,7 +324,7 @@ function withErrorBoundary<P extends object>(
   ErrorComponent?: ComponentType<{ error: Error; reset: () => void }>
 ): ComponentType<P> {
   class WithErrorBoundaryComponent extends React.Component<P, WithErrorBoundaryState> {
-    static displayName = `withErrorBoundary(${WrappedComponent.displayName ?? WrappedComponent.name})`;
+    static displayName = `withErrorBoundary(${WrappedComponent.displayName || WrappedComponent.name})`;
 
     constructor(props: P) {
       super(props);
@@ -391,7 +391,7 @@ function withAuth<P extends object>(
     return <WrappedComponent {...(restProps as P)} />;
   };
 
-  WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName ?? WrappedComponent.name})`;
+  WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name})`;
 
   return WithAuthComponent;
 }

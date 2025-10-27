@@ -209,7 +209,7 @@ class BackgroundSyncService {
       const { missionId, progress, completedAt, timeSpent } = data;
 
       // Check for conflicts
-      const remoteDoc = await getDoc(doc(db, `users/${item.userId}/missions/${missionId}`));
+      const remoteDoc = await getDoc(doc(db, `users/${item.userId}/journeys/${missionId}`));
 
       if (remoteDoc.exists()) {
         const remoteData = remoteDoc.data();
@@ -224,7 +224,7 @@ class BackgroundSyncService {
 
       // Sync to Firebase
       await setDoc(
-        doc(db, `users/${item.userId}/missions/${missionId}`),
+        doc(db, `users/${item.userId}/journeys/${missionId}`),
         {
           progress,
           completedAt: completedAt ? Timestamp.fromDate(new Date(completedAt)) : null,
@@ -415,7 +415,7 @@ class BackgroundSyncService {
         const queue = JSON.parse(stored);
         this.syncQueue = queue.map((item: any) => ({
           ...(item && typeof item === 'object' ? item : {}),
-          timestamp: new Date(item?.timestamp || Date.now()),
+          timestamp: new Date(item?.timestamp ?? Date.now()),
           lastAttempt: item?.lastAttempt ? new Date(item.lastAttempt) : undefined,
         }));
       }
@@ -455,7 +455,7 @@ class BackgroundSyncService {
 
       conflicts.push({
         ...(conflict && typeof conflict === 'object' ? conflict : {}),
-        timestamp: conflict?.timestamp?.toISOString() || new Date().toISOString(),
+        timestamp: conflict?.timestamp?.toISOString() ?? new Date().toISOString(),
       });
 
       localStorage.setItem('sync_conflicts', JSON.stringify(conflicts));

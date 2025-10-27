@@ -255,7 +255,7 @@ class PushNotificationService {
       badge: '/icons/badge-72x72.png',
       data: {
         type: 'mission_deadline',
-        url: '/missions',
+        url: '/journey',
         hoursLeft,
       },
       actions: [
@@ -285,7 +285,7 @@ class PushNotificationService {
       image: '/images/streak-risk.png',
       data: {
         type: 'streak_risk',
-        url: '/micro-learning',
+        url: '/journey',
         streak: currentStreak,
       },
       actions: [
@@ -314,7 +314,7 @@ class PushNotificationService {
       badge: '/icons/badge-72x72.png',
       data: {
         type: 'micro_learning',
-        url: '/micro-learning',
+        url: '/journey',
         subject,
       },
       actions: [

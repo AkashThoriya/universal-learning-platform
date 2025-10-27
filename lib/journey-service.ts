@@ -5,9 +5,10 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { EXAMS_DATA } from '@/lib/exams-data';
 import { journeyFirebaseService } from '@/lib/firebase-services';
-import { missionService } from '@/lib/mission-service';
 import { progressService } from '@/lib/progress-service';
+import { Result, createSuccess, createError } from '@/lib/types-utils';
 import {
   UserJourney,
   JourneyGoal,
@@ -18,9 +19,6 @@ import {
   WeeklyProgress,
   MilestoneAchievement,
 } from '@/types/journey';
-import { Result, createSuccess, createError } from '@/types/mission-system';
-
-import { ExamData } from '@/data/exams-data';
 
 /**
  * Journey Service
@@ -67,7 +65,7 @@ export class JourneyService {
         userId,
         title: request.title,
         description: request.description,
-        examId: request.examId,
+        ...(request.examId && { examId: request.examId }),
         customGoals,
         targetCompletionDate: request.targetCompletionDate,
         priority: request.priority,
@@ -154,7 +152,7 @@ export class JourneyService {
         return createSuccess(undefined);
       }
 
-      const exam = ExamData.find(e => e.id === journey.examId);
+      const exam = EXAMS_DATA.find(e => e.id === journey.examId);
       if (!exam) {
         return createError(new Error('Exam not found'));
       }
@@ -166,46 +164,48 @@ export class JourneyService {
         if (goal.category === 'knowledge' && goal.linkedSubjects.length > 0) {
           // Create subject-focused missions
           for (const subjectId of goal.linkedSubjects) {
-            const subject = exam.subjects.find(s => s.id === subjectId);
+            const subject = exam.defaultSyllabus.find(s => s.id === subjectId);
             if (subject) {
-              const missionResult = await missionService.createMissionTemplate({
-                title: `Master ${subject.name}`,
-                description: `Comprehensive study plan for ${subject.name}`,
-                type: 'study',
-                difficulty: 'medium',
-                estimatedDuration: 60,
-                subjects: [subjectId],
-                track: journey.track,
-                journeyId: journey.id,
-              });
+              // TODO: Implement mission service integration
+              // const missionResult = await missionService.createMissionTemplate({
+              //   title: `Master ${subject.name}`,
+              //   description: `Comprehensive study plan for ${subject.name}`,
+              //   type: 'study',
+              //   difficulty: 'medium',
+              //   estimatedDuration: 60,
+              //   subjects: [subjectId],
+              //   track: journey.track,
+              //   journeyId: journey.id,
+              // });
 
-              if (missionResult.success) {
-                missionTemplates.push(missionResult.data.id);
-              }
+              // if (missionResult.success) {
+              //   missionTemplates.push(missionResult.data.id);
+              // }
+              console.log(`Would create mission for subject: ${subject.name}`);
             }
           }
         }
 
         if (goal.category === 'skill' && goal.unit === 'tests') {
           // Create practice test missions
-          const missionResult = await missionService.createMissionTemplate({
-            title: `Practice Tests - ${goal.title}`,
-            description: `Practice sessions to improve ${goal.title}`,
-            type: 'practice',
-            difficulty: 'medium',
-            estimatedDuration: 45,
-            subjects: goal.linkedSubjects,
-            track: journey.track,
-            journeyId: journey.id,
-          });
+          // TODO: Implement mission service integration
+          // const missionResult = await missionService.createMissionTemplate({
+          //   title: `Practice Tests - ${goal.title}`,
+          //   description: `Practice sessions to improve ${goal.title}`,
+          //   type: 'practice',
+          //   difficulty: 'medium',
+          //   estimatedDuration: 45,
+          //   subjects: goal.linkedSubjects,
+          //   track: journey.track,
+          //   journeyId: journey.id,
+          // });
 
-          if (missionResult.success) {
-            missionTemplates.push(missionResult.data.id);
-          }
+          // if (missionResult.success) {
+          //   missionTemplates.push(missionResult.data.id);
+          // }
+          console.log(`Would create practice mission for: ${goal.title}`);
         }
-      }
-
-      // Update journey with linked mission templates
+      } // Update journey with linked mission templates
       await journeyFirebaseService.updateJourney(journey.id, {
         linkedMissionTemplates: missionTemplates,
       });
@@ -226,7 +226,7 @@ export class JourneyService {
   /**
    * Get journey templates for quick creation
    */
-  async getJourneyTemplates(examId?: string): Promise<Result<JourneyTemplate[]>> {
+  async getJourneyTemplates(_examId?: string): Promise<Result<JourneyTemplate[]>> {
     try {
       // For now, return static templates - in a real app this would query Firebase
       const templates: JourneyTemplate[] = [
@@ -234,23 +234,21 @@ export class JourneyService {
           id: 'template-1',
           title: '30-Day Sprint',
           description: 'Intensive 30-day preparation plan',
-          examId,
-          goals: [
+          category: 'exam_prep',
+          defaultDuration: 30,
+          estimatedHours: 120,
+          difficultyLevel: 'intermediate',
+          prerequisites: [],
+          goalTemplates: [
             {
               title: 'Complete Core Topics',
               description: 'Master all fundamental concepts',
               targetValue: 100,
               unit: 'percentage',
               category: 'knowledge',
-              isSpecific: true,
-              isMeasurable: true,
-              isAchievable: true,
-              isRelevant: true,
-              isTimeBound: true,
-              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-              linkedSubjects: [],
-              linkedTopics: [],
-              autoUpdateFrom: 'missions',
+              estimatedTimeToComplete: 25,
+              difficulty: 'intermediate',
+              dependencies: [],
             },
             {
               title: 'Practice Tests',
@@ -258,43 +256,35 @@ export class JourneyService {
               targetValue: 10,
               unit: 'tests',
               category: 'skill',
-              isSpecific: true,
-              isMeasurable: true,
-              isAchievable: true,
-              isRelevant: true,
-              isTimeBound: true,
-              deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-              linkedSubjects: [],
-              linkedTopics: [],
-              autoUpdateFrom: 'tests',
+              estimatedTimeToComplete: 20,
+              difficulty: 'intermediate',
+              dependencies: [],
             },
           ],
-          track: 'certification',
-          tags: ['intensive', 'short-term'],
+          popularityScore: 85,
+          successRate: 78,
           createdBy: 'system',
-          createdAt: new Date(),
+          tags: ['intensive', 'short-term'],
         },
         {
           id: 'template-2',
           title: '90-Day Comprehensive',
           description: 'Complete 3-month preparation program',
-          examId,
-          goals: [
+          category: 'exam_prep',
+          defaultDuration: 90,
+          estimatedHours: 300,
+          difficultyLevel: 'intermediate',
+          prerequisites: [],
+          goalTemplates: [
             {
               title: 'Study Hours',
               description: 'Dedicated study time',
               targetValue: 120,
               unit: 'hours',
               category: 'consistency',
-              isSpecific: true,
-              isMeasurable: true,
-              isAchievable: true,
-              isRelevant: true,
-              isTimeBound: true,
-              deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-              linkedSubjects: [],
-              linkedTopics: [],
-              autoUpdateFrom: 'mixed',
+              estimatedTimeToComplete: 75,
+              difficulty: 'intermediate',
+              dependencies: [],
             },
             {
               title: 'Topic Mastery',
@@ -302,21 +292,15 @@ export class JourneyService {
               targetValue: 100,
               unit: 'percentage',
               category: 'knowledge',
-              isSpecific: true,
-              isMeasurable: true,
-              isAchievable: true,
-              isRelevant: true,
-              isTimeBound: true,
-              deadline: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-              linkedSubjects: [],
-              linkedTopics: [],
-              autoUpdateFrom: 'missions',
+              estimatedTimeToComplete: 80,
+              difficulty: 'intermediate',
+              dependencies: [],
             },
           ],
-          track: 'certification',
-          tags: ['comprehensive', 'long-term'],
+          popularityScore: 92,
+          successRate: 85,
           createdBy: 'system',
-          createdAt: new Date(),
+          tags: ['comprehensive', 'long-term'],
         },
       ];
 
@@ -351,13 +335,31 @@ export class JourneyService {
       }
 
       const request: CreateJourneyRequest = {
-        title: customizations.title || template.title,
+        title: customizations.title ?? template.title,
         description: template.description,
-        examId: customizations.examId || template.examId,
-        customGoals: template.goals,
-        targetCompletionDate: customizations.targetCompletionDate || new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-        priority: customizations.priority || 'medium',
-        track: template.track,
+        ...(customizations.examId && { examId: customizations.examId }),
+        customGoals: template.goalTemplates.map(goalTemplate => ({
+          title: goalTemplate.title,
+          description: goalTemplate.description,
+          targetValue: goalTemplate.targetValue,
+          unit: goalTemplate.unit,
+          category: goalTemplate.category,
+          isSpecific: true,
+          isMeasurable: true,
+          isAchievable: true,
+          isRelevant: true,
+          isTimeBound: true,
+          deadline:
+            customizations.targetCompletionDate ||
+            new Date(Date.now() + template.defaultDuration * 24 * 60 * 60 * 1000),
+          linkedSubjects: [],
+          linkedTopics: [],
+          autoUpdateFrom: 'mixed',
+        })),
+        targetCompletionDate:
+          customizations.targetCompletionDate ?? new Date(Date.now() + template.defaultDuration * 24 * 60 * 60 * 1000),
+        priority: customizations.priority ?? 'medium',
+        track: 'certification',
       };
 
       const journey = await this.createJourney(userId, request);
@@ -407,8 +409,11 @@ export class JourneyService {
       // Link to progress service
       const progressResult = await progressService.linkJourney(journey.userId, journey.id);
       if (progressResult.success) {
+        // Update the journey with the linked progress ID
+        const updatedJourney = { ...journey };
+        updatedJourney.progressTracking.linkedUnifiedProgress = progressResult.data.progressId;
         await journeyFirebaseService.updateJourney(journey.id, {
-          'progressTracking.linkedUnifiedProgress': progressResult.data.progressId,
+          progressTracking: updatedJourney.progressTracking,
         });
       }
     } catch (error) {
@@ -428,7 +433,10 @@ export class JourneyService {
           : 0;
 
       await journeyFirebaseService.updateJourney(journey.id, {
-        'progressTracking.overallCompletion': Math.round(overallCompletion),
+        progressTracking: {
+          ...journey.progressTracking,
+          overallCompletion: Math.round(overallCompletion),
+        },
       });
     } catch (error) {
       console.error('Error calculating overall completion:', error);
@@ -511,11 +519,12 @@ export class JourneyService {
   /**
    * Activate journey missions when journey becomes active
    */
-  private async activateJourneyMissions(journey: UserJourney): Promise<void> {
+  private async activateJourneyMissions(_journey: UserJourney): Promise<void> {
     try {
-      for (const templateId of journey.linkedMissionTemplates) {
-        await missionService.activateMissionFromTemplate(journey.userId, templateId);
-      }
+      // TODO: Implement mission service integration
+      // for (const templateId of journey.linkedMissionTemplates) {
+      //   await missionService.activateMissionFromTemplate(journey.userId, templateId);
+      // }
     } catch (error) {
       console.error('Error activating journey missions:', error);
     }

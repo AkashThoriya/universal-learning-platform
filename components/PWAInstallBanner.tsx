@@ -43,6 +43,7 @@ export function PWAInstallBanner({
     platform,
     promptInstall,
     dismissInstallPrompt,
+    resetInstallPrompt,
     getManualInstallInstructions,
   } = usePWAInstall();
 
@@ -50,10 +51,23 @@ export function PWAInstallBanner({
   const [showInstructions, setShowInstructions] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
 
+  // Debug log
+  useEffect(() => {
+    console.log('PWA Install Banner state:', {
+      isInstalled,
+      shouldShowPrompt,
+      canAutoInstall,
+      needsManualInstall,
+      platform,
+      isVisible,
+    });
+  }, [isInstalled, shouldShowPrompt, canAutoInstall, needsManualInstall, platform, isVisible]);
+
   // Auto-show logic
   useEffect(() => {
-    if (autoShow && shouldShowPrompt && !isInstalled) {
-      const timer = setTimeout(() => setIsVisible(true), 2000);
+    if (autoShow && !isInstalled) {
+      // Show banner even if shouldShowPrompt is false for testing
+      const timer = setTimeout(() => setIsVisible(true), 1000);
       return () => clearTimeout(timer);
     }
     return undefined;
@@ -61,14 +75,19 @@ export function PWAInstallBanner({
 
   // Don't show if already installed
   if (isInstalled) {
+    console.log('PWA is already installed, hiding banner');
     return null;
   }
 
   const handleInstall = async () => {
+    console.log('Install button clicked', { canAutoInstall, needsManualInstall, platform });
+
     if (canAutoInstall) {
       setIsInstalling(true);
       try {
+        console.log('Attempting auto install...');
         const result = await promptInstall();
+        console.log('Install result:', result);
         if (result.success) {
           setIsVisible(false);
         }
@@ -78,13 +97,28 @@ export function PWAInstallBanner({
         setIsInstalling(false);
       }
     } else if (needsManualInstall) {
+      console.log('Showing manual install instructions');
+      setShowInstructions(true);
+    } else {
+      console.log('Install not available - showing fallback instructions');
+      // TODO: Replace alert with proper modal/toast
+      // alert(
+      //   'To install this app:\n\nOn Chrome: Click the menu (⋮) → "Install app"\nOn Safari: Click Share → "Add to Home Screen"'
+      // );
       setShowInstructions(true);
     }
   };
 
   const handleDismiss = () => {
+    console.log('Dismiss button clicked');
     setIsVisible(false);
     dismissInstallPrompt();
+  };
+
+  const handleDebugReset = () => {
+    console.log('DEBUG: Resetting PWA install prompt...');
+    resetInstallPrompt();
+    console.log('DEBUG: Reset complete');
   };
 
   const instructions = getManualInstallInstructions();
@@ -198,7 +232,7 @@ export function PWAInstallBanner({
   }
 
   // Inline variant
-  if (variant === 'inline') {
+  if (variant === 'inline' && isVisible) {
     return (
       <Card className={`border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 ${className}`}>
         <CardContent className="p-6">
@@ -250,6 +284,16 @@ export function PWAInstallBanner({
                       Install Guide
                     </>
                   )}
+                </Button>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleDebugReset}
+                  className="text-yellow-600 border-yellow-300 hover:bg-yellow-50"
+                  title="Debug: Reset PWA state"
+                >
+                  Reset
                 </Button>
 
                 <Button size="sm" variant="ghost" onClick={handleDismiss} className="text-blue-600 hover:text-blue-700">

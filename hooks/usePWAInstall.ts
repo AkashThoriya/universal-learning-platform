@@ -218,6 +218,16 @@ export function usePWAInstall() {
     }
   }, []);
 
+  const resetInstallPrompt = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('pwa_install_dismissed');
+      setInstallState(prev => ({
+        ...prev,
+        showInstallPrompt: true,
+      }));
+    }
+  }, []);
+
   // ============================================================================
   // MANUAL INSTALL GUIDANCE
   // ============================================================================
@@ -409,6 +419,7 @@ export function usePWAInstall() {
     // Actions
     promptInstall,
     dismissInstallPrompt,
+    resetInstallPrompt,
 
     // Utilities
     getManualInstallInstructions,

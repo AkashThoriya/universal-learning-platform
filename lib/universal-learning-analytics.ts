@@ -250,7 +250,7 @@ export class UniversalLearningAnalytics {
       );
 
       // Calculate metrics
-      const totalStudyTime = completedMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent || 0), 0);
+  const totalStudyTime = completedMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent ?? 0), 0);
       const completedSessions = completedMissions.length;
       const currentStreak = this.calculateStreak(completedMissions);
       const weeklyGoalProgress = this.calculateWeeklyProgress(completedMissions);
@@ -265,8 +265,16 @@ export class UniversalLearningAnalytics {
         accuracyTrend,
         subjectProgress,
       };
-    } catch (error) {
-      logError('Failed to get exam progress', { userId, error });
+    } catch (error: any) {
+      // Check if this is a Firebase index error
+      const isIndexError = error?.code === 'failed-precondition' && error?.message?.includes('index');
+
+      if (isIndexError) {
+        logInfo('Firestore indexes are still building, returning empty exam progress', { userId });
+      } else {
+        logError('Failed to get exam progress', { userId, error });
+      }
+
       return {
         totalStudyTime: 0,
         completedSessions: 0,
@@ -303,13 +311,13 @@ export class UniversalLearningAnalytics {
       const activeGoals = customGoals.filter(goal => goal.isActive !== false).length;
       const completedGoals = customGoals.filter(goal => goal.status === 'completed').length;
       const totalLearningHours =
-        customMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent || 0), 0) / 60;
+  customMissions.reduce((sum, mission) => sum + (mission.progress?.timeSpent ?? 0), 0) / 60;
       const skillCategories = [...new Set(customGoals.map(goal => goal.category))];
       const averageCompletionRate = this.calculateAverageCompletionRate(customGoals);
       const goalProgress = customGoals.map(goal => ({
         id: goal.id,
         title: goal.title,
-        progress: goal.progress?.completedMissions || 0,
+        progress: goal.progress?.completedMissions ?? 0,
         category: goal.category,
       }));
 
@@ -321,8 +329,16 @@ export class UniversalLearningAnalytics {
         averageCompletionRate,
         goalProgress,
       };
-    } catch (error) {
-      logError('Failed to get custom learning progress', { userId, error });
+    } catch (error: any) {
+      // Check if this is a Firebase index error
+      const isIndexError = error?.code === 'failed-precondition' && error?.message?.includes('index');
+
+      if (isIndexError) {
+        logInfo('Firestore indexes are still building, returning empty custom learning progress', { userId });
+      } else {
+        logError('Failed to get custom learning progress', { userId, error });
+      }
+
       return {
         activeGoals: 0,
         completedGoals: 0,
@@ -344,8 +360,8 @@ export class UniversalLearningAnalytics {
     // Calculate overall progress as a weighted average
     const examWeight = 0.6; // Slightly higher weight for exam preparation
     const customWeight = 0.4;
-    const examProgressPercent = examProgress.weeklyGoalProgress || 0;
-    const customProgressPercent = customProgress.averageCompletionRate || 0;
+  const examProgressPercent = examProgress.weeklyGoalProgress ?? 0;
+  const customProgressPercent = customProgress.averageCompletionRate ?? 0;
     const overallProgress = examProgressPercent * examWeight + customProgressPercent * customWeight;
 
     // Mock weekly targets (in real implementation, get from user preferences)
@@ -375,7 +391,7 @@ export class UniversalLearningAnalytics {
   private calculateWeeklyProgress(missions: any[]): number {
     // Implementation for calculating weekly progress
     const thisWeek = missions.filter(mission => {
-      const completedAt = mission.completedAt?.toDate() || new Date();
+  const completedAt = mission.completedAt?.toDate() ?? new Date();
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
       return completedAt >= weekAgo;
     });
@@ -384,15 +400,15 @@ export class UniversalLearningAnalytics {
 
   private calculateAccuracyTrend(missions: any[]): number[] {
     // Implementation for calculating accuracy trend
-    return missions.slice(0, 7).map(mission => mission.progress?.accuracy || 0);
+  return missions.slice(0, 7).map(mission => mission.progress?.accuracy ?? 0);
   }
 
   private calculateSubjectProgress(missions: any[]): Record<string, number> {
     // Implementation for calculating subject-wise progress
     const subjectCounts: Record<string, number> = {};
     missions.forEach(mission => {
-      const subject = mission.subject || 'General';
-      subjectCounts[subject] = (subjectCounts[subject] || 0) + 1;
+  const subject = mission.subject ?? 'General';
+  subjectCounts[subject] = (subjectCounts[subject] ?? 0) + 1;
     });
     return subjectCounts;
   }
@@ -402,8 +418,8 @@ export class UniversalLearningAnalytics {
       return 0;
     }
     const totalProgress = goals.reduce((sum, goal) => {
-      const completed = goal.progress?.completedMissions || 0;
-      const total = goal.progress?.totalMissions || 1;
+  const completed = goal.progress?.completedMissions ?? 0;
+  const total = goal.progress?.totalMissions ?? 1;
       return sum + completed / total;
     }, 0);
     return (totalProgress / goals.length) * 100;

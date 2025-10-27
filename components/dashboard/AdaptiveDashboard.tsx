@@ -22,6 +22,7 @@ import {
   Map,
   LucideIcon,
 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalyticsDashboard';
@@ -33,17 +34,19 @@ import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { customLearningService, missionFirebaseService } from '@/lib/firebase-services';
+import { getExamById } from '@/lib/exams-data';
+import { customLearningService } from '@/lib/firebase-services';
+import { getUser, getSyllabus } from '@/lib/firebase-utils';
 import { logError, logInfo, measurePerformance } from '@/lib/logger';
 import { progressService } from '@/lib/progress-service';
 import { cn } from '@/lib/utils';
+import { Exam, SyllabusSubject } from '@/types/exam';
 
 interface DashboardStats {
   totalStudyTime: number;
   completedSessions: number;
   currentStreak: number;
   weeklyGoalProgress: number;
-  activeMissions: number;
   completedTopics: number;
   // Custom learning stats
   customGoalsActive: number;
@@ -81,6 +84,90 @@ interface Achievement {
 interface AdaptiveDashboardProps {
   className?: string;
 }
+
+// Helper function to generate today's study recommendations
+const generateTodayRecommendations = (
+  exam: Exam,
+  syllabus: SyllabusSubject[],
+  examDaysLeft?: number
+): {
+  currentTopic?: string;
+  nextAction?: string;
+  studyGoal?: string;
+  examDaysLeft?: number;
+  subjectRecommendation?: string;
+  todaysPlan?: string[];
+} => {
+  // Find the next topic to study (first incomplete topic)
+  let currentTopic = '';
+  let nextAction = '';
+  let subjectRecommendation = '';
+  const todaysPlan: string[] = [];
+
+  if (syllabus.length > 0) {
+    // Find first subject with incomplete topics
+    for (const subject of syllabus) {
+      if (subject.topics && subject.topics.length > 0) {
+        const incompleteTopic = subject.topics.find(_topic => {
+          // Check if topic is not completed (this would depend on your progress tracking)
+          return true; // For now, assume all topics need work
+        });
+
+        if (incompleteTopic) {
+          currentTopic = `${subject.name} - ${incompleteTopic.name}`;
+          subjectRecommendation = subject.name;
+          todaysPlan.push(`📚 Study ${incompleteTopic.name}`);
+          todaysPlan.push(`⏱️ Target: ${incompleteTopic.estimatedHours ?? 2} hours`);
+          break;
+        }
+      }
+    }
+  }
+
+  // Generate action based on day and exam timeline
+  if (examDaysLeft !== undefined) {
+    if (examDaysLeft <= 7) {
+      nextAction = 'Take a practice test';
+    } else if (examDaysLeft <= 30) {
+      nextAction = 'Review and practice questions';
+    } else {
+      nextAction = 'Study new topics';
+    }
+  } else {
+    nextAction = 'Continue your learning journey';
+  }
+
+  // Generate study goal
+  let studyGoal = '';
+  if (examDaysLeft !== undefined) {
+    if (examDaysLeft <= 7) {
+      studyGoal = 'Focus on revision and mock tests';
+    } else if (examDaysLeft <= 30) {
+      studyGoal = 'Complete topic review and practice';
+    } else {
+      studyGoal = 'Master fundamental concepts';
+    }
+  } else {
+    studyGoal = 'Build strong foundations';
+  }
+
+  // Add general plan items
+  if (todaysPlan.length === 0) {
+    todaysPlan.push('📚 Choose a topic to study');
+    todaysPlan.push('⏱️ Target: 2 hours focused study');
+  }
+  todaysPlan.push('🧪 Take practice test');
+  todaysPlan.push('📝 Review weak areas');
+
+  return {
+    currentTopic: currentTopic ?? `Start with ${exam.name} basics`,
+    nextAction,
+    studyGoal,
+    subjectRecommendation: subjectRecommendation ?? 'Choose a subject to begin',
+    todaysPlan,
+    ...(examDaysLeft !== undefined && { examDaysLeft }),
+  };
+};
 
 // Custom Goal Card Component
 interface CustomGoalCardProps {
@@ -133,6 +220,10 @@ function CustomGoalCard({ goal }: CustomGoalCardProps) {
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+
+  // Check if this is a first-time user from onboarding
+  const isFirstTime = searchParams.get('onboarding') === 'complete' && searchParams.get('welcome') === 'true';
 
   logInfo('AdaptiveDashboard component initialized', {
     userId: user?.uid ?? 'no-user',
@@ -144,7 +235,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     completedSessions: 0,
     currentStreak: 0,
     weeklyGoalProgress: 0,
-    activeMissions: 0,
     completedTopics: 0,
     customGoalsActive: 0,
     customGoalsCompleted: 0,
@@ -161,6 +251,15 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   const [motivationalMessage, setMotivationalMessage] = useState('');
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning');
   const [customGoals, setCustomGoals] = useState<any[]>([]);
+  const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
+  const [todayRecommendations, setTodayRecommendations] = useState<{
+    currentTopic?: string;
+    nextAction?: string;
+    studyGoal?: string;
+    examDaysLeft?: number;
+    subjectRecommendation?: string;
+    todaysPlan?: string[];
+  }>({});
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -195,7 +294,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               completedSessions: 0,
               currentStreak: 0,
               weeklyGoalProgress: 0,
-              activeMissions: 0,
               completedTopics: 0,
               customGoalsActive: 0,
               customGoalsCompleted: 0,
@@ -213,11 +311,40 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             return;
           }
 
-          // Fetch real user data
-          const [progressResult, activeMissionsResult] = await Promise.all([
+          // Fetch real user data including profile and exam info
+          const [progressResult, activeJourneysResult, userProfile] = await Promise.all([
             progressService.getUserProgress(user.uid),
-            missionFirebaseService.getActiveMissions(user.uid),
+            // journeyService.getActiveJourneys(user.uid), // Using placeholder for now
+            Promise.resolve({ success: true, data: [] }), // Placeholder for journeys
+            getUser(user.uid),
           ]);
+
+          // Load selected exam information
+          if (userProfile?.selectedExamId) {
+            const exam = getExamById(userProfile.selectedExamId);
+            if (exam) {
+              setSelectedExam(exam);
+
+              // Calculate exam countdown
+              const examDaysLeft = userProfile.examDate
+                ? Math.max(0, Math.ceil((userProfile.examDate.toDate().getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+                : undefined;
+
+              // Generate today's recommendations
+              try {
+                const syllabus = await getSyllabus(user.uid);
+                const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
+                setTodayRecommendations(todayRecs);
+              } catch (error) {
+                logError('Failed to load syllabus for recommendations', { error });
+                setTodayRecommendations({
+                  nextAction: 'Review your syllabus',
+                  studyGoal: 'Plan your study schedule',
+                  ...(examDaysLeft !== undefined && { examDaysLeft }),
+                });
+              }
+            }
+          }
 
           // Process progress data
           let realStats: DashboardStats = {
@@ -225,7 +352,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             completedSessions: 0,
             currentStreak: 0,
             weeklyGoalProgress: 0,
-            activeMissions: 0,
             completedTopics: 0,
             customGoalsActive: 0,
             customGoalsCompleted: 0,
@@ -245,7 +371,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               completedSessions: progress.overallProgress.totalMissionsCompleted,
               currentStreak: progress.overallProgress.currentStreak,
               weeklyGoalProgress: Math.min(progress.overallProgress.consistencyRating, 100),
-              activeMissions: 0,
               completedTopics:
                 progress.trackProgress.exam.masteredSkills.length +
                 progress.trackProgress.course_tech.masteredSkills.length,
@@ -254,10 +379,10 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               customLearningHours: Math.round(
                 (progress.trackProgress.exam.timeInvested + progress.trackProgress.course_tech.timeInvested) / 60
               ),
-              adaptiveTestsCompleted: (progress.overallProgress as any).adaptiveTestingLevel || 0,
+              adaptiveTestsCompleted: (progress.overallProgress as any).adaptiveTestingLevel ?? 0,
               adaptiveTestsAverage: 0, // Will be loaded from adaptive testing service
               adaptiveTestsTotal: 0, // Will be loaded from adaptive testing service
-              activeJourneys: (progress as any).linkedJourneys?.length || 0,
+              activeJourneys: (progress as any).linkedJourneys?.length ?? 0,
               journeyCompletion: Math.round(
                 (progress as any).journeyProgress
                   ? Object.values((progress as any).journeyProgress).reduce(
@@ -275,18 +400,18 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             };
           }
 
-          // Add active missions count
-          if (activeMissionsResult.success && activeMissionsResult.data) {
-            realStats.activeMissions = activeMissionsResult.data.length;
+          // Add active journeys count
+          if (activeJourneysResult.success && activeJourneysResult.data) {
+            realStats.activeJourneys = activeJourneysResult.data.length;
           }
 
           // Setup achievements based on real data
-          const mockAchievements: Achievement[] = [];
+          const recentAchievements: Achievement[] = [];
 
           // Only show achievements if user has meaningful progress
           // Week Warrior: requires 7+ consecutive days
           if (realStats.currentStreak >= 7) {
-            mockAchievements.push({
+            recentAchievements.push({
               id: 'week_warrior',
               title: 'Week Warrior',
               description: 'Maintained a 7-day learning streak',
@@ -298,7 +423,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           // First Steps: only if user has completed at least 3 sessions (not just 1)
           if (realStats.completedSessions >= 3 && realStats.completedSessions <= 5) {
-            mockAchievements.push({
+            recentAchievements.push({
               id: 'first_steps',
               title: 'Getting Started',
               description: 'Completed your first 3 study sessions',
@@ -310,7 +435,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           // Study Champion: for users with 10+ completed sessions
           if (realStats.completedSessions >= 10) {
-            mockAchievements.push({
+            recentAchievements.push({
               id: 'study_champion',
               title: 'Study Champion',
               description: 'Completed 10 study sessions',
@@ -321,7 +446,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           }
 
           // Only show the most recent achievement to avoid spam
-          const recentAchievements = mockAchievements.slice(-1);
+          const finalAchievements = recentAchievements.slice(-1);
 
           // Load custom goals if user is authenticated
           const customGoalsResult = await customLearningService.getUserCustomGoals(user.uid);
@@ -342,7 +467,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           }
 
           setStats(realStats);
-          setRecentAchievements(recentAchievements);
+          setRecentAchievements(finalAchievements);
           setMotivationalMessage(getMotivationalMessage(timeOfDay, realStats.currentStreak));
 
           logInfo('Dashboard data loaded successfully', {
@@ -363,7 +488,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             completedSessions: 0,
             currentStreak: 0,
             weeklyGoalProgress: 0,
-            activeMissions: 0,
             completedTopics: 0,
             customGoalsActive: 0,
             customGoalsCompleted: 0,
@@ -411,27 +535,27 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       ],
     };
 
-    const timeMessages = messages[timeOfDay as keyof typeof messages] ?? messages.morning;
-    return timeMessages[Math.floor(Math.random() * timeMessages.length)] ?? 'Ready to continue your learning journey!';
+    const timeMessages = messages[timeOfDay as keyof typeof messages] || messages.morning;
+    return timeMessages[Math.floor(Math.random() * timeMessages.length)] || 'Ready to continue your learning journey!';
   };
 
   const quickActions: QuickAction[] = [
     {
-      title: 'Continue Learning',
-      description: 'Resume your last study session',
+      title: 'Plan Journey',
+      description: 'Create your personalized learning path',
       icon: PlayCircle,
-      href: '/micro-learning?resume=true',
+      href: '/journey',
       color: 'from-green-500 to-emerald-500',
-      badge: 'Continue',
+      badge: 'Plan',
       priority: 'high',
     },
     {
-      title: 'Quick Session',
-      description: 'Start a 15-minute focused session',
+      title: 'Take Test',
+      description: 'Start adaptive assessment',
       icon: Zap,
-      href: '/micro-learning?auto=true',
+      href: '/test',
       color: 'from-yellow-500 to-orange-500',
-      badge: 'Popular',
+      badge: 'Test',
       priority: 'high',
     },
     {
@@ -444,12 +568,12 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       priority: 'medium',
     },
     {
-      title: 'Daily Missions',
-      description: "Complete today's learning goals",
+      title: 'Study Syllabus',
+      description: 'Review topics and subjects',
       icon: Target,
-      href: '/missions',
+      href: '/syllabus',
       color: 'from-purple-500 to-pink-500',
-      badge: stats.activeMissions.toString(),
+      badge: 'Study',
       priority: 'high',
     },
     {
@@ -556,7 +680,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       {/* Personalized Welcome Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center lg:text-left">
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-          Welcome back, {user?.displayName?.split(' ')[0] ?? 'Champion'}! 👋
+          {isFirstTime
+            ? `Welcome, ${user?.displayName?.split(' ')[0] || 'Champion'}! 👋`
+            : `Welcome back, ${user?.displayName?.split(' ')[0] || 'Champion'}! 👋`}
         </h1>
         <p className="text-lg text-gray-600">{motivationalMessage}</p>
       </motion.div>
@@ -640,6 +766,94 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </div>
             </div>
           </Alert>
+        </motion.div>
+      )}
+
+      {/* Selected Exam and Today's Recommendations */}
+      {selectedExam && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 border border-indigo-200 rounded-lg p-6"
+        >
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-indigo-900 mb-2">📚 Your Selected Exam: {selectedExam.name}</h2>
+              <p className="text-indigo-700 mb-1">{selectedExam.description}</p>
+              <Badge variant="outline" className="text-indigo-600 border-indigo-300">
+                {selectedExam.category}
+              </Badge>
+            </div>
+            {todayRecommendations.examDaysLeft !== undefined && (
+              <div className="text-right">
+                <div className="text-2xl font-bold text-indigo-900">{todayRecommendations.examDaysLeft}</div>
+                <div className="text-sm text-indigo-600">days left</div>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-700">Today's Focus</span>
+                </div>
+                <p className="text-sm text-gray-900">{todayRecommendations.currentTopic}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="h-4 w-4 text-yellow-600" />
+                  <span className="text-sm font-medium text-gray-700">Next Action</span>
+                </div>
+                <p className="text-sm text-gray-900">{todayRecommendations.nextAction}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium text-gray-700">Study Goal</span>
+                </div>
+                <p className="text-sm text-gray-900">{todayRecommendations.studyGoal}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex gap-3 mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => (window.location.href = '/syllabus')}
+              className="bg-white/60 hover:bg-white/80"
+            >
+              <BookOpen className="h-4 w-4 mr-2" />
+              View Syllabus
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => (window.location.href = '/test')}
+              className="bg-white/60 hover:bg-white/80"
+            >
+              <Brain className="h-4 w-4 mr-2" />
+              Take Test
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => (window.location.href = '/journey')}
+              className="bg-white/60 hover:bg-white/80"
+            >
+              <Map className="h-4 w-4 mr-2" />
+              Plan Journey
+            </Button>
+          </div>
         </motion.div>
       )}
 
@@ -806,33 +1020,129 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                   <CardDescription>Personalized recommendations based on your progress</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium text-blue-900">Recommended Topic</h4>
-                        <p className="text-sm text-blue-700 mt-1">Quantitative Aptitude - Number Series</p>
-                        <p className="text-xs text-blue-600 mt-2">
-                          Based on your recent performance, this topic needs attention
-                        </p>
-                      </div>
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                        Start Session
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium text-purple-900">Active Mission</h4>
-                        <p className="text-sm text-purple-700 mt-1">Complete 5 Reasoning sessions this week</p>
-                        <div className="mt-2">
-                          <Progress value={80} className="bg-purple-200" />
-                          <p className="text-xs text-purple-600 mt-1">4 of 5 completed</p>
+                  {/* Dynamic content based on user's actual progress */}
+                  {stats.activeJourneys > 0 ? (
+                    <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium text-purple-900">Active Journeys</h4>
+                          <p className="text-sm text-purple-700 mt-1">
+                            You have {stats.activeJourneys} active journey{stats.activeJourneys > 1 ? 's' : ''} in
+                            progress
+                          </p>
+                          <p className="text-xs text-purple-600 mt-2">Continue your personalized learning path</p>
                         </div>
+                        <Button
+                          size="sm"
+                          className="bg-purple-600 hover:bg-purple-700"
+                          onClick={() => (window.location.href = '/journey')}
+                        >
+                          View Journeys
+                        </Button>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium text-blue-900">Plan Your Journey</h4>
+                          <p className="text-sm text-blue-700 mt-1">Create a personalized learning path</p>
+                          <p className="text-xs text-blue-600 mt-2">
+                            Design journeys tailored to your learning goals and schedule
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                          onClick={() => (window.location.href = '/journey')}
+                        >
+                          Create Journey
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Study recommendations based on actual data */}
+                  {stats.completedTopics > 0 ? (
+                    <div className="p-4 rounded-lg bg-green-50 border border-green-200">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium text-green-900">Keep Momentum</h4>
+                          <p className="text-sm text-green-700 mt-1">
+                            You've mastered {stats.completedTopics} topic{stats.completedTopics > 1 ? 's' : ''}!
+                          </p>
+                          <p className="text-xs text-green-600 mt-2">Take an adaptive test to assess your knowledge</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => (window.location.href = '/test')}
+                        >
+                          Take Test
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-lg bg-orange-50 border border-orange-200">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium text-orange-900">Start Learning</h4>
+                          <p className="text-sm text-orange-700 mt-1">Begin with your syllabus and topics</p>
+                          <p className="text-xs text-orange-600 mt-2">Perfect for building your study foundation</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-orange-600 hover:bg-orange-700"
+                          onClick={() => (window.location.href = '/syllabus')}
+                        >
+                          View Syllabus
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Today's Study Plan - NEW SECTION */}
+                  {selectedExam && todayRecommendations.todaysPlan && (
+                    <div className="p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            Today's Study Plan - {selectedExam.name}
+                          </h4>
+                          <p className="text-sm text-blue-700 mt-1">
+                            {todayRecommendations.subjectRecommendation &&
+                              `Focus on: ${todayRecommendations.subjectRecommendation}`}
+                          </p>
+                          {todayRecommendations.examDaysLeft && (
+                            <p className="text-xs text-blue-600 mt-1">
+                              📅 {todayRecommendations.examDaysLeft} days until exam
+                            </p>
+                          )}
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                          onClick={() => (window.location.href = '/syllabus')}
+                        >
+                          Start Now
+                        </Button>
+                      </div>
+                      <div className="space-y-2">
+                        {todayRecommendations.todaysPlan.map((item, index) => (
+                          <div key={index} className="flex items-center gap-2 text-sm text-blue-800">
+                            <div className="w-2 h-2 rounded-full bg-blue-400" />
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                      {todayRecommendations.studyGoal && (
+                        <div className="mt-3 pt-3 border-t border-blue-200">
+                          <p className="text-xs text-blue-600 font-medium">🎯 Goal: {todayRecommendations.studyGoal}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
                     <div className="flex items-start justify-between">
@@ -848,7 +1158,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                         </p>
                         <p className="text-xs text-indigo-600 mt-2">
                           {stats.adaptiveTestsCompleted > 0
-                            ? `${stats.adaptiveTestsCompleted} tests completed • Average: ${stats.adaptiveTestsAverage.toFixed(1)}%`
+                            ? `${stats.adaptiveTestsCompleted} tests completed${stats.adaptiveTestsAverage > 0 ? ` • Average: ${stats.adaptiveTestsAverage.toFixed(1)}%` : ''}`
                             : 'Smart questions that adjust difficulty in real-time'}
                         </p>
                       </div>
@@ -917,7 +1227,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Active Missions</span>
                     <Badge variant="outline" className="bg-blue-50">
-                      {stats.activeMissions}
+                      {stats.activeJourneys}
                     </Badge>
                   </div>
                   <div className="flex justify-between items-center">
@@ -974,20 +1284,36 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="text-sm">
-                    <p className="font-medium text-gray-900">Today's Schedule</p>
+                    <p className="font-medium text-gray-900">Study Progress</p>
                     <div className="mt-2 space-y-2">
-                      <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                        <span className="text-green-700">Morning Session</span>
-                        <Badge className="bg-green-100 text-green-700">✓ Done</Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                        <span className="text-blue-700">Afternoon Review</span>
-                        <Badge className="bg-blue-100 text-blue-700">Next</Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-gray-600">Evening Practice</span>
-                        <Badge variant="outline">Pending</Badge>
-                      </div>
+                      {stats.currentStreak > 0 ? (
+                        <div className="flex items-center justify-between p-2 bg-orange-50 rounded">
+                          <span className="text-orange-700">Current Streak</span>
+                          <Badge className="bg-orange-100 text-orange-700">{stats.currentStreak} days</Badge>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <span className="text-gray-700">Start Your Streak</span>
+                          <Badge variant="outline">0 days</Badge>
+                        </div>
+                      )}
+                      {stats.totalStudyTime > 0 ? (
+                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                          <span className="text-blue-700">Weekly Study Time</span>
+                          <Badge className="bg-blue-100 text-blue-700">{formatTime(stats.totalStudyTime)}</Badge>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <span className="text-gray-700">No study time yet</span>
+                          <Badge variant="outline">Start today</Badge>
+                        </div>
+                      )}
+                      {stats.customGoalsActive > 0 && (
+                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                          <span className="text-purple-700">Active Goals</span>
+                          <Badge className="bg-purple-100 text-purple-700">{stats.customGoalsActive}</Badge>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>

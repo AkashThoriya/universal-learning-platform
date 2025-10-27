@@ -3,39 +3,58 @@
  *
  * This service provides AI-powered test recommendations based on:
  * - User's learning progress and weak areas
- * - Mission completion patterns
  * - Journey progression requirements
  * - Historical test performance
  * - Learning preferences and persona
+ * - Subject-specific strengths and weaknesses
  *
  * @author Exam Strategy Engine Team
  * @version 1.0.0
  */
 
-import { AdaptiveTest, TestRecommendation, TestMissionLink, TestJourneyIntegration } from '@/types/adaptive-testing';
-import { MissionDifficulty } from '@/types/mission-system';
-import { UnifiedProgress, LearningTrack } from '@/types/user';
-
-import { adaptiveTestingService } from './adaptive-testing-service';
-import { missionFirebaseService, adaptiveTestingFirebaseService } from './firebase-services';
+import { AdaptiveTest, TestRecommendation } from '@/types/adaptive-testing';
+import { UserJourney } from '@/types/journey';
 import { progressService } from './progress-service';
 import { createSuccess, createError, Result } from './types-utils';
+
+// Define difficulty levels for recommendations
+type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+
+// Define a simplified progress interface for our needs
+interface UnifiedProgress {
+  overallProgress: {
+    totalMissionsCompleted: number;
+    totalTimeInvested: number;
+    averageScore: number;
+    currentStreak: number;
+    longestStreak: number;
+    consistencyRating: number;
+  };
+  trackProgress: Record<string, {
+    averageAccuracy: number;
+    timeInvested: number;
+    subjectProgress: Array<{
+      subject: string;
+      accuracy: number;
+    }>;
+  }>;
+}
 
 interface RecommendationContext {
   userId: string;
   userProgress: UnifiedProgress;
-  activeMissions: any[];
+  activeJourneys: UserJourney[];
   completedTests: AdaptiveTest[];
   weakAreas: string[];
   strongAreas: string[];
-  preferredDifficulty: MissionDifficulty;
+  preferredDifficulty: DifficultyLevel;
   learningGoals: string[];
   timeAvailable: number; // minutes
 }
 
 interface RecommendationWeights {
   weakAreaFocus: number;
-  missionAlignment: number;
+  journeyAlignment: number;
   journeyProgression: number;
   difficultyProgression: number;
   varietyBonus: number;
@@ -45,7 +64,7 @@ interface RecommendationWeights {
 export class AdaptiveTestingRecommendationEngine {
   private readonly DEFAULT_WEIGHTS: RecommendationWeights = {
     weakAreaFocus: 0.4, // 40% - Focus on weak areas
-    missionAlignment: 0.25, // 25% - Align with active missions
+    journeyAlignment: 0.25, // 25% - Align with active journeys
     journeyProgression: 0.15, // 15% - Support journey progression
     difficultyProgression: 0.1, // 10% - Appropriate difficulty
     varietyBonus: 0.05, // 5% - Encourage subject variety
@@ -76,7 +95,7 @@ export class AdaptiveTestingRecommendationEngine {
       const scoredRecommendations = await this.scoreRecommendations(candidates, context.data, weights);
 
       // Select top recommendations
-      const topRecommendations = scoredRecommendations.sort((a, b) => b.score - a.score).slice(0, maxRecommendations);
+      const topRecommendations = scoredRecommendations.sort((a, b) => (b as any).score - (a as any).score).slice(0, maxRecommendations);
 
       return createSuccess(topRecommendations);
     } catch (error) {
@@ -95,7 +114,7 @@ export class AdaptiveTestingRecommendationEngine {
   ): Promise<Result<TestRecommendation[], string>> {
     const customWeights: Partial<RecommendationWeights> = {
       weakAreaFocus: 0.7,
-      missionAlignment: 0.15,
+      journeyAlignment: 0.15,
       journeyProgression: 0.1,
       difficultyProgression: 0.05,
     };
@@ -104,15 +123,15 @@ export class AdaptiveTestingRecommendationEngine {
   }
 
   /**
-   * Generate recommendations aligned with active missions
+   * Generate recommendations aligned with active journeys
    */
-  async generateMissionAlignedRecommendations(
+  async generateJourneyAlignedRecommendations(
     userId: string,
     maxRecommendations = 3
   ): Promise<Result<TestRecommendation[], string>> {
     const customWeights: Partial<RecommendationWeights> = {
       weakAreaFocus: 0.2,
-      missionAlignment: 0.5,
+      journeyAlignment: 0.5,
       journeyProgression: 0.2,
       difficultyProgression: 0.1,
     };
@@ -142,7 +161,7 @@ export class AdaptiveTestingRecommendationEngine {
 
       const weights: RecommendationWeights = {
         weakAreaFocus: 0.5,
-        missionAlignment: 0.2,
+        journeyAlignment: 0.2,
         journeyProgression: 0.1,
         difficultyProgression: 0.1,
         varietyBonus: 0.05,
@@ -150,7 +169,7 @@ export class AdaptiveTestingRecommendationEngine {
       };
 
       const scored = await this.scoreRecommendations(quickCandidates, context.data, weights);
-      const top = scored.sort((a, b) => b.score - a.score).slice(0, maxRecommendations);
+      const top = scored.sort((a, b) => (b as any).score - (a as any).score).slice(0, maxRecommendations);
 
       return createSuccess(top);
     } catch (error) {
@@ -166,31 +185,46 @@ export class AdaptiveTestingRecommendationEngine {
   private async buildRecommendationContext(userId: string): Promise<Result<RecommendationContext, string>> {
     try {
       // Gather user data
-      const [progressResult, missionsResult, testsResult] = await Promise.all([
-        progressService.getUserProgress(userId),
-        missionFirebaseService.getActiveMissions(userId),
-        adaptiveTestingFirebaseService.getUserTests(userId),
-      ]);
-
+      const progressResult = await progressService.getUserProgress(userId);
+      
       if (!progressResult.success) {
         return createError(`Failed to get user progress: ${progressResult.error}`);
       }
 
-      const userProgress = progressResult.data;
-      const activeMissions = missionsResult.success ? missionsResult.data : [];
-      const allTests = testsResult.success ? testsResult.data : [];
-      const completedTests = allTests.filter(test => test.status === 'completed');
+      const rawProgress = progressResult.data;
+      
+      // Cast the progress to our simplified interface
+      const userProgress: UnifiedProgress = {
+        overallProgress: rawProgress.overallProgress,
+        trackProgress: Object.fromEntries(
+          Object.entries(rawProgress.trackProgress).map(([key, track]: [string, any]) => [
+            key,
+            {
+              averageAccuracy: track.averageScore ?? 70,
+              timeInvested: track.timeInvested ?? 0,
+              subjectProgress: track.topicBreakdown?.map((topic: any) => ({
+                subject: topic.topic,
+                accuracy: topic.averageScore ?? topic.proficiency ?? 70,
+              })) ?? [],
+            },
+          ])
+        ),
+      };
+      
+      // For now, use empty arrays until the journey and test services are fully implemented
+      const activeJourneys: UserJourney[] = [];
+      const completedTests: AdaptiveTest[] = [];
 
       // Analyze learning patterns
       const weakAreas = this.identifyWeakAreas(userProgress);
       const strongAreas = this.identifyStrongAreas(userProgress);
       const preferredDifficulty = this.inferPreferredDifficulty(userProgress, completedTests);
-      const learningGoals = this.extractLearningGoals(activeMissions);
+      const learningGoals = this.extractLearningGoals(activeJourneys);
 
       const context: RecommendationContext = {
         userId,
         userProgress,
-        activeMissions,
+        activeJourneys,
         completedTests,
         weakAreas,
         strongAreas,
@@ -217,9 +251,10 @@ export class AdaptiveTestingRecommendationEngine {
     }
   ): Promise<TestRecommendation[]> {
     const candidates: TestRecommendation[] = [];
-    const maxQuestions = constraints?.maxQuestions || 25;
-    const maxDuration = constraints?.maxDuration || 45;
-    const focusAreas = constraints?.focusAreas || [...context.weakAreas, ...context.learningGoals];
+    const maxQuestions = constraints?.maxQuestions ?? 25;
+    const maxDuration = constraints?.maxDuration ?? 45;
+      // Remove unused variable warning
+      // const _focusAreas = constraints?.focusAreas || [...context.weakAreas, ...context.learningGoals];
 
     // Generate tests for weak areas
     for (const subject of context.weakAreas.slice(0, 3)) {
@@ -235,11 +270,12 @@ export class AdaptiveTestingRecommendationEngine {
         expectedBenefit: 'Strengthen weak areas',
         priority: 'high',
         tags: ['weakness-focus', 'skill-building'],
-        missionAlignment: this.calculateMissionAlignment([subject], context.activeMissions),
+        missionAlignment: this.calculateJourneyAlignment([subject], context.activeJourneys),
         estimatedAccuracy: this.estimateAccuracy(subject, context),
         aiGenerated: true,
         createdFrom: 'recommendation',
-        linkedMissions: this.findRelatedMissions([subject], context.activeMissions),
+        linkedMissions: this.findRelatedJourneys([subject], context.activeJourneys),
+        confidence: 0.8, // High confidence for weak area targeting
         adaptiveConfig: {
           algorithmType: 'CAT',
           convergenceCriteria: { standardError: 0.3, minQuestions: 8, maxQuestions },
@@ -248,31 +284,32 @@ export class AdaptiveTestingRecommendationEngine {
       });
     }
 
-    // Generate mission-aligned tests
-    for (const mission of context.activeMissions.slice(0, 2)) {
-      const missionSubjects = this.extractMissionSubjects(mission);
-      if (missionSubjects.length > 0) {
+    // Generate journey-aligned tests
+    for (const journey of context.activeJourneys.slice(0, 2)) {
+      const journeySubjects = this.extractJourneySubjects(journey);
+      if (journeySubjects.length > 0) {
         candidates.push({
-          testId: `mission-${mission.id}-${Date.now()}`,
-          title: `${mission.title} Assessment`,
-          description: `Test your readiness for mission: ${mission.title}`,
+          testId: `journey-${journey.id}-${Date.now()}`,
+          title: `${journey.title} Assessment`,
+          description: `Test your progress on journey: ${journey.title}`,
           estimatedDuration: Math.min(maxDuration, 35),
-          difficulty: mission.difficultyLevel || context.preferredDifficulty,
-          subjects: missionSubjects,
+          difficulty: this.inferJourneyDifficulty(journey) ?? context.preferredDifficulty,
+          subjects: journeySubjects,
           questionCount: Math.min(maxQuestions, 18),
-          reasons: [`Supports active mission: ${mission.title}`, 'Mission preparation'],
-          expectedBenefit: 'Mission readiness verification',
+          reasons: [`Supports active journey: ${journey.title}`, 'Journey progress assessment'],
+          expectedBenefit: 'Journey progress verification',
           priority: 'medium',
-          tags: ['mission-prep', 'goal-aligned'],
+          tags: ['journey-prep', 'goal-aligned'],
           missionAlignment: 1.0,
-          estimatedAccuracy: this.estimateAccuracy(missionSubjects[0], context),
+          estimatedAccuracy: this.estimateAccuracy(journeySubjects[0] ?? '', context),
           aiGenerated: true,
-          createdFrom: 'mission',
-          linkedMissions: [mission.id],
+          createdFrom: 'journey',
+          linkedMissions: [journey.id],
+          confidence: 0.9, // Very high confidence for journey-aligned tests
           adaptiveConfig: {
             algorithmType: 'HYBRID',
             convergenceCriteria: { standardError: 0.25, minQuestions: 10, maxQuestions },
-            difficultyRange: { min: 'beginner', max: mission.difficultyLevel || 'intermediate' },
+            difficultyRange: { min: 'beginner', max: this.inferJourneyDifficulty(journey) ?? 'intermediate' },
           },
         });
       }
@@ -292,11 +329,12 @@ export class AdaptiveTestingRecommendationEngine {
         expectedBenefit: 'Overall progress assessment',
         priority: 'medium',
         tags: ['comprehensive', 'multi-subject'],
-        missionAlignment: this.calculateMissionAlignment(context.weakAreas, context.activeMissions),
+        missionAlignment: this.calculateJourneyAlignment(context.weakAreas, context.activeJourneys),
         estimatedAccuracy: this.estimateAccuracy('overall', context),
         aiGenerated: true,
         createdFrom: 'recommendation',
-        linkedMissions: context.activeMissions.map(m => m.id).slice(0, 3),
+        linkedMissions: context.activeJourneys.map(j => j.id).slice(0, 3),
+        confidence: 0.7, // Good confidence for comprehensive tests
         adaptiveConfig: {
           algorithmType: 'CAT',
           convergenceCriteria: { standardError: 0.35, minQuestions: 15, maxQuestions },
@@ -313,17 +351,18 @@ export class AdaptiveTestingRecommendationEngine {
         description: `Challenge yourself with advanced ${context.strongAreas[0]} problems`,
         estimatedDuration: Math.min(maxDuration, 25),
         difficulty: this.getAdvancedDifficulty(context.preferredDifficulty),
-        subjects: [context.strongAreas[0]],
+        subjects: [context.strongAreas[0] ?? 'advanced'],
         questionCount: Math.min(maxQuestions, 15),
-        reasons: [`Build on strength in ${context.strongAreas[0]}`, 'Advanced skill development'],
+        reasons: [`Build on strength in ${context.strongAreas[0] ?? 'advanced topics'}`, 'Advanced skill development'],
         expectedBenefit: 'Strength reinforcement',
         priority: 'low',
         tags: ['strength-building', 'advanced'],
-        missionAlignment: this.calculateMissionAlignment([context.strongAreas[0]], context.activeMissions),
-        estimatedAccuracy: this.estimateAccuracy(context.strongAreas[0], context) + 10,
+        missionAlignment: this.calculateJourneyAlignment([context.strongAreas[0] ?? ''], context.activeJourneys),
+        estimatedAccuracy: this.estimateAccuracy(context.strongAreas[0] ?? '', context) + 10,
         aiGenerated: true,
         createdFrom: 'recommendation',
-        linkedMissions: this.findRelatedMissions([context.strongAreas[0]], context.activeMissions),
+        linkedMissions: this.findRelatedJourneys([context.strongAreas[0] ?? ''], context.activeJourneys),
+        confidence: 0.6, // Lower confidence for strength building
         adaptiveConfig: {
           algorithmType: 'CAT',
           convergenceCriteria: { standardError: 0.2, minQuestions: 8, maxQuestions },
@@ -350,10 +389,10 @@ export class AdaptiveTestingRecommendationEngine {
       const weakAreaScore = this.calculateWeakAreaScore(candidate, context);
       score += weakAreaScore * weights.weakAreaFocus;
 
-      // Mission alignment score
-      score += candidate.missionAlignment * weights.missionAlignment;
+      // Journey alignment score
+      score += candidate.missionAlignment * weights.journeyAlignment;
 
-      // Journey progression score (placeholder - would integrate with journey system)
+      // Journey progression score
       const journeyScore = this.calculateJourneyScore(candidate, context);
       score += journeyScore * weights.journeyProgression;
 
@@ -384,8 +423,20 @@ export class AdaptiveTestingRecommendationEngine {
   }
 
   private calculateJourneyScore(candidate: TestRecommendation, context: RecommendationContext): number {
-    // Placeholder - would integrate with actual journey system
-    return 0.5;
+    if (context.activeJourneys.length === 0) {
+      return 0.5; // Default score when no journeys
+    }
+
+    // Calculate how well the test aligns with journey goals
+    let totalScore = 0;
+    for (const journey of context.activeJourneys) {
+      const journeySubjects = this.extractJourneySubjects(journey);
+      const overlap = candidate.subjects.filter(subject => journeySubjects.includes(subject)).length;
+      const alignmentScore = overlap / Math.max(candidate.subjects.length, 1);
+      totalScore += alignmentScore;
+    }
+
+    return Math.min(totalScore / context.activeJourneys.length, 1.0);
   }
 
   private calculateDifficultyScore(candidate: TestRecommendation, context: RecommendationContext): number {
@@ -422,7 +473,7 @@ export class AdaptiveTestingRecommendationEngine {
     if (context.completedTests.length >= 3) {
       confidence += 0.1;
     }
-    if (context.activeMissions.length > 0) {
+    if (context.activeJourneys.length > 0) {
       confidence += 0.1;
     }
     if (candidate.missionAlignment > 0.5) {
@@ -437,13 +488,15 @@ export class AdaptiveTestingRecommendationEngine {
     const weakAreas: string[] = [];
 
     // Analyze track progress for weak subjects
-    Object.entries(progress.trackProgress).forEach(([track, trackData]) => {
-      if (trackData.averageAccuracy < 70) {
-        trackData.subjectProgress.forEach(subject => {
-          if (subject.accuracy < 65) {
-            weakAreas.push(subject.subject);
-          }
-        });
+    Object.entries(progress.trackProgress).forEach(([_track, trackData]) => {
+      if (trackData && typeof trackData === 'object' && 'averageAccuracy' in trackData && 'subjectProgress' in trackData) {
+        if (trackData.averageAccuracy < 70) {
+          trackData.subjectProgress.forEach((subject: { subject: string; accuracy: number }) => {
+            if (subject.accuracy < 65) {
+              weakAreas.push(subject.subject);
+            }
+          });
+        }
       }
     });
 
@@ -453,23 +506,25 @@ export class AdaptiveTestingRecommendationEngine {
   private identifyStrongAreas(progress: UnifiedProgress): string[] {
     const strongAreas: string[] = [];
 
-    Object.entries(progress.trackProgress).forEach(([track, trackData]) => {
-      trackData.subjectProgress.forEach(subject => {
-        if (subject.accuracy >= 85) {
-          strongAreas.push(subject.subject);
-        }
-      });
+    Object.entries(progress.trackProgress).forEach(([_track, trackData]) => {
+      if (trackData && typeof trackData === 'object' && 'subjectProgress' in trackData) {
+        trackData.subjectProgress.forEach((subject: { subject: string; accuracy: number }) => {
+          if (subject.accuracy >= 85) {
+            strongAreas.push(subject.subject);
+          }
+        });
+      }
     });
 
     return [...new Set(strongAreas)].slice(0, 3);
   }
 
-  private inferPreferredDifficulty(progress: UnifiedProgress, tests: AdaptiveTest[]): MissionDifficulty {
+  private inferPreferredDifficulty(progress: UnifiedProgress, tests: AdaptiveTest[]): DifficultyLevel {
     if (tests.length === 0) {
       return 'intermediate';
     }
 
-    const avgAccuracy = progress.overallProgress.averageAccuracy;
+    const avgAccuracy = progress.overallProgress.averageScore;
 
     if (avgAccuracy >= 85) {
       return 'advanced';
@@ -480,61 +535,111 @@ export class AdaptiveTestingRecommendationEngine {
     return 'beginner';
   }
 
-  private extractLearningGoals(missions: any[]): string[] {
-    return missions.flatMap(mission => this.extractMissionSubjects(mission)).slice(0, 5);
+  private extractLearningGoals(journeys: UserJourney[]): string[] {
+    return journeys.flatMap(journey => this.extractJourneySubjects(journey)).slice(0, 5);
   }
 
-  private extractMissionSubjects(mission: any): string[] {
-    // Extract subjects from mission - placeholder implementation
-    return mission.subjects || [mission.category || 'General'];
+  private extractJourneySubjects(journey: UserJourney): string[] {
+    // Extract subjects from journey goals and linked subjects
+    const subjects: string[] = [];
+    
+    // Extract from custom goals
+    journey.customGoals.forEach(goal => {
+      if (goal.linkedSubjects) {
+        subjects.push(...goal.linkedSubjects);
+      }
+    });
+    
+    // If no subjects found, use journey track as default
+    if (subjects.length === 0) {
+      subjects.push(journey.track ?? 'General');
+    }
+    
+    return [...new Set(subjects)]; // Remove duplicates
   }
 
-  private calculateMissionAlignment(subjects: string[], missions: any[]): number {
-    if (missions.length === 0) {
+  private calculateJourneyAlignment(subjects: string[], journeys: UserJourney[]): number {
+    if (journeys.length === 0) {
       return 0;
     }
 
-    const missionSubjects = missions.flatMap(mission => this.extractMissionSubjects(mission));
-    const overlap = subjects.filter(subject => missionSubjects.includes(subject)).length;
+    const journeySubjects = journeys.flatMap(journey => this.extractJourneySubjects(journey));
+    const overlap = subjects.filter(subject => journeySubjects.includes(subject)).length;
 
     return overlap / Math.max(subjects.length, 1);
   }
 
-  private findRelatedMissions(subjects: string[], missions: any[]): string[] {
-    return missions
-      .filter(mission => {
-        const missionSubjects = this.extractMissionSubjects(mission);
-        return subjects.some(subject => missionSubjects.includes(subject));
+  private findRelatedJourneys(subjects: string[], journeys: UserJourney[]): string[] {
+    return journeys
+      .filter(journey => {
+        const journeySubjects = this.extractJourneySubjects(journey);
+        return subjects.some(subject => journeySubjects.includes(subject));
       })
-      .map(mission => mission.id)
+      .map(journey => journey.id)
       .slice(0, 3);
   }
 
   private estimateAccuracy(subject: string, context: RecommendationContext): number {
     if (subject === 'overall') {
-      return context.userProgress.overallProgress.averageAccuracy;
+      return context.userProgress.overallProgress.averageScore;
     }
 
     // Find subject-specific accuracy
     let accuracy = 70; // Default
     Object.values(context.userProgress.trackProgress).forEach(track => {
-      const subjectData = track.subjectProgress.find(s => s.subject === subject);
-      if (subjectData) {
-        accuracy = subjectData.accuracy;
+      if (track && typeof track === 'object' && 'subjectProgress' in track) {
+        const subjectData = track.subjectProgress.find((s: { subject: string; accuracy: number }) => s.subject === subject);
+        if (subjectData) {
+          accuracy = subjectData.accuracy;
+        }
       }
     });
 
     return accuracy;
   }
 
-  private getProgressiveDifficulty(current: MissionDifficulty): MissionDifficulty {
-    const progression = { beginner: 'intermediate', intermediate: 'intermediate', advanced: 'advanced' };
-    return progression[current] || 'intermediate';
+  private getProgressiveDifficulty(current: DifficultyLevel): DifficultyLevel {
+    const progression: Record<DifficultyLevel, DifficultyLevel> = { 
+      beginner: 'intermediate', 
+      intermediate: 'intermediate', 
+      advanced: 'advanced',
+      expert: 'expert'
+    };
+    return progression[current] ?? 'intermediate';
   }
 
-  private getAdvancedDifficulty(current: MissionDifficulty): MissionDifficulty {
-    const advancement = { beginner: 'intermediate', intermediate: 'advanced', advanced: 'expert' };
-    return advancement[current] || 'advanced';
+  private getAdvancedDifficulty(current: DifficultyLevel): DifficultyLevel {
+    const advancement: Record<DifficultyLevel, DifficultyLevel> = { 
+      beginner: 'intermediate', 
+      intermediate: 'advanced', 
+      advanced: 'expert',
+      expert: 'expert'
+    };
+    return advancement[current] ?? 'advanced';
+  }
+
+  /**
+   * Infer journey difficulty based on goals and completion requirements
+   */
+  private inferJourneyDifficulty(journey: UserJourney): DifficultyLevel {
+    // Base difficulty on journey priority and target completion date
+    const daysToComplete = journey.targetCompletionDate 
+      ? Math.ceil((journey.targetCompletionDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      : 90;
+
+    const goalsCount = journey.customGoals.length;
+
+    if (journey.priority === 'high' && daysToComplete < 30) {
+      return 'expert';
+    }
+    if (journey.priority === 'high' || (goalsCount > 5 && daysToComplete < 60)) {
+      return 'advanced';
+    }
+    if (goalsCount > 3 || daysToComplete < 90) {
+      return 'intermediate';
+    }
+    
+    return 'beginner';
   }
 }
 

@@ -40,7 +40,7 @@ class ProductionReadinessChecker {
       hasLoadingState: this.checkLoadingState(componentCode),
       hasProperValidation: this.checkValidation(componentCode),
       hasAccessibility: this.checkAccessibility(componentCode),
-      hasTypeScript: componentPath.endsWith('.tsx') || componentPath.endsWith('.ts'),
+      hasTypeScript: componentPath.endsWith('.tsx') ?? componentPath.endsWith('.ts'),
       hasDocumentation: this.checkDocumentation(componentCode),
       hasTestable: this.checkTestability(componentCode),
       isSecure: this.checkSecurity(componentCode),

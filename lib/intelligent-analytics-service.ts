@@ -34,8 +34,6 @@ import {
 
 import { UserPersona } from '@/types/exam';
 
-/* eslint-disable import/no-cycle */
-import { analyticsDemoService } from './analytics-demo-data';
 import { db } from './firebase';
 import { firebaseService } from './firebase-services';
 import { logger } from './logger';
@@ -487,12 +485,12 @@ export class IntelligentAnalyticsService {
       const hasMinimumData = userEvents.length >= 5; // Minimum events for meaningful analytics
 
       if (!hasMinimumData) {
-        logger.info('Using demo data for analytics (insufficient user data)', {
+        logger.info('Insufficient user data for analytics, returning empty state', {
           userId,
           eventCount: userEvents.length,
         });
-        // Return demo data for new users
-        return analyticsDemoService.generateDemoAnalytics();
+        // Return empty analytics structure for new users
+        return this.createEmptyAnalytics();
       }
 
       const [examPerformance, coursePerformance, crossTrackInsights, trends, predictions] = await Promise.all([
@@ -515,9 +513,9 @@ export class IntelligentAnalyticsService {
       return analytics;
     } catch (error) {
       logger.error('Failed to get performance analytics', error as Error);
-      // Fallback to demo data on error
-      logger.info('Falling back to demo data due to error', { userId });
-      return analyticsDemoService.generateDemoAnalytics();
+      // Return empty analytics on error instead of demo data
+      logger.info('Returning empty analytics due to error', { userId });
+      return this.createEmptyAnalytics();
     }
   }
 
@@ -565,8 +563,8 @@ export class IntelligentAnalyticsService {
       // Check if user has sufficient data
       const userEvents = await this.getUserEvents(userId);
       if (userEvents.length < 3) {
-        logger.info('Using demo weak areas (insufficient user data)', { userId });
-        return analyticsDemoService.generateDemoWeakAreas();
+        logger.info('Insufficient user data for weak area analysis', { userId });
+        return [];
       }
 
       const examWeakAreas = await this.analyzeExamWeaknesses(userId);
@@ -581,7 +579,7 @@ export class IntelligentAnalyticsService {
       );
     } catch (error) {
       logger.error('Failed to identify weak areas', error as Error);
-      return analyticsDemoService.generateDemoWeakAreas();
+      return [];
     }
   }
 
@@ -590,11 +588,9 @@ export class IntelligentAnalyticsService {
    */
   async getImprovementRecommendations(userId: string, weakAreas: WeakArea[]): Promise<AdaptiveRecommendation[]> {
     try {
-      // Use demo recommendations for demonstration
-      const demoRecommendations = analyticsDemoService.generateDemoRecommendations();
-
       if (weakAreas.length === 0) {
-        return demoRecommendations;
+        logger.info('No weak areas identified, returning empty recommendations', { userId });
+        return [];
       }
 
       const recommendations: AdaptiveRecommendation[] = [];
@@ -605,12 +601,10 @@ export class IntelligentAnalyticsService {
         recommendations.push(recommendation);
       }
 
-      // Combine with demo recommendations for richer content
-      const combinedRecommendations = [...recommendations, ...demoRecommendations];
-      return combinedRecommendations.sort((a, b) => b.confidence - a.confidence).slice(0, 6);
+      return recommendations.sort((a, b) => b.confidence - a.confidence);
     } catch (error) {
       logger.error('Failed to generate improvement recommendations', error as Error);
-      return analyticsDemoService.generateDemoRecommendations();
+      return [];
     }
   }
 
@@ -813,23 +807,29 @@ export class IntelligentAnalyticsService {
   }
 
   private async getUserEvents(userId: string, category?: string): Promise<AnalyticsEvent[]> {
-    const eventsQuery = category
-      ? query(
-          collection(db, this.COLLECTION_EVENTS),
-          where('userId', '==', userId),
-          where('category', '==', category),
-          orderBy('timestamp', 'desc'),
-          limit(1000)
-        )
-      : query(
-          collection(db, this.COLLECTION_EVENTS),
-          where('userId', '==', userId),
-          orderBy('timestamp', 'desc'),
-          limit(1000)
-        );
+    try {
+      const eventsQuery = category
+        ? query(
+            collection(db, this.COLLECTION_EVENTS),
+            where('userId', '==', userId),
+            where('category', '==', category),
+            orderBy('timestamp', 'desc'),
+            limit(1000)
+          )
+        : query(
+            collection(db, this.COLLECTION_EVENTS),
+            where('userId', '==', userId),
+            orderBy('timestamp', 'desc'),
+            limit(1000)
+          );
 
-    const snapshot = await getDocs(eventsQuery);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as AnalyticsEvent);
+      const snapshot = await getDocs(eventsQuery);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as AnalyticsEvent);
+    } catch (error) {
+      logger.error('Failed to get user events (indexes may still be building)', error as Error);
+      // Return empty array instead of throwing error when indexes are not ready
+      return [];
+    }
   }
 
   // Placeholder implementations for complex analytics methods
@@ -919,6 +919,53 @@ export class IntelligentAnalyticsService {
   }
   private async identifyRiskFactors(_userId: string): Promise<RiskFactor[]> {
     return [];
+  }
+
+  // ============================================================================
+  // HELPER METHODS
+  // ============================================================================
+
+  /**
+   * Create empty analytics structure for users with insufficient data
+   */
+  private createEmptyAnalytics(): PerformanceAnalytics {
+
+    return {
+      examPerformance: {
+        totalMockTests: 0,
+        averageScore: 0,
+        scoreImprovement: 0,
+        weakAreas: [],
+        strongAreas: [],
+        revisionEffectiveness: 0,
+        predictedExamScore: 0,
+      },
+      coursePerformance: {
+        totalAssignments: 0,
+        completionRate: 0,
+        projectSuccessRate: 0,
+        skillMastery: [],
+        codingEfficiency: 0,
+        problemSolvingScore: 0,
+      },
+      crossTrackInsights: {
+        learningTransfer: [],
+        skillSynergy: [],
+        adaptiveRecommendations: [],
+        crossTrackBenefits: [],
+      },
+      trends: {
+        daily: [],
+        weekly: [],
+        monthly: [],
+      },
+      predictions: {
+        examSuccessProbability: 0,
+        skillMasteryTimeline: [],
+        optimalStudyPlan: [],
+        riskFactors: [],
+      },
+    };
   }
 }
 

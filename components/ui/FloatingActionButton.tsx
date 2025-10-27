@@ -25,8 +25,8 @@ export default function FloatingActionButton({ className }: FloatingActionButton
   const actions: FloatingAction[] = [
     {
       icon: Zap,
-      label: 'Quick Session',
-      href: '/micro-learning?auto=true',
+      label: 'Plan Journey',
+      href: '/journey',
       color: 'bg-yellow-500 hover:bg-yellow-600',
       priority: 'high',
     },
@@ -39,8 +39,8 @@ export default function FloatingActionButton({ className }: FloatingActionButton
     },
     {
       icon: Target,
-      label: 'Missions',
-      href: '/missions',
+      label: 'Take Test',
+      href: '/test',
       color: 'bg-purple-500 hover:bg-purple-600',
       priority: 'high',
     },

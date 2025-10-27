@@ -208,7 +208,7 @@ export class PersonaAwareGoalSetting {
 
     // Weekend intensive
     const isWeekendWorker =
-      workSchedule.workingDays.includes('saturday') || workSchedule.workingDays.includes('sunday');
+      workSchedule.workingDays.includes('saturday') ?? workSchedule.workingDays.includes('sunday');
     if (!isWeekendWorker) {
       slots.push('Weekend Intensive Sessions');
     }

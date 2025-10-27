@@ -4,17 +4,13 @@ import { BookOpen, Target, Zap, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 import AuthGuard from '@/components/AuthGuard';
-import { QuickSessionLauncher } from '@/components/micro-learning';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
 import { SUBJECTS_DATA } from '@/lib/subjects-data';
 
 export default function SubjectsPage() {
-  const { user } = useAuth();
-
   const getTierColor = (tier: number) => {
     switch (tier) {
       case 1:
@@ -52,14 +48,32 @@ export default function SubjectsPage() {
             <p className="text-muted-foreground">Master every topic with banking context and strategic insights</p>
           </div>
 
-          {/* Quick Micro-Learning */}
+          {/* Quick Actions */}
           <div className="max-w-2xl mx-auto">
-            <QuickSessionLauncher
-              userId={user?.uid ?? ''}
-              onStartSession={(subjectId, topicId, track, duration) => {
-                window.location.href = `/micro-learning?auto=true&subject=${subjectId}&topic=${topicId}&track=${track}&duration=${duration}`;
-              }}
-            />
+            <Card className="border-indigo-200 bg-gradient-to-r from-indigo-50 to-blue-50">
+              <CardContent className="pt-6 text-center">
+                <Zap className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-indigo-900 mb-2">Ready to Study?</h3>
+                <p className="text-sm text-indigo-700 mb-4">Choose your path to learning excellence</p>
+                <div className="flex gap-3 justify-center">
+                  <Button
+                    onClick={() => (window.location.href = '/syllabus')}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    View Syllabus
+                  </Button>
+                  <Button
+                    onClick={() => (window.location.href = '/test')}
+                    variant="outline"
+                    className="border-indigo-300"
+                  >
+                    <Target className="h-4 w-4 mr-2" />
+                    Take Test
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Tier Overview */}

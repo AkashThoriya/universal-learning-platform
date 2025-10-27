@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion';
 import {
   TrendingUp,
-  TrendingDown,
-  Calendar,
   Clock,
   Target,
   AlertTriangle,
@@ -30,8 +28,7 @@ import {
   Cell,
   BarChart,
   Bar,
-  LineChart,
-  Line,
+  Pie,
 } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
@@ -62,7 +59,7 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
     const data = journey.progressTracking.weeklyProgress.map((week, index) => ({
       week: `Week ${index + 1}`,
       hours: week.hoursStudied,
-      goals: week.goalsAdvanced?.length || 0,
+      goals: week.goalsAdvanced?.length ?? 0,
       completion: Math.min(100, (index + 1) * 15), // Mock progression
     }));
     setChartData(data);
@@ -112,10 +109,8 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
         speed: '#F59E0B',
         accuracy: '#8B5CF6',
         consistency: '#F97316',
-      }[category] || '#6B7280',
+      }[category] ?? '#6B7280',
   }));
-
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#F97316'];
 
   return (
     <div className={cn('space-y-6', className)}>
@@ -359,7 +354,7 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
                   </ResponsiveContainer>
                 </div>
                 <div className="mt-4 space-y-2">
-                  {pieData.map((entry, index) => (
+                  {pieData.map(entry => (
                     <div key={entry.name} className="flex items-center gap-2 text-sm">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
                       <span className="capitalize">{entry.name}</span>

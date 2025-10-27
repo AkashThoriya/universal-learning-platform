@@ -67,7 +67,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
             </Button>
 
             <Button
-              onClick={onNavigateHome ?? (() => (window.location.href = '/'))}
+              onClick={onNavigateHome || (() => (window.location.href = '/'))}
               variant="outline"
               className="flex items-center gap-2"
             >
@@ -135,7 +135,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   render() {
     if (this.state.hasError && this.state.error) {
-      const FallbackComponent = this.props.fallback ?? DefaultErrorFallback;
+      const FallbackComponent = this.props.fallback || DefaultErrorFallback;
 
       return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
     }
@@ -222,7 +222,7 @@ export function FeatureErrorBoundary({
           error={error}
           resetError={resetError}
           title={`Error in ${featureName}`}
-          description={fallbackMessage ?? `There was an issue with the ${featureName} feature.`}
+          description={fallbackMessage || `There was an issue with the ${featureName} feature.`}
         />
       )}
       onError={(error, errorInfo) => {

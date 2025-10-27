@@ -61,10 +61,42 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
 
     try {
       const userRef = doc(db, 'users', userId);
+
+      // Filter out undefined values and clean customExam if not a custom exam
+      const cleanUserData = { ...userData };
+
+      // If not a custom exam, remove customExam entirely
+      if (!userData.isCustomExam) {
+        delete cleanUserData.customExam;
+      } else if (cleanUserData.customExam) {
+        // If it is a custom exam, clean empty strings and undefined values
+        const { customExam } = cleanUserData;
+        const cleanedCustomExam: any = {};
+
+        if (customExam.name && customExam.name.trim() !== '') {
+          cleanedCustomExam.name = customExam.name;
+        }
+        if (customExam.description && customExam.description.trim() !== '') {
+          cleanedCustomExam.description = customExam.description;
+        }
+        if (customExam.category && customExam.category.trim() !== '') {
+          cleanedCustomExam.category = customExam.category;
+        }
+
+        // Only include customExam if it has actual content
+        if (Object.keys(cleanedCustomExam).length > 0) {
+          cleanUserData.customExam = cleanedCustomExam;
+        } else {
+          delete cleanUserData.customExam;
+        }
+      }
+
       const newUserData = {
-        ...userData,
+        ...cleanUserData,
         createdAt: Timestamp.now(),
-        onboardingComplete: false,
+        // Preserve onboardingComplete if provided, otherwise set to false
+        onboardingComplete: cleanUserData.onboardingComplete ?? false,
+        onboardingCompleted: cleanUserData.onboardingCompleted ?? false, // Legacy field
         stats: {
           totalStudyHours: 0,
           currentStreak: 0,
@@ -227,23 +259,169 @@ export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[]) 
         batch.delete(doc.ref);
       });
 
-      // Add new syllabus
+      // Add new syllabus with user-specific topic tracking
       syllabus.forEach(subject => {
         const subjectRef = doc(db, 'users', userId, 'syllabus', subject.id);
-        batch.set(subjectRef, subject);
+
+        // Create user-specific subject data with topic status tracking
+        const userSubjectData = {
+          ...subject,
+          userId, // Add user reference
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+          // Initialize topic status tracking for each topic
+          topicStatus:
+            subject.topics?.reduce(
+              (statusMap, topic) => {
+                statusMap[topic.id] = {
+                  status: 'not_started', // not_started, in_progress, completed, mastered
+                  progress: 0, // 0-100
+                  timeSpent: 0, // in minutes
+                  lastAccessed: null,
+                  completedAt: null,
+                  masteryLevel: 0, // 0-100
+                  attempts: 0,
+                  averageScore: 0,
+                  notes: '',
+                  difficulty: 'medium', // Default difficulty as topic doesn't have this property
+                  estimatedHours: topic.estimatedHours ?? 0,
+                };
+                return statusMap;
+              },
+              {} as Record<string, any>
+            ) ?? {},
+          // Subject-level tracking
+          subjectProgress: {
+            overallProgress: 0,
+            completedTopics: 0,
+            totalTopics: subject.topics?.length ?? 0,
+            timeSpent: 0,
+            averageScore: 0,
+            status: 'not_started',
+            startedAt: null,
+            completedAt: null,
+          },
+        };
+
+        batch.set(subjectRef, userSubjectData);
       });
 
       await batch.commit();
 
-      logInfo('Syllabus saved successfully', {
+      logInfo('Syllabus saved successfully with topic tracking', {
         userId,
         newSubjectCount: syllabus.length,
-        totalTopics: syllabus.reduce((total, subject) => total + (subject.topics?.length ?? 0), 0),
+        totalTopics: syllabus.reduce((total, subject) => total + (subject.topics?.length || 0), 0),
+        topicTrackingEnabled: true,
       });
     } catch (error) {
       logError('Failed to save syllabus', {
         userId,
         subjectCount: syllabus.length,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+      throw error;
+    }
+  });
+};
+
+/**
+ * Updates the status of a specific topic for a user
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} subjectId - The subject ID containing the topic
+ * @param {string} topicId - The topic ID to update
+ * @param {object} statusUpdate - The status update data
+ * @returns {Promise<void>} Promise that resolves when topic status is updated
+ */
+export const updateTopicStatus = async (
+  userId: string,
+  subjectId: string,
+  topicId: string,
+  statusUpdate: {
+    status?: 'not_started' | 'in_progress' | 'completed' | 'mastered';
+    progress?: number;
+    timeSpent?: number;
+    masteryLevel?: number;
+    averageScore?: number;
+    notes?: string;
+  }
+) => {
+  return measurePerformance('updateTopicStatus', async () => {
+    logInfo('Updating topic status', {
+      userId,
+      subjectId,
+      topicId,
+      statusUpdate,
+    });
+
+    try {
+      const subjectRef = doc(db, 'users', userId, 'syllabus', subjectId);
+      const subjectDoc = await getDoc(subjectRef);
+
+      if (!subjectDoc.exists()) {
+        throw new Error(`Subject ${subjectId} not found for user ${userId}`);
+      }
+
+      const subjectData = subjectDoc.data();
+      const topicStatus = subjectData.topicStatus || {};
+
+      // Update topic status
+      const updatedTopicStatus = {
+        ...topicStatus[topicId],
+        ...statusUpdate,
+        lastAccessed: Timestamp.now(),
+        attempts: (topicStatus[topicId]?.attempts ?? 0) + 1,
+      };
+
+      // Mark completion timestamp if status is completed or mastered
+      if (statusUpdate.status === 'completed' || statusUpdate.status === 'mastered') {
+        updatedTopicStatus.completedAt = Timestamp.now();
+      }
+
+      topicStatus[topicId] = updatedTopicStatus;
+
+      // Calculate subject progress
+      const totalTopics = Object.keys(topicStatus).length;
+      const completedTopics = Object.values(topicStatus).filter(
+        (status: any) => status.status === 'completed' || status.status === 'mastered'
+      ).length;
+      const overallProgress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+      const totalTimeSpent = Object.values(topicStatus).reduce(
+        (total: number, status: any) => total + (status.timeSpent || 0),
+        0
+      );
+
+      // Update subject progress
+      const subjectProgress = {
+        ...subjectData.subjectProgress,
+        overallProgress,
+        completedTopics,
+        timeSpent: totalTimeSpent,
+        status: overallProgress === 100 ? 'completed' : overallProgress > 0 ? 'in_progress' : 'not_started',
+        ...(overallProgress === 100 && !subjectData.subjectProgress?.completedAt && { completedAt: Timestamp.now() }),
+        ...(overallProgress > 0 && !subjectData.subjectProgress?.startedAt && { startedAt: Timestamp.now() }),
+      };
+
+      // Update the document
+      await updateDoc(subjectRef, {
+        topicStatus,
+        subjectProgress,
+        updatedAt: Timestamp.now(),
+      });
+
+      logInfo('Topic status updated successfully', {
+        userId,
+        subjectId,
+        topicId,
+        newStatus: updatedTopicStatus.status,
+        subjectOverallProgress: overallProgress,
+      });
+    } catch (error) {
+      logError('Failed to update topic status', {
+        userId,
+        subjectId,
+        topicId,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
       throw error;
@@ -685,7 +863,7 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     totalTopics: 0,
   };
 
-  const currentStats = user.stats ?? defaultStats;
+  const currentStats = user.stats || defaultStats;
 
   const totalMinutes = log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0);
   const totalHours = currentStats.totalStudyHours + totalMinutes / 60;

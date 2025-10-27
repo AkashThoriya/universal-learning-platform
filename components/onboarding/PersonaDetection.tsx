@@ -398,7 +398,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
             <Label>Work Start Time</Label>
             <Input
               type="time"
-              value={form.data.userPersona?.workSchedule?.workingHours?.start ?? '09:00'}
+              value={form.data.userPersona?.workSchedule?.workingHours?.start || '09:00'}
               onChange={e => updateWorkSchedule('workSchedule.workingHours.start', e.target.value)}
             />
           </div>
@@ -406,7 +406,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
             <Label>Work End Time</Label>
             <Input
               type="time"
-              value={form.data.userPersona?.workSchedule?.workingHours?.end ?? '17:00'}
+              value={form.data.userPersona?.workSchedule?.workingHours?.end || '17:00'}
               onChange={e => updateWorkSchedule('workSchedule.workingHours.end', e.target.value)}
             />
           </div>
@@ -420,9 +420,9 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
               <div key={day.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={day.id}
-                  checked={form.data.userPersona?.workSchedule?.workingDays?.includes(day.id) ?? false}
+                  checked={form.data.userPersona?.workSchedule?.workingDays?.includes(day.id) || false}
                   onCheckedChange={checked => {
-                    const currentDays = form.data.userPersona?.workSchedule?.workingDays ?? [];
+                    const currentDays = form.data.userPersona?.workSchedule?.workingDays || [];
                     if (checked) {
                       updateWorkSchedule('workSchedule.workingDays', [...currentDays, day.id]);
                     } else {
@@ -446,7 +446,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
           <Label>Daily Commute Time (both ways)</Label>
           <div className="flex items-center space-x-2">
             <Slider
-              value={[form.data.userPersona?.workSchedule?.commuteTime ?? 60]}
+              value={[form.data.userPersona?.workSchedule?.commuteTime || 60]}
               onValueChange={([value]) => updateWorkSchedule('workSchedule.commuteTime', value)}
               max={180}
               min={0}
@@ -463,7 +463,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Work Schedule Flexibility</Label>
           <Select
-            value={form.data.userPersona?.workSchedule?.flexibility ?? 'rigid'}
+            value={form.data.userPersona?.workSchedule?.flexibility || 'rigid'}
             onValueChange={(value: 'rigid' | 'flexible' | 'hybrid') =>
               updateWorkSchedule('workSchedule.flexibility', value)
             }
@@ -483,7 +483,7 @@ function WorkScheduleInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Lunch Break Duration</Label>
           <Select
-            value={String(form.data.userPersona?.workSchedule?.lunchBreakDuration ?? 60)}
+            value={String(form.data.userPersona?.workSchedule?.lunchBreakDuration || 60)}
             onValueChange={value => updateWorkSchedule('workSchedule.lunchBreakDuration', parseInt(value))}
           >
             <SelectTrigger>
@@ -570,7 +570,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
             <Label>Current Role</Label>
             <Input
               placeholder="e.g., Software Engineer, Manager"
-              value={form.data.userPersona?.careerContext?.currentRole ?? ''}
+              value={form.data.userPersona?.careerContext?.currentRole || ''}
               onChange={e => updateCareerContext('careerContext.currentRole', e.target.value)}
             />
           </div>
@@ -578,7 +578,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
             <Label>Target Role</Label>
             <Input
               placeholder="e.g., Senior Manager, Product Director"
-              value={form.data.userPersona?.careerContext?.targetRole ?? ''}
+              value={form.data.userPersona?.careerContext?.targetRole || ''}
               onChange={e => updateCareerContext('careerContext.targetRole', e.target.value)}
             />
           </div>
@@ -589,7 +589,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Label>Industry</Label>
           <Input
             placeholder="e.g., Technology, Finance, Healthcare"
-            value={form.data.userPersona?.careerContext?.industry ?? ''}
+            value={form.data.userPersona?.careerContext?.industry || ''}
             onChange={e => updateCareerContext('careerContext.industry', e.target.value)}
           />
         </div>
@@ -598,7 +598,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
         <div className="space-y-2">
           <Label>Timeline for Career Goals</Label>
           <RadioGroup
-            value={form.data.userPersona?.careerContext?.urgency ?? 'short_term'}
+            value={form.data.userPersona?.careerContext?.urgency || 'short_term'}
             onValueChange={(value: 'immediate' | 'short_term' | 'long_term') =>
               updateCareerContext('careerContext.urgency', value)
             }
@@ -633,9 +633,9 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
               <div key={motivation.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={motivation.id}
-                  checked={form.data.userPersona?.careerContext?.motivation?.includes(motivation.id) ?? false}
+                  checked={form.data.userPersona?.careerContext?.motivation?.includes(motivation.id) || false}
                   onCheckedChange={checked => {
-                    const currentMotivations = form.data.userPersona?.careerContext?.motivation ?? [];
+                    const currentMotivations = form.data.userPersona?.careerContext?.motivation || [];
                     if (checked) {
                       updateCareerContext('careerContext.motivation', [...currentMotivations, motivation.id]);
                     } else {
@@ -662,7 +662,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
           <Label>Key Skill Gaps (optional)</Label>
           <Textarea
             placeholder="e.g., Leadership skills, Technical expertise, Communication, Data analysis..."
-            value={form.data.userPersona?.careerContext?.skillGaps?.join(', ') ?? ''}
+            value={form.data.userPersona?.careerContext?.skillGaps?.join(', ') || ''}
             onChange={e => {
               const skills = e.target.value
                 .split(',')
@@ -718,7 +718,7 @@ function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<Person
             </span>
           </div>
           <Slider
-            value={[form.data.preferences?.dailyStudyGoalMinutes ?? 480]}
+            value={[form.data.preferences?.dailyStudyGoalMinutes || 480]}
             onValueChange={([value]) => updatePreference('preferences.dailyStudyGoalMinutes', value)}
             max={recommendations.maxGoal}
             min={recommendations.minGoal}
@@ -791,7 +791,7 @@ function PreferredStudyTimeInput({ form }: PersonaDetectionStepProps) {
     <div className="space-y-2">
       <Label>Preferred Study Time</Label>
       <Select
-        value={form.data.preferences?.preferredStudyTime ?? 'morning'}
+        value={form.data.preferences?.preferredStudyTime || 'morning'}
         onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') =>
           updatePreference('preferences.preferredStudyTime', value)
         }

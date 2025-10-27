@@ -35,7 +35,7 @@ export default function LoginPage() {
           isNewUser: result.user.isNewUser ?? false,
         });
 
-        if (result.user.isNewUser ?? false) {
+        if (result.user.isNewUser) {
           logInfo('Redirecting new user to onboarding');
           router.push('/onboarding');
         } else {

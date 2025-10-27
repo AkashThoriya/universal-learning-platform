@@ -20,11 +20,14 @@
 
 'use client';
 
+import { BarChart3 } from 'lucide-react';
 import { Suspense, useEffect } from 'react';
 
 import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import AuthGuard from '@/components/AuthGuard';
 import { ComponentErrorBoundary } from '@/components/error-handling/GlobalErrorBoundary';
+import { AnalyticsLayout } from '@/components/layout/AppLayout';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { LoadingSpinner } from '@/components/ui/loading-states';
 import { logInfo } from '@/lib/logger';
 
@@ -39,10 +42,10 @@ export default function AnalyticsPage() {
 
   return (
     <AuthGuard>
-      <ComponentErrorBoundary
-        fallback={
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
-            <div className="text-center space-y-4 max-w-md">
+      <AnalyticsLayout>
+        <ComponentErrorBoundary
+          fallback={
+            <div className="text-center space-y-6">
               <div className="text-6xl">📊</div>
               <h2 className="text-2xl font-bold text-gray-900">Analytics Temporarily Unavailable</h2>
               <p className="text-gray-600">
@@ -55,43 +58,44 @@ export default function AnalyticsPage() {
                 Refresh Page
               </button>
             </div>
-          </div>
-        }
-      >
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-          <div className="container mx-auto px-4 py-8">
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center min-h-[60vh]">
-                  <div className="text-center space-y-6">
-                    <div className="relative">
-                      <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-                      <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
-                        <LoadingSpinner size="large" />
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 mt-4">Loading Analytics</h3>
-                        <p className="text-sm text-gray-600">
-                          Analyzing your learning patterns and performance data...
-                        </p>
-                        <div className="mt-4 space-y-2">
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full animate-pulse"
-                              style={{ width: '60%' }}
-                            />
-                          </div>
-                          <p className="text-xs text-gray-500">Processing cross-track insights</p>
+          }
+        >
+          <FeaturePageHeader
+            title="Analytics Dashboard"
+            description="Gain insights into your learning patterns and performance across all subjects"
+            icon={<BarChart3 className="h-8 w-8" />}
+            badge="📊 Performance Insights"
+          />
+
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center space-y-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
+                    <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/20">
+                      <LoadingSpinner size="large" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2 mt-4">Loading Analytics</h3>
+                      <p className="text-sm text-gray-600">Analyzing your learning patterns and performance data...</p>
+                      <div className="mt-4 space-y-2">
+                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full animate-pulse"
+                            style={{ width: '60%' }}
+                          />
                         </div>
+                        <p className="text-xs text-gray-500">Processing cross-track insights</p>
                       </div>
                     </div>
                   </div>
                 </div>
-              }
-            >
-              <AnalyticsDashboard />
-            </Suspense>
-          </div>
-        </div>
-      </ComponentErrorBoundary>
+              </div>
+            }
+          >
+            <AnalyticsDashboard />
+          </Suspense>
+        </ComponentErrorBoundary>
+      </AnalyticsLayout>
     </AuthGuard>
   );
 }

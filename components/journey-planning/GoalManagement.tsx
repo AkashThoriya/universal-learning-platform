@@ -20,7 +20,7 @@ import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -118,13 +118,23 @@ export default function GoalManagement({
 
   const handleEditGoal = (goal: JourneyGoal) => {
     setEditingGoal(goal);
+
+    const formatDateForInput = (date: Date): string => {
+      const isoString = date.toISOString();
+      const parts = isoString.split('T');
+      return parts[0] ?? '';
+    };
+
+    const deadlineValue =
+      goal.deadline instanceof Date ? formatDateForInput(goal.deadline) : formatDateForInput(new Date());
+
     setFormData({
       title: goal.title,
       description: goal.description,
       targetValue: goal.targetValue,
       unit: goal.unit,
       category: goal.category,
-      deadline: goal.deadline.toISOString().split('T')[0],
+      deadline: deadlineValue,
       linkedSubjects: goal.linkedSubjects,
       autoUpdateFrom: goal.autoUpdateFrom,
     });
@@ -161,7 +171,7 @@ export default function GoalManagement({
   };
 
   const isGoalOverdue = (goal: JourneyGoal) => {
-    return new Date() > goal.deadline && !isGoalCompleted(goal);
+    return goal.deadline && new Date() > goal.deadline && !isGoalCompleted(goal);
   };
 
   const getCategoryIcon = (category: JourneyGoal['category']) => {
@@ -426,10 +436,12 @@ export default function GoalManagement({
 
                         {/* Goal Metadata */}
                         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            <span>Due: {goal.deadline.toLocaleDateString()}</span>
-                          </div>
+                          {goal.deadline && (
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              <span>Due: {goal.deadline.toLocaleDateString()}</span>
+                            </div>
+                          )}
                           {isGoalOverdue(goal) && <Badge className="bg-red-100 text-red-700 text-xs">Overdue</Badge>}
                           {goal.autoUpdateFrom !== 'manual' && (
                             <Badge variant="outline" className="text-xs">

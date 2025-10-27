@@ -405,7 +405,7 @@ export class DatabaseService {
   private config: DatabaseConfig;
 
   constructor(config?: DatabaseConfig) {
-    this.config = config || DatabaseConfigHelper.getConfigFromEnv();
+    this.config = config ?? DatabaseConfigHelper.getConfigFromEnv();
     this.provider = databaseFactory.createProvider(this.config);
   }
 

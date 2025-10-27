@@ -97,7 +97,7 @@ export function PersonalInfoStep({
         </Label>
         <Input
           id="displayName"
-          value={formData?.displayName ?? ''}
+          value={formData?.displayName || ''}
           onChange={e => (form.updateField as (field: string, value: string) => void)('displayName', e.target.value)}
           onBlur={() => (form.markFieldTouched as (field: string) => void)('displayName')}
           placeholder="Enter your full name"
@@ -200,7 +200,7 @@ export function PersonalInfoStep({
             <Input
               id="examDate"
               type="date"
-              value={formData?.examDate ?? ''}
+              value={formData?.examDate || ''}
               onChange={e => (form.updateField as (field: string, value: string) => void)('examDate', e.target.value)}
               onBlur={() => (form.markFieldTouched as (field: string) => void)('examDate')}
               className={`pl-10 ${form.errors.examDate ? 'border-red-500' : ''}`}
@@ -226,7 +226,7 @@ export function PersonalInfoStep({
             <br />
             <span className="text-sm">
               Syllabus: {selectedExam.defaultSyllabus.length} subjects • Estimated study time:{' '}
-              {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours ?? 0), 0)} hours
+              {selectedExam.defaultSyllabus.reduce((sum, s) => sum + (s.estimatedHours || 0), 0)} hours
             </span>
           </AlertDescription>
         </Alert>
@@ -263,7 +263,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Input
             id="customExamName"
-            value={formData?.customExam?.name ?? ''}
+            value={formData?.customExam?.name || ''}
             onChange={e =>
               (form.updateField as (field: string, value: unknown) => void)('customExam', {
                 ...formData?.customExam,
@@ -288,7 +288,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
             Category
           </Label>
           <Select
-            value={formData?.customExam?.category ?? ''}
+            value={formData?.customExam?.category || ''}
             onValueChange={value =>
               (form.updateField as (field: string, value: unknown) => void)('customExam', {
                 ...formData?.customExam,
@@ -321,7 +321,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
           </Label>
           <Textarea
             id="customExamDescription"
-            value={formData?.customExam?.description ?? ''}
+            value={formData?.customExam?.description || ''}
             onChange={e =>
               (form.updateField as (field: string, value: unknown) => void)('customExam', {
                 ...formData?.customExam,
@@ -360,7 +360,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
     return null;
   }
 
-  const totalHours = selectedExam.defaultSyllabus.reduce((sum, subject) => sum + (subject.estimatedHours ?? 0), 0);
+  const totalHours = selectedExam.defaultSyllabus.reduce((sum, subject) => sum + (subject.estimatedHours || 0), 0);
   const daysUntilExam = formData?.examDate
     ? Math.max(0, Math.ceil((new Date(formData.examDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
@@ -440,7 +440,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
                 <Badge variant={subject.tier === 1 ? 'destructive' : subject.tier === 2 ? 'default' : 'secondary'}>
                   Tier {subject.tier}
                 </Badge>
-                <div className="text-sm text-gray-600">{subject.estimatedHours ?? 0}h</div>
+                <div className="text-sm text-gray-600">{subject.estimatedHours || 0}h</div>
               </div>
             </div>
           ))}

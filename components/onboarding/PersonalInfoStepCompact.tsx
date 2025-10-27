@@ -376,7 +376,7 @@ export function PersonalInfoStepCompact({
                 {POPULAR_EXAM_CATEGORIES.map(category => {
                   const Icon = category.icon;
                   const isActive = activeCategory === category.id;
-                  const examCount = examsByCategory[category.id]?.length ?? 0;
+                  const examCount = examsByCategory[category.id]?.length || 0;
                   const activeClasses = getCategoryClasses(category.id, isActive);
 
                   return (
@@ -585,7 +585,7 @@ export function PersonalInfoStepCompact({
 
                 <div className="px-4 space-y-4">
                   <Slider
-                    value={[Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)]}
+                    value={[Math.floor((form.data.preferences?.dailyStudyGoalMinutes || 240) / 60)]}
                     onValueChange={([hours]) => {
                       if (hours !== undefined) {
                         const totalMinutes = hours * 60;
@@ -611,7 +611,7 @@ export function PersonalInfoStepCompact({
                 <div className="mt-4 text-center">
                   <p className="text-sm text-blue-600">
                     {(() => {
-                      const hours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60);
+                      const hours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes || 240) / 60);
                       if (hours <= 2) {
                         return 'Light study routine - perfect for busy schedules';
                       }
@@ -765,7 +765,7 @@ export function PersonalInfoStepCompact({
                 </Label>
                 <Input
                   id="custom-exam-name"
-                  value={form.data.customExam?.name ?? ''}
+                  value={form.data.customExam?.name || ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,
@@ -783,7 +783,7 @@ export function PersonalInfoStepCompact({
                 </Label>
                 <Input
                   id="custom-exam-category"
-                  value={form.data.customExam?.category ?? ''}
+                  value={form.data.customExam?.category || ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,
@@ -800,7 +800,7 @@ export function PersonalInfoStepCompact({
                 </Label>
                 <Input
                   id="custom-exam-description"
-                  value={form.data.customExam?.description ?? ''}
+                  value={form.data.customExam?.description || ''}
                   onChange={e =>
                     form.updateField('customExam', {
                       ...form.data.customExam,
@@ -846,7 +846,7 @@ export function PersonalInfoStepCompact({
                     </div>
                     <div className="bg-white/70 p-3 rounded-lg">
                       <h4 className="font-medium text-gray-800 mb-1">Learning Path</h4>
-                      <p className="text-gray-700">{selectedExam?.name ?? form.data.customExam?.name}</p>
+                      <p className="text-gray-700">{selectedExam?.name || form.data.customExam?.name}</p>
                       {(selectedExam?.category ?? form.data.customExam?.category) && (
                         <Badge variant="outline" className="mt-1 text-xs">
                           {selectedExam?.category ?? form.data.customExam?.category}
@@ -904,7 +904,7 @@ export function PersonalInfoStepCompact({
         )}
 
       {/* Validation Summary */}
-      {(validationErrors.displayName ?? (validationErrors.examDate || !form.data.selectedExamId)) && (
+      {(validationErrors.displayName || (validationErrors.examDate || !form.data.selectedExamId)) && (
         <Alert className="border-amber-200 bg-amber-50">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-800">

@@ -3,7 +3,7 @@
  * Integrates with existing Mission System, Progress Service, and Journey Planning
  */
 
-import { LearningTrack, MissionDifficulty, UnifiedProgress } from './mission-system';
+import { LearningTrack, MissionDifficulty } from './mission-system';
 
 export interface AdaptiveTest {
   id: string;

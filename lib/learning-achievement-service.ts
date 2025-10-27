@@ -275,7 +275,7 @@ class LearningAchievementService {
           points: data.points,
           earnedAt: data.earnedAt.toDate(),
           category: data.category,
-          metadata: data.metadata || {},
+          metadata: data.metadata ?? {},
         };
       });
 
@@ -394,7 +394,7 @@ class LearningAchievementService {
         points: achievement.points,
         earnedAt: Timestamp.fromDate(achievement.earnedAt),
         category: achievement.category,
-        metadata: achievement.metadata || {},
+        metadata: achievement.metadata ?? {},
       });
 
       logInfo('Achievement awarded', {

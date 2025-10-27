@@ -80,8 +80,8 @@ class GeminiProvider {
 
   constructor(config: LLMProvider) {
     this.apiKey = config.apiKey;
-    this.baseUrl = config.baseUrl || 'https://generativelanguage.googleapis.com/v1beta';
-    this.model = config.model || 'gemini-1.5-flash';
+    this.baseUrl = config.baseUrl ?? 'https://generativelanguage.googleapis.com/v1beta';
+    this.model = config.model ?? 'gemini-1.5-flash';
   }
 
   async generateQuestions(
@@ -107,8 +107,8 @@ class GeminiProvider {
             },
           ],
           generationConfig: {
-            temperature: options.temperature || 0.7,
-            maxOutputTokens: options.maxTokens || 4096,
+            temperature: options.temperature ?? 0.7,
+            maxOutputTokens: options.maxTokens ?? 4096,
             candidateCount: 1,
           },
           safetySettings: [
@@ -142,13 +142,11 @@ class GeminiProvider {
         data: questions,
         provider: 'gemini',
         model: this.model,
-        usage: data.usageMetadata
-          ? {
-              promptTokens: data.usageMetadata.promptTokenCount || 0,
-              completionTokens: data.usageMetadata.candidatesTokenCount || 0,
-              totalTokens: data.usageMetadata.totalTokenCount || 0,
-            }
-          : undefined,
+        usage: {
+          promptTokens: data.usageMetadata?.promptTokenCount ?? 0,
+          completionTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
+          totalTokens: data.usageMetadata?.totalTokenCount ?? 0,
+        },
       };
     } catch (error) {
       return {
@@ -231,16 +229,16 @@ Return ONLY the JSON array, no additional text.`;
 
       const questions = JSON.parse(jsonMatch[0]);
 
-      return questions.map((q: any, index: number) => ({
-        question: q.question || '',
-        options: q.options || undefined,
-        correctAnswer: q.correctAnswer || '',
-        explanation: q.explanation || undefined,
-        difficulty: q.difficulty || request.difficulty,
-        subject: q.subject || request.subjects[0],
-        topics: q.topics || [],
-        estimatedTime: q.estimatedTime || 60,
-        bloomsLevel: q.bloomsLevel || 'understand',
+      return questions.map((q: any, _index: number) => ({
+        question: q.question ?? '',
+        options: q.options ?? undefined,
+        correctAnswer: q.correctAnswer ?? '',
+        explanation: q.explanation ?? undefined,
+        difficulty: q.difficulty ?? request.difficulty,
+        subject: q.subject ?? request.subjects[0],
+        topics: q.topics ?? [],
+        estimatedTime: q.estimatedTime ?? 60,
+        bloomsLevel: q.bloomsLevel ?? 'understand',
       }));
     } catch (error) {
       // Fallback: create basic questions if parsing fails
@@ -255,15 +253,14 @@ Return ONLY the JSON array, no additional text.`;
     for (let i = 0; i < Math.min(request.questionCount, 5); i++) {
       questions.push({
         question: `Generated ${request.difficulty} question ${i + 1} for ${request.subjects[0]}`,
-        options:
-          request.questionType === 'multiple_choice'
-            ? ['A) Option 1', 'B) Option 2', 'C) Option 3', 'D) Option 4']
-            : undefined,
+        options: request.questionType === 'multiple_choice'
+          ? ['A) Option 1', 'B) Option 2', 'C) Option 3', 'D) Option 4']
+          : [],
         correctAnswer: request.questionType === 'multiple_choice' ? 'A' : 'Sample answer',
         explanation: 'This is a generated question for testing purposes.',
         difficulty: request.difficulty,
-        subject: request.subjects[0],
-        topics: request.topics || [request.subjects[0]],
+        subject: request.subjects[0] ?? 'General',
+        topics: request.topics ?? [request.subjects[0] ?? 'General'],
         estimatedTime: 90,
         bloomsLevel: 'understand',
       });
@@ -294,7 +291,7 @@ export class LLMService {
 
   private initializeProviders(): void {
     // Initialize Gemini provider
-    const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY ?? process.env.GEMINI_API_KEY;
     if (geminiApiKey) {
       this.providers.set(
         'gemini',
@@ -317,7 +314,7 @@ export class LLMService {
     options: QuestionGenerationOptions = {}
   ): Promise<Result<AdaptiveQuestion[]>> {
     try {
-      const providerName = options.provider || 'gemini';
+      const providerName = options.provider ?? 'gemini';
       const provider = this.providers.get(providerName);
 
       if (!provider) {
@@ -327,16 +324,16 @@ export class LLMService {
       const response = await provider.generateQuestions(request, options);
 
       if (!response.success || !response.data) {
-        return createError(new Error(response.error || 'Failed to generate questions'));
+        return createError(new Error(response.error ?? 'Failed to generate questions'));
       }
 
       // Convert LLM response to AdaptiveQuestion format
       const adaptiveQuestions: AdaptiveQuestion[] = response.data.map((llmQuestion, index) => ({
         id: `${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
         question: llmQuestion.question,
-        options: llmQuestion.options || [],
+        options: llmQuestion.options ?? [],
         correctAnswer: llmQuestion.correctAnswer,
-        explanation: llmQuestion.explanation,
+        explanation: llmQuestion.explanation ?? 'No explanation provided',
         difficulty: this.mapDifficultyToNumeric(llmQuestion.difficulty),
         subject: llmQuestion.subject,
         topics: llmQuestion.topics,
@@ -383,7 +380,7 @@ export class LLMService {
       advanced: 3,
       expert: 4,
     };
-    return mapping[difficulty] || 2;
+    return mapping[difficulty] ?? 2;
   }
 
   private calculateInitialDiscrimination(difficulty: MissionDifficulty): number {
@@ -394,7 +391,7 @@ export class LLMService {
       advanced: 1.5,
       expert: 1.8,
     };
-    return discrimination[difficulty] || 1.2;
+    return discrimination[difficulty] ?? 1.2;
   }
 }
 

@@ -88,6 +88,9 @@ interface OnboardingFormData {
   preferences: {
     dailyStudyGoalMinutes: number;
     preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    useWeekendSchedule?: boolean;
+    weekdayStudyMinutes?: number;
+    weekendStudyMinutes?: number;
     tierDefinitions: {
       1: string;
       2: string;
@@ -165,21 +168,21 @@ const onboardingSchema = z.object({
             subtopics: z
               .array(z.string())
               .optional()
-              .transform(val => val ?? undefined),
+              .transform(val => val || undefined),
             estimatedHours: z
               .number()
               .optional()
-              .transform(val => val ?? undefined),
+              .transform(val => val || undefined),
           })
         ),
         estimatedHours: z
           .number()
           .optional()
-          .transform(val => val ?? undefined),
+          .transform(val => val || undefined),
         isCustom: z
           .boolean()
           .optional()
-          .transform(val => val ?? undefined),
+          .transform(val => val || undefined),
       })
     )
     .min(1, 'At least one subject is required')
@@ -190,6 +193,9 @@ const onboardingSchema = z.object({
       .min(60, 'Minimum study goal is 1 hour (60 minutes)')
       .max(720, 'Maximum study goal is 12 hours (720 minutes)'),
     preferredStudyTime: z.enum(['morning', 'afternoon', 'evening', 'night']),
+    useWeekendSchedule: z.boolean().optional(),
+    weekdayStudyMinutes: z.number().min(30).max(720).optional(),
+    weekendStudyMinutes: z.number().min(0).max(720).optional(),
     tierDefinitions: z.object({
       1: z.string().min(3, 'Tier 1 definition must be at least 3 characters'),
       2: z.string().min(3, 'Tier 2 definition must be at least 3 characters'),
@@ -249,16 +255,51 @@ export default function OnboardingSetupPage() {
     logInfo('Onboarding setup page initialized', { timestamp: new Date().toISOString() });
   }, []);
 
-  // Log user authentication status
+  // Log user authentication status and check if onboarding is already complete
   useEffect(() => {
-    if (user) {
-      logInfo('User authenticated for onboarding', {
-        userId: user.uid,
-        email: user.email ?? 'no-email',
-      });
-    } else {
-      logInfo('User not authenticated, waiting for auth state');
-    }
+    const checkOnboardingStatus = async () => {
+      if (user) {
+        logInfo('User authenticated for onboarding', {
+          userId: user.uid,
+          email: user.email ?? 'no-email',
+        });
+
+        // Check if user has already completed onboarding
+        try {
+          const { getDoc, doc } = await import('firebase/firestore');
+          const { db } = await import('@/lib/firebase');
+
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const isOnboardingComplete = userData?.onboardingComplete || userData?.onboardingCompleted;
+
+            if (isOnboardingComplete) {
+              logInfo('User has already completed onboarding, redirecting to dashboard', {
+                userId: user.uid,
+                onboardingComplete: userData?.onboardingComplete,
+                onboardingCompleted: userData?.onboardingCompleted,
+              });
+
+              // Redirect to dashboard immediately
+              window.location.href = '/dashboard';
+            }
+          }
+        } catch (error) {
+          logError('Error checking onboarding status', {
+            userId: user.uid,
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+          // Continue with onboarding if check fails
+        }
+      } else {
+        logInfo('User not authenticated, waiting for auth state');
+      }
+    };
+
+    checkOnboardingStatus();
   }, [user]);
 
   // Component state
@@ -303,11 +344,7 @@ export default function OnboardingSetupPage() {
     selectedExamId: '',
     examDate: '',
     isCustomExam: false,
-    customExam: {
-      name: '',
-      description: '',
-      category: 'Custom',
-    },
+    customExam: {},
     syllabus: [],
     preferences: {
       dailyStudyGoalMinutes: 240, // 4 hours default (more realistic)
@@ -578,7 +615,7 @@ export default function OnboardingSetupPage() {
             form.updateFields({
               selectedExamId: examId,
               isCustomExam: false,
-              syllabus: exam.defaultSyllabus || [],
+              syllabus: exam.defaultSyllabus ?? [],
             });
             logInfo('Predefined exam configured', {
               examId,
@@ -661,7 +698,7 @@ export default function OnboardingSetupPage() {
 
       const newTopic: SyllabusTopic = {
         id: newTopicId,
-        name: topicName || 'New Topic',
+        name: topicName ?? 'New Topic',
         estimatedHours: 5,
       };
 
@@ -803,13 +840,14 @@ export default function OnboardingSetupPage() {
         displayName: form.data.displayName,
         selectedExamId: form.data.selectedExamId,
         examDate: Timestamp.fromDate(new Date(form.data.examDate)),
-        onboardingCompleted: true,
+        onboardingComplete: true, // Use consistent field name
+        onboardingCompleted: true, // Keep legacy field for compatibility
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         ...(form.data.userPersona && { userPersona: form.data.userPersona }),
         preferences: form.data.preferences,
         isCustomExam: form.data.isCustomExam,
-        customExam: form.data.isCustomExam ? form.data.customExam : undefined,
+        ...(form.data.isCustomExam && form.data.customExam && { customExam: form.data.customExam }),
       };
 
       // Save data with retry logic and better error handling
@@ -821,6 +859,26 @@ export default function OnboardingSetupPage() {
       while (retryCount < maxRetries) {
         try {
           const startTime = performance.now();
+
+          // Log comprehensive data before saving
+          logInfo('Saving comprehensive onboarding data', {
+            userId: user.uid,
+            userData: {
+              displayName: userData.displayName,
+              selectedExamId: userData.selectedExamId,
+              isCustomExam: userData.isCustomExam,
+              onboardingComplete: userData.onboardingComplete,
+              hasPreferences: !!userData.preferences,
+              hasUserPersona: !!userData.userPersona,
+            },
+            syllabusData: {
+              subjectCount: form.data.syllabus.length,
+              subjects: form.data.syllabus.map(s => ({ id: s.id, name: s.name, topicCount: s.topics?.length || 0 })),
+            },
+            customGoals: {
+              count: (form.data as any).customLearningGoals?.length ?? 0,
+            },
+          });
 
           const operations = await Promise.allSettled([
             createUser(user.uid, userData),
@@ -981,7 +1039,7 @@ export default function OnboardingSetupPage() {
   // Keyboard navigation support
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey ?? event.metaKey) {
+      if (event.ctrlKey || event.metaKey) {
         switch (event.key) {
           case 'ArrowLeft':
             event.preventDefault();
@@ -1299,7 +1357,7 @@ export default function OnboardingSetupPage() {
                     <strong>Profile:</strong> {form.data.userPersona?.type.replace('_', ' ')}
                   </p>
                   <p>
-                    <strong>Exam:</strong> {selectedExam?.name ?? form.data.customExam?.name}
+                    <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
                   </p>
                   <p>
                     <strong>Target Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}
@@ -1360,8 +1418,20 @@ export default function OnboardingSetupPage() {
                 <h3 className="font-semibold mb-2">Study Preferences</h3>
                 <div className="bg-gray-50 p-3 rounded-lg space-y-1">
                   <p>
-                    <strong>Daily Goal:</strong> {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
-                    {form.data.preferences.dailyStudyGoalMinutes % 60}m
+                    <strong>Daily Goal:</strong>{' '}
+                    {form.data.preferences?.useWeekendSchedule ? (
+                      <>
+                        {Math.floor((form.data.preferences.weekdayStudyMinutes ?? 240) / 60)}h{' '}
+                        {(form.data.preferences.weekdayStudyMinutes ?? 240) % 60}m weekdays,{' '}
+                        {Math.floor((form.data.preferences.weekendStudyMinutes ?? 360) / 60)}h{' '}
+                        {(form.data.preferences.weekendStudyMinutes ?? 360) % 60}m weekends
+                      </>
+                    ) : (
+                      <>
+                        {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
+                        {form.data.preferences.dailyStudyGoalMinutes % 60}m daily
+                      </>
+                    )}
                   </p>
                   <p>
                     <strong>Preferred Time:</strong> {form.data.preferences.preferredStudyTime}

@@ -1,8 +1,7 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  Timer,
   CheckCircle2,
   Circle,
   AlertTriangle,
@@ -14,10 +13,8 @@ import {
   ChevronRight,
   Flag,
   Bookmark,
-  Lightbulb,
+  Timer,
   TrendingUp,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 
@@ -29,7 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { AdaptiveQuestion, QuestionOption } from '@/types/adaptive-testing';
+import { AdaptiveQuestion } from '@/types/adaptive-testing';
 
 interface QuestionInterfaceProps {
   question: AdaptiveQuestion;
@@ -70,7 +67,6 @@ export default function QuestionInterface({
   const [confidence, setConfidence] = useState<number[]>([75]);
   const [timeSpent, setTimeSpent] = useState(0);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [showHint, setShowHint] = useState(false);
   const [questionStartTime] = useState(Date.now());
 
   // Timer effect
@@ -98,7 +94,7 @@ export default function QuestionInterface({
     }
 
     setIsAnswered(true);
-    onAnswer(question.id, selectedOption, confidence[0], timeSpent);
+    onAnswer(question.id, selectedOption, confidence[0] ?? 3, timeSpent);
   }, [selectedOption, isAnswered, question.id, confidence, timeSpent, onAnswer]);
 
   const formatTime = (ms: number) => {
@@ -137,9 +133,9 @@ export default function QuestionInterface({
                   Question {questionNumber} of {totalQuestions}
                 </Badge>
                 {adaptiveMode && (
-                  <Badge className={getDifficultyColor(question.difficulty)}>
+                  <Badge className={getDifficultyColor(String(question.difficulty))}>
                     <Brain className="h-3 w-3 mr-1" />
-                    {question.difficulty}
+                    {String(question.difficulty)}
                   </Badge>
                 )}
                 <Badge variant="outline" className="text-blue-600">
@@ -185,9 +181,9 @@ export default function QuestionInterface({
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-lg leading-relaxed">{question.text}</CardTitle>
-                  {question.description && (
-                    <CardDescription className="mt-2 text-base">{question.description}</CardDescription>
+                  <CardTitle className="text-lg leading-relaxed">{question.question}</CardTitle>
+                  {question.explanation && (
+                    <CardDescription className="mt-2 text-base">{question.explanation}</CardDescription>
                   )}
                 </div>
                 <div className="flex items-center gap-2 ml-4">
@@ -222,44 +218,8 @@ export default function QuestionInterface({
                       <p>{isFlagged ? 'Remove flag' : 'Flag for review'}</p>
                     </TooltipContent>
                   </Tooltip>
-
-                  {question.hints && question.hints.length > 0 && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setShowHint(!showHint)}
-                          className={cn(showHint && 'text-blue-600 bg-blue-50')}
-                        >
-                          {showHint ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{showHint ? 'Hide hint' : 'Show hint'}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
                 </div>
               </div>
-
-              {/* Hint Section */}
-              <AnimatePresence>
-                {showHint && question.hints && question.hints.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <Lightbulb className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-800">Hint</span>
-                    </div>
-                    <p className="text-blue-700 text-sm">{question.hints[0]}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
               {/* Adaptive Insights */}
               {adaptiveMode && (
@@ -279,23 +239,23 @@ export default function QuestionInterface({
             <CardContent className="space-y-4">
               {/* Answer Options */}
               <div className="space-y-3">
-                {question.options.map((option: QuestionOption, index: number) => (
+                {question.options?.map((option: string, index: number) => (
                   <motion.div
-                    key={option.id}
+                    key={`option-${index}`}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
                     className={cn(
                       'p-4 rounded-lg border-2 cursor-pointer transition-all duration-200',
-                      selectedOption === option.id
+                      selectedOption === `option-${index}`
                         ? 'border-blue-500 bg-blue-50 shadow-md'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
                       isAnswered && 'cursor-not-allowed opacity-75'
                     )}
-                    onClick={() => handleOptionSelect(option.id)}
+                    onClick={() => handleOptionSelect(`option-${index}`)}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-0.5">
-                        {selectedOption === option.id ? (
+                        {selectedOption === `option-${index}` ? (
                           <CheckCircle2 className="h-5 w-5 text-blue-600" />
                         ) : (
                           <Circle className="h-5 w-5 text-gray-400" />
@@ -304,18 +264,9 @@ export default function QuestionInterface({
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-medium text-gray-800">
-                            {String.fromCharCode(65 + index)}. {option.text}
+                            {String.fromCharCode(65 + index)}. {option}
                           </span>
                         </div>
-                        {option.explanation && selectedOption === option.id && (
-                          <motion.p
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="text-sm text-gray-600 mt-2"
-                          >
-                            {option.explanation}
-                          </motion.p>
-                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -392,7 +343,6 @@ export default function QuestionInterface({
               <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t">
                 <div className="flex items-center gap-4">
                   <span>ID: {question.id.slice(-8)}</span>
-                  <span>Points: {question.points}</span>
                   {adaptiveMode && (
                     <span className="flex items-center gap-1">
                       <TrendingUp className="h-3 w-3" />

@@ -340,7 +340,7 @@ export default function TopicDetailPage() {
                 <div className="flex items-center space-x-2">
                   <FileText className="h-8 w-8 text-purple-600" />
                   <div>
-                    <p className="text-2xl font-bold">{Math.round(topicProgress.totalStudyTime / 60) ?? 0}h</p>
+                    <p className="text-2xl font-bold">{Math.round(topicProgress.totalStudyTime / 60) || 0}h</p>
                     <p className="text-sm text-muted-foreground">Study Time</p>
                   </div>
                 </div>

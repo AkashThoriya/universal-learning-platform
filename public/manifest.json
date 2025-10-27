@@ -68,10 +68,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Start Learning",
-      "short_name": "Learn",
-      "description": "Start a micro-learning session",
-      "url": "/micro-learning",
+      "name": "Journey Planning",
+      "short_name": "Journey",
+      "description": "Plan your learning journey",
+      "url": "/journey",
       "icons": [{ "src": "/icons/shortcut-learn.png", "sizes": "96x96" }]
     },
     {
@@ -109,7 +109,7 @@
       "sizes": "540x720",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Mobile view of micro-learning session"
+      "label": "Mobile view of journey planning"
     }
   ],
   "prefer_related_applications": false,

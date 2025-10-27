@@ -18,11 +18,9 @@ import {
   Target,
   Calendar,
   TestTube,
-  User,
   Bell,
   Menu,
   X,
-  Zap,
   Brain,
   Map,
   type LucideIcon,
@@ -101,14 +99,6 @@ export default function Navigation() {
       description: 'Performance insights and trends',
     },
     {
-      href: '/missions',
-      label: 'Missions',
-      icon: Target,
-      isActive: isActiveGroup(['/missions']),
-      badge: 3,
-      description: 'Daily and weekly goals',
-    },
-    {
       href: '/test',
       label: 'Adaptive Testing',
       icon: Brain,
@@ -121,13 +111,6 @@ export default function Navigation() {
       icon: Map,
       isActive: isActiveGroup(['/journey']),
       description: 'Plan your learning path and track progress',
-    },
-    {
-      href: '/micro-learning',
-      label: 'Micro-Learning',
-      icon: Zap,
-      isActive: isActive('/micro-learning'),
-      description: 'Quick learning sessions',
     },
     {
       href: '/syllabus',
@@ -177,8 +160,8 @@ export default function Navigation() {
   );
 
   // Group navigation items for better organization
-  const primaryNavItems = navItems.slice(0, 6); // Dashboard, Analytics, Missions, Adaptive Testing, Journey Planning, Micro-Learning
-  const secondaryNavItems = navItems.slice(6); // Syllabus, Daily Log, Mock Tests
+  const primaryNavItems = navItems.slice(0, 4); // Dashboard, Analytics, Adaptive Testing, Journey Planning
+  const secondaryNavItems = navItems.slice(4); // Syllabus, Daily Log, Mock Tests
 
   return (
     <nav
@@ -217,13 +200,7 @@ export default function Navigation() {
                 >
                   <item.icon className="h-4 w-4 mr-1.5" />
                   <span className="hidden xl:inline">{item.label}</span>
-                  <span className="xl:hidden">
-                    {item.label === 'Micro-Learning'
-                      ? 'Micro'
-                      : item.label === 'Adaptive Testing'
-                        ? 'Testing'
-                        : item.label}
-                  </span>
+                  <span className="xl:hidden">{item.label === 'Adaptive Testing' ? 'Testing' : item.label}</span>
                   {item.badge && (
                     <Badge
                       variant="secondary"
@@ -237,55 +214,36 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* User Menu - Simplified */}
-          <div className="flex items-center space-x-1 flex-shrink-0">
-            {/* More Menu for Secondary Items - Desktop */}
-            <div className="hidden lg:block">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="hover:bg-white/10"
-              >
-                <Menu className="h-4 w-4 mr-1" />
-                <span className="hidden xl:inline">More</span>
-              </Button>
-            </div>
-
-            {/* Notifications - Only show dot when there are actual notifications */}
+          {/* User Menu - Redesigned for better UX */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            {/* Notifications - Always visible */}
             <Button
               variant="ghost"
               size="sm"
-              className="hidden sm:flex relative h-8 w-8 rounded-full hover:bg-white/10"
+              className="relative h-10 w-10 rounded-full hover:bg-white/10 flex-shrink-0"
               title="Notifications"
             >
-              <Bell className="h-4 w-4" />
+              <Bell className="h-5 w-5" />
               {/* Only show notification dot if there are actual notifications - for now hiding it */}
               {false && (
                 <div className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border border-background" />
               )}
             </Button>
 
-            {/* User Profile - Minimal */}
-            <div className="flex items-center space-x-1">
-              <div className="hidden lg:block text-right">
-                <p className="text-sm font-medium truncate max-w-24">{user?.displayName?.split(' ')[0] ?? 'User'}</p>
-              </div>
-              <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full">
-                <User className="h-4 w-4" />
+            {/* More Menu - Desktop (contains secondary items + user actions) */}
+            <div className="hidden lg:block">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="hover:bg-white/10 flex items-center space-x-1"
+              >
+                <span className="text-sm font-medium max-w-20 truncate">
+                  {user?.displayName?.split(' ')[0] ?? 'Menu'}
+                </span>
+                <Menu className="h-4 w-4" />
               </Button>
             </div>
-
-            {/* Logout - Icon only on smaller screens */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLogout}
-              className="hover:bg-red-500/10 hover:text-red-500 h-8 w-8 rounded-full hidden sm:flex"
-              title="Logout"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
 
             {/* Mobile menu button */}
             <Button
@@ -306,22 +264,52 @@ export default function Navigation() {
             {/* All nav items for mobile */}
             <div className="lg:hidden space-y-2">{navItems.map(renderNavItem)}</div>
 
-            {/* Secondary nav items for desktop "More" menu */}
-            <div className="hidden lg:block space-y-2">{secondaryNavItems.map(renderNavItem)}</div>
+            {/* Desktop "More" menu - Secondary nav items + User actions */}
+            <div className="hidden lg:block space-y-2">
+              {/* Secondary navigation items */}
+              {secondaryNavItems.map(renderNavItem)}
+
+              {/* User actions separator */}
+              {secondaryNavItems.length > 0 && <div className="border-t border-white/10 my-2" />}
+
+              {/* User Profile Section */}
+              <div className="px-3 py-2">
+                <div className="flex items-center space-x-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-sm font-semibold text-primary">
+                      {(user?.displayName?.charAt(0) ?? user?.email?.charAt(0) ?? 'U').toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{user?.displayName || 'User'}</p>
+                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  </div>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="w-full justify-start text-red-500 hover:bg-red-500/10"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
 
             {/* Mobile user actions */}
             <div className="lg:hidden pt-4 mt-4 border-t border-white/10 space-y-2">
               <div className="flex items-center space-x-3 px-3 py-2">
-                <User className="h-5 w-5 text-muted-foreground" />
+                <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center">
+                  <span className="text-xs font-semibold text-primary">
+                    {(user?.displayName?.charAt(0) ?? user?.email?.charAt(0) ?? 'U').toUpperCase()}
+                  </span>
+                </div>
                 <div>
-                  <p className="text-sm font-medium">{user?.displayName ?? 'User'}</p>
+                  <p className="text-sm font-medium">{user?.displayName || 'User'}</p>
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm" className="w-full justify-start">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
-              </Button>
               <Button
                 variant="ghost"
                 size="sm"

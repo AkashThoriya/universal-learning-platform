@@ -666,6 +666,6 @@ export class FirebaseDatabaseProvider implements DatabaseProvider {
       startsWith: '>=', // Firestore doesn't have startsWith, this is a workaround
     };
 
-    return (operatorMap[operator] ?? '==') as WhereFilterOp;
+    return (operatorMap[operator] || '==') as WhereFilterOp;
   }
 }
