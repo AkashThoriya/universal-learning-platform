@@ -786,9 +786,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </Badge>
             </div>
             {todayRecommendations.examDaysLeft !== undefined && (
-              <div className="text-right">
-                <div className="text-2xl font-bold text-indigo-900">{todayRecommendations.examDaysLeft}</div>
-                <div className="text-sm text-indigo-600">days left</div>
+              <div className="text-right shrink-0 ml-4">
+                <div className="text-2xl font-bold text-indigo-900 leading-tight">{todayRecommendations.examDaysLeft}</div>
+                <div className="text-sm text-indigo-600 leading-tight">days left</div>
               </div>
             )}
           </div>

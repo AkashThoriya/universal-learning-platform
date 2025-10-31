@@ -306,6 +306,7 @@ export default function OnboardingSetupPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
@@ -562,27 +563,32 @@ export default function OnboardingSetupPage() {
 
   // Enhanced navigation handlers with accessibility
   const handleNext = useCallback(async () => {
-    logInfo('Attempting to navigate to next step', {
-      currentStep: multiStep.currentStep,
-      totalSteps: 4,
-    });
-    const isValid = await validateStep(multiStep.currentStep);
-    if (isValid) {
-      setValidationErrors({});
-      multiStep.goToNext();
-      logInfo('Successfully navigated to next step', {
-        newStep: multiStep.currentStep + 1,
-      });
-    } else {
-      logger.warn('Navigation blocked due to validation errors', {
+    setIsNavigating(true);
+    try {
+      logInfo('Attempting to navigate to next step', {
         currentStep: multiStep.currentStep,
-        validationErrors,
+        totalSteps: 4,
       });
+      const isValid = await validateStep(multiStep.currentStep);
+      if (isValid) {
+        setValidationErrors({});
+        multiStep.goToNext();
+        logInfo('Successfully navigated to next step', {
+          newStep: multiStep.currentStep + 1,
+        });
+      } else {
+        logger.warn('Navigation blocked due to validation errors', {
+          currentStep: multiStep.currentStep,
+          validationErrors,
+        });
 
-      // Announce validation errors to screen readers
-      if (announceRef.current) {
-        announceRef.current.textContent = 'Please fix the errors before continuing';
+        // Announce validation errors to screen readers
+        if (announceRef.current) {
+          announceRef.current.textContent = 'Please fix the errors before continuing';
+        }
       }
+    } finally {
+      setIsNavigating(false);
     }
   }, [multiStep, validateStep, validationErrors]);
 
@@ -1312,10 +1318,20 @@ export default function OnboardingSetupPage() {
             ) : (
               <Button
                 onClick={handleNext}
+                disabled={isNavigating}
                 className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 py-2"
               >
-                <span>Continue</span>
-                <ArrowRight className="h-4 w-4" />
+                {isNavigating ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4" />
+                    <span>Validating...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Continue</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             )}
           </div>
@@ -1448,7 +1464,14 @@ export default function OnboardingSetupPage() {
                 Review More
               </Button>
               <Button onClick={handleComplete} disabled={isSubmitting}>
-                {isSubmitting ? 'Setting up...' : 'Complete Setup'}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    <span>Setting up...</span>
+                  </>
+                ) : (
+                  'Complete Setup'
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>

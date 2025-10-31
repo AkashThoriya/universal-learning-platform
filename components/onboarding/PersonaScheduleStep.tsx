@@ -333,14 +333,14 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
 
       {/* Persona Selection */}
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <User className="h-5 w-5 text-blue-600" aria-hidden="true" />
-            <Label className="text-lg font-semibold">Which describes you best?</Label>
+        <CardContent className="p-4">
+          <div className="flex items-center space-x-2 mb-3">
+            <User className="h-4 w-4 text-blue-600" aria-hidden="true" />
+            <Label className="text-base font-semibold">Which describes you best?</Label>
           </div>
-          <p className="text-sm text-gray-600 mb-6">This helps us recommend realistic study goals and schedules.</p>
+          <p className="text-sm text-gray-600 mb-4">This helps us recommend realistic study goals and schedules.</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {PERSONA_OPTIONS.map(persona => (
               <Card
                 key={persona.id}
@@ -349,18 +349,18 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                 }`}
                 onClick={() => handlePersonaSelect(persona.id)}
               >
-                <CardContent className="p-6 text-center">
+                <CardContent className="p-4 text-center">
                   <div
-                    className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r ${persona.color} flex items-center justify-center`}
+                    className={`w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-r ${persona.color} flex items-center justify-center`}
                   >
-                    <persona.icon className="h-8 w-8 text-white" />
+                    <persona.icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{persona.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{persona.description}</p>
-                  <div className="text-xs text-gray-500 space-y-1">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-sm">{persona.title}</h3>
+                  <p className="text-xs text-gray-600 mb-2">{persona.description}</p>
+                  <div className="text-xs text-gray-500">
                     <div>Default: {persona.defaultHours}h/day</div>
                     {form.data.userPersona?.type === persona.id && (
-                      <Badge variant="default" className="mt-2">
+                      <Badge variant="default" className="mt-1 text-xs py-0 px-1">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Selected
                       </Badge>
@@ -376,15 +376,15 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
       {/* Study Hours Configuration */}
       {form.data.userPersona?.type && (
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <Clock className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">How many hours can you realistically study?</Label>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2 mb-3">
+              <Clock className="h-4 w-4 text-blue-600" aria-hidden="true" />
+              <Label className="text-base font-semibold">How many hours can you realistically study?</Label>
             </div>
 
             {/* Schedule Type Selection */}
-            <div className="space-y-4 mb-6">
-              <div className="flex flex-col sm:flex-row gap-3">
+            <div className="space-y-3 mb-4">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   type="button"
                   variant={!useWeekendSchedule ? 'default' : 'outline'}
@@ -406,7 +406,8 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                       useWeekendSchedule: false,
                     });
                   }}
-                  className="flex-1"
+                  className="flex-1 text-sm"
+                  size="sm"
                 >
                   Same hours daily
                 </Button>
@@ -417,7 +418,8 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     setUseWeekendSchedule(true);
                     updateFormWithSchedule();
                   }}
-                  className="flex-1"
+                  className="flex-1 text-sm"
+                  size="sm"
                 >
                   Different weekday/weekend hours
                 </Button>
@@ -426,9 +428,9 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
 
             {!useWeekendSchedule ? (
               /* Simple daily schedule */
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
-                <div className="text-center mb-4">
-                  <div className="text-3xl font-bold text-blue-600">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                <div className="text-center mb-3">
+                  <div className="text-2xl font-bold text-blue-600">
                     {Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)}h{' '}
                     {(form.data.preferences?.dailyStudyGoalMinutes ?? 240) % 60}m
                   </div>
@@ -460,7 +462,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                   <span>12h</span>
                 </div>
 
-                <p className="text-sm text-blue-600 mt-4">
+                <p className="text-sm text-blue-600 mt-3">
                   {(() => {
                     const hours = Math.floor((form.data.preferences?.dailyStudyGoalMinutes || 240) / 60);
                     if (hours <= 2) {
@@ -478,13 +480,13 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
               </div>
             ) : (
               /* Weekend schedule */
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Weekday Hours */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">Monday - Friday</h4>
-                  <div className="text-center mb-4">
-                    <div className="text-2xl font-bold text-blue-600">{weekdayHours}h</div>
-                    <div className="text-sm text-blue-600 mt-1">Weekday Study Goal</div>
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Monday - Friday</h4>
+                  <div className="text-center mb-3">
+                    <div className="text-xl font-bold text-blue-600">{weekdayHours}h</div>
+                    <div className="text-xs text-blue-600 mt-1">Weekday Study Goal</div>
                   </div>
 
                   <Slider
@@ -509,7 +511,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     className="w-full"
                     aria-label="Weekday study hours"
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-2">
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
                     <span>30m</span>
                     <span>4h</span>
                     <span>8h</span>
@@ -517,11 +519,11 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                 </div>
 
                 {/* Weekend Hours */}
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6">
-                  <h4 className="font-semibold text-gray-900 mb-3">Saturday - Sunday</h4>
-                  <div className="text-center mb-4">
-                    <div className="text-2xl font-bold text-green-600">{weekendHours}h</div>
-                    <div className="text-sm text-green-600 mt-1">Weekend Study Goal</div>
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Saturday - Sunday</h4>
+                  <div className="text-center mb-3">
+                    <div className="text-xl font-bold text-green-600">{weekendHours}h</div>
+                    <div className="text-xs text-green-600 mt-1">Weekend Study Goal</div>
                   </div>
 
                   <Slider
@@ -546,7 +548,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     className="w-full"
                     aria-label="Weekend study hours"
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-2">
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
                     <span>0h</span>
                     <span>6h</span>
                     <span>12h</span>
@@ -554,12 +556,12 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                 </div>
 
                 {/* Weekly Summary */}
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3">
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-purple-600">
+                    <div className="text-base font-semibold text-purple-600">
                       Weekly Total: {(weekdayHours * 5 + weekendHours * 2).toFixed(1)}h
                     </div>
-                    <div className="text-sm text-purple-600 mt-1">
+                    <div className="text-xs text-purple-600 mt-1">
                       Average: {((weekdayHours * 5 + weekendHours * 2) / 7).toFixed(1)}h per day
                     </div>
                   </div>
@@ -573,10 +575,10 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
       {/* Target Date Selection */}
       {form.data.userPersona?.type && form.data.preferences?.dailyStudyGoalMinutes && (
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <Calendar className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">When is your target completion date?</Label>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2 mb-3">
+              <Calendar className="h-4 w-4 text-blue-600" aria-hidden="true" />
+              <Label className="text-base font-semibold">When is your target completion date?</Label>
             </div>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -600,26 +602,30 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                 )}
               </div>
 
-              {/* AI Analysis of Target Date */}
-              {selectedExam?.totalEstimatedHours && form.data.examDate && !validationErrors.examDate && (
+              {/* AI Analysis of Target Date - Show suggestion when study hours are selected */}
+              {selectedExam?.totalEstimatedHours && form.data.preferences?.dailyStudyGoalMinutes && (
                 <div className="space-y-4">
                   {(() => {
-                    const targetAnalysis = useWeekendSchedule
-                      ? checkTargetDateRealism(
-                          form.data.examDate,
-                          selectedExam.totalEstimatedHours,
-                          true,
-                          weekdayHours * 60,
-                          weekendHours * 60
-                        )
-                      : checkTargetDateRealism(
-                          form.data.examDate,
-                          selectedExam.totalEstimatedHours,
-                          false,
-                          undefined,
-                          undefined,
-                          form.data.preferences?.dailyStudyGoalMinutes
-                        );
+                    const hasSelectedDate = form.data.examDate && !validationErrors.examDate;
+                    
+                    const targetAnalysis = hasSelectedDate
+                      ? useWeekendSchedule
+                        ? checkTargetDateRealism(
+                            form.data.examDate,
+                            selectedExam.totalEstimatedHours,
+                            true,
+                            weekdayHours * 60,
+                            weekendHours * 60
+                          )
+                        : checkTargetDateRealism(
+                            form.data.examDate,
+                            selectedExam.totalEstimatedHours,
+                            false,
+                            undefined,
+                            undefined,
+                            form.data.preferences?.dailyStudyGoalMinutes
+                          )
+                      : null;
 
                     const recommendedDate = useWeekendSchedule
                       ? calculateRecommendedDateWithWeekends(
@@ -635,32 +641,59 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     return (
                       <div
                         className={`border rounded-lg p-4 ${
-                          targetAnalysis.isRealistic
-                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
-                            : 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
+                          targetAnalysis
+                            ? targetAnalysis.isRealistic
+                              ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
+                              : 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
+                            : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
                         }`}
                       >
                         <div className="flex items-center space-x-2 mb-3">
-                          {targetAnalysis.isRealistic ? (
-                            <CheckCircle className="h-5 w-5 text-green-600" />
+                          {targetAnalysis ? (
+                            targetAnalysis.isRealistic ? (
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                            ) : (
+                              <AlertCircle className="h-5 w-5 text-orange-600" />
+                            )
                           ) : (
-                            <AlertCircle className="h-5 w-5 text-orange-600" />
+                            <Calendar className="h-5 w-5 text-blue-600" />
                           )}
                           <span
                             className={`font-medium ${
-                              targetAnalysis.isRealistic ? 'text-green-800' : 'text-orange-800'
+                              targetAnalysis
+                                ? targetAnalysis.isRealistic
+                                  ? 'text-green-800'
+                                  : 'text-orange-800'
+                                : 'text-blue-800'
                             }`}
                           >
-                            {targetAnalysis.isRealistic ? 'Target Achievable!' : 'Target Analysis'}
+                            {targetAnalysis
+                              ? targetAnalysis.isRealistic
+                                ? 'Target Achievable!'
+                                : 'Target Analysis'
+                              : 'Suggested Target Date'}
                           </span>
                         </div>
 
                         <p
                           className={`text-sm mb-3 ${
-                            targetAnalysis.isRealistic ? 'text-green-700' : 'text-orange-700'
+                            targetAnalysis
+                              ? targetAnalysis.isRealistic
+                                ? 'text-green-700'
+                                : 'text-orange-700'
+                              : 'text-blue-700'
                           }`}
                         >
-                          {targetAnalysis.recommendation}
+                          {targetAnalysis
+                            ? targetAnalysis.recommendation
+                            : `Based on your study schedule and the content to cover, we recommend targeting ${recommendedDate.toLocaleDateString(
+                                'en-US',
+                                {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                }
+                              )} as your completion date.`}
                         </p>
 
                         <div className="bg-white rounded-lg p-3 border border-gray-200 space-y-2">
@@ -700,9 +733,14 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                               }
                             }}
                           >
-                            Use AI Suggestion
+                            {targetAnalysis ? 'Use AI Suggestion' : 'Set This Date'}
                           </Button>
-                          {!targetAnalysis.isRealistic && (
+                          {!targetAnalysis && (
+                            <div className="text-xs text-blue-600 flex items-center">
+                              💡 You can always adjust this later
+                            </div>
+                          )}
+                          {targetAnalysis && !targetAnalysis.isRealistic && (
                             <div className="text-orange-700 text-sm font-medium">
                               Recommended for realistic planning
                             </div>

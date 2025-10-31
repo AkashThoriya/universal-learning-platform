@@ -37,6 +37,58 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from '@/hooks/useForm';
 import { SyllabusSubject, SyllabusTopic, UserPersona } from '@/types/exam';
+import { EXAMS_DATA } from '@/lib/data/exams-data';
+
+/**
+ * Get context-aware strategy tips based on the selected exam
+ */
+function getExamSpecificTips(selectedExamId: string) {
+  const exam = EXAMS_DATA.find(e => e.id === selectedExamId);
+  
+  if (!exam) {
+    return {
+      strategyTip: "Focus 60% effort on high-weightage topics, 30% on medium-weightage topics, and 10% on low-weightage topics for optimal score maximization.",
+      topicManagement: "Expand subjects to manage topics - add specialized areas, remove irrelevant ones, and customize names to match your study material or coaching notes."
+    };
+  }
+
+  // Exam-specific strategy tips
+  const examTips: Record<string, { strategyTip: string; topicManagement: string }> = {
+    'upsc_cse_prelims': {
+      strategyTip: "For UPSC Prelims: 40% focus on Current Affairs & Polity (daily changing), 30% on Geography & History (static), 30% on Economics & Science (semi-static). Prioritize newspaper reading and monthly magazines.",
+      topicManagement: "Customize topics to match your optional subject and coaching material. Add monthly current affairs, remove overlapping history topics, and focus on areas frequently asked in recent years."
+    },
+    'ssc_cgl': {
+      strategyTip: "For SSC CGL: 35% on Quantitative Aptitude (high scoring), 30% on Reasoning (accuracy crucial), 25% on General Awareness (fact-based), 10% on English (qualifying). Time management is critical - aim 50 seconds per question.",
+      topicManagement: "Focus on high-frequency topics like Data Interpretation, Simplification in Quant. Add recent government schemes in GA and remove outdated historical facts."
+    },
+    'neet': {
+      strategyTip: "For NEET: 50% on Biology (360 marks - highest weightage), 25% on Physics (conceptual clarity), 25% on Chemistry (memory + concepts). NCERT is 85% of paper - master it completely before moving to other books.",
+      topicManagement: "Prioritize NCERT line-by-line for Biology. Add previous year questions as topics. Remove very advanced topics not in NCERT. Focus on diagrams and table format for quick revision."
+    },
+    'jee_main': {
+      strategyTip: "For JEE Main: Equal 33% weightage to PCM, but Mathematics often has easier scoring topics. Focus 40% on Mathematics (Calculus, Algebra), 30% on Physics (Mechanics, Electrostatics), 30% on Chemistry (Organic reactions).",
+      topicManagement: "Add numerical practice as separate topics under each subject. Include previous year question trends. Remove very theoretical topics - focus on application-based problem solving."
+    },
+    'sbi_po': {
+      strategyTip: "For Banking PO: 35% on Reasoning (puzzle-heavy), 30% on Quantitative Aptitude (speed crucial), 25% on English (vocabulary focus), 10% on Current Affairs. Mock tests are essential for time management.",
+      topicManagement: "Add monthly banking current affairs. Focus on high-speed topics like Simplification, Percentage. Include sectional time management as separate practice topics."
+    },
+    'cat': {
+      strategyTip: "For CAT: 40% on VARC (Reading speed crucial), 35% on DILR (logical thinking), 25% on QA (selective attempt). Focus on accuracy over speed - each wrong answer costs 3 correct ones due to negative marking.",
+      topicManagement: "Add Reading Comprehension passages by topic (business, science, etc.). Include mock analysis sessions. Remove low-yield quantitative topics and focus on high-probability areas."
+    },
+    'gate_cse': {
+      strategyTip: "For GATE CSE: 70% on technical subjects (algorithms, programming, etc.), 20% on Engineering Mathematics, 10% on General Aptitude. Previous years show 60% weightage to core CS subjects.",
+      topicManagement: "Break down programming topics into implementation and theory. Add specific algorithms as separate topics. Include numerical answer type question practice for each subject."
+    }
+  };
+
+  return examTips[selectedExamId] || {
+    strategyTip: `Focus on high-weightage subjects first. For ${exam.category} exams, prioritize accuracy over speed and maintain consistent daily practice across all subjects.`,
+    topicManagement: "Expand each subject to see topics. Customize based on your exam pattern - add emerging areas, remove outdated topics, and align with latest syllabus changes."
+  };
+}
 
 /**
  * Form data interface for onboarding
@@ -102,6 +154,9 @@ export function SyllabusManagementStep({
   const [editingTopic, setEditingTopic] = useState<string | null>(null);
   const [tempTopicName, setTempTopicName] = useState('');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
+
+  // Get exam-specific strategy tips
+  const examTips = getExamSpecificTips(form.data.selectedExamId);
 
   const startEditing = (subjectId: string, currentName: string) => {
     setEditingSubject(subjectId);
@@ -449,12 +504,10 @@ export function SyllabusManagementStep({
         <AlertDescription className="text-blue-800">
           <div className="space-y-2">
             <p>
-              <strong>Strategy Tip:</strong> Aim for 30% Tier 1, 50% Tier 2, and 20% Tier 3 subjects for optimal time
-              allocation and maximum score potential.
+              <strong>Strategy Tip:</strong> {examTips.strategyTip}
             </p>
             <p>
-              <strong>Topic Management:</strong> Click the arrow next to each subject to expand and manage individual
-              topics. You can add custom topics, remove irrelevant ones, and edit names to match your specific needs.
+              <strong>Topic Management:</strong> {examTips.topicManagement}
             </p>
           </div>
         </AlertDescription>
