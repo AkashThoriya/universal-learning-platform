@@ -15,7 +15,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { useToast } from '@/hooks/use-toast';
-import { TIME_CONSTANTS } from '@/lib/constants';
+import { TIME_CONSTANTS } from '@/lib/config/constants';
 
 export interface PWAInstallState {
   isInstallable: boolean;

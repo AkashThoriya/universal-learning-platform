@@ -14,8 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
-import { getExamById } from '@/lib/exams-data';
-import { saveMockTest, getUser } from '@/lib/firebase-utils';
+import { getExamById } from '@/lib/data/exams-data';
+import { saveMockTest, getUser } from '@/lib/firebase/firebase-utils';
 import { MockTestLog, User, Exam } from '@/types/exam';
 
 export default function MockTestLogPage() {

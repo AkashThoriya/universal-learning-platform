@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { auth } from '@/lib/firebase';
+import { auth } from '@/lib/firebase/firebase';
 
 interface AuthStep {
   id: string;

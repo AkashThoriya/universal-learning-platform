@@ -9,7 +9,7 @@
  * @version 1.0.0
  */
 
-import { createError, createSuccess, Result } from '@/lib/types-utils';
+import { createError, createSuccess, Result } from '@/lib/utils/types-utils';
 import { AdaptiveQuestion } from '@/types/adaptive-testing';
 import { MissionDifficulty } from '@/types/mission-system';
 

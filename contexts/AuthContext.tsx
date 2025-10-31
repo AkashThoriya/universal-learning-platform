@@ -13,8 +13,8 @@
 import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { auth } from '@/lib/firebase';
-import { logError, logInfo } from '@/lib/logger';
+import { auth } from '@/lib/firebase/firebase';
+import { logError, logInfo } from '@/lib/utils/logger';
 
 /**
  * Authentication context type definition

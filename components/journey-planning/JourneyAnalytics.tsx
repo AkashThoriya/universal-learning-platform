@@ -35,7 +35,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { JourneyAnalytics as JourneyAnalyticsType, UserJourney } from '@/types/journey';
 
 interface JourneyAnalyticsProps {

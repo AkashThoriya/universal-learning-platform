@@ -82,7 +82,7 @@ export function QuickSessionLauncher({
       setError(null);
 
       // Load personalized recommendations from Firebase
-      const { simpleLearningRecommendationsService } = await import('@/lib/simple-learning-recommendations');
+      const { simpleLearningRecommendationsService } = await import('@/lib/algorithms/simple-learning-recommendations');
       const recommendationsResult = await simpleLearningRecommendationsService.generateBasicRecommendations(activeUserId);
 
       // Convert recommendations to quick session format if successful

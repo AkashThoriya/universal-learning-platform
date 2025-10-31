@@ -32,7 +32,7 @@ import {
   RiskFactor as _RiskFactor,
   RecommendedAction as _RecommendedAction,
   ActionResource as _ActionResource,
-} from '@/lib/intelligent-analytics-service';
+} from '@/lib/analytics/intelligent-analytics-service';
 
 // ============================================================================
 // DEMO DATA GENERATOR SERVICE

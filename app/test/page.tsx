@@ -26,7 +26,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { adaptiveTestingService } from '@/lib/adaptive-testing-service';
+import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
 
 interface TestOverviewStats {

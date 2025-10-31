@@ -25,7 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from '@/hooks/useForm';
-import { PersonaAwareGoalSetting } from '@/lib/persona-aware-goals';
+import { PersonaAwareGoalSetting } from '@/lib/config/persona-aware-goals';
 import { UserPersonaType, CareerMotivation, UserPersona } from '@/types/exam';
 
 /**

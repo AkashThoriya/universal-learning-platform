@@ -61,10 +61,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
-import { AGE_LIMITS } from '@/lib/constants';
+import { AGE_LIMITS } from '@/lib/config/constants';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
-import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
-import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase-utils';
+import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
+import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType } from '@/types/exam';
 
 /**

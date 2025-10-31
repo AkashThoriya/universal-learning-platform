@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-import { logger } from './logger';
+import { logger } from '@/lib/utils/logger';
 
 // interface ValidationResult {
 //   passed: boolean;

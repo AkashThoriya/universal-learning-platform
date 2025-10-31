@@ -39,11 +39,11 @@ import {
 import { UserJourney, UpdateJourneyProgressRequest, JourneyAnalytics, MilestoneAchievement } from '@/types/journey';
 import { MissionDifficulty } from '@/types/mission-system';
 
-import { User, UserStats, TopicProgress, MockTestLog } from '../types/exam';
+import { User, UserStats, TopicProgress, MockTestLog } from '@/types/exam';
 
 import { db } from './firebase';
-import { serviceContainer, PerformanceMonitor, ConsoleLogger } from './service-layer';
-import { Result, createSuccess, createError, LoadingState as _LoadingState } from './types-utils';
+import { serviceContainer, PerformanceMonitor, ConsoleLogger } from '@/lib/services/service-layer';
+import { Result, createSuccess, createError, LoadingState as _LoadingState } from '@/lib/utils/types-utils';
 
 // ============================================================================
 // ADAPTIVE TESTING FIREBASE SERVICE
@@ -1396,7 +1396,7 @@ export const customLearningService = {
 
     try {
       const customGoal = await monitor.measure(`createFromTemplate:${userId}:${templateId}`, async () => {
-        const { LearningTemplateService } = await import('./learning-templates');
+        const { LearningTemplateService } = await import('@/lib/data/learning-templates');
 
         const template = LearningTemplateService.getTemplateById(templateId);
         if (!template) {

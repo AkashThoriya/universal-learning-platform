@@ -48,7 +48,6 @@ export type { FeatureHighlight, PWABenefit, OfflineFeature, ProfileTab } from '.
 
 export {
   LEARNING_GOAL_TEMPLATES,
-  LEARNING_CATEGORIES,
   TEMPLATES_BY_CATEGORY,
   TEMPLATES_BY_DIFFICULTY,
   getTemplateById,
@@ -57,11 +56,11 @@ export {
   validateTemplateStructure,
 } from './learning-templates';
 
-export type { LearningGoalTemplate, LearningCategory } from './learning-templates';
+export type { LearningGoalTemplate } from './learning-templates';
 
 // ============================================================================
 // BUSINESS DATA (Existing)
 // ============================================================================
 
-export { EXAMS_DATA } from '../exams-data';
-export { SUBJECTS_DATA } from '../subjects-data';
+export { EXAMS_DATA } from './exams-data';
+export { SUBJECTS_DATA } from './subjects-data';

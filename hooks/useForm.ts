@@ -11,7 +11,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { z } from 'zod';
 
-import { logInfo, logger } from '@/lib/logger';
+import { logInfo, logger } from '@/lib/utils/logger';
 
 /**
  * Field error structure

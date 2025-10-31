@@ -32,8 +32,8 @@ import React, {
   RefObject,
 } from 'react';
 
-import { LoadingState } from '../../lib/types-utils';
-import { cn } from '../../lib/utils';
+import { LoadingState } from '@/lib/utils/types-utils';
+import { cn } from '@/lib/utils/utils';
 
 // ============================================================================
 // PROVIDER PATTERN COMPONENTS

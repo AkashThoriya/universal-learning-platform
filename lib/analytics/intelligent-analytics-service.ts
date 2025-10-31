@@ -34,9 +34,9 @@ import {
 
 import { UserPersona } from '@/types/exam';
 
-import { db } from './firebase';
-import { firebaseService } from './firebase-services';
-import { logger } from './logger';
+import { db } from '@/lib/firebase/firebase';
+import { firebaseService } from '@/lib/firebase/firebase-services';
+import { logger } from '@/lib/utils/logger';
 
 // ============================================================================
 // ANALYTICS DATA INTERFACES

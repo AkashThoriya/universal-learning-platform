@@ -8,8 +8,8 @@
  * @version 1.0.0
  */
 
-import { logError, logInfo } from './logger';
-import type { LearningInsights, UnifiedLearningProgress } from './universal-learning-analytics';
+import { logError, logInfo } from '@/lib/utils/logger';
+import type { LearningInsights, UnifiedLearningProgress } from '@/lib/analytics/universal-learning-analytics';
 
 // Learning recommendation categories
 export type RecommendationType =

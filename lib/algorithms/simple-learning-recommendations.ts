@@ -7,7 +7,7 @@
  * @version 1.0.0
  */
 
-import { logError, logInfo } from './logger';
+import { logError, logInfo } from '@/lib/utils/logger';
 
 export interface SimpleRecommendation {
   id: string;

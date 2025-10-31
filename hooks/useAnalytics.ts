@@ -24,8 +24,8 @@ import {
   AnalyticsEventType,
   AnalyticsEventData,
   AnalyticsMetadata,
-} from '@/lib/intelligent-analytics-service';
-import { logger } from '@/lib/logger';
+} from '@/lib/analytics/intelligent-analytics-service';
+import { logger } from '@/lib/utils/logger';
 
 // ============================================================================
 // ANALYTICS TRACKING HOOK

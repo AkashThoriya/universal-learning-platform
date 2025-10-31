@@ -15,9 +15,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
-import { db } from '@/lib/firebase';
-import { logInfo, logError } from '@/lib/logger';
-import { SUBJECTS_DATA } from '@/lib/subjects-data';
+import { db } from '@/lib/firebase/firebase';
+import { logInfo, logError } from '@/lib/utils/logger';
+import { SUBJECTS_DATA } from '@/lib/data/subjects-data';
 import { TopicProgress } from '@/types/exam';
 
 // Constants

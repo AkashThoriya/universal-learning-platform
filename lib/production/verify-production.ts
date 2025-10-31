@@ -8,8 +8,8 @@
  * @version 1.0.0
  */
 
-import { logger } from './logger';
-import { BestPracticesEnforcer } from './production-checker';
+import { logger } from '@/lib/utils/logger';
+import { BestPracticesEnforcer } from '@/lib/production/production-checker';
 
 // Main verification function
 export async function verifyProductionReadiness(): Promise<void> {

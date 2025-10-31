@@ -8,7 +8,7 @@ import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { SUBJECTS_DATA } from '@/lib/subjects-data';
+import { SUBJECTS_DATA } from '@/lib/data/subjects-data';
 
 export default function SubjectsPage() {
   const getTierColor = (tier: number) => {

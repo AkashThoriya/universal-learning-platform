@@ -34,12 +34,12 @@ import FloatingActionButton from '@/components/ui/FloatingActionButton';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { getExamById } from '@/lib/exams-data';
-import { customLearningService } from '@/lib/firebase-services';
-import { getUser, getSyllabus } from '@/lib/firebase-utils';
-import { logError, logInfo, measurePerformance } from '@/lib/logger';
-import { progressService } from '@/lib/progress-service';
-import { cn } from '@/lib/utils';
+import { getExamById } from '@/lib/data/exams-data';
+import { customLearningService } from '@/lib/firebase/firebase-services';
+import { getUser, getSyllabus } from '@/lib/firebase/firebase-utils';
+import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
+import { progressService } from '@/lib/services/progress-service';
+import { cn } from '@/lib/utils/utils';
 import { Exam, SyllabusSubject } from '@/types/exam';
 
 interface DashboardStats {

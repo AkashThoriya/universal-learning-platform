@@ -50,8 +50,8 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, getAllProgress, saveSyllabus } from '@/lib/firebase-utils';
-import { logInfo, logError } from '@/lib/logger';
+import { getSyllabus, getAllProgress, saveSyllabus } from '@/lib/firebase/firebase-utils';
+import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
 
 // Constants

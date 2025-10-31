@@ -39,8 +39,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
-import { intelligentAnalyticsService, PerformanceAnalytics } from '@/lib/intelligent-analytics-service';
-import { logger } from '@/lib/logger';
+import { intelligentAnalyticsService, PerformanceAnalytics } from '@/lib/analytics/intelligent-analytics-service';
+import { logger } from '@/lib/utils/logger';
 
 // UI Components
 

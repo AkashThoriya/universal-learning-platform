@@ -15,8 +15,8 @@ import {
   progressService,
   mockTestService,
   dailyLogService as _dailyLogService,
-} from '@/lib/firebase-services';
-import { Result } from '@/lib/types-utils';
+} from '@/lib/firebase/firebase-services';
+import { Result } from '@/lib/utils/types-utils';
 import { User, TopicProgress as _TopicProgress, MockTestLog, DailyLog as _DailyLog } from '@/types/exam';
 
 // ============================================================================

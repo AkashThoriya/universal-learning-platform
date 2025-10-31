@@ -12,7 +12,7 @@
 
 import { doc, setDoc, getDoc, collection, addDoc, updateDoc, Timestamp } from 'firebase/firestore';
 
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebase/firebase';
 
 export interface SyncData {
   id: string;
@@ -213,7 +213,7 @@ class BackgroundSyncService {
 
       if (remoteDoc.exists()) {
         const remoteData = remoteDoc.data();
-        const remoteTimestamp = remoteData.lastUpdated?.toDate() || new Date(0);
+        const remoteTimestamp = remoteData.lastUpdated?.toDate() ?? new Date(0);
 
         if (remoteTimestamp > item.timestamp) {
           // Conflict detected - remote is newer

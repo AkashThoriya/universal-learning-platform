@@ -31,7 +31,7 @@ import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 import { TestPerformance, AdaptiveMetrics, SubjectPerformance } from '@/types/adaptive-testing';
 
 interface TestAnalyticsDashboardProps {

@@ -25,8 +25,8 @@ import {
   WeakArea as _WeakArea,
   AdaptiveRecommendation as _AdaptiveRecommendation,
   AnalyticsEvent,
-} from '@/lib/intelligent-analytics-service';
-import { logger } from '@/lib/logger';
+} from '@/lib/analytics/intelligent-analytics-service';
+import { logger } from '@/lib/utils/logger';
 
 // ============================================================================
 // DATA PROCESSING INTERFACES
@@ -212,9 +212,7 @@ export class RealTimeAnalyticsProcessor {
   private groupEventsByUser(events: AnalyticsEvent[]): Record<string, AnalyticsEvent[]> {
     return events.reduce(
       (acc, event) => {
-        if (!acc[event.userId]) {
-          acc[event.userId] = [];
-        }
+        acc[event.userId] ??= [];
         const userEvents = acc[event.userId];
         if (userEvents) {
           userEvents.push(event);
@@ -586,9 +584,7 @@ export class RealTimeAnalyticsProcessor {
           return acc;
         }
 
-        if (!acc[skillId]) {
-          acc[skillId] = [];
-        }
+        acc[skillId] ??= [];
         const { completionRate } = event.data;
         if (typeof completionRate === 'number') {
           acc[skillId].push(completionRate);

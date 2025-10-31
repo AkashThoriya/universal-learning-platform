@@ -6,7 +6,7 @@ import AuthGuard from '@/components/AuthGuard';
 import AdaptiveDashboard from '@/components/dashboard/AdaptiveDashboard';
 import Navigation from '@/components/Navigation';
 // import PWAInstallBanner from '@/components/PWAInstallBanner'; // Disabled PWA
-import { logInfo } from '@/lib/logger';
+import { logInfo } from '@/lib/utils/logger';
 
 export default function Dashboard() {
   useEffect(() => {

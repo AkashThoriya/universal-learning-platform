@@ -17,8 +17,8 @@ import {
   type MissionDifficulty,
 } from '@/types/mission-system';
 
-import { firebaseService } from './firebase-services';
-import { Result, createSuccess, createError } from './types-utils';
+import { firebaseService } from '@/lib/firebase/firebase-services';
+import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 
 /**
  * Progress service for tracking and aggregating user learning progress

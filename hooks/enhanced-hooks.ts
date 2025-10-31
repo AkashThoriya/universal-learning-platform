@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
-import { /* Result, AsyncResult, */ LoadingState, /* debounce, */ throttle } from '../lib/types-utils'; // Commented out unused imports
+import { /* Result, AsyncResult, */ LoadingState, /* debounce, */ throttle } from '@/lib/utils/types-utils'; // Commented out unused imports
 
 /**
  * Enhanced async data fetching hook with caching and error handling

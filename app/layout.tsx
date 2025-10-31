@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google';
 import GlobalErrorBoundary from '@/components/error-handling/GlobalErrorBoundary';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
-import { AccessibilityChecker, SkipToContent } from '@/lib/accessibility-utils';
+import { AccessibilityChecker, SkipToContent } from '@/lib/utils/accessibility-utils';
 
 const inter = Inter({ subsets: ['latin'] });
 

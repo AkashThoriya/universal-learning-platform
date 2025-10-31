@@ -29,7 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase-utils';
+import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 // Constants

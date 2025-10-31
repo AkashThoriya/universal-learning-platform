@@ -29,7 +29,7 @@ import { ComponentErrorBoundary } from '@/components/error-handling/GlobalErrorB
 import { AnalyticsLayout } from '@/components/layout/AppLayout';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { LoadingSpinner } from '@/components/ui/loading-states';
-import { logInfo } from '@/lib/logger';
+import { logInfo } from '@/lib/utils/logger';
 
 export default function AnalyticsPage() {
   useEffect(() => {

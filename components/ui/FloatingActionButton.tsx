@@ -5,7 +5,7 @@ import { Plus, Zap, BookOpen, Target, BarChart3, X, LucideIcon } from 'lucide-re
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/utils';
 
 interface FloatingAction {
   icon: LucideIcon;

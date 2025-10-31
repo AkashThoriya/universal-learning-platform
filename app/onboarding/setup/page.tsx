@@ -48,10 +48,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useAuth } from '@/contexts/AuthContext';
 import { useForm, UseFormReturn } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
-import { EXAMS_DATA, getExamById } from '@/lib/exams-data';
-import { customLearningService } from '@/lib/firebase-services';
-import { createUser, saveSyllabus } from '@/lib/firebase-utils';
-import { logger, logError, logInfo } from '@/lib/logger';
+import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
+import { customLearningService } from '@/lib/firebase/firebase-services';
+import { createUser, saveSyllabus } from '@/lib/firebase/firebase-utils';
+import { logger, logError, logInfo } from '@/lib/utils/logger';
 import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, UserPersona } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
@@ -267,7 +267,7 @@ export default function OnboardingSetupPage() {
         // Check if user has already completed onboarding
         try {
           const { getDoc, doc } = await import('firebase/firestore');
-          const { db } = await import('@/lib/firebase');
+          const { db } = await import('@/lib/firebase/firebase');
 
           const userDocRef = doc(db, 'users', user.uid);
           const userDoc = await getDoc(userDocRef);

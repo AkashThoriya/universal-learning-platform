@@ -3,10 +3,10 @@
  * Integrates with existing Mission System, Progress Service, and Journey Planning
  */
 
-import { AdaptiveAlgorithm, SpecializedAdaptiveAlgorithms } from '@/lib/adaptive-testing-algorithms';
-import { adaptiveTestingRecommendationEngine } from '@/lib/adaptive-testing-recommendation-engine';
-import { adaptiveTestingFirebaseService } from '@/lib/firebase-services';
-import { Result, createSuccess, createError } from '@/lib/types-utils';
+import { AdaptiveAlgorithm, SpecializedAdaptiveAlgorithms } from '@/lib/algorithms/adaptive-testing-algorithms';
+import { adaptiveTestingRecommendationEngine } from '@/lib/algorithms/adaptive-testing-recommendation-engine';
+import { adaptiveTestingFirebaseService } from '@/lib/firebase/firebase-services';
+import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 import {
   AdaptiveTest,
   AdaptiveQuestion,
@@ -292,9 +292,7 @@ export class AdaptiveTestingService {
         }
 
         // Fallback to standard adaptive selection
-        if (!nextQuestion) {
-          nextQuestion = AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) ?? null;
-        }
+        nextQuestion ??= AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) ?? null;
 
         if (nextQuestion) {
           session.nextQuestionPreview = nextQuestion;
@@ -580,7 +578,7 @@ export class AdaptiveTestingService {
       }
 
       // If insufficient questions in Firebase, generate using LLM
-      const { llmService } = await import('@/lib/llm-service');
+      const { llmService } = await import('@/lib/ai/llm-service');
 
       if (llmService.isAvailable()) {
         const questionsNeeded = test.totalQuestions * 2; // Generate 2x for selection flexibility
@@ -830,7 +828,7 @@ export class AdaptiveTestingService {
       // Update progress service with test results
       if (test.performance && test.adaptiveMetrics) {
         // Update progress service with adaptive test results
-        const { progressService } = await import('@/lib/progress-service');
+        const { progressService } = await import('@/lib/services/progress-service');
         const progressResult = await progressService.updateProgressFromAdaptiveTest(userId, test.performance, {
           subjects: test.linkedSubjects,
           track: test.track,

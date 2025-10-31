@@ -12,7 +12,7 @@
 
 import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebase/firebase';
 
 // VAPID Configuration (used by server-side push service)
 const validateVapidKeys = () => {

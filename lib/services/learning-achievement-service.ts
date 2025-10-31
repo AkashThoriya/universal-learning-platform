@@ -10,8 +10,8 @@
 
 import { collection, addDoc, getDocs, query, orderBy, Timestamp } from 'firebase/firestore';
 
-import { db } from '@/lib/firebase';
-import { logError, logInfo } from '@/lib/logger';
+import { db } from '@/lib/firebase/firebase';
+import { logError, logInfo } from '@/lib/utils/logger';
 
 // Achievement types and categories
 export type AchievementType =
@@ -430,13 +430,11 @@ class LearningAchievementService {
       // Calculate category progress
       const categoryProgress: Record<string, any> = {};
       for (const achievement of achievements) {
-        if (!categoryProgress[achievement.category]) {
-          categoryProgress[achievement.category] = {
-            points: 0,
-            count: 0,
-            lastEarned: achievement.earnedAt,
-          };
-        }
+        categoryProgress[achievement.category] ??= {
+          points: 0,
+          count: 0,
+          lastEarned: achievement.earnedAt,
+        };
         categoryProgress[achievement.category].points += achievement.points;
         categoryProgress[achievement.category].count += 1;
 
@@ -451,7 +449,7 @@ class LearningAchievementService {
         achievementCount,
         currentStreak: 0, // Would need additional calculation based on recent activity
         longestStreak: 0, // Would need historical data analysis
-        lastActivityDate: achievements.length > 0 ? achievements[0]?.earnedAt || new Date() : new Date(),
+        lastActivityDate: achievements.length > 0 ? achievements[0]?.earnedAt ?? new Date() : new Date(),
         categoryProgress,
       };
 

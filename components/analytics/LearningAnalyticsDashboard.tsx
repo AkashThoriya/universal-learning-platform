@@ -38,7 +38,7 @@ import {
   type UnifiedLearningProgress,
   type LearningInsights,
   type PerformanceComparison,
-} from '@/lib/universal-learning-analytics';
+} from '@/lib/analytics/universal-learning-analytics';
 
 interface LearningAnalyticsDashboardProps {
   className?: string;

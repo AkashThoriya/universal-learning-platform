@@ -5,10 +5,10 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { EXAMS_DATA } from '@/lib/exams-data';
-import { journeyFirebaseService } from '@/lib/firebase-services';
-import { progressService } from '@/lib/progress-service';
-import { Result, createSuccess, createError } from '@/lib/types-utils';
+import { EXAMS_DATA } from '@/lib/data/exams-data';
+import { journeyFirebaseService } from '@/lib/firebase/firebase-services';
+import { progressService } from '@/lib/services/progress-service';
+import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 import {
   UserJourney,
   JourneyGoal,
@@ -350,7 +350,7 @@ export class JourneyService {
           isRelevant: true,
           isTimeBound: true,
           deadline:
-            customizations.targetCompletionDate ||
+            customizations.targetCompletionDate ??
             new Date(Date.now() + template.defaultDuration * 24 * 60 * 60 * 1000),
           linkedSubjects: [],
           linkedTopics: [],
@@ -449,7 +449,7 @@ export class JourneyService {
   private async checkMilestoneAchievements(journey: UserJourney): Promise<void> {
     try {
       const completedGoals = journey.customGoals.filter(
-        goal => (journey.progressTracking.goalCompletions[goal.id] || 0) >= goal.targetValue
+        goal => (journey.progressTracking.goalCompletions[goal.id] ?? 0) >= goal.targetValue
       );
 
       const existingMilestones = journey.progressTracking.milestoneAchievements;

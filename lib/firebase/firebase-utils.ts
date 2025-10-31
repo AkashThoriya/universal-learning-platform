@@ -31,7 +31,7 @@ import {
 import { User, SyllabusSubject, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
 
 import { db } from './firebase';
-import { logError, logInfo, measurePerformance } from './logger';
+import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 
 // User Management
 
@@ -364,7 +364,7 @@ export const updateTopicStatus = async (
       }
 
       const subjectData = subjectDoc.data();
-      const topicStatus = subjectData.topicStatus || {};
+      const topicStatus = subjectData.topicStatus ?? {};
 
       // Update topic status
       const updatedTopicStatus = {
@@ -388,7 +388,7 @@ export const updateTopicStatus = async (
       ).length;
       const overallProgress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
       const totalTimeSpent = Object.values(topicStatus).reduce(
-        (total: number, status: any) => total + (status.timeSpent || 0),
+        (total: number, status: any) => total + (status.timeSpent ?? 0),
         0
       );
 
@@ -863,7 +863,7 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     totalTopics: 0,
   };
 
-  const currentStats = user.stats || defaultStats;
+  const currentStats = user.stats ?? defaultStats;
 
   const totalMinutes = log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0);
   const totalHours = currentStats.totalStudyHours + totalMinutes / 60;

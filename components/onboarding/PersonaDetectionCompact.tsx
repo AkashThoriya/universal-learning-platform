@@ -30,8 +30,8 @@ import {
   getDefaultStudyHours,
   validateStudyHours,
 } from '@/lib/data/onboarding';
-import { logInfo, logger } from '@/lib/logger';
-import { debounce } from '@/lib/types-utils';
+import { logInfo, logger } from '@/lib/utils/logger';
+import { debounce } from '@/lib/utils/types-utils';
 import { UserPersona, UserPersonaType, SyllabusSubject } from '@/types/exam';
 
 // Interface for Google Analytics gtag function

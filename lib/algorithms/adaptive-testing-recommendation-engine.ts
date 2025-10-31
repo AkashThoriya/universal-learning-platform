@@ -14,8 +14,8 @@
 
 import { AdaptiveTest, TestRecommendation } from '@/types/adaptive-testing';
 import { UserJourney } from '@/types/journey';
-import { progressService } from './progress-service';
-import { createSuccess, createError, Result } from './types-utils';
+import { progressService } from '@/lib/services/progress-service';
+import { createSuccess, createError, Result } from '@/lib/utils/types-utils';
 
 // Define difficulty levels for recommendations
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';

@@ -12,21 +12,21 @@
 import { Exam } from '@/types/exam';
 
 // Import individual exam data from JSON files
-import cat from './data/exams/cat.json';
-import devOpsMastery from './data/exams/devops-mastery.json';
-import dsaByNamastedev from './data/exams/dsa-by-namastedev.json';
-import dsaByStriver from './data/exams/dsa-by-striver.json';
-import gateCse from './data/exams/gate-cse.json';
-import ibpsSoIt from './data/exams/ibps-so-it.json';
-import jeeMain from './data/exams/jee-main.json';
-import neet from './data/exams/neet.json';
-import nodejsByNamastedev from './data/exams/nodejs-by-namastedev.json';
-import reactByNamastedev from './data/exams/react-by-namastedev.json';
-import rrbNtpc from './data/exams/rrb-ntpc.json';
-import sbiPo from './data/exams/sbi-po.json';
-import sqlMastery from './data/exams/sql-mastery.json';
-import sscCgl from './data/exams/ssc-cgl.json';
-import upscCsePrelims from './data/exams/upsc-cse-prelims.json';
+import cat from './exams/cat.json';
+import devOpsMastery from './exams/devops-mastery.json';
+import dsaByNamastedev from './exams/dsa-by-namastedev.json';
+import dsaByStriver from './exams/dsa-by-striver.json';
+import gateCse from './exams/gate-cse.json';
+import ibpsSoIt from './exams/ibps-so-it.json';
+import jeeMain from './exams/jee-main.json';
+import neet from './exams/neet.json';
+import nodejsByNamastedev from './exams/nodejs-by-namastedev.json';
+import reactByNamastedev from './exams/react-by-namastedev.json';
+import rrbNtpc from './exams/rrb-ntpc.json';
+import sbiPo from './exams/sbi-po.json';
+import sqlMastery from './exams/sql-mastery.json';
+import sscCgl from './exams/ssc-cgl.json';
+import upscCsePrelims from './exams/upsc-cse-prelims.json';
 
 /**
  * Array of predefined exams with complete syllabus data

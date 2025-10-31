@@ -15,7 +15,7 @@ import {
   createError as _createError,
   LoadingState as _LoadingState,
   PaginationState as _PaginationState,
-} from './types-utils';
+} from '@/lib/utils/types-utils';
 
 type AsyncResult<T> = Promise<Result<T>>;
 

@@ -11,7 +11,7 @@
 import { signInWithPopup, GoogleAuthProvider, UserCredential, AuthError, User } from 'firebase/auth';
 import { doc, setDoc, getDoc, Timestamp } from 'firebase/firestore';
 
-import { auth, db } from './firebase';
+import { auth, db } from '@/lib/firebase/firebase';
 
 // ============================================================================
 // GOOGLE AUTH PROVIDER SETUP

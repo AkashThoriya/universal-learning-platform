@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
-import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase-utils';
+import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase/firebase-utils';
 import { DailyLog, StudySession } from '@/types/exam';
 
 export default function DailyLogPage() {

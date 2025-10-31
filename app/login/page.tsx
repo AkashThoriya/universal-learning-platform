@@ -8,8 +8,8 @@ import { useState } from 'react';
 import EnhancedAuthFlow from '@/components/auth/EnhancedAuthFlow';
 import { Button } from '@/components/ui/button';
 import { LOGIN_FEATURES } from '@/lib/data/ui-content';
-import { signInWithGoogle } from '@/lib/google-auth';
-import { logError, logInfo } from '@/lib/logger';
+import { signInWithGoogle } from '@/lib/auth/google-auth';
+import { logError, logInfo } from '@/lib/utils/logger';
 
 export default function LoginPage() {
   const router = useRouter();
