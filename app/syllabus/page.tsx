@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import PageTransition from '@/components/layout/PageTransition';
 import {
   BookOpen,
   ChevronRight,
@@ -516,6 +518,7 @@ export default function SyllabusPage() {
         <Navigation />
         <BottomNav />
 
+        <PageTransition>
         <div className="max-w-7xl mx-auto p-4 sm:p-6 pb-20 lg:pb-6 space-y-8">
           {/* Enhanced Header */}
           <div className="text-center space-y-6">
@@ -1328,13 +1331,18 @@ inputMode="numeric"
             <>
               {/* Topics Grid View */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredTopics.map(topic => {
+                {filteredTopics.map((topic, index) => {
                   const topicProgress = getTopicProgress(topic.id);
                   const masteryScore = topicProgress?.masteryScore || 0;
 
                   return (
-                    <Link
+                    <motion.div
                       key={`${topic.subjectId}-${topic.id}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05, duration: 0.3 }}
+                    >
+                    <Link
                       href={`/syllabus/${topic.id}?subject=${topic.subjectId}`}
                     >
                       <Card className="hover:shadow-md transition-shadow cursor-pointer h-full group">
@@ -1385,6 +1393,7 @@ inputMode="numeric"
                         </CardContent>
                       </Card>
                     </Link>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -1401,6 +1410,7 @@ inputMode="numeric"
             </>
           )}
         </div>
+        </PageTransition>
       </div>
     </AuthGuard>
   );

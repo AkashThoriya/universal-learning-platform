@@ -65,12 +65,6 @@ export default function BottomNav() {
       activePath: '/dashboard',
     },
     {
-      href: '/analytics',
-      label: 'Analytics',
-      icon: <BarChart3 className="h-5 w-5" />,
-      activePath: '/analytics',
-    },
-    {
       href: '/test',
       label: 'Test',
       icon: <Brain className="h-5 w-5" />,
@@ -85,6 +79,12 @@ export default function BottomNav() {
   ];
 
   const secondaryItems = [
+    {
+      href: '/analytics',
+      label: 'Analytics',
+      icon: <BarChart3 className="h-5 w-5 text-indigo-500" />,
+      description: 'Performance insights and trends',
+    },
     {
       href: '/syllabus',
       label: 'Syllabus',
@@ -122,7 +122,7 @@ export default function BottomNav() {
   };
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
+    <div className="lg:hidden fixed bottom-0 left-0 w-full z-50">
       {/* Glassmorphism Container */}
       <nav className="glass border-t border-white/20 bg-white/80 dark:bg-black/80 backdrop-blur-xl pb-safe-area-bottom">
         <div className="flex justify-around items-center h-[calc(60px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">

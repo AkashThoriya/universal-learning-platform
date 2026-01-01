@@ -463,11 +463,11 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         value={state.selectedMetric}
         onValueChange={value => handleMetricChange(value as 'performance' | 'efficiency' | 'progress' | 'predictions')}
       >
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="efficiency">Efficiency</TabsTrigger>
-          <TabsTrigger value="progress">Progress</TabsTrigger>
-          <TabsTrigger value="predictions">Predictions</TabsTrigger>
+        <TabsList className="flex w-full overflow-x-auto no-scrollbar pb-1 md:grid md:grid-cols-4">
+          <TabsTrigger value="performance" className="flex-shrink-0">Performance</TabsTrigger>
+          <TabsTrigger value="efficiency" className="flex-shrink-0">Efficiency</TabsTrigger>
+          <TabsTrigger value="progress" className="flex-shrink-0">Progress</TabsTrigger>
+          <TabsTrigger value="predictions" className="flex-shrink-0">Predictions</TabsTrigger>
         </TabsList>
 
         {/* Performance Tab */}

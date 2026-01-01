@@ -6,8 +6,8 @@ import AuthGuard from '@/components/AuthGuard';
 import AdaptiveDashboard from '@/components/dashboard/AdaptiveDashboard';
 import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
-// import PWAInstallBanner from '@/components/PWAInstallBanner'; // Disabled PWA
 import { logInfo } from '@/lib/utils/logger';
+import PageTransition from '@/components/layout/PageTransition';
 
 export default function Dashboard() {
   useEffect(() => {
@@ -23,9 +23,9 @@ export default function Dashboard() {
         <Navigation />
         <BottomNav />
         {/* <PWAInstallBanner variant="inline" /> */}
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 pb-20 lg:pb-6">
+        <PageTransition className="max-w-7xl mx-auto p-4 sm:p-6 pb-20 lg:pb-6">
           <AdaptiveDashboard />
-        </div>
+        </PageTransition>
       </div>
     </AuthGuard>
   );

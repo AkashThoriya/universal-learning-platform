@@ -3,6 +3,7 @@
 import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { Target, BarChart3, Clock, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import PageTransition from '@/components/layout/PageTransition';
 import { useState } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
@@ -171,17 +172,21 @@ export default function TestLoggerPage() {
     }
   };
 
+
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         <BottomNav />
 
-        <div className="max-w-4xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900">Test Logger</h1>
-            <p className="text-muted-foreground">Log your mock test performance and analyze weaknesses</p>
-          </div>
+        <PageTransition>
+          <div className="max-w-4xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
+            <div className="text-center space-y-2">
+              <h1 className="text-4xl font-bold text-gray-900">Test Logger</h1>
+              <p className="text-muted-foreground">Log your mock test performance and analyze weaknesses</p>
+            </div>
+
 
           {step === 1 && (
             <Card>
@@ -494,6 +499,7 @@ inputMode="numeric"
             </Card>
           )}
         </div>
+        </PageTransition>
       </div>
     </AuthGuard>
   );

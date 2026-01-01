@@ -1,5 +1,6 @@
 'use client';
 
+import PageTransition from '@/components/layout/PageTransition';
 import { doc, getDoc } from 'firebase/firestore';
 import {
   Loader2,
@@ -164,6 +165,7 @@ export default function HomePage() {
           </div>
         </nav>
 
+        <PageTransition>
         {/* Hero Section - Optimized Above-the-Fold */}
         <section className="relative px-6 lg:px-8 pt-8 pb-12 overflow-hidden min-h-[90vh] flex items-center">
           {/* Enhanced Background */}
@@ -803,6 +805,7 @@ export default function HomePage() {
             </p>
           </div>
         </section>
+        </PageTransition>
 
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12 sm:py-16 px-6 lg:px-8">

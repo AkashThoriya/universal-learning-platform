@@ -1,35 +1,41 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0066cc;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#004499;stop-opacity:1" />
+    <!-- Blue to Purple gradient matching the app's brand -->
+    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="50%" style="stop-color:#8B5CF6"/>
+      <stop offset="100%" style="stop-color:#6366F1"/>
     </linearGradient>
-    <filter id="shadow">
-      <feDropShadow dx="2" dy="2" stdDeviation="4" flood-opacity="0.3"/>
-    </filter>
+    <!-- Background gradient -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EFF6FF"/>
+      <stop offset="100%" style="stop-color:#F5F3FF"/>
+    </linearGradient>
   </defs>
   
-  <!-- Main Book Shape with Rounded Corners -->
-  <rect x="96" y="128" width="320" height="256" rx="24" fill="url(#grad1)" filter="url(#shadow)"/>
+  <!-- Background Circle with subtle gradient -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGradient)"/>
   
-  <!-- Book Pages (White with transparency) -->
-  <rect x="112" y="144" width="288" height="224" rx="16" fill="white" opacity="0.95"/>
+  <!-- Outer Ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#brandGradient)" stroke-width="28"/>
   
-  <!-- Header Line -->
-  <rect x="128" y="168" width="256" height="12" rx="6" fill="#0066cc"/>
+  <!-- Middle Ring -->
+  <circle cx="256" cy="256" r="120" fill="none" stroke="url(#brandGradient)" stroke-width="24"/>
   
-  <!-- Content Lines -->
-  <rect x="128" y="200" width="200" height="8" rx="4" fill="#666" opacity="0.7"/>
-  <rect x="128" y="224" width="220" height="8" rx="4" fill="#666" opacity="0.7"/>
-  <rect x="128" y="248" width="180" height="8" rx="4" fill="#666" opacity="0.7"/>
-  <rect x="128" y="272" width="240" height="8" rx="4" fill="#666" opacity="0.7"/>
-  <rect x="128" y="296" width="160" height="8" rx="4" fill="#666" opacity="0.7"/>
+  <!-- Inner Ring -->
+  <circle cx="256" cy="256" r="60" fill="none" stroke="url(#brandGradient)" stroke-width="20"/>
   
-  <!-- Progress/Achievement Badge -->
-  <circle cx="368" cy="180" r="28" fill="#00cc66" filter="url(#shadow)"/>
-  <path d="M356 180 L364 188 L380 172" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Center Dot (Bullseye) -->
+  <circle cx="256" cy="256" r="24" fill="url(#brandGradient)"/>
   
-  <!-- Bookmark -->
-  <rect x="280" y="128" width="24" height="48" fill="#ff6b35"/>
-  <path d="M280 176 L292 164 L304 176" fill="#ff6b35"/>
+  <!-- Optional: Arrow hitting the target for "strategy" emphasis -->
+  <g transform="translate(256, 256) rotate(-45)">
+    <!-- Arrow shaft -->
+    <rect x="40" y="-6" width="140" height="12" rx="6" fill="url(#brandGradient)"/>
+    <!-- Arrow head -->
+    <polygon points="180,-16 220,0 180,16" fill="url(#brandGradient)"/>
+    <!-- Arrow feathers -->
+    <rect x="30" y="-18" width="4" height="36" rx="2" fill="url(#brandGradient)" opacity="0.8"/>
+    <rect x="20" y="-14" width="4" height="28" rx="2" fill="url(#brandGradient)" opacity="0.6"/>
+  </g>
 </svg>

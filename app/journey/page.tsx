@@ -10,6 +10,8 @@ import { StandardLayout } from '@/components/layout/AppLayout';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import PageTransition from '@/components/layout/PageTransition';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import {
   Dialog,
   DialogContent,
@@ -172,6 +174,8 @@ export default function JourneyPlanningPage() {
   };
 
   const stats = getJourneyStats();
+  
+  const cardClass = "min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center";
 
   if (isLoading) {
     return (
@@ -188,10 +192,10 @@ export default function JourneyPlanningPage() {
   return (
     <AuthGuard>
       <StandardLayout>
-        <div className="space-y-8">
+        <PageTransition className="space-y-8">
           {/* Header with improved spacing */}
           <div className="mb-6">
-            <FeaturePageHeader
+             <FeaturePageHeader
               title="Journey Planning"
               description="Create, manage, and track your personalized learning journeys"
               icon={<MapPin className="h-7 w-7" />}
@@ -252,63 +256,64 @@ export default function JourneyPlanningPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid grid-cols-1 md:grid-cols-4 gap-6"
           >
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-blue-600 mb-1">Total Journeys</p>
-                    <p className="text-3xl font-bold text-blue-900">{stats.total}</p>
+            <MobileScrollGrid className="md:grid-cols-4 gap-6">
+              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50", cardClass)}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-blue-600 mb-1">Total Journeys</p>
+                      <p className="text-3xl font-bold text-blue-900">{stats.total}</p>
+                    </div>
+                    <div className="p-3 rounded-full bg-blue-500/10">
+                      <BookOpen className="h-6 w-6 text-blue-600" />
+                    </div>
                   </div>
-                  <div className="p-3 rounded-full bg-blue-500/10">
-                    <BookOpen className="h-6 w-6 text-blue-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-green-600 mb-1">Active</p>
-                    <p className="text-3xl font-bold text-green-900">{stats.active}</p>
+              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100/50", cardClass)}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-green-600 mb-1">Active</p>
+                      <p className="text-3xl font-bold text-green-900">{stats.active}</p>
+                    </div>
+                    <div className="p-3 rounded-full bg-green-500/10">
+                      <Target className="h-6 w-6 text-green-600" />
+                    </div>
                   </div>
-                  <div className="p-3 rounded-full bg-green-500/10">
-                    <Target className="h-6 w-6 text-green-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-purple-600 mb-1">Completed</p>
-                    <p className="text-3xl font-bold text-purple-900">{stats.completed}</p>
+              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100/50", cardClass)}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-purple-600 mb-1">Completed</p>
+                      <p className="text-3xl font-bold text-purple-900">{stats.completed}</p>
+                    </div>
+                    <div className="p-3 rounded-full bg-purple-500/10">
+                      <Trophy className="h-6 w-6 text-purple-600" />
+                    </div>
                   </div>
-                  <div className="p-3 rounded-full bg-purple-500/10">
-                    <Trophy className="h-6 w-6 text-purple-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-yellow-50 to-yellow-100/50">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-yellow-600 mb-1">Planning</p>
-                    <p className="text-3xl font-bold text-yellow-900">{stats.planning}</p>
+              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-yellow-50 to-yellow-100/50", cardClass)}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-yellow-600 mb-1">Planning</p>
+                      <p className="text-3xl font-bold text-yellow-900">{stats.planning}</p>
+                    </div>
+                    <div className="p-3 rounded-full bg-yellow-500/10">
+                      <Clock className="h-6 w-6 text-yellow-600" />
+                    </div>
                   </div>
-                  <div className="p-3 rounded-full bg-yellow-500/10">
-                    <Clock className="h-6 w-6 text-yellow-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </MobileScrollGrid>
           </motion.div>
 
           {/* Search and Filters */}
@@ -480,7 +485,7 @@ export default function JourneyPlanningPage() {
               )}
             </AnimatePresence>
           </div>
-        </div>
+        </PageTransition>
       </StandardLayout>
     </AuthGuard>
   );

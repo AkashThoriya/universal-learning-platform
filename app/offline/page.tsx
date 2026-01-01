@@ -9,6 +9,7 @@
 
 import { WifiOff, RefreshCw, BookOpen, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import PageTransition from '@/components/layout/PageTransition';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -83,10 +84,14 @@ export default function OfflinePage() {
     );
   }
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl space-y-6">
-        {/* Header */}
+      <PageTransition>
+         <div className="w-full max-w-4xl space-y-6">
+
+
+
         <div className="text-center space-y-4">
           <div className="relative">
             <WifiOff className="h-20 w-20 text-slate-400 mx-auto" />
@@ -188,7 +193,8 @@ export default function OfflinePage() {
         <div className="text-center text-sm text-slate-500">
           <p>Exam Strategy Engine • Built for offline learning</p>
         </div>
-      </div>
+        </div>
+      </PageTransition>
     </div>
   );
 }

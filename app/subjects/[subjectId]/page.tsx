@@ -1,5 +1,7 @@
 'use client';
 
+import { motion } from 'framer-motion';
+import PageTransition from '@/components/layout/PageTransition';
 import { ArrowLeft, BookOpen, ExternalLink, ChevronRight, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -59,14 +61,19 @@ export default function SubjectPage() {
     }
   };
 
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         <BottomNav />
+        <PageTransition>
+          <div className="max-w-5xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
+            <div className="flex items-center space-x-4">
 
-        <div className="max-w-5xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
-          <div className="flex items-center space-x-4">
+
+
+
             <Link href="/subjects">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -90,7 +97,13 @@ export default function SubjectPage() {
           {/* Topics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {subject.topics.map((topic, index) => (
-              <Card key={topic.id} className="hover:shadow-lg transition-shadow">
+              <motion.div
+                key={topic.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.3 }}
+              >
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
@@ -131,6 +144,7 @@ export default function SubjectPage() {
                   </div>
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
           </div>
 
@@ -157,6 +171,7 @@ export default function SubjectPage() {
             </CardContent>
           </Card>
         </div>
+        </PageTransition>
       </div>
     </AuthGuard>
   );

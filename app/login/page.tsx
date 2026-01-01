@@ -3,6 +3,7 @@
 import { Shield, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import PageTransition from '@/components/layout/PageTransition';
 import { useState } from 'react';
 
 import EnhancedAuthFlow from '@/components/auth/EnhancedAuthFlow';
@@ -61,6 +62,8 @@ export default function LoginPage() {
     }
   };
 
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Back to Home */}
@@ -74,8 +77,9 @@ export default function LoginPage() {
       </div>
 
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left side - Branding & Features */}
+        <PageTransition>
+          <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
+
           <div className="space-y-8 text-center lg:text-left">
             <div className="space-y-4">
               <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
@@ -184,6 +188,7 @@ export default function LoginPage() {
             </div>
           </div>
         </div>
+      </PageTransition>
       </div>
     </div>
   );

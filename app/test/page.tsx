@@ -30,6 +30,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
+import PageTransition from '@/components/layout/PageTransition';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { cn } from '@/lib/utils/utils';
 
 interface TestOverviewStats {
   totalTests: number;
@@ -246,6 +249,7 @@ export default function AdaptiveTestingPage() {
         toast({
           title: 'Info',
           description: 'No test recommendations available at this time.',
+          variant: 'default',
         });
       }
     } catch (error) {
@@ -280,6 +284,8 @@ export default function AdaptiveTestingPage() {
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   };
+
+  const cardClass = "min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center";
 
   // Show active test interface
   if (activeTest && activeTest.currentQuestion) {
@@ -337,7 +343,7 @@ export default function AdaptiveTestingPage() {
       <Navigation />
       <BottomNav />
       <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
-        <div className="max-w-7xl mx-auto space-y-8">
+        <PageTransition className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
             <motion.div
@@ -373,64 +379,65 @@ export default function AdaptiveTestingPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             >
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-100 text-sm">Total Tests</p>
-                      <p className="text-3xl font-bold">{stats.totalTests}</p>
+              <MobileScrollGrid className="md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white", cardClass)}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-blue-100 text-sm">Total Tests</p>
+                        <p className="text-3xl font-bold">{stats.totalTests}</p>
+                      </div>
+                      <Target className="h-8 w-8 text-blue-200" />
                     </div>
-                    <Target className="h-8 w-8 text-blue-200" />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-100 text-sm">Average Score</p>
-                      <p className="text-3xl font-bold">{stats.averageAccuracy.toFixed(1)}%</p>
+                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white", cardClass)}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-green-100 text-sm">Average Score</p>
+                        <p className="text-3xl font-bold">{stats.averageAccuracy.toFixed(1)}%</p>
+                      </div>
+                      <Star className="h-8 w-8 text-green-200" />
                     </div>
-                    <Star className="h-8 w-8 text-green-200" />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-100 text-sm">Questions Answered</p>
-                      <p className="text-3xl font-bold">{stats.totalQuestions}</p>
+                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white", cardClass)}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-purple-100 text-sm">Questions Answered</p>
+                        <p className="text-3xl font-bold">{stats.totalQuestions}</p>
+                      </div>
+                      <BookOpen className="h-8 w-8 text-purple-200" />
                     </div>
-                    <BookOpen className="h-8 w-8 text-purple-200" />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-orange-100 text-sm">Time Saved</p>
-                      <p className="text-3xl font-bold">{formatTime(stats.timeSaved)}</p>
+                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white", cardClass)}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-orange-100 text-sm">Time Saved</p>
+                        <p className="text-3xl font-bold">{formatTime(stats.timeSaved)}</p>
+                      </div>
+                      <Clock className="h-8 w-8 text-orange-200" />
                     </div>
-                    <Clock className="h-8 w-8 text-orange-200" />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </MobileScrollGrid>
             </motion.div>
           )}
 
           {/* Main Content */}
           <Tabs defaultValue="tests" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="tests">My Tests</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+            <TabsList className="flex w-full overflow-x-auto no-scrollbar pb-1 md:grid md:grid-cols-3">
+              <TabsTrigger value="tests" className="flex-shrink-0">My Tests</TabsTrigger>
+              <TabsTrigger value="analytics" className="flex-shrink-0">Analytics</TabsTrigger>
+              <TabsTrigger value="recommendations" className="flex-shrink-0">Recommendations</TabsTrigger>
             </TabsList>
 
             <TabsContent value="tests" className="space-y-6">
@@ -438,50 +445,52 @@ export default function AdaptiveTestingPage() {
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                    <div className="flex flex-col md:flex-row gap-4 flex-1">
-                      <div className="relative flex-1 max-w-md">
+                    <div className="flex flex-col md:flex-row gap-4 flex-1 w-full">
+                      <div className="relative flex-1 max-w-md w-full">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                         <Input
                           placeholder="Search tests, subjects, or topics..."
                           value={searchQuery}
                           onChange={e => setSearchQuery(e.target.value)}
-                          className="pl-10"
+                          className="pl-10 w-full"
                         />
                       </div>
-                      <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="w-40">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Status</SelectItem>
-                          <SelectItem value="draft">Draft</SelectItem>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="paused">Paused</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Select value={filterSubject} onValueChange={setFilterSubject}>
-                        <SelectTrigger className="w-40">
-                          <SelectValue placeholder="Subject" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Subjects</SelectItem>
-                          {allSubjects.map(subject => (
-                            <SelectItem key={subject} value={subject}>
-                              {subject}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2 w-full md:w-auto">
+                        <Select value={filterStatus} onValueChange={setFilterStatus}>
+                          <SelectTrigger className="w-full md:w-40 flex-1 md:flex-none">
+                            <SelectValue placeholder="Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                            <SelectItem value="paused">Paused</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Select value={filterSubject} onValueChange={setFilterSubject}>
+                          <SelectTrigger className="w-full md:w-40 flex-1 md:flex-none">
+                            <SelectValue placeholder="Subject" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Subjects</SelectItem>
+                            {allSubjects.map(subject => (
+                              <SelectItem key={subject} value={subject}>
+                                {subject}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" onClick={loadTestsAndStats}>
+                    <div className="flex gap-2 w-full md:w-auto">
+                      <Button variant="outline" onClick={loadTestsAndStats} className="flex-1 md:flex-none">
                         <RefreshCw className="h-4 w-4 mr-2" />
                         Refresh
                       </Button>
                       <Button
                         onClick={generateRecommendedTest}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 flex-1 md:flex-none"
                       >
                         <Zap className="h-4 w-4 mr-2" />
                         Smart Test
@@ -594,7 +603,7 @@ export default function AdaptiveTestingPage() {
               </Card>
             </TabsContent>
           </Tabs>
-        </div>
+        </PageTransition>
       </div>
     </div>
   );

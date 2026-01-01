@@ -1,8 +1,24 @@
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <g fill="#000000">
-    <rect x="128" y="160" width="256" height="192" rx="16"/>
-    <rect x="144" y="176" width="224" height="8" rx="4"/>
-    <circle cx="384" cy="192" r="24"/>
-    <circle cx="192" cy="288" r="32"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="black" stroke-width="28"/>
+  
+  <!-- Middle Ring -->
+  <circle cx="256" cy="256" r="120" fill="none" stroke="black" stroke-width="24"/>
+  
+  <!-- Inner Ring -->
+  <circle cx="256" cy="256" r="60" fill="none" stroke="black" stroke-width="20"/>
+  
+  <!-- Center Dot (Bullseye) -->
+  <circle cx="256" cy="256" r="24" fill="black"/>
+  
+  <!-- Arrow hitting the target -->
+  <g transform="translate(256, 256) rotate(-45)">
+    <!-- Arrow shaft -->
+    <rect x="40" y="-6" width="140" height="12" rx="6" fill="black"/>
+    <!-- Arrow head -->
+    <polygon points="180,-16 220,0 180,16" fill="black"/>
+    <!-- Arrow feathers -->
+    <rect x="30" y="-18" width="4" height="36" rx="2" fill="black"/>
+    <rect x="20" y="-14" width="4" height="28" rx="2" fill="black"/>
   </g>
 </svg>

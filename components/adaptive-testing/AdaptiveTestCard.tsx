@@ -129,7 +129,7 @@ export default function AdaptiveTestCard({
         whileTap={{ scale: 0.98 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
-        className={cn('group', className)}
+        className={cn('group active:scale-[0.98] transition-transform', className)}
       >
         <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
           {/* Header with gradient background */}

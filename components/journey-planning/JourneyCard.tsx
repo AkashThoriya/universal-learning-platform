@@ -99,7 +99,7 @@ export default function JourneyCard({
     >
       <Card
         className={cn(
-          'relative transition-all duration-300 hover:shadow-lg cursor-pointer group',
+          'relative transition-all duration-300 hover:shadow-lg cursor-pointer group active:scale-[0.98]',
           journey.status === 'active' && 'ring-2 ring-green-200',
           className
         )}
@@ -268,13 +268,12 @@ export default function JourneyCard({
 
           {/* Action Buttons - Only visible on hover for non-active status */}
           <motion.div
-            className="flex gap-2 pt-2"
-            initial={{ opacity: 0, height: 0 }}
+            className="flex gap-2 pt-2 lg:opacity-0 lg:h-0 lg:group-hover:opacity-100 lg:group-hover:h-auto opacity-100 h-auto transition-all duration-200"
+            initial={false}
             animate={{
-              opacity: isHovered || journey.status === 'planning' ? 1 : 0,
-              height: isHovered || journey.status === 'planning' ? 'auto' : 0,
+              opacity: isHovered || journey.status === 'planning' ? 1 : 1, // Fallback to CSS for responsive handling
+              height: isHovered || journey.status === 'planning' ? 'auto' : 'auto',
             }}
-            transition={{ duration: 0.2 }}
           >
             {journey.status === 'planning' && onStart && (
               <Button

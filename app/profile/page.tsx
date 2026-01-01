@@ -12,6 +12,7 @@
 'use client';
 
 import { Timestamp } from 'firebase/firestore';
+import PageTransition from '@/components/layout/PageTransition';
 import {
   User,
   Settings,
@@ -36,6 +37,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
@@ -515,6 +517,7 @@ export default function ProfilePage() {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+
         {/* Header */}
         <div className="bg-white/90 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 py-4">
@@ -568,46 +571,47 @@ export default function ProfilePage() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Validation Errors */}
-          {Object.keys(validationErrors).length > 0 && (
-            <Alert className="mb-6 border-red-200 bg-red-50">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">
-                <div className="space-y-1">
-                  <p className="font-medium">Please fix the following errors:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    {Object.values(validationErrors).map((error, index) => (
-                      <li key={index} className="text-sm">
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
+        <PageTransition>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            {/* Validation Errors */}
+            {Object.keys(validationErrors).length > 0 && (
+              <Alert className="mb-6 border-red-200 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800">
+                  <div className="space-y-1">
+                    <p className="font-medium">Please fix the following errors:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      {Object.values(validationErrors).map((error, index) => (
+                        <li key={index} className="text-sm">
+                          {error}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {/* Profile Form */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            {/* Tab Navigation */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200">
-              <TabsList className="grid w-full grid-cols-6 gap-1">
-                {PROFILE_TABS.map(tab => {
-                  const Icon = tab.icon;
-                  return (
-                    <TabsTrigger
-                      key={tab.id}
-                      value={tab.id}
-                      className="flex items-center space-x-2 p-3 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span className="hidden sm:inline">{tab.label}</span>
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-            </div>
+            {/* Profile Form */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              {/* Tab Navigation */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200">
+                <TabsList className="flex w-full overflow-x-auto no-scrollbar md:grid md:grid-cols-6 gap-1">
+                  {PROFILE_TABS.map(tab => {
+                    const Icon = tab.icon;
+                    return (
+                      <TabsTrigger
+                        key={tab.id}
+                        value={tab.id}
+                        className="flex-shrink-0 min-w-fit md:min-w-0 flex items-center space-x-2 p-3 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span className="hidden sm:inline">{tab.label}</span>
+                      </TabsTrigger>
+                    );
+                  })}
+                </TabsList>
+              </div>
 
             {/* Tab Content */}
             <div className="space-y-6">
@@ -1359,7 +1363,7 @@ inputMode="numeric"
 
         {/* Unsaved Changes Warning */}
         {hasUnsavedChanges && (
-          <div className="fixed bottom-4 right-4 bg-amber-50 border border-amber-200 rounded-lg p-4 shadow-lg">
+          <div className="fixed bottom-4 right-4 bg-amber-50 border border-amber-200 rounded-lg p-4 shadow-lg z-50">
             <div className="flex items-center space-x-2">
               <AlertCircle className="h-5 w-5 text-amber-600" />
               <span className="text-amber-800">You have unsaved changes</span>
@@ -1369,6 +1373,7 @@ inputMode="numeric"
             </div>
           </div>
         )}
+      </PageTransition>
       </div>
       <BottomNav />
     </TooltipProvider>

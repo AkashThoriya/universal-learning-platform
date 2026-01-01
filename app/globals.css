@@ -139,8 +139,10 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+                html,
+                body {
+      @apply bg-background text-foreground overflow-x-hidden max-w-[100vw];
+        -webkit-tap-highlight-color: transparent;
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
@@ -417,6 +419,16 @@
   }
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
 /* Enhanced keyframe animations */
 @keyframes float {
   0%,

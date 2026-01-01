@@ -31,7 +31,7 @@ import { QuickActions } from '@/components/dashboard/QuickActions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import FloatingActionButton from '@/components/ui/FloatingActionButton';
+
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
@@ -1140,10 +1140,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             </div>
           </div>
 
-          {/* Mobile FAB for quick actions */}
-          <div className="lg:hidden">
-            <FloatingActionButton />
-          </div>
+
         </TabsContent>
 
         {/* Analytics Tab - Learning Analytics Dashboard */}
