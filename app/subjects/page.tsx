@@ -4,6 +4,7 @@ import { BookOpen, Target, Zap, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
 import AuthGuard from '@/components/AuthGuard';
+import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,8 +42,9 @@ export default function SubjectsPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
+        <BottomNav />
 
-        <div className="max-w-6xl mx-auto p-6 space-y-6">
+        <div className="max-w-6xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">Study Arsenal</h1>
             <p className="text-muted-foreground">Master every topic with banking context and strategic insights</p>

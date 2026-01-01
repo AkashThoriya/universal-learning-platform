@@ -18,6 +18,8 @@ import {
 import { useState, useEffect } from 'react';
 
 import { AdaptiveTestCard, QuestionInterface, TestAnalyticsDashboard } from '@/components/adaptive-testing';
+import BottomNav from '@/components/BottomNav';
+import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -282,8 +284,10 @@ export default function AdaptiveTestingPage() {
   // Show active test interface
   if (activeTest && activeTest.currentQuestion) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8">
-        <div className="container mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <Navigation />
+        <BottomNav />
+        <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
           <QuestionInterface
             question={activeTest.currentQuestion}
             questionNumber={activeTest.session.currentQuestionIndex + 1}
@@ -301,8 +305,10 @@ export default function AdaptiveTestingPage() {
   // Show results dashboard
   if (showResults) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8">
-        <div className="container mx-auto px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <Navigation />
+        <BottomNav />
+        <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
           <div className="max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -328,7 +334,9 @@ export default function AdaptiveTestingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8">
+      <Navigation />
+      <BottomNav />
+      <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">

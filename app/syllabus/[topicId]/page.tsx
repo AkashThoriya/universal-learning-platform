@@ -19,6 +19,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
+import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -202,6 +203,7 @@ export default function TopicDetailPage() {
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
+          <BottomNav />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
@@ -218,6 +220,7 @@ export default function TopicDetailPage() {
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
+          <BottomNav />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
               <h1 className="text-2xl font-bold">Topic not found</h1>
@@ -259,8 +262,9 @@ export default function TopicDetailPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
+        <BottomNav />
 
-        <div className="max-w-5xl mx-auto p-6 space-y-6">
+        <div className="max-w-5xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
           {/* Navigation */}
           <div className="flex items-center space-x-4">
             <Link href="/syllabus">

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
+import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,10 +15,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function TestLoggerPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -114,14 +117,20 @@ export default function TestLoggerPage() {
 
     const validationError = validateErrorAnalysis();
     if (validationError) {
-      // TODO: Replace with proper toast notification
-      // console.warn(validationError);
+      toast({
+        title: "Validation Error",
+        description: validationError,
+        variant: "destructive",
+      });
       return;
     }
 
     if (!date) {
-      // TODO: Replace with proper toast notification
-      // console.warn('Please select a test date');
+      toast({
+        title: "Missing Date",
+        description: "Please select a test date before submitting.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -166,8 +175,9 @@ export default function TestLoggerPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
+        <BottomNav />
 
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <div className="max-w-4xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-4xl font-bold text-gray-900">Test Logger</h1>
             <p className="text-muted-foreground">Log your mock test performance and analyze weaknesses</p>
@@ -276,6 +286,7 @@ export default function TestLoggerPage() {
                         <Input
                           id={`score-${index}`}
                           type="number"
+inputMode="numeric"
                           min="0"
                           max="50"
                           value={section.score}
@@ -289,6 +300,7 @@ export default function TestLoggerPage() {
                         <Input
                           id={`time-${index}`}
                           type="number"
+inputMode="numeric"
                           min="0"
                           value={section.time}
                           onChange={e => section.setTime(Number(e.target.value))}
@@ -382,6 +394,7 @@ export default function TestLoggerPage() {
                         <label className="text-xs font-medium text-red-700">Concept Gaps</label>
                         <Input
                           type="number"
+inputMode="numeric"
                           min="0"
                           max={section.totalErrors}
                           value={section.concepts}
@@ -393,6 +406,7 @@ export default function TestLoggerPage() {
                         <label className="text-xs font-medium text-orange-700">Careless Errors</label>
                         <Input
                           type="number"
+inputMode="numeric"
                           min="0"
                           max={section.totalErrors}
                           value={section.careless}
@@ -404,6 +418,7 @@ export default function TestLoggerPage() {
                         <label className="text-xs font-medium text-blue-700">Lucky Guesses</label>
                         <Input
                           type="number"
+inputMode="numeric"
                           min="0"
                           max={section.totalErrors}
                           value={section.guesses}
@@ -415,6 +430,7 @@ export default function TestLoggerPage() {
                         <label className="text-xs font-medium text-purple-700">Time Pressure</label>
                         <Input
                           type="number"
+inputMode="numeric"
                           min="0"
                           max={section.totalErrors}
                           value={section.timePressure}

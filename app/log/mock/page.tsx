@@ -6,10 +6,20 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
+import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,10 +27,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getExamById } from '@/lib/data/exams-data';
 import { saveMockTest, getUser } from '@/lib/firebase/firebase-utils';
 import { MockTestLog, User, Exam } from '@/types/exam';
+import { useToast } from '@/hooks/use-toast';
 
 export default function MockTestLogPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -58,6 +70,12 @@ export default function MockTestLogPage() {
   // Feedback and action items
   const [feedback, setFeedback] = useState('');
   const [actionItems, setActionItems] = useState<string[]>([]);
+
+  // Dialog state
+  const [distractionDialogOpen, setDistractionDialogOpen] = useState(false);
+  const [actionDialogOpen, setActionDialogOpen] = useState(false);
+  const [newDistraction, setNewDistraction] = useState('');
+  const [newAction, setNewAction] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,18 +146,18 @@ export default function MockTestLogPage() {
   };
 
   const addDistraction = () => {
-    // TODO: Replace with proper modal dialog
-    const distraction = 'Test distraction'; // Temporarily disabled prompt
-    if (distraction) {
-      setDistractions(prev => [...prev, distraction]);
+    if (newDistraction.trim()) {
+      setDistractions(prev => [...prev, newDistraction.trim()]);
+      setNewDistraction('');
+      setDistractionDialogOpen(false);
     }
   };
 
   const addActionItem = () => {
-    // TODO: Replace with proper modal dialog
-    const action = 'Action item'; // Temporarily disabled prompt
-    if (action) {
-      setActionItems(prev => [...prev, action]);
+    if (newAction.trim()) {
+      setActionItems(prev => [...prev, newAction.trim()]);
+      setNewAction('');
+      setActionDialogOpen(false);
     }
   };
 
@@ -149,8 +167,11 @@ export default function MockTestLogPage() {
     }
 
     if (!validateErrorAnalysis()) {
-      // TODO: Replace with proper toast notification
-      // console.warn(`Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`);
+      toast({
+        title: "Validation Error",
+        description: `Error analysis doesn't match total errors. You have ${getTotalErrors()} errors but analyzed ${conceptGaps + carelessErrors + intelligentGuesses + timePressures}.`,
+        variant: "destructive",
+      });
       return;
     }
 
@@ -207,6 +228,7 @@ export default function MockTestLogPage() {
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
+          <BottomNav />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
@@ -223,6 +245,7 @@ export default function MockTestLogPage() {
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
+          <BottomNav />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
               <h1 className="text-2xl font-bold">Setup Required</h1>
@@ -241,8 +264,9 @@ export default function MockTestLogPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
+        <BottomNav />
 
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-8">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-20 lg:pb-6 space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
             <div className="inline-block">
@@ -380,6 +404,7 @@ export default function MockTestLogPage() {
                           <Input
                             id={`score-${section?.id}`}
                             type="number"
+inputMode="numeric"
                             min="0"
                             max={section?.maxMarks}
                             value={section?.id ? (scores[section.id] || 0) : 0}
@@ -402,6 +427,7 @@ export default function MockTestLogPage() {
                         <Input
                           id={`time-taken-${section?.id}`}
                           type="number"
+inputMode="numeric"
                           min="0"
                           max={section?.maxTime}
                           value={section?.id ? (timeTaken[section.id] || 0) : 0}
@@ -504,6 +530,7 @@ export default function MockTestLogPage() {
                     <label className="text-sm font-medium text-red-700">Concept Gaps</label>
                     <Input
                       type="number"
+inputMode="numeric"
                       min="0"
                       max={getTotalErrors()}
                       value={conceptGaps}
@@ -516,6 +543,7 @@ export default function MockTestLogPage() {
                     <label className="text-sm font-medium text-orange-700">Careless Errors</label>
                     <Input
                       type="number"
+inputMode="numeric"
                       min="0"
                       max={getTotalErrors()}
                       value={carelessErrors}
@@ -528,6 +556,7 @@ export default function MockTestLogPage() {
                     <label className="text-sm font-medium text-blue-700">Lucky Guesses</label>
                     <Input
                       type="number"
+inputMode="numeric"
                       min="0"
                       max={getTotalErrors()}
                       value={intelligentGuesses}
@@ -540,6 +569,7 @@ export default function MockTestLogPage() {
                     <label className="text-sm font-medium text-purple-700">Time Pressure</label>
                     <Input
                       type="number"
+inputMode="numeric"
                       min="0"
                       max={getTotalErrors()}
                       value={timePressures}
@@ -700,9 +730,35 @@ export default function MockTestLogPage() {
                       <label htmlFor="distractions-list" className="text-sm font-medium">
                         Distractions
                       </label>
-                      <Button type="button" variant="outline" size="sm" onClick={addDistraction}>
-                        Add Distraction
-                      </Button>
+                      <Dialog open={distractionDialogOpen} onOpenChange={setDistractionDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button type="button" variant="outline" size="sm">
+                            Add Distraction
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Add Distraction</DialogTitle>
+                            <DialogDescription>
+                              What distracted you during the test?
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Input
+                            value={newDistraction}
+                            onChange={(e) => setNewDistraction(e.target.value)}
+                            placeholder="Describe distraction..."
+                            onKeyDown={(e) => e.key === 'Enter' && addDistraction()}
+                          />
+                          <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setDistractionDialogOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button type="button" onClick={addDistraction} disabled={!newDistraction.trim()}>
+                              Add Distraction
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <div id="distractions-list" className="space-y-2">
                       {distractions.map((distraction, index) => (
@@ -739,9 +795,35 @@ export default function MockTestLogPage() {
                       <label htmlFor="action-items-list" className="text-sm font-medium">
                         Action Items
                       </label>
-                      <Button type="button" variant="outline" size="sm" onClick={addActionItem}>
-                        Add Action Item
-                      </Button>
+                      <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button type="button" variant="outline" size="sm">
+                            Add Action Item
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Add Action Item</DialogTitle>
+                            <DialogDescription>
+                              What can you do to improve next time?
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Input
+                            value={newAction}
+                            onChange={(e) => setNewAction(e.target.value)}
+                            placeholder="Describe action item..."
+                            onKeyDown={(e) => e.key === 'Enter' && addActionItem()}
+                          />
+                          <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setActionDialogOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button type="button" onClick={addActionItem} disabled={!newAction.trim()}>
+                              Add Action Item
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <div id="action-items-list" className="space-y-2">
                       {actionItems.map((action, index) => (

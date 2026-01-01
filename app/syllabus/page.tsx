@@ -30,6 +30,7 @@ import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
+import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -492,6 +493,7 @@ export default function SyllabusPage() {
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
           <Navigation />
+          <BottomNav />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-6">
               <div className="relative">
@@ -512,8 +514,9 @@ export default function SyllabusPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
+        <BottomNav />
 
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 pb-20 lg:pb-6 space-y-8">
           {/* Enhanced Header */}
           <div className="text-center space-y-6">
             <div className="inline-block">
@@ -1085,6 +1088,7 @@ export default function SyllabusPage() {
                                                       <Input
                                                         id={`topic-hours-${topic.id}`}
                                                         type="number"
+inputMode="numeric"
                                                         min="1"
                                                         max="100"
                                                         value={tempTopicHours}

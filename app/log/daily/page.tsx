@@ -7,10 +7,20 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
+import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
@@ -41,6 +51,12 @@ export default function DailyLogPage() {
   const [note, setNote] = useState('');
   const [challenges, setChallenges] = useState<string[]>([]);
   const [wins, setWins] = useState<string[]>([]);
+
+  // Dialog state for challenges and wins
+  const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
+  const [winDialogOpen, setWinDialogOpen] = useState(false);
+  const [newChallenge, setNewChallenge] = useState('');
+  const [newWin, setNewWin] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -116,18 +132,18 @@ export default function DailyLogPage() {
   };
 
   const addChallenge = () => {
-    // TODO: Replace with proper modal dialog
-    const challenge = 'Study challenge'; // Temporarily disabled prompt
-    if (challenge) {
-      setChallenges(prev => [...prev, challenge]);
+    if (newChallenge.trim()) {
+      setChallenges(prev => [...prev, newChallenge.trim()]);
+      setNewChallenge('');
+      setChallengeDialogOpen(false);
     }
   };
 
   const addWin = () => {
-    // TODO: Replace with proper modal dialog
-    const win = 'Study win'; // Temporarily disabled prompt
-    if (win) {
-      setWins(prev => [...prev, win]);
+    if (newWin.trim()) {
+      setWins(prev => [...prev, newWin.trim()]);
+      setNewWin('');
+      setWinDialogOpen(false);
     }
   };
 
@@ -182,6 +198,7 @@ export default function DailyLogPage() {
       <AuthGuard>
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
           <Navigation />
+          <BottomNav />
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-6">
               <div className="relative">
@@ -202,8 +219,9 @@ export default function DailyLogPage() {
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <Navigation />
+        <BottomNav />
 
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-8">
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-20 lg:pb-6 space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
             <div className="inline-block">
@@ -262,6 +280,7 @@ export default function DailyLogPage() {
                     <Input
                       id="sleep-hours"
                       type="number"
+inputMode="numeric"
                       min="0"
                       max="12"
                       step="0.5"
@@ -277,6 +296,7 @@ export default function DailyLogPage() {
                     <Input
                       id="physical-activity"
                       type="number"
+inputMode="numeric"
                       min="0"
                       max="300"
                       value={physicalActivity}
@@ -392,6 +412,7 @@ export default function DailyLogPage() {
                         <Input
                           id={`minutes-${index}`}
                           type="number"
+inputMode="numeric"
                           min="5"
                           max="480"
                           value={session.minutes}
@@ -433,6 +454,7 @@ export default function DailyLogPage() {
                         <Input
                           id={`effectiveness-${index}`}
                           type="number"
+inputMode="numeric"
                           min="1"
                           max="5"
                           value={session.effectiveness}
@@ -449,6 +471,7 @@ export default function DailyLogPage() {
                         <Input
                           id={`distractions-${index}`}
                           type="number"
+inputMode="numeric"
                           min="0"
                           max="50"
                           value={session.distractions}
@@ -507,6 +530,7 @@ export default function DailyLogPage() {
                     <Input
                       id="daily-goal"
                       type="number"
+inputMode="numeric"
                       min="60"
                       max="720"
                       value={targetMinutes}
@@ -563,10 +587,36 @@ export default function DailyLogPage() {
                       <label htmlFor="challenges-list" className="text-sm font-medium">
                         Challenges
                       </label>
-                      <Button type="button" variant="outline" size="sm" onClick={addChallenge}>
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add
-                      </Button>
+                      <Dialog open={challengeDialogOpen} onOpenChange={setChallengeDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button type="button" variant="outline" size="sm">
+                            <Plus className="h-3 w-3 mr-1" />
+                            Add
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Add Challenge</DialogTitle>
+                            <DialogDescription>
+                              What challenge did you face during your study today?
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Input
+                            value={newChallenge}
+                            onChange={(e) => setNewChallenge(e.target.value)}
+                            placeholder="Describe the challenge..."
+                            onKeyDown={(e) => e.key === 'Enter' && addChallenge()}
+                          />
+                          <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setChallengeDialogOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button type="button" onClick={addChallenge} disabled={!newChallenge.trim()}>
+                              Add Challenge
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <div id="challenges-list" className="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
                       {challenges.map((challenge, index) => (
@@ -587,10 +637,36 @@ export default function DailyLogPage() {
                       <label htmlFor="wins-list" className="text-sm font-medium">
                         Wins
                       </label>
-                      <Button type="button" variant="outline" size="sm" onClick={addWin}>
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add
-                      </Button>
+                      <Dialog open={winDialogOpen} onOpenChange={setWinDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button type="button" variant="outline" size="sm">
+                            <Plus className="h-3 w-3 mr-1" />
+                            Add
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Add Win</DialogTitle>
+                            <DialogDescription>
+                              What was a win or accomplishment from your study today?
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Input
+                            value={newWin}
+                            onChange={(e) => setNewWin(e.target.value)}
+                            placeholder="Describe your win..."
+                            onKeyDown={(e) => e.key === 'Enter' && addWin()}
+                          />
+                          <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setWinDialogOpen(false)}>
+                              Cancel
+                            </Button>
+                            <Button type="button" onClick={addWin} disabled={!newWin.trim()}>
+                              Add Win
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <div id="wins-list" className="space-y-2 min-h-[100px] max-h-[200px] overflow-y-auto">
                       {wins.map((win, index) => (

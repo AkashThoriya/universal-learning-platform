@@ -58,6 +58,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import BottomNav from '@/components/BottomNav';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
@@ -1022,6 +1023,7 @@ export default function ProfilePage() {
                         <Input
                           id="daily-goal"
                           type="number"
+inputMode="numeric"
                           min="60"
                           max="720"
                           step="30"
@@ -1091,6 +1093,7 @@ export default function ProfilePage() {
                           <div key={index} className="flex items-center space-x-1">
                             <Input
                               type="number"
+inputMode="numeric"
                               min="1"
                               max="365"
                               value={interval}
@@ -1367,6 +1370,7 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+      <BottomNav />
     </TooltipProvider>
   );
 }
