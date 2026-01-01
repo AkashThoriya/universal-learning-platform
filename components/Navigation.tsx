@@ -181,7 +181,7 @@ export default function Navigation() {
           </div>
 
           {/* Primary Navigation - Only show most important items */}
-          <div className="hidden lg:flex items-center space-x-1 flex-1 justify-center">
+          <div className="hidden xl:flex items-center space-x-1 flex-1 justify-center">
             {primaryNavItems.map(item => (
               <Link key={item.href} href={item.href}>
                 <Button
@@ -225,7 +225,7 @@ export default function Navigation() {
             </Button>
 
             {/* More Menu - Desktop (contains secondary items + user actions) */}
-            <div className="hidden lg:block">
+            <div className="hidden xl:block">
               <Button
                 variant="ghost"
                 size="sm"
@@ -243,7 +243,7 @@ export default function Navigation() {
 
         {/* Desktop "More" menu dropdown */}
         {isDesktopMenuOpen && (
-          <div className="hidden lg:block absolute top-16 right-0 w-64 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 rounded-bl-xl shadow-2xl overflow-hidden py-2">
+          <div className="hidden xl:block absolute top-16 right-0 w-64 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 rounded-bl-xl shadow-2xl overflow-hidden py-2">
             <div className="space-y-1">
               {secondaryNavItems.map(renderNavItem)}
               <div className="border-t border-gray-200 dark:border-gray-700 my-2" />

@@ -68,7 +68,7 @@ export default function SubjectPage() {
         <Navigation />
         <BottomNav />
         <PageTransition>
-          <div className="max-w-5xl mx-auto p-6 pb-20 lg:pb-6 space-y-6">
+          <div className="max-w-5xl mx-auto p-6 pb-20 xl:pb-6 space-y-6">
             <div className="flex items-center space-x-4">
 
 

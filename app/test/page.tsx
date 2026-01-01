@@ -293,7 +293,7 @@ export default function AdaptiveTestingPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <Navigation />
         <BottomNav />
-        <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
+        <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
           <QuestionInterface
             question={activeTest.currentQuestion}
             questionNumber={activeTest.session.currentQuestionIndex + 1}
@@ -314,7 +314,7 @@ export default function AdaptiveTestingPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <Navigation />
         <BottomNav />
-        <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
+        <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
           <div className="max-w-6xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -342,7 +342,7 @@ export default function AdaptiveTestingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <Navigation />
       <BottomNav />
-      <div className="container mx-auto px-4 py-8 pb-20 lg:pb-8">
+      <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
         <PageTransition className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">

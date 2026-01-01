@@ -122,9 +122,9 @@ export default function BottomNav() {
   };
 
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 w-full z-50">
+    <div className="xl:hidden fixed bottom-0 left-0 w-full z-50">
       {/* Glassmorphism Container */}
-      <nav className="glass border-t border-white/20 bg-white/80 dark:bg-black/80 backdrop-blur-xl pb-safe-area-bottom">
+      <nav className="glass border-t border-white/20 bg-white/80 dark:bg-black/80 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
         <div className="flex justify-around items-center h-[calc(60px+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)]">
           {primaryItems.map((item) => {
             const active = isActive(item.activePath || item.href);
