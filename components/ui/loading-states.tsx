@@ -10,8 +10,8 @@
  */
 
 import { Loader2, RefreshCw, AlertCircle, CheckCircle, Clock, WifiOff } from 'lucide-react';
-import React from 'react';
 
+import { useState, useEffect, useRef, ReactNode, ComponentType, SVGProps } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -431,7 +431,7 @@ export function EmptyState({
   message?: string;
   actionLabel?: string;
   onAction?: () => void;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon?: ComponentType<SVGProps<SVGSVGElement>>;
   variant?: 'default' | 'compact';
 }) {
   if (variant === 'compact') {
@@ -565,17 +565,17 @@ export function SmartLoading({
   isLoading: boolean;
   error?: Error | string | null;
   isEmpty?: boolean;
-  children: React.ReactNode;
-  loadingComponent?: React.ReactNode;
-  errorComponent?: React.ReactNode;
-  emptyComponent?: React.ReactNode;
+  children: ReactNode;
+  loadingComponent?: ReactNode;
+  errorComponent?: ReactNode;
+  emptyComponent?: ReactNode;
   onRetry?: () => void;
   className?: string;
   loadingDelay?: number;
 }) {
-  const [showLoading, setShowLoading] = React.useState(false);
+  const [showLoading, setShowLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let timeout: NodeJS.Timeout;
 
     if (isLoading) {
@@ -632,9 +632,9 @@ export function LoadingTrigger({
   threshold?: number;
   className?: string;
 }) {
-  const triggerRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const trigger = triggerRef.current;
     if (!trigger) {
       return;

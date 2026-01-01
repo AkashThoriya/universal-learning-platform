@@ -20,7 +20,7 @@ import {
   TestTube,
   Bell,
   Menu,
-  X,
+
   Brain,
   Map,
   type LucideIcon,
@@ -47,7 +47,23 @@ export default function Navigation() {
   const { logout, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const nav = document.querySelector('[role="navigation"]');
+      if (nav && !nav.contains(event.target as Node)) {
+        setIsDesktopMenuOpen(false);
+      }
+    };
+
+    if (isDesktopMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return undefined;
+  }, [isDesktopMenuOpen]);
 
   const handleLogout = async () => {
     try {
@@ -60,28 +76,6 @@ export default function Navigation() {
 
   const isActive = (path: string) => pathname === path;
   const isActiveGroup = (paths: string[]) => paths.some(path => pathname.startsWith(path));
-
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
-
-  // Close menu when clicking outside (desktop "More" menu)
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const nav = document.querySelector('[role="navigation"]');
-      if (nav && !nav.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    if (isMobileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return undefined;
-  }, [isMobileMenuOpen]);
 
   const navItems: NavItem[] = [
     {
@@ -235,7 +229,7 @@ export default function Navigation() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setIsDesktopMenuOpen(!isDesktopMenuOpen)}
                 className="hover:bg-white/10 flex items-center space-x-1"
               >
                 <span className="text-sm font-medium max-w-20 truncate">
@@ -244,71 +238,18 @@ export default function Navigation() {
                 <Menu className="h-4 w-4" />
               </Button>
             </div>
-
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden h-8 w-8 rounded-full"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle mobile menu"
-            >
-              {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
           </div>
         </div>
 
-        {/* Mobile Navigation + Desktop "More" menu */}
-        {isMobileMenuOpen && (
-          <div className="py-4 space-y-2 border-t border-white/10">
-            {/* All nav items for mobile */}
-            <div className="lg:hidden space-y-2">{navItems.map(renderNavItem)}</div>
-
-            {/* Desktop "More" menu - Secondary nav items + User actions */}
-            <div className="hidden lg:block space-y-2">
-              {/* Secondary navigation items */}
+        {/* Desktop "More" menu dropdown */}
+        {isDesktopMenuOpen && (
+          <div className="hidden lg:block absolute top-16 right-0 w-64 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 rounded-bl-xl shadow-2xl overflow-hidden py-2">
+            <div className="space-y-1">
               {secondaryNavItems.map(renderNavItem)}
-
-              {/* User actions separator */}
-              {secondaryNavItems.length > 0 && <div className="border-t border-white/10 my-2" />}
-
-              {/* User Profile Section */}
+              <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
               <div className="px-3 py-2">
-                <div className="flex items-center space-x-3">
-                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-sm font-semibold text-primary">
-                      {(user?.displayName?.charAt(0) ?? user?.email?.charAt(0) ?? 'U').toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{user?.displayName || 'User'}</p>
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
-                  </div>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="w-full justify-start text-red-500 hover:bg-red-500/10"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </div>
-
-            {/* Mobile user actions */}
-            <div className="lg:hidden pt-4 mt-4 border-t border-white/10 space-y-2">
-              <div className="flex items-center space-x-3 px-3 py-2">
-                <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center">
-                  <span className="text-xs font-semibold text-primary">
-                    {(user?.displayName?.charAt(0) ?? user?.email?.charAt(0) ?? 'U').toUpperCase()}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{user?.displayName || 'User'}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
-                </div>
+                <p className="text-sm font-medium">{user?.displayName}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
               <Button
                 variant="ghost"

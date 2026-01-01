@@ -1,7 +1,7 @@
 'use client';
 
 import { Loader2, Target, Brain, TrendingUp } from 'lucide-react';
-import React from 'react';
+
 
 import { Card, CardContent } from '@/components/ui/card';
 

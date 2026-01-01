@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpen, Code, Clock, Play, Zap, Target, Loader2, AlertCircle, User } from 'lucide-react';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';

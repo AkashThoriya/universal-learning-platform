@@ -1,10 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Build optimizations
-  eslint: {
-    ignoreDuringBuilds: false, // Enable eslint during builds for production
-    dirs: ['app', 'components', 'lib', 'types'], // Only lint these directories
-  },
   typescript: {
     ignoreBuildErrors: false, // Ensure type safety
   },
@@ -12,7 +8,16 @@ const nextConfig = {
   // Image optimization
   images: {
     unoptimized: false, // Enable Next.js image optimization
-    domains: ['images.pexels.com', 'via.placeholder.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

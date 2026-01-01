@@ -15,7 +15,7 @@
 'use client';
 
 import { User, Clock, Target, Check, AlertCircle, ArrowRight, Info } from 'lucide-react';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';

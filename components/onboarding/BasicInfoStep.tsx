@@ -13,7 +13,7 @@
 'use client';
 
 import { Search, BookOpen, User, Plus, AlertCircle } from 'lucide-react';
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';

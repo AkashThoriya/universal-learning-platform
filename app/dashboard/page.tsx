@@ -21,7 +21,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         {/* <PWAInstallBanner variant="inline" /> */}
-        <div className="max-w-7xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6">
           <AdaptiveDashboard />
         </div>
       </div>

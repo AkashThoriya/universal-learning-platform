@@ -27,7 +27,7 @@ import {
   Loader2,
   RefreshCw,
 } from 'lucide-react';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { z } from 'zod';
 
 import { BasicInfoStep } from '@/components/onboarding/BasicInfoStep';

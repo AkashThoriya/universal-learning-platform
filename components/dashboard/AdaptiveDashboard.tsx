@@ -6,8 +6,7 @@ import {
   BookOpen,
   Target,
   TrendingUp,
-  Clock,
-  CheckCircle,
+
   Zap,
   Trophy,
   Flame,
@@ -16,17 +15,19 @@ import {
   Award,
   PlayCircle,
   Users,
-  Sparkles,
   Plus,
   Brain,
   Map,
   LucideIcon,
 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+
 import { useEffect, useState } from 'react';
 
 import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalyticsDashboard';
-import { Alert } from '@/components/ui/alert';
+import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
+import { StatsGrid } from '@/components/dashboard/StatsGrid';
+import { QuickActions } from '@/components/dashboard/QuickActions';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -220,10 +221,9 @@ function CustomGoalCard({ goal }: CustomGoalCardProps) {
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
-  const searchParams = useSearchParams();
 
-  // Check if this is a first-time user from onboarding
-  const isFirstTime = searchParams.get('onboarding') === 'complete' && searchParams.get('welcome') === 'true';
+
+
 
   logInfo('AdaptiveDashboard component initialized', {
     userId: user?.uid ?? 'no-user',
@@ -678,96 +678,14 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   return (
     <div className={cn('space-y-6', className)}>
       {/* Personalized Welcome Header */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center lg:text-left">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-          {isFirstTime
-            ? `Welcome, ${user?.displayName?.split(' ')[0] || 'Champion'}! 👋`
-            : `Welcome back, ${user?.displayName?.split(' ')[0] || 'Champion'}! 👋`}
-        </h1>
-        <p className="text-lg text-gray-600">{motivationalMessage}</p>
-      </motion.div>
-
-      {/* Celebration Alert for Achievements */}
-      {recentAchievements.length > 0 && recentAchievements[0] && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: -20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ delay: 0.5, type: 'spring', damping: 15 }}
-        >
-          <Alert className="bg-gradient-to-r from-yellow-50 via-orange-50 to-yellow-50 border-2 border-yellow-300 shadow-lg relative overflow-hidden">
-            {/* Animated background sparkles */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-2 left-4 text-yellow-400 animate-pulse">✨</div>
-              <div className="absolute top-6 right-6 text-orange-400 animate-pulse delay-200">⭐</div>
-              <div className="absolute bottom-3 left-8 text-yellow-500 animate-pulse delay-500">🎉</div>
-              <div className="absolute bottom-2 right-12 text-orange-500 animate-pulse delay-700">🏆</div>
-            </div>
-
-            <div className="relative z-10">
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 p-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full shadow-md">
-                  <Trophy className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                      🎉 Achievement Unlocked!
-                    </h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-600 hover:text-gray-800 hover:bg-white/50"
-                      onClick={() => setRecentAchievements([])}
-                    >
-                      ✕
-                    </Button>
-                  </div>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="flex items-center space-x-2">
-                      {(() => {
-                        const IconComponent = recentAchievements[0].icon;
-                        return <IconComponent className="h-5 w-5 text-orange-600" />;
-                      })()}
-                      <span className="font-semibold text-gray-900">{recentAchievements[0].title}</span>
-                    </div>
-                    <div
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        recentAchievements[0].rarity === 'legendary'
-                          ? 'bg-purple-100 text-purple-800'
-                          : recentAchievements[0].rarity === 'epic'
-                            ? 'bg-red-100 text-red-800'
-                            : recentAchievements[0].rarity === 'rare'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {recentAchievements[0].rarity}
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 mb-3">{recentAchievements[0].description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
-                      Earned {recentAchievements[0].earnedAt.toLocaleDateString()} at{' '}
-                      {recentAchievements[0].earnedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="bg-white/80 hover:bg-white border-orange-200 text-orange-700 hover:text-orange-800"
-                      onClick={() => {
-                        // TODO: Navigate to achievements page or show modal
-                        setRecentAchievements([]);
-                      }}
-                    >
-                      View All Achievements
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Alert>
-        </motion.div>
-      )}
+      {/* Personalized Welcome Header & Achievements */}
+      <WelcomeHeader 
+        user={user}
+        motivationalMessage={motivationalMessage}
+        recentAchievements={recentAchievements}
+        onDismissAchievement={() => setRecentAchievements([])}
+        onViewAllAchievements={() => setRecentAchievements([])}
+      />
 
       {/* Selected Exam and Today's Recommendations */}
       {selectedExam && (
@@ -867,60 +785,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         {/* Overview Tab - Original Dashboard Content */}
         <TabsContent value="overview" className="space-y-6 mt-6">
           {/* Enhanced Stats Overview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Study Time</CardTitle>
-                <Clock className="h-4 w-4 opacity-80" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{formatTime(stats.totalStudyTime)}</div>
-                <p className="text-xs opacity-80 mt-1">This week</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Sessions</CardTitle>
-                <CheckCircle className="h-4 w-4 opacity-80" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.completedSessions}</div>
-                <p className="text-xs opacity-80 mt-1">Completed</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-orange-500 to-red-500 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Streak</CardTitle>
-                <Flame className="h-4 w-4 opacity-80" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.currentStreak} days</div>
-                <p className="text-xs opacity-80 mt-1">Keep it burning! 🔥</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium opacity-90">Weekly Goal</CardTitle>
-                <Target className="h-4 w-4 opacity-80" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.weeklyGoalProgress}%</div>
-                <Progress value={stats.weeklyGoalProgress} className="mt-2 bg-white/20" />
-              </CardContent>
-            </Card>
-          </motion.div>
+          {/* Enhanced Stats Overview */}
+          <StatsGrid stats={stats} />
 
           {/* Custom Learning Goals */}
           <motion.div
@@ -957,55 +823,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           </motion.div>
 
           {/* Priority Actions */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
-              Recommended Actions
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {prioritizedActions.map((action, index) => {
-                const IconComponent = action.icon;
-                const ANIMATION_DELAY_INCREMENT = 0.1;
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: ANIMATION_DELAY_INCREMENT * index }}
-                  >
-                    <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <div className={`p-2 rounded-lg bg-gradient-to-r ${action.color} text-white`}>
-                            <IconComponent className="h-5 w-5" />
-                          </div>
-                          {action.badge && (
-                            <Badge variant={action.priority === 'high' ? 'default' : 'secondary'} className="text-xs">
-                              {action.badge}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                          {action.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mt-1">{action.description}</p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full mt-3 group-hover:bg-blue-50 group-hover:border-blue-200"
-                          onClick={() => (window.location.href = action.href)}
-                        >
-                          {action.priority === 'high' ? 'Start Now' : 'Explore'}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
+          {/* Priority Actions */}
+          <QuickActions actions={prioritizedActions} />
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

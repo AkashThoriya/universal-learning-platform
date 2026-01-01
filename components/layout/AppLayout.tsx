@@ -10,9 +10,10 @@
 
 'use client';
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import Navigation from '@/components/Navigation';
+import BottomNav from '@/components/BottomNav';
 import { cn } from '@/lib/utils/utils';
 
 interface AppLayoutProps {
@@ -74,7 +75,12 @@ export default function AppLayout({
   return (
     <div className={cn('min-h-screen', backgroundVariants[background])}>
       {/* Navigation */}
-      {showNavigation && <Navigation />}
+      {showNavigation && (
+        <>
+          <Navigation />
+          <BottomNav />
+        </>
+      )}
 
       {/* Optional Header Content */}
       {headerContent && <div className={cn(maxWidth, 'mx-auto', paddingVariants[padding])}>{headerContent}</div>}

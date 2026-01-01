@@ -30,7 +30,7 @@ import {
   Zap,
 } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
@@ -95,7 +95,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
   // COMPUTED VALUES
   // ============================================================================
 
-  const summaryMetrics = React.useMemo(() => {
+  const summaryMetrics = useMemo(() => {
     if (!analytics) {
       return null;
     }

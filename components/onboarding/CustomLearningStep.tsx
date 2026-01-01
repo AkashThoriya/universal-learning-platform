@@ -12,7 +12,7 @@
 
 import { motion } from 'framer-motion';
 import { Plus, Target, BookOpen, Trash2, Edit } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

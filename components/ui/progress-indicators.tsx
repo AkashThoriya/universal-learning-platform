@@ -10,8 +10,8 @@
  */
 
 import { CheckCircle, Circle, Clock } from 'lucide-react';
-import React from 'react';
 
+import { Fragment, FC } from 'react';
 import { cn } from '@/lib/utils/utils';
 
 /**
@@ -53,7 +53,7 @@ interface StepProgressIndicatorProps {
  * />
  * ```
  */
-export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
+export const StepProgressIndicator: FC<StepProgressIndicatorProps> = ({
   currentStep,
   totalSteps,
   stepLabels = [],
@@ -142,7 +142,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
           const label = stepLabels[index] || `Step ${step}`;
 
           return (
-            <React.Fragment key={step}>
+            <Fragment key={step}>
               <div className="flex flex-col items-center space-y-2">
                 <div className={getStepClasses(step)}>
                   {showStepNumbers && !['completed'].includes(status) ? (
@@ -172,7 +172,7 @@ export const StepProgressIndicator: React.FC<StepProgressIndicatorProps> = ({
               </div>
 
               {!isLast && <div className={getConnectorClasses(step)} />}
-            </React.Fragment>
+            </Fragment>
           );
         })}
       </div>
@@ -219,7 +219,7 @@ interface CircularProgressProps {
  * />
  * ```
  */
-export const CircularProgress: React.FC<CircularProgressProps> = ({
+export const CircularProgress: FC<CircularProgressProps> = ({
   value,
   size = 'md',
   showPercentage = true,
@@ -334,7 +334,7 @@ interface LinearProgressProps {
  * />
  * ```
  */
-export const LinearProgress: React.FC<LinearProgressProps> = ({
+export const LinearProgress: FC<LinearProgressProps> = ({
   value,
   showPercentage = false,
   height = 'md',

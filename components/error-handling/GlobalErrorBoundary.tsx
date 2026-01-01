@@ -11,7 +11,7 @@
 'use client';
 
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
-import React, { Component, ReactNode } from 'react';
+import { Component, ReactNode } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';

@@ -1,8 +1,8 @@
 'use client';
 
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import React from 'react';
 
+import { Component, ReactNode, ErrorInfo, ComponentType, useCallback } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,13 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
-  errorInfo: React.ErrorInfo | null;
+  errorInfo: ErrorInfo | null;
 }
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback?: React.ComponentType<ErrorFallbackProps>;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+  children: ReactNode;
+  fallback?: ComponentType<ErrorFallbackProps>;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface ErrorFallbackProps {
@@ -88,7 +88,7 @@ function DefaultErrorFallback({ error, resetError, onNavigateHome }: ErrorFallba
 /**
  * Enhanced Error Boundary with better error handling and user experience
  */
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -105,7 +105,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({
       error,
       errorInfo,
@@ -148,7 +148,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
  * Hook for functional components to handle errors
  */
 export function useErrorHandler() {
-  return React.useCallback((error: Error, _errorInfo?: React.ErrorInfo) => {
+  return useCallback((error: Error, _errorInfo?: ErrorInfo) => {
     console.error('Error caught by useErrorHandler:', error);
 
     // In production, send to error reporting service
@@ -211,7 +211,7 @@ export function FeatureErrorBoundary({
   featureName,
   fallbackMessage,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   featureName: string;
   fallbackMessage?: string;
 }) {

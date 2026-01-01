@@ -36,7 +36,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
