@@ -7,10 +7,6 @@
 [![release](https://img.shields.io/badge/release-v0.0.0-lightgrey.svg)](#)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## 🎉 Latest Update (September 2025)
-
-_Last updated: 8 September 2025_
-
 ### ⚖️ Project status
 
 Production-tested and PWA-enabled. See the "Status & verification" section for links to demo, CI and build artifacts.
