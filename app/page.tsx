@@ -149,10 +149,13 @@ export default function HomePage() {
         <nav className="relative z-50 px-6 lg:px-8 py-6">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Target className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold text-gradient">Universal Learning Platform</span>
+              <Target className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
+              <span className="text-lg sm:text-xl font-bold text-gradient">
+                <span className="hidden sm:inline">Universal Learning Platform</span>
+                <span className="sm:hidden">ULP</span>
+              </span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link href="/login">
                 <Button variant="ghost" className="text-sm">
                   Sign In
@@ -407,13 +410,13 @@ export default function HomePage() {
         </section>
 
         {/* Enhanced Testimonials Section */}
-        <section className="py-24 px-6 lg:px-8 relative overflow-hidden">
+        <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20">
             <div className="absolute inset-0 bg-grid-slate-100/30 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/20" />
           </div>
 
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-20">
+            <div className="text-center mb-8 sm:mb-12 md:mb-20">
               <Badge
                 variant="secondary"
                 className="mb-6 px-6 py-3 bg-white/80 backdrop-blur-sm border border-purple-200"
@@ -421,13 +424,13 @@ export default function HomePage() {
                 <Star className="h-4 w-4 mr-2" />
                 Success Stories
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6">
                 Dreams Achieved,{' '}
                 <span className="text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                   Lives Transformed
                 </span>
               </h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-2">
                 Real students, real results. See how our platform has helped thousands of candidates achieve their exam
                 dreams and career aspirations.
               </p>
@@ -522,28 +525,28 @@ export default function HomePage() {
         </section>
 
         {/* Enhanced Features Deep Dive */}
-        <section className="py-24 px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 relative overflow-hidden">
+        <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-slate-100/30 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/20" />
 
           <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-20">
+            <div className="text-center mb-8 sm:mb-12 md:mb-20">
               <Badge variant="secondary" className="mb-6 px-6 py-3 bg-white/80 backdrop-blur-sm border border-blue-200">
                 <Sparkles className="h-4 w-4 mr-2" />
                 Advanced Features
               </Badge>
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6">
                 Everything You Need to{' '}
                 <span className="text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   Ace Your Exam
                 </span>
               </h2>
-              <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed px-2">
                 Discover our comprehensive suite of tools designed to maximize your preparation efficiency and transform
                 your study experience into a strategic journey.
               </p>
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center px-4">
+            <div className="grid xl:grid-cols-2 gap-6 sm:gap-8 xl:gap-12 items-center px-4">
               {/* Feature List */}
               <div className="space-y-8 lg:space-y-10">
                 <div className="flex items-start space-x-4 sm:space-x-6">
@@ -810,8 +813,8 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-12 sm:py-16 px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-6 sm:gap-8">
-              <div className="md:col-span-1">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+              <div className="col-span-2 md:col-span-1">
                 <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                   <Target className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                   <span className="text-base sm:text-lg font-bold">Universal Learning Platform</span>
@@ -859,32 +862,6 @@ export default function HomePage() {
                   <li>
                     <Link href="/community" className="hover:text-white transition-colors">
                       Community
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Company</h4>
-                <ul className="space-y-2 text-xs sm:text-sm text-gray-400">
-                  <li>
-                    <Link href="/about" className="hover:text-white transition-colors">
-                      About
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/blog" className="hover:text-white transition-colors">
-                      Blog
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/careers" className="hover:text-white transition-colors">
-                      Careers
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/privacy" className="hover:text-white transition-colors">
-                      Privacy
                     </Link>
                   </li>
                 </ul>

@@ -286,7 +286,7 @@ export function SyllabusManagementStep({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-semibold">Subjects ({form.data.syllabus.length})</h4>
-          <Button variant="outline" size="default" onClick={onAddSubject} className="flex items-center space-x-1 h-9 md:h-10"> {/* Larger on Tablet */}
+          <Button variant="outline" size="default" onClick={onAddSubject} className="flex items-center space-x-1 h-10"> {/* Larger on Tablet */}
             <Plus className="h-4 w-4" />
             <span>Add Subject</span>
           </Button>

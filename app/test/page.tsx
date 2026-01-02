@@ -354,7 +354,7 @@ export default function AdaptiveTestingPage() {
               <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl text-white">
                 <Brain className="h-8 w-8" />
               </div>
-              <h1 className="text-4xl font-bold text-gray-800">Adaptive Testing</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">Adaptive Testing</h1>
             </motion.div>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Experience personalized assessments that adapt to your knowledge level in real-time, providing efficient
@@ -386,7 +386,7 @@ export default function AdaptiveTestingPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-blue-100 text-sm">Total Tests</p>
-                        <p className="text-3xl font-bold">{stats.totalTests}</p>
+                        <p className="text-2xl sm:text-3xl font-bold">{stats.totalTests}</p>
                       </div>
                       <Target className="h-8 w-8 text-blue-200" />
                     </div>
@@ -398,7 +398,7 @@ export default function AdaptiveTestingPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-green-100 text-sm">Average Score</p>
-                        <p className="text-3xl font-bold">{stats.averageAccuracy.toFixed(1)}%</p>
+                        <p className="text-2xl sm:text-3xl font-bold">{stats.averageAccuracy.toFixed(1)}%</p>
                       </div>
                       <Star className="h-8 w-8 text-green-200" />
                     </div>
@@ -410,7 +410,7 @@ export default function AdaptiveTestingPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-purple-100 text-sm">Questions Answered</p>
-                        <p className="text-3xl font-bold">{stats.totalQuestions}</p>
+                        <p className="text-2xl sm:text-3xl font-bold">{stats.totalQuestions}</p>
                       </div>
                       <BookOpen className="h-8 w-8 text-purple-200" />
                     </div>
@@ -422,7 +422,7 @@ export default function AdaptiveTestingPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-orange-100 text-sm">Time Saved</p>
-                        <p className="text-3xl font-bold">{formatTime(stats.timeSaved)}</p>
+                        <p className="text-2xl sm:text-3xl font-bold">{formatTime(stats.timeSaved)}</p>
                       </div>
                       <Clock className="h-8 w-8 text-orange-200" />
                     </div>

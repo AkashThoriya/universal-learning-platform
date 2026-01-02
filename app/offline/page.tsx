@@ -101,7 +101,7 @@ export default function OfflinePage() {
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-slate-900">You're Offline</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">You're Offline</h1>
             <p className="text-slate-600 max-w-md mx-auto">
               No internet connection detected. Don't worry - you can still access many features!
             </p>

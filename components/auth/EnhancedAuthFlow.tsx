@@ -1,6 +1,6 @@
 'use client';
 
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Shield, CheckCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -110,13 +110,18 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     setError('');
 
     try {
-      // Check if user exists by attempting to sign in with a dummy password
-      // This is a simplified approach - in production, you'd use a dedicated API
-      const MOCK_USER_EXISTS_PROBABILITY = 0.5;
-      setIsNewUser(Math.random() > MOCK_USER_EXISTS_PROBABILITY); // Simulated for demo
+      // Check if user exists by checking sign-in methods for this email
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      // If signInMethods array is empty, user doesn't exist (new user)
+      // If it has methods, user exists (returning user)
+      setIsNewUser(signInMethods.length === 0);
       setCurrentStep('password');
-    } catch (_err) {
-      setError('Failed to verify email. Please try again.');
+    } catch (err) {
+      console.error('Email verification error:', err);
+      // If error occurs, still proceed but assume new user for safety
+      // This handles edge cases like email enumeration protection
+      setIsNewUser(true);
+      setCurrentStep('password');
     } finally {
       setLoading(false);
     }

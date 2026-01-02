@@ -263,7 +263,7 @@ export default function JourneyPlanningPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-blue-600 mb-1">Total Journeys</p>
-                      <p className="text-3xl font-bold text-blue-900">{stats.total}</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-blue-900">{stats.total}</p>
                     </div>
                     <div className="p-3 rounded-full bg-blue-500/10">
                       <BookOpen className="h-6 w-6 text-blue-600" />
@@ -277,7 +277,7 @@ export default function JourneyPlanningPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-green-600 mb-1">Active</p>
-                      <p className="text-3xl font-bold text-green-900">{stats.active}</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-green-900">{stats.active}</p>
                     </div>
                     <div className="p-3 rounded-full bg-green-500/10">
                       <Target className="h-6 w-6 text-green-600" />
@@ -291,7 +291,7 @@ export default function JourneyPlanningPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-purple-600 mb-1">Completed</p>
-                      <p className="text-3xl font-bold text-purple-900">{stats.completed}</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-purple-900">{stats.completed}</p>
                     </div>
                     <div className="p-3 rounded-full bg-purple-500/10">
                       <Trophy className="h-6 w-6 text-purple-600" />
@@ -305,7 +305,7 @@ export default function JourneyPlanningPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-yellow-600 mb-1">Planning</p>
-                      <p className="text-3xl font-bold text-yellow-900">{stats.planning}</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-yellow-900">{stats.planning}</p>
                     </div>
                     <div className="p-3 rounded-full bg-yellow-500/10">
                       <Clock className="h-6 w-6 text-yellow-600" />

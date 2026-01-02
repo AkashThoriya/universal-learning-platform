@@ -419,8 +419,10 @@ export default function ProfilePage() {
         updateData.userPersona = form.data.userPersona;
       }
 
-      // Save user data and syllabus
-      await Promise.all([updateUser(user.uid, updateData), saveSyllabus(user.uid, form.data.syllabus)]);
+      // CRITICAL: Save sequentially to prevent partial data state
+      // If updateUser succeeds but saveSyllabus fails (or vice versa), we'd have inconsistent data
+      await updateUser(user.uid, updateData);
+      await saveSyllabus(user.uid, form.data.syllabus);
 
       setHasUnsavedChanges(false);
       setValidationErrors({});

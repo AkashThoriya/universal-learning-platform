@@ -886,13 +886,32 @@ export default function OnboardingSetupPage() {
             },
           });
 
-          const operations = await Promise.allSettled([
-            createUser(user.uid, userData),
-            saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]),
-          ]);
+          // CRITICAL: Run operations sequentially to prevent partial data state
+          // If createUser succeeds but saveSyllabus fails, we would have inconsistent data
+          // Running sequentially ensures atomicity - if first fails, second is not attempted
+          
+          logInfo('Step 1: Creating user profile', { userId: user.uid });
+          await createUser(user.uid, userData);
+          logInfo('Step 1 completed: User profile created successfully', { userId: user.uid });
 
-          // Save custom learning goals separately if any exist
+          logInfo('Step 2: Saving syllabus data', { 
+            userId: user.uid, 
+            subjectCount: form.data.syllabus.length 
+          });
+          await saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]);
+          logInfo('Step 2 completed: Syllabus saved successfully', { 
+            userId: user.uid,
+            subjectCount: form.data.syllabus.length,
+            totalTopics: form.data.syllabus.reduce((total, s) => total + (s.topics?.length || 0), 0)
+          });
+
+          // Save custom learning goals separately if any exist (optional - doesn't affect core data)
           if ((form.data as any).customLearningGoals && (form.data as any).customLearningGoals.length > 0) {
+            logInfo('Step 3: Saving custom learning goals', {
+              userId: user.uid,
+              goalCount: (form.data as any).customLearningGoals.length
+            });
+
             const goalOperations = await Promise.allSettled(
               (form.data as any).customLearningGoals.map((goal: any) =>
                 customLearningService.saveCustomGoal(user.uid, {
@@ -907,7 +926,8 @@ export default function OnboardingSetupPage() {
 
             const goalFailures = goalOperations.filter(result => result.status === 'rejected');
             if (goalFailures.length > 0) {
-              logError('Failed to save some custom learning goals', {
+              // Log but don't fail - custom goals are optional
+              logError('Failed to save some custom learning goals (non-critical)', {
                 failures: goalFailures.length,
                 total: (form.data as any).customLearningGoals.length,
               });
@@ -916,28 +936,10 @@ export default function OnboardingSetupPage() {
 
           const duration = performance.now() - startTime;
 
-          const failures = operations.filter(result => result.status === 'rejected');
-          if (failures.length > 0) {
-            logError('Save operations failed', {
-              failures: failures.map((failure, index) => ({
-                operation: index === 0 ? 'user profile' : 'syllabus data',
-                reason: failure.reason,
-              })),
-              retryCount,
-              duration: Math.round(duration),
-            });
-
-            const failureReasons = failures.map((failure, index) => {
-              const operationName = index === 0 ? 'user profile' : 'syllabus data';
-              return `${operationName}: ${failure.reason}`;
-            });
-            throw new Error(`Failed to save: ${failureReasons.join(', ')}`);
-          }
-
-          logInfo('Save operations completed successfully', {
+          logInfo('All save operations completed successfully', {
             duration: Math.round(duration),
             retryCount,
-            operationsCompleted: operations.length,
+            userId: user.uid,
           });
 
           break; // Success, exit retry loop

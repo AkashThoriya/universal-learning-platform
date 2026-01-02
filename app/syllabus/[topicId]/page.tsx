@@ -266,7 +266,7 @@ export default function TopicDetailPage() {
         <Navigation />
         <BottomNav />
         <PageTransition>
-          <div className="max-w-5xl mx-auto p-6 pb-20 xl:pb-6 space-y-6">
+          <div className="max-w-5xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-6">
 
 
 
@@ -286,7 +286,7 @@ export default function TopicDetailPage() {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <BookOpen className="h-6 w-6 text-blue-600" />
-                    <h1 className="text-3xl font-bold text-gray-900">{topic.name}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{topic.name}</h1>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Badge variant="outline">{subject.name}</Badge>

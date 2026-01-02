@@ -266,9 +266,15 @@ export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[]) 
         // Create user-specific subject data with topic status tracking
         const userSubjectData = {
           ...subject,
+          order: syllabus.indexOf(subject), // Preserve subject order
           userId, // Add user reference
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
+          // Store topics with order index
+          topics: subject.topics?.map((topic, topicIndex) => ({
+            ...topic,
+            order: topicIndex, // Preserve topic order
+          })) ?? [],
           // Initialize topic status tracking for each topic
           topicStatus:
             subject.topics?.reduce(
@@ -445,10 +451,20 @@ export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> =>
   const syllabusRef = collection(db, 'users', userId, 'syllabus');
   const syllabusSnap = await getDocs(syllabusRef);
 
-  return syllabusSnap.docs.map(doc => ({
+  const subjects = syllabusSnap.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as SyllabusSubject[];
+
+  // Sort subjects by order, then topics by order within each subject
+  return subjects
+    .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+    .map(subject => ({
+      ...subject,
+      topics: subject.topics
+        ?.sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+        ?? [],
+    }));
 };
 
 // Progress Tracking
@@ -472,29 +488,44 @@ export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> =>
  * ```
  */
 export const updateTopicProgress = async (userId: string, topicId: string, updates: Partial<TopicProgress>) => {
-  const progressRef = doc(db, 'users', userId, 'progress', topicId);
-  const progressSnap = await getDoc(progressRef);
+  try {
+    const progressRef = doc(db, 'users', userId, 'progress', topicId);
+    const progressSnap = await getDoc(progressRef);
 
-  if (progressSnap.exists()) {
-    await updateDoc(progressRef, updates);
-  } else {
-    // Create new progress entry
-    await setDoc(progressRef, {
-      id: topicId,
+    if (progressSnap.exists()) {
+      await updateDoc(progressRef, updates);
+    } else {
+      // Create new progress entry
+      await setDoc(progressRef, {
+        id: topicId,
+        topicId,
+        masteryScore: 0,
+        lastRevised: Timestamp.now(),
+        nextRevision: Timestamp.now(),
+        revisionCount: 0,
+        totalStudyTime: 0,
+        userNotes: '',
+        personalContext: '',
+        tags: [],
+        difficulty: 3,
+        importance: 3,
+        lastScoreImprovement: 0,
+        ...updates,
+      });
+    }
+
+    logInfo('Topic progress updated', {
+      userId,
       topicId,
-      masteryScore: 0,
-      lastRevised: Timestamp.now(),
-      nextRevision: Timestamp.now(),
-      revisionCount: 0,
-      totalStudyTime: 0,
-      userNotes: '',
-      personalContext: '',
-      tags: [],
-      difficulty: 3,
-      importance: 3,
-      lastScoreImprovement: 0,
-      ...updates,
+      updateFields: Object.keys(updates),
     });
+  } catch (error) {
+    logError('Failed to update topic progress', {
+      userId,
+      topicId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    throw error;
   }
 };
 
@@ -638,11 +669,26 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
  * ```
  */
 export const saveDailyLog = async (userId: string, log: DailyLog) => {
-  const logRef = doc(db, 'users', userId, 'logs_daily', log.id);
-  await setDoc(logRef, log);
+  try {
+    const logRef = doc(db, 'users', userId, 'logs_daily', log.id);
+    await setDoc(logRef, log);
 
-  // Update user stats
-  await updateUserStats(userId, log);
+    // Update user stats
+    await updateUserStats(userId, log);
+
+    logInfo('Daily log saved', {
+      userId,
+      logId: log.id,
+      studiedTopicsCount: log.studiedTopics?.length ?? 0,
+    });
+  } catch (error) {
+    logError('Failed to save daily log', {
+      userId,
+      logId: log.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    throw error;
+  }
 };
 
 /**
@@ -722,11 +768,27 @@ export const getRecentDailyLogs = async (userId: string, days = 30): Promise<Dai
  * ```
  */
 export const saveMockTest = async (userId: string, test: MockTestLog) => {
-  const testRef = doc(db, 'users', userId, 'logs_mocks', test.id);
-  await setDoc(testRef, test);
+  try {
+    const testRef = doc(db, 'users', userId, 'logs_mocks', test.id);
+    await setDoc(testRef, test);
 
-  // Update mastery scores based on test performance
-  await updateMasteryScoresFromTest(userId, test);
+    // Update mastery scores based on test performance
+    await updateMasteryScoresFromTest(userId, test);
+
+    logInfo('Mock test saved', {
+      userId,
+      testId: test.id,
+      platform: test.platform,
+      testName: test.testName,
+    });
+  } catch (error) {
+    logError('Failed to save mock test', {
+      userId,
+      testId: test.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    throw error;
+  }
 };
 
 /**
@@ -932,50 +994,68 @@ export const subscribeToRevisionQueue = (userId: string, callback: (items: Revis
     limit(20)
   );
 
-  return onSnapshot(revisionQuery, async snapshot => {
-    const syllabus = await getSyllabus(userId);
-    const items = snapshot.docs.map(doc => {
-      const progress = doc.data() as TopicProgress;
-      const subject = syllabus.find(s => s.topics.some(t => t.id === progress.topicId));
-      const topic = subject?.topics.find(t => t.id === progress.topicId);
+  return onSnapshot(
+    revisionQuery,
+    async snapshot => {
+      const syllabus = await getSyllabus(userId);
+      const items = snapshot.docs.map(doc => {
+        const progress = doc.data() as TopicProgress;
+        const subject = syllabus.find(s => s.topics.some(t => t.id === progress.topicId));
+        const topic = subject?.topics.find(t => t.id === progress.topicId);
 
-      const daysSinceLastRevision = Math.floor(
-        (today.toMillis() - progress.lastRevised.toMillis()) / (1000 * 60 * 60 * 24)
-      );
+        const daysSinceLastRevision = Math.floor(
+          (today.toMillis() - progress.lastRevised.toMillis()) / (1000 * 60 * 60 * 24)
+        );
 
-      let priority: 'overdue' | 'due_today' | 'due_soon' | 'scheduled' = 'scheduled';
-      if (daysSinceLastRevision > 1) {
-        priority = 'overdue';
-      } else if (daysSinceLastRevision === 1) {
-        priority = 'due_today';
-      } else {
-        priority = 'due_soon';
-      }
+        let priority: 'overdue' | 'due_today' | 'due_soon' | 'scheduled' = 'scheduled';
+        if (daysSinceLastRevision > 1) {
+          priority = 'overdue';
+        } else if (daysSinceLastRevision === 1) {
+          priority = 'due_today';
+        } else {
+          priority = 'due_soon';
+        }
 
-      return {
-        topicId: progress.topicId,
-        topicName: topic?.name ?? 'Unknown Topic',
-        subjectName: subject?.name ?? 'Unknown Subject',
-        tier: subject?.tier ?? 3,
-        masteryScore: progress.masteryScore,
-        daysSinceLastRevision,
-        priority,
-        estimatedTime: topic?.estimatedHours ? topic.estimatedHours * 60 : 30,
-        lastRevised: progress.lastRevised,
-        nextRevision: progress.nextRevision,
-      } as RevisionItem;
-    });
+        return {
+          topicId: progress.topicId,
+          topicName: topic?.name ?? 'Unknown Topic',
+          subjectName: subject?.name ?? 'Unknown Subject',
+          tier: subject?.tier ?? 3,
+          masteryScore: progress.masteryScore,
+          daysSinceLastRevision,
+          priority,
+          estimatedTime: topic?.estimatedHours ? topic.estimatedHours * 60 : 30,
+          lastRevised: progress.lastRevised,
+          nextRevision: progress.nextRevision,
+        } as RevisionItem;
+      });
 
-    callback(items);
-  });
+      callback(items);
+    },
+    error => {
+      logError('Subscription error in subscribeToRevisionQueue', {
+        userId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  );
 };
 
 export const subscribeToUserStats = (userId: string, callback: (user: User) => void) => {
   const userRef = doc(db, 'users', userId);
 
-  return onSnapshot(userRef, doc => {
-    if (doc.exists()) {
-      callback({ userId, ...doc.data() } as User);
+  return onSnapshot(
+    userRef,
+    doc => {
+      if (doc.exists()) {
+        callback({ userId, ...doc.data() } as User);
+      }
+    },
+    error => {
+      logError('Subscription error in subscribeToUserStats', {
+        userId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
     }
-  });
+  );
 };

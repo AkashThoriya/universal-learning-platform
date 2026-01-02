@@ -67,28 +67,29 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Back to Home */}
-      <div className="absolute top-6 left-6 z-10">
+      <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20">
         <Link href="/">
-          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+          <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 h-10">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
+            <span className="hidden sm:inline">Back to Home</span>
           </Button>
         </Link>
       </div>
 
-      <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="flex items-center justify-center min-h-screen px-4 py-16 sm:py-12">
         <PageTransition>
-          <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
+          <div className="w-full max-w-6xl grid xl:grid-cols-2 gap-8 xl:gap-12 items-center">
 
-          <div className="space-y-8 text-center lg:text-left">
+          {/* Left side - Features (Hidden on Mobile/Tablet, visible on xl+ / 1280px+) */}
+          <div className="hidden xl:block space-y-8 text-left">
             <div className="space-y-4">
-              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
+              <h1 className="text-4xl xl:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
                 Exam Strategy Engine
               </h1>
               <p className="text-xl text-gray-600 leading-relaxed">
                 Universal Strategic Platform for Competitive Exam Success
               </p>
-              <div className="flex items-center justify-center lg:justify-start space-x-2 text-sm text-gray-500">
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <Shield className="h-4 w-4" />
                 <span>Trusted by 10,000+ successful candidates</span>
               </div>
@@ -110,7 +111,7 @@ export default function LoginPage() {
 
             {/* Trust Indicators */}
             <div className="pt-6 border-t border-gray-200">
-              <div className="flex items-center justify-center lg:justify-start space-x-6 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-500">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full" />
                   <span>99.9% Uptime</span>
@@ -127,8 +128,33 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Right side - Enhanced Auth Form */}
-          <div className="w-full max-w-md mx-auto lg:mx-0">
+          {/* Right side - Auth Form (Full width on mobile/tablet, constrained on desktop) */}
+          <div className="w-full max-w-md mx-auto">
+            {/* Header - Visible on mobile and tablet (hidden on xl+) */}
+            <div className="xl:hidden text-center mb-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
+                Exam Strategy Engine
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600 max-w-sm mx-auto">
+                Universal Strategic Platform for Competitive Exam Success
+              </p>
+              {/* Compact Trust Badges for Tablet */}
+              <div className="hidden sm:flex xl:hidden items-center justify-center gap-4 mt-4 text-xs text-gray-500">
+                <div className="flex items-center space-x-1.5">
+                  <Shield className="h-3.5 w-3.5 text-blue-500" />
+                  <span>Secure</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                  <span>99.9% Uptime</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full" />
+                  <span>GDPR Compliant</span>
+                </div>
+              </div>
+            </div>
+
             <EnhancedAuthFlow />
 
             {/* Additional Options */}
@@ -138,7 +164,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-gray-200" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
+                  <span className="px-3 bg-blue-50/80 text-gray-500 text-xs sm:text-sm">Or continue with</span>
                 </div>
               </div>
 
@@ -146,11 +172,16 @@ export default function LoginPage() {
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{googleError}</div>
               )}
 
-              <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isGoogleLoading}>
+              <Button 
+                variant="outline" 
+                className="w-full h-12 text-base active:scale-[0.98] transition-transform" 
+                onClick={handleGoogleSignIn} 
+                disabled={isGoogleLoading}
+              >
                 {isGoogleLoading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                 ) : (
-                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                     <path
                       fill="currentColor"
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -174,17 +205,35 @@ export default function LoginPage() {
             </div>
 
             {/* Legal Links */}
-            <div className="mt-6 text-center text-xs text-gray-500 space-y-2">
+            <div className="mt-6 text-center text-xs text-gray-500">
               <p>
                 By continuing, you agree to our{' '}
                 <Link href="/terms" className="text-blue-600 hover:text-blue-700 underline">
-                  Terms of Service
+                  Terms
                 </Link>{' '}
                 and{' '}
                 <Link href="/privacy" className="text-blue-600 hover:text-blue-700 underline">
                   Privacy Policy
                 </Link>
               </p>
+            </div>
+
+            {/* Mobile-only Trust Indicators (hidden on sm+) */}
+            <div className="sm:hidden mt-6 pt-4 border-t border-gray-200">
+              <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-gray-500">
+                <div className="flex items-center space-x-1">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                  <span>99.9% Uptime</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                  <span>Secure</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full" />
+                  <span>GDPR</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

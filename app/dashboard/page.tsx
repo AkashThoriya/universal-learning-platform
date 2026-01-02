@@ -23,7 +23,7 @@ export default function Dashboard() {
         <Navigation />
         <BottomNav />
         {/* <PWAInstallBanner variant="inline" /> */}
-        <PageTransition className="max-w-7xl mx-auto p-4 sm:p-6 pb-20 xl:pb-6">
+        <PageTransition className="max-w-7xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6">
           <AdaptiveDashboard />
         </PageTransition>
       </div>
