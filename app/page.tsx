@@ -685,7 +685,7 @@ export default function HomePage() {
         </section>
 
         {/* Free Platform Section - Seamless continuation */}
-        <section className="py-20 sm:py-24 px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-800 relative overflow-hidden">
+        <section className="py-12 sm:py-20 md:py-24 px-6 lg:px-8 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-800 relative overflow-hidden">
           {/* Subtle pattern overlay */}
           <div className="absolute inset-0 bg-grid-slate-100/20 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/10" />
 
@@ -746,7 +746,7 @@ export default function HomePage() {
         </section>
 
         {/* Enhanced Final CTA Section - Natural Flow */}
-        <section className="py-20 sm:py-24 px-6 lg:px-8 relative overflow-hidden">
+        <section className="py-12 sm:py-20 md:py-24 px-6 lg:px-8 relative overflow-hidden">
           {/* Seamless gradient evolution from previous section */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-100 to-purple-100 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900">
             <div className="absolute inset-0 bg-grid-slate-100/30 [mask-image:radial-gradient(ellipse_at_center,white,transparent)] dark:bg-grid-slate-700/20" />

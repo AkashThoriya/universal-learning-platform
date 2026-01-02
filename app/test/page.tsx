@@ -26,12 +26,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
 import PageTransition from '@/components/layout/PageTransition';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import { cn } from '@/lib/utils/utils';
 
 interface TestOverviewStats {
@@ -434,11 +436,13 @@ export default function AdaptiveTestingPage() {
 
           {/* Main Content */}
           <Tabs defaultValue="tests" className="space-y-6 min-h-[60vh]">
-            <TabsList className="flex w-full overflow-x-auto no-scrollbar pb-1 md:grid md:grid-cols-3">
-              <TabsTrigger value="tests" className="flex-shrink-0">My Tests</TabsTrigger>
-              <TabsTrigger value="analytics" className="flex-shrink-0">Analytics</TabsTrigger>
-              <TabsTrigger value="recommendations" className="flex-shrink-0">Recommendations</TabsTrigger>
-            </TabsList>
+            <ScrollableTabsList>
+              <TabsList className="flex w-full md:grid md:grid-cols-3">
+                <TabsTrigger value="tests" className="flex-shrink-0 snap-start">My Tests</TabsTrigger>
+                <TabsTrigger value="analytics" className="flex-shrink-0 snap-start">Analytics</TabsTrigger>
+                <TabsTrigger value="recommendations" className="flex-shrink-0 snap-start">Recommendations</TabsTrigger>
+              </TabsList>
+            </ScrollableTabsList>
 
             <TabsContent value="tests" className="space-y-6">
               {/* Controls */}
@@ -539,15 +543,15 @@ export default function AdaptiveTestingPage() {
                   ))}
                 </motion.div>
               ) : (
-                <Card className="border-dashed border-2 border-gray-300">
-                  <CardContent className="p-12 text-center">
-                    <Brain className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">No tests found</h3>
-                    <p className="text-gray-500 mb-6">
-                      {searchQuery || filterStatus !== 'all' || filterSubject !== 'all'
-                        ? 'Try adjusting your search or filters'
-                        : 'Create your first adaptive test to get started'}
-                    </p>
+                <EmptyState
+                  icon={Brain}
+                  title="No tests found"
+                  description={
+                    searchQuery || filterStatus !== 'all' || filterSubject !== 'all'
+                      ? 'Try adjusting your search or filters'
+                      : 'Create your first adaptive test to get started'
+                  }
+                  action={
                     <Button
                       onClick={generateRecommendedTest}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -555,8 +559,8 @@ export default function AdaptiveTestingPage() {
                       <Plus className="h-4 w-4 mr-2" />
                       Generate Smart Test
                     </Button>
-                  </CardContent>
-                </Card>
+                  }
+                />
               )}
             </TabsContent>
 
@@ -570,10 +574,12 @@ export default function AdaptiveTestingPage() {
                   <CardDescription>Comprehensive analysis of your adaptive testing performance</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 text-gray-500">
-                    <TrendingUp className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p>Complete some tests to see your analytics</p>
-                  </div>
+                  <EmptyState
+                    icon={TrendingUp}
+                    title="No analytics yet"
+                    description="Complete some tests to see your performance analytics"
+                    className="border-0 bg-transparent"
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -588,17 +594,21 @@ export default function AdaptiveTestingPage() {
                   <CardDescription>AI-powered test recommendations based on your learning journey</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12 text-gray-500">
-                    <Zap className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                    <p className="mb-4">Complete your profile setup to get personalized recommendations</p>
-                    <Button
-                      onClick={generateRecommendedTest}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    >
-                      <Zap className="h-4 w-4 mr-2" />
-                      Generate Smart Test
-                    </Button>
-                  </div>
+                  <EmptyState
+                    icon={Zap}
+                    title="No recommendations yet"
+                    description="Complete your profile setup to get personalized recommendations"
+                    className="border-0 bg-transparent"
+                    action={
+                      <Button
+                        onClick={generateRecommendedTest}
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      >
+                        <Zap className="h-4 w-4 mr-2" />
+                        Generate Smart Test
+                      </Button>
+                    }
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

@@ -23,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { journeyService } from '@/lib/services/journey-service';
 import { cn } from '@/lib/utils/utils';
@@ -426,11 +427,11 @@ export default function JourneyPlanningPage() {
                 </Card>
               ) : (
                 // No results from search/filter
-                <Card>
-                  <CardContent className="pt-8 pb-8 text-center">
-                    <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Journeys Found</h3>
-                    <p className="text-gray-600 mb-4">No journeys match your current search or filter criteria.</p>
+                <EmptyState
+                  icon={Search}
+                  title="No Journeys Found"
+                  description="No journeys match your current search or filter criteria."
+                  action={
                     <Button
                       variant="outline"
                       onClick={() => {
@@ -440,8 +441,8 @@ export default function JourneyPlanningPage() {
                     >
                       Clear Filters
                     </Button>
-                  </CardContent>
-                </Card>
+                  }
+                />
               )}
             </div>
 

@@ -8,6 +8,7 @@ import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { logInfo } from '@/lib/utils/logger';
 import PageTransition from '@/components/layout/PageTransition';
+import PageContainer from '@/components/layout/PageContainer';
 
 export default function Dashboard() {
   useEffect(() => {
@@ -22,10 +23,11 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         <BottomNav />
-        {/* <PWAInstallBanner variant="inline" /> */}
-        <PageTransition className="max-w-7xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6">
-          <AdaptiveDashboard />
-        </PageTransition>
+        <PageContainer>
+          <PageTransition>
+            <AdaptiveDashboard />
+          </PageTransition>
+        </PageContainer>
       </div>
     </AuthGuard>
   );
