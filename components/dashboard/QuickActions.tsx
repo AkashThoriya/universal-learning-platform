@@ -5,6 +5,7 @@ import { Sparkles, LucideIcon } from 'lucide-react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 
 interface QuickAction {
   title: string;
@@ -27,7 +28,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
         <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
         Recommended Actions
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <MobileScrollGrid className="gap-4">
         {actions.map((action, index) => {
           const IconComponent = action.icon;
           const ANIMATION_DELAY_INCREMENT = 0.1;
@@ -37,6 +38,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: ANIMATION_DELAY_INCREMENT * index }}
+              className="min-w-[280px] h-full"
             >
               <Card 
                 className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 h-full"
@@ -72,7 +74,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
             </motion.div>
           );
         })}
-      </div>
+      </MobileScrollGrid>
     </motion.div>
   );
 }

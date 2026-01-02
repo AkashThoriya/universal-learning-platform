@@ -1,7 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 
@@ -18,8 +19,8 @@ interface Achievement {
 }
 
 interface WelcomeHeaderProps {
-  user: any; // Using any to match existing usage in AdaptiveDashboard, ideally strictly typed
-  motivationalMessage: string;
+  user: any;
+  timeOfDay?: 'morning' | 'afternoon' | 'evening' | 'night';
   recentAchievements: Achievement[];
   onDismissAchievement: () => void;
   onViewAllAchievements: () => void;
@@ -27,11 +28,50 @@ interface WelcomeHeaderProps {
 
 export function WelcomeHeader({
   user,
-  motivationalMessage,
+  timeOfDay = 'morning',
   recentAchievements,
   onDismissAchievement,
   onViewAllAchievements
 }: WelcomeHeaderProps) {
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+
+  const messages = {
+    morning: [
+      `Good morning! Ready to make today count? ☀️`,
+      'Morning champion! Your brain is fresh and ready! 🧠',
+      'Rise and shine! Another day of progress awaits! 🌅',
+      'Start your day with a win! 🏆',
+    ],
+    afternoon: [
+      `Afternoon power session! Keep the streak alive! 🔥`,
+      'Perfect time for a focused study session! 📚',
+      "Afternoon energy boost - let's keep going! ⚡",
+      'Halfway through the day, stay strong! 💪',
+    ],
+    evening: [
+      `Evening reflection time! You're doing great! 🌟`,
+      'Wind down with some light review! 🌙',
+      'Evening learning session - the best way to end! 🌆',
+      'Consolidate your knowledge before sleep! 🧠',
+    ],
+    night: [
+      'Night owl studying? Make sure to rest too! 🦉',
+      "Late-night sessions can be productive! 🌃",
+      'Burning the midnight oil? Consistency wins! 💡',
+      'Great work today, rest up for tomorrow! 😴',
+    ],
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentMessageIndex((prev) => prev + 1);
+    }, 15000); // Change every 15 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const currentMessages = messages[timeOfDay] || messages.morning;
+  const activeMessage = currentMessages[currentMessageIndex % currentMessages.length];
   
 
 
@@ -47,11 +87,48 @@ export function WelcomeHeader({
 
   return (
     <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center lg:text-left">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-           {`Welcome back, ${user?.displayName?.split(' ')[0] || 'Champion'}! 👋`}
-        </h1>
-        <p className="text-lg text-gray-600">{motivationalMessage}</p>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white shadow-lg mx-1"
+      >
+        {/* Abstract Background Shapes for Visual Texture */}
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold md:text-3xl mb-2 flex items-center gap-2">
+              {`Welcome back, ${user?.displayName?.split(' ')[0] || 'Champion'}!`}
+              <span className="animate-wave inline-block origin-bottom-right">👋</span>
+            </h1>
+            
+            <div className="relative min-h-[1.5rem] min-w-[200px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMessage}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex items-start gap-2 text-blue-100 font-medium"
+                >
+                  <div className="flex h-5 md:h-6 items-center flex-shrink-0">
+                    <span className="bg-white/20 p-1 rounded-full text-xs">💡</span>
+                  </div>
+                  <p className="text-sm md:text-base whitespace-normal break-words">
+                    {activeMessage}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+          
+          {/* Optional: Add a subtle 'Date/Streak' indicator if needed in future */}
+          {/* <div className="hidden md:block bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm">
+             <span className="text-sm font-semibold">Ready to learn? 🚀</span> 
+          </div> */}
+        </div>
       </motion.div>
 
       {/* Celebration Alert for Achievements */}

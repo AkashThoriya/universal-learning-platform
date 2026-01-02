@@ -369,7 +369,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* Main Content Tabs */}
-          <Tabs defaultValue="notes" className="space-y-6">
+          <Tabs defaultValue="notes" className="space-y-6 min-h-[50vh]">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="notes" className="flex items-center space-x-2">
                 <FileText className="h-4 w-4" />

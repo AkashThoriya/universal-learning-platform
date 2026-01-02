@@ -433,7 +433,7 @@ export default function AdaptiveTestingPage() {
           )}
 
           {/* Main Content */}
-          <Tabs defaultValue="tests" className="space-y-6">
+          <Tabs defaultValue="tests" className="space-y-6 min-h-[60vh]">
             <TabsList className="flex w-full overflow-x-auto no-scrollbar pb-1 md:grid md:grid-cols-3">
               <TabsTrigger value="tests" className="flex-shrink-0">My Tests</TabsTrigger>
               <TabsTrigger value="analytics" className="flex-shrink-0">Analytics</TabsTrigger>

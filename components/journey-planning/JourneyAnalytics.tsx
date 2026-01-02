@@ -214,11 +214,11 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
 
       {/* Charts and Analytics */}
       <Tabs defaultValue="progress" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="progress">Progress</TabsTrigger>
-          <TabsTrigger value="goals">Goals</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
-          <TabsTrigger value="comparison">Comparison</TabsTrigger>
+        <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-4 p-1 bg-muted/50 rounded-xl"> {/* Added bg and rounded */}
+          <TabsTrigger value="progress" className="snap-start flex-1 min-w-[100px]">Progress</TabsTrigger> {/* Added snap-start */}
+          <TabsTrigger value="goals" className="snap-start flex-1 min-w-[100px]">Goals</TabsTrigger>
+          <TabsTrigger value="insights" className="snap-start flex-1 min-w-[100px]">Insights</TabsTrigger>
+          <TabsTrigger value="comparison" className="snap-start flex-1 min-w-[100px]">Comparison</TabsTrigger>
         </TabsList>
 
         <TabsContent value="progress" className="space-y-4">
@@ -385,7 +385,7 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
                           ) : (
                             <div className="h-4 w-4 rounded-full border-2 border-gray-300" />
                           )}
-                          <span className="text-sm font-medium truncate">{goal.title}</span>
+                          <span className="text-sm font-medium break-words">{goal.title}</span>
                         </div>
                         <span className="text-sm text-gray-500">{Math.round(progress)}%</span>
                       </div>

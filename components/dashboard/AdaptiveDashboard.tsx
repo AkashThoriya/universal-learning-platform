@@ -27,6 +27,7 @@ import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalytics
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
 import { QuickActions } from '@/components/dashboard/QuickActions';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -248,7 +249,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   });
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [motivationalMessage, setMotivationalMessage] = useState('');
+
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning');
   const [customGoals, setCustomGoals] = useState<any[]>([]);
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
@@ -306,7 +307,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               journeyMilestones: 0,
             });
             setRecentAchievements([]);
-            setMotivationalMessage(getMotivationalMessage(timeOfDay, 0));
+
             setIsLoading(false);
             return;
           }
@@ -468,7 +469,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           setStats(realStats);
           setRecentAchievements(finalAchievements);
-          setMotivationalMessage(getMotivationalMessage(timeOfDay, realStats.currentStreak));
+
 
           logInfo('Dashboard data loaded successfully', {
             userId: user?.uid ?? 'no-user',
@@ -501,7 +502,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           };
           setStats(fallbackStats);
           setRecentAchievements([]);
-          setMotivationalMessage(getMotivationalMessage(timeOfDay, 0));
+
         } finally {
           setIsLoading(false);
         }
@@ -511,33 +512,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     loadDashboardData();
   }, [timeOfDay, user?.uid]);
 
-  const getMotivationalMessage = (timeOfDay: string, streak: number): string => {
-    const messages = {
-      morning: [
-        `Good morning! Ready to make day ${streak + 1} count? ☀️`,
-        'Morning champion! Your brain is fresh and ready to learn! 🧠',
-        'Rise and shine! Another day of progress awaits! 🌅',
-      ],
-      afternoon: [
-        `Afternoon power session time! You're on a ${streak}-day streak! 🔥`,
-        'Perfect time for a focused study session! 📚',
-        "Afternoon energy boost - let's keep the momentum going! ⚡",
-      ],
-      evening: [
-        `Evening reflection time! You've maintained a ${streak}-day streak! 🌟`,
-        'Wind down with some light review - every bit counts! 🌙',
-        'Evening learning session - the best way to end your day! 🌆',
-      ],
-      night: [
-        'Night owl studying? Make sure to get enough rest too! 🦉',
-        "Late-night sessions can be productive - just don't overdo it! 🌃",
-        'Burning the midnight oil? Remember, consistency beats intensity! 💡',
-      ],
-    };
 
-    const timeMessages = messages[timeOfDay as keyof typeof messages] || messages.morning;
-    return timeMessages[Math.floor(Math.random() * timeMessages.length)] || 'Ready to continue your learning journey!';
-  };
 
   const quickActions: QuickAction[] = [
     {
@@ -681,7 +656,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       {/* Personalized Welcome Header & Achievements */}
       <WelcomeHeader 
         user={user}
-        motivationalMessage={motivationalMessage}
+        timeOfDay={timeOfDay}
         recentAchievements={recentAchievements}
         onDismissAchievement={() => setRecentAchievements([])}
         onViewAllAchievements={() => setRecentAchievements([])}
@@ -695,24 +670,24 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           transition={{ delay: 0.3 }}
           className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 border border-indigo-200 rounded-lg p-6"
         >
-          <div className="flex items-start justify-between mb-4">
-            <div>
+          <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
+            <div className="flex-1 min-w-0">
               <h2 className="text-xl font-semibold text-indigo-900 mb-2">📚 Your Selected Exam: {selectedExam.name}</h2>
-              <p className="text-indigo-700 mb-1">{selectedExam.description}</p>
+              <p className="text-indigo-700 mb-2 line-clamp-2">{selectedExam.description}</p>
               <Badge variant="outline" className="text-indigo-600 border-indigo-300">
                 {selectedExam.category}
               </Badge>
             </div>
             {todayRecommendations.examDaysLeft !== undefined && (
-              <div className="text-right shrink-0 ml-4">
+              <div className="flex items-center md:flex-col md:items-end gap-2 md:gap-0 md:text-right shrink-0">
                 <div className="text-2xl font-bold text-indigo-900 leading-tight">{todayRecommendations.examDaysLeft}</div>
                 <div className="text-sm text-indigo-600 leading-tight">days left</div>
               </div>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+          <MobileScrollGrid className="mt-4 gap-4">
+            <Card className="border-0 bg-white/60 backdrop-blur-sm min-w-[260px]">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Target className="h-4 w-4 text-blue-600" />
@@ -722,7 +697,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </CardContent>
             </Card>
 
-            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="border-0 bg-white/60 backdrop-blur-sm min-w-[260px]">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="h-4 w-4 text-yellow-600" />
@@ -732,7 +707,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </CardContent>
             </Card>
 
-            <Card className="border-0 bg-white/60 backdrop-blur-sm">
+            <Card className="border-0 bg-white/60 backdrop-blur-sm min-w-[260px]">
               <CardContent className="pt-4">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-green-600" />
@@ -741,14 +716,14 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 <p className="text-sm text-gray-900">{todayRecommendations.studyGoal}</p>
               </CardContent>
             </Card>
-          </div>
+          </MobileScrollGrid>
 
-          <div className="flex gap-3 mt-4">
+          <div className="flex flex-wrap gap-3 mt-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => (window.location.href = '/syllabus')}
-              className="bg-white/60 hover:bg-white/80"
+              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px]"
             >
               <BookOpen className="h-4 w-4 mr-2" />
               View Syllabus
@@ -757,7 +732,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               variant="outline"
               size="sm"
               onClick={() => (window.location.href = '/test')}
-              className="bg-white/60 hover:bg-white/80"
+              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px]"
             >
               <Brain className="h-4 w-4 mr-2" />
               Take Test
@@ -766,7 +741,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               variant="outline"
               size="sm"
               onClick={() => (window.location.href = '/journey')}
-              className="bg-white/60 hover:bg-white/80"
+              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px]"
             >
               <Map className="h-4 w-4 mr-2" />
               Plan Journey
@@ -776,7 +751,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       )}
 
       {/* Main Dashboard Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs defaultValue="overview" className="w-full min-h-[80vh]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
           <TabsTrigger value="analytics">Learning Analytics</TabsTrigger>

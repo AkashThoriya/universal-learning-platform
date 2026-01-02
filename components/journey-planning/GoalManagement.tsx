@@ -336,7 +336,7 @@ export default function GoalManagement({
       </div>
 
       {/* Goals Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
@@ -404,7 +404,7 @@ export default function GoalManagement({
                         <div className="flex items-center gap-2 mb-2">
                           <h4
                             className={cn(
-                              'font-medium truncate',
+                              'font-medium break-words',
                               isGoalCompleted(goal) ? 'text-green-800 line-through' : 'text-gray-900'
                             )}
                           >
@@ -454,14 +454,14 @@ export default function GoalManagement({
 
                     {/* Goal Actions */}
                     <div className="flex items-center gap-1 ml-4">
-                      <Button variant="ghost" size="sm" onClick={() => handleEditGoal(goal)} className="h-8 w-8 p-0">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditGoal(goal)} className="h-10 w-10 p-0">
                         <Edit3 className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => onDeleteGoal?.(goal.id)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="h-10 w-10 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

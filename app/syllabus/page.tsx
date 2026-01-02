@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import PageTransition from '@/components/layout/PageTransition';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import {
   BookOpen,
   ChevronRight,
@@ -703,8 +704,9 @@ export default function SyllabusPage() {
           </Card>
 
           {/* Overview Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
+          {/* Overview Stats */}
+          <MobileScrollGrid className="gap-4">
+            <Card className="min-w-[240px]">
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
                   <BookOpen className="h-8 w-8 text-blue-600" />
@@ -716,7 +718,7 @@ export default function SyllabusPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="min-w-[240px]">
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
                   <Target className="h-8 w-8 text-green-600" />
@@ -730,7 +732,7 @@ export default function SyllabusPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="min-w-[240px]">
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
                   <TrendingUp className="h-8 w-8 text-purple-600" />
@@ -747,7 +749,7 @@ export default function SyllabusPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="min-w-[240px]">
               <CardContent className="pt-6">
                 <div className="flex items-center space-x-2">
                   <Clock className="h-8 w-8 text-orange-600" />
@@ -767,7 +769,7 @@ export default function SyllabusPage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </MobileScrollGrid>
 
           {/* Content based on view mode */}
           {viewMode === 'subjects' ? (
@@ -1120,7 +1122,7 @@ inputMode="numeric"
                                               ) : (
                                                 <div className="space-y-1">
                                                   <div className="flex items-center space-x-2">
-                                                    <h6 className="font-medium text-gray-900 truncate">{topic.name}</h6>
+                                                    <h6 className="font-medium text-gray-900 line-clamp-2 break-words">{topic.name}</h6>
                                                     {topic.estimatedHours && (
                                                       <Badge variant="secondary" className="text-xs">
                                                         {topic.estimatedHours}h

@@ -286,7 +286,7 @@ export function SyllabusManagementStep({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-semibold">Subjects ({form.data.syllabus.length})</h4>
-          <Button variant="outline" size="sm" onClick={onAddSubject} className="flex items-center space-x-1">
+          <Button variant="outline" size="default" onClick={onAddSubject} className="flex items-center space-x-1 h-9 md:h-10"> {/* Larger on Tablet */}
             <Plus className="h-4 w-4" />
             <span>Add Subject</span>
           </Button>
@@ -316,7 +316,7 @@ export function SyllabusManagementStep({
                         size="sm"
                         variant="ghost"
                         onClick={() => toggleSubjectExpansion(subject.id)}
-                        className="p-1 h-auto"
+                        className="h-10 w-10 p-0"
                       >
                         {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </Button>
@@ -353,9 +353,9 @@ export function SyllabusManagementStep({
                               size="sm"
                               variant="ghost"
                               onClick={() => startEditing(subject.id, subject.name)}
-                              className="p-1 h-auto"
+                              className="h-10 w-10 p-0"
                             >
-                              <Edit3 className="h-3 w-3" />
+                              <Edit3 className="h-4 w-4" />
                             </Button>
                             <span className="text-sm text-gray-600">({subject.topics?.length || 0} topics)</span>
                           </div>
@@ -413,10 +413,12 @@ export function SyllabusManagementStep({
                           {subject.topics.map((topic: SyllabusTopic) => (
                             <div
                               key={topic.id}
-                              className="flex items-center justify-between p-3 bg-white border rounded-md hover:shadow-sm transition-shadow"
+                              className="flex items-center justify-between p-3 md:p-4 bg-white border rounded-md hover:shadow-sm transition-shadow"
                             >
-                              <div className="flex items-center space-x-2 flex-1">
-                                <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
+                              <div className="flex items-center gap-2 flex-1">
+                                <div className="p-3 -ml-3 md:p-4 md:-ml-4 cursor-grab opacity-50 hover:opacity-100 transition-opacity"> {/* Increased touch target for tablet */}
+                                  <GripVertical className="h-5 w-5 text-gray-400" />
+                                </div>
                                 {editingTopic === topic.id ? (
                                   <div className="flex items-center space-x-2 flex-1">
                                     <Input
@@ -451,9 +453,9 @@ export function SyllabusManagementStep({
                                       size="sm"
                                       variant="ghost"
                                       onClick={() => startEditingTopic(topic.id, topic.name)}
-                                      className="p-1 h-auto"
+                                      className="h-10 w-10 p-0"
                                     >
-                                      <Edit3 className="h-3 w-3" />
+                                      <Edit3 className="h-4 w-4" />
                                     </Button>
                                     {topic.estimatedHours && (
                                       <span className="text-xs text-gray-500">({topic.estimatedHours}h)</span>
@@ -466,9 +468,9 @@ export function SyllabusManagementStep({
                                 size="sm"
                                 variant="ghost"
                                 onClick={() => onRemoveTopic(subject.id, topic.id)}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 h-10 w-10 p-0"
                               >
-                                <Trash2 className="h-3 w-3" />
+                                <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
                           ))}

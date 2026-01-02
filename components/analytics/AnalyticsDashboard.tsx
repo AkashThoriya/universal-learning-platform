@@ -66,6 +66,7 @@ import {
   AdaptiveRecommendation,
 } from '@/lib/analytics/intelligent-analytics-service';
 import { logger } from '@/lib/utils/logger';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 
 // UI Components
 
@@ -416,7 +417,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       </div>
 
       {/* Performance Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <MobileScrollGrid className="gap-6">
         <PerformanceMetricCard
           title="Exam Performance"
           value={performanceMetrics?.examSuccess.current || 0}
@@ -456,7 +457,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
           icon={<Brain className="h-4 w-4" />}
           color="purple"
         />
-      </div>
+      </MobileScrollGrid>
 
       {/* Main Analytics Tabs */}
       <Tabs

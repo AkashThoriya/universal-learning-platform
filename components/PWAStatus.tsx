@@ -463,8 +463,8 @@ export function PWAStatus() {
                 {statusData.features.map((feature, index) => {
                   const IconComponent = feature.icon;
                   return (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                    <div key={index} className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
                         <IconComponent className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <p className="font-medium">{feature.name}</p>

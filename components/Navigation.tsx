@@ -23,8 +23,11 @@ import {
 
   Brain,
   Map,
+  Sparkles,
   type LucideIcon,
+
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -42,6 +45,42 @@ interface NavItem {
   badge?: string | number;
   description?: string;
 }
+
+const MotivationalRotator = () => {
+    const [index, setIndex] = useState(0);
+    const messages = [
+        "Focus on progress ⚡",
+        "You got this! 🚀", 
+        "Stay consistent 💎",
+        "Trust the process 🌱",
+        "Dream big 🌟"
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % messages.length);
+        }, 8000);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="h-6 relative w-full max-w-[200px] flex items-center justify-center">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute text-sm font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5 whitespace-nowrap"
+                >
+                    <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                    {messages[index]}
+                </motion.div>
+            </AnimatePresence>
+        </div>
+    );
+};
 
 export default function Navigation() {
   const { logout, user } = useAuth();
@@ -206,6 +245,11 @@ export default function Navigation() {
                 </Button>
               </Link>
             ))}
+          </div>
+
+          {/* Mobile/Tablet Motivational Text (Hidden on XL) */}
+          <div className="flex xl:hidden flex-1 justify-center items-center px-4 overflow-hidden h-16">
+            <MotivationalRotator />
           </div>
 
           {/* User Menu - Redesigned for better UX */}

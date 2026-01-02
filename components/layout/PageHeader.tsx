@@ -107,7 +107,7 @@ export default function PageHeader({
 
         {/* Title Row */}
         <div className={cn('flex items-center justify-between', centered && 'flex-col space-y-4')}>
-          <div className={cn('flex items-center space-x-3', centered && 'justify-center')}>
+          <div className={cn('flex items-start space-x-3', centered && 'justify-center')}>
             {icon && (
               <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg">
                 {icon}

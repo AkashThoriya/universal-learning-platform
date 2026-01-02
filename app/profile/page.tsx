@@ -13,6 +13,7 @@
 
 import { Timestamp } from 'firebase/firestore';
 import PageTransition from '@/components/layout/PageTransition';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import {
   User,
   Settings,
@@ -528,7 +529,7 @@ export default function ProfilePage() {
                 </Button>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Profile Settings</h1>
-                  <p className="text-sm text-gray-600">Manage your personal information and study preferences</p>
+                  <p className="text-sm text-gray-600 hidden md:block">Manage your personal information and study preferences</p>
                 </div>
               </div>
 
@@ -555,13 +556,13 @@ export default function ProfilePage() {
                 <Button onClick={handleSave} disabled={saving || !hasUnsavedChanges}>
                   {saving ? (
                     <>
-                      <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                      Saving...
+                      <Loader2 className="animate-spin h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Saving...</span>
                     </>
                   ) : (
                     <>
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Changes
+                      <Save className="h-4 w-4 md:mr-2" />
+                      <span className="hidden md:inline">Save Changes</span>
                     </>
                   )}
                 </Button>
@@ -593,7 +594,7 @@ export default function ProfilePage() {
             )}
 
             {/* Profile Form */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 min-h-[60vh]">
               {/* Tab Navigation */}
               <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200">
                 <TabsList className="flex w-full overflow-x-auto no-scrollbar md:grid md:grid-cols-6 gap-1">
@@ -660,43 +661,43 @@ export default function ProfilePage() {
                     </div>
 
                     {/* User Persona */}
-                    <div className="space-y-4">
-                      <Label>Profile Type</Label>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {(['student', 'working_professional', 'freelancer'] as UserPersonaType[]).map(type => (
-                          <Card
-                            key={type}
-                            className={`cursor-pointer transition-all duration-200 border-2 ${
-                              form.data.userPersona?.type === type
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            onClick={() =>
-                              form.updateField('userPersona', {
-                                ...form.data.userPersona,
-                                type,
-                              })
-                            }
-                          >
-                            <CardContent className="p-4 text-center">
-                              <div className="mb-2">
-                                {type === 'student' && <User className="h-8 w-8 mx-auto text-blue-600" />}
-                                {type === 'working_professional' && (
-                                  <UserCheck className="h-8 w-8 mx-auto text-green-600" />
-                                )}
-                                {type === 'freelancer' && <Activity className="h-8 w-8 mx-auto text-purple-600" />}
-                              </div>
-                              <h3 className="font-medium capitalize">{type.replace('_', ' ')}</h3>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {type === 'student' && 'Full-time student with flexible schedule'}
-                                {type === 'working_professional' && 'Working professional with limited time'}
-                                {type === 'freelancer' && 'Flexible schedule with project commitments'}
-                              </p>
-                            </CardContent>
-                          </Card>
-                        ))}
+                      <div className="space-y-4">
+                        <Label>Profile Type</Label>
+                        <MobileScrollGrid className="gap-4">
+                          {(['student', 'working_professional', 'freelancer'] as UserPersonaType[]).map(type => (
+                            <Card
+                              key={type}
+                              className={`cursor-pointer transition-all duration-200 border-2 min-w-[280px] ${
+                                form.data.userPersona?.type === type
+                                  ? 'border-blue-500 bg-blue-50'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                              onClick={() =>
+                                form.updateField('userPersona', {
+                                  ...form.data.userPersona,
+                                  type,
+                                })
+                              }
+                            >
+                              <CardContent className="p-4 text-center">
+                                <div className="mb-2">
+                                  {type === 'student' && <User className="h-8 w-8 mx-auto text-blue-600" />}
+                                  {type === 'working_professional' && (
+                                    <UserCheck className="h-8 w-8 mx-auto text-green-600" />
+                                  )}
+                                  {type === 'freelancer' && <Activity className="h-8 w-8 mx-auto text-purple-600" />}
+                                </div>
+                                <h3 className="font-medium capitalize">{type.replace('_', ' ')}</h3>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {type === 'student' && 'Full-time student with flexible schedule'}
+                                  {type === 'working_professional' && 'Working professional with limited time'}
+                                  {type === 'freelancer' && 'Flexible schedule with project commitments'}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </MobileScrollGrid>
                       </div>
-                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>

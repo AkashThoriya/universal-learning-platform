@@ -204,8 +204,8 @@ export function QuickSessionLauncher({
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-gray-900 text-sm truncate">{session.title}</h4>
-                    <p className="text-xs text-gray-600 truncate">{session.description}</p>
+                    <h4 className="font-medium text-gray-900 text-sm line-clamp-2 break-words">{session.title}</h4>
+                    <p className="text-xs text-gray-600 line-clamp-2 break-words">{session.description}</p>
 
                     <div className="flex items-center space-x-2 mt-1">
                       <Badge variant="secondary" className={`text-xs ${getDifficultyColor(session.difficulty)}`}>

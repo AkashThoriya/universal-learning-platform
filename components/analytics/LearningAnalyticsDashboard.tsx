@@ -116,7 +116,7 @@ export default function LearningAnalyticsDashboard({ className }: LearningAnalyt
 
   if (loading) {
     return (
-      <Card className="w-full">
+      <Card className="w-full min-h-[600px] flex items-center justify-center">
         <CardContent className="text-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
           <p className="text-gray-600">Loading your learning analytics...</p>

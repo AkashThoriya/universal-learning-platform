@@ -252,14 +252,14 @@ export function CustomLearningStep({ form }: CustomLearningStepProps) {
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(goal.priority)}`}>
                         {goal.priority}
                       </span>
-                      <Button variant="ghost" size="sm" onClick={() => handleEditGoal(goal)} className="h-8 w-8 p-0">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditGoal(goal)} className="h-10 w-10 p-0">
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteGoal(goal.id)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-800"
+                        className="h-10 w-10 p-0 text-red-600 hover:text-red-800"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

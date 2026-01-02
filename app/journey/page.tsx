@@ -257,7 +257,7 @@ export default function JourneyPlanningPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <MobileScrollGrid className="md:grid-cols-4 gap-6">
+            <MobileScrollGrid className="md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50", cardClass)}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">

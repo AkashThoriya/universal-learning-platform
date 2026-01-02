@@ -178,7 +178,7 @@ export default function QuestionInterface({
           transition={{ duration: 0.3 }}
         >
           <Card className="border-0 shadow-lg">
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <CardTitle className="text-lg leading-relaxed">{question.question}</CardTitle>
@@ -191,11 +191,10 @@ export default function QuestionInterface({
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="sm"
                         onClick={() => onBookmark?.(question.id)}
-                        className={cn(isBookmarked && 'text-yellow-600 bg-yellow-50')}
+                        className={cn('h-11 w-11 p-0', isBookmarked && 'text-yellow-600 bg-yellow-50')}
                       >
-                        <Bookmark className="h-4 w-4" />
+                        <Bookmark className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -207,11 +206,10 @@ export default function QuestionInterface({
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="sm"
                         onClick={() => onFlag?.(question.id)}
-                        className={cn(isFlagged && 'text-red-600 bg-red-50')}
+                        className={cn('h-11 w-11 p-0', isFlagged && 'text-red-600 bg-red-50')}
                       >
-                        <Flag className="h-4 w-4" />
+                        <Flag className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -236,7 +234,7 @@ export default function QuestionInterface({
               )}
             </CardHeader>
 
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               {/* Answer Options */}
               <div className="space-y-3">
                 {question.options?.map((option: string, index: number) => (
@@ -245,26 +243,30 @@ export default function QuestionInterface({
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
                     className={cn(
-                      'p-4 rounded-lg border-2 cursor-pointer transition-all duration-200',
+                      'p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 relative overflow-hidden', // Rounded-xl, relative for ripple if needed
                       selectedOption === `option-${index}`
-                        ? 'border-blue-500 bg-blue-50 shadow-md'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
+                        ? 'border-blue-500 bg-blue-50/50 shadow-sm ring-1 ring-blue-200' // Added ring and shadow
+                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50',
                       isAnswered && 'cursor-not-allowed opacity-75'
                     )}
                     onClick={() => handleOptionSelect(`option-${index}`)}
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 relative z-10"> {/* z-10 for content */}
                       <div className="flex-shrink-0 mt-0.5">
                         {selectedOption === `option-${index}` ? (
-                          <CheckCircle2 className="h-5 w-5 text-blue-600" />
+                          <CheckCircle2 className="h-6 w-6 text-blue-600" /> // Slightly larger icon
                         ) : (
-                          <Circle className="h-5 w-5 text-gray-400" />
+                          <Circle className="h-6 w-6 text-gray-300" /> // Lighter gray for smoother look
                         )}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-gray-800">
-                            {String.fromCharCode(65 + index)}. {option}
+                          <span className={cn(
+                            "text-base leading-relaxed transition-colors", // Larger text base
+                            selectedOption === `option-${index}` ? "font-semibold text-blue-900" : "font-medium text-gray-800"
+                          )}>
+                            <span className="inline-block w-6 font-bold opacity-60 mr-1">{String.fromCharCode(65 + index)}.</span>
+                            {option}
                           </span>
                         </div>
                       </div>

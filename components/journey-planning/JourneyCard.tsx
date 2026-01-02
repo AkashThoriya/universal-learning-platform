@@ -99,8 +99,8 @@ export default function JourneyCard({
     >
       <Card
         className={cn(
-          'relative transition-all duration-300 hover:shadow-lg cursor-pointer group active:scale-[0.98]',
-          journey.status === 'active' && 'ring-2 ring-green-200',
+          'relative transition-all duration-300 hover:shadow-lg cursor-pointer group active:scale-[0.98] ring-1 ring-transparent hover:ring-black/5 dark:hover:ring-white/10', // Added ring for subtle definition
+          journey.status === 'active' && 'ring-2 ring-green-500/50 shadow-green-100', // Improved active ring
           className
         )}
         onClick={() => onViewDetails?.(journey)}
@@ -126,7 +126,7 @@ export default function JourneyCard({
                   {journey.track}
                 </Badge>
               </div>
-              <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors truncate">
+              <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2">
                 {journey.title}
               </CardTitle>
               <CardDescription className="text-sm text-gray-600 line-clamp-2 mt-1">
@@ -139,7 +139,7 @@ export default function JourneyCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-10 w-10 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>

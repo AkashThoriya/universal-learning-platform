@@ -230,11 +230,11 @@ export default function TestAnalyticsDashboard({
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="subjects">Subjects</TabsTrigger>
-                  <TabsTrigger value="adaptive">Adaptive</TabsTrigger>
-                  <TabsTrigger value="patterns">Patterns</TabsTrigger>
+                <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-4 p-1 bg-muted/50 rounded-xl">
+                  <TabsTrigger value="overview" className="snap-start flex-1 min-w-[90px]">Overview</TabsTrigger>
+                  <TabsTrigger value="subjects" className="snap-start flex-1 min-w-[90px]">Subjects</TabsTrigger>
+                  <TabsTrigger value="adaptive" className="snap-start flex-1 min-w-[90px]">Adaptive</TabsTrigger>
+                  <TabsTrigger value="patterns" className="snap-start flex-1 min-w-[90px]">Patterns</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
