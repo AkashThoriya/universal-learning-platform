@@ -1,11 +1,7 @@
 # Exam Strategy Engine - Universal Learning Platform for Students & Working Professionals
 
-<!-- Badges: replace URLs with your CI/coverage/release endpoints -->
-
-[![build](https://img.shields.io/badge/build-pending-lightgrey.svg)](#)
-[![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey.svg)](#)
-[![release](https://img.shields.io/badge/release-v0.0.0-lightgrey.svg)](#)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Version](https://img.shields.io/badge/version-1.0.0-00DC82?style=for-the-badge)
+![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa)
 
 ### ⚖️ Project status
 
