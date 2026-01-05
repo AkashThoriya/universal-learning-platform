@@ -24,6 +24,7 @@ import { BarChart3 } from 'lucide-react';
 import { Suspense, useEffect } from 'react';
 
 import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
+import { AnalyticsErrorState } from '@/components/analytics/AnalyticsErrorState';
 import AuthGuard from '@/components/AuthGuard';
 import { ComponentErrorBoundary } from '@/components/error-handling/GlobalErrorBoundary';
 import { AnalyticsLayout } from '@/components/layout/AppLayout';
@@ -44,21 +45,7 @@ export default function AnalyticsPage() {
     <AuthGuard>
       <AnalyticsLayout>
         <ComponentErrorBoundary
-          fallback={
-            <div className="text-center space-y-6">
-              <div className="text-6xl">📊</div>
-              <h2 className="text-2xl font-bold text-gray-900">Analytics Temporarily Unavailable</h2>
-              <p className="text-gray-600">
-                We're working to restore your analytics dashboard. Please try refreshing the page.
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Refresh Page
-              </button>
-            </div>
-          }
+          fallback={<AnalyticsErrorState />}
         >
           <FeaturePageHeader
             title="Analytics Dashboard"

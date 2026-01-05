@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { TEST_PLATFORMS, TEST_TYPES, SCORING } from '@/lib/config/exam-constants';
 
 export default function TestLoggerPage() {
   const { user } = useAuth();
@@ -66,9 +67,9 @@ export default function TestLoggerPage() {
   const [feedback, setFeedback] = useState('');
 
   const getTotalScore = () => quantScore + reasoningScore + englishScore + pkScore;
-  const getTotalErrors = (section: 'quant' | 'reasoning' | 'english' | 'pk') => {
-    const maxScore = 50;
-    let actualScore;
+  const getTotalErrors = (section: string) => {
+    const maxScore = SCORING.SECTION_MAX_SCORE;
+    let actualScore = 0;
 
     if (section === 'quant') {
       actualScore = quantScore;
@@ -212,11 +213,11 @@ export default function TestLoggerPage() {
                         <SelectValue placeholder="Select platform" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="testbook">Testbook</SelectItem>
-                        <SelectItem value="oliveboard">Oliveboard</SelectItem>
-                        <SelectItem value="adda247">Adda247</SelectItem>
-                        <SelectItem value="gradeup">Gradeup</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        {TEST_PLATFORMS.map(platform => (
+                          <SelectItem key={platform.value} value={platform.value}>
+                            {platform.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -230,9 +231,11 @@ export default function TestLoggerPage() {
                       <SelectValue placeholder="Select test type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="full_prelims">Full Prelims (200 questions)</SelectItem>
-                      <SelectItem value="sectional">Sectional Test</SelectItem>
-                      <SelectItem value="pk_only">Professional Knowledge Only</SelectItem>
+                        {TEST_TYPES.map(type => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>

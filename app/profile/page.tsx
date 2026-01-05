@@ -66,6 +66,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
 import { AGE_LIMITS } from '@/lib/config/constants';
+import { DEFAULT_PREFERENCES } from '@/lib/config/defaults';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
 import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase/firebase-utils';
@@ -208,19 +209,11 @@ export default function ProfilePage() {
       customExam: { name: '', description: '', category: '' },
       syllabus: [],
       preferences: {
-        dailyStudyGoalMinutes: 240,
-        preferredStudyTime: 'morning' as const,
-        tierDefinitions: {
-          1: 'High Priority - Core Topics',
-          2: 'Medium Priority - Important Topics',
-          3: 'Low Priority - Additional Topics',
-        },
-        revisionIntervals: [1, 3, 7, 16, 35],
-        notifications: {
-          revisionReminders: true,
-          dailyGoalReminders: true,
-          healthCheckReminders: true,
-        },
+        dailyStudyGoalMinutes: DEFAULT_PREFERENCES.DAILY_STUDY_GOAL_MINUTES,
+        preferredStudyTime: DEFAULT_PREFERENCES.PREFERRED_STUDY_TIME,
+        tierDefinitions: { ...DEFAULT_PREFERENCES.TIER_DEFINITIONS } as any,
+        revisionIntervals: [...DEFAULT_PREFERENCES.REVISION_INTERVALS],
+        notifications: { ...DEFAULT_PREFERENCES.NOTIFICATIONS },
       },
       settings: {
         theme: 'system' as const,
@@ -273,19 +266,11 @@ export default function ProfilePage() {
             },
             syllabus: userSyllabus ?? [],
             preferences: {
-              dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes ?? 240,
-              preferredStudyTime: fetchedUser.preferences?.preferredStudyTime ?? 'morning',
-              tierDefinitions: fetchedUser.preferences?.tierDefinitions ?? {
-                1: 'High Priority - Core Topics',
-                2: 'Medium Priority - Important Topics',
-                3: 'Low Priority - Additional Topics',
-              },
-              revisionIntervals: fetchedUser.preferences?.revisionIntervals ?? [1, 3, 7, 16, 35],
-              notifications: fetchedUser.preferences?.notifications ?? {
-                revisionReminders: true,
-                dailyGoalReminders: true,
-                healthCheckReminders: true,
-              },
+              dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes ?? DEFAULT_PREFERENCES.DAILY_STUDY_GOAL_MINUTES,
+              preferredStudyTime: fetchedUser.preferences?.preferredStudyTime ?? DEFAULT_PREFERENCES.PREFERRED_STUDY_TIME,
+              tierDefinitions: fetchedUser.preferences?.tierDefinitions ?? { ...DEFAULT_PREFERENCES.TIER_DEFINITIONS } as any,
+              revisionIntervals: fetchedUser.preferences?.revisionIntervals ?? [...DEFAULT_PREFERENCES.REVISION_INTERVALS],
+              notifications: fetchedUser.preferences?.notifications ?? { ...DEFAULT_PREFERENCES.NOTIFICATIONS },
             },
             settings: {
               theme: 'system',

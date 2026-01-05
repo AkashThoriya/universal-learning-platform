@@ -1,6 +1,6 @@
 'use client';
 
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendPasswordResetEmail } from 'firebase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Shield, CheckCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -192,6 +192,27 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     }
   }, [password, email, isNewUser, passwordStrength, onSuccess, router]);
 
+  const handleForgotPassword = useCallback(async () => {
+    if (!email || !validateEmail(email)) {
+      setError('Please enter a valid email address first.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setError('');
+      setCurrentStep('resetSent'); 
+    } catch (err) {
+      console.error('Password reset error:', err);
+      setError('Failed to send reset email. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }, [email, validateEmail]);
+
   const EmailCaptureStep = useMemo(
     () => (
       <motion.div
@@ -337,10 +358,7 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
             <button
               type="button"
               className="text-sm text-blue-600 hover:text-blue-700 underline"
-              onClick={() => {
-                // TODO: Implement forgot password flow
-                setError('Password reset functionality coming soon!');
-              }}
+              onClick={() => setCurrentStep('forgotPassword')}
             >
               Forgot your password?
             </button>
@@ -378,6 +396,92 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
       setPassword,
       setError,
     ]
+  );
+
+  const ForgotPasswordStep = useMemo(
+    () => (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="space-y-6"
+      >
+        <div className="space-y-2">
+          <label htmlFor="reset-email" className="text-sm font-medium text-gray-700">
+            Confirm Email Address
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              id="reset-email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="pl-10"
+              autoComplete="email"
+            />
+          </div>
+        </div>
+
+        {error && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
+            >
+              {error}
+            </motion.div>
+        )}
+
+        <Button onClick={handleForgotPassword} disabled={!email || loading} className="w-full" size="lg">
+          {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
+          Send Reset Link
+        </Button>
+
+        <div className="text-center">
+          <button
+            type="button"
+            className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+            onClick={() => setCurrentStep('password')}
+          >
+            Back to Sign In
+          </button>
+        </div>
+      </motion.div>
+    ),
+    [email, error, loading, handleForgotPassword, setCurrentStep, setEmail]
+  );
+
+  const ResetSentStep = useMemo(
+    () => (
+      <motion.div
+         initial={{ opacity: 0, scale: 0.95 }}
+         animate={{ opacity: 1, scale: 1 }}
+         className="text-center space-y-6"
+       >
+         <motion.div
+           initial={{ scale: 0 }}
+           animate={{ scale: 1 }}
+           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+           className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto"
+         >
+           <Mail className="h-8 w-8 text-blue-600" />
+         </motion.div>
+ 
+         <div>
+           <h3 className="text-lg font-semibold text-gray-900">Check your inbox</h3>
+           <p className="text-gray-600 mt-1">
+             We've sent a password reset link to <strong>{email}</strong>
+           </p>
+         </div>
+ 
+         <Button onClick={() => setCurrentStep('password')} variant="outline" className="w-full">
+           Back to Sign In
+         </Button>
+       </motion.div>
+    ),
+    [email, setCurrentStep]
   );
 
   const SuccessStep = useMemo(
@@ -430,6 +534,18 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
         subtitle: isNewUser ? 'Create a strong password for your account' : 'Enter your password to continue',
         component: PasswordStep,
       },
+      forgotPassword: {
+        id: 'forgotPassword',
+        title: 'Reset Password',
+        subtitle: "Enter your email and we'll send you a link to reset your password",
+        component: ForgotPasswordStep,
+      },
+      resetSent: {
+        id: 'resetSent',
+        title: 'Email Sent',
+        subtitle: 'Please check your email',
+        component: ResetSentStep,
+      },
       success: {
         id: 'success',
         title: 'All Set!',
@@ -437,8 +553,9 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
         component: SuccessStep,
       },
     }),
-    [EmailCaptureStep, PasswordStep, SuccessStep, isNewUser]
+    [EmailCaptureStep, PasswordStep, ForgotPasswordStep, ResetSentStep, SuccessStep, isNewUser]
   );
+
 
   const currentStepData = authSteps[currentStep];
 

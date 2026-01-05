@@ -8,6 +8,7 @@
 'use client';
 
 import { WifiOff, RefreshCw, BookOpen, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageTransition from '@/components/layout/PageTransition';
 
@@ -18,6 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { OFFLINE_FEATURES } from '@/lib/data';
 
 export default function OfflinePage() {
+  const router = useRouter();
   const [isOnline, setIsOnline] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
@@ -44,16 +46,26 @@ export default function OfflinePage() {
     };
   }, []);
 
-  const handleRetry = () => {
+  const handleRetry = async () => {
     setRetryCount(prev => prev + 1);
 
     if (navigator.onLine) {
-      window.location.reload();
+      try {
+        // Attempt to fetch a small resource to verify connection
+        const response = await fetch('/api/health-check', { method: 'HEAD', cache: 'no-store' });
+        if (response.ok || response.status === 404) { // 404 is fine, means server reached
+          setIsOnline(true);
+          router.refresh();
+        }
+      } catch (e) {
+        // Still offline or server unreachable
+      }
     } else {
-      // Try to reconnect
+      // Just check navigator status as fallback
       setTimeout(() => {
         if (navigator.onLine) {
-          window.location.reload();
+          setIsOnline(true);
+          router.refresh();
         }
       }, 1000);
     }

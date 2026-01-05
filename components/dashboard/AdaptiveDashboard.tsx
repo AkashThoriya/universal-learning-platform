@@ -153,13 +153,13 @@ const generateTodayRecommendations = (
 
   return {
     currentTopic: currentTopic || `Start with ${exam.name} basics`,
-    currentTopicId: currentTopicId || undefined,
-    currentSubjectId: currentSubjectId || undefined,
+    ...(currentTopicId ? { currentTopicId } : {}),
+    ...(currentSubjectId ? { currentSubjectId } : {}),
     nextAction,
     studyGoal,
     subjectRecommendation: subjectRecommendation || 'Choose a subject to begin',
     todaysPlan,
-    ...(examDaysLeft !== undefined && { examDaysLeft }),
+    ...(examDaysLeft !== undefined ? { examDaysLeft } : {}),
   };
 };
 
