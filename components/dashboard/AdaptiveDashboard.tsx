@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import {
-  BarChart3,
   BookOpen,
   Target,
   TrendingUp,
@@ -13,9 +12,6 @@ import {
   Star,
   Calendar,
   Award,
-  PlayCircle,
-  Users,
-  Plus,
   Brain,
   Map,
   LucideIcon,
@@ -26,14 +22,12 @@ import { useEffect, useState } from 'react';
 import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalyticsDashboard';
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
-import { QuickActions } from '@/components/dashboard/QuickActions';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { getExamById } from '@/lib/data/exams-data';
@@ -64,16 +58,6 @@ interface DashboardStats {
   journeyMilestones: number;
 }
 
-interface QuickAction {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  href: string;
-  color: string;
-  badge?: string;
-  priority: 'high' | 'medium' | 'low';
-}
-
 interface Achievement {
   id: string;
   title: string;
@@ -94,6 +78,8 @@ const generateTodayRecommendations = (
   examDaysLeft?: number
 ): {
   currentTopic?: string;
+  currentTopicId?: string;
+  currentSubjectId?: string;
   nextAction?: string;
   studyGoal?: string;
   examDaysLeft?: number;
@@ -102,6 +88,8 @@ const generateTodayRecommendations = (
 } => {
   // Find the next topic to study (first incomplete topic)
   let currentTopic = '';
+  let currentTopicId = '';
+  let currentSubjectId = '';
   let nextAction = '';
   let subjectRecommendation = '';
   const todaysPlan: string[] = [];
@@ -117,6 +105,8 @@ const generateTodayRecommendations = (
 
         if (incompleteTopic) {
           currentTopic = `${subject.name} - ${incompleteTopic.name}`;
+          currentTopicId = incompleteTopic.id;
+          currentSubjectId = subject.id;
           subjectRecommendation = subject.name;
           todaysPlan.push(`📚 Study ${incompleteTopic.name}`);
           todaysPlan.push(`⏱️ Target: ${incompleteTopic.estimatedHours ?? 2} hours`);
@@ -162,63 +152,16 @@ const generateTodayRecommendations = (
   todaysPlan.push('📝 Review weak areas');
 
   return {
-    currentTopic: currentTopic ?? `Start with ${exam.name} basics`,
+    currentTopic: currentTopic || `Start with ${exam.name} basics`,
+    currentTopicId: currentTopicId || undefined,
+    currentSubjectId: currentSubjectId || undefined,
     nextAction,
     studyGoal,
-    subjectRecommendation: subjectRecommendation ?? 'Choose a subject to begin',
+    subjectRecommendation: subjectRecommendation || 'Choose a subject to begin',
     todaysPlan,
     ...(examDaysLeft !== undefined && { examDaysLeft }),
   };
 };
-
-// Custom Goal Card Component
-interface CustomGoalCardProps {
-  goal: {
-    id: string;
-    title: string;
-    description?: string;
-    category: string;
-    progress: number;
-    targetValue: number;
-    createdAt: Date;
-    dueDate?: Date;
-    status: 'active' | 'completed' | 'paused';
-  };
-}
-
-function CustomGoalCard({ goal }: CustomGoalCardProps) {
-  const progressPercentage = Math.min((goal.progress / goal.targetValue) * 100, 100);
-
-  return (
-    <Card className="hover:shadow-lg transition-all duration-300">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-gray-900">{goal.title}</CardTitle>
-          <Badge variant={goal.status === 'completed' ? 'default' : 'secondary'} className="text-xs">
-            {goal.status}
-          </Badge>
-        </div>
-        {goal.description && <CardDescription className="text-sm text-gray-600">{goal.description}</CardDescription>}
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-600">Progress</span>
-            <span className="font-medium">
-              {goal.progress} / {goal.targetValue}
-            </span>
-          </div>
-          <Progress value={progressPercentage} className="h-2" />
-          <div className="flex justify-between items-center text-xs text-gray-500">
-            <span>Category: {goal.category}</span>
-            <span>{progressPercentage.toFixed(0)}%</span>
-          </div>
-          {goal.dueDate && <div className="text-xs text-gray-500">Due: {goal.dueDate.toLocaleDateString()}</div>}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
@@ -251,10 +194,11 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   const [isLoading, setIsLoading] = useState(true);
 
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'afternoon' | 'evening' | 'night'>('morning');
-  const [customGoals, setCustomGoals] = useState<any[]>([]);
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [todayRecommendations, setTodayRecommendations] = useState<{
     currentTopic?: string;
+    currentTopicId?: string;
+    currentSubjectId?: string;
     nextAction?: string;
     studyGoal?: string;
     examDaysLeft?: number;
@@ -449,11 +393,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           // Only show the most recent achievement to avoid spam
           const finalAchievements = recentAchievements.slice(-1);
 
-          // Load custom goals if user is authenticated
+          // Load custom goals data for stats (display removed but stats still tracked)
           const customGoalsResult = await customLearningService.getUserCustomGoals(user.uid);
           if (customGoalsResult.success) {
-            setCustomGoals(customGoalsResult.data);
-
             // Update stats with real custom learning data
             const activeGoals = customGoalsResult.data.filter((goal: any) => goal.isActive).length;
             const completedGoals = customGoalsResult.data.filter(
@@ -514,80 +456,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
 
 
-  const quickActions: QuickAction[] = [
-    {
-      title: 'Plan Journey',
-      description: 'Create your personalized learning path',
-      icon: PlayCircle,
-      href: '/journey',
-      color: 'from-green-500 to-emerald-500',
-      badge: 'Plan',
-      priority: 'high',
-    },
-    {
-      title: 'Take Test',
-      description: 'Start adaptive assessment',
-      icon: Zap,
-      href: '/test',
-      color: 'from-yellow-500 to-orange-500',
-      badge: 'Test',
-      priority: 'high',
-    },
-    {
-      title: 'View Analytics',
-      description: 'Check your performance insights',
-      icon: BarChart3,
-      href: '/analytics',
-      color: 'from-blue-500 to-indigo-500',
-      badge: 'New',
-      priority: 'medium',
-    },
-    {
-      title: 'Study Syllabus',
-      description: 'Review topics and subjects',
-      icon: Target,
-      href: '/syllabus',
-      color: 'from-purple-500 to-pink-500',
-      badge: 'Study',
-      priority: 'high',
-    },
-    {
-      title: 'Adaptive Testing',
-      description: 'Take personalized assessments',
-      icon: Brain,
-      href: '/test',
-      color: 'from-indigo-500 to-purple-500',
-      badge: stats.adaptiveTestsCompleted > 0 ? 'Available' : 'New',
-      priority: 'high',
-    },
-    {
-      title: 'Journey Planning',
-      description: 'Plan your learning path',
-      icon: Map,
-      href: '/journey',
-      color: 'from-emerald-500 to-teal-500',
-      badge: stats.activeJourneys > 0 ? `${stats.activeJourneys} Active` : 'Create',
-      priority: 'high',
-    },
-    {
-      title: 'Study Materials',
-      description: 'Browse topics and syllabus',
-      icon: BookOpen,
-      href: '/syllabus',
-      color: 'from-indigo-500 to-purple-500',
-      priority: 'medium',
-    },
-    {
-      title: 'Join Study Group',
-      description: 'Connect with fellow learners',
-      icon: Users,
-      href: '/community',
-      color: 'from-pink-500 to-rose-500',
-      badge: 'Beta',
-      priority: 'low',
-    },
-  ];
-
   const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
@@ -623,13 +491,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         return 'bg-gray-100 text-gray-800';
     }
   };
-
-  const prioritizedActions = quickActions
-    .sort((a, b) => {
-      const priorityWeight = { high: 3, medium: 2, low: 1 };
-      return priorityWeight[b.priority] - priorityWeight[a.priority];
-    })
-    .slice(0, 6); // Show more actions to include adaptive testing
 
   if (isLoading) {
     return (
@@ -668,11 +529,11 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 border border-indigo-200 rounded-lg p-6"
+          className="bg-gradient-to-r from-indigo-50 via-blue-50 to-cyan-50 border border-indigo-200 rounded-lg p-4 sm:p-6"
         >
           <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-semibold text-indigo-900 mb-2">📚 Your Selected Exam: {selectedExam.name}</h2>
+              <h2 className="text-xl font-semibold text-indigo-900 mb-2">📚 Currently preparing for {selectedExam.name}</h2>
               <p className="text-indigo-700 mb-2 line-clamp-2">{selectedExam.description}</p>
               <Badge variant="outline" className="text-indigo-600 border-indigo-300">
                 {selectedExam.category}
@@ -689,9 +550,21 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           <MobileScrollGrid className="mt-4 gap-4">
             <Card className="border-0 bg-white/60 backdrop-blur-sm min-w-[260px]">
               <CardContent className="pt-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Target className="h-4 w-4 text-blue-600" />
-                  <span className="text-sm font-medium text-gray-700">Today's Focus</span>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-700">Today's Focus</span>
+                  </div>
+                  {todayRecommendations.currentTopicId && todayRecommendations.currentSubjectId && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 text-xs bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
+                      onClick={() => (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)}
+                    >
+                      Log Progress
+                    </Button>
+                  )}
                 </div>
                 <p className="text-sm text-gray-900">{todayRecommendations.currentTopic}</p>
               </CardContent>
@@ -723,7 +596,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               variant="outline"
               size="sm"
               onClick={() => (window.location.href = '/syllabus')}
-              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px]"
+              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px] h-10"
             >
               <BookOpen className="h-4 w-4 mr-2" />
               View Syllabus
@@ -732,7 +605,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               variant="outline"
               size="sm"
               onClick={() => (window.location.href = '/test')}
-              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px]"
+              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px] h-10"
             >
               <Brain className="h-4 w-4 mr-2" />
               Take Test
@@ -741,7 +614,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               variant="outline"
               size="sm"
               onClick={() => (window.location.href = '/journey')}
-              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px]"
+              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px] h-10"
             >
               <Map className="h-4 w-4 mr-2" />
               Plan Journey
@@ -763,44 +636,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           {/* Enhanced Stats Overview */}
           <StatsGrid stats={stats} />
 
-          {/* Custom Learning Goals */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-8"
-          >
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
-              <Target className="h-5 w-5 mr-2 text-blue-500" />
-              Custom Learning Goals
-            </h2>
-            {customGoals.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {customGoals.map(goal => (
-                  <CustomGoalCard key={goal.id} goal={goal} />
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <div className="text-gray-500 mb-4">
-                    <BookOpen className="h-12 w-12 mx-auto mb-2" />
-                    <p>No custom learning goals yet</p>
-                    <p className="text-sm">Create your first goal to start learning something new!</p>
-                  </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Learning Goal
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </motion.div>
-
-          {/* Priority Actions */}
-          {/* Priority Actions */}
-          <QuickActions actions={prioritizedActions} />
-
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Today's Focus & Achievements */}
@@ -816,8 +651,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 <CardContent className="space-y-4">
                   {/* Dynamic content based on user's actual progress */}
                   {stats.activeJourneys > 0 ? (
-                    <div className="p-4 rounded-lg bg-purple-50 border border-purple-200">
-                      <div className="flex items-start justify-between">
+                    <div className="p-3 sm:p-4 rounded-lg bg-purple-50 border border-purple-200">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                         <div>
                           <h4 className="font-medium text-purple-900">Active Journeys</h4>
                           <p className="text-sm text-purple-700 mt-1">
@@ -836,8 +671,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                      <div className="flex items-start justify-between">
+                    <div className="p-3 sm:p-4 rounded-lg bg-blue-50 border border-blue-200">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                         <div>
                           <h4 className="font-medium text-blue-900">Plan Your Journey</h4>
                           <p className="text-sm text-blue-700 mt-1">Create a personalized learning path</p>
@@ -858,8 +693,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
                   {/* Study recommendations based on actual data */}
                   {stats.completedTopics > 0 ? (
-                    <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-                      <div className="flex items-start justify-between">
+                    <div className="p-3 sm:p-4 rounded-lg bg-green-50 border border-green-200">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                         <div>
                           <h4 className="font-medium text-green-900">Keep Momentum</h4>
                           <p className="text-sm text-green-700 mt-1">
@@ -877,8 +712,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       </div>
                     </div>
                   ) : (
-                    <div className="p-4 rounded-lg bg-orange-50 border border-orange-200">
-                      <div className="flex items-start justify-between">
+                    <div className="p-3 sm:p-4 rounded-lg bg-orange-50 border border-orange-200">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                         <div>
                           <h4 className="font-medium text-orange-900">Start Learning</h4>
                           <p className="text-sm text-orange-700 mt-1">Begin with your syllabus and topics</p>
@@ -897,8 +732,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
                   {/* Today's Study Plan - NEW SECTION */}
                   {selectedExam && todayRecommendations.todaysPlan && (
-                    <div className="p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
-                      <div className="flex items-start justify-between mb-3">
+                    <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3">
                         <div>
                           <h4 className="font-semibold text-blue-900 flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
@@ -1114,7 +949,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </Card>
             </div>
           </div>
-
 
         </TabsContent>
 

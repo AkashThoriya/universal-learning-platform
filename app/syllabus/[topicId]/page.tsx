@@ -14,6 +14,8 @@ import {
   Lightbulb,
   Calendar,
   Plus,
+  Target,
+  AlertCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -199,6 +201,128 @@ export default function TopicDetailPage() {
     }
   };
 
+  // ============================================
+  // Topic Action Handlers
+  // ============================================
+
+  const handleMarkCompleted = async () => {
+    if (!user || !topicProgress) return;
+
+    try {
+      const isCompleted = topicProgress.status === 'completed';
+      const newStatus = isCompleted ? 'in_progress' as const : 'completed' as const;
+      const actionType = isCompleted ? 'unmarked' as const : 'completed' as const;
+      
+      const baseUpdates = {
+        status: newStatus,
+        masteryScore: isCompleted ? Math.max(topicProgress.masteryScore - 10, 0) : Math.min(topicProgress.masteryScore + 10, 100),
+        actionHistory: [
+          ...(topicProgress.actionHistory ?? []),
+          {
+            action: actionType,
+            timestamp: Timestamp.now(),
+          },
+        ],
+      };
+      
+      // Only include completedAt when marking as completed
+      const updates = isCompleted 
+        ? baseUpdates 
+        : { ...baseUpdates, completedAt: Timestamp.now() };
+
+      await updateTopicProgress(user.uid, topicId, updates);
+      setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
+
+      toast({
+        title: isCompleted ? 'Unmarked as Completed' : 'Marked as Completed',
+        description: isCompleted ? 'Topic status reverted.' : 'Great progress! Topic marked as completed.',
+      });
+    } catch (error) {
+      console.error('Error marking as completed:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update status. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handlePracticed = async () => {
+    if (!user || !topicProgress) return;
+
+    try {
+      const newStatus: 'not_started' | 'in_progress' | 'completed' | 'mastered' = 
+        topicProgress.status === 'not_started' || !topicProgress.status ? 'in_progress' : topicProgress.status;
+      
+      const updates = {
+        practiceCount: (topicProgress.practiceCount ?? 0) + 1,
+        lastPracticed: Timestamp.now(),
+        masteryScore: Math.min(topicProgress.masteryScore + 3, 100),
+        status: newStatus,
+        actionHistory: [
+          ...(topicProgress.actionHistory ?? []),
+          {
+            action: 'practiced' as const,
+            timestamp: Timestamp.now(),
+          },
+        ],
+      };
+
+      await updateTopicProgress(user.uid, topicId, updates);
+      setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
+
+      toast({
+        title: 'Practice Logged!',
+        description: `Practice session #${updates.practiceCount} recorded. Keep it up!`,
+      });
+    } catch (error) {
+      console.error('Error logging practice:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to log practice. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleNeedsReview = async () => {
+    if (!user || !topicProgress) return;
+
+    try {
+      const needsReview = !topicProgress.needsReview;
+      const baseUpdates = {
+        needsReview,
+        actionHistory: [
+          ...(topicProgress.actionHistory ?? []),
+          {
+            action: 'needs_review' as const,
+            timestamp: Timestamp.now(),
+          },
+        ],
+      };
+      
+      // Only include reviewRequestedAt when setting the flag
+      const updates = needsReview 
+        ? { ...baseUpdates, reviewRequestedAt: Timestamp.now() }
+        : baseUpdates;
+
+      await updateTopicProgress(user.uid, topicId, updates);
+      setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
+
+      toast({
+        title: needsReview ? 'Flagged for Review' : 'Review Flag Removed',
+        description: needsReview ? 'This topic will be highlighted for future review.' : 'Review flag has been cleared.',
+      });
+    } catch (error) {
+      console.error('Error toggling review flag:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update review flag. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (loading) {
     return (
       <AuthGuard>
@@ -313,6 +437,61 @@ export default function TopicDetailPage() {
                 <Progress value={topicProgress.masteryScore} className="h-3" />
               </div>
             </CardHeader>
+          </Card>
+
+          {/* Topic Action Buttons */}
+          <Card className="border-dashed border-2 border-gray-200 bg-white/50">
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700">Track Your Progress</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Log your activities to build mastery
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                  <Button
+                    onClick={handleMarkCompleted}
+                    variant={topicProgress.status === 'completed' ? 'default' : 'outline'}
+                    size="sm"
+                    className={`h-10 ${topicProgress.status === 'completed' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    {topicProgress.status === 'completed' ? 'Completed ✓' : 'Mark Completed'}
+                  </Button>
+
+                  <Button
+                    onClick={handlePracticed}
+                    variant="outline"
+                    size="sm"
+                    className="h-10"
+                  >
+                    <Target className="h-4 w-4 mr-2" />
+                    Practiced {(topicProgress.practiceCount ?? 0) > 0 ? `(${topicProgress.practiceCount})` : ''}
+                  </Button>
+
+                  <Button
+                    onClick={handleMarkRevised}
+                    variant="outline"
+                    size="sm"
+                    className="h-10"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Revised {topicProgress.revisionCount > 0 ? `(${topicProgress.revisionCount})` : ''}
+                  </Button>
+
+                  <Button
+                    onClick={handleNeedsReview}
+                    variant={topicProgress.needsReview ? 'destructive' : 'outline'}
+                    size="sm"
+                    className="h-10"
+                  >
+                    <AlertCircle className="h-4 w-4 mr-2" />
+                    {topicProgress.needsReview ? 'Flagged ⚠️' : 'Needs Review'}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
           </Card>
 
           {/* Stats Cards */}

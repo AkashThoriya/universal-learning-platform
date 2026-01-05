@@ -489,6 +489,31 @@ export interface TopicProgress {
     date: Timestamp;
     note: string;
   }>;
+
+  // ============================================
+  // Action Tracking Fields (User-specific)
+  // ============================================
+
+  /** Topic completion status */
+  status?: 'not_started' | 'in_progress' | 'completed' | 'mastered';
+  /** Timestamp when topic was marked as completed */
+  completedAt?: Timestamp;
+
+  /** Number of practice sessions logged */
+  practiceCount?: number;
+  /** Timestamp of last practice session */
+  lastPracticed?: Timestamp;
+
+  /** Flag to indicate topic needs review/attention */
+  needsReview?: boolean;
+  /** Timestamp when review was requested */
+  reviewRequestedAt?: Timestamp;
+
+  /** Activity history for audit trail */
+  actionHistory?: Array<{
+    action: 'completed' | 'practiced' | 'revised' | 'needs_review' | 'unmarked';
+    timestamp: Timestamp;
+  }>;
 }
 
 /**

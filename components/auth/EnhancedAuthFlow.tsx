@@ -68,6 +68,8 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
   const [error, setError] = useState('');
   const [isNewUser, setIsNewUser] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
+  // Auth mode: 'auto' uses email detection, 'signin' forces login, 'signup' forces registration
+  const [authMode, setAuthMode] = useState<'auto' | 'signin' | 'signup'>('auto');
   const router = useRouter();
 
   const validateEmail = useCallback((email: string): boolean => {
@@ -110,7 +112,14 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     setError('');
 
     try {
-      // Check if user exists by checking sign-in methods for this email
+      // If user manually selected a mode, use that instead of auto-detection
+      if (authMode !== 'auto') {
+        setIsNewUser(authMode === 'signup');
+        setCurrentStep('password');
+        return;
+      }
+
+      // Auto-detect: Check if user exists by checking sign-in methods for this email
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
       // If signInMethods array is empty, user doesn't exist (new user)
       // If it has methods, user exists (returning user)
@@ -120,12 +129,12 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
       console.error('Email verification error:', err);
       // If error occurs, still proceed but assume new user for safety
       // This handles edge cases like email enumeration protection
-      setIsNewUser(true);
+      setIsNewUser(authMode === 'signup' || true);
       setCurrentStep('password');
     } finally {
       setLoading(false);
     }
-  }, [email, validateEmail]);
+  }, [email, validateEmail, authMode]);
 
   const handlePasswordSubmit = useCallback(async () => {
     if (password.length < 6) {
@@ -221,20 +230,36 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
 
         <Button onClick={handleEmailSubmit} disabled={!email || loading} className="w-full" size="lg">
           {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ArrowRight className="h-4 w-4 mr-2" />}
-          Continue
+          {authMode === 'signup' ? 'Create Account' : authMode === 'signin' ? 'Sign In' : 'Continue'}
         </Button>
+
+        {/* Auth Mode Toggle */}
+        <div className="text-center pt-4 border-t border-gray-100">
+          <button
+            type="button"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            onClick={() => {
+              if (authMode === 'signup') {
+                setAuthMode('signin');
+              } else {
+                setAuthMode('signup');
+              }
+              setError('');
+            }}
+          >
+            {authMode === 'signup' 
+              ? 'Already have an account? Sign in' 
+              : "Don't have an account? Create one"}
+          </button>
+        </div>
 
         <div className="flex items-center space-x-2 text-xs text-gray-500">
           <Shield className="h-3 w-3" />
           <span>Secure authentication with end-to-end encryption</span>
         </div>
-
-        <div className="text-center text-xs text-gray-500 mt-4">
-          <p>Prefer one-click sign-in? Try Google authentication above</p>
-        </div>
       </motion.div>
     ),
-    [email, error, loading, handleEmailSubmit]
+    [email, error, loading, handleEmailSubmit, authMode]
   );
 
   const PasswordStep = useMemo(
@@ -321,6 +346,22 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
             </button>
           </div>
         )}
+
+        {/* Mode Switch */}
+        <div className="text-center pt-2">
+          <button
+            type="button"
+            className="text-sm text-gray-500 hover:text-gray-700"
+            onClick={() => {
+              setIsNewUser(!isNewUser);
+              setError('');
+            }}
+          >
+            {isNewUser 
+              ? 'Already have an account? Sign in instead' 
+              : "Don't have an account? Create one"}
+          </button>
+        </div>
       </motion.div>
     ),
     [
