@@ -69,7 +69,7 @@ Production-tested and PWA-enabled. See the "Status & verification" section for l
 
 ## Live Demo
 
-🚀 **[Experience the Platform](https://exam-strategy-engine.vercel.app)**
+🚀 **[Experience the Platform](https://exam-engine-gules.vercel.app/)**
 
 _Production-ready platform available for immediate use. Create an account to explore all enterprise features._
 
