@@ -28,9 +28,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase/firebase-utils';
@@ -573,11 +573,11 @@ export default function TopicDetailPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Textarea
+                  <MarkdownEditor
                     value={userNotes}
-                    onChange={e => setUserNotes(e.target.value)}
+                    onChange={setUserNotes}
                     placeholder="Add your study notes here... Include key concepts, formulas, important points, practice questions, etc."
-                    rows={12}
+                    minHeight="min-h-[400px]"
                     className="mb-4"
                   />
                 </CardContent>
@@ -605,11 +605,11 @@ export default function TopicDetailPage() {
                       </ul>
                     </div>
 
-                    <Textarea
+                    <MarkdownEditor
                       value={personalContext}
-                      onChange={e => setPersonalContext(e.target.value)}
+                      onChange={setPersonalContext}
                       placeholder="Create your personal context here... Answer the reflection prompts above to build deeper understanding."
-                      rows={10}
+                      minHeight="min-h-[300px]"
                     />
                   </div>
                 </CardContent>
