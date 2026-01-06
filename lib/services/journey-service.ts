@@ -99,10 +99,53 @@ export class JourneyService {
   }
 
   /**
+   * Create initial journey from onboarding data
+   */
+  async createJourneyFromOnboarding(
+    userId: string,
+    examId: string,
+    targetDate: Date
+  ): Promise<Result<UserJourney>> {
+    try {
+      const exam = EXAMS_DATA.find(e => e.id === examId);
+      if (!exam) {
+        return createError(new Error('Exam not found'));
+      }
+
+      const request: CreateJourneyRequest = {
+        title: `${exam.name} Preparation Journey`,
+        description: `Your personalized journey to master ${exam.name}`,
+        targetCompletionDate: targetDate,
+        priority: 'high',
+        track: 'exam',
+        examId: examId,
+        customGoals: [],
+      };
+
+      return this.createJourney(userId, request);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to create journey from onboarding'));
+    }
+  }
+
+  /**
    * Get journeys for a user with real-time updates
    */
-  subscribeToUserJourneys(userId: string, callback: (journeys: UserJourney[]) => void): () => void {
-    const unsubscribe = journeyFirebaseService.subscribeToUserJourneys(userId, callback);
+  /**
+   * Get journeys for a user with real-time updates
+   * @param courseId Optional - Filter journeys by specific course/exam ID
+   */
+  subscribeToUserJourneys(userId: string, callback: (journeys: UserJourney[]) => void, courseId?: string): () => void {
+    const unsubscribe = journeyFirebaseService.subscribeToUserJourneys(userId, (journeys) => {
+      if (courseId) {
+        // Filter journeys by examId if a course context is provided
+        // Journeys without examId are considered general/global
+        const filteredJourneys = journeys.filter(j => !j.examId || j.examId === courseId);
+        callback(filteredJourneys);
+      } else {
+        callback(journeys);
+      }
+    });
     this.unsubscribeFunctions.set(userId, unsubscribe);
     return unsubscribe;
   }
@@ -426,10 +469,10 @@ export class JourneyService {
    */
   private async calculateOverallCompletion(journey: UserJourney): Promise<void> {
     try {
-      const goalCompletions = Object.values(journey.progressTracking.goalCompletions);
+      const goalCompletions = Object.values(journey.progressTracking.goalCompletions) as number[];
       const overallCompletion =
         goalCompletions.length > 0
-          ? goalCompletions.reduce((sum, completion) => sum + completion, 0) / goalCompletions.length
+          ? goalCompletions.reduce((sum: number, completion: number) => sum + completion, 0) / goalCompletions.length
           : 0;
 
       await journeyFirebaseService.updateJourney(journey.id, {

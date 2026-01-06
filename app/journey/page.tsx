@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import { JourneyCard, GoalManagement, JourneyAnalytics } from '@/components/journey-planning';
-import { CreateJourneyDialog } from '@/components/journey/CreateJourneyDialog';
+import { JourneyArchitect } from '@/components/journey/JourneyArchitect';
 import { StandardLayout } from '@/components/layout/AppLayout';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,9 @@ import { journeyService } from '@/lib/services/journey-service';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { cn } from '@/lib/utils/utils';
 import { UserJourney } from '@/types/journey';
+import { User } from '@/types/exam';
+import { getUser } from '@/lib/firebase/firebase-utils';
+import { CreateJourneyDialog } from '@/components/journey/CreateJourneyDialog';
 
 export default function JourneyPlanningPage() {
   const { user } = useAuth();
@@ -31,8 +34,10 @@ export default function JourneyPlanningPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
+
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [journeyToDelete, setJourneyToDelete] = useState<UserJourney | null>(null);
+  const [userData, setUserData] = useState<User | null>(null);
 
 
   // Load journeys on component mount
@@ -51,6 +56,13 @@ export default function JourneyPlanningPage() {
     }
     setIsLoading(false);
     return undefined;
+  }, [user]);
+
+  // Load full user data for course context
+  useEffect(() => {
+    if (user?.uid) {
+      getUser(user.uid).then(data => setUserData(data));
+    }
   }, [user]);
 
   // Filter journeys based on search and status
@@ -164,14 +176,26 @@ export default function JourneyPlanningPage() {
                     </span>
                   </Button>
 
-                  <CreateJourneyDialog
+                  <JourneyArchitect
                     userId={user?.uid || ''}
                     onJourneyCreated={() => {}}
                     trigger={
                       <Button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 px-4 py-2">
                         <Plus className="h-4 w-4" />
-                        <span className="font-medium">Create Journey</span>
+                        <span className="font-medium">AI Architect</span>
                       </Button>
+                    }
+                  />
+
+                  <CreateJourneyDialog
+                    userId={user?.uid || ''}
+                    onJourneyCreated={() => {}}
+                    selectedCourses={userData?.selectedCourses}
+                    trigger={
+                       <Button variant="outline" size="sm" className="hidden sm:flex">
+                         <Plus className="h-4 w-4 mr-2" />
+                         Manual
+                       </Button>
                     }
                   />
               </div>
@@ -298,7 +322,7 @@ export default function JourneyPlanningPage() {
                           onStart={handleStartJourney}
                           onPause={handlePauseJourney}
                           onDelete={handleDeleteJourney}
-                          onViewDetails={setSelectedJourney}
+                          onViewDetails={(j) => window.location.href = `/journey/${j.id}`}
                           className={cn(
                             'transition-all duration-200 hover:shadow-lg',
                             selectedJourney?.id === journey.id && 'ring-2 ring-blue-500 shadow-lg'
@@ -320,7 +344,7 @@ export default function JourneyPlanningPage() {
                       Create your first personalized learning journey to achieve your educational and professional
                       goals.
                     </p>
-                    <CreateJourneyDialog
+                    <JourneyArchitect
                       userId={user?.uid || ''}
                       onJourneyCreated={() => {}}
                       trigger={

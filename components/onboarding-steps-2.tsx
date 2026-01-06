@@ -24,7 +24,7 @@ import {
   ChevronRight,
   GripVertical,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +36,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from '@/hooks/useForm';
-import { SyllabusSubject, SyllabusTopic, UserPersona } from '@/types/exam';
+import { Exam, SyllabusSubject, SyllabusTopic, OnboardingFormData } from '@/types/exam';
 import { EXAMS_DATA } from '@/lib/data/exams-data';
 
 /**
@@ -91,44 +91,11 @@ function getExamSpecificTips(selectedExamId: string) {
 }
 
 /**
- * Form data interface for onboarding
- */
-interface OnboardingFormData {
-  userPersona?: UserPersona;
-  displayName: string;
-  selectedExamId: string;
-  examDate: string;
-  isCustomExam: boolean;
-  customExam: {
-    name?: string;
-    description?: string;
-    category?: string;
-  };
-  syllabus: SyllabusSubject[];
-  preferences: {
-    dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
-    tierDefinitions: {
-      1: string;
-      2: string;
-      3: string;
-    };
-    revisionIntervals: number[];
-    notifications: {
-      revisionReminders: boolean;
-      dailyGoalReminders: boolean;
-      healthCheckReminders: boolean;
-    };
-  };
-  // Additional form fields with specific types
-  [key: string]: string | number | boolean | object | undefined;
-}
-
-/**
  * Syllabus Management Step
  */
 interface SyllabusManagementStepProps {
   form: UseFormReturn<OnboardingFormData>;
+  selectedExam: Exam | null;
   onUpdateSubjectTier: (subjectId: string, tier: 1 | 2 | 3) => void;
   onAddSubject: () => void;
   onRemoveSubject: (subjectId: string) => void;
@@ -157,6 +124,16 @@ export function SyllabusManagementStep({
 
   // Get exam-specific strategy tips
   const examTips = getExamSpecificTips(form.data.selectedExamId);
+
+  // Helper to get primary course name
+  const primaryCourseName = useMemo(() => {
+    if (form.data.isCustomExam) return form.data.customExam?.name || 'Custom Course';
+    if (form.data.selectedExamId && form.data.selectedCourses) {
+       const course = form.data.selectedCourses.find(c => c.examId === form.data.selectedExamId);
+       if (course) return course.examName;
+    }
+    return 'Selected Course';
+  }, [form.data.isCustomExam, form.data.customExam, form.data.selectedExamId, form.data.selectedCourses]);
 
   const startEditing = (subjectId: string, currentName: string) => {
     setEditingSubject(subjectId);
@@ -291,6 +268,16 @@ export function SyllabusManagementStep({
             <span>Add Subject</span>
           </Button>
         </div>
+        
+        {/* Multi-course clarification alert */}
+        {form.data.selectedCourses && form.data.selectedCourses.length > 1 && (
+          <Alert className="border-amber-200 bg-amber-50">
+            <AlertCircle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-800 text-sm">
+               Customizing syllabus for <strong>{primaryCourseName}</strong>. Other selected courses will use a standard recommended syllabus which you can customize later in your profile.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {form.data.syllabus.length === 0 ? (
           <Alert className="border-amber-200 bg-amber-50">

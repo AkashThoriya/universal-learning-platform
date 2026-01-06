@@ -32,12 +32,14 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/utils';
-import { TestPerformance, AdaptiveMetrics, SubjectPerformance } from '@/types/adaptive-testing';
+import { TestPerformance, AdaptiveMetrics, SubjectPerformance, AdaptiveQuestion, TestResponse } from '@/types/adaptive-testing';
 
 interface TestAnalyticsDashboardProps {
   performance: TestPerformance;
   adaptiveMetrics?: AdaptiveMetrics;
   subjectPerformances?: SubjectPerformance[];
+  questions?: AdaptiveQuestion[];
+  responses?: TestResponse[];
   showDetailedAnalysis?: boolean;
   showRecommendations?: boolean;
   className?: string;
@@ -47,6 +49,8 @@ export default function TestAnalyticsDashboard({
   performance,
   adaptiveMetrics,
   subjectPerformances = [],
+  questions = [],
+  responses = [],
   showDetailedAnalysis = true,
   showRecommendations = true,
   className,
@@ -230,11 +234,14 @@ export default function TestAnalyticsDashboard({
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-4 p-1 bg-muted/50 rounded-xl">
+                <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-5 p-1 bg-muted/50 rounded-xl">
                   <TabsTrigger value="overview" className="snap-start flex-1 min-w-[90px]">Overview</TabsTrigger>
                   <TabsTrigger value="subjects" className="snap-start flex-1 min-w-[90px]">Subjects</TabsTrigger>
                   <TabsTrigger value="adaptive" className="snap-start flex-1 min-w-[90px]">Adaptive</TabsTrigger>
                   <TabsTrigger value="patterns" className="snap-start flex-1 min-w-[90px]">Patterns</TabsTrigger>
+                  {questions.length > 0 && (
+                    <TabsTrigger value="review" className="snap-start flex-1 min-w-[90px]">Review</TabsTrigger>
+                  )}
                 </TabsList>
 
                 <TabsContent value="overview" className="space-y-6 mt-6">
@@ -564,6 +571,85 @@ export default function TestAnalyticsDashboard({
                     </Card>
                   </div>
                 </TabsContent>
+
+                {/* Review Tab - Question Review */}
+                {questions.length > 0 && (
+                  <TabsContent value="review" className="space-y-4 mt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold">Question Review</h3>
+                      <Badge variant="outline">
+                        {responses.filter(r => r.isCorrect).length}/{responses.length} Correct
+                      </Badge>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {questions.map((question, index) => {
+                        const response = responses.find(r => r.questionId === question.id);
+                        const isCorrect = response?.isCorrect || false;
+                        
+                        return (
+                          <Card 
+                            key={question.id} 
+                            className={cn(
+                              'border-l-4',
+                              isCorrect ? 'border-l-green-500 bg-green-50/30' : 'border-l-red-500 bg-red-50/30'
+                            )}
+                          >
+                            <CardContent className="p-4">
+                              <div className="flex items-start justify-between gap-4 mb-3">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-sm font-medium text-gray-500">Q{index + 1}</span>
+                                  {isCorrect ? (
+                                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                                  ) : (
+                                    <XCircle className="h-5 w-5 text-red-600" />
+                                  )}
+                                </div>
+                                <Badge variant="outline" className="text-xs">
+                                  {typeof question.difficulty === 'string' ? question.difficulty : `Level ${question.difficulty}`}
+                                </Badge>
+                              </div>
+                              
+                              <p className="text-gray-900 font-medium mb-3">
+                                {question.question || question.content}
+                              </p>
+                              
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                <div>
+                                  <span className="text-gray-500">Your answer:</span>
+                                  <p className={cn(
+                                    'font-medium mt-1',
+                                    isCorrect ? 'text-green-700' : 'text-red-700'
+                                  )}>
+                                    {response?.userAnswer || 'No answer'}
+                                  </p>
+                                </div>
+                                {!isCorrect && (
+                                  <div>
+                                    <span className="text-gray-500">Correct answer:</span>
+                                    <p className="font-medium mt-1 text-green-700">
+                                      {question.correctAnswer || question.correctAnswers?.join(', ')}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {question.explanation && (
+                                <div className="mt-3 pt-3 border-t border-gray-200">
+                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                    <Lightbulb className="h-3 w-3" />
+                                    Explanation
+                                  </span>
+                                  <p className="text-sm text-gray-700 mt-1">{question.explanation}</p>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </TabsContent>
+                )}
               </Tabs>
             </CardContent>
           </Card>
@@ -628,16 +714,27 @@ export default function TestAnalyticsDashboard({
 
               <Separator />
 
-              <div className="flex items-center justify-center gap-4 pt-4">
-                <Button variant="outline" className="gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                <Button 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={() => (window.location.href = '/analytics')}
+                >
                   <LineChart className="h-4 w-4" />
                   View Progress Trends
                 </Button>
-                <Button variant="outline" className="gap-2">
+                <Button 
+                  variant="outline" 
+                  className="gap-2"
+                  onClick={() => (window.location.href = '/journey')}
+                >
                   <Target className="h-4 w-4" />
                   Set New Goals
                 </Button>
-                <Button className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button 
+                  className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  onClick={() => (window.location.href = '/test')}
+                >
                   <TrendingUp className="h-4 w-4" />
                   Take Another Test
                 </Button>

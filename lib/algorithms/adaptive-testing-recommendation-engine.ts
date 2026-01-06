@@ -86,6 +86,52 @@ export class AdaptiveTestingRecommendationEngine {
         return createError(`Failed to build recommendation context: ${context.error}`);
       }
 
+      // Try AI Generation First
+      const { llmService } = await import('@/lib/ai/llm-service');
+      
+      if (llmService.isAvailable()) {
+         // Construct Prompt Context
+         const promptContext = {
+           userId,
+           weakAreas: context.data.weakAreas,
+           strongAreas: context.data.strongAreas,
+           recentActivity: context.data.userProgress.overallProgress,
+           preferredDifficulty: context.data.preferredDifficulty
+         };
+
+         const aiResult = await llmService.generateTestRecommendations(promptContext);
+         
+         if (aiResult.success && aiResult.data && Array.isArray(aiResult.data)) {
+           const aiRecommendations: TestRecommendation[] = aiResult.data.map((rec: any, index: number) => ({
+             testId: `ai-rec-${Date.now()}-${index}`,
+             title: rec.title,
+             description: rec.description,
+             reasons: [rec.reason],
+             subjects: rec.subjects ?? [],
+             difficulty: rec.difficulty ?? context.data.preferredDifficulty,
+             questionCount: 15,
+             estimatedDuration: 20,
+             priority: rec.priority ?? 'medium',
+             tags: ['ai-recommended', 'personalized'],
+             missionAlignment: 1,
+             estimatedAccuracy: 0.7, // Estimate
+             aiGenerated: true, // Truly AI generated now
+             createdFrom: 'recommendation',
+             linkedMissions: [],
+             confidence: 0.9,
+             expectedBenefit: rec.expectedBenefit ?? 'Personalized test to strengthen your weakest areas',
+             adaptiveConfig: {
+               algorithmType: 'CAT',
+               convergenceCriteria: { standardError: 0.3, minQuestions: 10, maxQuestions: 20 },
+               difficultyRange: { min: 'beginner', max: 'advanced' },
+             },
+           }));
+           
+           return createSuccess(aiRecommendations);
+         }
+      }
+
+      // Fallback to Heuristic Engine (Renamed to Adaptive Insights)
       const weights = { ...this.DEFAULT_WEIGHTS, ...customWeights };
 
       // Generate candidate tests
@@ -95,7 +141,9 @@ export class AdaptiveTestingRecommendationEngine {
       const scoredRecommendations = await this.scoreRecommendations(candidates, context.data, weights);
 
       // Select top recommendations
-      const topRecommendations = scoredRecommendations.sort((a, b) => (b as any).score - (a as any).score).slice(0, maxRecommendations);
+      const topRecommendations = scoredRecommendations
+        .sort((a, b) => (b as any).score - (a as any).score)
+        .slice(0, maxRecommendations);
 
       return createSuccess(topRecommendations);
     } catch (error) {
@@ -302,7 +350,7 @@ export class AdaptiveTestingRecommendationEngine {
           tags: ['journey-prep', 'goal-aligned'],
           missionAlignment: 1.0,
           estimatedAccuracy: this.estimateAccuracy(journeySubjects[0] ?? '', context),
-          aiGenerated: true,
+          aiGenerated: false,
           createdFrom: 'journey',
           linkedMissions: [journey.id],
           confidence: 0.9, // Very high confidence for journey-aligned tests

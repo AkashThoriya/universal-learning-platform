@@ -50,73 +50,16 @@ import { useForm, UseFormReturn } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
-import { createUser, saveSyllabus } from '@/lib/firebase/firebase-utils';
-import { logger, logError, logInfo } from '@/lib/utils/logger';
-import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, UserPersona } from '@/types/exam';
+import { createUser, saveSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
+import { journeyService } from '@/lib/services/journey-service';
+import { logError, logInfo, logger } from '@/lib/utils/logger';
+import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, OnboardingFormData } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
   interface Window {
     gtag?: (command: string, action: string, parameters?: Record<string, unknown>) => void;
   }
-}
-
-/**
- * Enhanced onboarding form data structure with complete validation
- */
-interface OnboardingFormData {
-  // Step 1: Persona Detection
-  userPersona?: UserPersona;
-
-  // Step 2: Personal Information
-  displayName: string;
-  selectedExamId: string;
-  examDate: string;
-  isCustomExam: boolean;
-
-  // Step 3: Custom Exam Details (if applicable)
-  customExam: {
-    name?: string;
-    description?: string;
-    category?: string;
-  };
-
-  // Step 4: Syllabus Configuration
-  syllabus: SyllabusSubject[];
-
-  // Step 4: Study Preferences
-  preferences: {
-    dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
-    useWeekendSchedule?: boolean;
-    weekdayStudyMinutes?: number;
-    weekendStudyMinutes?: number;
-    tierDefinitions: {
-      1: string;
-      2: string;
-      3: string;
-    };
-    revisionIntervals: number[];
-    notifications: {
-      revisionReminders: boolean;
-      dailyGoalReminders: boolean;
-      healthCheckReminders: boolean;
-    };
-  };
-
-  // Step 6: Custom Learning Goals
-  customLearningGoals?: Array<{
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    targetValue: number;
-    unit: string;
-    priority: 'high' | 'medium' | 'low';
-  }>;
-
-  // Index signature to satisfy Record<string, unknown> constraint
-  [key: string]: string | number | boolean | object | undefined;
 }
 
 /**
@@ -135,7 +78,20 @@ const onboardingSchema = z.object({
     .min(2, 'Name must be at least 2 characters long')
     .max(50, 'Name must be less than 50 characters')
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
-  selectedExamId: z.string().min(1, 'Please select an exam'),
+  selectedExamId: z.string().optional(),
+  selectedCourses: z
+    .array(
+      z.object({
+        examId: z.string(),
+        examName: z.string(),
+        targetDate: z.any(), // Timestamp or string
+        priority: z.number(),
+        isCustom: z.boolean().optional(),
+        customExam: z.any().optional(),
+      })
+    )
+    .min(1, 'Please select at least one course')
+    .max(5, 'Maximum 5 courses allowed'),
   examDate: z
     .string()
     .min(1, 'Target completion date is required')
@@ -343,6 +299,7 @@ export default function OnboardingSetupPage() {
   const initialFormData: OnboardingFormData = {
     displayName: user?.displayName ?? '',
     selectedExamId: '',
+    selectedCourses: [],
     examDate: '',
     isCustomExam: false,
     customExam: {},
@@ -842,18 +799,25 @@ export default function OnboardingSetupPage() {
       });
 
       // Prepare user data
-      const userData: Partial<UserType> = {
+      // Prepare user data
+      const profileData: Partial<UserType> = {
         displayName: form.data.displayName,
-        selectedExamId: form.data.selectedExamId,
+        ...(form.data.selectedExamId ? { selectedExamId: form.data.selectedExamId } : {}),
         examDate: Timestamp.fromDate(new Date(form.data.examDate)),
-        onboardingComplete: true, // Use consistent field name
-        onboardingCompleted: true, // Keep legacy field for compatibility
+        onboardingComplete: true,
+        onboardingCompleted: true, // Legacy
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        ...(form.data.userPersona && { userPersona: form.data.userPersona }),
-        preferences: form.data.preferences,
-        isCustomExam: form.data.isCustomExam,
-        ...(form.data.isCustomExam && form.data.customExam && { customExam: form.data.customExam }),
+        ...(form.data.userPersona ? { userPersona: form.data.userPersona } : {}),
+        ...(form.data.preferences ? { preferences: form.data.preferences } : {}),
+        ...(form.data.isCustomExam !== undefined ? { isCustomExam: form.data.isCustomExam } : {}),
+        ...(form.data.isCustomExam && form.data.customExam ? {
+          customExam: {
+            ...(form.data.customExam.name ? { name: form.data.customExam.name } : {}),
+            ...(form.data.customExam.description ? { description: form.data.customExam.description } : {}),
+            ...(form.data.customExam.category ? { category: form.data.customExam.category } : {})
+          }
+        } : {}),
       };
 
       // Save data with retry logic and better error handling
@@ -870,12 +834,12 @@ export default function OnboardingSetupPage() {
           logInfo('Saving comprehensive onboarding data', {
             userId: user.uid,
             userData: {
-              displayName: userData.displayName,
-              selectedExamId: userData.selectedExamId,
-              isCustomExam: userData.isCustomExam,
-              onboardingComplete: userData.onboardingComplete,
-              hasPreferences: !!userData.preferences,
-              hasUserPersona: !!userData.userPersona,
+              displayName: profileData.displayName,
+              selectedExamId: (profileData.selectedExamId || 'none') as string,
+              isCustomExam: profileData.isCustomExam,
+              onboardingComplete: profileData.onboardingComplete,
+              hasPreferences: !!profileData.preferences,
+              hasUserPersona: !!profileData.userPersona,
             },
             syllabusData: {
               subjectCount: form.data.syllabus.length,
@@ -890,20 +854,133 @@ export default function OnboardingSetupPage() {
           // If createUser succeeds but saveSyllabus fails, we would have inconsistent data
           // Running sequentially ensures atomicity - if first fails, second is not attempted
           
+          // Construct proper SelectedCourse objects with correct dates
+          const primaryExamId = form.data.selectedExamId;
+          const finalSelectedCourses = (form.data.selectedCourses && form.data.selectedCourses.length > 0)
+            ? form.data.selectedCourses.map(course => {
+                // strict destructure to avoid undefined values in spread
+                const { isCustom, customExam, ...courseRest } = course;
+                const safeCourse = {
+                    ...courseRest,
+                    ...(isCustom !== undefined ? { isCustom: !!isCustom } : {}),
+                    ...(customExam ? { customExam } : {})
+                };
+
+                // If this is the primary course, sync the date from step 2
+                if (course.examId === primaryExamId) {
+                  return {
+                    ...safeCourse,
+                    targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
+                    priority: 1
+                  };
+                }
+                // Ensure course matches SelectedCourseStrict type
+                return {
+                  ...safeCourse,
+                  // Ensure targetDate is valid or fallback
+                  targetDate: course.targetDate || Timestamp.now()
+                };
+              })
+            : [{
+                // Fallback if no selectedCourses (shouldn't happen with validation)
+                examId: primaryExamId || '',
+                examName: form.data.isCustomExam ? (form.data.customExam.name || 'Custom Exam') : (getExamById(primaryExamId || '')?.name || 'Unknown Exam'),
+                targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
+                priority: 1,
+                ...(form.data.isCustomExam !== undefined ? { isCustom: !!form.data.isCustomExam } : {}),
+                ...(form.data.customExam ? {
+                  customExam: {
+                    ...(form.data.customExam.name ? { name: form.data.customExam.name } : {}),
+                    ...(form.data.customExam.description ? { description: form.data.customExam.description } : {}),
+                    ...(form.data.customExam.category ? { category: form.data.customExam.category } : {})
+                  }
+                } : {})
+              }];
+
+          const profileDataFinal: Partial<UserType> = {
+            ...profileData,
+            selectedExamId: primaryExamId || '', // Legacy
+            primaryCourseId: primaryExamId || '', // New
+            selectedCourses: finalSelectedCourses, // New
+            ...(form.data.preferences && form.data.userPersona ? {
+              settings: {
+                 revisionIntervals: form.data.preferences.revisionIntervals,
+                 dailyStudyGoalMinutes: form.data.preferences.dailyStudyGoalMinutes,
+                 tierDefinition: form.data.preferences.tierDefinitions,
+                 notifications: form.data.preferences.notifications,
+                 preferences: {
+                    theme: 'system',
+                    language: 'en',
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                 },
+                 userPersona: form.data.userPersona
+              }
+            } : {}),
+            // Initialize stats
+            stats: {
+              totalStudyHours: 0,
+              currentStreak: 0,
+              longestStreak: 0,
+              totalMockTests: 0,
+              averageScore: 0,
+              topicsCompleted: 0,
+              totalTopics: 0,
+            },
+          };
+
+          // Save User Profile
           logInfo('Step 1: Creating user profile', { userId: user.uid });
-          await createUser(user.uid, userData);
+          await createUser(user.uid, profileDataFinal);
           logInfo('Step 1 completed: User profile created successfully', { userId: user.uid });
 
-          logInfo('Step 2: Saving syllabus data', { 
-            userId: user.uid, 
-            subjectCount: form.data.syllabus.length 
-          });
+          // Save Syllabus - Dual Write Strategy
+          // 1. Save Primary Syllabus to legacy location (for backward compatibility)
+          logInfo('Step 2: Saving syllabus data (Legacy)', { userId: user.uid });
           await saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]);
-          logInfo('Step 2 completed: Syllabus saved successfully', { 
-            userId: user.uid,
-            subjectCount: form.data.syllabus.length,
-            totalTopics: form.data.syllabus.reduce((total, s) => total + (s.topics?.length || 0), 0)
-          });
+          
+          // 2. Save ALL syllabi to new course-specific locations (for multi-course support)
+          logInfo('Step 2b: Saving multi-course syllabus data', { userId: user.uid, courseCount: finalSelectedCourses.length });
+          
+          // Create import for saveSyllabusForCourse if not exists or use dynamic import/require 
+          // Note: Please ensure saveSyllabusForCourse is imported at top of file. 
+          // Since I cannot change imports in this block, I assume it's imported or I'll use a clearer way.
+          // Wait, I missed adding the import in previous step. I should assume it's NOT imported yet.
+          // I will fix the import in a separate tool call if needed, or rely on 'firebase-utils' export.
+          
+          await Promise.all(finalSelectedCourses.map(async (course) => {
+            let syllabusToSave: SyllabusSubject[] = [];
+
+            if (course.examId === primaryExamId) {
+              // Use the customized syllabus from the form
+              syllabusToSave = form.data.syllabus as SyllabusSubject[];
+            } else {
+              // Fetch default syllabus for secondary course
+              const exam = getExamById(course.examId || '');
+              syllabusToSave = exam?.defaultSyllabus || [];
+            }
+
+            await saveSyllabusForCourse(user.uid, course.examId || '', syllabusToSave);
+          }));
+
+          logInfo('Step 2 completed: All syllabi saved successfully');
+
+          // Step 3: Create initial Journey for the Primary Course
+          if (primaryExamId && form.data.examDate) {
+            logInfo('Step 3: Creating initial journey', { userId: user.uid, examId: primaryExamId });
+            try {
+              // Ensure we have a valid Date object
+              const journeyDate = new Date(form.data.examDate);
+              await journeyService.createJourneyFromOnboarding(
+                user.uid,
+                primaryExamId,
+                journeyDate
+              );
+              logInfo('Step 3 completed: Initial journey created');
+            } catch (error) {
+              // Non-blocking error - don't fail onboarding if journey creation fails
+              logError('Failed to create initial journey', { error });
+            }
+          }
 
           // Save custom learning goals separately if any exist (optional - doesn't affect core data)
           if ((form.data as any).customLearningGoals && (form.data as any).customLearningGoals.length > 0) {
@@ -1100,6 +1177,7 @@ export default function OnboardingSetupPage() {
           return (
             <SyllabusManagementStep
               form={form as UseFormReturn<OnboardingFormData>}
+              selectedExam={selectedExam}
               onUpdateSubjectTier={updateSubjectTier}
               onAddSubject={addCustomSubject}
               onRemoveSubject={removeSubject}
@@ -1169,17 +1247,25 @@ export default function OnboardingSetupPage() {
         )}
 
         {/* Enhanced Progress Indicator */}
-        <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40">
+        <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40 pt-safe">
           <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               {/* Step Info */}
               <div className="flex items-center space-x-3">
                 <div className="text-2xl">{STEP_INFO[multiStep.currentStep - 1]?.icon}</div>
                 <div>
-                  <h2 className="font-semibold text-gray-900">{STEP_INFO[multiStep.currentStep - 1]?.title}</h2>
+                  <h2 className="font-semibold text-gray-900 truncate max-w-[150px] sm:max-w-none">{STEP_INFO[multiStep.currentStep - 1]?.title}</h2>
                   <p className="text-sm text-gray-600">
                     Step {multiStep.currentStep} of {multiStep.totalSteps} •{' '}
                     {STEP_INFO[multiStep.currentStep - 1]?.estimatedTime}
+                    {multiStep.currentStep > 1 && selectedExam && (
+                      <button 
+                        onClick={() => multiStep.goToStep(1)}
+                        className="ml-2 text-blue-600 hover:text-blue-700 hover:underline"
+                      >
+                        Change Course
+                      </button>
+                    )}
                   </p>
                 </div>
               </div>

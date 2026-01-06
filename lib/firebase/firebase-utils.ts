@@ -29,6 +29,7 @@ import {
 } from 'firebase/firestore';
 
 import { User, SyllabusSubject, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
+import { EXAMS_DATA } from '@/lib/data/exams-data';
 
 import { db } from './firebase';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
@@ -149,11 +150,34 @@ export const getUser = async (userId: string): Promise<User | null> => {
 
       if (userSnap.exists()) {
         const userData = { userId, ...userSnap.data() } as User;
+        
+        // Backward Compatibility: Populate selectedCourses if missing but legacy fields exist
+        if ((!userData.selectedCourses || userData.selectedCourses.length === 0) && userData.selectedExamId) {
+           const exam = EXAMS_DATA.find(e => e.id === userData.selectedExamId);
+           userData.selectedCourses = [{
+             examId: userData.selectedExamId,
+             examName: userData.isCustomExam 
+               ? (userData.customExam?.name || 'Custom Exam') 
+               : (exam?.name || 'Unknown Exam'),
+             targetDate: userData.examDate || Timestamp.now(),
+             priority: 1,
+             ...(userData.isCustomExam !== undefined ? { isCustom: userData.isCustomExam } : {}),
+             ...(userData.customExam ? {
+               customExam: {
+                 ...(userData.customExam.name ? { name: userData.customExam.name } : {}),
+                 ...(userData.customExam.description ? { description: userData.customExam.description } : {}),
+                 ...(userData.customExam.category ? { category: userData.customExam.category } : {})
+               }
+             } : {})
+           }];
+        }
+
         logInfo('User data retrieved successfully', {
           userId,
           hasDisplayName: !!userData.displayName,
           onboardingComplete: userData.onboardingComplete ?? false,
           selectedExamId: userData.selectedExamId ?? 'none',
+          selectedCoursesCount: userData.selectedCourses?.length ?? 0
         });
         return userData;
       }
@@ -457,14 +481,126 @@ export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> =>
   })) as SyllabusSubject[];
 
   // Sort subjects by order, then topics by order within each subject
-  return subjects
-    .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+  return subjects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .map(subject => ({
       ...subject,
-      topics: subject.topics
-        ?.sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
-        ?? [],
+      topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? [],
     }));
+};
+
+/**
+ * Saves a syllabus for a specific course (Multi-course support)
+ * Stores in: users/{userId}/courses/{courseId}/syllabus
+ */
+export const saveSyllabusForCourse = async (userId: string, courseId: string, syllabus: SyllabusSubject[]) => {
+  return measurePerformance('saveSyllabusForCourse', async () => {
+    logInfo('Saving syllabus for course', { userId, courseId, subjectCount: syllabus.length });
+
+    try {
+      const batch = writeBatch(db);
+      
+      // Collection path: users/{userId}/courses/{courseId}/syllabus
+      const syllabusRef = collection(db, 'users', userId, 'courses', courseId, 'syllabus');
+      const existingSyllabus = await getDocs(syllabusRef);
+
+      // Clear existing course syllabus
+      existingSyllabus.docs.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+
+      // Add new syllabus subjects
+      syllabus.forEach((subject, index) => {
+        const subjectRef = doc(syllabusRef, subject.id);
+        
+        // Similar to main saveSyllabus but scoped
+        const userSubjectData = {
+          ...subject,
+          order: index,
+          userId,
+          courseId,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+          topics: subject.topics?.map((topic, topicIndex) => ({
+             ...topic, 
+             order: topicIndex 
+          })) ?? [],
+          // Initialize topic status (same logic as main saveSyllabus)
+          topicStatus: subject.topics?.reduce((acc, topic) => ({
+            ...acc,
+            [topic.id]: {
+              status: 'not_started',
+              progress: 0,
+              timeSpent: 0,
+              masteryLevel: 0,
+              attempts: 0,
+              averageScore: 0,
+              difficulty: 'medium',
+              estimatedHours: topic.estimatedHours ?? 0,
+            }
+          }), {} as Record<string, any>) ?? {},
+          subjectProgress: {
+            // ... copy standard init logic
+            totalTopics: subject.topics?.length ?? 0,
+            completedTopics: 0,
+            masteredTopics: 0,
+            totalTimeSpent: 0,
+            averageMastery: 0,
+            status: 'not_started',
+          }
+        };
+
+        batch.set(subjectRef, userSubjectData);
+      });
+
+      await batch.commit();
+      logInfo('Course syllabus saved successfully', { userId, courseId });
+    } catch (error) {
+      logError('Failed to save course syllabus', { userId, courseId, error });
+      throw error;
+    }
+  });
+};
+
+/**
+ * Retrieves the syllabus for a specific course
+ */
+export const getSyllabusForCourse = async (userId: string, courseId: string): Promise<SyllabusSubject[]> => {
+  return measurePerformance('getSyllabusForCourse', async () => {
+    try {
+      const syllabusRef = collection(db, 'users', userId, 'courses', courseId, 'syllabus');
+      const snapshot = await getDocs(syllabusRef);
+
+      const subjects = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as SyllabusSubject[];
+
+      return subjects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        .map(subject => ({
+          ...subject,
+          topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? []
+        }));
+    } catch (error) {
+      logError('Failed to get course syllabus', { userId, courseId, error });
+      throw error;
+    }
+  });
+};
+
+/**
+ * Retrieves all syllabi for all user courses
+ */
+export const getAllSyllabi = async (userId: string): Promise<Record<string, SyllabusSubject[]>> => {
+  const user = await getUser(userId);
+  if (!user?.selectedCourses) return {};
+
+  const results: Record<string, SyllabusSubject[]> = {};
+  
+  await Promise.all(user.selectedCourses.map(async (course) => {
+    results[course.examId] = await getSyllabusForCourse(userId, course.examId);
+  }));
+
+  return results;
 };
 
 // Progress Tracking

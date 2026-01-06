@@ -13,7 +13,7 @@
 'use client';
 
 import { User, Clock, Calendar, AlertCircle, CheckCircle } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { UseFormReturn } from '@/hooks/useForm';
 import { PERSONA_OPTIONS, getDefaultStudyHours } from '@/lib/data/onboarding';
-import { Exam, UserPersona, UserPersonaType, SyllabusSubject } from '@/types/exam';
+import { Exam, UserPersona, UserPersonaType, OnboardingFormData } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
@@ -33,41 +33,6 @@ declare global {
   }
 }
 
-/**
- * Form data interface for onboarding
- */
-interface OnboardingFormData {
-  userPersona?: UserPersona;
-  displayName: string;
-  selectedExamId: string;
-  examDate: string;
-  isCustomExam: boolean;
-  customExam: {
-    name?: string;
-    description?: string;
-    category?: string;
-  };
-  syllabus: SyllabusSubject[];
-  preferences: {
-    dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
-    tierDefinitions: {
-      1: string;
-      2: string;
-      3: string;
-    };
-    revisionIntervals: number[];
-    notifications: {
-      revisionReminders: boolean;
-      dailyGoalReminders: boolean;
-      healthCheckReminders: boolean;
-    };
-    useWeekendSchedule?: boolean;
-    weekdayStudyMinutes?: number;
-    weekendStudyMinutes?: number;
-  };
-  [key: string]: string | number | boolean | object | undefined;
-}
 
 /**
  * Props for persona schedule step
@@ -201,47 +166,50 @@ const checkTargetDateRealism = (
 };
 
 /**
- * Persona & Schedule setup step component - Step 2 of onboarding
+ * Persona selection & schedule configuration step - Step 2 of onboarding
  */
 export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepProps) {
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [weekdayHours, setWeekdayHours] = useState(
+    Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)
+  );
+  const [weekendHours, setWeekendHours] = useState(
+    Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)
+  );
   const [useWeekendSchedule, setUseWeekendSchedule] = useState(false);
-  const [weekdayHours, setWeekdayHours] = useState(4);
-  const [weekendHours, setWeekendHours] = useState(6);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+
+  // Helper to get primary course name
+  const primaryCourseName = useMemo(() => {
+    if (form.data.isCustomExam) return form.data.customExam?.name || 'Custom Course';
+    if (form.data.selectedExamId) {
+       // Try to find in selectedCourses first for consistency
+       const course = (form.data as any).selectedCourses?.find((c: any) => c.examId === form.data.selectedExamId);
+       if (course) return course.examName;
+       return selectedExam?.name || 'Selected Course';
+    }
+    return 'Selected Course';
+  }, [form.data.isCustomExam, form.data.customExam, form.data.selectedExamId, form.data.selectedCourses, selectedExam]);
 
   // Helper function to calculate average daily hours from weekend schedule
-  const calculateAverageDailyHours = useCallback(() => {
-    if (!useWeekendSchedule) {
-      return Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60);
-    }
-    return (weekdayHours * 5 + weekendHours * 2) / 7;
-  }, [useWeekendSchedule, weekdayHours, weekendHours, form.data.preferences?.dailyStudyGoalMinutes]);
 
-  // Helper function to update form data when weekend schedule changes
+
+
+
+  // Update form with specialized schedule
   const updateFormWithSchedule = useCallback(() => {
+    const avgMinutes = ((weekdayHours * 5 + weekendHours * 2) / 7) * 60;
+    
+    // Only update if weekend schedule is explicitly enabled
     if (useWeekendSchedule) {
-      const avgDailyMinutes = calculateAverageDailyHours() * 60;
       form.updateField('preferences', {
         ...(form.data.preferences ?? {}),
-        dailyStudyGoalMinutes: Math.round(avgDailyMinutes),
+        dailyStudyGoalMinutes: Math.round(avgMinutes),
         useWeekendSchedule: true,
         weekdayStudyMinutes: weekdayHours * 60,
         weekendStudyMinutes: weekendHours * 60,
       });
-    } else {
-      // Clear weekend schedule data when not using it
-      const {
-        useWeekendSchedule: _,
-        weekdayStudyMinutes: __,
-        weekendStudyMinutes: ___,
-        ...cleanPrefs
-      } = form.data.preferences || {};
-      form.updateField('preferences', {
-        ...cleanPrefs,
-        useWeekendSchedule: false,
-      });
     }
-  }, [useWeekendSchedule, calculateAverageDailyHours, weekdayHours, weekendHours, form]);
+  }, [form, weekdayHours, weekendHours, useWeekendSchedule]);
 
   // Enhanced persona selection
   const handlePersonaSelect = useCallback(
@@ -254,6 +222,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
       // Update persona
       form.updateField('userPersona', {
         type: personaType,
+        label: selectedPersona.title,
       } as UserPersona);
 
       // Set default study hours based on persona
@@ -263,16 +232,29 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
       // Update local state for weekend schedule
       setWeekdayHours(defaultHours);
       setWeekendHours(Math.min(defaultHours + 2, 8)); // Add 2h for weekends, max 8h
+      setUseWeekendSchedule(false); // Reset to uniform schedule
 
       form.updateField('preferences', {
         ...(form.data.preferences ?? {}),
         dailyStudyGoalMinutes: defaultMinutes,
+        preferredStudyTime: 'morning', // Reset to default
+        tierDefinitions: {
+          1: 'High Priority - Core Concepts',
+          2: 'Medium Priority - Standard Topics',
+          3: 'Low Priority - Supplementary Material',
+        },
+        revisionIntervals: [1, 3, 7, 14, 30],
+        notifications: {
+          revisionReminders: true,
+          dailyGoalReminders: true,
+          healthCheckReminders: true,
+        },
       });
 
       // Analytics
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'persona_selected', {
-          persona_type: personaType,
+          persona: personaType,
           default_hours: defaultHours,
         });
       }
@@ -292,10 +274,11 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
       }));
 
       // Analytics
-      if (typeof window !== 'undefined' && window.gtag && value) {
+      if (!error && value && typeof window !== 'undefined' && window.gtag) {
         const examDate = new Date(value);
         const today = new Date();
-        const daysToExam = Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        const diffTime = Math.abs(examDate.getTime() - today.getTime());
+        const daysToExam = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         window.gtag('event', 'target_date_selected', {
           days_to_completion: daysToExam,
@@ -580,6 +563,17 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
               <Calendar className="h-4 w-4 text-blue-600" aria-hidden="true" />
               <Label className="text-base font-semibold">When is your target completion date?</Label>
             </div>
+            
+            {/* Multi-course clarification alert */}
+            {(form.data.selectedCourses as any[]) && (form.data.selectedCourses as any[]).length > 1 && (
+              <Alert className="mb-4 bg-amber-50 border-amber-200">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800 text-sm">
+                   Settings for <strong>{primaryCourseName}</strong>. Other selected courses will use a standard schedule which you can customize later.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Input
@@ -701,6 +695,12 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                             <span className="text-gray-600">Content to cover:</span>
                             <span className="font-medium">{selectedExam.totalEstimatedHours} hours</span>
                           </div>
+                          {selectedExam.recommendedHoursPerWeek && (
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-gray-600">Recommended pace:</span>
+                              <span className="font-medium text-blue-600">{selectedExam.recommendedHoursPerWeek} hrs/week</span>
+                            </div>
+                          )}
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-gray-600">Your schedule:</span>
                             <span className="font-medium">

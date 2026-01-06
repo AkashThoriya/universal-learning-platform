@@ -68,9 +68,9 @@ import { useForm } from '@/hooks/useForm';
 import { AGE_LIMITS } from '@/lib/config/constants';
 import { DEFAULT_PREFERENCES } from '@/lib/config/defaults';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
-import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
-import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase/firebase-utils';
-import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType } from '@/types/exam';
+import { getExamById } from '@/lib/data/exams-data';
+import { getUser, updateUser, getSyllabus, saveSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
+import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType, SelectedCourse } from '@/types/exam';
 
 /**
  * Profile form data structure with complete validation
@@ -83,6 +83,7 @@ interface ProfileFormData {
 
   // Exam Configuration
   selectedExamId: string;
+  selectedCourses: SelectedCourse[];
   examDate: string;
   isCustomExam: boolean;
   customExam: {
@@ -133,6 +134,18 @@ const profileSchema = z.object({
     .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces'),
   email: z.string().email('Please enter a valid email address'),
   selectedExamId: z.string().min(1, 'Please select an exam'),
+  selectedCourses: z.array(z.object({
+    examId: z.string(),
+    examName: z.string(),
+    targetDate: z.any(), // Accept Timestamp or Date
+    priority: z.number(),
+    isCustom: z.boolean().optional(),
+    customExam: z.object({
+      name: z.string().optional(),
+      description: z.string().optional(),
+      category: z.string().optional(),
+    }).optional(),
+  })).optional(),
   examDate: z
     .string()
     .min(1, 'Exam date is required')
@@ -148,7 +161,22 @@ const profileSchema = z.object({
     description: z.string().optional(),
     category: z.string().optional(),
   }),
-  syllabus: z.array(z.any()).min(0, 'Syllabus configuration is required'),
+  syllabus: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+      topics: z.array(z.object({
+        id: z.string(),
+        name: z.string(),
+        subtopics: z.array(z.string()).optional(),
+        estimatedHours: z.number().optional(),
+        description: z.string().optional(),
+      })),
+      estimatedHours: z.number().optional(),
+      isCustom: z.boolean().optional(),
+    })
+  ).min(0, 'Syllabus configuration is required'),
   userPersona: z
     .object({
       type: z.enum(['student', 'working_professional', 'freelancer']),
@@ -204,6 +232,7 @@ export default function ProfilePage() {
       email: '',
       userPersona: undefined,
       selectedExamId: '',
+      selectedCourses: [],
       examDate: '',
       isCustomExam: false,
       customExam: { name: '', description: '', category: '' },
@@ -252,18 +281,41 @@ export default function ProfilePage() {
           }
 
           // Initialize form with user data
+          // Normalize selectedCourses
+          let courses = fetchedUser.selectedCourses || [];
+          if (courses.length === 0 && fetchedUser.selectedExamId) {
+             const exam = getExamById(fetchedUser.selectedExamId);
+             if (exam || fetchedUser.isCustomExam) {
+                courses.push({
+                   examId: fetchedUser.selectedExamId,
+                   examName: fetchedUser.isCustomExam ? (fetchedUser.customExam?.name || 'Custom Exam') : (exam?.name || 'Unknown Exam'),
+                   targetDate: fetchedUser.examDate || Timestamp.now(),
+                   priority: 1,
+                   ...(fetchedUser.isCustomExam !== undefined ? { isCustom: fetchedUser.isCustomExam } : {}),
+                   ...(fetchedUser.customExam ? {
+                     customExam: {
+                       ...(fetchedUser.customExam.name ? { name: fetchedUser.customExam.name } : {}),
+                       ...(fetchedUser.customExam.description ? { description: fetchedUser.customExam.description } : {}),
+                       ...(fetchedUser.customExam.category ? { category: fetchedUser.customExam.category } : {})
+                     }
+                   } : {})
+                });
+             }
+          }
+
           const formData: ProfileFormData = {
             displayName: fetchedUser.displayName ?? '',
             email: fetchedUser.email ?? '',
             userPersona: fetchedUser.userPersona ?? undefined,
             selectedExamId: fetchedUser.selectedExamId ?? '',
+            selectedCourses: courses,
             examDate: fetchedUser.examDate ? (fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '') : '',
             isCustomExam: fetchedUser.isCustomExam ?? false,
-            customExam: {
-              name: fetchedUser.customExam?.name ?? '',
-              description: fetchedUser.customExam?.description ?? '',
-              category: fetchedUser.customExam?.category ?? '',
-            },
+            customExam: fetchedUser.customExam ? {
+              name: fetchedUser.customExam.name ?? '',
+              description: fetchedUser.customExam.description ?? '',
+              category: fetchedUser.customExam.category ?? '',
+            } : { name: '', description: '', category: '' },
             syllabus: userSyllabus ?? [],
             preferences: {
               dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes ?? DEFAULT_PREFERENCES.DAILY_STUDY_GOAL_MINUTES,
@@ -296,27 +348,7 @@ export default function ProfilePage() {
     loadUserData();
   }, [user, form, toast]);
 
-  // Learning path selection handler
-  const handleExamSelect = useCallback(
-    (examId: string) => {
-      if (examId === 'custom') {
-        form.updateField('selectedExamId', 'custom');
-        form.updateField('isCustomExam', true);
-        form.updateField('syllabus', []);
-        setSelectedExam(null);
-      } else {
-        const exam = getExamById(examId);
-        if (exam) {
-          form.updateField('selectedExamId', examId);
-          form.updateField('isCustomExam', false);
-          form.updateField('syllabus', exam.defaultSyllabus);
-          setSelectedExam(exam);
-        }
-      }
-      setHasUnsavedChanges(true);
-    },
-    [form]
-  );
+
 
   // Syllabus management functions
   const updateSubjectTier = useCallback(
@@ -361,6 +393,78 @@ export default function ProfilePage() {
     },
     [form]
   );
+
+  // Multi-course handlers
+  const handleSetPrimaryCourse = useCallback(async (courseId: string) => {
+    if (!form.data.selectedCourses) return;
+    
+    // Update local state
+    const updatedCourses = form.data.selectedCourses.map(c => ({
+      ...c,
+      priority: c.examId === courseId ? 1 : 2
+    }));
+    
+    // Find new primary course
+    const newPrimary = updatedCourses.find(c => c.examId === courseId);
+    if (newPrimary) {
+      form.updateField('selectedCourses', updatedCourses);
+      form.updateField('selectedExamId', newPrimary.examId);
+      form.updateField('isCustomExam', !!newPrimary.isCustom);
+      if (newPrimary.targetDate) {
+         try {
+             // Handle Timestamp vs Date string safely
+             let dateObj: Date;
+             // @ts-ignore - Handle Firebase Timestamp safely
+             if (typeof newPrimary.targetDate.toDate === 'function') {
+                 // @ts-ignore
+                 dateObj = newPrimary.targetDate.toDate();
+             } else {
+                 // @ts-ignore
+                 dateObj = new Date(newPrimary.targetDate);
+             }
+              form.updateField('examDate', dateObj.toISOString().split('T')[0] || '');
+         } catch (e) {
+             console.error("Date parsing error", e);
+         }
+      }
+      
+      // Also update selectedExam object for UI
+      if (!newPrimary.isCustom) {
+         const exam = getExamById(newPrimary.examId);
+         setSelectedExam(exam || null);
+      } else {
+         setSelectedExam(null);
+      }
+      
+      setHasUnsavedChanges(true);
+      toast({
+        title: "Primary Course Updated",
+        description: `Set ${newPrimary.examName} as your primary course. Save changes to apply.`
+      });
+    }
+  }, [form, toast]);
+
+  const handleRemoveCourse = useCallback((courseId: string) => {
+    if (!form.data.selectedCourses) return;
+    
+    const courseToRemove = form.data.selectedCourses.find(c => c.examId === courseId);
+    if (courseToRemove?.priority === 1) {
+      toast({
+         title: "Cannot Remove Primary Course",
+         description: "Please set another course as primary before removing this one.",
+         variant: "destructive"
+      });
+      return;
+    }
+    
+    const updatedCourses = form.data.selectedCourses.filter(c => c.examId !== courseId);
+    form.updateField('selectedCourses', updatedCourses);
+    setHasUnsavedChanges(true);
+    toast({
+        title: "Course Removed",
+        description: "Course removed from your list. Save changes to confirm."
+    });
+  }, [form, toast]);
 
   // Save profile changes
   const handleSave = useCallback(async () => {
@@ -407,7 +511,15 @@ export default function ProfilePage() {
       // CRITICAL: Save sequentially to prevent partial data state
       // If updateUser succeeds but saveSyllabus fails (or vice versa), we'd have inconsistent data
       await updateUser(user.uid, updateData);
+      
+      // Dual write: Save to legacy location (for backward compat)
       await saveSyllabus(user.uid, form.data.syllabus);
+      
+      // Dual write: Save to course-specific location (for multi-course support)
+      // We use the selectedExamId from form data as the target course
+      if (form.data.selectedExamId) {
+          await saveSyllabusForCourse(user.uid, form.data.selectedExamId, form.data.syllabus);
+      }
 
       setHasUnsavedChanges(false);
       setValidationErrors({});
@@ -472,9 +584,8 @@ export default function ProfilePage() {
   }, [form.data]);
 
   // Filtered exams for display
-  const filteredExams = useMemo(() => {
-    return EXAMS_DATA.slice(0, 20); // Show top 20 exams for performance
-  }, []);
+
+
 
   if (loading) {
     return (
@@ -695,65 +806,58 @@ export default function ProfilePage() {
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <BookOpen className="h-5 w-5 text-blue-600" />
-                      <span>Exam Configuration</span>
+                      <span>Course Management</span>
                     </CardTitle>
-                    <CardDescription>Your learning path and timeline details</CardDescription>
+                    <CardDescription>Manage your active courses and learning paths</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {/* Current Exam Display */}
-                    {selectedExam && (
-                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-blue-900">{selectedExam.name}</h3>
-                            <p className="text-sm text-blue-700 mt-1">{selectedExam.description}</p>
-                            <div className="flex items-center space-x-2 mt-2">
-                              <Badge variant="outline">{selectedExam.category}</Badge>
-                              {selectedExam.stages && (
-                                <Badge variant="secondary">{selectedExam.stages.length} stages</Badge>
-                              )}
-                            </div>
-                          </div>
-                          <Button variant="outline" size="sm" onClick={() => handleExamSelect('custom')}>
-                            Change Exam
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Learning Path Selection */}
+                    {/* Course List */}
                     <div className="space-y-4">
-                      <Label>Learning Path *</Label>
-                      <Select value={form.data.selectedExamId} onValueChange={handleExamSelect}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your learning path" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filteredExams.map(exam => (
-                            <SelectItem key={exam.id} value={exam.id}>
-                              <div className="flex items-center justify-between w-full">
-                                <span>{exam.name}</span>
-                                <Badge variant="outline" className="ml-2">
-                                  {exam.category}
-                                </Badge>
-                              </div>
-                            </SelectItem>
-                          ))}
-                          <SelectItem value="custom">
-                            <div className="flex items-center space-x-2">
-                              <Plus className="h-4 w-4" />
-                              <span>Create Custom Exam</span>
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                       <div className="flex justify-between items-center">
+                          <Label className="text-base font-semibold">My Courses</Label>
+                          {/* <Button size="sm" variant="outline" onClick={handleAddCoursePlaceholder}><Plus className="h-4 w-4 mr-1"/> Add Course</Button> */}
+                       </div>
+                       
+                       {form.data.selectedCourses && form.data.selectedCourses.length > 0 ? (
+                          <div className="grid gap-4">
+                             {form.data.selectedCourses.sort((a, b) => a.priority - b.priority).map((course) => (
+                                <div key={course.examId} className={`p-4 rounded-lg border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${course.priority === 1 ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'}`}>
+                                   <div>
+                                      <div className="flex items-center space-x-2">
+                                         <h4 className="font-semibold text-gray-900">{course.examName}</h4>
+                                         {course.priority === 1 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Primary</Badge>}
+                                         {course.isCustom && <Badge variant="outline">Custom</Badge>}
+                                      </div>
+                                      <p className="text-sm text-gray-500 mt-1">Target: {course.targetDate && ((course.targetDate as any).toDate ? (course.targetDate as any).toDate().toLocaleDateString() : new Date(course.targetDate as any).toLocaleDateString())}</p>
+                                   </div>
+                                   <div className="flex items-center space-x-2 w-full sm:w-auto">
+                                      {course.priority !== 1 && (
+                                         <>
+                                            <Button size="sm" variant="ghost" onClick={() => handleSetPrimaryCourse(course.examId)}>Set Primary</Button>
+                                            <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveCourse(course.examId)}><Trash2 className="h-4 w-4"/></Button>
+                                         </>
+                                      )}
+                                      {course.priority === 1 && (
+                                         <Button size="sm" variant="ghost" disabled className="text-gray-400">Current Primary</Button>
+                                      )}
+                                   </div>
+                                </div>
+                             ))}
+                          </div>
+                       ) : (
+                          <div className="text-center py-8 text-gray-500">No courses found.</div>
+                       )}
                     </div>
 
-                    {/* Custom Exam Details */}
+                    {/* Legacy/Fallback Section if needed (Hidden if simplified) */}
+                     
+                    {/* Current Primary Exam Details (Only show if isCustomExam is true for editing) */}
                     {form.data.isCustomExam && (
+                      <div className="pt-4 border-t">
+                      <h4 className="font-medium mb-4">Primary Course Details</h4>
                       <Card className="border-purple-200 bg-purple-50">
                         <CardHeader>
-                          <CardTitle className="text-purple-800">Custom Exam Details</CardTitle>
+                          <CardTitle className="text-purple-800 text-base">Custom Exam Settings</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="space-y-2">
@@ -784,6 +888,8 @@ export default function ProfilePage() {
                               placeholder="e.g., State Services, Private Sector"
                             />
                           </div>
+
+
                           <div className="space-y-2">
                             <Label htmlFor="custom-exam-description">Description</Label>
                             <Textarea
@@ -801,6 +907,7 @@ export default function ProfilePage() {
                           </div>
                         </CardContent>
                       </Card>
+                      </div>
                     )}
 
                     {/* Exam Date */}

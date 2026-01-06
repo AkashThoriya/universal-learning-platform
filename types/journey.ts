@@ -110,7 +110,7 @@ export interface JourneyAnalytics {
   predictedCompletionDate: Date;
   riskFactors: string[];
   recommendations: string[];
-  comparisonWithSimilarUsers: {
+  comparisonWithSimilarUsers?: {
     percentile: number;
     averageCompletionTime: number;
   };

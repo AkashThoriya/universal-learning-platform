@@ -682,7 +682,10 @@ export function PersonalInfoStepCompact({
                     return (
                       <div className="space-y-2">
                         <p className="text-sm text-green-700">
-                          Based on <strong>{selectedExam.totalEstimatedHours} hours</strong> of content and your
+                          Based on <strong>{selectedExam.totalEstimatedHours} hours</strong> of content
+                          {selectedExam.recommendedHoursPerWeek && (
+                            <> (recommended: <strong>{selectedExam.recommendedHoursPerWeek} hrs/week</strong>)</>
+                          )} and your
                           <strong> {dailyHours}h daily</strong> study plan:
                         </p>
                         <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-200">

@@ -9,65 +9,17 @@
  * @version 1.0.0
  */
 
+import { PROMPTS } from '@/lib/ai/prompts';
+import {
+  LLMProvider,
+  QuestionGenerationRequest,
+  QuestionGenerationOptions,
+  LLMResponse,
+  LLMQuestionResponse,
+} from '@/lib/ai/types';
 import { createError, createSuccess, Result } from '@/lib/utils/types-utils';
 import { AdaptiveQuestion } from '@/types/adaptive-testing';
 import { MissionDifficulty } from '@/types/mission-system';
-
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-export interface LLMProvider {
-  name: string;
-  apiKey: string;
-  baseUrl?: string;
-  model?: string;
-}
-
-export interface QuestionGenerationRequest {
-  subjects: string[];
-  topics?: string[];
-  difficulty: MissionDifficulty;
-  questionCount: number;
-  questionType: 'multiple_choice' | 'true_false' | 'short_answer' | 'essay';
-  examContext?: string;
-  learningObjectives?: string[];
-  excludeTopics?: string[];
-}
-
-export interface QuestionGenerationOptions {
-  provider?: 'gemini' | 'openai' | 'anthropic';
-  temperature?: number;
-  maxTokens?: number;
-  includeExplanations?: boolean;
-  difficultyProgression?: boolean;
-  adaptive?: boolean;
-}
-
-export interface LLMQuestionResponse {
-  question: string;
-  options?: string[];
-  correctAnswer: string | number;
-  explanation?: string;
-  difficulty: MissionDifficulty;
-  subject: string;
-  topics: string[];
-  estimatedTime: number;
-  bloomsLevel: 'remember' | 'understand' | 'apply' | 'analyze' | 'evaluate' | 'create';
-}
-
-export interface LLMResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  usage?: {
-    promptTokens: number;
-    completionTokens: number;
-    totalTokens: number;
-  };
-  provider: string;
-  model: string;
-}
 
 // ============================================================================
 // PROVIDER IMPLEMENTATIONS
@@ -77,157 +29,120 @@ class GeminiProvider {
   private apiKey: string;
   private baseUrl: string;
   private model: string;
+  private maxRetries = 3;
 
   constructor(config: LLMProvider) {
     this.apiKey = config.apiKey;
     this.baseUrl = config.baseUrl ?? 'https://generativelanguage.googleapis.com/v1beta';
-    this.model = config.model ?? 'gemini-1.5-flash';
+    this.model = config.model ?? 'gemini-2.5-pro';
   }
 
   async generateQuestions(
     request: QuestionGenerationRequest,
     options: QuestionGenerationOptions = {}
   ): Promise<LLMResponse<LLMQuestionResponse[]>> {
-    try {
-      const prompt = this.buildQuestionPrompt(request, options);
+    let attempts = 0;
+    while (attempts < this.maxRetries) {
+      try {
+        const prompt = PROMPTS.generateQuestions(request);
 
-      const response = await fetch(`${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: prompt,
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: options.temperature ?? 0.7,
-            maxOutputTokens: options.maxTokens ?? 4096,
-            candidateCount: 1,
+        // User explicitly confirmed access to gemini-2.5-pro.
+        // We are strictly using this model for superior reasoning and generation capabilities.
+        const targetModel = 'gemini-2.5-pro';
+
+        const response = await fetch(`${this.baseUrl}/models/${targetModel}:generateContent?key=${this.apiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          safetySettings: [
-            {
-              category: 'HARM_CATEGORY_HARASSMENT',
-              threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+            generationConfig: {
+              temperature: options.temperature ?? 0.7,
+              maxOutputTokens: options.maxTokens ?? 8192, // Increased for CoT
+              candidateCount: 1,
+              responseMimeType: 'application/json', // Force JSON mode
             },
-            {
-              category: 'HARM_CATEGORY_HATE_SPEECH',
-              threshold: 'BLOCK_MEDIUM_AND_ABOVE',
-            },
-          ],
-        }),
-      });
+            safetySettings: [
+              {
+                category: 'HARM_CATEGORY_HARASSMENT',
+                threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+              },
+              {
+                category: 'HARM_CATEGORY_HATE_SPEECH',
+                threshold: 'BLOCK_MEDIUM_AND_ABOVE',
+              },
+            ],
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+        if (!response.ok) {
+          if (response.status === 429 || response.status >= 500) {
+            throw new Error(`Transient API error: ${response.status}`);
+          }
+          throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.candidates?.[0]?.content) {
+          throw new Error('Invalid response from Gemini API');
+        }
+
+        const generatedContent = data.candidates[0].content.parts[0].text;
+        const questions = this.parseQuestionResponse(generatedContent, request);
+
+        return {
+          success: true,
+          data: questions,
+          provider: 'gemini',
+          model: targetModel,
+          usage: {
+            promptTokens: data.usageMetadata?.promptTokenCount ?? 0,
+            completionTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
+            totalTokens: data.usageMetadata?.totalTokenCount ?? 0,
+          },
+        };
+      } catch (error) {
+        attempts++;
+        if (attempts >= this.maxRetries) {
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error occurred after retries',
+            provider: 'gemini',
+            model: this.model,
+          };
+        }
+        // Exponential backoff
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 1000));
       }
-
-      const data = await response.json();
-
-      if (!data.candidates?.[0]?.content) {
-        throw new Error('Invalid response from Gemini API');
-      }
-
-      const generatedContent = data.candidates[0].content.parts[0].text;
-      const questions = this.parseQuestionResponse(generatedContent, request);
-
-      return {
-        success: true,
-        data: questions,
-        provider: 'gemini',
-        model: this.model,
-        usage: {
-          promptTokens: data.usageMetadata?.promptTokenCount ?? 0,
-          completionTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
-          totalTokens: data.usageMetadata?.totalTokenCount ?? 0,
-        },
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        provider: 'gemini',
-        model: this.model,
-      };
     }
-  }
-
-  private buildQuestionPrompt(request: QuestionGenerationRequest, options: QuestionGenerationOptions): string {
-    const difficultyDescription = this.getDifficultyDescription(request.difficulty);
-    const bloomsLevels = this.getBloomsLevels(request.difficulty);
-
-    return `Generate ${request.questionCount} ${request.questionType.replace('_', ' ')} questions for ${request.subjects.join(', ')}.
-
-REQUIREMENTS:
-- Difficulty: ${request.difficulty} (${difficultyDescription})
-- Cognitive Level: ${bloomsLevels.join(' or ')}
-- Question Type: ${request.questionType}
-- Subjects: ${request.subjects.join(', ')}
-${request.topics ? `- Topics: ${request.topics.join(', ')}` : ''}
-${request.examContext ? `- Exam Context: ${request.examContext}` : ''}
-${request.learningObjectives ? `- Learning Objectives: ${request.learningObjectives.join(', ')}` : ''}
-${options.includeExplanations ? '- Include detailed explanations for answers' : ''}
-
-OUTPUT FORMAT (JSON):
-[
-  {
-    "question": "Question text here",
-    ${request.questionType === 'multiple_choice' ? '"options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"],' : ''}
-    "correctAnswer": ${request.questionType === 'multiple_choice' ? '"A"' : '"Correct answer text"'},
-    ${options.includeExplanations ? '"explanation": "Detailed explanation of why this is correct",' : ''}
-    "difficulty": "${request.difficulty}",
-    "subject": "Primary subject",
-    "topics": ["topic1", "topic2"],
-    "estimatedTime": 120,
-    "bloomsLevel": "apply"
-  }
-]
-
-Generate diverse, high-quality questions that test real understanding. Ensure questions are:
-1. Clear and unambiguous
-2. Academically rigorous
-3. Properly aligned with the specified difficulty
-4. Free from bias or controversial content
-5. Practically relevant to the subject matter
-
-Return ONLY the JSON array, no additional text.`;
-  }
-
-  private getDifficultyDescription(difficulty: MissionDifficulty): string {
-    const descriptions = {
-      beginner: 'Basic recall and understanding of fundamental concepts',
-      intermediate: 'Application of concepts to familiar problems',
-      advanced: 'Analysis and synthesis of complex scenarios',
-      expert: 'Evaluation and creation of novel solutions',
-    };
-    return descriptions[difficulty];
-  }
-
-  private getBloomsLevels(difficulty: MissionDifficulty): string[] {
-    const levels = {
-      beginner: ['remember', 'understand'],
-      intermediate: ['understand', 'apply'],
-      advanced: ['apply', 'analyze'],
-      expert: ['analyze', 'evaluate', 'create'],
-    };
-    return levels[difficulty];
+    return { success: false, error: 'Max retries exceeded', provider: 'gemini', model: this.model };
   }
 
   private parseQuestionResponse(content: string, request: QuestionGenerationRequest): LLMQuestionResponse[] {
     try {
-      // Clean the response to extract JSON
-      const jsonMatch = content.match(/\[[\s\S]*\]/);
-      if (!jsonMatch) {
-        throw new Error('No JSON array found in response');
-      }
+      // Robust JSON Extraction
+      // Remove any markdown code fences
+      const cleanContent = content.replace(/```json\n?|\n?```/g, '').trim();
 
-      const questions = JSON.parse(jsonMatch[0]);
+      // Try to find the array if there's extra text
+      const arrayMatch = cleanContent.match(/\[[\s\S]*\]/);
+      const jsonStr = arrayMatch ? arrayMatch[0] : cleanContent;
+
+      const questions = JSON.parse(jsonStr);
+
+      if (!Array.isArray(questions)) {
+        throw new Error('Response is not an array');
+      }
 
       return questions.map((q: any, _index: number) => ({
         question: q.question ?? '',
@@ -241,32 +156,81 @@ Return ONLY the JSON array, no additional text.`;
         bloomsLevel: q.bloomsLevel ?? 'understand',
       }));
     } catch (error) {
-      // Fallback: create basic questions if parsing fails
-      console.warn('Failed to parse LLM response, using fallback:', error);
-      return this.createFallbackQuestions(request);
+      console.error('Failed to parse LLM response:', error);
+      throw new Error('Failed to parse generated questions');
     }
   }
 
-  private createFallbackQuestions(request: QuestionGenerationRequest): LLMQuestionResponse[] {
-    const questions: LLMQuestionResponse[] = [];
+  async generateTestRecommendations(context: any): Promise<LLMResponse<any>> {
+    try {
+      const prompt = PROMPTS.generateTestRecommendations(context);
 
-    for (let i = 0; i < Math.min(request.questionCount, 5); i++) {
-      questions.push({
-        question: `Generated ${request.difficulty} question ${i + 1} for ${request.subjects[0]}`,
-        options: request.questionType === 'multiple_choice'
-          ? ['A) Option 1', 'B) Option 2', 'C) Option 3', 'D) Option 4']
-          : [],
-        correctAnswer: request.questionType === 'multiple_choice' ? 'A' : 'Sample answer',
-        explanation: 'This is a generated question for testing purposes.',
-        difficulty: request.difficulty,
-        subject: request.subjects[0] ?? 'General',
-        topics: request.topics ?? [request.subjects[0] ?? 'General'],
-        estimatedTime: 90,
-        bloomsLevel: 'understand',
+      const targetModel = 'gemini-2.5-pro';
+
+      const response = await fetch(`${this.baseUrl}/models/${targetModel}:generateContent?key=${this.apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: 'application/json' },
+        }),
       });
-    }
 
-    return questions;
+      if (!response.ok) {
+        throw new Error(`Gemini API error: ${response.status}`);
+      }
+      const data = await response.json();
+      const content = data.candidates[0].content.parts[0].text;
+      return {
+        success: true,
+        data: JSON.parse(content),
+        provider: 'gemini',
+        model: targetModel,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to generate recommendations',
+        provider: 'gemini',
+        model: this.model,
+      };
+    }
+  }
+
+  async generateJourneyPlan(goal: string): Promise<LLMResponse<any>> {
+    try {
+      const prompt = PROMPTS.generateJourneyPlan(goal);
+
+      const targetModel = 'gemini-2.5-pro';
+
+      const response = await fetch(`${this.baseUrl}/models/${targetModel}:generateContent?key=${this.apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: 'application/json' },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API error: ${response.status}`);
+      }
+      const data = await response.json();
+      const content = data.candidates[0].content.parts[0].text;
+      return {
+        success: true,
+        data: JSON.parse(content),
+        provider: 'gemini',
+        model: targetModel,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to generate plan',
+        provider: 'gemini',
+        model: this.model,
+      };
+    }
   }
 }
 
@@ -287,6 +251,40 @@ export class LLMService {
       LLMService.instance = new LLMService();
     }
     return LLMService.instance;
+  }
+
+  async generateTestRecommendations(context: any, options: { provider?: string } = {}): Promise<LLMResponse<any>> {
+    const providerName = options.provider ?? 'gemini';
+    const provider = this.providers.get(providerName);
+
+    if (!provider) {
+      return {
+        success: false,
+        error: `LLM provider '${providerName}' not available. Check API key configuration.`,
+        provider: providerName,
+        model: 'unknown',
+      };
+    }
+    // Delegate the call to the provider's method
+    return provider.generateTestRecommendations(context);
+  }
+
+  /**
+   * Generate a journey plan using AI
+   */
+  async generateJourneyPlan(goal: string, options: { provider?: string } = {}): Promise<LLMResponse<any>> {
+    const providerName = options.provider ?? 'gemini';
+    const provider = this.providers.get(providerName);
+
+    if (!provider) {
+      return {
+        success: false,
+        error: `LLM provider '${providerName}' not available. Check API key configuration.`,
+        provider: providerName,
+        model: 'unknown',
+      };
+    }
+    return provider.generateJourneyPlan(goal);
   }
 
   private initializeProviders(): void {

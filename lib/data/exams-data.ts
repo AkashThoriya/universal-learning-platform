@@ -26,6 +26,7 @@ import rrbNtpc from './exams/rrb-ntpc.json';
 import sbiPo from './exams/sbi-po.json';
 import sqlMastery from './exams/sql-mastery.json';
 import sscCgl from './exams/ssc-cgl.json';
+import systemsDsa from './exams/systems-dsa.json';
 import upscCsePrelims from './exams/upsc-cse-prelims.json';
 
 /**
@@ -70,6 +71,7 @@ export const EXAMS_DATA: Exam[] = [
   nodejsByNamastedev as Exam,
   reactByNamastedev as Exam,
   sqlMastery as Exam,
+  systemsDsa as Exam,
 ];
 
 /**

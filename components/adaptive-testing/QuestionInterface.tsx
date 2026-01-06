@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion';
 import {
   CheckCircle2,
-  Circle,
-  AlertTriangle,
   Brain,
   Target,
   Zap,
@@ -17,10 +15,12 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
@@ -177,13 +177,30 @@ export default function QuestionInterface({
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="p-4 sm:p-6">
+          <Card className="border-0 shadow-xl overflow-hidden">
+            <CardHeader className="p-6 sm:p-8 bg-white">
               <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg leading-relaxed">{question.question}</CardTitle>
-                  {question.explanation && (
-                    <CardDescription className="mt-2 text-base">{question.explanation}</CardDescription>
+                <div className="flex-1 prose prose-lg max-w-none text-gray-900">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {question.question}
+                  </ReactMarkdown>
+                  
+                  {question.explanation && isAnswered && (
+                     <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100"
+                     >
+                        <h4 className="flex items-center gap-2 text-blue-900 font-semibold mb-2">
+                            <Zap className="h-4 w-4 fill-blue-500 text-blue-500" />
+                            Explanation
+                        </h4>
+                        <div className="prose prose-sm prose-blue max-w-none">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {question.explanation}
+                            </ReactMarkdown>
+                        </div>
+                     </motion.div>
                   )}
                 </div>
                 <div className="flex items-center gap-2 ml-4">
@@ -192,7 +209,7 @@ export default function QuestionInterface({
                       <Button
                         variant="ghost"
                         onClick={() => onBookmark?.(question.id)}
-                        className={cn('h-11 w-11 p-0', isBookmarked && 'text-yellow-600 bg-yellow-50')}
+                        className={cn('h-11 w-11 p-0 rounded-full hover:bg-gray-100', isBookmarked && 'text-yellow-600 bg-yellow-50')}
                       >
                         <Bookmark className="h-5 w-5" />
                       </Button>
@@ -207,7 +224,7 @@ export default function QuestionInterface({
                       <Button
                         variant="ghost"
                         onClick={() => onFlag?.(question.id)}
-                        className={cn('h-11 w-11 p-0', isFlagged && 'text-red-600 bg-red-50')}
+                        className={cn('h-11 w-11 p-0 rounded-full hover:bg-gray-100', isFlagged && 'text-red-600 bg-red-50')}
                       >
                         <Flag className="h-5 w-5" />
                       </Button>
@@ -220,55 +237,50 @@ export default function QuestionInterface({
               </div>
 
               {/* Adaptive Insights */}
-              {adaptiveMode && (
-                <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Zap className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm font-medium text-purple-800">Adaptive Insights</span>
-                  </div>
-                  <p className="text-purple-700 text-xs">
-                    This question adapts to your ability level. Your performance here will help optimize future
-                    questions.
-                  </p>
+              {adaptiveMode && !isAnswered && (
+                <div className="mt-6 flex items-center gap-2 text-xs font-medium text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full w-fit">
+                    <TrendingUp className="h-3 w-3" />
+                    <span>Adaptive Question: Difficulty calibrating to your level</span>
                 </div>
               )}
             </CardHeader>
 
-            <CardContent className="space-y-4 p-4 sm:p-6">
+            <CardContent className="space-y-6 p-6 sm:p-8 pt-0">
               {/* Answer Options */}
               <div className="space-y-3">
                 {question.options?.map((option: string, index: number) => (
                   <motion.div
                     key={`option-${index}`}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
+                    whileHover={!isAnswered ? { scale: 1.005 } : {}}
+                    whileTap={!isAnswered ? { scale: 0.995 } : {}}
                     className={cn(
-                      'p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 relative overflow-hidden', // Rounded-xl, relative for ripple if needed
+                      'group relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200',
                       selectedOption === `option-${index}`
-                        ? 'border-blue-500 bg-blue-50/50 shadow-sm ring-1 ring-blue-200' // Added ring and shadow
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50',
+                        ? 'border-blue-500 bg-blue-50/50 shadow-md ring-1 ring-blue-200'
+                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50 hover:shadow-sm',
                       isAnswered && 'cursor-not-allowed opacity-75'
                     )}
                     onClick={() => handleOptionSelect(`option-${index}`)}
                   >
-                    <div className="flex items-start gap-3 relative z-10"> {/* z-10 for content */}
-                      <div className="flex-shrink-0 mt-0.5">
+                    <div className="flex items-start gap-4 z-10 relative"> 
+                      <div className="flex-shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110">
                         {selectedOption === `option-${index}` ? (
-                          <CheckCircle2 className="h-6 w-6 text-blue-600" /> // Slightly larger icon
+                          <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center">
+                              <CheckCircle2 className="h-4 w-4 text-white" />
+                          </div>
                         ) : (
-                          <Circle className="h-6 w-6 text-gray-300" /> // Lighter gray for smoother look
+                          <div className="h-6 w-6 rounded-full border-2 border-gray-300 group-hover:border-blue-400 group-hover:bg-blue-50" />
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
                           <span className={cn(
-                            "text-base leading-relaxed transition-colors", // Larger text base
-                            selectedOption === `option-${index}` ? "font-semibold text-blue-900" : "font-medium text-gray-800"
+                            "text-base leading-relaxed transition-colors block",
+                            selectedOption === `option-${index}` ? "font-semibold text-blue-900" : "font-medium text-gray-700"
                           )}>
-                            <span className="inline-block w-6 font-bold opacity-60 mr-1">{String.fromCharCode(65 + index)}.</span>
-                            {option}
+                             <ReactMarkdown components={{ p: 'span' }} remarkPlugins={[remarkGfm]}>
+                                 {option}
+                             </ReactMarkdown>
                           </span>
-                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -280,11 +292,11 @@ export default function QuestionInterface({
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="space-y-3 p-4 bg-green-50 rounded-lg border border-green-200"
+                  className="space-y-4 p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100"
                 >
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-green-800">How confident are you?</label>
-                    <Badge variant="outline" className="text-green-700">
+                    <label className="text-sm font-semibold text-green-900">How confident are you?</label>
+                    <Badge variant="outline" className="text-green-700 bg-white border-green-200 shadow-sm">
                       {confidence[0]}%
                     </Badge>
                   </div>
@@ -296,20 +308,20 @@ export default function QuestionInterface({
                     step={5}
                     className="py-2"
                   />
-                  <div className="flex justify-between text-xs text-green-600">
+                  <div className="flex justify-between text-xs font-medium text-green-700">
                     <span>Uncertain</span>
                     <span>Very Confident</span>
                   </div>
                 </motion.div>
               )}
 
-              <Separator />
+              <Separator className="bg-gray-100" />
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between pt-2">
                 <div className="flex items-center gap-2">
                   {onPrevious && questionNumber > 1 && (
-                    <Button variant="outline" onClick={onPrevious} className="gap-2">
+                    <Button variant="ghost" onClick={onPrevious} className="gap-2 text-gray-500 hover:text-gray-900">
                       <ChevronLeft className="h-4 w-4" />
                       Previous
                     </Button>
@@ -320,7 +332,7 @@ export default function QuestionInterface({
                   {!isAnswered && selectedOption && (
                     <Button
                       onClick={handleSubmitAnswer}
-                      className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8"
+                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 shadow-lg shadow-green-200"
                       size="lg"
                     >
                       <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -331,7 +343,7 @@ export default function QuestionInterface({
                   {isAnswered && onNext && (
                     <Button
                       onClick={onNext}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 shadow-lg shadow-blue-200"
                       size="lg"
                     >
                       Next Question
@@ -342,20 +354,14 @@ export default function QuestionInterface({
               </div>
 
               {/* Question Metadata */}
-              <div className="flex items-center justify-between text-xs text-gray-500 pt-4 border-t">
+              <div className="flex items-center justify-between text-xs text-gray-400 pt-4">
                 <div className="flex items-center gap-4">
                   <span>ID: {question.id.slice(-8)}</span>
-                  {adaptiveMode && (
-                    <span className="flex items-center gap-1">
-                      <TrendingUp className="h-3 w-3" />
-                      Adaptive
-                    </span>
-                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   {question.tags?.map(tag => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
-                      {tag}
+                    <Badge key={tag} variant="secondary" className="text-[10px] px-2 py-0 h-5 bg-gray-100 text-gray-500 hover:bg-gray-200 border-0">
+                      #{tag}
                     </Badge>
                   ))}
                 </div>
@@ -365,17 +371,10 @@ export default function QuestionInterface({
         </motion.div>
 
         {/* Warning for unanswered questions */}
-        {!selectedOption && questionNumber > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
-          >
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-yellow-600" />
-              <span className="text-sm text-yellow-800">Please select an answer before proceeding.</span>
-            </div>
-          </motion.div>
+        {!selectedOption && !isAnswered && (
+             <p className="text-center text-xs text-gray-400 animate-pulse">
+                Select the best answer to proceed
+             </p>
         )}
       </div>
     </TooltipProvider>

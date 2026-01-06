@@ -54,7 +54,8 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, getAllProgress, saveSyllabus } from '@/lib/firebase/firebase-utils';
+
+import { getSyllabus, getAllProgress, saveSyllabus, getUser, getSyllabusForCourse, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
 import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
 
@@ -72,8 +73,10 @@ export default function SyllabusPage() {
   const [tierFilter, setTierFilter] = useState<string>('all');
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<'subjects' | 'topics'>('subjects');
 
+  const [viewMode, setViewMode] = useState<'subjects' | 'topics'>('subjects');
+  const [currentExamId, setCurrentExamId] = useState<string>('');
+  
   // Enhanced edit state management
   const [editMode, setEditMode] = useState(false);
   const [editingSubject, setEditingSubject] = useState<string | null>(null);
@@ -97,12 +100,28 @@ export default function SyllabusPage() {
       logInfo('Syllabus page: Starting data fetch', { userId: user.uid });
 
       try {
-        const [syllabusData, progressData] = await Promise.all([getSyllabus(user.uid), getAllProgress(user.uid)]);
+
+        const userProfile = await getUser(user.uid);
+        const examId = userProfile?.selectedExamId || '';
+        setCurrentExamId(examId);
+
+        let syllabusData: SyllabusSubject[] = [];
+        if (examId) {
+             syllabusData = await getSyllabusForCourse(user.uid, examId);
+        }
+        
+        // Fallback or legacy load
+        if (syllabusData.length === 0) {
+             syllabusData = await getSyllabus(user.uid);
+        }
+
+        const progressData = await getAllProgress(user.uid);
 
         logInfo('Syllabus page: Data fetched successfully', {
           syllabusCount: syllabusData.length,
           progressCount: progressData.length,
           userId: user.uid,
+          examId
         });
 
         setSyllabus(syllabusData);
@@ -130,8 +149,21 @@ export default function SyllabusPage() {
     }
 
     setSaving(true);
+
     try {
-      await saveSyllabus(user.uid, syllabus);
+      if (currentExamId) {
+         await saveSyllabusForCourse(user.uid, currentExamId, syllabus);
+         // Also save to legacy location for now to maintain dashboard compatibility if needed, 
+         // BUT only if this is the primary course. 
+         // Since AdaptiveDashboard now switches primary, we assume we are editing primary.
+         // Wait, AdaptiveDashboard implementation might NOT have updated saveSyllabus there.
+         // Let's safe Dual Write here if we want to be super safe. 
+         // But `saveSyllabus` overwrites everything.
+         // Better strategy: Since AdaptiveDashboard now tries `getSyllabusForCourse` first, 
+         // we just need to save to the course location.
+      } else {
+         await saveSyllabus(user.uid, syllabus); 
+      }
       logInfo('Syllabus updated successfully', {
         userId: user.uid,
         subjectCount: syllabus.length,

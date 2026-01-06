@@ -12,56 +12,27 @@
 
 'use client';
 
-import { Search, BookOpen, User, Plus, AlertCircle } from 'lucide-react';
-import { useState, useMemo, useCallback } from 'react';
+import { Search, BookOpen, User, Plus, AlertCircle, X, Star } from 'lucide-react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { Timestamp } from 'firebase/firestore';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from '@/hooks/useForm';
 import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
-import { Exam, SyllabusSubject } from '@/types/exam';
+import { Exam, SelectedCourse, OnboardingFormData } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
   interface Window {
     gtag?: (command: string, action: string, parameters?: Record<string, unknown>) => void;
   }
-}
-
-/**
- * Form data interface for onboarding
- */
-interface OnboardingFormData {
-  displayName: string;
-  selectedExamId: string;
-  examDate: string;
-  isCustomExam: boolean;
-  customExam: {
-    name?: string;
-    description?: string;
-    category?: string;
-  };
-  syllabus: SyllabusSubject[];
-  preferences: {
-    dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
-    tierDefinitions: {
-      1: string;
-      2: string;
-      3: string;
-    };
-    revisionIntervals: number[];
-    notifications: {
-      revisionReminders: boolean;
-      dailyGoalReminders: boolean;
-      healthCheckReminders: boolean;
-    };
-  };
-  [key: string]: string | number | boolean | object | undefined;
 }
 
 /**
@@ -106,6 +77,87 @@ export function BasicInfoStep({
   const [activeCategory, setActiveCategory] = useState<string | null>('computer-science');
   const [showAllExams, setShowAllExams] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
+
+  // Sync isMultiSelectMode with selectedCourses length
+  useEffect(() => {
+    if (form.data.selectedCourses && form.data.selectedCourses.length > 1) {
+      setIsMultiSelectMode(true);
+    }
+  }, [form.data.selectedCourses]);
+
+  // Handle course toggle
+  const toggleCourse = useCallback((exam: Exam) => {
+    const currentCourses = form.data.selectedCourses || [];
+    const isSelected = currentCourses.some(c => c.examId === exam.id);
+
+    let newCourses: SelectedCourse[];
+
+    if (isSelected) {
+      newCourses = currentCourses.filter(c => c.examId !== exam.id);
+    } else {
+      if (currentCourses.length >= 5) {
+        // Optional: Add toast notification for max limit
+        return;
+      }
+      const newCourse: SelectedCourse = {
+        examId: exam.id,
+        examName: exam.name,
+        targetDate: Timestamp.now(), // Placeholder, updated in next step
+        priority: currentCourses.length + 1,
+        isCustom: false,
+      };
+      newCourses = [...currentCourses, newCourse];
+    }
+
+    form.updateField('selectedCourses', newCourses);
+    
+    // Sync legacy selectedExamId for backward compat (use primary/first course)
+    if (newCourses.length > 0) {
+      form.updateField('selectedExamId', newCourses[0]?.examId ?? '');
+      // Sync form.data.isCustomExam (if primary is custom, though this handler is for predefined)
+      form.updateField('isCustomExam', false);
+    } else {
+      form.updateField('selectedExamId', '');
+    }
+
+  }, [form]);
+
+  // Override standard select for multi-mode support
+  const handleExamClick = useCallback((examId: string) => {
+    const exam = filteredExams.find(e => e.id === examId);
+    if (!exam) return;
+
+    if (isMultiSelectMode) {
+      toggleCourse(exam);
+    } else {
+      // Standard single-select behavior
+      const newCourse: SelectedCourse = {
+        examId: exam.id,
+        examName: exam.name,
+        targetDate: Timestamp.now(),
+        priority: 1,
+        isCustom: false,
+      };
+      form.updateField('selectedCourses', [newCourse]);
+      onExamSelect(examId); // Calls parent handler which sets selectedExamId
+    }
+  }, [isMultiSelectMode, filteredExams, form, onExamSelect, toggleCourse]);
+
+  // Remove course handler
+  const removeCourse = useCallback((examId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    const currentCourses = form.data.selectedCourses || [];
+    const newCourses = currentCourses.filter(c => c.examId !== examId);
+    form.updateField('selectedCourses', newCourses);
+     
+    if (newCourses.length > 0) {
+      form.updateField('selectedExamId', newCourses[0]?.examId ?? '');
+    } else {
+      form.updateField('selectedExamId', '');
+    }
+  }, [form]);
+
 
   // Category color mapping
   const getCategoryClasses = useCallback((categoryId: string, isActive: boolean) => {
@@ -176,7 +228,15 @@ export function BasicInfoStep({
   // Enhanced custom exam handler
   const handleCustomExam = useCallback(() => {
     try {
-      onExamSelect('custom');
+      // For custom exams in multi-select, we might need more complex logic
+      // For now, custom acts as single select or primary replacement
+      if (isMultiSelectMode) {
+         // TODO: Add logic for custom course in multi-select (future enhancement)
+         // Current constraint: Custom course replaces selection or adds as primary
+         onExamSelect('custom');
+      } else {
+         onExamSelect('custom');
+      }
 
       // Analytics
       if (typeof window !== 'undefined' && window.gtag) {
@@ -188,7 +248,7 @@ export function BasicInfoStep({
     } catch (error) {
       console.error('Error selecting custom exam:', error);
     }
-  }, [onExamSelect]);
+  }, [onExamSelect, isMultiSelectMode]);
 
   return (
     <div className="space-y-6" role="main" aria-labelledby="basic-info-title">
@@ -242,13 +302,52 @@ export function BasicInfoStep({
       <Card>
         <CardContent className="p-6">
           <div className="mb-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <BookOpen className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <Label className="text-lg font-semibold">What do you want to learn?</Label>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-2">
+                <BookOpen className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                <Label className="text-lg font-semibold">What do you want to learn?</Label>
+              </div>
+              
+              {/* Progressive Complexity Toggle */}
+              {form.data.selectedExamId && !form.data.isCustomExam && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm"
+                  onClick={() => setIsMultiSelectMode(!isMultiSelectMode)}
+                >
+                  {isMultiSelectMode ? 'Done selecting' : 'Selecting 1 course... Add another?'}
+                </Button>
+              )}
             </div>
-            <p className="text-sm text-gray-600">
+            
+            <p className="text-sm text-gray-600 mb-4">
               Choose your learning path. We'll provide a pre-structured curriculum that you can fully customize later.
             </p>
+
+            {/* Selected Courses Chips (Multi-Select Mode) */}
+            {form.data.selectedCourses && form.data.selectedCourses.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                {form.data.selectedCourses.map((course, index) => (
+                  <Badge 
+                    key={course.examId} 
+                    variant={index === 0 ? "default" : "secondary"}
+                    className="pl-2 pr-1 py-1 text-sm flex items-center gap-1"
+                  >
+                    {course.examName}
+                    {index === 0 && <Star className="h-3 w-3 fill-current text-yellow-300 ml-1" />}
+                    {isMultiSelectMode && (
+                      <button 
+                        onClick={(e) => removeCourse(course.examId, e)}
+                        className="hover:bg-black/10 rounded-full p-0.5 ml-1 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Enhanced Search */}
@@ -272,7 +371,7 @@ export function BasicInfoStep({
           {!searchQuery && (
             <div className="mb-6">
               <Label className="text-sm font-medium mb-3 block">Popular Categories</Label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 -mx-1 px-1">
                 {POPULAR_EXAM_CATEGORIES.map(category => (
                   <Button
                     key={category.id}
@@ -305,24 +404,41 @@ export function BasicInfoStep({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {displayExams.map(exam => (
-                <Card
-                  key={exam.id}
-                  className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                    form.data.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
-                  }`}
-                  onClick={() => onExamSelect(exam.id)}
-                >
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-gray-900 mb-1">{exam.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{exam.description}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{exam.category}</span>
-                      <span>{exam.defaultSyllabus.length} subjects</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {displayExams.map(exam => {
+                const isSelected = form.data.selectedCourses?.some(c => c.examId === exam.id);
+                
+                return (
+                  <Card
+                    key={exam.id}
+                    className={`cursor-pointer transition-all duration-200 hover:shadow-md relative ${
+                      isSelected 
+                        ? 'ring-2 ring-blue-500 bg-blue-50' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => handleExamClick(exam.id)}
+                  >
+                    {/* Multi-select Checkbox */}
+                    {isMultiSelectMode && (
+                      <div className="absolute top-3 right-3">
+                         <Checkbox 
+                           checked={isSelected} 
+                           onCheckedChange={() => handleExamClick(exam.id)}
+                           className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                         />
+                      </div>
+                    )}
+
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-1 pr-6">{exam.name}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{exam.description}</p>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span>{exam.category}</span>
+                        <span>{exam.defaultSyllabus.length} subjects</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
 
               {/* Custom Exam Option */}
               <Card
@@ -420,7 +536,7 @@ export function BasicInfoStep({
       )}
 
       {/* Progress Summary */}
-      {selectedExam && form.data.displayName && !validationErrors.displayName && (
+      {(selectedExam || (form.data.selectedCourses && form.data.selectedCourses.length > 0)) && form.data.displayName && !validationErrors.displayName && (
         <Card className="border-green-200 bg-gradient-to-r from-green-50 via-blue-50 to-purple-50">
           <CardContent className="p-6">
             <div className="flex items-start space-x-3">
@@ -432,11 +548,16 @@ export function BasicInfoStep({
                 <p className="text-sm text-gray-600 mb-2">
                   You've selected{' '}
                   <span className="font-medium">
-                    {form.data.isCustomExam ? form.data.customExam.name : selectedExam.name}
+                    {form.data.isCustomExam 
+                      ? form.data.customExam.name 
+                      : form.data.selectedCourses && form.data.selectedCourses.length > 0
+                        ? `${form.data.selectedCourses.length} course${form.data.selectedCourses.length > 1 ? 's' : ''}`
+                        : selectedExam?.name
+                    }
                   </span>
                   . Next, we'll understand your learning style and create a personalized schedule.
                 </p>
-                {!form.data.isCustomExam && (
+                {!form.data.isCustomExam && selectedExam && (
                   <div className="text-xs text-gray-500">
                     {selectedExam.defaultSyllabus.length} subjects • Fully customizable
                   </div>
@@ -448,13 +569,13 @@ export function BasicInfoStep({
       )}
 
       {/* Validation Summary */}
-      {(validationErrors.displayName || !form.data.selectedExamId) && (
+      {(validationErrors.displayName || (!form.data.selectedExamId && (!form.data.selectedCourses || form.data.selectedCourses.length === 0))) && (
         <Alert className="border-amber-200 bg-amber-50">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-800">
             <div className="space-y-1">
               {validationErrors.displayName && <div>• {validationErrors.displayName}</div>}
-              {!form.data.selectedExamId && <div>• Please select a learning path</div>}
+              {(!form.data.selectedExamId && (!form.data.selectedCourses || form.data.selectedCourses.length === 0)) && <div>• Please select a learning path</div>}
             </div>
           </AlertDescription>
         </Alert>

@@ -198,7 +198,7 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
                 <div>
                   <p className="text-sm text-gray-600">Percentile</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {analyticsData.comparisonWithSimilarUsers.percentile}th
+                    {analyticsData.comparisonWithSimilarUsers?.percentile ?? 0}th
                   </p>
                   <div className="flex items-center mt-2">
                     <Users className="h-4 w-4 text-orange-500 mr-1" />
@@ -498,11 +498,11 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <div className="text-2xl font-bold text-blue-600 mb-2">
-                    {analyticsData.comparisonWithSimilarUsers.percentile}th
+                    {analyticsData.comparisonWithSimilarUsers?.percentile ?? 0}th
                   </div>
                   <div className="text-sm text-blue-700">Percentile</div>
                   <div className="text-xs text-blue-600 mt-1">
-                    Better than {analyticsData.comparisonWithSimilarUsers.percentile}% of learners
+                    Better than {analyticsData.comparisonWithSimilarUsers?.percentile ?? 0}% of learners
                   </div>
                 </div>
 
@@ -516,7 +516,7 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
 
                 <div className="text-center p-4 bg-purple-50 rounded-lg">
                   <div className="text-2xl font-bold text-purple-600 mb-2">
-                    {analyticsData.comparisonWithSimilarUsers.averageCompletionTime}d
+                    {analyticsData.comparisonWithSimilarUsers?.averageCompletionTime ?? 90}d
                   </div>
                   <div className="text-sm text-purple-700">Est. Completion</div>
                   <div className="text-xs text-purple-600 mt-1">vs 120d average</div>

@@ -598,3 +598,12 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Safe area insets for iOS notched devices */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

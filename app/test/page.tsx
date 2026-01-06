@@ -18,6 +18,7 @@ import {
 import { useState, useEffect } from 'react';
 
 import { AdaptiveTestCard, QuestionInterface, TestAnalyticsDashboard } from '@/components/adaptive-testing';
+import { TestGenerationOverlay } from '@/components/adaptive-testing/TestGenerationOverlay';
 import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,7 @@ export default function AdaptiveTestingPage() {
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [tests, setTests] = useState<AdaptiveTest[]>([]);
   const [stats, setStats] = useState<TestOverviewStats>({
     totalTests: 0,
@@ -239,23 +241,40 @@ export default function AdaptiveTestingPage() {
       return;
     }
 
+    // Start Generation Visuals
+    setIsGenerating(true);
+
+    // This promise wrapper ensures the animation plays for at least 6s (sum of step durations)
+    // so the user sees the "Magic" fully, even if the API is fast.
+    const minAnimationTime = new Promise(resolve => setTimeout(resolve, 8000));
+    
     try {
-      const recommendations = await adaptiveTestingService.generateTestRecommendations(user.uid);
+      // Run generation in parallel with animation
+      const [recommendations] = await Promise.all([
+        adaptiveTestingService.generateTestRecommendations(user.uid),
+        minAnimationTime
+      ]);
+
       if (recommendations.success && recommendations.data && recommendations.data.length > 0) {
+        // Just take the first recommendation for "Smart Test" flow
         const newTest = await adaptiveTestingService.createTestFromRecommendation(user.uid, recommendations.data[0]!);
         if (newTest.success && newTest.data) {
           await loadTestsAndStats();
+          // Hide overlay then start
+          setIsGenerating(false);
           handleStartTest(newTest.data.id);
         }
       } else {
+        setIsGenerating(false);
         toast({
           title: 'Info',
-          description: 'No test recommendations available at this time.',
+          description: 'No new test recommendations available at this time.',
           variant: 'default',
         });
       }
     } catch (error) {
       console.error('Error generating recommended test:', error);
+      setIsGenerating(false);
       toast({
         title: 'Error',
         description: 'Failed to generate recommended test. Please try again.',
@@ -331,6 +350,8 @@ export default function AdaptiveTestingPage() {
             <TestAnalyticsDashboard
               performance={showResults.performance}
               adaptiveMetrics={showResults.test.adaptiveMetrics}
+              questions={showResults.test.questions || []}
+              responses={showResults.test.responses || []}
               showDetailedAnalysis
               showRecommendations
             />
@@ -344,6 +365,10 @@ export default function AdaptiveTestingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <Navigation />
       <BottomNav />
+      
+      {/* Test Generation Overlay */}
+      <TestGenerationOverlay isVisible={isGenerating} />
+
       <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
         <PageTransition className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
@@ -574,12 +599,91 @@ export default function AdaptiveTestingPage() {
                   <CardDescription>Comprehensive analysis of your adaptive testing performance</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <EmptyState
-                    icon={TrendingUp}
-                    title="No analytics yet"
-                    description="Complete some tests to see your performance analytics"
-                    className="border-0 bg-transparent"
-                  />
+                  {stats.completedTests > 0 ? (
+                    <div className="space-y-6">
+                      {/* Performance Summary */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="bg-blue-50 rounded-lg p-4 text-center">
+                          <p className="text-sm text-blue-600 font-medium">Completed Tests</p>
+                          <p className="text-2xl font-bold text-blue-900">{stats.completedTests}</p>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-4 text-center">
+                          <p className="text-sm text-green-600 font-medium">Average Accuracy</p>
+                          <p className="text-2xl font-bold text-green-900">{stats.averageAccuracy.toFixed(1)}%</p>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-4 text-center">
+                          <p className="text-sm text-purple-600 font-medium">Total Questions</p>
+                          <p className="text-2xl font-bold text-purple-900">{stats.totalQuestions}</p>
+                        </div>
+                        <div className="bg-orange-50 rounded-lg p-4 text-center">
+                          <p className="text-sm text-orange-600 font-medium">Time Invested</p>
+                          <p className="text-2xl font-bold text-orange-900">{formatTime(stats.timeSpent)}</p>
+                        </div>
+                      </div>
+
+                      {/* Recent Test History */}
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-3">Recent Test History</h4>
+                        <div className="space-y-3">
+                          {tests
+                            .filter(t => t.status === 'completed')
+                            .slice(0, 5)
+                            .map((test, index) => (
+                              <div 
+                                key={test.id} 
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                                onClick={() => handleViewResults(test.id)}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                    {index + 1}
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-gray-900">{test.title}</p>
+                                    <p className="text-xs text-gray-500">
+                                      {test.performance?.totalQuestions || 0} questions • {formatTime(test.performance?.totalTime || 0)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className={`font-bold ${(test.performance?.accuracy || 0) >= 70 ? 'text-green-600' : 'text-orange-600'}`}>
+                                    {test.performance?.accuracy.toFixed(0) || 0}%
+                                  </p>
+                                  <p className="text-xs text-gray-500">Score</p>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                        {tests.filter(t => t.status === 'completed').length === 0 && (
+                          <p className="text-center text-gray-500 py-4">No completed tests yet</p>
+                        )}
+                      </div>
+
+                      {/* Performance Tip */}
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <TrendingUp className="h-5 w-5 text-blue-600 mt-0.5" />
+                          <div>
+                            <h5 className="font-medium text-blue-900">Performance Tip</h5>
+                            <p className="text-sm text-blue-700 mt-1">
+                              {stats.averageAccuracy >= 80 
+                                ? "Excellent work! Consider challenging yourself with harder topics."
+                                : stats.averageAccuracy >= 60
+                                ? "Good progress! Focus on weak areas identified in test reviews."
+                                : "Keep practicing! Review explanations after each test to improve."}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <EmptyState
+                      icon={TrendingUp}
+                      title="No analytics yet"
+                      description="Complete some tests to see your performance analytics"
+                      className="border-0 bg-transparent"
+                    />
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

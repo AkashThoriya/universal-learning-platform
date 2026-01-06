@@ -43,6 +43,8 @@ export interface Exam {
   defaultSyllabus: SyllabusSubject[];
   /** Total estimated hours to complete all subjects and topics, optional */
   totalEstimatedHours?: number;
+  /** Recommended weekly study hours for optimal learning pace, optional */
+  recommendedHoursPerWeek?: number;
 }
 
 /**
@@ -129,6 +131,8 @@ export interface SyllabusSubject {
   estimatedHours?: number;
   /** Whether this is a custom subject added by the user (optional) */
   isCustom?: boolean;
+  /** Sort order for the subject */
+  order?: number;
 }
 
 /**
@@ -156,6 +160,8 @@ export interface SyllabusTopic {
   estimatedHours?: number;
   /** Detailed description or notes for the topic (optional) */
   description?: string;
+  /** Sort order for the topic */
+  order?: number;
 }
 
 /**
@@ -192,10 +198,20 @@ export interface User {
     /** Target exam date */
     targetDate: Timestamp;
   };
-  /** Selected exam ID during onboarding */
+  /** Selected exam ID during onboarding (Deprecated: use selectedCourses) */
   selectedExamId?: string;
-  /** Target exam date during onboarding */
+  /** Target exam date during onboarding (Deprecated: use selectedCourses) */
   examDate?: Timestamp;
+  
+  /** 
+   * Active courses selected by the user
+   * Supports multi-course selection with progressive complexity
+   */
+  selectedCourses?: SelectedCourse[];
+  
+  /** ID of the primary/active course for dashboard display */
+  primaryCourseId?: string;
+
   /** Whether the user has completed the onboarding process */
   onboardingComplete?: boolean;
   /** Whether onboarding has been completed (legacy field) */
@@ -220,6 +236,7 @@ export interface User {
       1: string;
       2: string;
       3: string;
+      4?: string; // Optional 4th tier
     };
     revisionIntervals: number[];
     notifications: {
@@ -261,6 +278,90 @@ export interface User {
     totalLearningHours: number;
   };
 }
+
+/**
+ * Represents a specific course selected by the user
+ * 
+ * @interface SelectedCourse
+ */
+export interface SelectedCourse {
+  /** Unique identifier for the exam/course */
+  examId: string;
+  /** Display name of the course */
+  examName: string;
+  /** Target completion/exam date */
+  targetDate: Timestamp;
+  /** Priority level (1 = Primary, 2+ = Secondary) */
+  priority: number;
+  /** Whether this is a custom-created course */
+  isCustom?: boolean;
+  /** Metadata for custom courses */
+  customExam?: {
+    name?: string;
+    description?: string;
+    category?: string;
+  };
+}
+
+/**
+ * Enhanced onboarding form data structure with complete validation
+ */
+export interface OnboardingFormData {
+  // Step 1: Persona Detection
+  userPersona?: UserPersona;
+
+  // Step 2: Personal Information
+  displayName: string;
+  selectedExamId: string; // Deprecated, kept for backward compatibility
+  selectedCourses: SelectedCourse[]; // New multi-course field
+  examDate: string;
+  isCustomExam: boolean;
+
+  // Step 3: Custom Exam Details (if applicable)
+  customExam: {
+    name?: string;
+    description?: string;
+    category?: string;
+  };
+
+  // Step 4: Syllabus Configuration
+  syllabus: SyllabusSubject[];
+
+  // Step 4: Study Preferences
+  preferences: {
+    dailyStudyGoalMinutes: number;
+    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    useWeekendSchedule?: boolean;
+    weekdayStudyMinutes?: number;
+    weekendStudyMinutes?: number;
+    tierDefinitions: {
+      1: string;
+      2: string;
+      3: string;
+    };
+    revisionIntervals: number[];
+    notifications: {
+      revisionReminders: boolean;
+      dailyGoalReminders: boolean;
+      healthCheckReminders: boolean;
+    };
+  };
+
+  // Step 6: Custom Learning Goals
+  customLearningGoals?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    targetValue: number;
+    unit: string;
+    priority: 'high' | 'medium' | 'low';
+  }>;
+
+  // Index signature to satisfy Record<string, unknown> constraint
+  [key: string]: string | number | boolean | object | undefined;
+}
+
 
 /**
  * User persona types for adaptive learning experience

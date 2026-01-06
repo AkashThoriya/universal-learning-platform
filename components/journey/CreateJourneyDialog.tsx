@@ -36,6 +36,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { journeyService } from '@/lib/services/journey-service';
 import { CreateJourneyRequest } from '@/types/journey';
+import { SelectedCourse } from '@/types/exam';
 
 const createJourneySchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -45,6 +46,7 @@ const createJourneySchema = z.object({
     return date > new Date();
   }, 'Completion date must be in the future'),
   priority: z.enum(['low', 'medium', 'high', 'critical']),
+  examId: z.string().optional(),
 });
 
 type CreateJourneyFormValues = z.infer<typeof createJourneySchema>;
@@ -53,9 +55,10 @@ interface CreateJourneyDialogProps {
   userId: string;
   onJourneyCreated: () => void;
   trigger?: React.ReactNode;
+  selectedCourses?: SelectedCourse[] | undefined;
 }
 
-export function CreateJourneyDialog({ userId, onJourneyCreated, trigger }: CreateJourneyDialogProps) {
+export function CreateJourneyDialog({ userId, onJourneyCreated, trigger, selectedCourses }: CreateJourneyDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -79,6 +82,7 @@ export function CreateJourneyDialog({ userId, onJourneyCreated, trigger }: Creat
         targetCompletionDate: new Date(data.targetCompletionDate),
         priority: data.priority,
         track: 'certification', // Default track for custom journeys
+        ...(data.examId ? { examId: data.examId } : {}),
         customGoals: [], // Empty goals for now, user can add later
       };
 
@@ -98,7 +102,7 @@ export function CreateJourneyDialog({ userId, onJourneyCreated, trigger }: Creat
     } catch (error) {
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Something went wrong',
+        description: 'Failed to create journey. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -110,17 +114,17 @@ export function CreateJourneyDialog({ userId, onJourneyCreated, trigger }: Creat
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            New Journey
+          <Button variant="outline">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Journey
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Journey</DialogTitle>
           <DialogDescription>
-            Start a new learning path. Plan your goals and set a timeline.
+            Start a new learning journey. You can link it to an existing course or create a custom one.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -138,6 +142,33 @@ export function CreateJourneyDialog({ userId, onJourneyCreated, trigger }: Creat
                 </FormItem>
               )}
             />
+
+            {selectedCourses && selectedCourses.length > 0 && (
+              <FormField
+                control={form.control}
+                name="examId"
+                render={({ field }) => (
+                  <FormItem>
+                   <FormLabel>Link to Course (Optional)</FormLabel>
+                   <Select onValueChange={field.onChange} value={field.value || ''}>
+                     <FormControl>
+                       <SelectTrigger>
+                         <SelectValue placeholder="Select a course to link..." />
+                       </SelectTrigger>
+                     </FormControl>
+                     <SelectContent>
+                       {selectedCourses.map((course) => (
+                         <SelectItem key={course.examId} value={course.examId}>
+                           {course.examName}
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                   <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             
             <FormField
               control={form.control}

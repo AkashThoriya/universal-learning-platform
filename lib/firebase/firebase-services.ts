@@ -1638,31 +1638,97 @@ const adaptiveTestingFirebaseService = {
   },
 
   /**
+   * Get user's adaptive tests (one-time fetch)
+   */
+  async getUserTests(userId: string): Promise<Result<AdaptiveTest[]>> {
+    try {
+      const q = query(
+        collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+
+      const snapshot = await getDocs(q);
+      const tests = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+        createdAt: doc.data().createdAt?.toDate() ?? new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() ?? new Date(),
+        completedAt: doc.data().completedAt?.toDate() ?? null,
+      })) as AdaptiveTest[];
+
+      return createSuccess(tests);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to fetch user tests'));
+    }
+  },
+
+  /**
    * Get question bank for test generation
    */
   async getQuestionBank(
+    userId: string,
     subjects: string[],
     difficulties: MissionDifficulty[],
     maxQuestions = 100
   ): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const questionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS);
-      const q = query(
+      
+      // Query 1: System/Public Questions
+      // We look for questions created by 'system' or 'llm' (public pool)
+      // Note: We run separate queries because Firestore limits 'in' clauses
+      const systemQuery = query(
         questionsRef,
-        where('subject', 'in', subjects.slice(0, 10)), // Firestore limit
+        where('subject', 'in', subjects.slice(0, 10)), 
         where('difficulty', 'in', difficulties),
+        where('createdBy', 'in', ['system', 'llm']), 
         orderBy('discriminationIndex', 'desc'),
-        orderBy('successRate', 'asc'),
         limit(maxQuestions)
       );
 
-      const snapshot = await getDocs(q);
-      const questions = snapshot.docs.map(doc => ({
+      // Query 2: User's Private Questions
+      // We look for questions specific to this user
+      const userQuery = query(
+        questionsRef,
+        where('subject', 'in', subjects.slice(0, 10)),
+        where('difficulty', 'in', difficulties),
+        where('createdBy', '==', userId),
+        orderBy('discriminationIndex', 'desc'),
+        limit(maxQuestions)
+      );
+
+      // Execute in parallel
+      const [systemSnap, userSnap] = await Promise.all([
+        getDocs(systemQuery),
+        getDocs(userQuery)
+      ]);
+
+      const systemQuestions = systemSnap.docs.map(doc => ({
         ...doc.data(),
         id: doc.id,
       })) as AdaptiveQuestion[];
 
-      return createSuccess(questions);
+      const userQuestions = userSnap.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as AdaptiveQuestion[];
+
+      // Merge and deduplicate
+      const allQuestions = [...userQuestions, ...systemQuestions];
+      const uniquequestions = Array.from(
+        new Map(allQuestions.map(q => [q.id, q])).values()
+      );
+
+      // Sort by discrimination index (desc) and success rate (asc)
+      const sortedQuestions = uniquequestions.sort((a, b) => {
+        if (b.discriminationIndex !== a.discriminationIndex) {
+          return b.discriminationIndex - a.discriminationIndex; // Desc
+        }
+        return (a.successRate ?? 0.5) - (b.successRate ?? 0.5); // Asc
+      });
+
+      return createSuccess(sortedQuestions.slice(0, maxQuestions));
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get question bank'));
     }
@@ -2384,10 +2450,7 @@ const journeyFirebaseService = {
         ),
         riskFactors,
         recommendations,
-        comparisonWithSimilarUsers: {
-          percentile: Math.min(95, Math.max(5, 50 + (actualProgress - expectedProgress))),
-          averageCompletionTime: totalDays * 1.2, // Simulated data
-        },
+        // comparisonWithSimilarUsers removed to ensure integrity (no simulated data)
       };
 
       // Save analytics

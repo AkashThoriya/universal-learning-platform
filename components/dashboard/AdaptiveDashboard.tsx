@@ -5,7 +5,7 @@ import {
   BookOpen,
   Target,
   TrendingUp,
-
+  PlayCircle,
   Zap,
   Trophy,
   Flame,
@@ -14,6 +14,7 @@ import {
   Award,
   Brain,
   Map,
+  CheckCircle2,
   LucideIcon,
 } from 'lucide-react';
 
@@ -23,6 +24,7 @@ import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalytics
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,11 +34,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
-import { getUser, getSyllabus } from '@/lib/firebase/firebase-utils';
+import { getUser, getSyllabus, getSyllabusForCourse, updateUser } from '@/lib/firebase/firebase-utils';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 import { progressService } from '@/lib/services/progress-service';
+import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { cn } from '@/lib/utils/utils';
-import { Exam, SyllabusSubject } from '@/types/exam';
+import { useToast } from '@/hooks/use-toast';
+import { Exam, SyllabusSubject, SelectedCourse } from '@/types/exam';
 
 interface DashboardStats {
   totalStudyTime: number;
@@ -165,6 +169,7 @@ const generateTodayRecommendations = (
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
+  const { toast } = useToast();
 
 
 
@@ -205,6 +210,10 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     subjectRecommendation?: string;
     todaysPlan?: string[];
   }>({});
+
+  const [availableCourses, setAvailableCourses] = useState<SelectedCourse[]>([]);
+  const [switchingCourse, setSwitchingCourse] = useState(false);
+  const [activeCourseId, setActiveCourseId] = useState<string>('');
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -257,27 +266,54 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           }
 
           // Fetch real user data including profile and exam info
-          const [progressResult, activeJourneysResult, userProfile] = await Promise.all([
+          const [progressResult, activeJourneysResult, userProfile, userTests] = await Promise.all([
             progressService.getUserProgress(user.uid),
             // journeyService.getActiveJourneys(user.uid), // Using placeholder for now
             Promise.resolve({ success: true, data: [] }), // Placeholder for journeys
             getUser(user.uid),
+            adaptiveTestingService.getUserTests(user.uid),
           ]);
 
           // Load selected exam information
-          if (userProfile?.selectedExamId) {
-            const exam = getExamById(userProfile.selectedExamId);
+          // Load selected exam information
+          const currentExamId = userProfile?.selectedExamId || '';
+          setActiveCourseId(currentExamId);
+
+          // Populate available courses
+          if (userProfile?.selectedCourses && userProfile.selectedCourses.length > 0) {
+            setAvailableCourses(userProfile.selectedCourses);
+          } else if (currentExamId) {
+             // Fallback for legacy
+             const exam = getExamById(currentExamId);
+             if (exam) {
+                setAvailableCourses([{
+                   examId: currentExamId,
+                   examName: exam.name,
+                   targetDate: userProfile?.examDate || new Date(),
+                   priority: 1
+                } as any]);
+             }
+          }
+
+          if (currentExamId) {
+            const exam = getExamById(currentExamId);
             if (exam) {
               setSelectedExam(exam);
 
               // Calculate exam countdown
-              const examDaysLeft = userProfile.examDate
-                ? Math.max(0, Math.ceil((userProfile.examDate.toDate().getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+              const examDate = userProfile?.selectedCourses?.find(c => c.examId === currentExamId)?.targetDate || userProfile?.examDate;
+              const examDaysLeft = examDate
+                ? Math.max(0, Math.ceil((((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
                 : undefined;
 
               // Generate today's recommendations
               try {
-                const syllabus = await getSyllabus(user.uid);
+                // Try course-specific syllabus first, fall back to global
+                let syllabus = await getSyllabusForCourse(user.uid, currentExamId);
+                if (!syllabus || syllabus.length === 0) {
+                   syllabus = await getSyllabus(user.uid);
+                }
+                
                 const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
                 setTodayRecommendations(todayRecs);
               } catch (error) {
@@ -324,9 +360,11 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               customLearningHours: Math.round(
                 (progress.trackProgress.exam.timeInvested + progress.trackProgress.course_tech.timeInvested) / 60
               ),
-              adaptiveTestsCompleted: (progress.overallProgress as any).adaptiveTestingLevel ?? 0,
-              adaptiveTestsAverage: 0, // Will be loaded from adaptive testing service
-              adaptiveTestsTotal: 0, // Will be loaded from adaptive testing service
+              adaptiveTestsCompleted: userTests.filter(t => t.status === 'completed').length,
+              adaptiveTestsAverage: userTests.filter(t => t.status === 'completed').length > 0
+                ? userTests.filter(t => t.status === 'completed').reduce((sum, t) => sum + (t.performance?.accuracy || 0), 0) / userTests.filter(t => t.status === 'completed').length
+                : 0,
+              adaptiveTestsTotal: userTests.length,
               activeJourneys: (progress as any).linkedJourneys?.length ?? 0,
               journeyCompletion: Math.round(
                 (progress as any).journeyProgress
@@ -454,6 +492,61 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     loadDashboardData();
   }, [timeOfDay, user?.uid]);
 
+  const handleCourseSwitch = async (courseId: string) => {
+    if (!user || switchingCourse || courseId === activeCourseId) return;
+    
+    try {
+      setSwitchingCourse(true);
+      
+      // Update Firebase
+      await updateUser(user.uid, { selectedExamId: courseId });
+      
+      // Update local state
+      setActiveCourseId(courseId);
+      
+      // Load new exam data
+      const exam = getExamById(courseId);
+      if (exam) {
+        setSelectedExam(exam);
+        
+        // Load syllabus for new course
+        let syllabus = await getSyllabusForCourse(user.uid, courseId);
+        if (!syllabus || syllabus.length === 0) {
+          syllabus = await getSyllabus(user.uid);
+        }
+        
+        // Find target date for the course
+        const courseData = availableCourses.find(c => c.examId === courseId);
+        const examDaysLeft = courseData?.targetDate
+          ? Math.max(0, Math.ceil((
+              ((courseData.targetDate as any).toDate 
+                ? (courseData.targetDate as any).toDate() 
+                : new Date(courseData.targetDate as any)
+              ).getTime() - Date.now()
+            ) / (1000 * 60 * 60 * 24)))
+          : undefined;
+        
+        // Generate new recommendations
+        const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
+        setTodayRecommendations(todayRecs);
+        
+        toast({
+          title: 'Course Switched',
+          description: `Now focusing on ${exam.name}`,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to switch course', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to switch course. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSwitchingCourse(false);
+    }
+  };
+
 
 
   const formatTime = (minutes: number): string => {
@@ -515,15 +608,77 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     <div className={cn('space-y-6', className)}>
       {/* Personalized Welcome Header */}
       {/* Personalized Welcome Header & Achievements */}
-      <WelcomeHeader 
-        user={user}
-        timeOfDay={timeOfDay}
-        recentAchievements={recentAchievements}
-        onDismissAchievement={() => setRecentAchievements([])}
-        onViewAllAchievements={() => setRecentAchievements([])}
-      />
+        {/* Header with Course Switcher */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+           {availableCourses.length > 1 ? (
+             <div className="w-full md:w-auto flex items-center gap-2 bg-white/50 backdrop-blur-sm p-1 rounded-lg border border-white/20">
+                <span className="text-sm font-medium text-gray-600 pl-2">Current Focus:</span>
+                <Select value={activeCourseId} onValueChange={handleCourseSwitch} disabled={switchingCourse}>
+                   <SelectTrigger className="w-[200px] h-8 bg-white border-0 shadow-sm">
+                      <SelectValue placeholder="Select Course" />
+                   </SelectTrigger>
+                   <SelectContent>
+                      {availableCourses.map(course => (
+                         <SelectItem key={course.examId} value={course.examId}>
+                            {course.examName}
+                         </SelectItem>
+                      ))}
+                   </SelectContent>
+                </Select>
+             </div>
+           ) : (
+             <div/> 
+           )}
+           {/* Placeholder for future header items */}
+        </div>
 
-      {/* Selected Exam and Today's Recommendations */}
+        <WelcomeHeader
+          user={user}
+          timeOfDay={timeOfDay}
+          recentAchievements={recentAchievements}
+          onDismissAchievement={() => setRecentAchievements(prev => prev.slice(1))}
+          onViewAllAchievements={() => {
+            /* TODO: Navigate to achievements page */
+          }}
+        />
+
+        {/* Continue Where Left Off Card */}
+        {todayRecommendations?.currentTopic && todayRecommendations?.currentTopicId && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-4"
+          >
+            <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-l-4 border-l-green-500">
+              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 bg-green-100 rounded-full">
+                      <PlayCircle className="h-4 w-4 text-green-600" />
+                    </div>
+                    <span className="text-sm font-semibold text-green-700">Continue where you left off</span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                    {todayRecommendations.currentTopic}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-0.5">
+                    {todayRecommendations.subjectRecommendation} • Ready to continue
+                  </p>
+                </div>
+                <Button
+                  onClick={() => (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)}
+                  className="bg-green-600 hover:bg-green-700 gap-2 w-full sm:w-auto"
+                >
+                  <PlayCircle className="h-4 w-4" />
+                  Resume
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Selected Exam and Today's Recommendations */}
       {selectedExam && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -632,9 +787,73 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
         {/* Overview Tab - Original Dashboard Content */}
         <TabsContent value="overview" className="space-y-6 mt-6">
-          {/* Enhanced Stats Overview */}
-          {/* Enhanced Stats Overview */}
-          <StatsGrid stats={stats} />
+          {/* Enhanced Stats / New User Welcome */}
+          {stats.completedSessions === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Card className="border-blue-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-900">
+                    <Flame className="h-5 w-5 text-orange-500" />
+                    🚀 Get Started with Your Learning Journey
+                  </CardTitle>
+                  <CardDescription className="text-blue-700">
+                    Complete these steps to build your personalized study plan
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className={`flex items-center gap-3 p-3 rounded-lg ${selectedExam ? 'bg-green-50 border border-green-200' : 'bg-white border border-gray-200'}`}>
+                    {selectedExam ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    ) : (
+                      <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                    )}
+                    <span className={`font-medium ${selectedExam ? 'text-green-800' : 'text-gray-700'}`}>
+                      Select a course
+                    </span>
+                    {selectedExam && <Badge variant="secondary" className="ml-auto">{selectedExam.name}</Badge>}
+                  </div>
+                  
+                  <div 
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => window.location.href = '/syllabus'}
+                  >
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                    <span className="font-medium text-gray-700">Explore your syllabus</span>
+                    <Button size="sm" variant="ghost" className="ml-auto text-blue-600">
+                      Start
+                    </Button>
+                  </div>
+                  
+                  <div 
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => window.location.href = '/test'}
+                  >
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                    <span className="font-medium text-gray-700">Take your first practice test</span>
+                    <Button size="sm" variant="ghost" className="ml-auto text-blue-600">
+                      Start
+                    </Button>
+                  </div>
+                  
+                  <div 
+                    className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => window.location.href = '/journey'}
+                  >
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
+                    <span className="font-medium text-gray-700">Create a learning journey</span>
+                    <Button size="sm" variant="ghost" className="ml-auto text-blue-600">
+                      Start
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : (
+            <StatsGrid stats={stats} />
+          )}
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

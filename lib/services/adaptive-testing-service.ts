@@ -463,8 +463,8 @@ export class AdaptiveTestingService {
         return [];
       }
 
-      const result = await this.getUserTests(userId);
-      return result;
+      const result = await adaptiveTestingFirebaseService.getUserTests(userId);
+      return result.success ? result.data ?? [] : [];
     } catch (error) {
       console.error('Error getting user tests:', error);
       return [];
@@ -566,8 +566,9 @@ export class AdaptiveTestingService {
     try {
       const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
 
-      // First try to get questions from Firebase
+      // First try to get questions from Firebase (System bank + User's private bank)
       const firebaseResult = await adaptiveTestingFirebaseService.getQuestionBank(
+        test.userId,
         test.linkedSubjects,
         difficulties,
         test.totalQuestions * 3 // Get 3x questions for selection flexibility
@@ -604,20 +605,28 @@ export class AdaptiveTestingService {
         );
 
         if (llmResult.success && llmResult.data) {
+          // Tag questions with user ID to ensure ownership/privacy
+          const taggedQuestions = llmResult.data.map(q => ({
+            ...q,
+            createdBy: test.userId 
+          }));
+
           // Save generated questions to Firebase for future use
-          await this.saveGeneratedQuestions(llmResult.data);
+          await this.saveGeneratedQuestions(taggedQuestions);
 
           // Combine with any existing Firebase questions
-          const allQuestions = [...(firebaseResult.data ?? []), ...llmResult.data];
+          const allQuestions = [...(firebaseResult.data ?? []), ...taggedQuestions];
           return createSuccess(allQuestions);
         }
         console.warn('LLM question generation failed:', llmResult.error);
       }
 
-      // Fallback: generate mock questions if LLM is not available
-      console.warn('Using mock questions as fallback for test generation');
-      const mockQuestions = this.generateFallbackQuestions(test.linkedSubjects, test.totalQuestions * 2);
-      return createSuccess(mockQuestions);
+      // No fallback: Return Firebase questions if available, otherwise error
+      console.error('Question generation failed: No LLM or Firebase questions available.');
+      if (firebaseResult.success && firebaseResult.data && firebaseResult.data.length > 0) {
+        return firebaseResult;
+      }
+      return createError(new Error('Unable to generate questions. Please try again later or contact support.'));
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate question bank'));
     }
@@ -656,53 +665,7 @@ export class AdaptiveTestingService {
     }
   }
 
-  private mapDifficultyToNumeric(difficulty: MissionDifficulty): number {
-    const mapping = {
-      beginner: 1,
-      intermediate: 2,
-      advanced: 3,
-      expert: 4,
-    };
-    return mapping[difficulty] ?? 2;
-  }
 
-  private generateFallbackQuestions(subjects: string[], count: number): AdaptiveQuestion[] {
-    const questions: AdaptiveQuestion[] = [];
-    const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
-    const bloomsLevels = ['remember', 'understand', 'apply', 'analyze', 'evaluate', 'create'] as const;
-
-    for (let i = 0; i < count; i++) {
-      const subject = subjects[i % subjects.length];
-      const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
-      const bloomsLevel = bloomsLevels[Math.floor(Math.random() * bloomsLevels.length)];
-
-      questions.push({
-        id: `q_${i + 1}_${Date.now()}`,
-        question: `Generated ${difficulty} question about ${subject} - Question ${i + 1}`,
-        options: ['A) Option A (Correct)', 'B) Option B', 'C) Option C', 'D) Option D'],
-        correctAnswer: 'A',
-        explanation: `This is the explanation for the ${subject} question.`,
-        difficulty: this.mapDifficultyToNumeric(difficulty ?? 'beginner'),
-        discriminationIndex: 0.5 + Math.random() * 0.4, // 0.5 to 0.9
-        guessingParameter: 0.25, // Standard for 4-option MCQ
-        subject: subject ?? 'general',
-        topics: [`${subject} Topic ${Math.floor(i / 5) + 1}`],
-        bloomsLevel: bloomsLevel ?? 'understand',
-        timeLimit: 120, // 2 minutes
-        timesAsked: 0,
-        averageResponseTime: 60000, // 1 minute default
-        successRate: 0.5 + Math.random() * 0.4, // 50% to 90%
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdBy: 'system',
-        validated: false,
-        qualityScore: 0.7,
-        metaTags: [(subject ?? 'general').toLowerCase(), difficulty ?? 'beginner', 'generated'],
-      });
-    }
-
-    return questions;
-  }
 
   private selectFirstQuestion(test: AdaptiveTest): AdaptiveQuestion | null {
     // Start with intermediate difficulty question from first subject
