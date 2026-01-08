@@ -14,6 +14,9 @@ import {
   Lightbulb,
   Calendar,
   Plus,
+  Brain,
+  RotateCcw,
+  ArrowRight,
   Target,
   AlertCircle,
 } from 'lucide-react';
@@ -27,7 +30,7 @@ import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -35,6 +38,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
+import { cn } from '@/lib/utils/utils';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -548,114 +552,269 @@ export default function TopicDetailPage() {
           </div>
 
           {/* Main Content Tabs */}
-          <Tabs defaultValue="notes" className="space-y-6 min-h-[50vh]">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="notes" className="flex items-center space-x-2">
-                <FileText className="h-4 w-4" />
-                <span>Study Notes</span>
+          <Tabs defaultValue="subtopics" className="space-y-6 min-h-[50vh]">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto gap-1">
+              <TabsTrigger value="subtopics" className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-xs sm:text-sm min-h-[44px]">
+                <BookOpen className="h-4 w-4 shrink-0" />
+                Subtopics
               </TabsTrigger>
-              <TabsTrigger value="context" className="flex items-center space-x-2">
-                <Lightbulb className="h-4 w-4" />
-                <span>Personal Context</span>
+              <TabsTrigger value="notes" className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-xs sm:text-sm min-h-[44px]">
+                <FileText className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Study</span> Notes
               </TabsTrigger>
-              <TabsTrigger value="current-affairs" className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4" />
-                <span>Current Affairs</span>
+              <TabsTrigger value="context" className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-xs sm:text-sm min-h-[44px]">
+                <Lightbulb className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Personal</span> Context
+              </TabsTrigger>
+              <TabsTrigger value="current-affairs" className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-xs sm:text-sm min-h-[44px]">
+                <Calendar className="h-4 w-4 shrink-0" />
+                <span className="hidden sm:inline">Current</span> Affairs
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="notes" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Study Notes</CardTitle>
-                  <CardDescription>
-                    Your personal notes, key concepts, formulas, and important points for this topic
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MarkdownEditor
-                    value={userNotes}
-                    onChange={setUserNotes}
-                    placeholder="Add your study notes here... Include key concepts, formulas, important points, practice questions, etc."
-                    minHeight="min-h-[400px]"
-                    className="mb-4"
-                  />
-                </CardContent>
-              </Card>
+            <TabsContent value="notes" className="space-y-4 animate-in fade-in-50 duration-500">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-semibold tracking-tight">Study Notes</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Capture key concepts, equations, and important points.
+                    </p>
+                  </div>
+                </div>
+                <MarkdownEditor
+                  value={userNotes}
+                  onChange={setUserNotes}
+                  placeholder="Start writing your notes here... support for **bold**, *italics*, lists and more."
+                  minHeight="min-h-[500px]"
+                  className="shadow-sm border-muted-foreground/20"
+                />
+              </div>
             </TabsContent>
 
-            <TabsContent value="context" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Context</CardTitle>
-                  <CardDescription>
-                    Create meaningful connections - Why is this topic important? How does it relate to your exam and
-                    real-world applications?
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                      <h4 className="font-semibold text-blue-900 mb-2">Reflection Prompts</h4>
-                      <ul className="text-sm text-blue-800 space-y-1">
-                        <li>• Why is this topic crucial for your exam?</li>
-                        <li>• How does this connect to other topics you've studied?</li>
-                        <li>• What real-world applications can you think of?</li>
-                        <li>• What memory aids or mnemonics help you remember this?</li>
-                      </ul>
+            <TabsContent value="context" className="space-y-6 animate-in fade-in-50 duration-500">
+              <div className="grid gap-6 md:grid-cols-[1fr_300px]">
+                 <div className="space-y-4">
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-semibold tracking-tight">Personal Context</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Why does this topic matter to you? Connect it to your bigger picture.
+                      </p>
                     </div>
-
                     <MarkdownEditor
                       value={personalContext}
                       onChange={setPersonalContext}
-                      placeholder="Create your personal context here... Answer the reflection prompts above to build deeper understanding."
-                      minHeight="min-h-[300px]"
+                      placeholder="I want to master this becuase..."
+                      minHeight="min-h-[400px]"
+                      className="shadow-sm border-muted-foreground/20"
                     />
-                  </div>
-                </CardContent>
-              </Card>
+                 </div>
+
+                 <div className="space-y-4">
+                    <div className="p-5 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50/50 border border-blue-100/50 shadow-sm">
+                      <h4 className="flex items-center gap-2 font-semibold text-blue-900 mb-3 text-sm">
+                        <Lightbulb className="h-4 w-4 text-blue-600" />
+                        Reflection Prompts
+                      </h4>
+                      <ul className="space-y-3 text-sm text-blue-800/80">
+                         <li className="flex gap-2">
+                           <span className="text-blue-400">•</span>
+                           <span>Why is this topic crucial for your upcoming exam?</span>
+                         </li>
+                         <li className="flex gap-2">
+                           <span className="text-blue-400">•</span>
+                           <span>How does this concept connect to previously studied topics?</span>
+                         </li>
+                         <li className="flex gap-2">
+                           <span className="text-blue-400">•</span>
+                           <span>Can you identify a real-world application?</span>
+                         </li>
+                         <li className="flex gap-2">
+                           <span className="text-blue-400">•</span>
+                           <span>What mnemonics or memory aids help you recall this?</span>
+                         </li>
+                      </ul>
+                    </div>
+                 </div>
+              </div>
             </TabsContent>
 
-            <TabsContent value="current-affairs" className="space-y-4">
+            <TabsContent value="current-affairs" className="space-y-6 animate-in fade-in-50 duration-500">
+              <div className="grid gap-6 md:grid-cols-[350px_1fr] md:items-start">
+                 {/* Input Column */}
+                 <div className="space-y-4 md:sticky md:top-6">
+                    <div className="p-5 rounded-xl border bg-card shadow-sm space-y-4">
+                       <div className="space-y-1">
+                          <h3 className="font-semibold text-sm flex items-center gap-2">
+                            <Plus className="h-4 w-4 text-primary" />
+                            Add New Update
+                          </h3>
+                          <p className="text-xs text-muted-foreground">
+                            Found a news article or recent update? Log it here.
+                          </p>
+                       </div>
+                       <div className="space-y-3">
+                         <Textarea
+                           value={newCurrentAffair}
+                           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewCurrentAffair(e.target.value)}
+                           placeholder="e.g., The Supreme Court recently ruled on..."
+                           className="resize-none min-h-[100px] text-sm"
+                         />
+                         <Button 
+                           onClick={addCurrentAffair} 
+                           disabled={!newCurrentAffair.trim()} 
+                           className="w-full"
+                           size="sm"
+                         >
+                           Add to Timeline
+                         </Button>
+                       </div>
+                    </div>
+                 </div>
+
+                 {/* Timeline Column */}
+                 <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                       <h3 className="text-lg font-semibold tracking-tight">Timeline & Updates</h3>
+                       <Badge variant="outline" className="font-mono text-xs">
+                         {topicProgress?.currentAffairs?.length || 0} Entries
+                       </Badge>
+                    </div>
+
+                    {!topicProgress?.currentAffairs || topicProgress.currentAffairs.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 px-4 rounded-xl border-2 border-dashed border-muted bg-muted/5 text-center transition-all hover:bg-muted/10">
+                        <div className="h-16 w-16 rounded-full bg-muted/20 flex items-center justify-center mb-4">
+                           <Calendar className="h-8 w-8 text-muted-foreground/50" />
+                        </div>
+                        <h4 className="text-base font-semibold text-muted-foreground">No updates logged yet</h4>
+                        <p className="text-sm text-muted-foreground/60 max-w-xs mt-1">
+                          Keep your knowledge fresh by tracking related current affairs and news events.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="relative space-y-0 pl-4 border-l-2 border-muted ml-2">
+                        {/* Sort by date descending if possible, but assuming array order for now */}
+                        {[...(topicProgress.currentAffairs)].reverse().map((affair, index) => (
+                           <div key={index} className="relative pb-8 pl-6 group">
+                              {/* Timeline dot */}
+                              <div className="absolute -left-[29px] top-1 h-3.5 w-3.5 rounded-full border-2 border-background bg-muted-foreground/30 group-hover:bg-primary transition-colors ring-4 ring-background" />
+                              
+                              <div className="p-4 rounded-xl border bg-card shadow-sm hover:shadow-md transition-all">
+                                 <p className="text-sm leading-relaxed whitespace-pre-wrap">{affair.note}</p>
+                                 <div className="flex items-center gap-2 mt-3">
+                                    <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-normal text-muted-foreground">
+                                       {format(affair.date.toDate(), 'MMM d, yyyy')}
+                                    </Badge>
+                                    {/* Could add delete button here if we had logic for it, but safe to omit or just show read-only for now unless I add handleDelete */}
+                                 </div>
+                              </div>
+                           </div>
+                        ))}
+                      </div>
+                    )}
+                 </div>
+              </div>
+            </TabsContent>
+
+            {/* Subtopics Tab */}
+            <TabsContent value="subtopics" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Affairs & Updates</CardTitle>
-                  <CardDescription>Track recent developments, news, and updates related to this topic</CardDescription>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Subtopics
+                  </CardTitle>
+                  <CardDescription>
+                    Break down this topic into smaller, manageable concepts
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex space-x-2">
-                    <Input
-                      value={newCurrentAffair}
-                      onChange={e => setNewCurrentAffair(e.target.value)}
-                      placeholder="Add a current affairs note or recent update..."
-                      className="flex-1"
-                    />
-                    <Button onClick={addCurrentAffair} disabled={!newCurrentAffair.trim()}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add
-                    </Button>
-                  </div>
-
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No current affairs notes yet.</p>
-                    <p className="text-sm">Add your first note above to start tracking updates!</p>
-                  </div>
+                <CardContent>
+                  {!topic?.subtopics || topic.subtopics.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No subtopics available yet.</p>
+                      <p className="text-sm">Break down topics into smaller chunks for better tracking.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {topic.subtopics.map((subtopic, index) => (
+                        <Link
+                          key={subtopic.id}
+                          href={`/syllabus/${topicId}/${index}?subject=${subjectId}`}
+                          className="block"
+                        >
+                          <div
+                            className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/50 transition-colors cursor-pointer group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={cn(
+                                "p-2 rounded-full border transition-colors group-hover:border-primary/50",
+                                subtopic.status === 'completed' ? "bg-green-100 border-green-200 text-green-700" :
+                                subtopic.status === 'in_progress' ? "bg-blue-100 border-blue-200 text-blue-700" :
+                                "bg-muted border-border text-muted-foreground"
+                              )}>
+                                {subtopic.status === 'completed' ? <CheckCircle className="h-4 w-4" /> :
+                                 subtopic.status === 'in_progress' ? <Clock className="h-4 w-4" /> :
+                                 <div className="h-4 w-4 rounded-full border-2 border-current" />
+                                }
+                              </div>
+                              <div>
+                                <p className="font-medium group-hover:text-primary transition-colors">{subtopic.name}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                                  <span className={cn(
+                                    "px-1.5 py-0.5 rounded-md font-medium",
+                                    subtopic.status === 'completed' ? "bg-green-100 text-green-700" :
+                                    subtopic.status === 'in_progress' ? "bg-blue-100 text-blue-700" :
+                                    "bg-muted text-muted-foreground"
+                                  )}>
+                                    {subtopic.status === 'not_started' ? 'Not Started' :
+                                     subtopic.status === 'in_progress' ? 'In Progress' : 
+                                     subtopic.status === 'completed' ? 'Completed' : 'Mastered'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              {subtopic.revisionCount > 0 && (
+                                <div className="flex items-center gap-1" title="Revisions">
+                                  <RotateCcw className="h-3 w-3" />
+                                  <span>{subtopic.revisionCount}</span>
+                                </div>
+                              )}
+                              {subtopic.practiceCount > 0 && (
+                                <div className="flex items-center gap-1" title="Practice sessions">
+                                  <Brain className="h-3 w-3" />
+                                  <span>{subtopic.practiceCount}</span>
+                                </div>
+                              )}
+                              <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
           </Tabs>
 
           {/* Action Buttons */}
-          <div className="flex space-x-4">
-            <Button onClick={handleSave} disabled={saving} className="flex-1">
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={handleSave} disabled={saving} className="flex-1 min-w-[140px]">
               <Save className="h-4 w-4 mr-2" />
               {saving ? 'Saving...' : 'Save Changes'}
             </Button>
-            <Button onClick={handleMarkRevised} variant="outline" className="flex-1">
+            <Button onClick={handleMarkRevised} variant="outline" className="flex-1 min-w-[140px]">
               <CheckCircle className="h-4 w-4 mr-2" />
               Mark as Revised
             </Button>
+            <Link href={`/test?subject=${subjectId}&topic=${topicId}`} className="flex-1 min-w-[140px]">
+              <Button variant="secondary" className="w-full bg-purple-100 hover:bg-purple-200 text-purple-700">
+                <Brain className="h-4 w-4 mr-2" />
+                Take Test
+              </Button>
+            </Link>
           </div>
         </div>
 

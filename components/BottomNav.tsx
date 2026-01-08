@@ -13,17 +13,18 @@
 
 import {
   Home,
-  BarChart3,
+  
   Brain,
   Map,
   Menu,
   BookOpen,
   Calendar,
-  TestTube,
   LogOut,
+  User,
 
   Settings,
-  HelpCircle
+  HelpCircle,
+  AlertTriangle
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -57,6 +58,7 @@ export default function BottomNav() {
 
   const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
 
+  // Primary items shown in bottom bar: Dashboard, Concept Review, Test (3 items only for cleaner mobile UI)
   const primaryItems = [
     {
       href: '/dashboard',
@@ -65,25 +67,26 @@ export default function BottomNav() {
       activePath: '/dashboard',
     },
     {
+      href: '/review',
+      label: 'Review',
+      icon: <AlertTriangle className="h-5 w-5" />,
+      activePath: '/review',
+    },
+    {
       href: '/test',
       label: 'Test',
       icon: <Brain className="h-5 w-5" />,
       activePath: '/test',
     },
-    {
-      href: '/journey',
-      label: 'Journey',
-      icon: <Map className="h-5 w-5" />,
-      activePath: '/journey',
-    },
   ];
 
+  // Secondary items in the "More" drawer
   const secondaryItems = [
     {
-      href: '/analytics',
-      label: 'Analytics',
-      icon: <BarChart3 className="h-5 w-5 text-indigo-500" />,
-      description: 'Performance insights and trends',
+      href: '/journey',
+      label: 'Journey Planning',
+      icon: <Map className="h-5 w-5 text-indigo-500" />,
+      description: 'Plan your learning path',
     },
     {
       href: '/syllabus',
@@ -98,10 +101,10 @@ export default function BottomNav() {
       description: 'Track your daily progress',
     },
     {
-      href: '/log/mock',
-      label: 'Mock Tests',
-      icon: <TestTube className="h-5 w-5 text-purple-500" />,
-      description: 'Record test scores',
+      href: '/profile',
+      label: 'Profile',
+      icon: <User className="h-5 w-5 text-purple-500" />,
+      description: 'Manage settings & preferences',
     },
   ];
 

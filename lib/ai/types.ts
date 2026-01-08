@@ -20,6 +20,7 @@ export interface QuestionGenerationRequest {
   examContext?: string;
   learningObjectives?: string[];
   excludeTopics?: string[];
+  syllabusContext?: string; // Additional context about the syllabus/chapter
 }
 
 export interface QuestionGenerationOptions {

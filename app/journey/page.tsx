@@ -10,7 +10,7 @@ import { JourneyArchitect } from '@/components/journey/JourneyArchitect';
 import { StandardLayout } from '@/components/layout/AppLayout';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import PageTransition from '@/components/layout/PageTransition';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { Input } from '@/components/ui/input';
@@ -160,7 +160,7 @@ export default function JourneyPlanningPage() {
              <FeaturePageHeader
               title="Journey Planning"
               description="Create, manage, and track your personalized learning journeys"
-              icon={<MapPin className="h-7 w-7" />}
+              icon={<MapPin className="h-5 w-5" />}
               badge="🗺️ Learning Paths"
               actions={
                 <div className="flex items-center gap-3">
@@ -334,13 +334,12 @@ export default function JourneyPlanningPage() {
                 </div>
               ) : journeys.length === 0 ? (
                 // Empty state for no journeys
-                <Card className="border-dashed border-2 border-gray-200 bg-gray-50/50">
-                  <CardContent className="pt-12 pb-12 text-center">
-                    <div className="bg-blue-100 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                      <MapPin className="h-12 w-12 text-blue-600" />
+                <div className="rounded-xl border-2 border-dashed border-muted bg-muted/10 p-12 text-center">
+                    <div className="bg-primary/10 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                      <MapPin className="h-12 w-12 text-primary" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Start Your Learning Journey</h3>
-                    <p className="text-gray-600 mb-8 max-w-md mx-auto text-lg">
+                    <h3 className="text-2xl font-bold text-foreground mb-3">Start Your Learning Journey</h3>
+                    <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
                       Create your first personalized learning journey to achieve your educational and professional
                       goals.
                     </p>
@@ -349,7 +348,7 @@ export default function JourneyPlanningPage() {
                       onJourneyCreated={() => {}}
                       trigger={
                         <Button
-                          className="mb-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 px-8 py-3 text-lg"
+                          className="mb-8 h-auto py-3 px-8 text-lg font-medium shadow-lg hover:shadow-xl transition-all"
                         >
                           <Plus className="h-5 w-5 mr-2" />
                           Create Your First Journey
@@ -357,30 +356,29 @@ export default function JourneyPlanningPage() {
                       }
                     />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 max-w-3xl mx-auto">
-                      <div className="text-center p-6 bg-white rounded-xl shadow-sm border">
+                      <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
                         <div className="bg-blue-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                           <Target className="h-8 w-8 text-blue-600" />
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Set Goals</h4>
-                        <p className="text-sm text-gray-600">Define clear, measurable learning objectives</p>
+                        <h4 className="font-semibold text-foreground mb-2">Set Goals</h4>
+                        <p className="text-sm text-muted-foreground">Define clear, measurable learning objectives</p>
                       </div>
-                      <div className="text-center p-6 bg-white rounded-xl shadow-sm border">
+                      <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
                         <div className="bg-green-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                           <BarChart3 className="h-8 w-8 text-green-600" />
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Track Progress</h4>
-                        <p className="text-sm text-gray-600">Monitor your advancement with detailed analytics</p>
+                        <h4 className="font-semibold text-foreground mb-2">Track Progress</h4>
+                        <p className="text-sm text-muted-foreground">Monitor your advancement with detailed analytics</p>
                       </div>
-                      <div className="text-center p-6 bg-white rounded-xl shadow-sm border">
+                      <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
                         <div className="bg-yellow-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                           <Trophy className="h-8 w-8 text-yellow-600" />
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Achieve Success</h4>
-                        <p className="text-sm text-gray-600">Celebrate milestones and complete your goals</p>
+                        <h4 className="font-semibold text-foreground mb-2">Achieve Success</h4>
+                        <p className="text-sm text-muted-foreground">Celebrate milestones and complete your goals</p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+                </div>
               ) : (
                 // No results from search/filter
                 <EmptyState
@@ -409,35 +407,35 @@ export default function JourneyPlanningPage() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="lg:col-span-1"
+                  className="lg:col-span-1 space-y-6"
                 >
-                  <Card className="sticky top-6">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">{selectedJourney.title}</CardTitle>
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedJourney(null)}>
-                          ×
+                  <div className="sticky top-6 space-y-6">
+                     <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                           <h2 className="text-xl font-semibold tracking-tight">{selectedJourney.title}</h2>
+                           <p className="text-sm text-muted-foreground line-clamp-2">{selectedJourney.description}</p>
+                        </div>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 -mt-1 -mr-2 text-muted-foreground" onClick={() => setSelectedJourney(null)}>
+                           <span className="sr-only">Close</span>
+                           <span className="text-xl">×</span>
                         </Button>
-                      </div>
-                      <CardDescription>{selectedJourney.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Tabs defaultValue="goals" className="space-y-4">
-                        <TabsList className="grid w-full grid-cols-2">
+                     </div>
+
+                      <Tabs defaultValue="goals" className="w-full">
+                        <TabsList className="grid w-full grid-cols-2 mb-6">
                           <TabsTrigger value="goals">Goals</TabsTrigger>
                           <TabsTrigger value="analytics">Analytics</TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="goals">
+                        <TabsContent value="goals" className="mt-0">
                           <GoalManagement journey={selectedJourney} />
                         </TabsContent>
 
-                        <TabsContent value="analytics">
+                        <TabsContent value="analytics" className="mt-0">
                           <JourneyAnalytics journey={selectedJourney} />
                         </TabsContent>
                       </Tabs>
-                    </CardContent>
-                  </Card>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

@@ -372,7 +372,7 @@ export function BasicInfoStep({
             <div className="mb-6">
               <Label className="text-sm font-medium mb-3 block">Popular Categories</Label>
               <div className="flex flex-wrap gap-2 -mx-1 px-1">
-                {POPULAR_EXAM_CATEGORIES.map(category => (
+                {POPULAR_EXAM_CATEGORIES.filter(category => (examsByCategory[category.id]?.length || 0) > 0).map(category => (
                   <Button
                     key={category.id}
                     variant="outline"
@@ -430,7 +430,7 @@ export function BasicInfoStep({
 
                     <CardContent className="p-4">
                       <h3 className="font-semibold text-gray-900 mb-1 pr-6">{exam.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{exam.description}</p>
+                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{exam.description}</p>
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <span>{exam.category}</span>
                         <span>{exam.defaultSyllabus.length} subjects</span>

@@ -180,7 +180,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
             </CardTitle>
             <CardDescription>Your learning insights across exam and course tracks</CardDescription>
           </div>
-          <Link href="/analytics">
+          <Link href="/dashboard">
             <Button variant="ghost" size="sm">
               <BarChart3 className="h-4 w-4" />
             </Button>
@@ -302,7 +302,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
         </div>
 
         {/* Action Button */}
-        <Link href="/analytics">
+        <Link href="/dashboard">
           <Button className="w-full" variant="outline">
             <span>View Detailed Analytics</span>
             <ArrowRight className="h-4 w-4 ml-2" />

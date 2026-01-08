@@ -12,7 +12,6 @@ import {
   Plus,
   Trash2,
   Settings,
-  Bell,
   Target,
   AlertCircle,
   CheckCircle,
@@ -34,7 +33,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from '@/hooks/useForm';
 import { Exam, SyllabusSubject, SyllabusTopic, OnboardingFormData } from '@/types/exam';
 import { EXAMS_DATA } from '@/lib/data/exams-data';
@@ -546,40 +544,24 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
           <CardTitle>Study Preferences</CardTitle>
         </div>
         <CardDescription>
-          Customize your study schedule and notification preferences for optimal learning.
+          Customize your study schedule and revision preferences for optimal learning.
         </CardDescription>
       </CardHeader>
 
       {/* Daily Study Goal */}
       <div className="space-y-4">
         <Label className="text-sm font-medium">Daily Study Goal</Label>
-        <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">
-              {studyGoalHours}h {studyGoalMinutes}m per day
-            </span>
-            <Target className="h-5 w-5 text-indigo-600" />
+        <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg flex items-center justify-between">
+          <div>
+            <div className="text-2xl font-bold text-indigo-700">
+              {studyGoalHours}h {studyGoalMinutes > 0 ? `${studyGoalMinutes}m` : ''}
+              <span className="text-base font-normal text-indigo-600 ml-1">per day</span>
+            </div>
+            <p className="text-xs text-indigo-600 mt-1">
+              Set based on your schedule in Step 2. You can adjust this later in settings.
+            </p>
           </div>
-
-          <Slider
-            value={[form.data.preferences.dailyStudyGoalMinutes]}
-            onValueChange={([value]) =>
-              form.updateField('preferences', {
-                ...form.data.preferences,
-                dailyStudyGoalMinutes: value ?? 240,
-              })
-            }
-            min={60}
-            max={720}
-            step={30}
-            className="w-full"
-          />
-
-          <div className="flex justify-between text-xs text-gray-600 mt-2">
-            <span>1h</span>
-            <span>6h</span>
-            <span>12h</span>
-          </div>
+          <Target className="h-8 w-8 text-indigo-300" />
         </div>
       </div>
 
@@ -696,52 +678,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
         </Alert>
       </div>
 
-      {/* Notifications */}
-      <div className="space-y-4">
-        <Label className="text-sm font-medium">Notification Preferences</Label>
-
-        <div className="space-y-3">
-          {[
-            {
-              key: 'revisionReminders' as const,
-              label: 'Revision Reminders',
-              description: 'Get notified when topics are due for revision',
-            },
-            {
-              key: 'dailyGoalReminders' as const,
-              label: 'Daily Goal Reminders',
-              description: 'Receive reminders about your daily study goals',
-            },
-            {
-              key: 'healthCheckReminders' as const,
-              label: 'Health Check Reminders',
-              description: 'Get prompted to log your health and energy levels',
-            },
-          ].map(notification => (
-            <div key={notification.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <Bell className="h-4 w-4 text-gray-600" />
-                  <span className="font-medium text-sm">{notification.label}</span>
-                </div>
-                <p className="text-xs text-gray-600 mt-1">{notification.description}</p>
-              </div>
-              <Switch
-                checked={form.data.preferences.notifications[notification.key]}
-                onCheckedChange={checked =>
-                  form.updateField('preferences', {
-                    ...form.data.preferences,
-                    notifications: {
-                      ...form.data.preferences.notifications,
-                      [notification.key]: checked,
-                    },
-                  })
-                }
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Note: Notification Preferences removed - not currently implemented */}
 
       {/* Summary */}
       <Alert className="border-green-200 bg-green-50">

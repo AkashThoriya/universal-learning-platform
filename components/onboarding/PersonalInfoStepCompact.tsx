@@ -373,7 +373,7 @@ export function PersonalInfoStepCompact({
                 </Badge>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {POPULAR_EXAM_CATEGORIES.map(category => {
+                {POPULAR_EXAM_CATEGORIES.filter(category => (examsByCategory[category.id]?.length || 0) > 0).map(category => {
                   const Icon = category.icon;
                   const isActive = activeCategory === category.id;
                   const examCount = examsByCategory[category.id]?.length || 0;

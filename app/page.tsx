@@ -839,8 +839,8 @@ export default function HomePage() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/analytics" className="hover:text-white transition-colors">
-                      Analytics
+                    <Link href="/review" className="hover:text-white transition-colors">
+                      Concept Review
                     </Link>
                   </li>
                 </ul>

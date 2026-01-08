@@ -156,10 +156,42 @@
           "estimatedHours": 1.65,
           "description": "Introduction to React, setting up development environment, understanding the React ecosystem",
           "subtopics": [
-            "What is React?",
-            "React vs Other Frameworks",
-            "Setting up Development Environment",
-            "Understanding the React Ecosystem"
+            {
+              "id": "inception_sub_0",
+              "name": "What is React?",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "inception_sub_1",
+              "name": "React vs Other Frameworks",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "inception_sub_2",
+              "name": "Setting up Development Environment",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "inception_sub_3",
+              "name": "Understanding the React Ecosystem",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -168,11 +200,51 @@
           "estimatedHours": 2.208,
           "description": "Understanding build tools, bundlers like Parcel/Webpack, and setting up a React project",
           "subtopics": [
-            "Understanding Bundlers",
-            "Parcel vs Webpack",
-            "Setting up React Project",
-            "Understanding package.json",
-            "NPM Scripts"
+            {
+              "id": "igniting_app_sub_0",
+              "name": "Understanding Bundlers",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "igniting_app_sub_1",
+              "name": "Parcel vs Webpack",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "igniting_app_sub_2",
+              "name": "Setting up React Project",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "igniting_app_sub_3",
+              "name": "Understanding package.json",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "igniting_app_sub_4",
+              "name": "NPM Scripts",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -181,11 +253,51 @@
           "estimatedHours": 2,
           "description": "Deep dive into JSX, creating React components, and understanding the virtual DOM",
           "subtopics": [
-            "What is JSX?",
-            "Creating React Components",
-            "Functional vs Class Components",
-            "Virtual DOM Concepts",
-            "React.createElement"
+            {
+              "id": "laying_foundation_sub_0",
+              "name": "What is JSX?",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "laying_foundation_sub_1",
+              "name": "Creating React Components",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "laying_foundation_sub_2",
+              "name": "Functional vs Class Components",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "laying_foundation_sub_3",
+              "name": "Virtual DOM Concepts",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "laying_foundation_sub_4",
+              "name": "React.createElement",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -194,11 +306,51 @@
           "estimatedHours": 2.242,
           "description": "Building actual UI components, props, and creating reusable components",
           "subtopics": [
-            "Building Food Ordering App UI",
-            "Understanding Props",
-            "Component Composition",
-            "Reusable Components",
-            "Component Structure"
+            {
+              "id": "show_me_code_sub_0",
+              "name": "Building Food Ordering App UI",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "show_me_code_sub_1",
+              "name": "Understanding Props",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "show_me_code_sub_2",
+              "name": "Component Composition",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "show_me_code_sub_3",
+              "name": "Reusable Components",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "show_me_code_sub_4",
+              "name": "Component Structure",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -207,11 +359,51 @@
           "estimatedHours": 2.155,
           "description": "Introduction to React Hooks, useState, and functional component state management",
           "subtopics": [
-            "What are React Hooks?",
-            "useState Hook",
-            "Rules of Hooks",
-            "Functional vs Class Components",
-            "State Management Basics"
+            {
+              "id": "lets_get_hooked_sub_0",
+              "name": "What are React Hooks?",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "lets_get_hooked_sub_1",
+              "name": "useState Hook",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "lets_get_hooked_sub_2",
+              "name": "Rules of Hooks",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "lets_get_hooked_sub_3",
+              "name": "Functional vs Class Components",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "lets_get_hooked_sub_4",
+              "name": "State Management Basics",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -228,11 +420,51 @@
           "estimatedHours": 2.379,
           "description": "Making API calls, useEffect hook, handling asynchronous operations, and CORS",
           "subtopics": [
-            "useEffect Hook",
-            "Making API Calls",
-            "Handling Async Operations",
-            "Understanding CORS",
-            "Error Handling in API Calls"
+            {
+              "id": "exploring_world_sub_0",
+              "name": "useEffect Hook",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "exploring_world_sub_1",
+              "name": "Making API Calls",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "exploring_world_sub_2",
+              "name": "Handling Async Operations",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "exploring_world_sub_3",
+              "name": "Understanding CORS",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "exploring_world_sub_4",
+              "name": "Error Handling in API Calls",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -241,10 +473,42 @@
           "estimatedHours": 0.777,
           "description": "Resolving Swiggy API issues and CORS plugin problems",
           "subtopics": [
-            "Swiggy API Integration",
-            "CORS Plugin Setup",
-            "Mock API Implementation",
-            "Debugging API Issues"
+            {
+              "id": "api_issues_resolution_sub_0",
+              "name": "Swiggy API Integration",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "api_issues_resolution_sub_1",
+              "name": "CORS Plugin Setup",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "api_issues_resolution_sub_2",
+              "name": "Mock API Implementation",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "api_issues_resolution_sub_3",
+              "name": "Debugging API Issues",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -253,11 +517,51 @@
           "estimatedHours": 2.307,
           "description": "Implementing client-side routing with React Router",
           "subtopics": [
-            "React Router Setup",
-            "Client-side Routing",
-            "Route Parameters",
-            "Nested Routing",
-            "Navigation Components"
+            {
+              "id": "finding_path_sub_0",
+              "name": "React Router Setup",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "finding_path_sub_1",
+              "name": "Client-side Routing",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "finding_path_sub_2",
+              "name": "Route Parameters",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "finding_path_sub_3",
+              "name": "Nested Routing",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "finding_path_sub_4",
+              "name": "Navigation Components",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -266,12 +570,60 @@
           "estimatedHours": 2.771,
           "description": "Understanding class components, lifecycle methods, and component patterns",
           "subtopics": [
-            "Class Components Syntax",
-            "Component Lifecycle Methods",
-            "componentDidMount",
-            "componentDidUpdate",
-            "componentWillUnmount",
-            "this.state and this.setState"
+            {
+              "id": "get_classy_sub_0",
+              "name": "Class Components Syntax",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "get_classy_sub_1",
+              "name": "Component Lifecycle Methods",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "get_classy_sub_2",
+              "name": "componentDidMount",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "get_classy_sub_3",
+              "name": "componentDidUpdate",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "get_classy_sub_4",
+              "name": "componentWillUnmount",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "get_classy_sub_5",
+              "name": "this.state and this.setState",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -280,11 +632,51 @@
           "estimatedHours": 1.636,
           "description": "Performance optimization techniques, lazy loading, and code splitting",
           "subtopics": [
-            "Code Splitting",
-            "Lazy Loading",
-            "Suspense Component",
-            "Performance Best Practices",
-            "Bundle Analysis"
+            {
+              "id": "optimizing_app_sub_0",
+              "name": "Code Splitting",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "optimizing_app_sub_1",
+              "name": "Lazy Loading",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "optimizing_app_sub_2",
+              "name": "Suspense Component",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "optimizing_app_sub_3",
+              "name": "Performance Best Practices",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "optimizing_app_sub_4",
+              "name": "Bundle Analysis",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -292,7 +684,53 @@
           "name": "Episode 10: Jo Dikhta Hai, Vo Bikta Hai - Styling",
           "estimatedHours": 1.626,
           "description": "Styling React applications, CSS-in-JS, and UI libraries",
-          "subtopics": ["CSS in React", "Styled Components", "CSS Modules", "Tailwind CSS", "Material-UI"]
+          "subtopics": [
+            {
+              "id": "styling_ui_sub_0",
+              "name": "CSS in React",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "styling_ui_sub_1",
+              "name": "Styled Components",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "styling_ui_sub_2",
+              "name": "CSS Modules",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "styling_ui_sub_3",
+              "name": "Tailwind CSS",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "styling_ui_sub_4",
+              "name": "Material-UI",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
+          ]
         }
       ]
     },
@@ -308,11 +746,51 @@
           "estimatedHours": 3.133,
           "description": "Advanced state management patterns, prop drilling solutions, and context API",
           "subtopics": [
-            "Prop Drilling Problems",
-            "Context API",
-            "useContext Hook",
-            "State Management Patterns",
-            "Data Flow in React"
+            {
+              "id": "data_new_oil_sub_0",
+              "name": "Prop Drilling Problems",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_new_oil_sub_1",
+              "name": "Context API",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_new_oil_sub_2",
+              "name": "useContext Hook",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_new_oil_sub_3",
+              "name": "State Management Patterns",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_new_oil_sub_4",
+              "name": "Data Flow in React",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -321,11 +799,51 @@
           "estimatedHours": 2.659,
           "description": "Introduction to Redux, Redux Toolkit, and state management with Redux",
           "subtopics": [
-            "What is Redux?",
-            "Redux Store",
-            "Actions and Reducers",
-            "Redux Toolkit",
-            "useSelector and useDispatch"
+            {
+              "id": "build_store_sub_0",
+              "name": "What is Redux?",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "build_store_sub_1",
+              "name": "Redux Store",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "build_store_sub_2",
+              "name": "Actions and Reducers",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "build_store_sub_3",
+              "name": "Redux Toolkit",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "build_store_sub_4",
+              "name": "useSelector and useDispatch",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -334,12 +852,60 @@
           "estimatedHours": 4.167,
           "description": "Testing React applications, Jest, React Testing Library, and test-driven development",
           "subtopics": [
-            "Introduction to Testing",
-            "Jest Framework",
-            "React Testing Library",
-            "Writing Unit Tests",
-            "Integration Testing",
-            "Test-Driven Development"
+            {
+              "id": "time_for_test_sub_0",
+              "name": "Introduction to Testing",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "time_for_test_sub_1",
+              "name": "Jest Framework",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "time_for_test_sub_2",
+              "name": "React Testing Library",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "time_for_test_sub_3",
+              "name": "Writing Unit Tests",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "time_for_test_sub_4",
+              "name": "Integration Testing",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "time_for_test_sub_5",
+              "name": "Test-Driven Development",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -348,11 +914,51 @@
           "estimatedHours": 3.919,
           "description": "Starting a complex project, project architecture, and advanced React patterns",
           "subtopics": [
-            "Project Architecture",
-            "Advanced React Patterns",
-            "Authentication in React",
-            "Firebase Integration",
-            "Project Structure"
+            {
+              "id": "netflixgpt_beginning_sub_0",
+              "name": "Project Architecture",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_beginning_sub_1",
+              "name": "Advanced React Patterns",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_beginning_sub_2",
+              "name": "Authentication in React",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_beginning_sub_3",
+              "name": "Firebase Integration",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_beginning_sub_4",
+              "name": "Project Structure",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -361,11 +967,51 @@
           "estimatedHours": 3.606,
           "description": "Building core features, API integration, and complex state management",
           "subtopics": [
-            "Complex API Integration",
-            "Multiple API Handling",
-            "Advanced State Management",
-            "Error Boundaries",
-            "Performance Optimization"
+            {
+              "id": "netflixgpt_core_sub_0",
+              "name": "Complex API Integration",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_core_sub_1",
+              "name": "Multiple API Handling",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_core_sub_2",
+              "name": "Advanced State Management",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_core_sub_3",
+              "name": "Error Boundaries",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_core_sub_4",
+              "name": "Performance Optimization",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -374,11 +1020,51 @@
           "estimatedHours": 4.073,
           "description": "Finalizing the project, deployment, and production best practices",
           "subtopics": [
-            "Project Finalization",
-            "Deployment Strategies",
-            "Production Best Practices",
-            "Performance Monitoring",
-            "Security Considerations"
+            {
+              "id": "netflixgpt_wrap_sub_0",
+              "name": "Project Finalization",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_wrap_sub_1",
+              "name": "Deployment Strategies",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_wrap_sub_2",
+              "name": "Production Best Practices",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_wrap_sub_3",
+              "name": "Performance Monitoring",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "netflixgpt_wrap_sub_4",
+              "name": "Security Considerations",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -395,11 +1081,51 @@
           "estimatedHours": 6,
           "description": "Building YouTube clone, machine coding interview preparation, and advanced features",
           "subtopics": [
-            "Machine Coding Interview Prep",
-            "YouTube Clone Development",
-            "Advanced Features Implementation",
-            "Project Optimization",
-            "Video Streaming Concepts"
+            {
+              "id": "youtube_project_sub_0",
+              "name": "Machine Coding Interview Prep",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "youtube_project_sub_1",
+              "name": "YouTube Clone Development",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "youtube_project_sub_2",
+              "name": "Advanced Features Implementation",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "youtube_project_sub_3",
+              "name": "Project Optimization",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "youtube_project_sub_4",
+              "name": "Video Streaming Concepts",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -408,11 +1134,51 @@
           "estimatedHours": 1.5,
           "description": "Deep dive into useMemo, useCallback, useRef, and performance optimization hooks",
           "subtopics": [
-            "useMemo Hook",
-            "useCallback Hook",
-            "useRef Hook",
-            "Performance Optimization",
-            "When to Use Each Hook"
+            {
+              "id": "advanced_hooks_sub_0",
+              "name": "useMemo Hook",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "advanced_hooks_sub_1",
+              "name": "useCallback Hook",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "advanced_hooks_sub_2",
+              "name": "useRef Hook",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "advanced_hooks_sub_3",
+              "name": "Performance Optimization",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "advanced_hooks_sub_4",
+              "name": "When to Use Each Hook",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -421,16 +1187,96 @@
           "estimatedHours": 10,
           "description": "Building a complete dating app UI for developers with modern React patterns",
           "subtopics": [
-            "Complex UI Development",
-            "State Management in Large Apps",
-            "Component Design Patterns",
-            "Responsive Design",
-            "Modern React Patterns",
-            "UI/UX Best Practices",
-            "Animation in React",
-            "Form Handling",
-            "Data Validation",
-            "Performance Optimization"
+            {
+              "id": "devtinder_project_sub_0",
+              "name": "Complex UI Development",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_1",
+              "name": "State Management in Large Apps",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_2",
+              "name": "Component Design Patterns",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_3",
+              "name": "Responsive Design",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_4",
+              "name": "Modern React Patterns",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_5",
+              "name": "UI/UX Best Practices",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_6",
+              "name": "Animation in React",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_7",
+              "name": "Form Handling",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_8",
+              "name": "Data Validation",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_project_sub_9",
+              "name": "Performance Optimization",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -447,11 +1293,51 @@
           "estimatedHours": 2,
           "description": "Essential debugging skills and troubleshooting common React issues",
           "subtopics": [
-            "React Developer Tools",
-            "Console Debugging",
-            "Common Error Patterns",
-            "Performance Debugging",
-            "Network Issues"
+            {
+              "id": "debugging_troubleshooting_sub_0",
+              "name": "React Developer Tools",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "debugging_troubleshooting_sub_1",
+              "name": "Console Debugging",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "debugging_troubleshooting_sub_2",
+              "name": "Common Error Patterns",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "debugging_troubleshooting_sub_3",
+              "name": "Performance Debugging",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "debugging_troubleshooting_sub_4",
+              "name": "Network Issues",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -460,11 +1346,51 @@
           "estimatedHours": 2,
           "description": "Industry best practices, code organization, and maintainable React code",
           "subtopics": [
-            "Code Organization",
-            "Component Design Principles",
-            "Performance Best Practices",
-            "Accessibility in React",
-            "SEO Considerations"
+            {
+              "id": "best_practices_sub_0",
+              "name": "Code Organization",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "best_practices_sub_1",
+              "name": "Component Design Principles",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "best_practices_sub_2",
+              "name": "Performance Best Practices",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "best_practices_sub_3",
+              "name": "Accessibility in React",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "best_practices_sub_4",
+              "name": "SEO Considerations",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -473,11 +1399,51 @@
           "estimatedHours": 2,
           "description": "Deploying React applications and production considerations",
           "subtopics": [
-            "Build Process",
-            "Environment Variables",
-            "Deployment Platforms",
-            "CI/CD Pipelines",
-            "Monitoring and Analytics"
+            {
+              "id": "deployment_production_sub_0",
+              "name": "Build Process",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "deployment_production_sub_1",
+              "name": "Environment Variables",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "deployment_production_sub_2",
+              "name": "Deployment Platforms",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "deployment_production_sub_3",
+              "name": "CI/CD Pipelines",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "deployment_production_sub_4",
+              "name": "Monitoring and Analytics",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -486,11 +1452,51 @@
           "estimatedHours": 2,
           "description": "React interview questions, coding challenges, and career preparation",
           "subtopics": [
-            "Common Interview Questions",
-            "Coding Challenges",
-            "System Design for React",
-            "Portfolio Development",
-            "Resume Building"
+            {
+              "id": "interview_preparation_sub_0",
+              "name": "Common Interview Questions",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "interview_preparation_sub_1",
+              "name": "Coding Challenges",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "interview_preparation_sub_2",
+              "name": "System Design for React",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "interview_preparation_sub_3",
+              "name": "Portfolio Development",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "interview_preparation_sub_4",
+              "name": "Resume Building",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]

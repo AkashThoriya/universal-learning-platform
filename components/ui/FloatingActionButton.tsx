@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Zap, BookOpen, Target, BarChart3, X, LucideIcon } from 'lucide-react';
+import { Plus, Zap, BookOpen, Target, X, LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -43,13 +43,6 @@ export default function FloatingActionButton({ className }: FloatingActionButton
       href: '/test',
       color: 'bg-purple-500 hover:bg-purple-600',
       priority: 'high',
-    },
-    {
-      icon: BarChart3,
-      label: 'Analytics',
-      href: '/analytics',
-      color: 'bg-green-500 hover:bg-green-600',
-      priority: 'medium',
     },
   ];
 

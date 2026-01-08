@@ -107,14 +107,15 @@ export class AdaptiveTestingService {
         description: request.description,
         linkedJourneyId: request.linkedJourneyId ?? `journey_${Date.now()}`,
         linkedSubjects: request.subjects,
-        track: request.track,
-        totalQuestions: request.targetQuestions,
-        estimatedDuration: request.targetQuestions * 2, // 2 minutes per question
-        difficultyRange: {
+        ...(request.topics && { linkedTopics: request.topics }),
+        track: request.track ?? 'exam' as const,
+        totalQuestions: request.questionCount ?? request.targetQuestions ?? 5,
+        estimatedDuration: (request.questionCount ?? request.targetQuestions ?? 5) * 2, // 2 minutes per question
+        difficultyRange: request.difficultyRange ?? {
           min: 'beginner',
           max: 'expert',
         },
-        algorithmType: request.algorithmType,
+        algorithmType: request.algorithmType ?? 'HYBRID',
         convergenceThreshold: 0.3,
         initialDifficulty: 'intermediate',
         status: 'draft',

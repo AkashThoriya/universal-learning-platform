@@ -18,7 +18,6 @@ import {
   User,
   BookOpen,
   Settings,
-  Palette,
   Clock,
   Trophy,
   Activity,
@@ -174,18 +173,6 @@ export const PROFILE_TABS: readonly ProfileTab[] = [
     label: 'Study Preferences',
     icon: Settings,
     description: 'Goals and scheduling',
-  },
-  {
-    id: 'notifications',
-    label: 'Notifications',
-    icon: Bell,
-    description: 'Alerts and reminders',
-  },
-  {
-    id: 'system',
-    label: 'System Settings',
-    icon: Palette,
-    description: 'Theme and language',
   },
 ] as const;
 

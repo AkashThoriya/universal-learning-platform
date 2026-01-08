@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-import { AdaptiveTestCard, QuestionInterface, TestAnalyticsDashboard } from '@/components/adaptive-testing';
+import { AdaptiveTestCard, QuestionInterface, TestAnalyticsDashboard, TestConfigModal, TestConfig } from '@/components/adaptive-testing';
 import { TestGenerationOverlay } from '@/components/adaptive-testing/TestGenerationOverlay';
 import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
@@ -73,6 +73,7 @@ export default function AdaptiveTestingPage() {
     test: AdaptiveTest;
     performance: any;
   } | null>(null);
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   // Load tests and stats on mount
   useEffect(() => {
@@ -231,6 +232,57 @@ export default function AdaptiveTestingPage() {
     }
   };
 
+  // Handle test generation from modal config
+  const handleGenerateFromConfig = async (config: TestConfig) => {
+    if (!user?.uid) {
+      toast({
+        title: 'Error',
+        description: 'Please log in to generate a test.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setShowConfigModal(false);
+    setIsGenerating(true);
+
+    const minAnimationTime = new Promise(resolve => setTimeout(resolve, 6000));
+
+    try {
+      const [testResult] = await Promise.all([
+        adaptiveTestingService.createAdaptiveTest(user.uid, {
+          title: `${config.subjects[0]} Test - ${config.difficulty}`,
+          description: config.topics.length > 0 
+            ? `Testing: ${config.topics.join(', ')}` 
+            : `Comprehensive ${config.subjects[0]} test`,
+          subjects: config.subjects,
+          ...(config.topics.length > 0 && { topics: config.topics }),
+          difficulty: config.difficulty,
+          questionCount: config.questionCount,
+          questionType: 'multiple_choice',
+          ...(config.syllabusContext && { syllabusContext: config.syllabusContext }),
+        }),
+        minAnimationTime
+      ]);
+
+      if (!testResult.success || !testResult.data) {
+        throw new Error('Failed to create test');
+      }
+      
+      await loadTestsAndStats();
+      setIsGenerating(false);
+      handleStartTest(testResult.data.id);
+    } catch (error) {
+      console.error('Error generating test from config:', error);
+      setIsGenerating(false);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to generate test. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const generateRecommendedTest = async () => {
     if (!user?.uid) {
       toast({
@@ -368,6 +420,14 @@ export default function AdaptiveTestingPage() {
       
       {/* Test Generation Overlay */}
       <TestGenerationOverlay isVisible={isGenerating} />
+
+      {/* Test Configuration Modal */}
+      <TestConfigModal
+        open={showConfigModal}
+        onOpenChange={setShowConfigModal}
+        onGenerate={handleGenerateFromConfig}
+        isGenerating={isGenerating}
+      />
 
       <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
         <PageTransition className="max-w-7xl mx-auto space-y-8">
@@ -578,7 +638,7 @@ export default function AdaptiveTestingPage() {
                   }
                   action={
                     <Button
-                      onClick={generateRecommendedTest}
+                      onClick={() => setShowConfigModal(true)}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -705,7 +765,7 @@ export default function AdaptiveTestingPage() {
                     className="border-0 bg-transparent"
                     action={
                       <Button
-                        onClick={generateRecommendedTest}
+                        onClick={() => setShowConfigModal(true)}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                       >
                         <Zap className="h-4 w-4 mr-2" />

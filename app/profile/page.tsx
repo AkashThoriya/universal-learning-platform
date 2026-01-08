@@ -14,32 +14,30 @@
 import { Timestamp } from 'firebase/firestore';
 import PageTransition from '@/components/layout/PageTransition';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import {
   User,
-  Settings,
   BookOpen,
   Calendar,
   Target,
-  Bell,
   Save,
-  RefreshCw,
   AlertCircle,
   Trash2,
   Plus,
-  Moon,
-  Sun,
-  Smartphone,
   ArrowLeft,
   ChevronRight,
-  Palette,
   Lock,
   UserCheck,
   Activity,
+  Briefcase,
   Loader2,
+  Zap,
+  Sun,
+  Moon,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { z } from 'zod';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -57,7 +55,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -85,6 +82,7 @@ interface ProfileFormData {
   selectedExamId: string;
   selectedCourses: SelectedCourse[];
   examDate: string;
+  preparationStartDate: string;
   isCustomExam: boolean;
   customExam: {
     name: string;
@@ -169,7 +167,16 @@ const profileSchema = z.object({
       topics: z.array(z.object({
         id: z.string(),
         name: z.string(),
-        subtopics: z.array(z.string()).optional(),
+        subtopics: z.array(z.object({
+          id: z.string(),
+          name: z.string(),
+          order: z.number().optional(),
+          status: z.enum(['not_started', 'in_progress', 'completed', 'mastered']).optional(),
+          needsReview: z.boolean().optional(),
+          practiceCount: z.number().optional(),
+          revisionCount: z.number().optional(),
+          lastRevised: z.any().optional(),
+        })).optional(),
         estimatedHours: z.number().optional(),
         description: z.string().optional(),
       })),
@@ -224,6 +231,8 @@ export default function ProfilePage() {
   const [showPreviewDialog, setShowPreviewDialog] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const prepDateInputRef = useRef<HTMLInputElement>(null);
+  const searchParams = useSearchParams();
 
   // Initialize form with enhanced configuration
   const form = useForm<ProfileFormData>({
@@ -234,6 +243,7 @@ export default function ProfilePage() {
       selectedExamId: '',
       selectedCourses: [],
       examDate: '',
+      preparationStartDate: '',
       isCustomExam: false,
       customExam: { name: '', description: '', category: '' },
       syllabus: [],
@@ -303,13 +313,14 @@ export default function ProfilePage() {
              }
           }
 
-          const formData: ProfileFormData = {
-            displayName: fetchedUser.displayName ?? '',
-            email: fetchedUser.email ?? '',
-            userPersona: fetchedUser.userPersona ?? undefined,
-            selectedExamId: fetchedUser.selectedExamId ?? '',
-            selectedCourses: courses,
-            examDate: fetchedUser.examDate ? (fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '') : '',
+            const formData: ProfileFormData = {
+             displayName: fetchedUser.displayName ?? user.displayName ?? '',
+             email: fetchedUser.email ?? user.email ?? '',
+             userPersona: fetchedUser.userPersona ?? undefined,
+             selectedExamId: fetchedUser.selectedExamId ?? '',
+             selectedCourses: courses,
+             examDate: fetchedUser.examDate ? (fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '') : '',
+            preparationStartDate: fetchedUser.preparationStartDate ? (fetchedUser.preparationStartDate.toDate().toISOString().split('T')[0] ?? '') : '',
             isCustomExam: fetchedUser.isCustomExam ?? false,
             customExam: fetchedUser.customExam ? {
               name: fetchedUser.customExam.name ?? '',
@@ -346,8 +357,25 @@ export default function ProfilePage() {
     };
 
     loadUserData();
-  }, [user, form, toast]);
+  }, [user, form.setData, toast]);
 
+  // Handle deep-link URL params (e.g., ?tab=exam&focus=prepDate)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    const focusParam = searchParams.get('focus');
+    
+    if (tabParam && ['personal', 'exam', 'syllabus', 'preferences'].includes(tabParam)) {
+      setActiveTab(tabParam);
+      
+      // Focus the prep date input after tab switch with a delay for rendering
+      if (focusParam === 'prepDate' && tabParam === 'exam') {
+        setTimeout(() => {
+          prepDateInputRef.current?.focus();
+          prepDateInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    }
+  }, [searchParams]);
 
 
   // Syllabus management functions
@@ -497,8 +525,9 @@ export default function ProfilePage() {
         displayName: form.data.displayName,
         selectedExamId: form.data.selectedExamId,
         examDate: Timestamp.fromDate(new Date(form.data.examDate)),
+        ...(form.data.preparationStartDate ? { preparationStartDate: Timestamp.fromDate(new Date(form.data.preparationStartDate)) } : {}),
         isCustomExam: form.data.isCustomExam,
-        customExam: form.data.isCustomExam ? form.data.customExam : undefined,
+        ...(form.data.isCustomExam && form.data.customExam ? { customExam: form.data.customExam } : {}),
         preferences: form.data.preferences,
         updatedAt: Timestamp.now(),
       };
@@ -695,21 +724,23 @@ export default function ProfilePage() {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 min-h-[60vh]">
               {/* Tab Navigation */}
               <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200">
-                <TabsList className="flex w-full overflow-x-auto no-scrollbar md:grid md:grid-cols-6 gap-1">
-                  {PROFILE_TABS.map(tab => {
-                    const Icon = tab.icon;
-                    return (
-                      <TabsTrigger
-                        key={tab.id}
-                        value={tab.id}
-                        className="flex-shrink-0 min-w-fit md:min-w-0 flex items-center space-x-2 p-3 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span className="hidden sm:inline">{tab.label}</span>
-                      </TabsTrigger>
-                    );
-                  })}
-                </TabsList>
+                <ScrollableTabsList>
+                  <TabsList className="flex w-full md:grid md:grid-cols-4 gap-1">
+                    {PROFILE_TABS.map(tab => {
+                      const Icon = tab.icon;
+                      return (
+                        <TabsTrigger
+                          key={tab.id}
+                          value={tab.id}
+                          className="flex-shrink-0 snap-start min-w-fit md:min-w-0 flex items-center space-x-2 p-3 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                        >
+                          <Icon className="h-4 w-4" />
+                          <span className="hidden sm:inline">{tab.label}</span>
+                        </TabsTrigger>
+                      );
+                    })}
+                  </TabsList>
+                </ScrollableTabsList>
               </div>
 
             {/* Tab Content */}
@@ -740,11 +771,11 @@ export default function ProfilePage() {
                       )}
                     </div>
 
-                    {/* Email (read-only) */}
+                    {/* Email (read-only from Auth) */}
                     <div className="space-y-2">
                       <Label htmlFor="email">Email Address</Label>
                       <div className="relative">
-                        <Input id="email" value={userData.email} readOnly className="bg-gray-50 cursor-not-allowed" />
+                        <Input id="email" value={user?.email || ''} readOnly className="bg-gray-50 cursor-not-allowed" />
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -757,18 +788,22 @@ export default function ProfilePage() {
                         </Tooltip>
                       </div>
                     </div>
+                    </CardContent>
+                  </Card>
 
                     {/* User Persona */}
                       <div className="space-y-4">
-                        <Label>Profile Type</Label>
+                        <Label className="text-base font-semibold">Profile Type</Label>
                         <MobileScrollGrid className="gap-4">
-                          {(['student', 'working_professional', 'freelancer'] as UserPersonaType[]).map(type => (
+                          {(['student', 'working_professional', 'freelancer'] as UserPersonaType[]).map(type => {
+                            const isSelected = form.data.userPersona?.type === type;
+                            return (
                             <Card
                               key={type}
-                              className={`cursor-pointer transition-all duration-200 border-2 min-w-[280px] ${
-                                form.data.userPersona?.type === type
-                                  ? 'border-blue-500 bg-blue-50'
-                                  : 'border-gray-200 hover:border-gray-300'
+                              className={`cursor-pointer transition-all duration-200 min-w-[280px] relative overflow-hidden ${
+                                isSelected
+                                  ? 'border-primary ring-2 ring-primary bg-primary/5 shadow-md'
+                                  : 'border-muted hover:border-primary/50 hover:shadow-md'
                               }`}
                               onClick={() =>
                                 form.updateField('userPersona', {
@@ -777,31 +812,35 @@ export default function ProfilePage() {
                                 })
                               }
                             >
-                              <CardContent className="p-4 text-center">
-                                <div className="mb-2">
-                                  {type === 'student' && <User className="h-8 w-8 mx-auto text-blue-600" />}
+                              <CardContent className="p-5 text-center relative z-10">
+                                {isSelected && (
+                                   <div className="absolute top-3 right-3 text-primary">
+                                      <UserCheck className="h-5 w-5" />
+                                   </div>
+                                )}
+                                <div className={`mb-3 inline-flex p-3 rounded-full ${isSelected ? 'bg-background' : 'bg-muted/50'}`}>
+                                  {type === 'student' && <User className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />}
                                   {type === 'working_professional' && (
-                                    <UserCheck className="h-8 w-8 mx-auto text-green-600" />
+                                    <Briefcase className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
                                   )}
-                                  {type === 'freelancer' && <Activity className="h-8 w-8 mx-auto text-purple-600" />}
+                                  {type === 'freelancer' && <Activity className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />}
                                 </div>
-                                <h3 className="font-medium capitalize">{type.replace('_', ' ')}</h3>
-                                <p className="text-sm text-gray-600 mt-1">
+                                <h3 className="font-semibold capitalize text-foreground">{type.replace('_', ' ')}</h3>
+                                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
                                   {type === 'student' && 'Full-time student with flexible schedule'}
                                   {type === 'working_professional' && 'Working professional with limited time'}
                                   {type === 'freelancer' && 'Flexible schedule with project commitments'}
                                 </p>
                               </CardContent>
                             </Card>
-                          ))}
+                          )})}
                         </MobileScrollGrid>
                       </div>
-                  </CardContent>
-                </Card>
               </TabsContent>
 
               {/* Exam Setup Tab */}
               <TabsContent value="exam" className="space-y-6">
+                {/* Course Management Card */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
@@ -810,12 +849,11 @@ export default function ProfilePage() {
                     </CardTitle>
                     <CardDescription>Manage your active courses and learning paths</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent>
                     {/* Course List */}
                     <div className="space-y-4">
                        <div className="flex justify-between items-center">
                           <Label className="text-base font-semibold">My Courses</Label>
-                          {/* <Button size="sm" variant="outline" onClick={handleAddCoursePlaceholder}><Plus className="h-4 w-4 mr-1"/> Add Course</Button> */}
                        </div>
                        
                        {form.data.selectedCourses && form.data.selectedCourses.length > 0 ? (
@@ -848,13 +886,11 @@ export default function ProfilePage() {
                           <div className="text-center py-8 text-gray-500">No courses found.</div>
                        )}
                     </div>
+                  </CardContent>
+                </Card>
 
-                    {/* Legacy/Fallback Section if needed (Hidden if simplified) */}
-                     
                     {/* Current Primary Exam Details (Only show if isCustomExam is true for editing) */}
                     {form.data.isCustomExam && (
-                      <div className="pt-4 border-t">
-                      <h4 className="font-medium mb-4">Primary Course Details</h4>
                       <Card className="border-purple-200 bg-purple-50">
                         <CardHeader>
                           <CardTitle className="text-purple-800 text-base">Custom Exam Settings</CardTitle>
@@ -889,7 +925,6 @@ export default function ProfilePage() {
                             />
                           </div>
 
-
                           <div className="space-y-2">
                             <Label htmlFor="custom-exam-description">Description</Label>
                             <Textarea
@@ -907,98 +942,131 @@ export default function ProfilePage() {
                           </div>
                         </CardContent>
                       </Card>
-                      </div>
                     )}
 
                     {/* Exam Date */}
-                    <div className="space-y-2">
-                      <Label htmlFor="exam-date">Exam Date *</Label>
-                      <Input
-                        id="exam-date"
-                        type="date"
-                        value={form.data.examDate}
-                        onChange={e => form.updateField('examDate', e.target.value)}
-                        min={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-                        className={validationErrors.examDate ? 'border-red-300' : ''}
-                      />
-                      {validationErrors.examDate && <p className="text-sm text-red-600">{validationErrors.examDate}</p>}
-                      {form.data.examDate && !validationErrors.examDate && (
-                        <div className="flex items-center space-x-2 text-sm bg-blue-50 p-3 rounded-lg">
-                          <Calendar className="h-4 w-4 text-blue-600" />
-                          <span className="text-blue-800">
-                            {(() => {
-                              const examDate = new Date(form.data.examDate);
-                              const today = new Date();
-                              const diffDays = Math.ceil(
-                                (examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-                              );
-                              return `${diffDays} days to prepare`;
-                            })()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                                <Calendar className="h-5 w-5 text-blue-600" />
+                                <span>Exam Schedule</span>
+                            </CardTitle>
+                             <CardDescription>Set the target date for your primary exam</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-2">
+                              <Label htmlFor="exam-date">Exam Date *</Label>
+                              <Input
+                                id="exam-date"
+                                type="date"
+                                value={form.data.examDate}
+                                onChange={e => form.updateField('examDate', e.target.value)}
+                                min={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                                className={validationErrors.examDate ? 'border-red-300' : ''}
+                              />
+                              {validationErrors.examDate && <p className="text-sm text-red-600">{validationErrors.examDate}</p>}
+                              {form.data.examDate && !validationErrors.examDate && (
+                                <div className="flex items-center space-x-2 text-sm bg-blue-50 p-3 rounded-lg">
+                                  <Calendar className="h-4 w-4 text-blue-600" />
+                                  <span className="text-blue-800">
+                                    {(() => {
+                                      const examDate = new Date(form.data.examDate);
+                                      const today = new Date();
+                                      const diffDays = Math.ceil(
+                                        (examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+                                      );
+                                      return `${diffDays} days to prepare`;
+                                    })()}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Preparation Start Date */}
+                            <div className="space-y-2 pt-4 border-t">
+                              <Label htmlFor="prep-start-date">When did you start preparing?</Label>
+                              <Input
+                                ref={prepDateInputRef}
+                                id="prep-start-date"
+                                type="date"
+                                value={form.data.preparationStartDate}
+                                onChange={e => form.updateField('preparationStartDate', e.target.value)}
+                                max={new Date().toISOString().split('T')[0]}
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Used to calculate your study velocity and pace for Strategy Insights
+                              </p>
+                            </div>
+                        </CardContent>
+                    </Card>
               </TabsContent>
 
               {/* Syllabus Tab */}
               <TabsContent value="syllabus" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Target className="h-5 w-5 text-blue-600" />
-                      <span>Syllabus Organization</span>
-                    </CardTitle>
-                    <CardDescription>
+                 {/* Header Section */}
+                 <div className="flex flex-col space-y-2">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Target className="h-5 w-5 text-primary" />
+                      Syllabus Organization
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
                       Organize your subjects by priority levels for effective study planning
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </p>
+                 </div>
+
                     {form.data.syllabus.length === 0 ? (
-                      <div className="text-center py-8">
-                        <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="font-medium text-gray-900 mb-2">No subjects added yet</h3>
-                        <p className="text-gray-600 mb-4">Start by selecting an exam or adding custom subjects</p>
-                        <Button onClick={addCustomSubject}>
-                          <Plus className="h-4 w-4 mr-2" />
+                      <div className="text-center py-12 border-2 border-dashed rounded-xl bg-muted/10">
+                        <div className="bg-muted rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                           <BookOpen className="h-10 w-10 text-muted-foreground" />
+                        </div>
+                        <h3 className="font-semibold text-foreground mb-2 text-lg">No subjects added yet</h3>
+                        <p className="text-muted-foreground mb-6">Start by selecting an exam or adding custom subjects</p>
+                        <Button onClick={addCustomSubject} size="lg">
+                          <Plus className="h-5 w-5 mr-2" />
                           Add Subject
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-6">
+                      <div className="space-y-8">
                         {/* Tier Definitions */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {[1, 2, 3].map(tier => (
-                            <div key={tier} className="space-y-2">
-                              <Label htmlFor={`tier-${tier}`}>
-                                Tier {tier} Definition
-                                <span className="text-red-500 ml-1">*</span>
-                              </Label>
-                              <Input
-                                id={`tier-${tier}`}
-                                value={form.data.preferences.tierDefinitions[tier as 1 | 2 | 3]}
-                                onChange={e =>
-                                  form.updateField('preferences', {
-                                    ...form.data.preferences,
-                                    tierDefinitions: {
-                                      ...form.data.preferences.tierDefinitions,
-                                      [tier]: e.target.value,
-                                    },
-                                  })
-                                }
-                                placeholder={`Define Tier ${tier}...`}
-                                className={
-                                  tier === 1
-                                    ? 'border-red-300 focus:border-red-500'
-                                    : tier === 2
-                                      ? 'border-yellow-300 focus:border-yellow-500'
-                                      : 'border-green-300 focus:border-green-500'
-                                }
-                              />
-                            </div>
-                          ))}
-                        </div>
+                        <Card>
+                             <CardHeader className="pb-3">
+                                <CardTitle className="text-base">Tier Definitions</CardTitle>
+                             </CardHeader>
+                             <CardContent>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                  {[1, 2, 3].map(tier => (
+                                    <div key={tier} className="space-y-2">
+                                      <Label htmlFor={`tier-${tier}`} className="text-xs uppercase text-muted-foreground font-bold tracking-wider">
+                                        Tier {tier}
+                                        <span className="text-red-500 ml-1">*</span>
+                                      </Label>
+                                      <Input
+                                        id={`tier-${tier}`}
+                                        value={form.data.preferences.tierDefinitions[tier as 1 | 2 | 3]}
+                                        onChange={e =>
+                                          form.updateField('preferences', {
+                                            ...form.data.preferences,
+                                            tierDefinitions: {
+                                              ...form.data.preferences.tierDefinitions,
+                                              [tier]: e.target.value,
+                                            },
+                                          })
+                                        }
+                                        placeholder={`Define Tier ${tier}...`}
+                                        className={
+                                          tier === 1
+                                            ? 'border-red-200 focus:border-red-500 bg-red-50/30'
+                                            : tier === 2
+                                              ? 'border-yellow-200 focus:border-yellow-500 bg-yellow-50/30'
+                                              : 'border-green-200 focus:border-green-500 bg-green-50/30'
+                                        }
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                             </CardContent>
+                        </Card>
 
                         {/* Subjects by Tier */}
                         <div className="space-y-6">
@@ -1006,51 +1074,60 @@ export default function ProfilePage() {
                             const tierSubjects = form.data.syllabus.filter(subject => subject.tier === tier);
                             const tierColor =
                               tier === 1
-                                ? 'border-red-200 bg-red-50'
+                                ? 'border-red-200 bg-red-50/50'
                                 : tier === 2
-                                  ? 'border-yellow-200 bg-yellow-50'
-                                  : 'border-green-200 bg-green-50';
+                                  ? 'border-yellow-200 bg-yellow-50/50'
+                                  : 'border-green-200 bg-green-50/50';
 
                             return (
-                              <div key={tier} className={`p-4 rounded-lg border ${tierColor}`}>
-                                <div className="flex items-center justify-between mb-4">
-                                  <h3 className="font-semibold text-gray-900">
-                                    Tier {tier} ({tierSubjects.length} subjects)
-                                  </h3>
-                                  <Badge
-                                    variant={tier === 1 ? 'destructive' : tier === 2 ? 'default' : 'secondary'}
-                                    className="capitalize"
-                                  >
-                                    {form.data.preferences.tierDefinitions[tier as 1 | 2 | 3]}
+                              <div key={tier} className={`p-6 rounded-xl border ${tierColor}`}>
+                                <div className="flex items-center justify-between mb-6">
+                                  <div className="flex items-center gap-3">
+                                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                                          tier === 1 ? 'bg-red-100 text-red-700' :
+                                          tier === 2 ? 'bg-yellow-100 text-yellow-700' :
+                                          'bg-green-100 text-green-700'
+                                      }`}>
+                                          T{tier}
+                                      </div>
+                                      <h3 className="font-semibold text-foreground text-lg">
+                                        {form.data.preferences.tierDefinitions[tier as 1 | 2 | 3] || `Tier ${tier}`}
+                                      </h3>
+                                  </div>
+                                  <Badge variant="outline" className="bg-background">
+                                    {tierSubjects.length} subjects
                                   </Badge>
                                 </div>
 
                                 {tierSubjects.length === 0 ? (
-                                  <p className="text-gray-600 text-sm">No subjects in this tier</p>
+                                  <div className="text-center py-8 border-2 border-dashed border-muted-foreground/10 rounded-lg bg-background/50">
+                                      <p className="text-muted-foreground text-sm">No subjects in this tier</p>
+                                  </div>
                                 ) : (
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {tierSubjects.map(subject => (
-                                      <Card key={subject.id} className="bg-white">
-                                        <CardContent className="p-3">
-                                          <div className="flex items-start justify-between">
-                                            <div className="flex-1">
+                                      <Card key={subject.id} className="bg-background shadow-sm hover:shadow-md transition-shadow border-0 ring-1 ring-black/5">
+                                        <CardContent className="p-4">
+                                          <div className="flex items-start justify-between gap-3">
+                                            <div className="flex-1 min-w-0">
                                               {subject.isCustom ? (
                                                 <Input
                                                   value={subject.name}
                                                   onChange={e => updateSubjectName(subject.id, e.target.value)}
-                                                  className="font-medium text-sm border-none p-0 h-auto bg-transparent"
+                                                  className="font-semibold text-sm border-transparent hover:border-input p-0 h-auto bg-transparent focus:ring-0 px-1 -ml-1 truncate"
                                                 />
                                               ) : (
-                                                <h4 className="font-medium text-sm">{subject.name}</h4>
+                                                <h4 className="font-semibold text-sm truncate pr-2" title={subject.name}>{subject.name}</h4>
                                               )}
                                               {subject.topics && (
-                                                <p className="text-xs text-gray-600 mt-1">
+                                                <p className="text-xs text-muted-foreground mt-1 flex items-center">
+                                                  <BookOpen className="h-3 w-3 mr-1" />
                                                   {subject.topics.length} topics
                                                 </p>
                                               )}
                                             </div>
 
-                                            <div className="flex items-center space-x-1 ml-2">
+                                            <div className="flex items-center flex-shrink-0">
                                               {/* Tier Selection */}
                                               <Select
                                                 value={subject.tier.toString()}
@@ -1058,7 +1135,7 @@ export default function ProfilePage() {
                                                   updateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)
                                                 }
                                               >
-                                                <SelectTrigger className="w-16 h-6 text-xs">
+                                                <SelectTrigger className="w-14 h-7 text-xs px-1 gap-1">
                                                   <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -1074,9 +1151,9 @@ export default function ProfilePage() {
                                                   variant="ghost"
                                                   size="sm"
                                                   onClick={() => removeSubject(subject.id)}
-                                                  className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
+                                                  className="h-7 w-7 p-0 ml-1 text-muted-foreground hover:text-red-600"
                                                 >
-                                                  <Trash2 className="h-3 w-3" />
+                                                  <Trash2 className="h-3.5 w-3.5" />
                                                 </Button>
                                               )}
                                             </div>
@@ -1092,70 +1169,70 @@ export default function ProfilePage() {
                         </div>
 
                         {/* Add Custom Subject */}
-                        <div className="flex justify-center">
-                          <Button variant="outline" onClick={addCustomSubject}>
+                        <div className="flex justify-center pt-4">
+                          <Button variant="outline" size="lg" onClick={addCustomSubject} className="border-dashed">
                             <Plus className="h-4 w-4 mr-2" />
                             Add Custom Subject
                           </Button>
                         </div>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
               </TabsContent>
 
               {/* Study Preferences Tab */}
-              <TabsContent value="preferences" className="space-y-6">
+              <TabsContent value="preferences" className="space-y-8">
+                {/* Daily Study Goal Card */}
                 <Card>
-                  <CardHeader>
+                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
-                      <Settings className="h-5 w-5 text-blue-600" />
-                      <span>Study Preferences</span>
+                      <Target className="h-5 w-5 text-blue-600" />
+                      <span>Daily Goals</span>
                     </CardTitle>
-                    <CardDescription>Configure your daily goals and study schedule</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Daily Study Goal */}
+                    <CardDescription>Set your commitment level</CardDescription>
+                   </CardHeader>
+                   <CardContent>
                     <div className="space-y-2">
-                      <Label htmlFor="daily-goal">Daily Study Goal (Minutes) *</Label>
-                      <div className="flex items-center space-x-4">
-                        <Input
-                          id="daily-goal"
-                          type="number"
-inputMode="numeric"
-                          min="60"
-                          max="720"
-                          step="30"
-                          value={form.data.preferences.dailyStudyGoalMinutes}
-                          onChange={e =>
-                            form.updateField('preferences', {
-                              ...form.data.preferences,
-                              dailyStudyGoalMinutes: parseInt(e.target.value) ?? 240,
-                            })
-                          }
-                          className={validationErrors['preferences.dailyStudyGoalMinutes'] ? 'border-red-300' : ''}
-                        />
-                        <div className="text-sm text-gray-600">
-                          {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
-                          {form.data.preferences.dailyStudyGoalMinutes % 60}m
-                        </div>
-                      </div>
-                      {validationErrors['preferences.dailyStudyGoalMinutes'] && (
-                        <p className="text-sm text-red-600">{validationErrors['preferences.dailyStudyGoalMinutes']}</p>
-                      )}
+                       <Label htmlFor="daily-goal">Daily Study Goal (Minutes) *</Label>
+                       <div className="flex items-center space-x-4">
+                         <Input
+                           id="daily-goal"
+                           type="number"
+                           inputMode="numeric"
+                           min="60"
+                           max="720"
+                           step="30"
+                           value={form.data.preferences.dailyStudyGoalMinutes}
+                           onChange={e =>
+                             form.updateField('preferences', {
+                               ...form.data.preferences,
+                               dailyStudyGoalMinutes: parseInt(e.target.value) ?? 240,
+                             })
+                           }
+                           className={validationErrors['preferences.dailyStudyGoalMinutes'] ? 'border-red-300' : ''}
+                         />
+                         <div className="text-sm text-gray-600">
+                           {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
+                           {form.data.preferences.dailyStudyGoalMinutes % 60}m
+                         </div>
+                       </div>
+                       {validationErrors['preferences.dailyStudyGoalMinutes'] && (
+                         <p className="text-sm text-red-600">{validationErrors['preferences.dailyStudyGoalMinutes']}</p>
+                       )}
                     </div>
+                   </CardContent>
+                </Card>
 
-                    {/* Preferred Study Time */}
-                    <div className="space-y-2">
-                      <Label>Preferred Study Time</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {/* Preferred Study Time - Grid Section */}
+                    <div className="space-y-4">
+                      <Label className="text-base font-semibold">Preferred Study Time</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {(['morning', 'afternoon', 'evening', 'night'] as const).map(time => (
                           <Card
                             key={time}
-                            className={`cursor-pointer transition-all duration-200 border-2 ${
+                            className={`cursor-pointer transition-all duration-200 border relative overflow-hidden ${
                               form.data.preferences.preferredStudyTime === time
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
+                                ? 'border-primary ring-2 ring-primary bg-primary/5 shadow-md'
+                                : 'border-muted hover:border-primary/50 hover:shadow-sm'
                             }`}
                             onClick={() =>
                               form.updateField('preferences', {
@@ -1164,15 +1241,15 @@ inputMode="numeric"
                               })
                             }
                           >
-                            <CardContent className="p-3 text-center">
-                              <div className="mb-2">
-                                {time === 'morning' && <Sun className="h-6 w-6 mx-auto text-yellow-500" />}
-                                {time === 'afternoon' && <Sun className="h-6 w-6 mx-auto text-orange-500" />}
-                                {time === 'evening' && <Moon className="h-6 w-6 mx-auto text-purple-500" />}
-                                {time === 'night' && <Moon className="h-6 w-6 mx-auto text-blue-500" />}
+                            <CardContent className="p-4 text-center">
+                              <div className="mb-3">
+                                {time === 'morning' && <Sun className="h-7 w-7 mx-auto text-yellow-500" />}
+                                {time === 'afternoon' && <Sun className="h-7 w-7 mx-auto text-orange-500" />}
+                                {time === 'evening' && <Moon className="h-7 w-7 mx-auto text-purple-500" />}
+                                {time === 'night' && <Moon className="h-7 w-7 mx-auto text-blue-500" />}
                               </div>
-                              <h4 className="font-medium text-sm capitalize">{time}</h4>
-                              <p className="text-xs text-gray-600 mt-1">
+                              <h4 className="font-semibold text-sm capitalize">{time}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">
                                 {time === 'morning' && '6:00 - 12:00'}
                                 {time === 'afternoon' && '12:00 - 18:00'}
                                 {time === 'evening' && '18:00 - 22:00'}
@@ -1184,202 +1261,52 @@ inputMode="numeric"
                       </div>
                     </div>
 
-                    {/* Revision Intervals */}
-                    <div className="space-y-2">
-                      <Label>Spaced Repetition Intervals (Days)</Label>
-                      <div className="flex items-center space-x-2">
-                        {form.data.preferences.revisionIntervals.map((interval, index) => (
-                          <div key={index} className="flex items-center space-x-1">
-                            <Input
-                              type="number"
-inputMode="numeric"
-                              min="1"
-                              max="365"
-                              value={interval}
-                              onChange={e => {
-                                const newIntervals = [...form.data.preferences.revisionIntervals];
-                                newIntervals[index] = parseInt(e.target.value) || 1;
-                                form.updateField('preferences', {
-                                  ...form.data.preferences,
-                                  revisionIntervals: newIntervals,
-                                });
-                              }}
-                              className="w-16 text-center"
-                            />
-                            {index < form.data.preferences.revisionIntervals.length - 1 && (
-                              <ChevronRight className="h-4 w-4 text-gray-400" />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Topics will be scheduled for revision after these intervals
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Notifications Tab */}
-              <TabsContent value="notifications" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Bell className="h-5 w-5 text-blue-600" />
-                      <span>Notification Settings</span>
-                    </CardTitle>
-                    <CardDescription>Choose when and how you want to be reminded</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Notification Types */}
-                    <div className="space-y-4">
-                      {[
-                        {
-                          key: 'revisionReminders',
-                          label: 'Revision Reminders',
-                          description: 'Get notified when topics are due for revision',
-                          icon: RefreshCw,
-                        },
-                        {
-                          key: 'dailyGoalReminders',
-                          label: 'Daily Goal Reminders',
-                          description: 'Remind me about my daily study goals',
-                          icon: Target,
-                        },
-                        {
-                          key: 'healthCheckReminders',
-                          label: 'Health Check Reminders',
-                          description: 'Remind me to log my daily health metrics',
-                          icon: Activity,
-                        },
-                      ].map(notification => {
-                        const Icon = notification.icon;
-                        return (
-                          <div
-                            key={notification.key}
-                            className="flex items-center justify-between p-4 border rounded-lg"
-                          >
-                            <div className="flex items-start space-x-3">
-                              <Icon className="h-5 w-5 text-blue-600 mt-1" />
-                              <div>
-                                <h3 className="font-medium">{notification.label}</h3>
-                                <p className="text-sm text-gray-600">{notification.description}</p>
+                    {/* Learning Science / Revision Intervals */}
+                    <Card>
+                       <CardHeader>
+                          <CardTitle className="flex items-center space-x-2">
+                             <Zap className="h-5 w-5 text-yellow-500" />
+                             <span>Spaced Repetition</span>
+                          </CardTitle>
+                          <CardDescription>Optimize your memory retention schedule</CardDescription>
+                       </CardHeader>
+                       <CardContent>
+                        <div className="space-y-4">
+                          <Label>Revision Intervals (Days)</Label>
+                          <div className="flex items-center space-x-3 overflow-x-auto pb-2 pt-4">
+                            {form.data.preferences.revisionIntervals.map((interval, index) => (
+                              <div key={index} className="flex items-center space-x-2 flex-shrink-0">
+                                <div className="relative">
+                                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-muted text-[10px] px-1.5 py-0.5 rounded-full border whitespace-nowrap">R{index+1}</span>
+                                    <Input
+                                      type="number"
+                                      inputMode="numeric"
+                                      min="1"
+                                      max="365"
+                                      value={interval}
+                                      onChange={e => {
+                                        const newIntervals = [...form.data.preferences.revisionIntervals];
+                                        newIntervals[index] = parseInt(e.target.value) || 1;
+                                        form.updateField('preferences', {
+                                          ...form.data.preferences,
+                                          revisionIntervals: newIntervals,
+                                        });
+                                      }}
+                                      className="w-16 text-center font-mono"
+                                    />
+                                </div>
+                                {index < form.data.preferences.revisionIntervals.length - 1 && (
+                                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                )}
                               </div>
-                            </div>
-                            <Switch
-                              checked={
-                                form.data.preferences.notifications[
-                                  notification.key as keyof typeof form.data.preferences.notifications
-                                ]
-                              }
-                              onCheckedChange={checked =>
-                                form.updateField('preferences', {
-                                  ...form.data.preferences,
-                                  notifications: {
-                                    ...form.data.preferences.notifications,
-                                    [notification.key]: checked,
-                                  },
-                                })
-                              }
-                            />
+                            ))}
                           </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* System Settings Tab */}
-              <TabsContent value="system" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                      <Palette className="h-5 w-5 text-blue-600" />
-                      <span>System Settings</span>
-                    </CardTitle>
-                    <CardDescription>Customize your app experience and preferences</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Theme Selection */}
-                    <div className="space-y-3">
-                      <Label>Theme</Label>
-                      <div className="grid grid-cols-3 gap-3">
-                        {[
-                          { value: 'light', label: 'Light', icon: Sun },
-                          { value: 'dark', label: 'Dark', icon: Moon },
-                          { value: 'system', label: 'System', icon: Smartphone },
-                        ].map(theme => {
-                          const Icon = theme.icon;
-                          return (
-                            <Card
-                              key={theme.value}
-                              className={`cursor-pointer transition-all duration-200 border-2 ${
-                                form.data.settings.theme === theme.value
-                                  ? 'border-blue-500 bg-blue-50'
-                                  : 'border-gray-200 hover:border-gray-300'
-                              }`}
-                              onClick={() =>
-                                form.updateField('settings', {
-                                  ...form.data.settings,
-                                  theme: theme.value as 'light' | 'dark' | 'system',
-                                })
-                              }
-                            >
-                              <CardContent className="p-3 text-center">
-                                <Icon className="h-6 w-6 mx-auto mb-2 text-gray-600" />
-                                <h4 className="font-medium text-sm">{theme.label}</h4>
-                              </CardContent>
-                            </Card>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Language */}
-                    <div className="space-y-2">
-                      <Label htmlFor="language">Language</Label>
-                      <Select
-                        value={form.data.settings.language}
-                        onValueChange={value =>
-                          form.updateField('settings', {
-                            ...form.data.settings,
-                            language: value,
-                          })
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="hi">Hindi</SelectItem>
-                          <SelectItem value="es">Spanish</SelectItem>
-                          <SelectItem value="fr">French</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Timezone */}
-                    <div className="space-y-2">
-                      <Label htmlFor="timezone">Timezone</Label>
-                      <Input
-                        id="timezone"
-                        value={form.data.settings.timezone}
-                        onChange={e =>
-                          form.updateField('settings', {
-                            ...form.data.settings,
-                            timezone: e.target.value,
-                          })
-                        }
-                        placeholder="Your timezone"
-                        readOnly
-                        className="bg-gray-50"
-                      />
-                      <p className="text-sm text-gray-600">Timezone is automatically detected from your browser</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                          <p className="text-sm text-muted-foreground">
+                            Topics will be scheduled for revision after these intervals (Day 1, Day 3, etc.)
+                          </p>
+                        </div>
+                       </CardContent>
+                    </Card>
               </TabsContent>
             </div>
           </Tabs>

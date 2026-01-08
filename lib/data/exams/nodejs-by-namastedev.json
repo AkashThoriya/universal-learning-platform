@@ -163,10 +163,42 @@
           "estimatedHours": 1.5,
           "description": "Introduction to the course, roadmap, and what you'll learn in this comprehensive NodeJS journey",
           "subtopics": [
-            "Course Overview and Roadmap",
-            "Prerequisites and Setup",
-            "Community and Resources",
-            "Learning Approach"
+            {
+              "id": "welcome_intro_sub_0",
+              "name": "Course Overview and Roadmap",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "welcome_intro_sub_1",
+              "name": "Prerequisites and Setup",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "welcome_intro_sub_2",
+              "name": "Community and Resources",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "welcome_intro_sub_3",
+              "name": "Learning Approach",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -175,10 +207,42 @@
           "estimatedHours": 2,
           "description": "Understanding what NodeJS is, its history, and why it's revolutionary for JavaScript development",
           "subtopics": [
-            "What is NodeJS?",
-            "History and Evolution",
-            "NodeJS vs Browser JavaScript",
-            "Use Cases and Applications"
+            {
+              "id": "nodejs_introduction_sub_0",
+              "name": "What is NodeJS?",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nodejs_introduction_sub_1",
+              "name": "History and Evolution",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nodejs_introduction_sub_2",
+              "name": "NodeJS vs Browser JavaScript",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nodejs_introduction_sub_3",
+              "name": "Use Cases and Applications",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -187,10 +251,42 @@
           "estimatedHours": 2,
           "description": "Understanding how JavaScript runs on the server-side and the differences from client-side execution",
           "subtopics": [
-            "Server-side JavaScript Execution",
-            "Differences from Browser Environment",
-            "Global Objects in NodeJS",
-            "File System Access"
+            {
+              "id": "js_on_server_sub_0",
+              "name": "Server-side JavaScript Execution",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "js_on_server_sub_1",
+              "name": "Differences from Browser Environment",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "js_on_server_sub_2",
+              "name": "Global Objects in NodeJS",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "js_on_server_sub_3",
+              "name": "File System Access",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -199,10 +295,42 @@
           "estimatedHours": 2,
           "description": "Writing your first NodeJS programs and understanding the development workflow",
           "subtopics": [
-            "Setting up Development Environment",
-            "Writing First NodeJS Program",
-            "Running NodeJS Scripts",
-            "Debugging Basics"
+            {
+              "id": "write_code_sub_0",
+              "name": "Setting up Development Environment",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "write_code_sub_1",
+              "name": "Writing First NodeJS Program",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "write_code_sub_2",
+              "name": "Running NodeJS Scripts",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "write_code_sub_3",
+              "name": "Debugging Basics",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -211,11 +339,51 @@
           "estimatedHours": 2,
           "description": "Understanding NodeJS module system, exports, and require mechanism",
           "subtopics": [
-            "CommonJS Module System",
-            "module.exports vs exports",
-            "require() Function",
-            "Module Resolution",
-            "Creating Custom Modules"
+            {
+              "id": "modules_require_sub_0",
+              "name": "CommonJS Module System",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "modules_require_sub_1",
+              "name": "module.exports vs exports",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "modules_require_sub_2",
+              "name": "require() Function",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "modules_require_sub_3",
+              "name": "Module Resolution",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "modules_require_sub_4",
+              "name": "Creating Custom Modules",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -224,10 +392,42 @@
           "estimatedHours": 2,
           "description": "Exploring NodeJS source code, understanding its architecture and contribution process",
           "subtopics": [
-            "NodeJS Repository Structure",
-            "C++ and JavaScript Integration",
-            "Understanding NodeJS Architecture",
-            "Open Source Contribution Process"
+            {
+              "id": "nodejs_github_sub_0",
+              "name": "NodeJS Repository Structure",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nodejs_github_sub_1",
+              "name": "C++ and JavaScript Integration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nodejs_github_sub_2",
+              "name": "Understanding NodeJS Architecture",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nodejs_github_sub_3",
+              "name": "Open Source Contribution Process",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -236,10 +436,42 @@
           "estimatedHours": 2.5,
           "description": "Deep dive into libuv library and asynchronous I/O operations in NodeJS",
           "subtopics": [
-            "What is libuv?",
-            "Asynchronous I/O Concepts",
-            "Non-blocking Operations",
-            "Cross-platform Compatibility"
+            {
+              "id": "libuv_async_sub_0",
+              "name": "What is libuv?",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_async_sub_1",
+              "name": "Asynchronous I/O Concepts",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_async_sub_2",
+              "name": "Non-blocking Operations",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_async_sub_3",
+              "name": "Cross-platform Compatibility",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -248,11 +480,51 @@
           "estimatedHours": 2.5,
           "description": "Understanding synchronous vs asynchronous code execution and timeout mechanisms",
           "subtopics": [
-            "Synchronous Code Execution",
-            "Asynchronous Code Patterns",
-            "setTimeout and setImmediate",
-            "Event Loop Timing",
-            "Practical Examples"
+            {
+              "id": "sync_async_timeout_sub_0",
+              "name": "Synchronous Code Execution",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "sync_async_timeout_sub_1",
+              "name": "Asynchronous Code Patterns",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "sync_async_timeout_sub_2",
+              "name": "setTimeout and setImmediate",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "sync_async_timeout_sub_3",
+              "name": "Event Loop Timing",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "sync_async_timeout_sub_4",
+              "name": "Practical Examples",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -261,11 +533,51 @@
           "estimatedHours": 2.5,
           "description": "Understanding V8 JavaScript engine, compilation, and optimization processes",
           "subtopics": [
-            "V8 Engine Architecture",
-            "Just-in-Time Compilation",
-            "Memory Management",
-            "Garbage Collection",
-            "Performance Optimization"
+            {
+              "id": "v8_engine_sub_0",
+              "name": "V8 Engine Architecture",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "v8_engine_sub_1",
+              "name": "Just-in-Time Compilation",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "v8_engine_sub_2",
+              "name": "Memory Management",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "v8_engine_sub_3",
+              "name": "Garbage Collection",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "v8_engine_sub_4",
+              "name": "Performance Optimization",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -274,11 +586,51 @@
           "estimatedHours": 2.5,
           "description": "Comprehensive understanding of the event loop and its phases",
           "subtopics": [
-            "Event Loop Architecture",
-            "Event Loop Phases",
-            "Callback Queue",
-            "Microtasks vs Macrotasks",
-            "Event Loop Debugging"
+            {
+              "id": "libuv_event_loop_sub_0",
+              "name": "Event Loop Architecture",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_event_loop_sub_1",
+              "name": "Event Loop Phases",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_event_loop_sub_2",
+              "name": "Callback Queue",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_event_loop_sub_3",
+              "name": "Microtasks vs Macrotasks",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "libuv_event_loop_sub_4",
+              "name": "Event Loop Debugging",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -287,11 +639,51 @@
           "estimatedHours": 2,
           "description": "Understanding thread pool concepts and their role in NodeJS operations",
           "subtopics": [
-            "Thread Pool Basics",
-            "File System Operations",
-            "CPU-Intensive Tasks",
-            "Thread Pool Size Configuration",
-            "Performance Implications"
+            {
+              "id": "thread_pool_sub_0",
+              "name": "Thread Pool Basics",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "thread_pool_sub_1",
+              "name": "File System Operations",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "thread_pool_sub_2",
+              "name": "CPU-Intensive Tasks",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "thread_pool_sub_3",
+              "name": "Thread Pool Size Configuration",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "thread_pool_sub_4",
+              "name": "Performance Implications",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -300,11 +692,51 @@
           "estimatedHours": 2.5,
           "description": "Building your first HTTP server using NodeJS built-in modules",
           "subtopics": [
-            "HTTP Module",
-            "Creating Basic Server",
-            "Request and Response Objects",
-            "Handling Different Routes",
-            "Server Configuration"
+            {
+              "id": "creating_server_sub_0",
+              "name": "HTTP Module",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "creating_server_sub_1",
+              "name": "Creating Basic Server",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "creating_server_sub_2",
+              "name": "Request and Response Objects",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "creating_server_sub_3",
+              "name": "Handling Different Routes",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "creating_server_sub_4",
+              "name": "Server Configuration",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -313,11 +745,51 @@
           "estimatedHours": 2,
           "description": "Introduction to databases, understanding SQL vs NoSQL paradigms",
           "subtopics": [
-            "Database Fundamentals",
-            "SQL vs NoSQL Comparison",
-            "When to Use Each Type",
-            "Popular Database Options",
-            "Database Design Principles"
+            {
+              "id": "databases_intro_sub_0",
+              "name": "Database Fundamentals",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "databases_intro_sub_1",
+              "name": "SQL vs NoSQL Comparison",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "databases_intro_sub_2",
+              "name": "When to Use Each Type",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "databases_intro_sub_3",
+              "name": "Popular Database Options",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "databases_intro_sub_4",
+              "name": "Database Design Principles",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -326,11 +798,51 @@
           "estimatedHours": 2.5,
           "description": "Setting up MongoDB and understanding document-based database concepts",
           "subtopics": [
-            "MongoDB Installation and Setup",
-            "Document-based Storage",
-            "Collections and Documents",
-            "Basic CRUD Operations",
-            "MongoDB Compass Introduction"
+            {
+              "id": "mongodb_setup_sub_0",
+              "name": "MongoDB Installation and Setup",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "mongodb_setup_sub_1",
+              "name": "Document-based Storage",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "mongodb_setup_sub_2",
+              "name": "Collections and Documents",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "mongodb_setup_sub_3",
+              "name": "Basic CRUD Operations",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "mongodb_setup_sub_4",
+              "name": "MongoDB Compass Introduction",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -347,10 +859,42 @@
           "estimatedHours": 1.5,
           "description": "Overview of the DevTinder project that will be built throughout the course",
           "subtopics": [
-            "Project Overview - DevTinder",
-            "Features and Functionality",
-            "Technology Stack",
-            "Development Timeline"
+            {
+              "id": "project_intro_sub_0",
+              "name": "Project Overview - DevTinder",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "project_intro_sub_1",
+              "name": "Features and Functionality",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "project_intro_sub_2",
+              "name": "Technology Stack",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "project_intro_sub_3",
+              "name": "Development Timeline",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -359,11 +903,51 @@
           "estimatedHours": 2,
           "description": "Understanding different architectural patterns and how to approach project building",
           "subtopics": [
-            "Monolithic Architecture",
-            "Microservices Architecture",
-            "Pros and Cons of Each",
-            "When to Choose What",
-            "Project Structure Planning"
+            {
+              "id": "architecture_patterns_sub_0",
+              "name": "Monolithic Architecture",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "architecture_patterns_sub_1",
+              "name": "Microservices Architecture",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "architecture_patterns_sub_2",
+              "name": "Pros and Cons of Each",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "architecture_patterns_sub_3",
+              "name": "When to Choose What",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "architecture_patterns_sub_4",
+              "name": "Project Structure Planning",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -372,11 +956,51 @@
           "estimatedHours": 2,
           "description": "High-level and low-level design concepts, feature planning and system architecture",
           "subtopics": [
-            "High-Level Design (HLD)",
-            "Low-Level Design (LLD)",
-            "Feature Breakdown",
-            "System Architecture Planning",
-            "Database Design"
+            {
+              "id": "planning_design_sub_0",
+              "name": "High-Level Design (HLD)",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "planning_design_sub_1",
+              "name": "Low-Level Design (LLD)",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "planning_design_sub_2",
+              "name": "Feature Breakdown",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "planning_design_sub_3",
+              "name": "System Architecture Planning",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "planning_design_sub_4",
+              "name": "Database Design",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -385,11 +1009,51 @@
           "estimatedHours": 2,
           "description": "Setting up Express.js server and understanding the Express framework",
           "subtopics": [
-            "Express.js Introduction",
-            "Server Setup and Configuration",
-            "Basic Routing",
-            "Express Application Structure",
-            "Development Server Setup"
+            {
+              "id": "express_server_sub_0",
+              "name": "Express.js Introduction",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "express_server_sub_1",
+              "name": "Server Setup and Configuration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "express_server_sub_2",
+              "name": "Basic Routing",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "express_server_sub_3",
+              "name": "Express Application Structure",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "express_server_sub_4",
+              "name": "Development Server Setup",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -398,11 +1062,51 @@
           "estimatedHours": 2.5,
           "description": "Advanced routing concepts and request handling in Express",
           "subtopics": [
-            "Advanced Routing Patterns",
-            "Route Parameters",
-            "Query Parameters",
-            "Request Body Handling",
-            "Response Methods"
+            {
+              "id": "routing_handlers_sub_0",
+              "name": "Advanced Routing Patterns",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "routing_handlers_sub_1",
+              "name": "Route Parameters",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "routing_handlers_sub_2",
+              "name": "Query Parameters",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "routing_handlers_sub_3",
+              "name": "Request Body Handling",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "routing_handlers_sub_4",
+              "name": "Response Methods",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -411,11 +1115,51 @@
           "estimatedHours": 2.5,
           "description": "Understanding middleware concept and implementing error handling",
           "subtopics": [
-            "Middleware Concepts",
-            "Built-in Middlewares",
-            "Custom Middleware Creation",
-            "Error Handling Middleware",
-            "Middleware Chain"
+            {
+              "id": "middlewares_errors_sub_0",
+              "name": "Middleware Concepts",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "middlewares_errors_sub_1",
+              "name": "Built-in Middlewares",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "middlewares_errors_sub_2",
+              "name": "Custom Middleware Creation",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "middlewares_errors_sub_3",
+              "name": "Error Handling Middleware",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "middlewares_errors_sub_4",
+              "name": "Middleware Chain",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -424,11 +1168,51 @@
           "estimatedHours": 3,
           "description": "Integrating MongoDB with Express using Mongoose ODM",
           "subtopics": [
-            "Mongoose Introduction",
-            "Schema Definition",
-            "Model Creation",
-            "Database Connection",
-            "Schema Validation"
+            {
+              "id": "database_mongoose_sub_0",
+              "name": "Mongoose Introduction",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "database_mongoose_sub_1",
+              "name": "Schema Definition",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "database_mongoose_sub_2",
+              "name": "Model Creation",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "database_mongoose_sub_3",
+              "name": "Database Connection",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "database_mongoose_sub_4",
+              "name": "Schema Validation",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -437,11 +1221,51 @@
           "estimatedHours": 2.5,
           "description": "Building RESTful APIs and understanding API design principles",
           "subtopics": [
-            "RESTful API Principles",
-            "HTTP Methods",
-            "API Endpoints Design",
-            "Request/Response Structure",
-            "API Testing"
+            {
+              "id": "apis_development_sub_0",
+              "name": "RESTful API Principles",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_development_sub_1",
+              "name": "HTTP Methods",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_development_sub_2",
+              "name": "API Endpoints Design",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_development_sub_3",
+              "name": "Request/Response Structure",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_development_sub_4",
+              "name": "API Testing",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -450,11 +1274,51 @@
           "estimatedHours": 2.5,
           "description": "Implementing data validation and sanitization for security",
           "subtopics": [
-            "Input Validation",
-            "Data Sanitization",
-            "Schema Validation Rules",
-            "Custom Validators",
-            "Error Handling for Validation"
+            {
+              "id": "data_validation_sub_0",
+              "name": "Input Validation",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_validation_sub_1",
+              "name": "Data Sanitization",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_validation_sub_2",
+              "name": "Schema Validation Rules",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_validation_sub_3",
+              "name": "Custom Validators",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "data_validation_sub_4",
+              "name": "Error Handling for Validation",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -463,11 +1327,51 @@
           "estimatedHours": 2,
           "description": "Implementing secure password hashing and encryption",
           "subtopics": [
-            "Password Security Concepts",
-            "Hashing vs Encryption",
-            "bcrypt Implementation",
-            "Salt and Rounds",
-            "Password Comparison"
+            {
+              "id": "password_encryption_sub_0",
+              "name": "Password Security Concepts",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "password_encryption_sub_1",
+              "name": "Hashing vs Encryption",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "password_encryption_sub_2",
+              "name": "bcrypt Implementation",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "password_encryption_sub_3",
+              "name": "Salt and Rounds",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "password_encryption_sub_4",
+              "name": "Password Comparison",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -476,11 +1380,51 @@
           "estimatedHours": 3,
           "description": "Implementing authentication using JWT tokens and cookie management",
           "subtopics": [
-            "Authentication vs Authorization",
-            "JWT Token Concepts",
-            "Token Creation and Verification",
-            "Cookie Management",
-            "Session Management"
+            {
+              "id": "auth_jwt_cookies_sub_0",
+              "name": "Authentication vs Authorization",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "auth_jwt_cookies_sub_1",
+              "name": "JWT Token Concepts",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "auth_jwt_cookies_sub_2",
+              "name": "Token Creation and Verification",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "auth_jwt_cookies_sub_3",
+              "name": "Cookie Management",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "auth_jwt_cookies_sub_4",
+              "name": "Session Management",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -488,7 +1432,53 @@
           "name": "Season 2 Episode 11: Diving into the APIs and express Router",
           "estimatedHours": 2.5,
           "description": "Advanced API development and Express Router for modular routing",
-          "subtopics": ["Express Router", "Modular Routing", "Route Organization", "API Versioning", "Route Protection"]
+          "subtopics": [
+            {
+              "id": "apis_router_sub_0",
+              "name": "Express Router",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_router_sub_1",
+              "name": "Modular Routing",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_router_sub_2",
+              "name": "Route Organization",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_router_sub_3",
+              "name": "API Versioning",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "apis_router_sub_4",
+              "name": "Route Protection",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
+          ]
         },
         {
           "id": "db_queries_indexes",
@@ -496,11 +1486,51 @@
           "estimatedHours": 3,
           "description": "Advanced database queries and performance optimization with indexes",
           "subtopics": [
-            "Complex MongoDB Queries",
-            "Aggregation Pipeline",
-            "Database Indexes",
-            "Compound Indexes",
-            "Query Performance Optimization"
+            {
+              "id": "db_queries_indexes_sub_0",
+              "name": "Complex MongoDB Queries",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "db_queries_indexes_sub_1",
+              "name": "Aggregation Pipeline",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "db_queries_indexes_sub_2",
+              "name": "Database Indexes",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "db_queries_indexes_sub_3",
+              "name": "Compound Indexes",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "db_queries_indexes_sub_4",
+              "name": "Query Performance Optimization",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -509,11 +1539,51 @@
           "estimatedHours": 2.5,
           "description": "Database relationships, population, and API design thinking",
           "subtopics": [
-            "MongoDB References",
-            "Populate Functionality",
-            "Relationship Management",
-            "API Design Patterns",
-            "Performance Considerations"
+            {
+              "id": "populate_apis_sub_0",
+              "name": "MongoDB References",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "populate_apis_sub_1",
+              "name": "Populate Functionality",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "populate_apis_sub_2",
+              "name": "Relationship Management",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "populate_apis_sub_3",
+              "name": "API Design Patterns",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "populate_apis_sub_4",
+              "name": "Performance Considerations",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -522,11 +1592,51 @@
           "estimatedHours": 3,
           "description": "Building complex feed APIs with pagination and filtering",
           "subtopics": [
-            "Feed Algorithm Design",
-            "Pagination Implementation",
-            "Skip and Limit",
-            "Cursor-based Pagination",
-            "Feed Optimization"
+            {
+              "id": "feed_pagination_sub_0",
+              "name": "Feed Algorithm Design",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "feed_pagination_sub_1",
+              "name": "Pagination Implementation",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "feed_pagination_sub_2",
+              "name": "Skip and Limit",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "feed_pagination_sub_3",
+              "name": "Cursor-based Pagination",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "feed_pagination_sub_4",
+              "name": "Feed Optimization",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -542,21 +1652,132 @@
           "name": "Season 2 Episode 15: DevTinder UI - Part 1",
           "estimatedHours": 2,
           "description": "Starting the frontend development for DevTinder application",
-          "subtopics": ["Frontend Setup", "Project Structure", "Component Architecture", "Initial UI Components"]
+          "subtopics": [
+            {
+              "id": "devtinder_ui_1_sub_0",
+              "name": "Frontend Setup",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_1_sub_1",
+              "name": "Project Structure",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_1_sub_2",
+              "name": "Component Architecture",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_1_sub_3",
+              "name": "Initial UI Components",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
+          ]
         },
         {
           "id": "devtinder_ui_2",
           "name": "Season 2 Episode 16: DevTinder UI - Part 2",
           "estimatedHours": 2,
           "description": "Continuing UI development with more complex components",
-          "subtopics": ["Advanced Components", "State Management", "API Integration", "User Authentication UI"]
+          "subtopics": [
+            {
+              "id": "devtinder_ui_2_sub_0",
+              "name": "Advanced Components",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_2_sub_1",
+              "name": "State Management",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_2_sub_2",
+              "name": "API Integration",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_2_sub_3",
+              "name": "User Authentication UI",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
+          ]
         },
         {
           "id": "devtinder_ui_3",
           "name": "Season 2 Episode 17: DevTinder UI - Part 3",
           "estimatedHours": 2,
           "description": "Building core features and user interactions",
-          "subtopics": ["Core Feature Implementation", "User Interactions", "Form Handling", "Real-time Updates"]
+          "subtopics": [
+            {
+              "id": "devtinder_ui_3_sub_0",
+              "name": "Core Feature Implementation",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_3_sub_1",
+              "name": "User Interactions",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_3_sub_2",
+              "name": "Form Handling",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_3_sub_3",
+              "name": "Real-time Updates",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
+          ]
         },
         {
           "id": "devtinder_ui_4",
@@ -564,10 +1785,42 @@
           "estimatedHours": 2,
           "description": "Advanced UI features and user experience improvements",
           "subtopics": [
-            "Advanced UI Features",
-            "User Experience Optimization",
-            "Performance Improvements",
-            "Mobile Responsiveness"
+            {
+              "id": "devtinder_ui_4_sub_0",
+              "name": "Advanced UI Features",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_4_sub_1",
+              "name": "User Experience Optimization",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_4_sub_2",
+              "name": "Performance Improvements",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_4_sub_3",
+              "name": "Mobile Responsiveness",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -575,7 +1828,44 @@
           "name": "Season 2 Episode 19: DevTinder UI - Part 5",
           "estimatedHours": 2,
           "description": "Finalizing the UI and connecting all components",
-          "subtopics": ["Final UI Polish", "Component Integration", "Testing and Debugging", "UI/UX Best Practices"]
+          "subtopics": [
+            {
+              "id": "devtinder_ui_5_sub_0",
+              "name": "Final UI Polish",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_5_sub_1",
+              "name": "Component Integration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_5_sub_2",
+              "name": "Testing and Debugging",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "devtinder_ui_5_sub_3",
+              "name": "UI/UX Best Practices",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
+          ]
         }
       ]
     },
@@ -591,11 +1881,51 @@
           "estimatedHours": 2.5,
           "description": "Setting up AWS EC2 instance and deploying frontend application",
           "subtopics": [
-            "AWS EC2 Setup",
-            "Instance Configuration",
-            "Frontend Deployment",
-            "Security Groups",
-            "SSH Access"
+            {
+              "id": "aws_frontend_deployment_sub_0",
+              "name": "AWS EC2 Setup",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "aws_frontend_deployment_sub_1",
+              "name": "Instance Configuration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "aws_frontend_deployment_sub_2",
+              "name": "Frontend Deployment",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "aws_frontend_deployment_sub_3",
+              "name": "Security Groups",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "aws_frontend_deployment_sub_4",
+              "name": "SSH Access",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -604,11 +1934,51 @@
           "estimatedHours": 2.5,
           "description": "Configuring Nginx as reverse proxy and deploying NodeJS backend",
           "subtopics": [
-            "Nginx Installation and Configuration",
-            "Reverse Proxy Setup",
-            "NodeJS App Deployment",
-            "Process Management",
-            "Load Balancing"
+            {
+              "id": "nginx_backend_deployment_sub_0",
+              "name": "Nginx Installation and Configuration",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_backend_deployment_sub_1",
+              "name": "Reverse Proxy Setup",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_backend_deployment_sub_2",
+              "name": "NodeJS App Deployment",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_backend_deployment_sub_3",
+              "name": "Process Management",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_backend_deployment_sub_4",
+              "name": "Load Balancing",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -617,11 +1987,51 @@
           "estimatedHours": 2,
           "description": "Setting up custom domain and SSL certificates",
           "subtopics": [
-            "Domain Registration",
-            "DNS Configuration",
-            "SSL Certificate Setup",
-            "Domain Mapping",
-            "HTTPS Configuration"
+            {
+              "id": "custom_domain_sub_0",
+              "name": "Domain Registration",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "custom_domain_sub_1",
+              "name": "DNS Configuration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "custom_domain_sub_2",
+              "name": "SSL Certificate Setup",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "custom_domain_sub_3",
+              "name": "Domain Mapping",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "custom_domain_sub_4",
+              "name": "HTTPS Configuration",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -630,11 +2040,51 @@
           "estimatedHours": 2,
           "description": "Implementing email functionality using AWS Simple Email Service",
           "subtopics": [
-            "AWS SES Setup",
-            "Email Templates",
-            "SMTP Configuration",
-            "Email Verification",
-            "Bounce and Complaint Handling"
+            {
+              "id": "email_services_sub_0",
+              "name": "AWS SES Setup",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "email_services_sub_1",
+              "name": "Email Templates",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "email_services_sub_2",
+              "name": "SMTP Configuration",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "email_services_sub_3",
+              "name": "Email Verification",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "email_services_sub_4",
+              "name": "Bounce and Complaint Handling",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -643,11 +2093,51 @@
           "estimatedHours": 1.5,
           "description": "Environment variable management and security best practices",
           "subtopics": [
-            "Environment Variables",
-            "dotenv Configuration",
-            "Secret Management",
-            "Production vs Development Config",
-            "Security Best Practices"
+            {
+              "id": "env_security_sub_0",
+              "name": "Environment Variables",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "env_security_sub_1",
+              "name": "dotenv Configuration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "env_security_sub_2",
+              "name": "Secret Management",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "env_security_sub_3",
+              "name": "Production vs Development Config",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "env_security_sub_4",
+              "name": "Security Best Practices",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -656,11 +2146,51 @@
           "estimatedHours": 2,
           "description": "Implementing scheduled tasks and background jobs",
           "subtopics": [
-            "Cron Job Concepts",
-            "Task Scheduling",
-            "Background Processing",
-            "Job Queues",
-            "Error Handling in Jobs"
+            {
+              "id": "cron_jobs_sub_0",
+              "name": "Cron Job Concepts",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "cron_jobs_sub_1",
+              "name": "Task Scheduling",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "cron_jobs_sub_2",
+              "name": "Background Processing",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "cron_jobs_sub_3",
+              "name": "Job Queues",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "cron_jobs_sub_4",
+              "name": "Error Handling in Jobs",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -669,11 +2199,51 @@
           "estimatedHours": 2.5,
           "description": "Integrating payment processing with Razorpay",
           "subtopics": [
-            "Payment Gateway Setup",
-            "Razorpay Integration",
-            "Payment Processing",
-            "Webhook Handling",
-            "Payment Security"
+            {
+              "id": "payment_gateway_sub_0",
+              "name": "Payment Gateway Setup",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "payment_gateway_sub_1",
+              "name": "Razorpay Integration",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "payment_gateway_sub_2",
+              "name": "Payment Processing",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "payment_gateway_sub_3",
+              "name": "Webhook Handling",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "payment_gateway_sub_4",
+              "name": "Payment Security",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -682,11 +2252,51 @@
           "estimatedHours": 2.5,
           "description": "Implementing real-time communication with WebSockets",
           "subtopics": [
-            "WebSocket Concepts",
-            "Socket.io Setup",
-            "Real-time Communication",
-            "Event Handling",
-            "Connection Management"
+            {
+              "id": "websockets_sub_0",
+              "name": "WebSocket Concepts",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "websockets_sub_1",
+              "name": "Socket.io Setup",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "websockets_sub_2",
+              "name": "Real-time Communication",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "websockets_sub_3",
+              "name": "Event Handling",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "websockets_sub_4",
+              "name": "Connection Management",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -695,11 +2305,51 @@
           "estimatedHours": 2.5,
           "description": "Building a complete real-time chat system",
           "subtopics": [
-            "Chat Architecture",
-            "Message Broadcasting",
-            "User Presence",
-            "Chat History",
-            "Message Persistence"
+            {
+              "id": "live_chat_sub_0",
+              "name": "Chat Architecture",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "live_chat_sub_1",
+              "name": "Message Broadcasting",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "live_chat_sub_2",
+              "name": "User Presence",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "live_chat_sub_3",
+              "name": "Chat History",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "live_chat_sub_4",
+              "name": "Message Persistence",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -716,11 +2366,51 @@
           "estimatedHours": 2,
           "description": "Advanced Nginx configuration and performance optimization",
           "subtopics": [
-            "Nginx Performance Tuning",
-            "Caching Strategies",
-            "Compression Configuration",
-            "Rate Limiting",
-            "Security Headers"
+            {
+              "id": "nginx_optimization_sub_0",
+              "name": "Nginx Performance Tuning",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_optimization_sub_1",
+              "name": "Caching Strategies",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_optimization_sub_2",
+              "name": "Compression Configuration",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_optimization_sub_3",
+              "name": "Rate Limiting",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "nginx_optimization_sub_4",
+              "name": "Security Headers",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -729,11 +2419,51 @@
           "estimatedHours": 2,
           "description": "Implementing comprehensive monitoring and logging solutions",
           "subtopics": [
-            "Application Monitoring",
-            "Log Management",
-            "Error Tracking",
-            "Performance Metrics",
-            "Alerting Systems"
+            {
+              "id": "monitoring_logging_sub_0",
+              "name": "Application Monitoring",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "monitoring_logging_sub_1",
+              "name": "Log Management",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "monitoring_logging_sub_2",
+              "name": "Error Tracking",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "monitoring_logging_sub_3",
+              "name": "Performance Metrics",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "monitoring_logging_sub_4",
+              "name": "Alerting Systems",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -742,11 +2472,51 @@
           "estimatedHours": 2.5,
           "description": "Optimizing application for scale and performance",
           "subtopics": [
-            "Code Optimization",
-            "Database Performance",
-            "Caching Strategies",
-            "Load Testing",
-            "Horizontal Scaling"
+            {
+              "id": "scalability_optimization_sub_0",
+              "name": "Code Optimization",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "scalability_optimization_sub_1",
+              "name": "Database Performance",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "scalability_optimization_sub_2",
+              "name": "Caching Strategies",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "scalability_optimization_sub_3",
+              "name": "Load Testing",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "scalability_optimization_sub_4",
+              "name": "Horizontal Scaling",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -755,11 +2525,51 @@
           "estimatedHours": 2,
           "description": "Implementing security best practices and hardening",
           "subtopics": [
-            "Security Vulnerabilities",
-            "Input Validation",
-            "SQL Injection Prevention",
-            "XSS Protection",
-            "CSRF Protection"
+            {
+              "id": "security_hardening_sub_0",
+              "name": "Security Vulnerabilities",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "security_hardening_sub_1",
+              "name": "Input Validation",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "security_hardening_sub_2",
+              "name": "SQL Injection Prevention",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "security_hardening_sub_3",
+              "name": "XSS Protection",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "security_hardening_sub_4",
+              "name": "CSRF Protection",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -768,11 +2578,51 @@
           "estimatedHours": 1.5,
           "description": "Setting up continuous integration and deployment pipelines",
           "subtopics": [
-            "CI/CD Concepts",
-            "Automated Testing",
-            "Deployment Pipelines",
-            "Version Control Integration",
-            "Rollback Strategies"
+            {
+              "id": "ci_cd_automation_sub_0",
+              "name": "CI/CD Concepts",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "ci_cd_automation_sub_1",
+              "name": "Automated Testing",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "ci_cd_automation_sub_2",
+              "name": "Deployment Pipelines",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "ci_cd_automation_sub_3",
+              "name": "Version Control Integration",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "ci_cd_automation_sub_4",
+              "name": "Rollback Strategies",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]

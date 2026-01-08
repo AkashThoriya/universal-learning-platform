@@ -28,7 +28,7 @@ import {
   DocumentData as _DocumentData,
 } from 'firebase/firestore';
 
-import { User, SyllabusSubject, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
+import { User, SyllabusSubject, Subtopic, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
 import { EXAMS_DATA } from '@/lib/data/exams-data';
 
 import { db } from './firebase';
@@ -454,6 +454,83 @@ export const updateTopicStatus = async (
         topicId,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
+      throw error;
+    }
+  });
+};
+
+/**
+ * Updates a specific subtopic within a topic
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} subjectId - The subject ID
+ * @param {string} topicId - The topic ID
+ * @param {string} subtopicId - The subtopic ID to update
+ * @param {Partial<Subtopic>} updates - fields to update
+ */
+export const updateSubtopic = async (
+  userId: string,
+  subjectId: string,
+  topicId: string,
+  subtopicId: string,
+  updates: Partial<Subtopic>
+) => {
+  return measurePerformance('updateSubtopic', async () => {
+    logInfo('Updating subtopic', { userId, subjectId, topicId, subtopicId });
+
+    try {
+      const subjectRef = doc(db, 'users', userId, 'syllabus', subjectId);
+      const subjectDoc = await getDoc(subjectRef);
+
+      if (!subjectDoc.exists()) {
+        throw new Error(`Subject ${subjectId} not found`);
+      }
+
+      const subjectData = subjectDoc.data() as SyllabusSubject;
+      const subjectsTopics = [...subjectData.topics];
+      
+      const topicIndex = subjectsTopics.findIndex(t => t.id === topicId);
+      if (topicIndex === -1) throw new Error(`Topic ${topicId} not found`);
+
+      const topic = subjectsTopics[topicIndex];
+      // TypeScript safety
+      if (!topic) throw new Error(`Topic at index ${topicIndex} is undefined`);
+
+      const subtopics = topic.subtopics ? [...topic.subtopics] : [];
+      
+      const subtopicIndex = subtopics.findIndex(s => s.id === subtopicId);
+      if (subtopicIndex === -1) throw new Error(`Subtopic ${subtopicId} not found`);
+
+      // Apply updates safely ensuring required fields are kept
+      const currentSubtopic = subtopics[subtopicIndex];
+      if (!currentSubtopic) throw new Error(`Subtopic at index ${subtopicIndex} is undefined`);
+
+      // Clean updates to remove undefined optional fields if strict
+      const cleanUpdates = Object.entries(updates).reduce((acc: any, [k, v]) => {
+        if (v !== undefined) acc[k] = v;
+        return acc;
+      }, {}) as Partial<Subtopic>;
+
+      subtopics[subtopicIndex] = {
+        ...currentSubtopic,
+        ...cleanUpdates
+      } as Subtopic;
+
+      // Update nested array
+      subjectsTopics[topicIndex] = {
+        ...topic,
+        subtopics
+      };
+
+
+      await updateDoc(subjectRef, {
+        topics: subjectsTopics,
+        updatedAt: Timestamp.now()
+      });
+
+      logInfo('Subtopic updated successfully', { userId, subtopicId });
+    } catch (error) {
+      logError('Failed to update subtopic', { userId, subtopicId, error });
       throw error;
     }
   });

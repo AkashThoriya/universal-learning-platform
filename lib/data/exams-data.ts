@@ -12,60 +12,34 @@
 import { Exam } from '@/types/exam';
 
 // Import individual exam data from JSON files
-import cat from './exams/cat.json';
-import devOpsMastery from './exams/devops-mastery.json';
 import dsaByNamastedev from './exams/dsa-by-namastedev.json';
 import dsaByStriver from './exams/dsa-by-striver.json';
-import gateCse from './exams/gate-cse.json';
-import ibpsSoIt from './exams/ibps-so-it.json';
-import jeeMain from './exams/jee-main.json';
-import neet from './exams/neet.json';
 import nodejsByNamastedev from './exams/nodejs-by-namastedev.json';
 import reactByNamastedev from './exams/react-by-namastedev.json';
-import rrbNtpc from './exams/rrb-ntpc.json';
-import sbiPo from './exams/sbi-po.json';
 import sqlMastery from './exams/sql-mastery.json';
-import sscCgl from './exams/ssc-cgl.json';
 import systemsDsa from './exams/systems-dsa.json';
-import upscCsePrelims from './exams/upsc-cse-prelims.json';
 
 /**
  * Array of predefined exams with complete syllabus data
- * Includes major competitive exams across different categories:
- * - Computer Science: DevOps, Data Structures & Algorithms (Striver & namastedev), React (namastedev), NodeJS (namastedev), SQL
- * - Civil Services: UPSC CSE, UPSC CDS, State PCS
- * - Banking: IBPS PO, IBPS Clerk, SBI PO
- * - Engineering: GATE, IES, State Engineering Services
- * - Management: CAT, XAT, SNAP
- * - Staff Selection: SSC CGL, SSC CHSL
- * - Railway: RRB NTPC, Group D
- * - Entrance: JEE Main, NEET
+ * Includes major courses across different categories:
+ * - Computer Science: Data Structures & Algorithms (Striver & namastedev), Systems DSA
+ * - Web Development: React (namastedev), NodeJS (namastedev), SQL
  *
  * @example
  * ```typescript
  * // Find a specific exam
- * const upscExam = EXAMS_DATA.find(exam => exam.id === 'upsc_cse_prelims');
+ * const systemsExam = EXAMS_DATA.find(exam => exam.id === 'systems_dsa_c_foundation');
  *
- * // Get all banking exams
- * const bankingExams = EXAMS_DATA.filter(exam => exam.category === 'Banking');
+ * // Get all CS courses
+ * const csExams = EXAMS_DATA.filter(exam => exam.category === 'Computer Science');
  *
  * // Calculate total estimated hours for an exam
- * const totalHours = upscExam?.defaultSyllabus.reduce((sum, subject) =>
+ * const totalHours = systemsExam?.defaultSyllabus.reduce((sum, subject) =>
  *   sum + (subject.estimatedHours ?? 0), 0
  * );
  * ```
  */
 export const EXAMS_DATA: Exam[] = [
-  upscCsePrelims as Exam,
-  ibpsSoIt as Exam,
-  sscCgl as Exam,
-  gateCse as Exam,
-  cat as Exam,
-  sbiPo as Exam,
-  jeeMain as Exam,
-  neet as Exam,
-  rrbNtpc as Exam,
-  devOpsMastery as Exam,
   dsaByStriver as Exam,
   dsaByNamastedev as Exam,
   nodejsByNamastedev as Exam,

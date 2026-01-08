@@ -14,17 +14,18 @@ import {
   LogOut,
   Home,
   BookOpen,
-  BarChart3,
+  
   Target,
   Calendar,
-  TestTube,
   Bell,
   Menu,
 
   Brain,
   Map,
   Sparkles,
+  AlertTriangle,
   type LucideIcon,
+  User,
 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -117,6 +118,7 @@ export default function Navigation() {
   const isActiveGroup = (paths: string[]) => paths.some(path => pathname.startsWith(path));
 
   const navItems: NavItem[] = [
+    // Primary nav (visible in main nav bar)
     {
       href: '/dashboard',
       label: 'Dashboard',
@@ -125,11 +127,11 @@ export default function Navigation() {
       description: 'Overview and quick actions',
     },
     {
-      href: '/analytics',
-      label: 'Analytics',
-      icon: BarChart3,
-      isActive: isActive('/analytics'),
-      description: 'Performance insights and trends',
+      href: '/review',
+      label: 'Concept Review',
+      icon: AlertTriangle,
+      isActive: isActive('/review'),
+      description: 'Topics and subtopics due for revision',
     },
     {
       href: '/test',
@@ -139,6 +141,14 @@ export default function Navigation() {
       description: 'Intelligent personalized assessments',
     },
     {
+      href: '/syllabus',
+      label: 'Syllabus',
+      icon: BookOpen,
+      isActive: isActive('/syllabus'),
+      description: 'Study material and topics',
+    },
+    // Secondary nav (in menu/more)
+    {
       href: '/journey',
       label: 'Journey Planning',
       icon: Map,
@@ -146,25 +156,11 @@ export default function Navigation() {
       description: 'Plan your learning path and track progress',
     },
     {
-      href: '/syllabus',
-      label: 'Syllabus',
-      icon: BookOpen,
-      isActive: isActive('/syllabus'),
-      description: 'Study material and topics',
-    },
-    {
       href: '/log/daily',
       label: 'Daily Log',
       icon: Calendar,
       isActive: isActive('/log/daily'),
       description: 'Track daily progress',
-    },
-    {
-      href: '/log/mock',
-      label: 'Mock Tests',
-      icon: TestTube,
-      isActive: isActiveGroup(['/log/mock', '/test-logger']),
-      description: 'Practice tests and assessments',
     },
   ];
 
@@ -285,25 +281,47 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Desktop "More" menu dropdown */}
+        {/* Desktop "More" menu dropdown - Revamped */}
         {isDesktopMenuOpen && (
-          <div className="hidden xl:block absolute top-16 right-0 w-64 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border border-white/20 rounded-bl-xl shadow-2xl overflow-hidden py-2">
-            <div className="space-y-1">
-              {secondaryNavItems.map(renderNavItem)}
-              <div className="border-t border-gray-200 dark:border-gray-700 my-2" />
-              <div className="px-3 py-2">
-                <p className="text-sm font-medium">{user?.displayName}</p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
+          <div className="hidden xl:block absolute top-16 right-4 w-72 bg-white dark:bg-gray-900 backdrop-blur-xl border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+            {/* User Header */}
+            <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
+                  {user?.displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || '?'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 dark:text-white truncate">{user?.displayName || 'User'}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
+                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
+            </div>
+
+            {/* Navigation Items */}
+            <div className="p-2">
+              <p className="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">Navigation</p>
+              {secondaryNavItems.map(renderNavItem)}
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200 dark:border-gray-700" />
+
+            {/* Account Section */}
+            <div className="p-2">
+              <p className="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">Account</p>
+              <Link href="/profile" onClick={() => setIsDesktopMenuOpen(false)}>
+                <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                  <User className="h-5 w-5 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Profile Settings</span>
+                </div>
+              </Link>
+              <button
                 onClick={handleLogout}
-                className="w-full justify-start text-red-500 hover:bg-red-500/10"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors group"
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+                <LogOut className="h-5 w-5 text-red-500" />
+                <span className="text-sm font-medium text-red-600 dark:text-red-400">Sign Out</span>
+              </button>
             </div>
           </div>
         )}

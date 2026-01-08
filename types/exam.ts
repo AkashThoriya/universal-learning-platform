@@ -136,6 +136,63 @@ export interface SyllabusSubject {
 }
 
 /**
+ * Represents an individual subtopic within a topic
+ * Provides full feature parity with topics including notes, context, and action tracking
+ *
+ * @interface Subtopic
+ * @example
+ * ```typescript
+ * const subtopic: Subtopic = {
+ *   id: 'modern_history_sub_1',
+ *   name: 'East India Company',
+ *   order: 0,
+ *   status: 'in_progress',
+ *   needsReview: false,
+ *   practiceCount: 2,
+ *   revisionCount: 1
+ * };
+ * ```
+ */
+export interface Subtopic {
+  /** Unique identifier for the subtopic */
+  id: string;
+  /** Human-readable subtopic name */
+  name: string;
+  /** Sort order within the parent topic */
+  order: number;
+
+  // Status & Actions
+  /** Current completion status */
+  status: 'not_started' | 'in_progress' | 'completed' | 'mastered';
+  /** Flag indicating topic needs review */
+  needsReview: boolean;
+  /** Number of practice sessions completed */
+  practiceCount: number;
+  /** Number of revision sessions completed */
+  revisionCount: number;
+
+  // Content (Feature parity with TopicProgress)
+  /** User's personal study notes for this subtopic */
+  userNotes?: string;
+  /** User's personal context - why this subtopic matters */
+  personalContext?: string;
+  /** Current affairs notes related to this subtopic */
+  currentAffairs?: Array<{ date: Timestamp; note: string }>;
+
+  // Timestamps
+  /** When the subtopic was created */
+  createdAt?: Timestamp;
+  /** When the subtopic was marked as completed */
+  completedAt?: Timestamp;
+  /** When the subtopic was last revised */
+  lastRevised?: Timestamp;
+  /** When the subtopic was last practiced */
+  lastPracticed?: Timestamp;
+  /** When the subtopic was flagged for review */
+  reviewRequestedAt?: Timestamp;
+}
+
+/**
  * Represents an individual topic within a subject
  *
  * @interface SyllabusTopic
@@ -144,7 +201,7 @@ export interface SyllabusSubject {
  * const topic: SyllabusTopic = {
  *   id: 'british_rule',
  *   name: 'British Administration in India',
- *   subtopics: ['East India Company', 'Crown Rule'],
+ *   subtopics: [{ id: 'sub_1', name: 'East India Company', ... }],
  *   estimatedHours: 15
  * };
  * ```
@@ -154,8 +211,8 @@ export interface SyllabusTopic {
   id: string;
   /** Human-readable topic name (e.g., "British Administration in India") */
   name: string;
-  /** Array of subtopic names (optional) */
-  subtopics?: string[];
+  /** Array of subtopics with full feature support (optional) */
+  subtopics?: Subtopic[];
   /** Estimated study time for this topic in hours (optional) */
   estimatedHours?: number;
   /** Detailed description or notes for the topic (optional) */
@@ -202,6 +259,9 @@ export interface User {
   selectedExamId?: string;
   /** Target exam date during onboarding (Deprecated: use selectedCourses) */
   examDate?: Timestamp;
+  
+  /** Date when the user started their preparation */
+  preparationStartDate?: Timestamp;
   
   /** 
    * Active courses selected by the user

@@ -121,10 +121,15 @@ const onboardingSchema = z.object({
           z.object({
             id: z.string(),
             name: z.string(),
-            subtopics: z
-              .array(z.string())
-              .optional()
-              .transform(val => val || undefined),
+            subtopics: z.array(z.object({
+              id: z.string(),
+              name: z.string(),
+              order: z.number().default(0),
+              status: z.enum(['not_started', 'in_progress', 'completed', 'mastered']).default('not_started'),
+              needsReview: z.boolean().default(false),
+              practiceCount: z.number().default(0),
+              revisionCount: z.number().default(0),
+            })).optional().default([]),
             estimatedHours: z
               .number()
               .optional()
@@ -181,7 +186,7 @@ const STEP_INFO = [
     title: 'Learning Style & Schedule',
     description: 'Set up your persona, study capacity, and target timeline',
     helpText: 'We create a personalized schedule based on your lifestyle and availability.',
-    icon: '�',
+    icon: '📅',
     estimatedTime: '3 minutes',
   },
   {
@@ -272,6 +277,7 @@ export default function OnboardingSetupPage() {
   // Refs for accessibility
   const stepContentRef = useRef<HTMLDivElement>(null);
   const announceRef = useRef<HTMLDivElement>(null);
+  const pageTopRef = useRef<HTMLDivElement>(null);
 
   // Accessibility announcement function
   const announceStepChange = useCallback((step: number) => {
@@ -347,10 +353,18 @@ export default function OnboardingSetupPage() {
       // Accessibility announcement
       announceStepChange(current);
 
-      // Focus management
+      // Focus management FIRST, then scroll AFTER
+      // This prevents focus() from overriding our scroll position
       setTimeout(() => {
-        stepContentRef.current?.focus();
-      }, 100);
+        // Focus the step content for accessibility
+        stepContentRef.current?.focus({ preventScroll: true });
+        
+        // Now scroll to top AFTER focus (with preventScroll, focus won't move viewport)
+        // Use requestAnimationFrame to ensure DOM is ready after React re-render
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+        });
+      }, 50);
     },
   });
 
@@ -804,6 +818,7 @@ export default function OnboardingSetupPage() {
         displayName: form.data.displayName,
         ...(form.data.selectedExamId ? { selectedExamId: form.data.selectedExamId } : {}),
         examDate: Timestamp.fromDate(new Date(form.data.examDate)),
+        preparationStartDate: Timestamp.now(), // Default to "Today" when user completes onboarding
         onboardingComplete: true,
         onboardingCompleted: true, // Legacy
         createdAt: Timestamp.now(),
@@ -1233,6 +1248,9 @@ export default function OnboardingSetupPage() {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+        {/* Scroll anchor for reliable scroll-to-top */}
+        <div ref={pageTopRef} aria-hidden="true" />
+        
         {/* Accessibility announcements */}
         <div ref={announceRef} className="sr-only" aria-live="polite" aria-atomic="true" />
 

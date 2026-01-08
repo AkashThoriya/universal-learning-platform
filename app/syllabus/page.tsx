@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import PageTransition from '@/components/layout/PageTransition';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import {
   BookOpen,
   ChevronRight,
@@ -46,6 +45,17 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
@@ -58,6 +68,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, getAllProgress, saveSyllabus, getUser, getSyllabusForCourse, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
 import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
+import StrategyInsights from '@/components/syllabus/StrategyInsights';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -68,6 +79,7 @@ export default function SyllabusPage() {
   const { toast } = useToast();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [progress, setProgress] = useState<TopicProgress[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null); // Using any temporarily to avoid Import hell, but ideally User type
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [tierFilter, setTierFilter] = useState<string>('all');
@@ -126,6 +138,7 @@ export default function SyllabusPage() {
 
         setSyllabus(syllabusData);
         setProgress(progressData);
+        if (userProfile) setUserProfile(userProfile);
       } catch (error) {
         logError('Error fetching syllabus data', {
           error: error instanceof Error ? error.message : String(error),
@@ -486,6 +499,8 @@ export default function SyllabusPage() {
 
     return matchesSearch && matchesTier && matchesMastery;
   }); // Keep natural order - first topics appear at the top
+  // Calculate completed topics count for Strategy Insights
+  const completedTopicsCount = progress.filter(p => p.status === 'completed').length;
 
   const getTierColor = (tier: number) => {
     switch (tier) {
@@ -556,33 +571,16 @@ export default function SyllabusPage() {
           {/* Enhanced Header */}
           <div className="text-center space-y-6">
             <div className="inline-block">
-              <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
+              <Badge variant="secondary" className="px-4 py-2 text-sm">
                 📚 Syllabus Management
               </Badge>
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Strategic Syllabus Overview</h1>
             <p className="text-muted-foreground text-lg">Manage your study priorities and track mastery progress</p>
 
-            {/* Enhanced Edit Mode Controls */}
-            <div className="flex justify-center items-center flex-wrap gap-4">
-              <Button
-                variant={editMode ? 'default' : 'outline'}
-                onClick={() => {
-                  setEditMode(!editMode);
-                  if (editMode) {
-                    cancelEditing();
-                    setBulkEditMode(false);
-                    setSelectedTopics(new Set());
-                  }
-                }}
-                className="flex items-center space-x-2"
-              >
-                <Settings className="h-4 w-4" />
-                <span>{editMode ? 'Exit Edit Mode' : 'Edit Syllabus'}</span>
-              </Button>
-
-              {editMode && (
-                <>
+            {/* Edit Mode Controls - Only show when in edit mode */}
+            {editMode && (
+              <div className="flex justify-center items-center flex-wrap gap-4">
                   <Button
                     variant={bulkEditMode ? 'default' : 'outline'}
                     onClick={() => {
@@ -603,9 +601,22 @@ export default function SyllabusPage() {
                     <Save className="h-4 w-4" />
                     <span>{saving ? 'Saving...' : 'Save Changes'}</span>
                   </Button>
-                </>
-              )}
-            </div>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setEditMode(false);
+                      cancelEditing();
+                      setBulkEditMode(false);
+                      setSelectedTopics(new Set());
+                    }}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Cancel
+                  </Button>
+              </div>
+            )}
 
             {/* Bulk Edit Actions */}
             {editMode && bulkEditMode && selectedTopics.size > 0 && (
@@ -630,6 +641,17 @@ export default function SyllabusPage() {
               </div>
             )}
           </div>
+
+          {/* Strategy Insights Section */}
+          {!loading && userProfile && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <StrategyInsights 
+                user={userProfile} 
+                syllabus={syllabus} 
+                completedTopicsCount={completedTopicsCount} 
+              />
+            </div>
+          )}
 
           {/* View Mode Toggle */}
           <div className="flex justify-center">
@@ -735,58 +757,68 @@ export default function SyllabusPage() {
             </CardContent>
           </Card>
 
-          {/* Overview Stats */}
-          {/* Overview Stats */}
-          <MobileScrollGrid className="gap-4">
-            <Card className="min-w-[240px]">
-              <CardContent className="pt-6">
-                <div className="flex items-center space-x-2">
-                  <BookOpen className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <p className="text-2xl font-bold">{syllabus.length}</p>
-                    <p className="text-sm text-muted-foreground">Total Subjects</p>
+          {/* Overview Stats - Enhanced Responsive Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* Total Subjects */}
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200/50 hover:shadow-md transition-all duration-200">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 sm:p-3 rounded-xl bg-blue-500/10">
+                    <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-blue-900">{syllabus.length}</p>
+                    <p className="text-xs sm:text-sm text-blue-700/70 font-medium truncate">Total Subjects</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="min-w-[240px]">
-              <CardContent className="pt-6">
-                <div className="flex items-center space-x-2">
-                  <Target className="h-8 w-8 text-green-600" />
-                  <div>
-                    <p className="text-2xl font-bold">
+            {/* Total Topics */}
+            <Card className="bg-gradient-to-br from-green-50 to-green-100/50 border-green-200/50 hover:shadow-md transition-all duration-200">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 sm:p-3 rounded-xl bg-green-500/10">
+                    <Target className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-green-900">
                       {syllabus.reduce((sum, subject) => sum + subject.topics.length, 0)}
                     </p>
-                    <p className="text-sm text-muted-foreground">Total Topics</p>
+                    <p className="text-xs sm:text-sm text-green-700/70 font-medium truncate">Total Topics</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="min-w-[240px]">
-              <CardContent className="pt-6">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="h-8 w-8 text-purple-600" />
-                  <div>
-                    <p className="text-2xl font-bold">
+            {/* Average Mastery */}
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200/50 hover:shadow-md transition-all duration-200">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 sm:p-3 rounded-xl bg-purple-500/10">
+                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-purple-900">
                       {Math.round(
                         syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
-                      )}
-                      %
+                      )}%
                     </p>
-                    <p className="text-sm text-muted-foreground">Avg Mastery</p>
+                    <p className="text-xs sm:text-sm text-purple-700/70 font-medium truncate">Avg Mastery</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="min-w-[240px]">
-              <CardContent className="pt-6">
-                <div className="flex items-center space-x-2">
-                  <Clock className="h-8 w-8 text-orange-600" />
-                  <div>
-                    <p className="text-2xl font-bold">
+            {/* Due for Revision */}
+            <Card className="bg-gradient-to-br from-orange-50 to-orange-100/50 border-orange-200/50 hover:shadow-md transition-all duration-200">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 sm:p-3 rounded-xl bg-orange-500/10">
+                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-orange-900">
                       {
                         progress.filter(p => {
                           const daysSince = Math.floor(
@@ -796,12 +828,12 @@ export default function SyllabusPage() {
                         }).length
                       }
                     </p>
-                    <p className="text-sm text-muted-foreground">Due for Revision</p>
+                    <p className="text-xs sm:text-sm text-orange-700/70 font-medium truncate">Due for Revision</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </MobileScrollGrid>
+          </div>
 
           {/* Content based on view mode */}
           {viewMode === 'subjects' ? (
@@ -1228,13 +1260,34 @@ inputMode="numeric"
                                                       Duplicate
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                      onClick={() => removeTopic(subject.id, topic.id)}
-                                                      className="text-red-600 focus:text-red-600"
-                                                    >
-                                                      <Trash2 className="h-3 w-3 mr-2" />
-                                                      Delete
-                                                    </DropdownMenuItem>
+                                                    <AlertDialog>
+                                                      <AlertDialogTrigger asChild>
+                                                        <DropdownMenuItem
+                                                          onSelect={(e) => e.preventDefault()}
+                                                          className="text-red-600 focus:text-red-600"
+                                                        >
+                                                          <Trash2 className="h-3 w-3 mr-2" />
+                                                          Delete
+                                                        </DropdownMenuItem>
+                                                      </AlertDialogTrigger>
+                                                      <AlertDialogContent>
+                                                        <AlertDialogHeader>
+                                                          <AlertDialogTitle>Delete Topic?</AlertDialogTitle>
+                                                          <AlertDialogDescription>
+                                                            This will permanently delete &quot;{topic.name}&quot;. This action cannot be undone.
+                                                          </AlertDialogDescription>
+                                                        </AlertDialogHeader>
+                                                        <AlertDialogFooter>
+                                                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                          <AlertDialogAction
+                                                            onClick={() => removeTopic(subject.id, topic.id)}
+                                                            className="bg-red-600 hover:bg-red-700"
+                                                          >
+                                                            Delete
+                                                          </AlertDialogAction>
+                                                        </AlertDialogFooter>
+                                                      </AlertDialogContent>
+                                                    </AlertDialog>
                                                   </DropdownMenuContent>
                                                 </DropdownMenu>
                                               </>
@@ -1264,7 +1317,7 @@ inputMode="numeric"
                                                 <div className="mt-1 flex flex-wrap gap-1">
                                                   {topic.subtopics.map((subtopic, idx) => (
                                                     <Badge key={idx} variant="outline" className="text-xs">
-                                                      {subtopic}
+                                                      {subtopic.name}
                                                     </Badge>
                                                   ))}
                                                 </div>
@@ -1388,12 +1441,12 @@ inputMode="numeric"
                                 <h3 className="font-semibold text-base line-clamp-2 group-hover:text-blue-600 transition-colors">
                                   {topic.name}
                                 </h3>
-                                <p className="text-sm text-muted-foreground mt-1 flex items-center">
+                                <div className="text-sm text-muted-foreground mt-1 flex items-center">
                                   <span className="truncate">{topic.subjectName}</span>
                                   <Badge className={`ml-2 text-xs ${getTierColor(topic.subjectTier)}`}>
                                     T{topic.subjectTier}
                                   </Badge>
-                                </p>
+                                </div>
                               </div>
                               <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors mt-1 flex-shrink-0" />
                             </div>
@@ -1444,6 +1497,20 @@ inputMode="numeric"
             </>
           )}
         </div>
+
+          {/* Edit Syllabus Toggle - At bottom, subtle but noticeable */}
+          {!editMode && (
+            <div className="flex justify-center py-8 mt-8">
+              <Button
+                variant="outline"
+                onClick={() => setEditMode(true)}
+                className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 hover:border-blue-400 text-blue-700 dark:text-blue-300 flex items-center gap-2 shadow-sm hover:shadow-md transition-all"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Edit Syllabus</span>
+              </Button>
+            </div>
+          )}
         </PageTransition>
       </div>
     </AuthGuard>

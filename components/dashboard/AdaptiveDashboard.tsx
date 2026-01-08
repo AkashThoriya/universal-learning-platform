@@ -14,13 +14,12 @@ import {
   Award,
   Brain,
   Map,
-  CheckCircle2,
   LucideIcon,
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 
-import LearningAnalyticsDashboard from '@/components/analytics/LearningAnalyticsDashboard';
+
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
@@ -30,7 +29,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
@@ -678,6 +677,40 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           </motion.div>
         )}
 
+        {/* Daily Log Quick Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mb-4"
+        >
+          <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-l-4 border-l-amber-500">
+            <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="p-1.5 bg-amber-100 rounded-full">
+                    <Calendar className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <span className="text-sm font-semibold text-amber-700">Track Your Progress</span>
+                </div>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                  Log Today&apos;s Study Session
+                </h3>
+                <p className="text-sm text-gray-600 mt-0.5">
+                  Record topics covered, time spent, and notes for better tracking
+                </p>
+              </div>
+              <Button
+                onClick={() => (window.location.href = '/log/daily')}
+                className="bg-amber-600 hover:bg-amber-700 gap-2 w-full sm:w-auto"
+              >
+                <Calendar className="h-4 w-4" />
+                Daily Log
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Selected Exam and Today's Recommendations */}
       {selectedExam && (
         <motion.div
@@ -778,82 +811,10 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         </motion.div>
       )}
 
-      {/* Main Dashboard Tabs */}
-      <Tabs defaultValue="overview" className="w-full min-h-[80vh]">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Learning Analytics</TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab - Original Dashboard Content */}
-        <TabsContent value="overview" className="space-y-6 mt-6">
-          {/* Enhanced Stats / New User Welcome */}
-          {stats.completedSessions === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <Card className="border-blue-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-900">
-                    <Flame className="h-5 w-5 text-orange-500" />
-                    🚀 Get Started with Your Learning Journey
-                  </CardTitle>
-                  <CardDescription className="text-blue-700">
-                    Complete these steps to build your personalized study plan
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${selectedExam ? 'bg-green-50 border border-green-200' : 'bg-white border border-gray-200'}`}>
-                    {selectedExam ? (
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-                    )}
-                    <span className={`font-medium ${selectedExam ? 'text-green-800' : 'text-gray-700'}`}>
-                      Select a course
-                    </span>
-                    {selectedExam && <Badge variant="secondary" className="ml-auto">{selectedExam.name}</Badge>}
-                  </div>
-                  
-                  <div 
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => window.location.href = '/syllabus'}
-                  >
-                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-                    <span className="font-medium text-gray-700">Explore your syllabus</span>
-                    <Button size="sm" variant="ghost" className="ml-auto text-blue-600">
-                      Start
-                    </Button>
-                  </div>
-                  
-                  <div 
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => window.location.href = '/test'}
-                  >
-                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-                    <span className="font-medium text-gray-700">Take your first practice test</span>
-                    <Button size="sm" variant="ghost" className="ml-auto text-blue-600">
-                      Start
-                    </Button>
-                  </div>
-                  
-                  <div 
-                    className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => window.location.href = '/journey'}
-                  >
-                    <div className="h-5 w-5 rounded-full border-2 border-gray-300" />
-                    <span className="font-medium text-gray-700">Create a learning journey</span>
-                    <Button size="sm" variant="ghost" className="ml-auto text-blue-600">
-                      Start
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ) : (
-            <StatsGrid stats={stats} />
-          )}
+      {/* Dashboard Content */}
+      <div className="space-y-6">
+          {/* Stats Grid - always shown */}
+          <StatsGrid stats={stats} />
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1169,13 +1130,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             </div>
           </div>
 
-        </TabsContent>
-
-        {/* Analytics Tab - Learning Analytics Dashboard */}
-        <TabsContent value="analytics" className="mt-6">
-          <LearningAnalyticsDashboard />
-        </TabsContent>
-      </Tabs>
+      </div>
     </div>
   );
 }

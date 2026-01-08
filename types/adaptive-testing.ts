@@ -243,14 +243,19 @@ export interface CreateAdaptiveTestRequest {
   title: string;
   description: string;
   subjects: string[];
-  track: LearningTrack;
-  targetQuestions: number;
+  topics?: string[];
+  track?: LearningTrack;
+  difficulty?: MissionDifficulty;
+  targetQuestions?: number;
+  questionCount?: number;
+  questionType?: 'multiple_choice' | 'true_false' | 'short_answer' | 'essay';
   linkedJourneyId?: string;
-  algorithmType: AdaptiveTest['algorithmType'];
+  algorithmType?: AdaptiveTest['algorithmType'];
   difficultyRange?: {
     min: MissionDifficulty;
     max: MissionDifficulty;
   };
+  syllabusContext?: string;
 }
 
 export interface StartTestSessionRequest {

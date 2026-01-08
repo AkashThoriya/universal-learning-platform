@@ -718,7 +718,7 @@ export default function TestAnalyticsDashboard({
                 <Button 
                   variant="outline" 
                   className="gap-2"
-                  onClick={() => (window.location.href = '/analytics')}
+                  onClick={() => (window.location.href = '/review')}
                 >
                   <LineChart className="h-4 w-4" />
                   View Progress Trends

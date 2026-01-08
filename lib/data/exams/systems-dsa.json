@@ -121,19 +121,123 @@
           "estimatedHours": 18,
           "description": "Master & (Address of) and * (Value at). Understand that arr[i] is syntax sugar for *(arr + i). Semiconductor context: Sensors dump data into linear buffers that cannot be resized. Passing a 1MB image buffer by pointer takes 4 bytes instead of copying.",
           "subtopics": [
-            "LC 1929: Concatenation of Array - Understanding memory copying",
-            "LC 1470: Shuffle the Array - Index manipulation",
-            "LC 412: Fizz Buzz - Modulo arithmetic (used in hardware timers)",
-            "LC 1108: Defanging an IP Address - String/Memory replacement logic",
-            "LC 3110: Score of a String - Pointer traversal",
-            "LC 3146: Permutation Difference between Two Strings",
-            "LC 3131: Find the Integer Added to Array",
-            "LC 2469: Convert the Temperature - Floating point math",
-            "LC 189: Rotate Array - In-place buffer rotation (circular buffer concept)",
-            "Drill: Write swap(int *a, int *b) from scratch - understand pointer dereferencing",
-            "Drill: Write strlen(char *s) using pointer arithmetic only",
-            "Drill: Write memcpy(void *dest, void *src, size_t n) from scratch",
-            "Project: Memory Alignment Drill - Create struct with char, int, char. Verify sizeof is 12 bytes (padding). Use #pragma pack(1) to force 6 bytes. Proves Data Bus Width knowledge."
+            {
+              "id": "week_1_physics_of_c_sub_0",
+              "name": "LC 1929: Concatenation of Array - Understanding memory copying",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_1",
+              "name": "LC 1470: Shuffle the Array - Index manipulation",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_2",
+              "name": "LC 412: Fizz Buzz - Modulo arithmetic (used in hardware timers)",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_3",
+              "name": "LC 1108: Defanging an IP Address - String/Memory replacement logic",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_4",
+              "name": "LC 3110: Score of a String - Pointer traversal",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_5",
+              "name": "LC 3146: Permutation Difference between Two Strings",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_6",
+              "name": "LC 3131: Find the Integer Added to Array",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_7",
+              "name": "LC 2469: Convert the Temperature - Floating point math",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_8",
+              "name": "LC 189: Rotate Array - In-place buffer rotation (circular buffer concept)",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_9",
+              "name": "Drill: Write swap(int *a, int *b) from scratch - understand pointer dereferencing",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_10",
+              "name": "Drill: Write strlen(char *s) using pointer arithmetic only",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_11",
+              "name": "Drill: Write memcpy(void *dest, void *src, size_t n) from scratch",
+              "order": 11,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_1_physics_of_c_sub_12",
+              "name": "Project: Memory Alignment Drill - Create struct with char, int, char. Verify sizeof is 12 bytes (padding). Use #pragma pack(1) to force 6 bytes. Proves Data Bus Width knowledge.",
+              "order": 12,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -142,16 +246,96 @@
           "estimatedHours": 16,
           "description": "Pre-calculating running totals for O(1) range queries. Semiconductor context: Telemetry & Battery - calculate total energy consumed between t=100ms and t=500ms without iterating the loop every time.",
           "subtopics": [
-            "LC 1480: Running Sum of 1d Array - The definition of Prefix Sum",
-            "LC 724: Find Pivot Index - Finding 'Center of Gravity' in data stream",
-            "LC 303: Range Sum Query - Immutable - Fast lookups, saves battery/CPU cycles",
-            "LC 238: Product of Array Except Self - Nvidia Classic (hardware dividers are slow/expensive)",
-            "LC 560: Subarray Sum Equals K - Identifying specific signal patterns",
-            "LC 1732: Find the Highest Altitude",
-            "LC 525: Contiguous Array - Binary signal balancing",
-            "LC 1854: Maximum Population Year",
-            "LC 2574: Left and Right Sum Differences - Useful for sensor calibration offsets",
-            "Deep Dive: Why pre-calculation trades memory for speed - critical embedded tradeoff"
+            {
+              "id": "week_2_prefix_sums_sub_0",
+              "name": "LC 1480: Running Sum of 1d Array - The definition of Prefix Sum",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_1",
+              "name": "LC 724: Find Pivot Index - Finding 'Center of Gravity' in data stream",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_2",
+              "name": "LC 303: Range Sum Query - Immutable - Fast lookups, saves battery/CPU cycles",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_3",
+              "name": "LC 238: Product of Array Except Self - Nvidia Classic (hardware dividers are slow/expensive)",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_4",
+              "name": "LC 560: Subarray Sum Equals K - Identifying specific signal patterns",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_5",
+              "name": "LC 1732: Find the Highest Altitude",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_6",
+              "name": "LC 525: Contiguous Array - Binary signal balancing",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_7",
+              "name": "LC 1854: Maximum Population Year",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_8",
+              "name": "LC 2574: Left and Right Sum Differences - Useful for sensor calibration offsets",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_2_prefix_sums_sub_9",
+              "name": "Deep Dive: Why pre-calculation trades memory for speed - critical embedded tradeoff",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -160,17 +344,105 @@
           "estimatedHours": 18,
           "description": "Using left and right indices to scan buffers from both ends in O(n) instead of O(n²). Semiconductor context: Buffer Compaction - remove dead bytes (zeros) without creating new array (In-Place algorithm).",
           "subtopics": [
-            "LC 26: Remove Duplicates from Sorted Array - Data compression, master Slow/Fast pointer",
-            "LC 27: Remove Element - Filtering noise from signals",
-            "LC 283: Move Zeroes - CRUCIAL: Compacting a buffer in-place",
-            "LC 167: Two Sum II - Sorted input with Binary Search logic",
-            "LC 344: Reverse String - Swapping memory bytes",
-            "LC 977: Squares of a Sorted Array",
-            "LC 125: Valid Palindrome - Checking data symmetry",
-            "LC 75: Sort Colors - Dutch National Flag problem (Signal sorting by priority)",
-            "LC 88: Merge Sorted Array - Merge from the BACK to avoid overwriting",
-            "LC 11: Container With Most Water (Medium) - Optimization with two pointers",
-            "LC 15: 3Sum (Medium) - Extension of two-pointer technique"
+            {
+              "id": "week_3_two_pointer_sub_0",
+              "name": "LC 26: Remove Duplicates from Sorted Array - Data compression, master Slow/Fast pointer",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_1",
+              "name": "LC 27: Remove Element - Filtering noise from signals",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_2",
+              "name": "LC 283: Move Zeroes - CRUCIAL: Compacting a buffer in-place",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_3",
+              "name": "LC 167: Two Sum II - Sorted input with Binary Search logic",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_4",
+              "name": "LC 344: Reverse String - Swapping memory bytes",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_5",
+              "name": "LC 977: Squares of a Sorted Array",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_6",
+              "name": "LC 125: Valid Palindrome - Checking data symmetry",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_7",
+              "name": "LC 75: Sort Colors - Dutch National Flag problem (Signal sorting by priority)",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_8",
+              "name": "LC 88: Merge Sorted Array - Merge from the BACK to avoid overwriting",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_9",
+              "name": "LC 11: Container With Most Water (Medium) - Optimization with two pointers",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_3_two_pointer_sub_10",
+              "name": "LC 15: 3Sum (Medium) - Extension of two-pointer technique",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -179,18 +451,114 @@
           "estimatedHours": 16,
           "description": "Mapping Row-Major [i][j] coordinates to linear memory addresses. Semiconductor context: Image Sensors & Displays - camera frames are 2D pixel matrices for ROI processing.",
           "subtopics": [
-            "LC 48: Rotate Image - In-place matrix rotation (critical for display drivers)",
-            "LC 54: Spiral Matrix - Serializing 2D data for transmission",
-            "LC 59: Spiral Matrix II - Writing data in spiral pattern (display buffer filling)",
-            "LC 867: Transpose Matrix - Axis swapping",
-            "LC 566: Reshape the Matrix - Memory re-mapping",
-            "LC 73: Set Matrix Zeroes - Masking rows/cols (pixel masking)",
-            "LC 74: Search a 2D Matrix - Efficient lookup tables",
-            "LC 1572: Matrix Diagonal Sum",
-            "LC 766: Toeplitz Matrix - Verifying diagonal consistency",
-            "LC 36: Valid Sudoku - Constraint checking in fixed grids",
-            "Drill: Why row-major iteration is faster than column-major (cache locality)",
-            "Project: Write two functions to sum 1024x1024 int matrix - Row-Major vs Column-Major. Measure execution time difference. Understand CPU cache behavior."
+            {
+              "id": "week_4_2d_arrays_sub_0",
+              "name": "LC 48: Rotate Image - In-place matrix rotation (critical for display drivers)",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_1",
+              "name": "LC 54: Spiral Matrix - Serializing 2D data for transmission",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_2",
+              "name": "LC 59: Spiral Matrix II - Writing data in spiral pattern (display buffer filling)",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_3",
+              "name": "LC 867: Transpose Matrix - Axis swapping",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_4",
+              "name": "LC 566: Reshape the Matrix - Memory re-mapping",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_5",
+              "name": "LC 73: Set Matrix Zeroes - Masking rows/cols (pixel masking)",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_6",
+              "name": "LC 74: Search a 2D Matrix - Efficient lookup tables",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_7",
+              "name": "LC 1572: Matrix Diagonal Sum",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_8",
+              "name": "LC 766: Toeplitz Matrix - Verifying diagonal consistency",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_9",
+              "name": "LC 36: Valid Sudoku - Constraint checking in fixed grids",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_10",
+              "name": "Drill: Why row-major iteration is faster than column-major (cache locality)",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_4_2d_arrays_sub_11",
+              "name": "Project: Write two functions to sum 1024x1024 int matrix - Row-Major vs Column-Major. Measure execution time difference. Understand CPU cache behavior.",
+              "order": 11,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -207,18 +575,114 @@
           "estimatedHours": 20,
           "description": "Master & (Clear/Check), | (Set), ^ (Toggle), ~ (Flip), << (Shift). HIGHEST ROI section - in Embedded C, you control hardware by writing to 32-bit Registers. Set Bit 5 to turn on LED, read Bit 3 to check button press. Changing the wrong bit crashes the system.",
           "subtopics": [
-            "LC 191: Number of 1 Bits - Hamming Weight (Parity Checks for error detection)",
-            "LC 136: Single Number - XOR to cancel duplicates",
-            "LC 268: Missing Number - XOR application for data integrity",
-            "LC 67: Add Binary - Implementing a hardware adder in software",
-            "LC 190: Reverse Bits - Little Endian to Big Endian (Network byte order) - CRUCIAL",
-            "LC 231: Power of Two - Memory alignment checking (must be 2, 4, 8...)",
-            "LC 461: Hamming Distance - Comparing binary signals (error detection)",
-            "LC 1009: Complement of Base 10 Integer",
-            "LC 389: Find the Difference - XOR for detecting inserted bytes",
-            "Project: Write is_little_endian() function - detect system endianness",
-            "Project: SWAP_ENDIAN(x) macro - Flip 32-bit integer using shifts",
-            "Project: Write SET_BIT(reg, n), CLEAR_BIT(reg, n), TOGGLE_BIT(reg, n), CHECK_BIT(reg, n) macros - the building blocks of all firmware"
+            {
+              "id": "week_5_boolean_logic_sub_0",
+              "name": "LC 191: Number of 1 Bits - Hamming Weight (Parity Checks for error detection)",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_1",
+              "name": "LC 136: Single Number - XOR to cancel duplicates",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_2",
+              "name": "LC 268: Missing Number - XOR application for data integrity",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_3",
+              "name": "LC 67: Add Binary - Implementing a hardware adder in software",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_4",
+              "name": "LC 190: Reverse Bits - Little Endian to Big Endian (Network byte order) - CRUCIAL",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_5",
+              "name": "LC 231: Power of Two - Memory alignment checking (must be 2, 4, 8...)",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_6",
+              "name": "LC 461: Hamming Distance - Comparing binary signals (error detection)",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_7",
+              "name": "LC 1009: Complement of Base 10 Integer",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_8",
+              "name": "LC 389: Find the Difference - XOR for detecting inserted bytes",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_9",
+              "name": "Project: Write is_little_endian() function - detect system endianness",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_10",
+              "name": "Project: SWAP_ENDIAN(x) macro - Flip 32-bit integer using shifts",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_5_boolean_logic_sub_11",
+              "name": "Project: Write SET_BIT(reg, n), CLEAR_BIT(reg, n), TOGGLE_BIT(reg, n), CHECK_BIT(reg, n) macros - the building blocks of all firmware",
+              "order": 11,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -227,17 +691,105 @@
           "estimatedHours": 18,
           "description": "Using masks to pack/unpack data. Semiconductor context: Packet Headers - a single 32-bit integer stores [Version: 4 bits][Length: 8 bits][Type: 4 bits][ID: 16 bits]. Extract using shifts and masks.",
           "subtopics": [
-            "LC 137: Single Number II - Track state across 32 individual bits",
-            "LC 260: Single Number III - Separating two unique elements using XOR",
-            "LC 201: Bitwise AND of Numbers Range - Understanding bit-ranges in registers",
-            "LC 371: Sum of Two Integers - Addition without + operator (half adder logic)",
-            "LC 338: Counting Bits - DP + Bits combination",
-            "LC 762: Prime Number of Set Bits in Binary Representation",
-            "LC 693: Binary Number with Alternating Bits",
-            "LC 1342: Number of Steps to Reduce a Number to Zero",
-            "LC 78: Subsets - Bit masking for generating all combinations (config variations)",
-            "LC 477: Total Hamming Distance - Batch error analysis",
-            "Project: Parse a 32-bit packet header - extract Version (bits 28-31), Length (bits 20-27), Type (bits 16-19), ID (bits 0-15)"
+            {
+              "id": "week_6_advanced_bit_hacks_sub_0",
+              "name": "LC 137: Single Number II - Track state across 32 individual bits",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_1",
+              "name": "LC 260: Single Number III - Separating two unique elements using XOR",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_2",
+              "name": "LC 201: Bitwise AND of Numbers Range - Understanding bit-ranges in registers",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_3",
+              "name": "LC 371: Sum of Two Integers - Addition without + operator (half adder logic)",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_4",
+              "name": "LC 338: Counting Bits - DP + Bits combination",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_5",
+              "name": "LC 762: Prime Number of Set Bits in Binary Representation",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_6",
+              "name": "LC 693: Binary Number with Alternating Bits",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_7",
+              "name": "LC 1342: Number of Steps to Reduce a Number to Zero",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_8",
+              "name": "LC 78: Subsets - Bit masking for generating all combinations (config variations)",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_9",
+              "name": "LC 477: Total Hamming Distance - Batch error analysis",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_6_advanced_bit_hacks_sub_10",
+              "name": "Project: Parse a 32-bit packet header - extract Version (bits 28-31), Length (bits 20-27), Type (bits 16-19), ID (bits 0-15)",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -246,17 +798,105 @@
           "estimatedHours": 18,
           "description": "Modulo arithmetic, GCD, Primes. Semiconductor context: Timers & Clocks - calculate divisor for 80MHz clock to 9600 baud rate. Cryptography relies on Primes and GCD.",
           "subtopics": [
-            "LC 204: Count Primes - Sieve of Eratosthenes",
-            "LC 326: Power of Three",
-            "LC 171: Excel Sheet Column Number - Base conversion",
-            "LC 202: Happy Number - Cycle detection in computations",
-            "LC 66: Plus One - Array math with carry propagation",
-            "LC 9: Palindrome Number",
-            "LC 69: Sqrt(x) - Hardware square root approximation (Binary Search)",
-            "LC 29: Divide Two Integers - Division using shifts only (hardware dividers are slow)",
-            "LC 7: Reverse Integer - INTEGER OVERFLOW handling (CRITICAL in embedded!)",
-            "LC 50: Pow(x, n) - Binary exponentiation (fast power calculation)",
-            "Understanding: Why modulo is used for timer wraparound, why GCD matters for clock dividers"
+            {
+              "id": "week_7_math_number_theory_sub_0",
+              "name": "LC 204: Count Primes - Sieve of Eratosthenes",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_1",
+              "name": "LC 326: Power of Three",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_2",
+              "name": "LC 171: Excel Sheet Column Number - Base conversion",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_3",
+              "name": "LC 202: Happy Number - Cycle detection in computations",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_4",
+              "name": "LC 66: Plus One - Array math with carry propagation",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_5",
+              "name": "LC 9: Palindrome Number",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_6",
+              "name": "LC 69: Sqrt(x) - Hardware square root approximation (Binary Search)",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_7",
+              "name": "LC 29: Divide Two Integers - Division using shifts only (hardware dividers are slow)",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_8",
+              "name": "LC 7: Reverse Integer - INTEGER OVERFLOW handling (CRITICAL in embedded!)",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_9",
+              "name": "LC 50: Pow(x, n) - Binary exponentiation (fast power calculation)",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_7_math_number_theory_sub_10",
+              "name": "Understanding: Why modulo is used for timer wraparound, why GCD matters for clock dividers",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -265,13 +905,69 @@
           "estimatedHours": 16,
           "description": "Review hardest Bit Manipulation problems. Project: Manual IEEE 754 Parser - proves understanding of how hardware stores decimals. Deep dive into floating point quirks.",
           "subtopics": [
-            "Review: Most challenging bit manipulation problems from Weeks 5-7",
-            "Project: IEEE 754 Parser - C function that takes float and prints sign, exponent, mantissa bits",
-            "Constraint: Do NOT just cast pointers - use union to overlay float and uint32_t",
-            "Bitmask extraction: Sign (bit 31), Exponent (bits 30-23), Mantissa (bits 22-0)",
-            "Understanding: Why 0.1 + 0.2 != 0.3 in floating point (critical for sensor math)",
-            "Understanding: When to use fixed-point vs floating-point in MCUs",
-            "Project: Implement fixed-point multiplication for Q16.16 format"
+            {
+              "id": "week_8_review_floating_point_sub_0",
+              "name": "Review: Most challenging bit manipulation problems from Weeks 5-7",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_8_review_floating_point_sub_1",
+              "name": "Project: IEEE 754 Parser - C function that takes float and prints sign, exponent, mantissa bits",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_8_review_floating_point_sub_2",
+              "name": "Constraint: Do NOT just cast pointers - use union to overlay float and uint32_t",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_8_review_floating_point_sub_3",
+              "name": "Bitmask extraction: Sign (bit 31), Exponent (bits 30-23), Mantissa (bits 22-0)",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_8_review_floating_point_sub_4",
+              "name": "Understanding: Why 0.1 + 0.2 != 0.3 in floating point (critical for sensor math)",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_8_review_floating_point_sub_5",
+              "name": "Understanding: When to use fixed-point vs floating-point in MCUs",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_8_review_floating_point_sub_6",
+              "name": "Project: Implement fixed-point multiplication for Q16.16 format",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -288,17 +984,105 @@
           "estimatedHours": 18,
           "description": "Handling char arrays without standard libraries. Semiconductor context: AT Commands - ESP32 WiFi module sends '+WIFI:CONNECTED', need to parse this string to know state. Data arrives byte-by-byte via UART or SPI.",
           "subtopics": [
-            "LC 242: Valid Anagram - Character frequency counting",
-            "LC 387: First Unique Character in a String",
-            "LC 28: Implement strStr() - KMP logic for finding commands in UART stream",
-            "LC 14: Longest Common Prefix - Matching command prefixes",
-            "LC 58: Length of Last Word",
-            "LC 392: Is Subsequence - Checking if command is valid sequence",
-            "LC 151: Reverse Words in a String - Parsing multi-word commands",
-            "LC 8: String to Integer (atoi) - Essential for CLI/sensor command parsing",
-            "LC 5: Longest Palindromic Substring (Medium) - Pattern matching preparation",
-            "Project: State Machine Parser - Parse stream byte-by-byte, trigger 'Command Found' only when exact sequence \\r\\nOK\\r\\n is detected",
-            "Project: Implement a simple AT command parser that handles: AT, AT+RST, AT+CWJAP=\"ssid\",\"pass\""
+            {
+              "id": "week_9_string_parsing_sub_0",
+              "name": "LC 242: Valid Anagram - Character frequency counting",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_1",
+              "name": "LC 387: First Unique Character in a String",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_2",
+              "name": "LC 28: Implement strStr() - KMP logic for finding commands in UART stream",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_3",
+              "name": "LC 14: Longest Common Prefix - Matching command prefixes",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_4",
+              "name": "LC 58: Length of Last Word",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_5",
+              "name": "LC 392: Is Subsequence - Checking if command is valid sequence",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_6",
+              "name": "LC 151: Reverse Words in a String - Parsing multi-word commands",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_7",
+              "name": "LC 8: String to Integer (atoi) - Essential for CLI/sensor command parsing",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_8",
+              "name": "LC 5: Longest Palindromic Substring (Medium) - Pattern matching preparation",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_9",
+              "name": "Project: State Machine Parser - Parse stream byte-by-byte, trigger 'Command Found' only when exact sequence \\r\\nOK\\r\\n is detected",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_9_string_parsing_sub_10",
+              "name": "Project: Implement a simple AT command parser that handles: AT, AT+RST, AT+CWJAP=\"ssid\",\"pass\"",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -307,16 +1091,96 @@
           "estimatedHours": 16,
           "description": "Window of size k moves across array. Semiconductor context: Moving Average Filter - smooth noisy temperature sensor by averaging last 10 readings. Foundation of Digital Signal Processing.",
           "subtopics": [
-            "LC 643: Maximum Average Subarray I - Foundation of DSP",
-            "LC 1343: Number of Sub-arrays of Size K with Average >= Threshold",
-            "LC 567: Permutation in String - Pattern matching in buffer",
-            "LC 438: Find All Anagrams in a String - Signal pattern detection",
-            "LC 219: Contains Duplicate II - Detecting repeated events in time window",
-            "LC 1176: Diet Plan Performance",
-            "LC 2090: K Radius Subarray Averages",
-            "LC 239: Sliding Window Maximum (Hard) - Peak detection using Deque",
-            "LC 1456: Maximum Number of Vowels in a Substring - Pattern detection",
-            "Project: Implement a moving average filter in C with configurable window size"
+            {
+              "id": "week_10_fixed_sliding_window_sub_0",
+              "name": "LC 643: Maximum Average Subarray I - Foundation of DSP",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_1",
+              "name": "LC 1343: Number of Sub-arrays of Size K with Average >= Threshold",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_2",
+              "name": "LC 567: Permutation in String - Pattern matching in buffer",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_3",
+              "name": "LC 438: Find All Anagrams in a String - Signal pattern detection",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_4",
+              "name": "LC 219: Contains Duplicate II - Detecting repeated events in time window",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_5",
+              "name": "LC 1176: Diet Plan Performance",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_6",
+              "name": "LC 2090: K Radius Subarray Averages",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_7",
+              "name": "LC 239: Sliding Window Maximum (Hard) - Peak detection using Deque",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_8",
+              "name": "LC 1456: Maximum Number of Vowels in a Substring - Pattern detection",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_10_fixed_sliding_window_sub_9",
+              "name": "Project: Implement a moving average filter in C with configurable window size",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -325,15 +1189,87 @@
           "estimatedHours": 18,
           "description": "Window expands and shrinks based on data validity. Semiconductor context: Debouncing - look for longest continuous window of 'High' signals to confirm button press.",
           "subtopics": [
-            "LC 3: Longest Substring Without Repeating Characters - Buffer boundary management",
-            "LC 1004: Max Consecutive Ones III - Simulates 'debouncing' a digital signal",
-            "LC 209: Minimum Size Subarray Sum - Finding minimal window",
-            "LC 424: Longest Repeating Character Replacement",
-            "LC 904: Fruit Into Baskets - Resource constraint optimization",
-            "LC 2024: Maximize the Confusion of an Exam",
-            "LC 930: Binary Subarrays With Sum",
-            "LC 2799: Count Complete Subarrays in an Array",
-            "LC 76: Minimum Window Substring (Hard) - IMPORTANT: Finding smallest window containing all required elements"
+            {
+              "id": "week_11_dynamic_sliding_window_sub_0",
+              "name": "LC 3: Longest Substring Without Repeating Characters - Buffer boundary management",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_1",
+              "name": "LC 1004: Max Consecutive Ones III - Simulates 'debouncing' a digital signal",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_2",
+              "name": "LC 209: Minimum Size Subarray Sum - Finding minimal window",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_3",
+              "name": "LC 424: Longest Repeating Character Replacement",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_4",
+              "name": "LC 904: Fruit Into Baskets - Resource constraint optimization",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_5",
+              "name": "LC 2024: Maximize the Confusion of an Exam",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_6",
+              "name": "LC 930: Binary Subarrays With Sum",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_7",
+              "name": "LC 2799: Count Complete Subarrays in an Array",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_11_dynamic_sliding_window_sub_8",
+              "name": "LC 76: Minimum Window Substring (Hard) - IMPORTANT: Finding smallest window containing all required elements",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -342,13 +1278,69 @@
           "estimatedHours": 16,
           "description": "Re-solve hardest Sliding Window problems. Challenge: Implement Moving Average without float/double for FPU-less microcontrollers. Real embedded constraint.",
           "subtopics": [
-            "Review: LC 239, LC 76, LC 3 - The three pillars of sliding window",
-            "Corner Cases: Empty array, Window size > Array size, All same elements",
-            "Implement: Sliding window median using two heaps",
-            "Project: Fixed-Point Arithmetic - Re-implement Moving Average without float/double",
-            "Technique: Scale inputs by 1000 (Q10.22 format), perform integer division",
-            "Technique: Manually format decimal point when printing",
-            "Understanding: Why FPU-less MCUs (like Cortex-M0) require fixed-point math"
+            {
+              "id": "week_12_buffer_review_sub_0",
+              "name": "Review: LC 239, LC 76, LC 3 - The three pillars of sliding window",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_12_buffer_review_sub_1",
+              "name": "Corner Cases: Empty array, Window size > Array size, All same elements",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_12_buffer_review_sub_2",
+              "name": "Implement: Sliding window median using two heaps",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_12_buffer_review_sub_3",
+              "name": "Project: Fixed-Point Arithmetic - Re-implement Moving Average without float/double",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_12_buffer_review_sub_4",
+              "name": "Technique: Scale inputs by 1000 (Q10.22 format), perform integer division",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_12_buffer_review_sub_5",
+              "name": "Technique: Manually format decimal point when printing",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_12_buffer_review_sub_6",
+              "name": "Understanding: Why FPU-less MCUs (like Cortex-M0) require fixed-point math",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -365,16 +1357,96 @@
           "estimatedHours": 18,
           "description": "Manipulating next pointers. Semiconductor context: OS Kernel (FreeRTOS/Linux) manages processes using Linked Lists - the 'Ready Queue' is a Linked List of tasks waiting to run.",
           "subtopics": [
-            "LC 206: Reverse Linked List - MEMORIZE THIS, most asked pointer question",
-            "LC 876: Middle of the Linked List - Fast/slow pointer foundation",
-            "LC 237: Delete Node in a Linked List - Unusual deletion technique",
-            "LC 21: Merge Two Sorted Lists - Merging task priority lists",
-            "LC 83: Remove Duplicates from Sorted List",
-            "LC 160: Intersection of Two Linked Lists - Finding common resources",
-            "LC 234: Palindrome Linked List - In-place verification",
-            "LC 203: Remove Linked List Elements - Filtering tasks by criteria",
-            "LC 141: Linked List Cycle - Essential for detecting infinite loops in system tasks",
-            "Project: Implement a simple task queue using linked list with add_task() and get_next_task()"
+            {
+              "id": "week_13_singly_linked_lists_sub_0",
+              "name": "LC 206: Reverse Linked List - MEMORIZE THIS, most asked pointer question",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_1",
+              "name": "LC 876: Middle of the Linked List - Fast/slow pointer foundation",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_2",
+              "name": "LC 237: Delete Node in a Linked List - Unusual deletion technique",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_3",
+              "name": "LC 21: Merge Two Sorted Lists - Merging task priority lists",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_4",
+              "name": "LC 83: Remove Duplicates from Sorted List",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_5",
+              "name": "LC 160: Intersection of Two Linked Lists - Finding common resources",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_6",
+              "name": "LC 234: Palindrome Linked List - In-place verification",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_7",
+              "name": "LC 203: Remove Linked List Elements - Filtering tasks by criteria",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_8",
+              "name": "LC 141: Linked List Cycle - Essential for detecting infinite loops in system tasks",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_13_singly_linked_lists_sub_9",
+              "name": "Project: Implement a simple task queue using linked list with add_task() and get_next_task()",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -383,17 +1455,105 @@
           "estimatedHours": 20,
           "description": "prev and next pointers. Cycle detection. Semiconductor context: Deadlock Detection - if Task A waits for Task B and vice versa, you have a cycle. Tortoise and Hare algorithm detects this.",
           "subtopics": [
-            "LC 141: Linked List Cycle - Revisit with deeper understanding",
-            "LC 142: Linked List Cycle II - Find where the cycle starts",
-            "LC 19: Remove Nth Node From End of List - Two-pointer distance",
-            "LC 61: Rotate List - Circular buffer rotation concept",
-            "LC 24: Swap Nodes in Pairs - Batch processing pattern",
-            "LC 143: Reorder List - Complex pointer manipulation",
-            "LC 2: Add Two Numbers - Big integer math (multi-precision)",
-            "LC 138: Copy List with Random Pointer - Deep copy of complex structures",
-            "LC 92: Reverse Linked List II - Partial reversal",
-            "LC 25: Reverse Nodes in k-Group (Hard) - Batch processing in chunks",
-            "Project: No-Malloc Pool - Pre-allocate array of 100 Nodes, write alloc_node() and free_node() functions (Automotive safety-critical pattern)"
+            {
+              "id": "week_14_advanced_lists_sub_0",
+              "name": "LC 141: Linked List Cycle - Revisit with deeper understanding",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_1",
+              "name": "LC 142: Linked List Cycle II - Find where the cycle starts",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_2",
+              "name": "LC 19: Remove Nth Node From End of List - Two-pointer distance",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_3",
+              "name": "LC 61: Rotate List - Circular buffer rotation concept",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_4",
+              "name": "LC 24: Swap Nodes in Pairs - Batch processing pattern",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_5",
+              "name": "LC 143: Reorder List - Complex pointer manipulation",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_6",
+              "name": "LC 2: Add Two Numbers - Big integer math (multi-precision)",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_7",
+              "name": "LC 138: Copy List with Random Pointer - Deep copy of complex structures",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_8",
+              "name": "LC 92: Reverse Linked List II - Partial reversal",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_9",
+              "name": "LC 25: Reverse Nodes in k-Group (Hard) - Batch processing in chunks",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_14_advanced_lists_sub_10",
+              "name": "Project: No-Malloc Pool - Pre-allocate array of 100 Nodes, write alloc_node() and free_node() functions (Automotive safety-critical pattern)",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -402,17 +1562,105 @@
           "estimatedHours": 18,
           "description": "Last In, First Out. Semiconductor context: Nested Interrupts - CPU pushes context to stack when ISR fires, pops it back when done. Stack overflow causes Hard Fault.",
           "subtopics": [
-            "LC 20: Valid Parentheses - Parsing nested JSON or commands",
-            "LC 155: Min Stack - Hardware Monitor tracking peak voltage",
-            "LC 232: Implement Queue using Stacks - Data structure conversion",
-            "LC 150: Evaluate Reverse Polish Notation - How CPU evaluates expressions",
-            "LC 682: Baseball Game - State tracking with undo",
-            "LC 1047: Remove All Adjacent Duplicates In String",
-            "LC 1544: Make The String Great - Pair cancellation",
-            "LC 71: Simplify Path - File system navigation",
-            "LC 394: Decode String (Medium) - Nested parsing with multipliers",
-            "LC 224: Basic Calculator (Hard) - Expression parsing (compiler internals)",
-            "Understanding: Calculate stack frame size and max stack depth for recursive functions"
+            {
+              "id": "week_15_stacks_sub_0",
+              "name": "LC 20: Valid Parentheses - Parsing nested JSON or commands",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_1",
+              "name": "LC 155: Min Stack - Hardware Monitor tracking peak voltage",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_2",
+              "name": "LC 232: Implement Queue using Stacks - Data structure conversion",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_3",
+              "name": "LC 150: Evaluate Reverse Polish Notation - How CPU evaluates expressions",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_4",
+              "name": "LC 682: Baseball Game - State tracking with undo",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_5",
+              "name": "LC 1047: Remove All Adjacent Duplicates In String",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_6",
+              "name": "LC 1544: Make The String Great - Pair cancellation",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_7",
+              "name": "LC 71: Simplify Path - File system navigation",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_8",
+              "name": "LC 394: Decode String (Medium) - Nested parsing with multipliers",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_9",
+              "name": "LC 224: Basic Calculator (Hard) - Expression parsing (compiler internals)",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_15_stacks_sub_10",
+              "name": "Understanding: Calculate stack frame size and max stack depth for recursive functions",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -421,14 +1669,78 @@
           "estimatedHours": 18,
           "description": "Finding the 'Next Greater Element'. Semiconductor context: Telemetry Spikes - finding next time temperature exceeds current threshold. Critical for alerting systems.",
           "subtopics": [
-            "LC 496: Next Greater Element I - Basic monotonic stack",
-            "LC 739: Daily Temperatures - Finding 'next peak' in signal stream",
-            "LC 901: Online Stock Span - Looking back in time",
-            "LC 735: Asteroid Collision - Signal interference simulation",
-            "LC 907: Sum of Subarray Minimums",
-            "LC 84: Largest Rectangle in Histogram (Hard) - Memory allocation optimization",
-            "LC 85: Maximal Rectangle (Hard) - Extension of histogram problem",
-            "Project: Implement a peak detector that finds the next time a sensor reading exceeds a threshold"
+            {
+              "id": "week_16_monotonic_stacks_sub_0",
+              "name": "LC 496: Next Greater Element I - Basic monotonic stack",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_1",
+              "name": "LC 739: Daily Temperatures - Finding 'next peak' in signal stream",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_2",
+              "name": "LC 901: Online Stock Span - Looking back in time",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_3",
+              "name": "LC 735: Asteroid Collision - Signal interference simulation",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_4",
+              "name": "LC 907: Sum of Subarray Minimums",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_5",
+              "name": "LC 84: Largest Rectangle in Histogram (Hard) - Memory allocation optimization",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_6",
+              "name": "LC 85: Maximal Rectangle (Hard) - Extension of histogram problem",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_16_monotonic_stacks_sub_7",
+              "name": "Project: Implement a peak detector that finds the next time a sensor reading exceeds a threshold",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -445,17 +1757,105 @@
           "estimatedHours": 22,
           "description": "Fixed array that wraps around using Modulo %. THE #1 MOST USED structure in firmware - connects hardware (UART) to software. Master this completely.",
           "subtopics": [
-            "LC 622: Design Circular Queue - THE MOST IMPORTANT QUESTION, used in every UART/SPI driver",
-            "LC 641: Design Circular Deque - Bidirectional network data buffer",
-            "LC 346: Moving Average from Data Stream - Real-time filtering",
-            "LC 225: Implement Stack using Queues",
-            "LC 933: Number of Recent Calls - Rate limiting pattern",
-            "LC 2073: Time Needed to Buy Tickets",
-            "LC 387: First Unique Character in a String",
-            "LC 649: Dota2 Senate - Priority-based elimination",
-            "Constraint: Implement with volatile head/tail indices for ISR safety",
-            "Project: Implement a full UART RX circular buffer with: enqueue (called from ISR), dequeue (called from main), is_empty, is_full, available_space",
-            "Understanding: Why volatile prevents compiler from caching values when ISR modifies queue"
+            {
+              "id": "week_17_circular_queues_sub_0",
+              "name": "LC 622: Design Circular Queue - THE MOST IMPORTANT QUESTION, used in every UART/SPI driver",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_1",
+              "name": "LC 641: Design Circular Deque - Bidirectional network data buffer",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_2",
+              "name": "LC 346: Moving Average from Data Stream - Real-time filtering",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_3",
+              "name": "LC 225: Implement Stack using Queues",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_4",
+              "name": "LC 933: Number of Recent Calls - Rate limiting pattern",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_5",
+              "name": "LC 2073: Time Needed to Buy Tickets",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_6",
+              "name": "LC 387: First Unique Character in a String",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_7",
+              "name": "LC 649: Dota2 Senate - Priority-based elimination",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_8",
+              "name": "Constraint: Implement with volatile head/tail indices for ISR safety",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_9",
+              "name": "Project: Implement a full UART RX circular buffer with: enqueue (called from ISR), dequeue (called from main), is_empty, is_full, available_space",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_17_circular_queues_sub_10",
+              "name": "Understanding: Why volatile prevents compiler from caching values when ISR modifies queue",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -464,17 +1864,105 @@
           "estimatedHours": 18,
           "description": "Accessing Min or Max element in O(1). Semiconductor context: RTOS Event Scheduling - 'Run Task A in 5ms, Task B in 2ms'. Min-Heap organizes timer events by expiry time.",
           "subtopics": [
-            "LC 215: Kth Largest Element in Array - Quick select vs heap",
-            "LC 1046: Last Stone Weight - Repeated max extraction",
-            "LC 347: Top K Frequent Elements - Frequency-based prioritization",
-            "LC 451: Sort Characters By Frequency",
-            "LC 973: K Closest Points to Origin - Distance-based prioritization",
-            "LC 506: Relative Ranks - Mapping rankings",
-            "LC 621: Task Scheduler - RTOS scheduling simulation",
-            "LC 295: Find Median from Data Stream (Hard) - Two-heap technique",
-            "LC 355: Design Twitter (Medium) - System design with heap for feed",
-            "LC 703: Kth Largest Element in a Stream - Online algorithm",
-            "Project: Implement a timer event queue using min-heap - add_timer(callback, delay_ms), tick()"
+            {
+              "id": "week_18_heaps_sub_0",
+              "name": "LC 215: Kth Largest Element in Array - Quick select vs heap",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_1",
+              "name": "LC 1046: Last Stone Weight - Repeated max extraction",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_2",
+              "name": "LC 347: Top K Frequent Elements - Frequency-based prioritization",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_3",
+              "name": "LC 451: Sort Characters By Frequency",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_4",
+              "name": "LC 973: K Closest Points to Origin - Distance-based prioritization",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_5",
+              "name": "LC 506: Relative Ranks - Mapping rankings",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_6",
+              "name": "LC 621: Task Scheduler - RTOS scheduling simulation",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_7",
+              "name": "LC 295: Find Median from Data Stream (Hard) - Two-heap technique",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_8",
+              "name": "LC 355: Design Twitter (Medium) - System design with heap for feed",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_9",
+              "name": "LC 703: Kth Largest Element in a Stream - Online algorithm",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_18_heaps_sub_10",
+              "name": "Project: Implement a timer event queue using min-heap - add_timer(callback, delay_ms), tick()",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -483,17 +1971,105 @@
           "estimatedHours": 18,
           "description": "O(1) lookup using keys. Semiconductor context: Device Whitelisting - checking if Bluetooth MAC address is authorized. Symbol tables for debuggers.",
           "subtopics": [
-            "LC 1: Two Sum - The classic hashmap problem",
-            "LC 217: Contains Duplicate - Existence checking",
-            "LC 169: Majority Element - Boyer-Moore voting",
-            "LC 383: Ransom Note - Character frequency matching",
-            "LC 49: Group Anagrams - Grouping by signature",
-            "LC 128: Longest Consecutive Sequence - O(n) sequence finding",
-            "LC 290: Word Pattern - Bijection mapping",
-            "LC 706: Design HashMap - Collision handling in memory-constrained environments",
-            "LC 146: LRU Cache (Medium) - NVIDIA FAVORITE: Cache management",
-            "LC 380: Insert Delete GetRandom O(1) (Medium) - Randomized access pattern",
-            "Project: Implement an LRU cache for firmware config parameters"
+            {
+              "id": "week_19_hash_maps_sub_0",
+              "name": "LC 1: Two Sum - The classic hashmap problem",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_1",
+              "name": "LC 217: Contains Duplicate - Existence checking",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_2",
+              "name": "LC 169: Majority Element - Boyer-Moore voting",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_3",
+              "name": "LC 383: Ransom Note - Character frequency matching",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_4",
+              "name": "LC 49: Group Anagrams - Grouping by signature",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_5",
+              "name": "LC 128: Longest Consecutive Sequence - O(n) sequence finding",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_6",
+              "name": "LC 290: Word Pattern - Bijection mapping",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_7",
+              "name": "LC 706: Design HashMap - Collision handling in memory-constrained environments",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_8",
+              "name": "LC 146: LRU Cache (Medium) - NVIDIA FAVORITE: Cache management",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_9",
+              "name": "LC 380: Insert Delete GetRandom O(1) (Medium) - Randomized access pattern",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_19_hash_maps_sub_10",
+              "name": "Project: Implement an LRU cache for firmware config parameters",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -502,19 +2078,123 @@
           "estimatedHours": 20,
           "description": "Hierarchical data nodes. Semiconductor context: Filesystems (FAT/LittleFS), device trees, interrupt hierarchies. Understanding recursive traversal.",
           "subtopics": [
-            "LC 104: Maximum Depth of Binary Tree - Recursion fundamentals",
-            "LC 226: Invert Binary Tree - Classic recursion",
-            "LC 100: Same Tree - Structure comparison",
-            "LC 101: Symmetric Tree - Mirror verification",
-            "LC 102: Binary Tree Level Order Traversal - BFS for diagnostics",
-            "LC 112: Path Sum - Root-to-leaf path analysis",
-            "LC 617: Merge Two Binary Trees - Combining config trees",
-            "LC 236: Lowest Common Ancestor - Root cause analysis",
-            "LC 98: Validate Binary Search Tree (Medium) - Data integrity validation",
-            "LC 230: Kth Smallest Element in a BST (Medium) - In-order traversal",
-            "LC 912: Sort an Array - MERGE SORT implementation from scratch",
-            "Project: Calculate exactly how much stack memory Merge Sort uses for 1M elements",
-            "Understanding: When recursion is dangerous in embedded (stack limits)"
+            {
+              "id": "week_20_binary_trees_sub_0",
+              "name": "LC 104: Maximum Depth of Binary Tree - Recursion fundamentals",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_1",
+              "name": "LC 226: Invert Binary Tree - Classic recursion",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_2",
+              "name": "LC 100: Same Tree - Structure comparison",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_3",
+              "name": "LC 101: Symmetric Tree - Mirror verification",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_4",
+              "name": "LC 102: Binary Tree Level Order Traversal - BFS for diagnostics",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_5",
+              "name": "LC 112: Path Sum - Root-to-leaf path analysis",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_6",
+              "name": "LC 617: Merge Two Binary Trees - Combining config trees",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_7",
+              "name": "LC 236: Lowest Common Ancestor - Root cause analysis",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_8",
+              "name": "LC 98: Validate Binary Search Tree (Medium) - Data integrity validation",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_9",
+              "name": "LC 230: Kth Smallest Element in a BST (Medium) - In-order traversal",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_10",
+              "name": "LC 912: Sort an Array - MERGE SORT implementation from scratch",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_11",
+              "name": "Project: Calculate exactly how much stack memory Merge Sort uses for 1M elements",
+              "order": 11,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_20_binary_trees_sub_12",
+              "name": "Understanding: When recursion is dangerous in embedded (stack limits)",
+              "order": 12,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]
@@ -531,17 +2211,105 @@
           "estimatedHours": 18,
           "description": "Visiting nodes in a network. Semiconductor context: State Machines (FSM) - device moves from Init → Idle → Active → Error. Network topology analysis.",
           "subtopics": [
-            "LC 200: Number of Islands - Grouping connected sensors/pixels",
-            "LC 733: Flood Fill - Region filling algorithm",
-            "LC 997: Find the Town Judge - Finding authority node",
-            "LC 1791: Find Center of Star Graph - Hub detection",
-            "LC 841: Keys and Rooms - Reachability analysis",
-            "LC 994: Rotting Oranges - Multi-source BFS (signal propagation)",
-            "LC 133: Clone Graph - Deep copy of network topology",
-            "LC 207: Course Schedule - Cycle detection for deadlock prevention",
-            "LC 210: Course Schedule II (Medium) - Topological sort for task ordering",
-            "LC 743: Network Delay Time (Medium) - Dijkstra's for signal propagation timing",
-            "Project: Traffic Light Controller FSM - States (RED, YEL, GRN), Events (TIMER, BTN), switch-case transitions. This IS firmware."
+            {
+              "id": "week_21_graphs_sub_0",
+              "name": "LC 200: Number of Islands - Grouping connected sensors/pixels",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_1",
+              "name": "LC 733: Flood Fill - Region filling algorithm",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_2",
+              "name": "LC 997: Find the Town Judge - Finding authority node",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_3",
+              "name": "LC 1791: Find Center of Star Graph - Hub detection",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_4",
+              "name": "LC 841: Keys and Rooms - Reachability analysis",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_5",
+              "name": "LC 994: Rotting Oranges - Multi-source BFS (signal propagation)",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_6",
+              "name": "LC 133: Clone Graph - Deep copy of network topology",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_7",
+              "name": "LC 207: Course Schedule - Cycle detection for deadlock prevention",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_8",
+              "name": "LC 210: Course Schedule II (Medium) - Topological sort for task ordering",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_9",
+              "name": "LC 743: Network Delay Time (Medium) - Dijkstra's for signal propagation timing",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_21_graphs_sub_10",
+              "name": "Project: Traffic Light Controller FSM - States (RED, YEL, GRN), Events (TIMER, BTN), switch-case transitions. This IS firmware.",
+              "order": 10,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -550,16 +2318,96 @@
           "estimatedHours": 16,
           "description": "Solving sub-problems once. Semiconductor context: Path Optimization - finding most power-efficient route for packet in mesh network. Resource allocation.",
           "subtopics": [
-            "LC 70: Climbing Stairs - Fibonacci pattern",
-            "LC 746: Min Cost Climbing Stairs - Path cost optimization",
-            "LC 198: House Robber - Non-adjacent selection (sensor sampling)",
-            "LC 322: Coin Change - Minimum resource usage",
-            "LC 53: Maximum Subarray - Kadane's Algorithm (peak signal detection)",
-            "LC 121: Best Time to Buy and Sell Stock - Single pass optimization",
-            "LC 118: Pascal's Triangle - Binomial coefficients",
-            "LC 91: Decode Ways - State machine enumeration",
-            "LC 300: Longest Increasing Subsequence (Medium) - Trend detection",
-            "LC 152: Maximum Product Subarray (Medium) - Handling negatives"
+            {
+              "id": "week_22_dynamic_programming_sub_0",
+              "name": "LC 70: Climbing Stairs - Fibonacci pattern",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_1",
+              "name": "LC 746: Min Cost Climbing Stairs - Path cost optimization",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_2",
+              "name": "LC 198: House Robber - Non-adjacent selection (sensor sampling)",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_3",
+              "name": "LC 322: Coin Change - Minimum resource usage",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_4",
+              "name": "LC 53: Maximum Subarray - Kadane's Algorithm (peak signal detection)",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_5",
+              "name": "LC 121: Best Time to Buy and Sell Stock - Single pass optimization",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_6",
+              "name": "LC 118: Pascal's Triangle - Binomial coefficients",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_7",
+              "name": "LC 91: Decode Ways - State machine enumeration",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_8",
+              "name": "LC 300: Longest Increasing Subsequence (Medium) - Trend detection",
+              "order": 8,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_22_dynamic_programming_sub_9",
+              "name": "LC 152: Maximum Product Subarray (Medium) - Handling negatives",
+              "order": 9,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -568,14 +2416,78 @@
           "estimatedHours": 24,
           "description": "Deep focus sessions: 3-4 hours per problem. These are the problems that separate senior engineers from juniors. Expect to struggle. Each problem requires multiple attempts.",
           "subtopics": [
-            "LC 42: Trapping Rain Water - Classic 'Senior' logic test (Two pointer + DP)",
-            "LC 23: Merge k Sorted Lists - Merging multiple sensor streams (Heap)",
-            "LC 239: Sliding Window Maximum - Peak detection at scale (Monotonic Deque)",
-            "LC 84: Largest Rectangle in Histogram - Memory block allocation",
-            "LC 297: Serialize and Deserialize Binary Tree - Config persistence",
-            "LC 208: Implement Trie (Prefix Tree) - Fast network routing lookups",
-            "LC 212: Word Search II (Hard) - Trie + DFS combination",
-            "LC 4: Median of Two Sorted Arrays (Hard) - O(log n) binary search mastery"
+            {
+              "id": "week_23_hard_problems_sub_0",
+              "name": "LC 42: Trapping Rain Water - Classic 'Senior' logic test (Two pointer + DP)",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_1",
+              "name": "LC 23: Merge k Sorted Lists - Merging multiple sensor streams (Heap)",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_2",
+              "name": "LC 239: Sliding Window Maximum - Peak detection at scale (Monotonic Deque)",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_3",
+              "name": "LC 84: Largest Rectangle in Histogram - Memory block allocation",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_4",
+              "name": "LC 297: Serialize and Deserialize Binary Tree - Config persistence",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_5",
+              "name": "LC 208: Implement Trie (Prefix Tree) - Fast network routing lookups",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_6",
+              "name": "LC 212: Word Search II (Hard) - Trie + DFS combination",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_23_hard_problems_sub_7",
+              "name": "LC 4: Median of Two Sorted Arrays (Hard) - O(log n) binary search mastery",
+              "order": 7,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         },
         {
@@ -584,13 +2496,69 @@
           "estimatedHours": 18,
           "description": "Two full weeks of intensive mock interview practice. No IDE. No Google. Paper and Pen only. This is how real interviews work. Practice speaking your logic out loud. Aim for 2-3 problems per day.",
           "subtopics": [
-            "Daily practice: Pick random Medium problem, solve on paper",
-            "Speak logic out loud - explain every line as you write it",
-            "For every recursive solution, calculate Max Stack Depth (N frames × 16 bytes = KB)",
-            "Reality check: Would this overflow a 4KB microcontroller stack?",
-            "Time yourself: 45 minutes per problem (real interview pace)",
-            "Practice: Writing valid C syntax on whiteboard without compiler help",
-            "Mock: Have a friend ask you to explain your solution"
+            {
+              "id": "week_24_25_mock_interviews_sub_0",
+              "name": "Daily practice: Pick random Medium problem, solve on paper",
+              "order": 0,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_24_25_mock_interviews_sub_1",
+              "name": "Speak logic out loud - explain every line as you write it",
+              "order": 1,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_24_25_mock_interviews_sub_2",
+              "name": "For every recursive solution, calculate Max Stack Depth (N frames × 16 bytes = KB)",
+              "order": 2,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_24_25_mock_interviews_sub_3",
+              "name": "Reality check: Would this overflow a 4KB microcontroller stack?",
+              "order": 3,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_24_25_mock_interviews_sub_4",
+              "name": "Time yourself: 45 minutes per problem (real interview pace)",
+              "order": 4,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_24_25_mock_interviews_sub_5",
+              "name": "Practice: Writing valid C syntax on whiteboard without compiler help",
+              "order": 5,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            },
+            {
+              "id": "week_24_25_mock_interviews_sub_6",
+              "name": "Mock: Have a friend ask you to explain your solution",
+              "order": 6,
+              "status": "not_started",
+              "needsReview": false,
+              "practiceCount": 0,
+              "revisionCount": 0
+            }
           ]
         }
       ]

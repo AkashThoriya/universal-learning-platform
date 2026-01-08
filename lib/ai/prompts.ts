@@ -35,46 +35,56 @@ const getBloomsLevels = (difficulty: MissionDifficulty): string[] => {
 export const PROMPTS = {
   /**
    * Constructs the prompt for generating adaptive questions.
+   * Uses strict JSON-only instructions to ensure parseable output.
    */
   generateQuestions: (request: QuestionGenerationRequest): string => {
     const difficultyDescription = getDifficultyDescription(request.difficulty);
     const bloomsLevels = getBloomsLevels(request.difficulty);
+    
+    // Build topic context if available
+    const topicsContext = request.topics?.length 
+      ? `- Specific Topics to Cover: ${request.topics.join(', ')}` 
+      : '';
+    const syllabusContext = request.syllabusContext 
+      ? `- Syllabus/Chapter Context: ${request.syllabusContext}` 
+      : '';
 
-    return `You are an expert Socratic Tutor and Exam Creator. Your goal is to create high-quality, pedagogically rigorous assessment questions.
+    return `IMPORTANT: You MUST respond with ONLY valid JSON. No markdown code fences, no comments, no explanations before or after. Start your response with [ and end with ].
 
-TASK: Generate ${request.questionCount} ${request.questionType.replace('_', ' ')} questions for ${request.subjects.join(', ')}.
+You are an expert Socratic Tutor and Exam Creator. Create high-quality, pedagogically rigorous assessment questions.
 
-CONTEXT:
-- Difficulty Level: ${request.difficulty.toUpperCase()}
-  * Standard: ${difficultyDescription}
+TASK: Generate exactly ${request.questionCount} ${request.questionType.replace('_', ' ')} questions.
+
+SUBJECT CONTEXT:
+- Subject(s): ${request.subjects.join(', ')}
+${topicsContext}
+${syllabusContext}
+- Difficulty Level: ${request.difficulty.toUpperCase()} (${difficultyDescription})
 - Target Cognitive Level (Bloom's): ${bloomsLevels.join(' or ')}
-${request.examContext ? `- Exam Context: ${request.examContext}` : ''}
-${request.learningObjectives ? `- Learning Objectives: ${request.learningObjectives.join(', ')}` : ''}
+${request.examContext ? `- Exam Type: ${request.examContext}` : ''}
+${request.learningObjectives?.length ? `- Learning Objectives: ${request.learningObjectives.join(', ')}` : ''}
 
-STRICT CONSTRAINTS (ANTI-PATTERNS):
-1. NO "All of the above" or "None of the above" options.
-2. NO ambiguous answers where multiple options could be arguably correct.
-3. NO negative phrasing (e.g., "Which of the following is NOT...").
-4. Distractors (wrong options) must be plausible and based on common misconceptions.
+STRICT CONSTRAINTS:
+1. NO "All of the above" or "None of the above" options
+2. NO ambiguous answers - exactly one correct answer
+3. NO negative phrasing (e.g., "Which is NOT...")
+4. Distractors must be plausible, based on common misconceptions
+5. Questions must be relevant to the specified topics
 
-OUTPUT FORMAT:
-You must return a JSON array of objects.
-
-EXAMPLE JSON OBJECT:
+REQUIRED JSON SCHEMA - Each object must have ALL these fields:
 {
-  "question": "A lucid and precise question text",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "correctAnswer": "A", // Must be one of the options or the letter if MCQ
-  "explanation": "## Correct Answer: A\\n\\n**Reasoning:** Detailed breakdown of why A is correct.\\n\\n**Why others are wrong:**\\n* B is incorrect because...\\n* C is incorrect because...",
+  "question": "Clear, precise question text",
+  "options": ["Option A text", "Option B text", "Option C text", "Option D text"],
+  "correctAnswer": "A",
+  "explanation": "Detailed explanation of why the answer is correct",
   "difficulty": "${request.difficulty}",
-  "subject": "Math",
-  "topics": ["Calculus"],
-  "estimatedTime": 120,
-  "bloomsLevel": "analyze"
+  "subject": "${request.subjects[0]}",
+  "topics": ["topic1", "topic2"],
+  "estimatedTime": 90,
+  "bloomsLevel": "${bloomsLevels[0]}"
 }
 
-GENERATE NOW:
-Create ${request.questionCount} questions in valid JSON format.`;
+OUTPUT: Return a JSON array with exactly ${request.questionCount} question objects. Start with [ and end with ]. No other text.`;
   },
 
   /**

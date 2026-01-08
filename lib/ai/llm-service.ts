@@ -34,7 +34,7 @@ class GeminiProvider {
   constructor(config: LLMProvider) {
     this.apiKey = config.apiKey;
     this.baseUrl = config.baseUrl ?? 'https://generativelanguage.googleapis.com/v1beta';
-    this.model = config.model ?? 'gemini-2.5-pro';
+    this.model = config.model ?? 'gemini-2.5-flash';
   }
 
   async generateQuestions(
@@ -46,9 +46,8 @@ class GeminiProvider {
       try {
         const prompt = PROMPTS.generateQuestions(request);
 
-        // User explicitly confirmed access to gemini-2.5-pro.
-        // We are strictly using this model for superior reasoning and generation capabilities.
-        const targetModel = 'gemini-2.5-pro';
+        // User requested gemini-2.5-flash for faster responses.
+        const targetModel = 'gemini-2.5-flash';
 
         const response = await fetch(`${this.baseUrl}/models/${targetModel}:generateContent?key=${this.apiKey}`, {
           method: 'POST',
@@ -128,44 +127,107 @@ class GeminiProvider {
     return { success: false, error: 'Max retries exceeded', provider: 'gemini', model: this.model };
   }
 
+  /**
+   * Parse LLM response with multiple fallback strategies for robust JSON extraction.
+   * Returns valid questions even if some fail validation.
+   */
   private parseQuestionResponse(content: string, request: QuestionGenerationRequest): LLMQuestionResponse[] {
-    try {
-      // Robust JSON Extraction
-      // Remove any markdown code fences
-      const cleanContent = content.replace(/```json\n?|\n?```/g, '').trim();
-
-      // Try to find the array if there's extra text
-      const arrayMatch = cleanContent.match(/\[[\s\S]*\]/);
-      const jsonStr = arrayMatch ? arrayMatch[0] : cleanContent;
-
-      const questions = JSON.parse(jsonStr);
-
-      if (!Array.isArray(questions)) {
-        throw new Error('Response is not an array');
+    const strategies = [
+      // Strategy 1: Direct parse (best case - LLM returned pure JSON)
+      () => JSON.parse(content.trim()),
+      
+      // Strategy 2: Remove markdown code fences
+      () => {
+        const cleaned = content
+          .replace(/```(?:json)?\s*\n?/gi, '')
+          .replace(/\n?\s*```/g, '')
+          .trim();
+        return JSON.parse(cleaned);
+      },
+      
+      // Strategy 3: Extract JSON array from surrounding text
+      () => {
+        const match = content.match(/\[\s*\{[\s\S]*\}\s*\]/);
+        if (!match) throw new Error('No JSON array found in response');
+        return JSON.parse(match[0]);
+      },
+      
+      // Strategy 4: Fix common JSON issues and retry
+      () => {
+        let fixed = content
+          // Remove markdown
+          .replace(/```(?:json)?\s*\n?/gi, '')
+          .replace(/\n?\s*```/g, '')
+          // Fix trailing commas
+          .replace(/,(\s*[}\]])/g, '$1')
+          // Fix unquoted keys (simple cases)
+          .replace(/([{,]\s*)([a-zA-Z_]\w*)(\s*:)/g, '$1"$2"$3')
+          // Remove comments (// style)
+          .replace(/\/\/[^\n]*/g, '')
+          .trim();
+        
+        const match = fixed.match(/\[\s*\{[\s\S]*\}\s*\]/);
+        if (!match) throw new Error('No JSON array after cleanup');
+        return JSON.parse(match[0]);
       }
+    ];
 
-      return questions.map((q: any, _index: number) => ({
-        question: q.question ?? '',
-        options: q.options ?? undefined,
-        correctAnswer: q.correctAnswer ?? '',
-        explanation: q.explanation ?? undefined,
+    let lastError: Error | null = null;
+    
+    for (let i = 0; i < strategies.length; i++) {
+      try {
+        const strategy = strategies[i];
+        if (!strategy) continue;
+        const rawData = strategy();
+        const validated = this.validateAndNormalizeQuestions(rawData, request);
+        
+        if (validated.length > 0) {
+          console.log(`[LLM] Successfully parsed ${validated.length} questions using strategy ${i + 1}`);
+          return validated;
+        }
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        console.warn(`[LLM] Parse strategy ${i + 1} failed:`, lastError.message);
+      }
+    }
+
+    console.error('[LLM] All JSON parsing strategies failed. Raw content:', content.substring(0, 500));
+    throw new Error(`Failed to parse LLM response: ${lastError?.message || 'Unknown error'}`);
+  }
+
+  /**
+   * Validate and normalize questions, filtering out invalid ones.
+   */
+  private validateAndNormalizeQuestions(data: unknown, request: QuestionGenerationRequest): LLMQuestionResponse[] {
+    if (!Array.isArray(data)) {
+      throw new Error('Response is not an array');
+    }
+
+    return data
+      .filter((q: any) => {
+        // Required fields validation
+        if (!q.question || typeof q.question !== 'string') return false;
+        if (q.correctAnswer === undefined || q.correctAnswer === null) return false;
+        return true;
+      })
+      .map((q: any) => ({
+        question: String(q.question).trim(),
+        options: Array.isArray(q.options) ? q.options.map((o: any) => String(o)) : undefined,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation ? String(q.explanation) : '',
         difficulty: q.difficulty ?? request.difficulty,
-        subject: q.subject ?? request.subjects[0],
-        topics: q.topics ?? [],
-        estimatedTime: q.estimatedTime ?? 60,
+        subject: q.subject ?? request.subjects[0] ?? 'General',
+        topics: Array.isArray(q.topics) ? q.topics : [],
+        estimatedTime: typeof q.estimatedTime === 'number' ? q.estimatedTime : 60,
         bloomsLevel: q.bloomsLevel ?? 'understand',
       }));
-    } catch (error) {
-      console.error('Failed to parse LLM response:', error);
-      throw new Error('Failed to parse generated questions');
-    }
   }
 
   async generateTestRecommendations(context: any): Promise<LLMResponse<any>> {
     try {
       const prompt = PROMPTS.generateTestRecommendations(context);
 
-      const targetModel = 'gemini-2.5-pro';
+      const targetModel = 'gemini-2.5-flash';
 
       const response = await fetch(`${this.baseUrl}/models/${targetModel}:generateContent?key=${this.apiKey}`, {
         method: 'POST',
@@ -201,7 +263,7 @@ class GeminiProvider {
     try {
       const prompt = PROMPTS.generateJourneyPlan(goal);
 
-      const targetModel = 'gemini-2.5-pro';
+      const targetModel = 'gemini-2.5-flash';
 
       const response = await fetch(`${this.baseUrl}/models/${targetModel}:generateContent?key=${this.apiKey}`, {
         method: 'POST',

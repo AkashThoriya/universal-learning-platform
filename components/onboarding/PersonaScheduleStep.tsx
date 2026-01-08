@@ -12,7 +12,7 @@
 
 'use client';
 
-import { User, Clock, Calendar, AlertCircle, CheckCircle } from 'lucide-react';
+import { User, Clock, Calendar, AlertCircle, CheckCircle, Sparkles } from 'lucide-react';
 import { useState, useCallback, useMemo } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -555,203 +555,169 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
         </Card>
       )}
 
-      {/* Target Date Selection */}
+      {/* Preparation Start Date - BEFORE target date */}
+      {form.data.userPersona?.type && form.data.preferences?.dailyStudyGoalMinutes && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2 mb-3">
+              <Calendar className="h-4 w-4 text-green-600" aria-hidden="true" />
+              <Label className="text-base font-semibold">When did you start preparing?</Label>
+            </div>
+            <div className="space-y-3">
+              <Input
+                type="date"
+                value={(form.data as any).preparationStartDate || new Date().toISOString().split('T')[0]}
+                onChange={e => form.updateField('preparationStartDate' as any, e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+                className="max-w-xs"
+              />
+              <p className="text-sm text-gray-500">
+                Default is today. If you've already been studying, pick an earlier date for accurate velocity tracking.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Target Date Prediction */}
       {form.data.userPersona?.type && form.data.preferences?.dailyStudyGoalMinutes && (
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2 mb-3">
               <Calendar className="h-4 w-4 text-blue-600" aria-hidden="true" />
-              <Label className="text-base font-semibold">When is your target completion date?</Label>
+              <Label className="text-base font-semibold">Target Completion Date</Label>
             </div>
-            
-            {/* Multi-course clarification alert */}
-            {(form.data.selectedCourses as any[]) && (form.data.selectedCourses as any[]).length > 1 && (
-              <Alert className="mb-4 bg-amber-50 border-amber-200">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertDescription className="text-amber-800 text-sm">
-                   Settings for <strong>{primaryCourseName}</strong>. Other selected courses will use a standard schedule which you can customize later.
-                </AlertDescription>
-              </Alert>
+
+            {/* Smart Prediction Section */}
+            {selectedExam?.totalEstimatedHours && (
+              <div className="space-y-4">
+                {(() => {
+                  const dailyMinutes = form.data.preferences?.dailyStudyGoalMinutes ?? 240;
+                  const dailyHours = dailyMinutes / 60;
+                  const totalHours = selectedExam.totalEstimatedHours;
+                  const daysNeeded = Math.ceil((totalHours / dailyHours) * 1.2); // 20% buffer
+                  
+                  const predictedDate = new Date();
+                  predictedDate.setDate(predictedDate.getDate() + daysNeeded);
+                  const predictedDateString = predictedDate.toISOString().split('T')[0];
+                  
+                  // Calculate what hours/day would be needed for user's chosen date
+                  const userChosenDate = form.data.examDate ? new Date(form.data.examDate) : null;
+                  const userDaysAvailable = userChosenDate 
+                    ? Math.ceil((userChosenDate.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000))
+                    : null;
+                  const requiredHoursPerDay = userDaysAvailable && userDaysAvailable > 0
+                    ? Math.ceil((totalHours / userDaysAvailable) * 10) / 10
+                    : null;
+                  const isAggressive = requiredHoursPerDay && requiredHoursPerDay > dailyHours;
+                  
+                  return (
+                    <>
+                      {/* AI Suggested Date */}
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4 border border-blue-200">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sparkles className="h-4 w-4 text-blue-600" />
+                          <span className="font-medium text-blue-800">AI Predicted Finish Date</span>
+                        </div>
+                        <div className="text-2xl font-bold text-blue-700 mb-2">
+                          {predictedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        </div>
+                        <div className="text-sm text-blue-600 mb-3">
+                          Based on {dailyHours}h/day × {totalHours} hours of content (with 20% buffer)
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            if (predictedDateString) {
+                              handleDateChange(predictedDateString);
+                            }
+                          }}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Accept This Date
+                        </Button>
+                      </div>
+
+                      {/* Or Manual Selection */}
+                      <div className="border-t pt-4">
+                        <div className="text-sm font-medium text-gray-700 mb-2">Or set a custom target date:</div>
+                        <Input
+                          type="date"
+                          value={form.data.examDate}
+                          onChange={e => handleDateChange(e.target.value)}
+                          min={minDateString}
+                          max={maxDateString}
+                          className={`max-w-xs ${validationErrors.examDate ? 'border-red-300 focus:border-red-500' : ''}`}
+                        />
+                        {validationErrors.examDate && (
+                          <div className="flex items-center gap-1 text-red-600 text-sm mt-1">
+                            <AlertCircle className="h-4 w-4" />
+                            <span>{validationErrors.examDate}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* If user picks earlier date, show required hours */}
+                      {userChosenDate && !validationErrors.examDate && isAggressive && (
+                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <AlertCircle className="h-4 w-4 text-amber-600" />
+                            <span className="font-medium text-amber-800">Ambitious Timeline!</span>
+                          </div>
+                          <p className="text-sm text-amber-700 mb-3">
+                            To finish by <strong>{userChosenDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</strong>, 
+                            you'll need to study <strong className="text-lg">{requiredHoursPerDay}h/day</strong> instead of {dailyHours}h/day.
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-amber-400 text-amber-700 hover:bg-amber-100"
+                            onClick={() => {
+                              const newMinutes = Math.min(Math.round((requiredHoursPerDay || dailyHours) * 60), 720);
+                              form.updateField('preferences', {
+                                ...(form.data.preferences ?? {}),
+                                dailyStudyGoalMinutes: newMinutes,
+                              });
+                            }}
+                          >
+                            Update to {requiredHoursPerDay}h/day
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Success state for matching or realistic date */}
+                      {userChosenDate && !validationErrors.examDate && !isAggressive && form.data.examDate && (
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-green-800">Target is achievable!</span>
+                          </div>
+                          <p className="text-sm text-green-700 mt-1">
+                            With {dailyHours}h/day, you have comfortable buffer to complete by {userChosenDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
             )}
 
-            <div className="space-y-4">
-              <div className="space-y-2">
+            {/* Fallback for custom exams without totalEstimatedHours */}
+            {!selectedExam?.totalEstimatedHours && (
+              <div className="space-y-3">
                 <Input
                   type="date"
                   value={form.data.examDate}
                   onChange={e => handleDateChange(e.target.value)}
                   min={minDateString}
                   max={maxDateString}
-                  className={`${validationErrors.examDate ? 'border-red-300 focus:border-red-500' : ''}`}
-                  aria-describedby="date-error date-help"
+                  className={validationErrors.examDate ? 'border-red-300' : ''}
                 />
-                <div id="date-help" className="text-sm text-gray-500">
-                  Select your ideal completion date (at least 7 days from today)
-                </div>
-                {validationErrors.examDate && (
-                  <div id="date-error" className="flex items-center space-x-1 text-red-600 text-sm">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>{validationErrors.examDate}</span>
-                  </div>
-                )}
+                <p className="text-sm text-gray-500">Select your target completion date</p>
               </div>
-
-              {/* AI Analysis of Target Date - Show suggestion when study hours are selected */}
-              {selectedExam?.totalEstimatedHours && form.data.preferences?.dailyStudyGoalMinutes && (
-                <div className="space-y-4">
-                  {(() => {
-                    const hasSelectedDate = form.data.examDate && !validationErrors.examDate;
-                    
-                    const targetAnalysis = hasSelectedDate
-                      ? useWeekendSchedule
-                        ? checkTargetDateRealism(
-                            form.data.examDate,
-                            selectedExam.totalEstimatedHours,
-                            true,
-                            weekdayHours * 60,
-                            weekendHours * 60
-                          )
-                        : checkTargetDateRealism(
-                            form.data.examDate,
-                            selectedExam.totalEstimatedHours,
-                            false,
-                            undefined,
-                            undefined,
-                            form.data.preferences?.dailyStudyGoalMinutes
-                          )
-                      : null;
-
-                    const recommendedDate = useWeekendSchedule
-                      ? calculateRecommendedDateWithWeekends(
-                          selectedExam.totalEstimatedHours,
-                          weekdayHours * 60,
-                          weekendHours * 60
-                        )
-                      : calculateRecommendedDate(
-                          selectedExam.totalEstimatedHours,
-                          form.data.preferences?.dailyStudyGoalMinutes ?? 240
-                        );
-
-                    return (
-                      <div
-                        className={`border rounded-lg p-4 ${
-                          targetAnalysis
-                            ? targetAnalysis.isRealistic
-                              ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200'
-                              : 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200'
-                            : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
-                        }`}
-                      >
-                        <div className="flex items-center space-x-2 mb-3">
-                          {targetAnalysis ? (
-                            targetAnalysis.isRealistic ? (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            ) : (
-                              <AlertCircle className="h-5 w-5 text-orange-600" />
-                            )
-                          ) : (
-                            <Calendar className="h-5 w-5 text-blue-600" />
-                          )}
-                          <span
-                            className={`font-medium ${
-                              targetAnalysis
-                                ? targetAnalysis.isRealistic
-                                  ? 'text-green-800'
-                                  : 'text-orange-800'
-                                : 'text-blue-800'
-                            }`}
-                          >
-                            {targetAnalysis
-                              ? targetAnalysis.isRealistic
-                                ? 'Target Achievable!'
-                                : 'Target Analysis'
-                              : 'Suggested Target Date'}
-                          </span>
-                        </div>
-
-                        <p
-                          className={`text-sm mb-3 ${
-                            targetAnalysis
-                              ? targetAnalysis.isRealistic
-                                ? 'text-green-700'
-                                : 'text-orange-700'
-                              : 'text-blue-700'
-                          }`}
-                        >
-                          {targetAnalysis
-                            ? targetAnalysis.recommendation
-                            : `Based on your study schedule and the content to cover, we recommend targeting ${recommendedDate.toLocaleDateString(
-                                'en-US',
-                                {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                }
-                              )} as your completion date.`}
-                        </p>
-
-                        <div className="bg-white rounded-lg p-3 border border-gray-200 space-y-2">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600">Content to cover:</span>
-                            <span className="font-medium">{selectedExam.totalEstimatedHours} hours</span>
-                          </div>
-                          {selectedExam.recommendedHoursPerWeek && (
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-gray-600">Recommended pace:</span>
-                              <span className="font-medium text-blue-600">{selectedExam.recommendedHoursPerWeek} hrs/week</span>
-                            </div>
-                          )}
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600">Your schedule:</span>
-                            <span className="font-medium">
-                              {useWeekendSchedule
-                                ? `${weekdayHours}h weekdays, ${weekendHours}h weekends`
-                                : `${Math.floor((form.data.preferences?.dailyStudyGoalMinutes ?? 240) / 60)}h daily`}
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600">AI suggests:</span>
-                            <span className="font-medium">
-                              {recommendedDate.toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                              })}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="mt-3 flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-blue-700 border-blue-300 hover:bg-blue-50"
-                            onClick={() => {
-                              const dateString = recommendedDate.toISOString().split('T')[0];
-                              if (dateString) {
-                                handleDateChange(dateString);
-                              }
-                            }}
-                          >
-                            {targetAnalysis ? 'Use AI Suggestion' : 'Set This Date'}
-                          </Button>
-                          {!targetAnalysis && (
-                            <div className="text-xs text-blue-600 flex items-center">
-                              💡 You can always adjust this later
-                            </div>
-                          )}
-                          {targetAnalysis && !targetAnalysis.isRealistic && (
-                            <div className="text-orange-700 text-sm font-medium">
-                              Recommended for realistic planning
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-            </div>
+            )}
           </CardContent>
         </Card>
       )}

@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils/utils';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { journeyService } from '@/lib/services/journey-service';
 import { useToast } from '@/hooks/use-toast';
 import { llmService } from '@/lib/ai/llm-service';
@@ -139,6 +140,9 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] min-h-[400px] flex flex-col justify-center">
+        <VisuallyHidden>
+          <DialogTitle>AI Journey Architect</DialogTitle>
+        </VisuallyHidden>
         <AnimatePresence mode="wait">
           {status === 'idle' && (
             <motion.div

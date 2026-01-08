@@ -708,34 +708,34 @@ function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<Person
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Current Goal */}
-        <div className="space-y-2">
+        {/* Current Goal - Text Display */}
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label>Daily Study Goal</Label>
-            <span className="text-sm text-muted-foreground">
+            <Label>Your Daily Study Goal</Label>
+            <span className="text-xl font-bold text-orange-600">
               {Math.floor(form.data.preferences?.dailyStudyGoalMinutes / 60)}h{' '}
               {form.data.preferences?.dailyStudyGoalMinutes % 60}m
             </span>
           </div>
-          <Slider
-            value={[form.data.preferences?.dailyStudyGoalMinutes || 480]}
-            onValueChange={([value]) => updatePreference('preferences.dailyStudyGoalMinutes', value)}
-            max={recommendations.maxGoal}
-            min={recommendations.minGoal}
-            step={30}
-            className="w-full"
-          />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>
-              {Math.floor(recommendations.minGoal / 60)}h {recommendations.minGoal % 60}m
-            </span>
-            <span className="font-medium">
-              Recommended: {Math.floor(recommendations.recommendedGoal / 60)}h {recommendations.recommendedGoal % 60}m
-            </span>
-            <span>
-              {Math.floor(recommendations.maxGoal / 60)}h {recommendations.maxGoal % 60}m
-            </span>
+          
+          <div className="bg-white rounded-lg p-3 border space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">Recommended:</span>
+              <span className="font-medium text-green-600">
+                {Math.floor(recommendations.recommendedGoal / 60)}h {recommendations.recommendedGoal % 60}m/day
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-500">Range:</span>
+              <span className="text-muted-foreground">
+                {Math.floor(recommendations.minGoal / 60)}h–{Math.floor(recommendations.maxGoal / 60)}h
+              </span>
+            </div>
           </div>
+          
+          <p className="text-xs text-muted-foreground">
+            💡 This is set based on your profile. You'll fine-tune it in the next step.
+          </p>
         </div>
 
         {/* Tips */}
