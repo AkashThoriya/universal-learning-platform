@@ -26,8 +26,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, updateTopicProgress, getTopicProgress } from '@/lib/firebase/firebase-utils';
-import { SyllabusSubject, Subtopic, TopicProgress } from '@/types/exam';
+import { getSyllabus, updateTopicProgress, getTopicProgress, getUser } from '@/lib/firebase/firebase-utils';
+import { SyllabusSubject, Subtopic, TopicProgress, User as UserProfile } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
 
 interface ReviewItem {
@@ -52,6 +52,7 @@ export default function ConceptReviewPage() {
 
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [topicProgressMap, setTopicProgressMap] = useState<Map<string, TopicProgress>>(new Map());
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'flagged' | 'due' | 'overdue'>('all');
@@ -61,8 +62,13 @@ export default function ConceptReviewPage() {
       if (!user) return;
       
       try {
-        const syllabusData = await getSyllabus(user.uid);
+        const [syllabusData, profileData] = await Promise.all([
+          getSyllabus(user.uid),
+          getUser(user.uid)
+        ]);
+        
         setSyllabus(syllabusData);
+        setUserProfile(profileData);
         
         // Fetch progress for all topics
         const progressPromises = syllabusData.flatMap(subject =>
@@ -102,9 +108,28 @@ export default function ConceptReviewPage() {
     syllabus.forEach(subject => {
       subject.topics.forEach(topic => {
         const progress = topicProgressMap.get(topic.id);
+        const startDate = userProfile?.preparationStartDate?.toDate();
+
+        // Create an effective progress object that respects the start date
+        const effectiveProgress = progress ? { ...progress } : undefined;
         
+        if (effectiveProgress && startDate) {
+          // If revision happened before start date, treat as not revised
+          if (effectiveProgress.lastRevised?.toDate() < startDate) {
+            effectiveProgress.lastRevised = undefined as any; 
+            effectiveProgress.nextRevision = undefined as any;
+            effectiveProgress.revisionCount = 0;
+            effectiveProgress.status = 'not_started';
+          }
+          
+          // If flag was set before start date, ignore it (unless it was just refreshed? No, timestamp checks handle it)
+          if (effectiveProgress.reviewRequestedAt?.toDate() < startDate) {
+            effectiveProgress.needsReview = false;
+          }
+        }
+
         // Check topic needs review
-        if (progress?.needsReview) {
+        if (effectiveProgress?.needsReview) {
           items.push({
             type: 'topic',
             id: topic.id,
@@ -112,16 +137,16 @@ export default function ConceptReviewPage() {
             subjectId: subject.id,
             subjectName: subject.name,
             needsReview: true,
-            nextRevision: progress.nextRevision?.toDate(),
-            lastRevised: progress.lastRevised?.toDate(),
-            status: progress.masteryScore >= 80 ? 'mastered' : progress.masteryScore > 0 ? 'in_progress' : 'not_started',
+            nextRevision: effectiveProgress.nextRevision?.toDate(),
+            lastRevised: effectiveProgress.lastRevised?.toDate(),
+            status: effectiveProgress.masteryScore >= 80 ? 'mastered' : effectiveProgress.masteryScore > 0 ? 'in_progress' : 'not_started',
             practiceCount: 0,
-            revisionCount: progress.revisionCount || 0,
+            revisionCount: effectiveProgress.revisionCount || 0,
           });
         }
         
         // Check topic due for revision
-        if (progress?.nextRevision && progress.nextRevision.toDate() <= new Date()) {
+        if (effectiveProgress?.nextRevision && effectiveProgress.nextRevision.toDate() <= new Date()) {
           const exists = items.find(i => i.type === 'topic' && i.id === topic.id);
           if (!exists) {
             items.push({
@@ -130,23 +155,39 @@ export default function ConceptReviewPage() {
               name: topic.name,
               subjectId: subject.id,
               subjectName: subject.name,
-              needsReview: progress.needsReview || false,
-              nextRevision: progress.nextRevision.toDate(),
-              lastRevised: progress.lastRevised?.toDate(),
-              status: progress.masteryScore >= 80 ? 'mastered' : progress.masteryScore > 0 ? 'in_progress' : 'not_started',
+              needsReview: effectiveProgress.needsReview || false,
+              nextRevision: effectiveProgress.nextRevision.toDate(),
+              lastRevised: effectiveProgress.lastRevised?.toDate(),
+              status: effectiveProgress.masteryScore >= 80 ? 'mastered' : effectiveProgress.masteryScore > 0 ? 'in_progress' : 'not_started',
               practiceCount: 0,
-              revisionCount: progress.revisionCount || 0,
+              revisionCount: effectiveProgress.revisionCount || 0,
             });
           }
         }
         
         // Check subtopics
         topic.subtopics?.forEach((subtopic: Subtopic) => {
-          if (subtopic.needsReview) {
-            const lastRevisedDate = subtopic.lastRevised?.toDate();
+          const startDate = userProfile?.preparationStartDate?.toDate();
+          const effectiveSubtopic = { ...subtopic };
+
+          if (startDate) {
+            // Ignore flags from before start date
+            if (effectiveSubtopic.reviewRequestedAt?.toDate() < startDate) {
+              effectiveSubtopic.needsReview = false;
+            }
+            // If revision old, reset needsReview if it was somehow based on that?
+            // Actually needsReview is explicit.
+          }
+
+          if (effectiveSubtopic.needsReview) {
+            const lastRevisedDate = effectiveSubtopic.lastRevised?.toDate();
+            
+            // Should we show lastRevised if it's old? Probably not relevant.
+            // But let's keep it for context unless it's strictly excluded.
+             
             items.push({
               type: 'subtopic',
-              id: subtopic.id,
+              id: subtopic.id, // Use original ID
               name: subtopic.name,
               subjectId: subject.id,
               subjectName: subject.name,
@@ -163,8 +204,8 @@ export default function ConceptReviewPage() {
       });
     });
     
-    return items;
-  }, [syllabus, topicProgressMap]);
+     return items;
+   }, [syllabus, topicProgressMap, userProfile]);
 
   // Filter items
   const filteredItems = useMemo(() => {
