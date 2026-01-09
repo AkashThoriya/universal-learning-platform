@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import {
   Brain,
   Target,
@@ -16,8 +17,9 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 
-import { AdaptiveTestCard, QuestionInterface, TestAnalyticsDashboard, TestConfigModal, TestConfig } from '@/components/adaptive-testing';
+import { AdaptiveTestCard, TestConfigModal, TestConfig } from '@/components/adaptive-testing';
 import { TestGenerationOverlay } from '@/components/adaptive-testing/TestGenerationOverlay';
 import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
@@ -31,7 +33,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
-import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
+import { AdaptiveTest } from '@/types/adaptive-testing';
 import PageTransition from '@/components/layout/PageTransition';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
@@ -64,28 +66,44 @@ export default function AdaptiveTestingPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterSubject, setFilterSubject] = useState<string>('all');
-  const [activeTest, setActiveTest] = useState<{
-    test: AdaptiveTest;
-    session: TestSession;
-    currentQuestion: AdaptiveQuestion | null;
-  } | null>(null);
-  const [showResults, setShowResults] = useState<{
-    test: AdaptiveTest;
-    performance: any;
-  } | null>(null);
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [preSelectedSubject, setPreSelectedSubject] = useState<string | undefined>(undefined);
+  const [preSelectedTopic, setPreSelectedTopic] = useState<string | undefined>(undefined);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Handle URL params for "Take Test" from syllabus
+  useEffect(() => {
+    const subject = searchParams.get('subject');
+    const topic = searchParams.get('topic');
+    
+    if (subject || topic) {
+      console.log('[TestPage] URL Params detected:', { subject, topic });
+      setPreSelectedSubject(subject || undefined);
+      setPreSelectedTopic(topic || undefined);
+      setShowConfigModal(true);
+      console.log('[TestPage] Auto-opening config modal');
+      
+      // Clean up URL params
+      router.replace('/test', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   // Load tests and stats on mount
   useEffect(() => {
-    loadTestsAndStats();
-  }, []);
+    if (user?.uid) {
+      loadTestsAndStats();
+    }
+  }, [user]);
 
   const loadTestsAndStats = async () => {
     try {
       setLoading(true);
 
       // Load user's tests
-      const userTests = await adaptiveTestingService.getUserTests();
+      if (!user?.uid) return;
+      const userTests = await adaptiveTestingService.getUserTests(user.uid);
       setTests(userTests);
 
       // Calculate stats
@@ -114,126 +132,25 @@ export default function AdaptiveTestingPage() {
     }
   };
 
-  const handleStartTest = async (testId: string) => {
-    try {
-      if (!user?.uid) {
-        throw new Error('User not authenticated');
-      }
-      const result = await adaptiveTestingService.startTestSession(user.uid, { testId });
-      if (result.success && result.data) {
-        setActiveTest({
-          test: tests.find(t => t.id === testId)!,
-          session: result.data,
-          currentQuestion: null, // Will be set by the first question request
-        });
-      } else {
-        throw new Error('Failed to start test');
-      }
-    } catch (error) {
-      console.error('Error starting test:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to start the test. Please try again.',
-        variant: 'destructive',
-      });
-    }
-  };
 
-  const handleAnswerSubmit = async (
-    questionId: string,
-    selectedOptionId: string,
-    confidence: number,
-    timeSpent: number
-  ) => {
-    if (!activeTest) {
-      return;
-    }
-
-    try {
-      if (!user?.uid) {
-        throw new Error('User not authenticated');
-      }
-      const result = await adaptiveTestingService.submitResponse(user.uid, {
-        sessionId: activeTest.session.id,
-        questionId,
-        answer: selectedOptionId,
-        responseTime: timeSpent,
-        confidence,
-      });
-
-      if (result.success && result.data) {
-        if (result.data.testCompleted) {
-          // Test completed
-          setShowResults({
-            test: activeTest.test,
-            performance: result.data.performance,
-          });
-          setActiveTest(null);
-          await loadTestsAndStats(); // Refresh the test list
-        } else if (result.data.nextQuestion) {
-          // Continue with next question
-          setActiveTest({
-            ...activeTest,
-            currentQuestion: result.data.nextQuestion,
-          });
-        }
-      } else {
-        throw new Error('Failed to submit answer');
-      }
-    } catch (error) {
-      console.error('Error submitting answer:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to submit answer. Please try again.',
-        variant: 'destructive',
-      });
-    }
+  // Navigation Handlers
+  const handleStartTest = (testId: string) => {
+    router.push(`/test/${testId}`);
   };
 
   const handleViewResults = (testId: string) => {
-    const test = tests.find(t => t.id === testId);
-    if (test?.performance) {
-      setShowResults({
-        test,
-        performance: test.performance,
-      });
-    }
+    router.push(`/test/${testId}`);
   };
 
-  const handleRetakeTest = async (testId: string) => {
-    if (!user) {
-      toast({
-        title: 'Error',
-        description: 'Please log in to retake a test.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      // Create a new test based on the existing one
-      const originalTest = tests.find(t => t.id === testId);
-      if (!originalTest) {
-        return;
-      }
-
-      const newTest = await adaptiveTestingService.createTestFromTemplate(user.uid, originalTest);
-      if (newTest.success && newTest.data) {
-        await loadTestsAndStats();
-        handleStartTest(newTest.data.id);
-      }
-    } catch (error) {
-      console.error('Error retaking test:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to create retake test. Please try again.',
-        variant: 'destructive',
-      });
-    }
+  const handleRetakeTest = (testId: string) => {
+    // Retake logic will be handled by detail page
+    router.push(`/test/${testId}`);
   };
+
 
   // Handle test generation from modal config
   const handleGenerateFromConfig = async (config: TestConfig) => {
+    console.log('[TestPage] handleGenerateFromConfig called with:', config);
     if (!user?.uid) {
       toast({
         title: 'Error',
@@ -266,14 +183,16 @@ export default function AdaptiveTestingPage() {
       ]);
 
       if (!testResult.success || !testResult.data) {
+        console.error('[TestPage] Failed to create test:', testResult.error);
         throw new Error('Failed to create test');
       }
       
+      console.log('[TestPage] Test created successfully:', testResult.data.id);
       await loadTestsAndStats();
       setIsGenerating(false);
       handleStartTest(testResult.data.id);
     } catch (error) {
-      console.error('Error generating test from config:', error);
+      console.error('[TestPage] Error generating test:', error);
       setIsGenerating(false);
       toast({
         title: 'Error',
@@ -360,58 +279,7 @@ export default function AdaptiveTestingPage() {
 
   const cardClass = "min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center";
 
-  // Show active test interface
-  if (activeTest && activeTest.currentQuestion) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <Navigation />
-        <BottomNav />
-        <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
-          <QuestionInterface
-            question={activeTest.currentQuestion}
-            questionNumber={activeTest.session.currentQuestionIndex + 1}
-            totalQuestions={activeTest.test.totalQuestions}
-            onAnswer={handleAnswerSubmit}
-            showConfidenceSlider
-            showTimer
-            adaptiveMode
-          />
-        </div>
-      </div>
-    );
-  }
 
-  // Show results dashboard
-  if (showResults) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <Navigation />
-        <BottomNav />
-        <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
-          <div className="max-w-6xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800">Test Results</h1>
-                <p className="text-gray-600 mt-1">{showResults.test.title}</p>
-              </div>
-              <Button onClick={() => setShowResults(null)} variant="outline">
-                Back to Tests
-              </Button>
-            </div>
-
-            <TestAnalyticsDashboard
-              performance={showResults.performance}
-              adaptiveMetrics={showResults.test.adaptiveMetrics}
-              questions={showResults.test.questions || []}
-              responses={showResults.test.responses || []}
-              showDetailedAnalysis
-              showRecommendations
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -424,30 +292,37 @@ export default function AdaptiveTestingPage() {
       {/* Test Configuration Modal */}
       <TestConfigModal
         open={showConfigModal}
-        onOpenChange={setShowConfigModal}
+        onOpenChange={(open) => {
+          setShowConfigModal(open);
+          if (!open) {
+            // Clear pre-selected values when modal closes
+            setPreSelectedSubject(undefined);
+            setPreSelectedTopic(undefined);
+          }
+        }}
         onGenerate={handleGenerateFromConfig}
         isGenerating={isGenerating}
+        {...(preSelectedSubject !== undefined && { preSelectedSubject })}
+        {...(preSelectedTopic !== undefined && { preSelectedTopic })}
       />
 
-      <div className="container mx-auto px-4 py-8 pb-20 xl:pb-8">
-        <PageTransition className="max-w-7xl mx-auto space-y-8">
+      <div className="container mx-auto px-4 py-8 pb-40 sm:pb-40 xl:pb-8">
+        <PageTransition className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <div className="text-center space-y-4">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-3"
-            >
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl text-white">
-                <Brain className="h-8 w-8" />
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">Adaptive Testing</h1>
-            </motion.div>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Experience personalized assessments that adapt to your knowledge level in real-time, providing efficient
-              and accurate evaluation of your skills.
-            </p>
-          </div>
+          <FeaturePageHeader
+            title="Adaptive Testing"
+            description="Personalized assessments that adapt to your knowledge level in real-time"
+            icon={<Brain className="h-5 w-5 text-purple-600" />}
+            actions={
+              <Button 
+                onClick={() => setShowConfigModal(true)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Test
+              </Button>
+            }
+          />
 
           {/* Stats Overview */}
           {loading ? (
@@ -622,7 +497,6 @@ export default function AdaptiveTestingPage() {
                         onStartTest={handleStartTest}
                         onViewResults={handleViewResults}
                         onRetakeTest={handleRetakeTest}
-                        showDetailedMetrics
                       />
                     </motion.div>
                   ))}

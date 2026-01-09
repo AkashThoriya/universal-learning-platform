@@ -78,6 +78,13 @@ export function TestConfigModal({
   preSelectedTopic,
 }: TestConfigModalProps) {
   const { user } = useAuth();
+  
+  useEffect(() => {
+    if (open) {
+      console.log('[TestConfigModal] Opened with props:', { preSelectedSubject, preSelectedTopic });
+    }
+  }, [open, preSelectedSubject, preSelectedTopic]);
+
   const [loading, setLoading] = useState(true);
   const [subjects, setSubjects] = useState<SyllabusSubject[]>([]);
   
@@ -159,6 +166,7 @@ export function TestConfigModal({
         : undefined,
     };
 
+    console.log('[TestConfigModal] Generating with config:', config);
     onGenerate(config);
   };
 

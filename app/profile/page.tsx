@@ -13,6 +13,7 @@
 
 import { Timestamp } from 'firebase/firestore';
 import PageTransition from '@/components/layout/PageTransition';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import {
@@ -700,7 +701,15 @@ function ProfileContent() {
 
         {/* Main Content */}
         <PageTransition>
-          <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto px-4 py-8">
+            {/* Header */}
+            <FeaturePageHeader
+              title="Profile Settings"
+              description="Manage your account, exam configuration, and study preferences"
+              icon={<User className="h-5 w-5 text-indigo-600" />}
+              className="mb-6"
+            />
+
             {/* Validation Errors */}
             {Object.keys(validationErrors).length > 0 && (
               <Alert className="mb-6 border-red-200 bg-red-50">

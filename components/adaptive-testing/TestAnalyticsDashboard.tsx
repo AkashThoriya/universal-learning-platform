@@ -106,7 +106,8 @@ export default function TestAnalyticsDashboard({
   };
 
   const performanceGrade = getPerformanceGrade(performance.accuracy);
-  const abilityInfo = getAbilityLevel(performance.finalAbilityEstimate);
+  const safeAbilityEstimate = Number.isNaN(performance.finalAbilityEstimate) ? 0 : performance.finalAbilityEstimate;
+  const abilityInfo = getAbilityLevel(safeAbilityEstimate);
   const AbilityIcon = abilityInfo.icon;
 
   return (
@@ -170,7 +171,7 @@ export default function TestAnalyticsDashboard({
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Ability Level</p>
                     <p className={cn('text-2xl font-bold', abilityInfo.color)}>{abilityInfo.level}</p>
-                    <p className="text-sm text-gray-500">{performance.finalAbilityEstimate.toFixed(2)}</p>
+                    <p className="text-sm text-gray-500">{safeAbilityEstimate.toFixed(2)}</p>
                   </div>
                   <div
                     className={cn('p-3 rounded-full', abilityInfo.color.replace('text-', 'bg-').replace('600', '100'))}
@@ -289,7 +290,7 @@ export default function TestAnalyticsDashboard({
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Final Ability Estimate</span>
-                            <span className="font-medium">{performance.finalAbilityEstimate.toFixed(3)}</span>
+                            <span className="font-medium">{safeAbilityEstimate.toFixed(3)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Standard Error</span>
@@ -457,7 +458,7 @@ export default function TestAnalyticsDashboard({
                               <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Final Ability Estimate</span>
-                                  <span className="font-medium">{performance.finalAbilityEstimate.toFixed(3)}</span>
+                                  <span className="font-medium">{safeAbilityEstimate.toFixed(3)}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Standard Error</span>

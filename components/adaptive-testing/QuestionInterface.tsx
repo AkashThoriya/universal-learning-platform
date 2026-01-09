@@ -44,6 +44,11 @@ interface QuestionInterfaceProps {
   showTimer?: boolean;
   adaptiveMode?: boolean;
   className?: string;
+  result?: {
+    isCorrect: boolean;
+    correctAnswer: string | number;
+    explanation?: string;
+  } | null;
 }
 
 export default function QuestionInterface({
@@ -62,6 +67,7 @@ export default function QuestionInterface({
   showTimer = true,
   adaptiveMode = true,
   className,
+  result,
 }: QuestionInterfaceProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number[]>([75]);
@@ -185,19 +191,25 @@ export default function QuestionInterface({
                       {question.question}
                   </ReactMarkdown>
                   
-                  {question.explanation && isAnswered && (
+                  {(result?.explanation || question.explanation) && isAnswered && (
                      <motion.div 
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100"
+                        className={cn(
+                          "mt-6 p-4 rounded-lg border",
+                          result?.isCorrect === false ? "bg-red-50 border-red-100" : "bg-blue-50 border-blue-100"
+                        )}
                      >
-                        <h4 className="flex items-center gap-2 text-blue-900 font-semibold mb-2">
-                            <Zap className="h-4 w-4 fill-blue-500 text-blue-500" />
-                            Explanation
+                        <h4 className={cn(
+                          "flex items-center gap-2 font-semibold mb-2",
+                          result?.isCorrect === false ? "text-red-900" : "text-blue-900"
+                        )}>
+                            <Zap className={cn("h-4 w-4", result?.isCorrect === false ? "fill-red-500 text-red-500" : "fill-blue-500 text-blue-500")} />
+                            {result?.isCorrect === false ? "Correction" : "Explanation"}
                         </h4>
-                        <div className="prose prose-sm prose-blue max-w-none">
+                        <div className={cn("prose prose-sm max-w-none", result?.isCorrect === false ? "prose-red" : "prose-blue")}>
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {question.explanation}
+                                {result?.explanation || question.explanation}
                             </ReactMarkdown>
                         </div>
                      </motion.div>
@@ -248,43 +260,88 @@ export default function QuestionInterface({
             <CardContent className="space-y-6 p-6 sm:p-8 pt-0">
               {/* Answer Options */}
               <div className="space-y-3">
-                {question.options?.map((option: string, index: number) => (
-                  <motion.div
-                    key={`option-${index}`}
-                    whileHover={!isAnswered ? { scale: 1.005 } : {}}
-                    whileTap={!isAnswered ? { scale: 0.995 } : {}}
-                    className={cn(
-                      'group relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200',
-                      selectedOption === `option-${index}`
-                        ? 'border-blue-500 bg-blue-50/50 shadow-md ring-1 ring-blue-200'
-                        : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50 hover:shadow-sm',
-                      isAnswered && 'cursor-not-allowed opacity-75'
-                    )}
-                    onClick={() => handleOptionSelect(`option-${index}`)}
-                  >
-                    <div className="flex items-start gap-4 z-10 relative"> 
-                      <div className="flex-shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110">
-                        {selectedOption === `option-${index}` ? (
-                          <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center">
-                              <CheckCircle2 className="h-4 w-4 text-white" />
-                          </div>
-                        ) : (
-                          <div className="h-6 w-6 rounded-full border-2 border-gray-300 group-hover:border-blue-400 group-hover:bg-blue-50" />
+                  {question.options?.map((option: string, index: number) => {
+                    const optionId = `option-${index}`;
+                    const isSelected = selectedOption === optionId;
+                    
+                    // Determine status for styling
+                    let status: 'default' | 'selected' | 'correct' | 'incorrect' = 'default';
+                    
+                    if (result) {
+                      // If we have a result, show correct/incorrect
+                      // Check if this option is the correct answer
+                      // We need to match option content or index? 
+                      // The backend returns logic matches. 
+                      // Assuming question.options[index] matches correctAnswer text OR index 
+                      // Let's assume correctAnswer is the TEXT of the option for now as per AdaptiveQuestion type
+                      // But wait, submitResponse sends `selectedOption` (optionId).
+                      // The result usually confirms correctness.
+                      // If `result.correctAnswer` is provided, we check against it.
+                      // The `correctAnswer` in AdaptiveQuestion is string | number.
+                      
+                      const isOptionCorrect = option === result.correctAnswer || (index + 1) === result.correctAnswer || optionId === result.correctAnswer;
+                      
+                      if (isOptionCorrect) {
+                        status = 'correct';
+                      } else if (isSelected) {
+                        status = 'incorrect';
+                      }
+                    } else if (isSelected) {
+                      status = 'selected';
+                    }
+
+                    return (
+                      <motion.div
+                        key={optionId}
+                        whileHover={!isAnswered ? { scale: 1.005 } : {}}
+                        whileTap={!isAnswered ? { scale: 0.995 } : {}}
+                        className={cn(
+                          'group relative p-4 rounded-xl border-2 transition-all duration-200',
+                          !isAnswered && 'cursor-pointer',
+                          status === 'selected' && 'border-blue-500 bg-blue-50/50 shadow-md ring-1 ring-blue-200',
+                          status === 'correct' && 'border-green-500 bg-green-50/50 shadow-md ring-1 ring-green-200',
+                          status === 'incorrect' && 'border-red-500 bg-red-50/50 shadow-md ring-1 ring-red-200',
+                          status === 'default' && 'border-gray-100',
+                          status === 'default' && !isAnswered && 'hover:border-gray-200 hover:bg-gray-50 hover:shadow-sm',
+                          isAnswered && status === 'default' && 'opacity-50'
                         )}
-                      </div>
-                      <div className="flex-1">
-                          <span className={cn(
-                            "text-base leading-relaxed transition-colors block",
-                            selectedOption === `option-${index}` ? "font-semibold text-blue-900" : "font-medium text-gray-700"
-                          )}>
-                             <ReactMarkdown components={{ p: 'span' }} remarkPlugins={[remarkGfm]}>
-                                 {option}
-                             </ReactMarkdown>
-                          </span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                        onClick={() => handleOptionSelect(optionId)}
+                      >
+                        <div className="flex items-start gap-4 z-10 relative"> 
+                          <div className="flex-shrink-0 mt-0.5 transition-transform duration-200 group-hover:scale-110">
+                            {status === 'correct' ? (
+                              <div className="h-6 w-6 rounded-full bg-green-600 flex items-center justify-center">
+                                  <CheckCircle2 className="h-4 w-4 text-white" />
+                              </div>
+                            ) : status === 'incorrect' ? (
+                              <div className="h-6 w-6 rounded-full border-2 border-red-500 bg-red-50 flex items-center justify-center">
+                                  <div className="h-2 w-2 rounded-full bg-red-500" />
+                              </div>
+                            ) : status === 'selected' ? (
+                              <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center">
+                                  <div className="h-2 w-2 rounded-full bg-white" />
+                              </div>
+                            ) : (
+                              <div className="h-6 w-6 rounded-full border-2 border-gray-300 group-hover:border-blue-400 group-hover:bg-blue-50" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                              <span className={cn(
+                                "text-base leading-relaxed transition-colors block",
+                                status === 'selected' ? "font-semibold text-blue-900" : 
+                                status === 'correct' ? "font-semibold text-green-900" :
+                                status === 'incorrect' ? "font-medium text-red-900" :
+                                "font-medium text-gray-700"
+                              )}>
+                                 <ReactMarkdown components={{ p: 'span' }} remarkPlugins={[remarkGfm]}>
+                                     {option}
+                                 </ReactMarkdown>
+                              </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
               </div>
 
               {/* Confidence Slider */}

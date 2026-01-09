@@ -1,5 +1,6 @@
 'use client';
 
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import PageTransition from '@/components/layout/PageTransition';
 import { format, isPast, isToday } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
@@ -115,7 +116,7 @@ export default function ConceptReviewPage() {
         
         if (effectiveProgress && startDate) {
           // If revision happened before start date, treat as not revised
-          if (effectiveProgress.lastRevised?.toDate() < startDate) {
+          if (effectiveProgress.lastRevised && effectiveProgress.lastRevised.toDate() < startDate) {
             effectiveProgress.lastRevised = undefined as any; 
             effectiveProgress.nextRevision = undefined as any;
             effectiveProgress.revisionCount = 0;
@@ -123,7 +124,7 @@ export default function ConceptReviewPage() {
           }
           
           // If flag was set before start date, ignore it (unless it was just refreshed? No, timestamp checks handle it)
-          if (effectiveProgress.reviewRequestedAt?.toDate() < startDate) {
+          if (effectiveProgress.reviewRequestedAt && effectiveProgress.reviewRequestedAt.toDate() < startDate) {
             effectiveProgress.needsReview = false;
           }
         }
@@ -172,7 +173,7 @@ export default function ConceptReviewPage() {
 
           if (startDate) {
             // Ignore flags from before start date
-            if (effectiveSubtopic.reviewRequestedAt?.toDate() < startDate) {
+            if (effectiveSubtopic.reviewRequestedAt && effectiveSubtopic.reviewRequestedAt.toDate() < startDate) {
               effectiveSubtopic.needsReview = false;
             }
             // If revision old, reset needsReview if it was somehow based on that?
@@ -285,20 +286,18 @@ export default function ConceptReviewPage() {
         <BottomNav />
 
         <PageTransition>
-        <div className="container max-w-6xl mx-auto px-4 py-8 pb-24 lg:pb-8 space-y-6">
+        <div className="container max-w-6xl mx-auto px-4 py-8 pb-40 lg:pb-8 space-y-6">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-                <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500" />
-                Concept Review
-              </h1>
-              <p className="text-muted-foreground">Topics and subtopics flagged for review or due for revision</p>
-            </div>
-            <Badge variant="outline" className="self-start sm:self-auto text-lg px-4 py-2">
-              {reviewItems.length} items
-            </Badge>
-          </div>
+          <FeaturePageHeader
+            title="Concept Review"
+            description="Topics and subtopics flagged for review or due for revision"
+            icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
+            actions={
+              <Badge variant="outline" className="text-base px-4 py-2">
+                {reviewItems.length} items
+              </Badge>
+            }
+          />
 
           {/* Search & Filters */}
           <div className="flex flex-col sm:flex-row gap-4">

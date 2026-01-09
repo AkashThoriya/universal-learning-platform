@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -350,22 +351,13 @@ export default function DailyLogPage() {
         <Navigation />
         <BottomNav />
 
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-8">
+        <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-40 sm:pb-40 xl:pb-6 space-y-8">
           {/* Header */}
-          <div className="text-center space-y-3 mb-2">
-            <Badge variant="secondary" className="px-4 py-1.5 text-sm font-medium">
-              📅 Daily Progress Tracking
-            </Badge>
-            <div className="flex items-center justify-center gap-3">
-              <Calendar className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                Daily Progress Log
-              </h1>
-            </div>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Track your journey for <span className="font-semibold text-foreground">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
-            </p>
-          </div>
+          <FeaturePageHeader
+            title="Daily Progress Log"
+            description={`Track your journey for ${format(new Date(), 'EEEE, MMMM d, yyyy')}`}
+            icon={<Calendar className="h-5 w-5 text-primary" />}
+          />
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Health Metrics */}
@@ -437,8 +429,8 @@ export default function DailyLogPage() {
 
                 <div className="h-px bg-border/50 my-6" />
 
-                {/* Visual Selectors Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {/* Visual Selectors - One per row for readability */}
+                <div className="space-y-6">
                   <VisualSelector
                     label="Energy Level"
                     value={energyLevel}
@@ -631,7 +623,7 @@ export default function DailyLogPage() {
                 <CardDescription className="text-sm">Set goals and reflect on your day</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="space-y-6">
                   <div className="space-y-3">
                     <label htmlFor="daily-goal" className="text-sm font-medium flex items-center gap-2">
                       <Target className="h-4 w-4 text-primary" />

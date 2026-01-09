@@ -2,9 +2,10 @@
 
 import { format } from 'date-fns';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { ArrowLeft, Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
+import { Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import PageTransition from '@/components/layout/PageTransition';
+import { DetailPageHeader } from '@/components/layout/PageHeader';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -275,23 +276,16 @@ export default function TopicPage() {
         <BottomNav />
 
         <PageTransition>
-          <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-6">
+          <div className="max-w-5xl mx-auto p-4 sm:p-6 pb-40 sm:pb-40 xl:pb-6 space-y-6">
 
 
-            <Link href={`/subjects/${subjectId}`}>
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to {subject.name}
-              </Button>
-            </Link>
-
-
-          {/* Topic Header */}
-          <div className="text-center space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">{topic.name}</h1>
-              <div className="flex items-center justify-center space-x-3">
-                <Badge variant="outline">{subject.name}</Badge>
+          <DetailPageHeader
+            title={topic.name}
+            description={subject.name}
+            backHref={`/subjects/${subjectId}`}
+            backLabel={subject.name}
+            actions={
+              <div className="flex items-center gap-2">
                 {userProgress && (
                   <Badge className={getMasteryBadgeClass(userProgress.masteryScore)}>
                     Mastery: {userProgress.masteryScore}%
@@ -301,8 +295,8 @@ export default function TopicPage() {
                   <Badge variant="secondary">Last revised: {format(userProgress.lastRevised.toDate(), 'MMM dd')}</Badge>
                 )}
               </div>
-            </div>
-          </div>
+            }
+          />
 
           {/* Banking Context */}
           <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">

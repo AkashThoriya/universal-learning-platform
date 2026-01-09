@@ -4,6 +4,7 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { Target, BarChart3, Clock, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import PageTransition from '@/components/layout/PageTransition';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { useState } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
@@ -182,11 +183,12 @@ export default function TestLoggerPage() {
         <BottomNav />
 
         <PageTransition>
-          <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-6">
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Test Logger</h1>
-              <p className="text-muted-foreground">Log your mock test performance and analyze weaknesses</p>
-            </div>
+          <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-6">
+          <FeaturePageHeader
+            title="Test Logger"
+            description="Log your mock test performance and analyze weaknesses"
+            icon={<Target className="h-5 w-5 text-primary" />}
+          />
 
 
           {step === 1 && (

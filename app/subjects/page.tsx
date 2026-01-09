@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -45,10 +46,11 @@ export default function SubjectsPage() {
         <BottomNav />
 
         <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Study Arsenal</h1>
-            <p className="text-muted-foreground">Master every topic with banking context and strategic insights</p>
-          </div>
+          <FeaturePageHeader
+            title="Study Arsenal"
+            description="Master every topic with banking context and strategic insights"
+            icon={<BookOpen className="h-5 w-5 text-indigo-600" />}
+          />
 
           {/* Quick Actions */}
           <div className="max-w-2xl mx-auto">

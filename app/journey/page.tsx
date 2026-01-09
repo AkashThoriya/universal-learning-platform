@@ -161,7 +161,6 @@ export default function JourneyPlanningPage() {
               title="Journey Planning"
               description="Create, manage, and track your personalized learning journeys"
               icon={<MapPin className="h-5 w-5" />}
-              badge="🗺️ Learning Paths"
               actions={
                 <div className="flex items-center gap-3">
                   <Button 

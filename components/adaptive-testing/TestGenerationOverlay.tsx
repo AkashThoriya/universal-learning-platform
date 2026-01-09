@@ -19,7 +19,7 @@ const STEPS: GenerationStep[] = [
   { id: 'curate', label: 'Curating Topic List', icon: Target, duration: 1200 },
   { id: 'draft', label: 'Drafting Questions', icon: Sparkles, duration: 2500 },
   { id: 'calibrate', label: 'Calibrating Difficulty', icon: Loader2, duration: 1500 },
-  { id: 'finalize', label: 'Finalizing Test', icon: CheckCircle2, duration: 1000 },
+  { id: 'finalize', label: 'Finalizing Test', icon: Loader2, duration: 1000 },
 ];
 
 interface TestGenerationOverlayProps {
@@ -27,38 +27,60 @@ interface TestGenerationOverlayProps {
   onComplete?: () => void;
 }
 
-export function TestGenerationOverlay({ isVisible, onComplete }: TestGenerationOverlayProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+const TIPS = [
+  "Adaptive tests recalibrate difficulty after every question.",
+  "Consistency is key to mastery.",
+  "Take your time to understand the explanations.",
+  "Focus on accuracy over speed for better adaptation.",
+  "You can review your performance analytics after the test."
+];
 
+export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+
+  // Reset state when visibility toggles
   useEffect(() => {
     if (!isVisible) {
       setCurrentStepIndex(0);
-      return;
+      setCurrentTipIndex(0);
     }
+  }, [isVisible]);
+
+  // Handle steps progression
+  useEffect(() => {
+    if (!isVisible) return;
 
     let timeoutId: NodeJS.Timeout;
 
     const processStep = (index: number) => {
-      if (index >= STEPS.length) {
-        // All steps done
-        if (onComplete) onComplete();
+      // If we are at the last step, we stay there until isVisible becomes false
+      if (index >= STEPS.length - 1) {
         return;
       }
 
       const step = STEPS[index];
-      // If we provided a duration, respect it.
-      // In a real app, this might be driven by actual progress events, 
-      // but for "Magical UI" we often simulate progress to show the user what's happening.
       timeoutId = setTimeout(() => {
         setCurrentStepIndex(prev => prev + 1);
         processStep(index + 1);
       }, step?.duration ?? 1000);
     };
 
-    processStep(0);
+    processStep(currentStepIndex);
 
     return () => clearTimeout(timeoutId);
-  }, [isVisible, onComplete]);
+  }, [isVisible, currentStepIndex]); // Re-run if isVisible changes, but we manage index internally
+
+  // Rotate tips
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const interval = setInterval(() => {
+      setCurrentTipIndex(prev => (prev + 1) % TIPS.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isVisible]);
 
   return (
     <AnimatePresence>
@@ -89,9 +111,17 @@ export function TestGenerationOverlay({ isVisible, onComplete }: TestGenerationO
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-4">
                   {STEPS.map((step, index) => {
+                    // Logic: 
+                    // - Completed: index < currentStepIndex
+                    // - Current: index === currentStepIndex
+                    // - Pending: index > currentStepIndex
+                    
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
                     const isPending = index > currentStepIndex;
+                    
+                    // Special case for last step: If it's current, keep it "active" (spinning/pulsing) forever
+                    const isLastStep = index === STEPS.length - 1;
 
                     return (
                       <div
@@ -115,7 +145,7 @@ export function TestGenerationOverlay({ isVisible, onComplete }: TestGenerationO
                             {isCompleted ? (
                               <CheckCircle2 className="w-5 h-5" />
                             ) : (
-                              <step.icon className={cn('w-4 h-4', isCurrent && 'animate-pulse')} />
+                              <step.icon className={cn('w-4 h-4', isCurrent && (isLastStep ? 'animate-spin' : 'animate-pulse'))} />
                             )}
                           </div>
                           {index < STEPS.length - 1 && (
@@ -134,7 +164,7 @@ export function TestGenerationOverlay({ isVisible, onComplete }: TestGenerationO
                               isCurrent ? 'text-blue-700' : isCompleted ? 'text-gray-600' : 'text-gray-400'
                             )}
                           >
-                            {step.label}
+                            {isLastStep && isCurrent ? 'Finalizing details...' : step.label}
                           </p>
                         </div>
                         {isCurrent && (
@@ -148,6 +178,27 @@ export function TestGenerationOverlay({ isVisible, onComplete }: TestGenerationO
                     );
                   })}
                 </div>
+                
+                {/* Rotating Tips Section */}
+                <div className="pt-4 border-t border-gray-100">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-bold text-purple-600 px-2 py-0.5 bg-purple-50 rounded-full">Pro Tip</span>
+                    </div>
+                    <div className="h-10 relative overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            <motion.p 
+                                key={currentTipIndex}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className="text-sm text-gray-600 leading-snug absolute w-full"
+                            >
+                                {TIPS[currentTipIndex]}
+                            </motion.p>
+                        </AnimatePresence>
+                    </div>
+                </div>
+
               </CardContent>
             </Card>
 

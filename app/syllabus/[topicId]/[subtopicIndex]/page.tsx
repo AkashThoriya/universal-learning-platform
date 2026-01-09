@@ -1,10 +1,10 @@
 'use client';
 
 import PageTransition from '@/components/layout/PageTransition';
+import { DetailPageHeader } from '@/components/layout/PageHeader';
 import { format } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import {
-  ArrowLeft,
   Save,
   CheckCircle,
   TrendingUp,
@@ -20,7 +20,6 @@ import { useState, useEffect } from 'react';
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -30,7 +29,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, updateSubtopic } from '@/lib/firebase/firebase-utils';
 import { Subtopic, SyllabusSubject } from '@/types/exam';
-import { cn } from '@/lib/utils/utils';
 
 export default function SubtopicDetailPage() {
   const { user } = useAuth();
@@ -163,40 +161,17 @@ export default function SubtopicDetailPage() {
   return (
     <AuthGuard>
       <PageTransition>
-        <div className="min-h-screen bg-background pb-20">
+        <div className="min-h-screen bg-background pb-40 sm:pb-40">
           <Navigation />
           
-          <main className="container max-w-4xl mx-auto p-4 space-y-6">
+          <main className="container max-w-5xl mx-auto p-4 space-y-6">
             {/* Header */}
-            <div className="space-y-4">
-              <Button 
-                variant="ghost" 
-                className="pl-0 hover:bg-transparent text-muted-foreground hover:text-primary"
-                onClick={() => router.back()}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Topic
-              </Button>
-
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-muted-foreground">
-                      {subject?.name}
-                    </Badge>
-                    <Badge className={cn(
-                      subtopic.status === 'completed' ? "bg-green-100 text-green-700 hover:bg-green-200" :
-                      subtopic.status === 'in_progress' ? "bg-blue-100 text-blue-700 hover:bg-blue-200" :
-                      "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                    )}>
-                      {subtopic.status === 'not_started' ? 'Not Started' :
-                       subtopic.status === 'in_progress' ? 'In Progress' : 
-                       subtopic.status === 'completed' ? 'Completed' : 'Mastered'}
-                    </Badge>
-                  </div>
-                  <h1 className="text-2xl sm:text-3xl font-bold">{subtopic.name}</h1>
-                </div>
-
+            <DetailPageHeader
+              title={subtopic.name}
+              description={subject?.name || ''}
+              backHref={`/syllabus/${topicId}?subject=${subjectId}`}
+              backLabel="Back to Topic"
+              actions={
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -227,8 +202,8 @@ export default function SubtopicDetailPage() {
                     {subtopic.status === 'completed' ? 'Mark In Progress' : 'Mark Complete'}
                   </Button>
                 </div>
-              </div>
-            </div>
+              }
+            />
 
             {/* Main Content */}
             <Tabs defaultValue="notes" className="space-y-6">

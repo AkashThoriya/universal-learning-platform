@@ -323,9 +323,11 @@ class FirebaseService {
       }
 
       this.logger.debug(`Document set: ${collectionPath}/${docId}`);
+      console.log(`[Firebase] setDocument success: ${collectionPath}/${docId}`);
       return createSuccess(undefined);
     } catch (error) {
       this.logger.error(`Error setting document ${collectionPath}/${docId}`, error as Error);
+      console.error(`[Firebase] setDocument failed: ${collectionPath}/${docId}`, error);
       return createError(error instanceof Error ? error : new Error('Unknown error'));
     }
   }
@@ -1640,13 +1642,19 @@ const adaptiveTestingFirebaseService = {
   /**
    * Get user's adaptive tests (one-time fetch)
    */
-  async getUserTests(userId: string): Promise<Result<AdaptiveTest[]>> {
+  async getUserTests(userId?: string): Promise<Result<AdaptiveTest[]>> {
     try {
-      const q = query(
-        collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
-      );
+      // First try with server-side sorting (requires index)
+      const q = userId
+        ? query(
+            collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
+            where('userId', '==', userId),
+            orderBy('createdAt', 'desc')
+          )
+        : query(
+            collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
+            orderBy('createdAt', 'desc')
+          );
 
       const snapshot = await getDocs(q);
       const tests = snapshot.docs.map(doc => ({
@@ -1658,7 +1666,36 @@ const adaptiveTestingFirebaseService = {
       })) as AdaptiveTest[];
 
       return createSuccess(tests);
-    } catch (error) {
+    } catch (error: any) {
+      // Fallback: If index is missing (failed-precondition), fetch without sort and sort client-side
+      if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+        console.warn('Index missing for tests query, falling back to client-side sorting');
+        try {
+           const qFallback = userId
+            ? query(
+                collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
+                where('userId', '==', userId)
+              )
+            : query(
+                collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS)
+              );
+            
+            const snapshot = await getDocs(qFallback);
+            const tests = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id,
+                createdAt: doc.data().createdAt?.toDate() ?? new Date(),
+                updatedAt: doc.data().updatedAt?.toDate() ?? new Date(),
+                completedAt: doc.data().completedAt?.toDate() ?? null,
+            })) as AdaptiveTest[];
+            
+            // Client-side sort
+            tests.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+            return createSuccess(tests);
+        } catch (e2) {
+            return createError(e2 instanceof Error ? e2 : new Error('Failed to fetch user tests fallback'));
+        }
+      }
       return createError(error instanceof Error ? error : new Error('Failed to fetch user tests'));
     }
   },
@@ -2041,6 +2078,58 @@ const adaptiveTestingFirebaseService = {
       return createSuccess(session);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get test session'));
+    }
+  },
+
+  /**
+   * Get active session for user and test
+   */
+  async getActiveSession(userId: string, testId: string): Promise<Result<TestSession | null>> {
+    try {
+      const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
+      const q = query(
+        sessionsRef,
+        where('userId', '==', userId),
+        where('testId', '==', testId),
+        where('status', '==', 'active'),
+        orderBy('lastActivity', 'desc'),
+        limit(1)
+      );
+
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        return createSuccess(null);
+      }
+
+      const data = snapshot.docs[0]!.data();
+      return createSuccess({
+        ...data,
+        startedAt: data.startedAt.toDate(),
+        lastActivity: data.lastActivity.toDate(),
+      } as TestSession);
+    } catch (error) {
+      // Fallback: Try without orderBy if index is missing
+      try {
+         const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
+         const q = query(
+            sessionsRef,
+            where('userId', '==', userId),
+            where('testId', '==', testId),
+            where('status', '==', 'active'),
+            limit(1)
+         );
+         const snapshot = await getDocs(q);
+         if (snapshot.empty) return createSuccess(null);
+         const data = snapshot.docs[0]!.data();
+         return createSuccess({
+            ...data,
+            startedAt: data.startedAt.toDate(),
+            lastActivity: data.lastActivity.toDate(),
+         } as TestSession);
+      } catch (retryError) {
+         return createError(error instanceof Error ? error : new Error('Failed to get active session'));
+      }
     }
   },
 

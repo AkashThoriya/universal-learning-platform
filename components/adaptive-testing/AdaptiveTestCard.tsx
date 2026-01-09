@@ -44,7 +44,7 @@ export default function AdaptiveTestCard({
   className,
   showDetailedMetrics = false,
 }: AdaptiveTestCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
+
 
   const getStatusIcon = (): LucideIcon => {
     switch (test.status) {
@@ -125,13 +125,10 @@ export default function AdaptiveTestCard({
   return (
     <TooltipProvider>
       <motion.div
-        whileHover={{ scale: 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
-        className={cn('group active:scale-[0.98] transition-transform', className)}
+        className={cn('group active:scale-[0.98] transition-transform h-full', className)}
       >
-        <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
+        <Card className="h-full flex flex-col hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
           {/* Header with gradient background */}
           <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 p-6 text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-black/10" />
@@ -169,15 +166,10 @@ export default function AdaptiveTestCard({
             {/* Animated background pattern */}
             <motion.div
               className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-white/10"
-              animate={{
-                scale: isHovered ? 1.2 : 1,
-                rotate: isHovered ? 180 : 0,
-              }}
-              transition={{ duration: 0.3 }}
             />
           </div>
 
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="flex-1 flex flex-col p-6 space-y-6">
             {/* Configuration Details */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -265,7 +257,7 @@ export default function AdaptiveTestCard({
                   <div className="bg-green-50 rounded-lg p-2">
                     <div className="text-xs text-green-600 font-medium">Ability</div>
                     <div className="text-sm font-bold text-green-800">
-                      {test.performance.finalAbilityEstimate.toFixed(2)}
+                      {Number.isNaN(test.performance.finalAbilityEstimate) ? '0.00' : test.performance.finalAbilityEstimate.toFixed(2)}
                     </div>
                   </div>
                   <div className="bg-orange-50 rounded-lg p-2">
@@ -287,13 +279,13 @@ export default function AdaptiveTestCard({
                       <div>
                         <span className="text-purple-600">Efficiency:</span>
                         <span className="ml-1 font-medium">
-                          {(test.adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
+                          {Number.isNaN(test.adaptiveMetrics.algorithmEfficiency) ? '0' : (test.adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
                         </span>
                       </div>
                       <div>
                         <span className="text-purple-600">Stability:</span>
                         <span className="ml-1 font-medium">
-                          {(test.adaptiveMetrics.abilityEstimateStability * 100).toFixed(0)}%
+                          {Number.isNaN(test.adaptiveMetrics.abilityEstimateStability) ? '0' : (test.adaptiveMetrics.abilityEstimateStability * 100).toFixed(0)}%
                         </span>
                       </div>
                     </div>
@@ -311,7 +303,7 @@ export default function AdaptiveTestCard({
             )}
 
             {/* Action Buttons */}
-            <div className="pt-2 space-y-2">
+            <div className="pt-2 space-y-2 mt-auto">
               {test.status === 'draft' || (test.status === 'active' && test.currentQuestion === 0) ? (
                 <Button
                   onClick={() => onStartTest?.(test.id)}

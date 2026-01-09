@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import PageTransition from '@/components/layout/PageTransition';
 import {
   BookOpen,
@@ -567,39 +568,36 @@ export default function SyllabusPage() {
         <BottomNav />
 
         <PageTransition>
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-8">
+        <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-8">
           {/* Enhanced Header */}
-          <div className="text-center space-y-6">
-            <div className="inline-block">
-              <Badge variant="secondary" className="px-4 py-2 text-sm">
-                📚 Syllabus Management
-              </Badge>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Strategic Syllabus Overview</h1>
-            <p className="text-muted-foreground text-lg">Manage your study priorities and track mastery progress</p>
-
-            {/* Edit Mode Controls - Only show when in edit mode */}
-            {editMode && (
-              <div className="flex justify-center items-center flex-wrap gap-4">
+          <FeaturePageHeader
+            title="Strategic Syllabus"
+            description="Manage your study priorities and track mastery progress"
+            icon={<BookOpen className="h-5 w-5 text-blue-600" />}
+            actions={
+              editMode ? (
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant={bulkEditMode ? 'default' : 'outline'}
                     onClick={() => {
                       setBulkEditMode(!bulkEditMode);
                       setSelectedTopics(new Set());
                     }}
-                    className="flex items-center space-x-2"
+                    className="flex items-center gap-2"
+                    size="sm"
                   >
                     <Layers className="h-4 w-4" />
-                    <span>{bulkEditMode ? 'Exit Bulk Edit' : 'Bulk Edit'}</span>
+                    <span>{bulkEditMode ? 'Exit Bulk' : 'Bulk Edit'}</span>
                   </Button>
 
                   <Button
                     onClick={saveSyllabusChanges}
                     disabled={saving}
-                    className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                    size="sm"
                   >
                     <Save className="h-4 w-4" />
-                    <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                    <span>{saving ? 'Saving...' : 'Save'}</span>
                   </Button>
 
                   <Button
@@ -615,8 +613,10 @@ export default function SyllabusPage() {
                   >
                     Cancel
                   </Button>
-              </div>
-            )}
+                </div>
+              ) : undefined
+            }
+          />
 
             {/* Bulk Edit Actions */}
             {editMode && bulkEditMode && selectedTopics.size > 0 && (
@@ -640,7 +640,6 @@ export default function SyllabusPage() {
                 </div>
               </div>
             )}
-          </div>
 
           {/* Strategy Insights Section */}
           {!loading && userProfile && (

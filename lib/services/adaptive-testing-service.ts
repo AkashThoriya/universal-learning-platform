@@ -99,6 +99,7 @@ export class AdaptiveTestingService {
    * Create adaptive test from manual configuration
    */
   async createAdaptiveTest(userId: string, request: CreateAdaptiveTestRequest): Promise<Result<AdaptiveTest>> {
+    console.log('[AdaptiveTestingService] createAdaptiveTest called:', { userId, request });
     try {
       const test: AdaptiveTest = {
         id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -130,20 +131,39 @@ export class AdaptiveTestingService {
       };
 
       // Generate question bank for this test
+      console.log('[AdaptiveTestingService] Generating question bank...');
       const questionsResult = await this.generateQuestionBank(test);
       if (!questionsResult.success) {
+        console.error('[AdaptiveTestingService] Question bank generation failed:', questionsResult.error);
         return questionsResult;
       }
 
+      console.log('[AdaptiveTestingService] Question bank generated with', questionsResult.data.length, 'questions');
       test.questions = questionsResult.data;
       test.status = 'active';
 
       // Save to Firebase
-      return await adaptiveTestingFirebaseService.createAdaptiveTest(userId, test);
+      console.log('[AdaptiveTestingService] Saving to Firebase...');
+      const result = await adaptiveTestingFirebaseService.createAdaptiveTest(userId, test);
+      if (result.success) {
+        console.log('[AdaptiveTestingService] Test saved successfully');
+      } else {
+        console.error('[AdaptiveTestingService] Failed to save test:', result.error);
+      }
+      return result;
     } catch (error) {
+      console.error('[AdaptiveTestingService] Unexpected error creating test:', error);
       return createError(error instanceof Error ? error : new Error('Failed to create adaptive test'));
     }
   }
+
+  /**
+   * Get a specific test by ID
+   */
+  async getTest(testId: string): Promise<Result<AdaptiveTest | null>> {
+    return adaptiveTestingFirebaseService.getAdaptiveTest(testId);
+  }
+
 
   /**
    * Start an adaptive test session
@@ -208,7 +228,7 @@ export class AdaptiveTestingService {
   async submitResponse(
     userId: string,
     request: SubmitResponseRequest
-  ): Promise<Result<{ nextQuestion?: AdaptiveQuestion; testCompleted: boolean; performance?: TestPerformance }>> {
+  ): Promise<Result<{ nextQuestion?: AdaptiveQuestion; testCompleted: boolean; performance?: TestPerformance; isCorrect: boolean; correctAnswer: string | number; explanation?: string }>> {
     try {
       const session = this.activeSessions.get(request.sessionId);
       if (!session || session.userId !== userId) {
@@ -336,6 +356,9 @@ export class AdaptiveTestingService {
         ...(nextQuestion && { nextQuestion }),
         testCompleted,
         ...(testCompleted && test.performance && { performance: test.performance }),
+        isCorrect,
+        correctAnswer: question.correctAnswer,
+        ...(question.explanation ? { explanation: question.explanation } : {}),
       });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to submit response'));
@@ -517,26 +540,50 @@ export class AdaptiveTestingService {
    */
   async resumeTestSession(sessionId: string): Promise<Result<TestSession>> {
     try {
-      const session = this.activeSessions.get(sessionId);
+      // First check memory
+      let session = this.activeSessions.get(sessionId);
+      
       if (!session) {
-        return createError(new Error('Session not found'));
+        // Try to fetch from Firebase
+        const sessionResult = await adaptiveTestingFirebaseService.getTestSession(sessionId);
+        if (sessionResult.success && sessionResult.data) {
+           session = sessionResult.data;
+           this.activeSessions.set(session.id, session);
+        } else {
+           return createError(new Error('Session not found'));
+        }
       }
 
       session.isPaused = false;
       session.lastActivity = new Date();
 
       // Update in Firebase
-      const sessionResult = await adaptiveTestingFirebaseService.getTestSession(sessionId);
-      if (sessionResult.success && sessionResult.data) {
-        await adaptiveTestingFirebaseService.updateTest(sessionResult.data.testId, {
+      await adaptiveTestingFirebaseService.updateTest(session.testId, {
           status: 'active',
           updatedAt: new Date(),
-        });
-      }
+      });
 
       return createSuccess(session);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to resume test session'));
+    }
+  }
+
+  /**
+   * Recover an active session for a specific test
+   */
+  async recoverActiveSession(userId: string, testId: string): Promise<Result<TestSession | null>> {
+    try {
+      const result = await adaptiveTestingFirebaseService.getActiveSession(userId, testId);
+      if (result.success && result.data) {
+        // Re-hydrate memory
+        this.activeSessions.set(result.data.id, result.data);
+        // Ensure status is active in memory? It is matched by query 'active'.
+        return createSuccess(result.data);
+      }
+      return createSuccess(null);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to recover active session'));
     }
   }
 

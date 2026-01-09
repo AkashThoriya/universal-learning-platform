@@ -1,11 +1,12 @@
 /**
- * @fileoverview Page Header Component
+ * @fileoverview Premium Page Header Component
  *
- * Provides consistent page headers with titles, descriptions, and actions
- * across all pages in the application.
+ * Provides consistent, beautifully designed page headers with titles,
+ * descriptions, icons, and actions across all pages in the application.
+ * Features glass-morphism, subtle animations, and responsive design.
  *
  * @author Exam Strategy Engine Team
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 'use client';
@@ -19,60 +20,46 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/utils';
 
 interface PageHeaderProps {
-  /**
-   * Main page title
-   */
+  /** Main page title */
   title: string;
-  /**
-   * Optional page description
-   */
+  /** Optional page description */
   description?: string;
-  /**
-   * Optional icon to display next to title
-   */
+  /** Optional icon to display next to title */
   icon?: ReactNode;
-  /**
-   * Optional badge to display above title
-   */
+  /** Optional badge configuration */
   badge?: {
     text: string;
     variant?: 'default' | 'secondary' | 'outline' | 'destructive';
   };
-  /**
-   * Optional back button configuration
-   */
+  /** Optional back button configuration */
   backButton?: {
     href: string;
     label: string;
   };
-  /**
-   * Actions to display on the right side
-   */
+  /** Actions to display (right side on desktop, below on mobile) */
   actions?: ReactNode;
-  /**
-   * Additional content below the main header
-   */
+  /** Additional content below the main header */
   children?: ReactNode;
-  /**
-   * Center align the header content
-   * @default false
-   */
+  /** Center align the header content @default false */
   centered?: boolean;
-  /**
-   * Additional CSS classes
-   */
+  /** Additional CSS classes */
   className?: string;
 }
 
 /**
- * Page Header Component
- *
- * Provides consistent page headers across the application
+ * Premium Page Header Component
+ * 
+ * Features:
+ * - Glass-morphism background option
+ * - Gradient icon backgrounds
+ * - Responsive layout (stacks on mobile)
+ * - Smooth animations
+ * - Consistent spacing across all devices
  */
 export default function PageHeader({
   title,
   description,
-  icon: _icon,
+  icon,
   badge,
   backButton,
   actions,
@@ -81,63 +68,104 @@ export default function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn('space-y-4', className)}>
       {/* Back Button */}
       {backButton && (
         <div className="flex items-center">
           <Link href={backButton.href}>
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
               {backButton.label}
             </Button>
           </Link>
         </div>
       )}
 
-      {/* Main Header */}
-      <div className={cn('space-y-4', centered && 'text-center')}>
-        {/* Badge */}
-        {badge && (
-          <div className={cn('inline-block', centered && 'block')}>
-            <Badge variant={badge.variant || 'secondary'} className="px-4 py-2 text-sm">
-              {badge.text}
-            </Badge>
-          </div>
+      {/* Main Header Container */}
+      <div
+        className={cn(
+          'flex flex-col gap-4',
+          centered ? 'items-center text-center' : 'sm:flex-row sm:items-start sm:justify-between'
         )}
-
-        {/* Title Row */}
-        <div className={cn('flex items-center justify-between', centered && 'flex-col space-y-4')}>
-          <div className={cn('flex items-start space-x-3', centered && 'justify-center')}>
-            <div className={cn(centered && 'text-center')}>
-              <h1 className={cn('text-3xl sm:text-4xl font-bold text-gray-900', centered && 'text-gradient')}>
-                {title}
-              </h1>
-              {description && (
-                <p className={cn('text-muted-foreground text-lg mt-1', centered && 'mt-2')}>{description}</p>
-              )}
+      >
+        {/* Left Section: Icon + Title + Description */}
+        <div className={cn('flex items-start gap-4', centered && 'flex-col items-center')}>
+          {/* Icon with gradient background */}
+          {icon && (
+            <div className="shrink-0 p-3 rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/10 shadow-sm">
+              <div className="text-primary">{icon}</div>
             </div>
-          </div>
+          )}
 
-          {/* Actions */}
-          {actions && !centered && <div className="flex items-center space-x-3">{actions}</div>}
+          {/* Title and Description */}
+          <div className={cn('space-y-1', centered && 'text-center')}>
+            {/* Badge */}
+            {badge && (
+              <Badge 
+                variant={badge.variant || 'secondary'} 
+                className="mb-2 px-3 py-1 text-xs font-medium"
+              >
+                {badge.text}
+              </Badge>
+            )}
+
+            {/* Title */}
+            <h1
+              className={cn(
+                'text-2xl sm:text-3xl font-bold tracking-tight',
+                centered
+                  ? 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent'
+                  : 'text-foreground'
+              )}
+            >
+              {title}
+            </h1>
+
+            {/* Description */}
+            {description && (
+              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
+                {description}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Centered Actions */}
-        {actions && centered && <div className="flex justify-center items-center space-x-3">{actions}</div>}
+        {/* Right Section: Actions */}
+        {actions && (
+          <div
+            className={cn(
+              'flex items-center gap-2 shrink-0',
+              centered ? 'justify-center' : 'self-start sm:self-center'
+            )}
+          >
+            {actions}
+          </div>
+        )}
       </div>
 
       {/* Additional Content */}
-      {children && <div className={cn(centered && 'text-center')}>{children}</div>}
+      {children && (
+        <div className={cn(centered && 'text-center')}>
+          {children}
+        </div>
+      )}
     </div>
   );
 }
 
 /**
- * Specialized page header variants
+ * ============================================
+ * Specialized Header Variants
+ * ============================================
  */
 
 /**
  * Simple page header with just title and description
+ * Best for: Settings pages, simple list pages
  */
 export function SimplePageHeader({
   title,
@@ -149,17 +177,27 @@ export function SimplePageHeader({
   className?: string;
 }) {
   return (
-    <PageHeader 
-      title={title} 
-      {...(description && { description })}
-      {...(className && { className })}
-      centered 
+    <PageHeader
+      title={title}
+      {...(description !== undefined && { description })}
+      {...(className !== undefined && { className })}
     />
   );
 }
 
 /**
- * Feature page header with badge and icon
+ * Feature page header with icon and optional actions
+ * Best for: Main feature pages (Syllabus, Review, Test, etc.)
+ * 
+ * @example
+ * ```tsx
+ * <FeaturePageHeader
+ *   title="Concept Review"
+ *   description="Topics flagged for review"
+ *   icon={<AlertTriangle className="h-5 w-5" />}
+ *   actions={<Badge>{count} items</Badge>}
+ * />
+ * ```
  */
 export function FeaturePageHeader({
   title,
@@ -179,11 +217,42 @@ export function FeaturePageHeader({
   return (
     <PageHeader
       title={title}
-      {...(description && { description })}
-      {...(icon && { icon })}
-      {...(badge && { badge: { text: badge } })}
-      {...(actions && { actions })}
-      {...(className && { className })}
+      {...(description !== undefined && { description })}
+      {...(icon !== undefined && { icon })}
+      {...(badge !== undefined && { badge: { text: badge } })}
+      {...(actions !== undefined && { actions })}
+      {...(className !== undefined && { className })}
+    />
+  );
+}
+
+/**
+ * Centered feature header for dashboard-style pages
+ * Best for: Dashboard, Syllabus overview, Journey planning
+ */
+export function CenteredPageHeader({
+  title,
+  description,
+  icon,
+  badge,
+  actions,
+  className,
+}: {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+  badge?: string;
+  actions?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <PageHeader
+      title={title}
+      {...(description !== undefined && { description })}
+      {...(icon !== undefined && { icon })}
+      {...(badge !== undefined && { badge: { text: badge } })}
+      {...(actions !== undefined && { actions })}
+      {...(className !== undefined && { className })}
       centered
     />
   );
@@ -191,6 +260,7 @@ export function FeaturePageHeader({
 
 /**
  * Detail page header with back button
+ * Best for: Topic details, Journey details, Test results
  */
 export function DetailPageHeader({
   title,
@@ -210,10 +280,10 @@ export function DetailPageHeader({
   return (
     <PageHeader
       title={title}
-      {...(description && { description })}
+      {...(description !== undefined && { description })}
       backButton={{ href: backHref, label: backLabel }}
-      {...(actions && { actions })}
-      {...(className && { className })}
+      {...(actions !== undefined && { actions })}
+      {...(className !== undefined && { className })}
     />
   );
 }

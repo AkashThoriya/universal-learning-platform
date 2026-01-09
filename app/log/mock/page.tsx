@@ -4,6 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 import { Target, BarChart3, Clock, MessageSquare, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import PageTransition from '@/components/layout/PageTransition';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
@@ -270,22 +271,13 @@ export default function MockTestLogPage() {
         <BottomNav />
 
         <PageTransition>
-          <div className="max-w-4xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-8">
+          <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-40 sm:pb-40 xl:pb-6 space-y-8">
             {/* Header */}
-            <div className="text-center space-y-4">
-              <div className="inline-block">
-                <Badge variant="secondary" className="px-4 py-2 text-sm animate-float">
-                  🎯 Mock Test Analysis
-                </Badge>
-              </div>
-              <div className="flex items-center justify-center space-x-3">
-                <Target className="h-8 w-8 text-primary animate-glow" />
-                <h1 className="text-3xl sm:text-4xl font-bold text-gradient">Mock Test Logger</h1>
-              </div>
-              <p className="text-muted-foreground text-lg">
-                Analyze your <span className="font-semibold">{userData.currentExam.name}</span> performance with precision
-              </p>
-            </div>
+            <FeaturePageHeader
+              title="Mock Test Logger"
+              description={`Analyze your ${userData.currentExam.name} performance with precision`}
+              icon={<Target className="h-5 w-5 text-primary" />}
+            />
 
 
           {step === 1 && (

@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  ArrowLeft, 
   Calendar, 
   Target, 
   CheckCircle2, 
@@ -18,6 +17,7 @@ import {
 
 import PageTransition from '@/components/layout/PageTransition';
 import PageContainer from '@/components/layout/PageContainer';
+import { DetailPageHeader } from '@/components/layout/PageHeader';
 import AuthGuard from '@/components/AuthGuard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -175,30 +175,24 @@ export default function JourneyDetailPage() {
   return (
     <AuthGuard>
       <PageTransition>
-        <PageContainer className="pb-24">
+        <PageContainer className="pb-40">
           {/* Header */}
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => router.push('/journey')}
-              className="h-11 w-11"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900">{journey.title}</h1>
-              <p className="text-gray-600">{journey.description}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge className={getStatusColor(journey.status)}>
-                {journey.status}
-              </Badge>
-              <Badge variant="outline" className={getPriorityColor(journey.priority)}>
-                {journey.priority}
-              </Badge>
-            </div>
-          </div>
+          <DetailPageHeader
+            title={journey.title}
+            description={journey.description}
+            backHref="/journey"
+            backLabel="Journeys"
+            actions={
+              <div className="flex items-center gap-2">
+                <Badge className={getStatusColor(journey.status)}>
+                  {journey.status}
+                </Badge>
+                <Badge variant="outline" className={getPriorityColor(journey.priority)}>
+                  {journey.priority}
+                </Badge>
+              </div>
+            }
+          />
 
           {/* Progress Overview */}
           <motion.div
