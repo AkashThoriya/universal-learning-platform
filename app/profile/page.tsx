@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react';
 import { z } from 'zod';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -217,7 +217,7 @@ const profileSchema = z.object({
 /**
  * Enhanced User Profile Management Page
  */
-export default function ProfilePage() {
+function ProfileContent() {
   const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -1399,5 +1399,19 @@ export default function ProfilePage() {
       </div>
       <BottomNav />
     </TooltipProvider>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense 
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        </div>
+      }
+    >
+      <ProfileContent />
+    </Suspense>
   );
 }
