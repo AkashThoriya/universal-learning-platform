@@ -685,17 +685,7 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
 function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<PersonaFormData>; persona: unknown }) {
   const recommendations = PersonaAwareGoalSetting.getStudyTimeRecommendations(persona as UserPersona);
 
-  // Helper function to update preferences
-  const updatePreference = (field: string, value: unknown) => {
-    const updatedPreferences = { ...form.data.preferences };
-    const fieldName = field.split('.')[1];
-    if (fieldName === 'dailyStudyGoalMinutes') {
-      updatedPreferences.dailyStudyGoalMinutes = value as number;
-    } else if (fieldName === 'preferredStudyTime') {
-      updatedPreferences.preferredStudyTime = value as 'morning' | 'afternoon' | 'evening' | 'night';
-    }
-    form.updateField('preferences', updatedPreferences);
-  };
+
 
   return (
     <Card className="border-orange-200 bg-orange-50/50">

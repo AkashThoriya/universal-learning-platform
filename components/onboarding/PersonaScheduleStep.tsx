@@ -13,7 +13,7 @@
 'use client';
 
 import { User, Clock, Calendar, AlertCircle, CheckCircle, Sparkles } from 'lucide-react';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -66,104 +66,7 @@ const validateExamDate = (date: string): string | null => {
   return null;
 };
 
-/**
- * Calculate recommended completion date based on total hours and daily study time
- */
-const calculateRecommendedDate = (totalHours: number, dailyStudyMinutes: number): Date => {
-  const dailyStudyHours = dailyStudyMinutes / 60;
-  const daysNeeded = Math.ceil(totalHours / dailyStudyHours);
 
-  // Add buffer time (20% extra) for realistic planning
-  const daysWithBuffer = Math.ceil(daysNeeded * 1.2);
-
-  const today = new Date();
-  const recommendedDate = new Date(today.getTime() + daysWithBuffer * 24 * 60 * 60 * 1000);
-
-  return recommendedDate;
-};
-
-/**
- * Calculate recommended completion date with weekend schedule support
- */
-const calculateRecommendedDateWithWeekends = (
-  totalHours: number,
-  weekdayMinutes: number,
-  weekendMinutes: number
-): Date => {
-  const weekdayHours = weekdayMinutes / 60;
-  const weekendHours = weekendMinutes / 60;
-
-  // Calculate hours per week (5 weekdays + 2 weekend days)
-  const hoursPerWeek = weekdayHours * 5 + weekendHours * 2;
-
-  // Calculate weeks needed
-  const weeksNeeded = Math.ceil(totalHours / hoursPerWeek);
-
-  // Add buffer time (20% extra)
-  const weeksWithBuffer = Math.ceil(weeksNeeded * 1.2);
-
-  const today = new Date();
-  const recommendedDate = new Date(today.getTime() + weeksWithBuffer * 7 * 24 * 60 * 60 * 1000);
-
-  return recommendedDate;
-};
-
-/**
- * Check if target date is realistic based on study schedule
- */
-const checkTargetDateRealism = (
-  targetDate: string,
-  totalHours: number,
-  useWeekendSchedule: boolean,
-  weekdayMinutes?: number,
-  weekendMinutes?: number,
-  dailyMinutes?: number
-): { isRealistic: boolean; daysShort?: number; recommendation: string } => {
-  const target = new Date(targetDate);
-  const today = new Date();
-  const daysAvailable = Math.ceil((target.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
-
-  let hoursNeeded;
-  if (useWeekendSchedule && weekdayMinutes && weekendMinutes) {
-    const weeksAvailable = Math.floor(daysAvailable / 7);
-    const extraDays = daysAvailable % 7;
-
-    // Calculate available study hours
-    const weekdayHours = weekdayMinutes / 60;
-    const weekendHours = weekendMinutes / 60;
-    const totalAvailableHours = weeksAvailable * (weekdayHours * 5 + weekendHours * 2) + extraDays * weekdayHours;
-
-    hoursNeeded = totalHours / totalAvailableHours;
-  } else if (dailyMinutes) {
-    const dailyHours = dailyMinutes / 60;
-    const totalAvailableHours = daysAvailable * dailyHours;
-    hoursNeeded = totalHours / totalAvailableHours;
-  } else {
-    return { isRealistic: false, recommendation: 'Please set your study schedule first.' };
-  }
-
-  if (hoursNeeded <= 0.8) {
-    // 80% or less of available time needed
-    return {
-      isRealistic: true,
-      recommendation: 'Perfect! Your target date is very achievable with some buffer time for breaks and revision.',
-    };
-  } else if (hoursNeeded <= 1.0) {
-    // Exactly the available time needed
-    return {
-      isRealistic: true,
-      recommendation:
-        'Your target is achievable, but it will require consistent daily effort. Consider adding a few weeks buffer.',
-    };
-  }
-  // More time needed than available
-  const shortfallDays = Math.ceil((hoursNeeded - 1) * daysAvailable);
-  return {
-    isRealistic: false,
-    daysShort: shortfallDays,
-    recommendation: `Your target date is quite ambitious. Consider extending by ${shortfallDays} days or increasing your daily study hours.`,
-  };
-};
 
 /**
  * Persona selection & schedule configuration step - Step 2 of onboarding
@@ -178,17 +81,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
   const [useWeekendSchedule, setUseWeekendSchedule] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  // Helper to get primary course name
-  const primaryCourseName = useMemo(() => {
-    if (form.data.isCustomExam) return form.data.customExam?.name || 'Custom Course';
-    if (form.data.selectedExamId) {
-       // Try to find in selectedCourses first for consistency
-       const course = (form.data as any).selectedCourses?.find((c: any) => c.examId === form.data.selectedExamId);
-       if (course) return course.examName;
-       return selectedExam?.name || 'Selected Course';
-    }
-    return 'Selected Course';
-  }, [form.data.isCustomExam, form.data.customExam, form.data.selectedExamId, form.data.selectedCourses, selectedExam]);
+
 
   // Helper function to calculate average daily hours from weekend schedule
 
