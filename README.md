@@ -1,6 +1,6 @@
 # Exam Strategy Engine - Universal Learning Platform for Students & Working Professionals
 
-![Version](https://img.shields.io/badge/version-1.0.3-00DC82?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.0.4-00DC82?style=for-the-badge)
 ![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa)
 
 ### ⚖️ Project status
