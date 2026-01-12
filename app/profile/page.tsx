@@ -14,6 +14,7 @@
 import { Timestamp } from 'firebase/firestore';
 import PageTransition from '@/components/layout/PageTransition';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import { ProfileSkeleton } from '@/components/skeletons';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import {
@@ -618,14 +619,7 @@ function ProfileContent() {
 
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-        <div className="text-center space-y-4">
-          <Loader2 className="animate-spin h-12 w-12 text-blue-600 mx-auto" />
-          <p className="text-gray-600">Loading your profile...</p>
-        </div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!user || !userData) {

@@ -14,14 +14,27 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { TestDetailSkeleton } from '@/components/skeletons';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
 import QuestionInterface from '@/components/adaptive-testing/QuestionInterface';
 import TestAnalyticsDashboard from '@/components/adaptive-testing/TestAnalyticsDashboard';
+import confetti from 'canvas-confetti';
 
 export default function TestDetailPage() {
   const { testId } = useParams();
@@ -46,6 +59,39 @@ export default function TestDetailPage() {
       testCompleted: boolean;
       performance?: any;
   } | null>(null);
+  const [hasShownConfetti, setHasShownConfetti] = useState(false);
+
+  // Celebration confetti on completion
+  useEffect(() => {
+    if ((mode === 'completed' || test?.status === 'completed') && !hasShownConfetti) {
+      setHasShownConfetti(true);
+      // Fire confetti burst from both sides
+      const duration = 3000;
+      const end = Date.now() + duration;
+      
+      const frame = () => {
+        confetti({
+          particleCount: 3,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#6366f1', '#8b5cf6', '#a855f7'],
+        });
+        confetti({
+          particleCount: 3,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#6366f1', '#8b5cf6', '#a855f7'],
+        });
+        
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      };
+      frame();
+    }
+  }, [mode, test?.status, hasShownConfetti]);
 
   // Load Test Data
   useEffect(() => {
@@ -183,8 +229,8 @@ export default function TestDetailPage() {
              ...(result.data.performance ? { performance: result.data.performance } : {})
          });
          
-         // Scroll for feedback
-         setTimeout(() => window.scrollTo({ top: 200, behavior: 'smooth' }), 100);
+         // Removed explicit scroll to prevent disorientation
+         // setTimeout(() => window.scrollTo({ top: 200, behavior: 'smooth' }), 100);
      }
   };
 
@@ -211,14 +257,7 @@ export default function TestDetailPage() {
   };
   
   if (loading) {
-      return (
-          <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-              <div className="text-center space-y-4">
-                  <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto" />
-                  <p className="text-gray-500 font-medium">Loading Assessment...</p>
-              </div>
-          </div>
-      );
+      return <TestDetailSkeleton />;
   }
 
   if (!test) return null;
@@ -257,9 +296,30 @@ export default function TestDetailPage() {
                       <Brain className="w-4 h-4 text-blue-600" />
                       <span className="font-semibold text-gray-900">{test.title}</span>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setMode('landing')} className="text-red-500 hover:text-red-600 hover:bg-red-50">
-                      Exit
-                  </Button>
+                  <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50">
+                              Exit
+                          </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                          <AlertDialogHeader>
+                              <AlertDialogTitle>Exit Assessment?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                  Your progress will be saved automatically. You can resume this test anytime from the dashboard.
+                              </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                              <AlertDialogCancel>Continue Test</AlertDialogCancel>
+                              <AlertDialogAction 
+                                  onClick={() => setMode('landing')}
+                                  className="bg-red-600 hover:bg-red-700"
+                              >
+                                  Exit & Save Progress
+                              </AlertDialogAction>
+                          </AlertDialogFooter>
+                      </AlertDialogContent>
+                  </AlertDialog>
               </div>
 
               <div className="container mx-auto px-4 py-6 max-w-4xl">
@@ -273,7 +333,6 @@ export default function TestDetailPage() {
                     result={questionResult}
                     adaptiveMode
                     showTimer
-                    showConfidenceSlider
                   />
               </div>
           </div>

@@ -29,6 +29,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, updateSubtopic } from '@/lib/firebase/firebase-utils';
 import { Subtopic, SyllabusSubject } from '@/types/exam';
+import { SubtopicDetailSkeleton } from '@/components/skeletons';
 
 export default function SubtopicDetailPage() {
   const { user } = useAuth();
@@ -140,8 +141,10 @@ export default function SubtopicDetailPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+          <Navigation />
+          <BottomNav />
+          <SubtopicDetailSkeleton />
         </div>
       </AuthGuard>
     );

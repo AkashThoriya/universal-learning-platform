@@ -259,21 +259,30 @@ export class AdaptiveTestingRecommendationEngine {
         ),
       };
       
-      // For now, use empty arrays until the journey and test services are fully implemented
+      // Fetch actual completed tests
+      const { adaptiveTestingService } = await import('@/lib/services/adaptive-testing-service');
+      const completedTests = await adaptiveTestingService.getUserTests(userId);
+      const finishedTests = completedTests.filter(t => t.status === 'completed');
+      
+      // For now, use empty arrays for journeys
       const activeJourneys: UserJourney[] = [];
-      const completedTests: AdaptiveTest[] = [];
 
-      // Analyze learning patterns
-      const weakAreas = this.identifyWeakAreas(userProgress);
+      // Extract weak areas from actual failed questions in recent tests
+      const weakAreasFromTests = this.extractFailedTopicsFromTests(finishedTests);
+      
+      // Combine with progress-based weak areas
+      const progressWeakAreas = this.identifyWeakAreas(userProgress);
+      const weakAreas = [...new Set([...weakAreasFromTests, ...progressWeakAreas])].slice(0, 8);
+      
       const strongAreas = this.identifyStrongAreas(userProgress);
-      const preferredDifficulty = this.inferPreferredDifficulty(userProgress, completedTests);
+      const preferredDifficulty = this.inferPreferredDifficulty(userProgress, finishedTests);
       const learningGoals = this.extractLearningGoals(activeJourneys);
 
       const context: RecommendationContext = {
         userId,
         userProgress,
         activeJourneys,
-        completedTests,
+        completedTests: finishedTests,
         weakAreas,
         strongAreas,
         preferredDifficulty,
@@ -286,6 +295,41 @@ export class AdaptiveTestingRecommendationEngine {
       return createError(`Context building failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
+
+  /**
+   * Extract topics where user failed questions from actual test responses
+   */
+  private extractFailedTopicsFromTests(tests: AdaptiveTest[]): string[] {
+    const failedTopics: Map<string, number> = new Map(); // topic -> fail count
+    
+    // Analyze last 10 completed tests
+    const recentTests = tests.slice(0, 10);
+    
+    for (const test of recentTests) {
+      if (!test.responses || !test.questions) continue;
+      
+      for (const response of test.responses) {
+        if (!response.isCorrect) {
+          // Find the question to get its topic
+          const question = test.questions.find(q => q.id === response.questionId);
+          if (question) {
+            // Use topic, subject, or linked subjects
+            const topic = question.topic || question.subject || test.linkedSubjects?.[0];
+            if (topic) {
+              failedTopics.set(topic, (failedTopics.get(topic) || 0) + 1);
+            }
+          }
+        }
+      }
+    }
+    
+    // Sort by fail count and return top failed topics
+    return Array.from(failedTopics.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([topic]) => topic)
+      .slice(0, 5);
+  }
+
 
   /**
    * Generate candidate tests based on context
@@ -304,26 +348,35 @@ export class AdaptiveTestingRecommendationEngine {
       // Remove unused variable warning
       // const _focusAreas = constraints?.focusAreas || [...context.weakAreas, ...context.learningGoals];
 
-    // Generate tests for weak areas
-    for (const subject of context.weakAreas.slice(0, 3)) {
+    // Generate tests for weak areas (from actual failed topics)
+    for (let i = 0; i < Math.min(context.weakAreas.length, 3); i++) {
+      const subject = context.weakAreas[i];
+      if (!subject) continue;
+      
+      const isFromRecentFailure = i < 2; // First 2 are likely from actual failures
+      
       candidates.push({
-        testId: `weak-area-${subject}-${Date.now()}`,
-        title: `Master ${subject}`,
-        description: `Focused assessment to improve your ${subject} skills`,
-        estimatedDuration: Math.min(maxDuration, 30),
+        testId: `weak-area-${subject.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}-${i}`,
+        title: `Improve: ${subject}`,
+        description: isFromRecentFailure 
+          ? `Practice test focused on ${subject} - you've had difficulty with this topic in recent assessments`
+          : `Targeted practice to strengthen your ${subject} skills`,
+        estimatedDuration: Math.min(maxDuration, 25),
         difficulty: this.getProgressiveDifficulty(context.preferredDifficulty),
         subjects: [subject],
-        questionCount: Math.min(maxQuestions, 20),
-        reasons: [`Identified weakness in ${subject}`, 'Targeted skill improvement'],
+        questionCount: Math.min(maxQuestions, 15),
+        reasons: isFromRecentFailure 
+          ? [`You got questions wrong in ${subject} in recent tests`, 'Targeted practice for improvement']
+          : [`Identified as an area for improvement`, 'Skill-building opportunity'],
         expectedBenefit: 'Strengthen weak areas',
-        priority: 'high',
-        tags: ['weakness-focus', 'skill-building'],
+        priority: isFromRecentFailure ? 'high' : 'medium',
+        tags: ['weakness-focus', 'skill-building', isFromRecentFailure ? 'recent-failure' : 'improvement'],
         missionAlignment: this.calculateJourneyAlignment([subject], context.activeJourneys),
         estimatedAccuracy: this.estimateAccuracy(subject, context),
-        aiGenerated: true,
+        aiGenerated: false, // These are heuristic-based
         createdFrom: 'recommendation',
         linkedMissions: this.findRelatedJourneys([subject], context.activeJourneys),
-        confidence: 0.8, // High confidence for weak area targeting
+        confidence: isFromRecentFailure ? 0.95 : 0.75,
         adaptiveConfig: {
           algorithmType: 'CAT',
           convergenceCriteria: { standardError: 0.3, minQuestions: 8, maxQuestions },

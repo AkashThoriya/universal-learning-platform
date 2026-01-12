@@ -14,6 +14,7 @@ import {
   Target,
   Zap,
   X,
+  Clock,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -285,6 +286,21 @@ export function TestConfigModal({
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>3 (Quick)</span>
               <span>15 (Comprehensive)</span>
+            </div>
+          </div>
+
+          {/* Estimated Duration Preview */}
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-900">Estimated Duration</p>
+                <p className="text-lg font-bold text-blue-700">
+                  ~{Math.ceil(questionCount * 2)} minutes
+                </p>
+              </div>
             </div>
           </div>
         </div>

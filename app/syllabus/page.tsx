@@ -70,6 +70,7 @@ import { getSyllabus, getAllProgress, saveSyllabus, getUser, getSyllabusForCours
 import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
 import StrategyInsights from '@/components/syllabus/StrategyInsights';
+import { SyllabusDashboardSkeleton } from '@/components/skeletons';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -542,20 +543,10 @@ export default function SyllabusPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
           <BottomNav />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-6">
-              <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-                <div className="relative glass rounded-2xl p-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-                  <p className="text-muted-foreground">Loading syllabus...</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SyllabusDashboardSkeleton />
         </div>
       </AuthGuard>
     );

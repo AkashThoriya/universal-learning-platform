@@ -25,6 +25,7 @@ import { UserJourney } from '@/types/journey';
 import { User } from '@/types/exam';
 import { getUser } from '@/lib/firebase/firebase-utils';
 import { CreateJourneyDialog } from '@/components/journey/CreateJourneyDialog';
+import { JourneySkeleton } from '@/components/skeletons';
 
 export default function JourneyPlanningPage() {
   const { user } = useAuth();
@@ -143,9 +144,7 @@ export default function JourneyPlanningPage() {
     return (
       <AuthGuard>
         <StandardLayout>
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
-          </div>
+          <JourneySkeleton />
         </StandardLayout>
       </AuthGuard>
     );

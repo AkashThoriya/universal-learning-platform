@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
+import { ReviewPageSkeleton } from '@/components/skeletons';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
@@ -268,12 +269,7 @@ export default function ConceptReviewPage() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
           <BottomNav />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-              <p className="text-muted-foreground">Loading review items...</p>
-            </div>
-          </div>
+          <ReviewPageSkeleton />
         </div>
       </AuthGuard>
     );

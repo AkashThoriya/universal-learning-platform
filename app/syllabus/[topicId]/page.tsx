@@ -39,6 +39,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
+import { TopicDetailSkeleton } from '@/components/skeletons';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -333,12 +334,7 @@ export default function TopicDetailPage() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
           <Navigation />
           <BottomNav />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-              <p className="text-muted-foreground">Loading topic details...</p>
-            </div>
-          </div>
+          <TopicDetailSkeleton />
         </div>
       </AuthGuard>
     );

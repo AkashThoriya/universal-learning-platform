@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
+import { DashboardSkeleton } from '@/components/skeletons';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -586,20 +587,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
   if (isLoading) {
     return (
-      <div className={cn('space-y-6', className)}>
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-lg" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 h-96 bg-gray-200 rounded-lg" />
-            <div className="h-96 bg-gray-200 rounded-lg" />
-          </div>
-        </div>
-      </div>
+      <DashboardSkeleton />
     );
   }
 
