@@ -1,174 +1,35 @@
-'use client';
-
 import PageTransition from '@/components/layout/PageTransition';
-import { doc, getDoc } from 'firebase/firestore';
 import {
-  Loader2,
   Target,
   Brain,
   TrendingUp,
   Zap,
-  ArrowRight,
   Star,
   CheckCircle,
   Quote,
-  Rocket,
   Trophy,
   Sparkles,
   BarChart,
   Shield,
   Smartphone,
+  ArrowRight,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
-import { db } from '@/lib/firebase/firebase';
+import HomeNavbar from '@/components/home/HomeNavbar';
+import HeroActions from '@/components/home/HeroActions';
+import CTAActions from '@/components/home/CTAActions';
 
 // Constants
 const STAR_RATING = 5;
 
 export default function HomePage() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
+      <HomeNavbar />
 
-  useEffect(() => {
-    const checkUserStatus = async () => {
-      if (loading) {
-        return;
-      }
-
-      if (!user) {
-        setChecking(false);
-        return; // Show landing page
-      }
-
-      try {
-        // Add timeout for Firebase operations
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Operation timeout')), 5000)
-        );
-
-        const userDocPromise = getDoc(doc(db, 'users', user.uid));
-
-        const userDoc = await Promise.race([userDocPromise, timeoutPromise]);
-
-        if (
-          userDoc &&
-          typeof userDoc === 'object' &&
-          'exists' in userDoc &&
-          typeof userDoc.exists === 'function' &&
-          userDoc.exists()
-        ) {
-          const userData = 'data' in userDoc && typeof userDoc.data === 'function' ? userDoc.data() : null;
-
-          // Check both onboardingComplete and onboardingCompleted for compatibility
-          const isOnboardingComplete = userData && (userData.onboardingComplete || userData.onboardingCompleted);
-
-          console.log('User onboarding status check:', {
-            userId: user.uid,
-            onboardingComplete: userData?.onboardingComplete,
-            onboardingCompleted: userData?.onboardingCompleted,
-            isComplete: isOnboardingComplete,
-            hasDisplayName: !!userData?.displayName,
-            hasSelectedExamId: !!userData?.selectedExamId,
-            hasPreferences: !!userData?.preferences,
-          });
-
-          if (isOnboardingComplete) {
-            console.log('Onboarding already completed, redirecting to dashboard');
-            router.push('/dashboard');
-          } else {
-            console.log('Onboarding not completed, redirecting to onboarding');
-            router.push('/onboarding');
-          }
-        } else {
-          console.log('No user document found, redirecting to onboarding');
-          router.push('/onboarding');
-        }
-      } catch (error) {
-        console.error('Error checking user status:', error);
-        // Fallback: if Firebase is having issues, still allow access
-        if (user) {
-          router.push('/dashboard');
-        }
-      } finally {
-        setChecking(false);
-      }
-    };
-
-    // Add overall timeout for the entire check
-    const timeoutId = setTimeout(() => {
-      console.warn('User status check taking too long, proceeding with fallback');
-      setChecking(false);
-      if (user) {
-        router.push('/dashboard');
-      }
-    }, 8000);
-
-    checkUserStatus().finally(() => {
-      clearTimeout(timeoutId);
-    });
-
-    return () => clearTimeout(timeoutId);
-  }, [user, loading, router]);
-
-  if (loading || checking) {
-    return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
-          <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
-        </div>
-
-        {/* Loading Content */}
-        <div className="relative z-10 text-center space-y-8 max-w-md mx-auto px-6">
-          <div className="relative">
-            <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-            <div className="relative glass rounded-2xl p-8">
-              <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gradient mb-2">Universal Learning Platform</h1>
-              <p className="text-muted-foreground">Initializing your strategic learning experience...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Landing page for unauthenticated users
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
-        {/* Navigation */}
-        <nav className="relative z-50 px-6 lg:px-8 py-6">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Target className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
-              <span className="text-lg sm:text-xl font-bold text-gradient">
-                <span className="hidden sm:inline">Universal Learning Platform</span>
-                <span className="sm:hidden">ULP</span>
-              </span>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <Link href="/login">
-                <Button variant="ghost" className="text-sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button className="text-sm gradient-primary text-white border-0">Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </nav>
-
-        <PageTransition>
+      <PageTransition>
         {/* Hero Section - Optimized Above-the-Fold */}
         <section className="relative px-6 lg:px-8 pt-8 pb-12 overflow-hidden min-h-[90vh] flex items-center">
           {/* Enhanced Background */}
@@ -205,18 +66,7 @@ export default function HomePage() {
               </span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-6 sm:mb-8">
-              <Link href="/login" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold hover:scale-105"
-                >
-                  <Rocket className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
-                  Start Your Learning Journey
-                  <ArrowRight className="ml-2 sm:ml-3 h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-              </Link>
-            </div>
+            <HeroActions />
 
             {/* Compact Trust Indicators */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6 opacity-80">
@@ -774,18 +624,7 @@ export default function HomePage() {
               and proven methodologies for both exams and custom skills.
             </p>
 
-            <div className="flex justify-center mb-8 sm:mb-12">
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  className="gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-8 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-bold hover:scale-105"
-                >
-                  <Rocket className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
-                  Start Your Learning Journey
-                  <ArrowRight className="ml-2 sm:ml-3 h-5 w-5 sm:h-6 sm:w-6" />
-                </Button>
-              </Link>
-            </div>
+            <CTAActions />
 
             {/* Enhanced trust indicators */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-3xl mx-auto mb-6 sm:mb-8">
@@ -799,83 +638,12 @@ export default function HomePage() {
               </div>
               <div className="flex items-center justify-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-white/50 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm sm:col-span-2 lg:col-span-1">
                 <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
-                <span className="font-medium text-sm sm:text-base">Instant Access</span>
+                <span className="font-medium text-sm sm:text-base">Privacy Focused</span>
               </div>
             </div>
-
-            <p className="text-xs sm:text-sm text-muted-foreground opacity-70">
-              Join 25,000+ students who are already on their path to success
-            </p>
           </div>
         </section>
-        </PageTransition>
-
-        {/* Footer */}
-        <footer className="bg-gray-900 text-white py-12 sm:py-16 px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-              <div className="col-span-2 md:col-span-1">
-                <div className="flex items-center space-x-2 mb-4 sm:mb-6">
-                  <Target className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                  <span className="text-base sm:text-lg font-bold">Universal Learning Platform</span>
-                </div>
-                <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
-                  Transforming learning with strategic intelligence and data-driven insights. Whether mastering exams or
-                  custom skills, your success is our mission.
-                </p>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Product</h4>
-                <ul className="space-y-2 text-xs sm:text-sm text-gray-400">
-                  <li>
-                    <Link href="/dashboard" className="hover:text-white transition-colors">
-                      Dashboard
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/subjects" className="hover:text-white transition-colors">
-                      Subjects
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/review" className="hover:text-white transition-colors">
-                      Concept Review
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Support</h4>
-                <ul className="space-y-2 text-xs sm:text-sm text-gray-400">
-                  <li>
-                    <Link href="/help" className="hover:text-white transition-colors">
-                      Help Center
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/contact" className="hover:text-white transition-colors">
-                      Contact Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/community" className="hover:text-white transition-colors">
-                      Community
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-gray-400">
-              <p>&copy; 2024 Universal Learning Platform. All rights reserved. Made with ❤️ for learners worldwide.</p>
-            </div>
-          </div>
-        </footer>
-      </div>
-    );
-  }
-
-  return null;
+      </PageTransition>
+    </div>
+  );
 }

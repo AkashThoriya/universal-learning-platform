@@ -146,7 +146,7 @@ export default function BottomNav() {
                 )}>
                   {item.icon}
                 </div>
-                <span className="text-[10px] font-medium leading-none">{item.label}</span>
+                <span className="text-[11px] font-medium leading-none">{item.label}</span>
               </Link>
             );
           })}
@@ -166,7 +166,7 @@ export default function BottomNav() {
                 )}>
                   <Menu className="h-5 w-5" />
                 </div>
-                <span className="text-[10px] font-medium leading-none">More</span>
+                <span className="text-[11px] font-medium leading-none">More</span>
               </button>
             </DrawerTrigger>
             
