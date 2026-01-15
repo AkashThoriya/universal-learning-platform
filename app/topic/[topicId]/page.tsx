@@ -229,10 +229,16 @@ export default function TopicPage() {
       return;
     }
 
+    // Calculate next revision date (7 days)
+    const nextRevisionDate = new Date();
+    nextRevisionDate.setDate(nextRevisionDate.getDate() + 7);
+
     const updatedProgress = {
       ...userProgress,
       lastRevised: Timestamp.now(),
       masteryScore: Math.min(userProgress.masteryScore + 10, 100),
+      nextRevision: Timestamp.fromDate(nextRevisionDate),
+      revisionCount: (userProgress.revisionCount || 0) + 1,
     };
 
     try {
@@ -384,7 +390,7 @@ export default function TopicPage() {
               {userProgress?.currentAffairs && userProgress.currentAffairs.length > 0 ? (
                 <div className="space-y-2">
                   {userProgress.currentAffairs
-                    .sort((a, b) => b.date.toMillis() - a.date.toMillis())
+                    .sort((a, b) => (b.date?.toMillis?.() || 0) - (a.date?.toMillis?.() || 0))
                     .map((affair, index) => (
                       <div key={index} className="bg-gray-50 p-3 rounded-lg">
                         <div className="flex items-start justify-between">

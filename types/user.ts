@@ -1,33 +1,14 @@
 import { Timestamp } from 'firebase/firestore';
 
 /**
- * @deprecated Use User from '@/types/exam' instead. This interface is kept for backward compatibility.
- * Migration: Import { User } from '@/types/exam'
- *
- * This legacy User interface will be removed in a future version.
- * Please migrate to the comprehensive User type from types/exam.ts
+ * @fileoverview User Type Definitions
+ * 
+ * This file re-exports the canonical User type from exam.ts and provides
+ * legacy type definitions for backward compatibility during migration.
+ * 
+ * @author Exam Strategy Engine Team
+ * @version 2.0.0
  */
-export interface LegacyUser {
-  userId: string;
-  email: string;
-  displayName: string;
-  examDate: Timestamp;
-  createdAt: Timestamp;
-  onboardingComplete: boolean;
-  currentPhase: string;
-  studyStreak?: number; // Added for dashboard
-  totalStudyHours?: number; // Added for dashboard
-  resources: {
-    mockPlatform: string;
-    quantBook: string;
-    pkCourse: string;
-  };
-  settings: {
-    dailyStudyGoalHrs: number;
-    wakeTime: string;
-    sleepTime: string;
-  };
-}
 
 /**
  * Re-export the comprehensive User type from exam.ts as the standard
@@ -37,18 +18,26 @@ export type {
   User,
   UserSettings,
   UserStats,
+  UserPersona,
+  UserPersonaType,
   TopicProgress,
   DailyLog as EnhancedDailyLog,
   MockTestLog,
   StudyInsight,
   RevisionItem,
+  SelectedCourse,
 } from './exam';
 
-/**
- * Legacy interfaces kept for backward compatibility
- * These will be removed in a future version - prefer using types from exam.ts
- */
+// ============================================
+// LEGACY TYPES - Marked for removal
+// These are kept only for backward compatibility
+// during migration. Do not use in new code.
+// ============================================
 
+/**
+ * @deprecated Use UserDiagnostic only for migration purposes.
+ * New code should use the adaptive testing system instead.
+ */
 export interface UserDiagnostic {
   diagnosticId: string;
   date: Timestamp;
@@ -68,6 +57,9 @@ export interface UserDiagnostic {
   };
 }
 
+/**
+ * @deprecated Use SyllabusSubject from exam.ts instead.
+ */
 export interface Subject {
   subjectId: string;
   name: string;
@@ -75,12 +67,18 @@ export interface Subject {
   topics: Topic[];
 }
 
+/**
+ * @deprecated Use SyllabusTopic from exam.ts instead.
+ */
 export interface Topic {
   id: string;
   name: string;
   bankingContext: string;
 }
 
+/**
+ * @deprecated Use TopicProgress from exam.ts instead.
+ */
 export interface UserProgress {
   progressId: string;
   topicId: string;
@@ -94,6 +92,9 @@ export interface UserProgress {
   }>;
 }
 
+/**
+ * @deprecated Use MockTestLog from exam.ts instead.
+ */
 export interface MockTest {
   testId: string;
   date: Timestamp;
@@ -121,6 +122,9 @@ export interface MockTest {
   feedback: string;
 }
 
+/**
+ * @deprecated Use DailyLog from exam.ts instead.
+ */
 export interface DailyLog {
   logId: string;
   date: Timestamp;

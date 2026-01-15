@@ -34,18 +34,6 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
     let targetDate: Date | undefined;
     if (user.currentExam?.targetDate) {
         targetDate = user.currentExam.targetDate.toDate();
-    } else if (user.examDate) {
-        targetDate = user.examDate.toDate();
-    } else if (user.selectedCourses && user.selectedCourses.length > 0) {
-        // Fallback to primary course or first course
-        const primary = user.selectedCourses.find(c => c.priority === 1) || user.selectedCourses[0];
-        // Handle potential raw Date object or Timestamp
-        if (primary) {
-            const rawDate = primary.targetDate;
-            if (rawDate) {
-                 targetDate = (rawDate as any).toDate ? (rawDate as any).toDate() : new Date(rawDate as any);
-            }
-        }
     }
 
     const examDate = targetDate;

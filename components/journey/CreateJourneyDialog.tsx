@@ -159,7 +159,7 @@ export function CreateJourneyDialog({ userId, onJourneyCreated, trigger, selecte
                      <SelectContent>
                        {selectedCourses.map((course) => (
                          <SelectItem key={course.examId} value={course.examId}>
-                           {course.examName}
+                           {course.name}
                          </SelectItem>
                        ))}
                      </SelectContent>

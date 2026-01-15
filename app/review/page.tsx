@@ -239,24 +239,47 @@ export default function ConceptReviewPage() {
     if (!user) return;
     
     try {
+      // Calculate next revision date based on spaced repetition
+      // Use user preferences if available, otherwise default to 7 days
+      const revisionIntervals = userProfile?.preferences?.revisionIntervals || [7, 14, 30];
+      const currentRevisionCount = item.revisionCount || 0;
+      
+      // Get the interval based on revision count (cycles through intervals)
+      const intervalIndex = Math.min(currentRevisionCount, revisionIntervals.length - 1);
+      const daysUntilNextRevision = revisionIntervals[intervalIndex] || 7;
+      
+      const nextRevisionDate = new Date();
+      nextRevisionDate.setDate(nextRevisionDate.getDate() + daysUntilNextRevision);
+      
       if (item.type === 'topic') {
         await updateTopicProgress(user.uid, item.id, {
           needsReview: false,
           lastRevised: Timestamp.now(),
+          nextRevision: Timestamp.fromDate(nextRevisionDate),
+          revisionCount: currentRevisionCount + 1,
         });
         
         setTopicProgressMap(prev => {
           const newMap = new Map(prev);
           const existing = newMap.get(item.id);
           if (existing) {
-            newMap.set(item.id, { ...existing, needsReview: false, lastRevised: Timestamp.now() });
+            newMap.set(item.id, { 
+              ...existing, 
+              needsReview: false, 
+              lastRevised: Timestamp.now(),
+              nextRevision: Timestamp.fromDate(nextRevisionDate),
+              revisionCount: currentRevisionCount + 1,
+            });
           }
           return newMap;
         });
       }
       // For subtopics, would need to update syllabus - simplified for now
       
-      toast({ title: 'Marked as Reviewed', description: `${item.name} has been marked as reviewed.` });
+      toast({ 
+        title: 'Marked as Reviewed', 
+        description: `${item.name} scheduled for next revision in ${daysUntilNextRevision} days.` 
+      });
     } catch (error) {
       console.error('Error marking reviewed:', error);
       toast({ title: 'Error', description: 'Failed to update review status.', variant: 'destructive' });

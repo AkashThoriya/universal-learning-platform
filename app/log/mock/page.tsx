@@ -89,7 +89,7 @@ export default function MockTestLogPage() {
         const userDoc = await getUser(user.uid);
         setUserData(userDoc);
 
-        if (userDoc?.currentExam.id) {
+        if (userDoc?.currentExam?.id) {
           const exam = getExamById(userDoc.currentExam.id);
           setExamData(exam ?? null);
 
@@ -275,7 +275,7 @@ export default function MockTestLogPage() {
             {/* Header */}
             <FeaturePageHeader
               title="Mock Test Logger"
-              description={`Analyze your ${userData.currentExam.name} performance with precision`}
+              description={`Analyze your ${userData.currentExam?.name ?? 'exam'} performance with precision`}
               icon={<Target className="h-5 w-5 text-primary" />}
             />
 

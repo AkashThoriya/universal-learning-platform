@@ -72,6 +72,7 @@ function AdaptiveTestingPageContent() {
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [preSelectedSubject, setPreSelectedSubject] = useState<string | undefined>(undefined);
   const [preSelectedTopic, setPreSelectedTopic] = useState<string | undefined>(undefined);
+  const [preSelectedQuestionCount, setPreSelectedQuestionCount] = useState<number | undefined>(undefined);
   const [recommendations, setRecommendations] = useState<any[]>([]); // TestRecommendation[]
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   
@@ -414,12 +415,14 @@ function AdaptiveTestingPageContent() {
             // Clear pre-selected values when modal closes
             setPreSelectedSubject(undefined);
             setPreSelectedTopic(undefined);
+            setPreSelectedQuestionCount(undefined);
           }
         }}
         onGenerate={handleGenerateFromConfig}
         isGenerating={isGenerating}
         {...(preSelectedSubject !== undefined && { preSelectedSubject })}
         {...(preSelectedTopic !== undefined && { preSelectedTopic })}
+        {...(preSelectedQuestionCount !== undefined && { preSelectedQuestionCount })}
       />
 
       <div className="container mx-auto px-4 py-8 pb-40 sm:pb-40 xl:pb-8">
@@ -543,6 +546,7 @@ function AdaptiveTestingPageContent() {
                 <Card 
                   className="border-0 shadow-md bg-gradient-to-br from-emerald-50 to-teal-50 hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => {
+                    setPreSelectedQuestionCount(3);
                     setShowConfigModal(true);
                   }}
                 >
@@ -562,6 +566,7 @@ function AdaptiveTestingPageContent() {
                 <Card 
                   className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => {
+                    setPreSelectedQuestionCount(7);
                     setShowConfigModal(true);
                   }}
                 >
@@ -581,6 +586,7 @@ function AdaptiveTestingPageContent() {
                 <Card 
                   className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => {
+                    setPreSelectedQuestionCount(15);
                     setShowConfigModal(true);
                   }}
                 >

@@ -17,7 +17,7 @@ import {
   
   Target,
   Calendar,
-  Bell,
+
   Menu,
 
   Brain,
@@ -251,18 +251,7 @@ export default function Navigation() {
           {/* User Menu - Redesigned for better UX */}
           <div className="flex items-center space-x-2 flex-shrink-0">
             {/* Notifications - Always visible */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative h-10 w-10 rounded-full hover:bg-white/10 flex-shrink-0"
-              title="Notifications"
-            >
-              <Bell className="h-5 w-5" />
-              {/* Only show notification dot if there are actual notifications - for now hiding it */}
-              {false && (
-                <div className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full border border-background" />
-              )}
-            </Button>
+
 
             {/* More Menu - Desktop (contains secondary items + user actions) */}
             <div className="hidden xl:block">

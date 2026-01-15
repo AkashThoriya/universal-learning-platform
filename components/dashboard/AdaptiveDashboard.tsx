@@ -275,24 +275,19 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           ]);
 
           // Load selected exam information
-          // Load selected exam information
-          const currentExamId = userProfile?.selectedExamId || '';
+          const currentExamId = userProfile?.currentExam?.id || '';
           setActiveCourseId(currentExamId);
 
           // Populate available courses
-          if (userProfile?.selectedCourses && userProfile.selectedCourses.length > 0) {
-            setAvailableCourses(userProfile.selectedCourses);
-          } else if (currentExamId) {
-             // Fallback for legacy
+          if (currentExamId && userProfile?.currentExam) {
              const exam = getExamById(currentExamId);
-             if (exam) {
-                setAvailableCourses([{
-                   examId: currentExamId,
-                   examName: exam.name,
-                   targetDate: userProfile?.examDate || new Date(),
-                   priority: 1
-                } as any]);
-             }
+             setAvailableCourses([{
+                examId: currentExamId,
+                examName: userProfile.currentExam.name || (exam?.name ?? 'Unknown Exam'),
+                targetDate: userProfile.currentExam.targetDate,
+                priority: 1,
+                isPrimary: true
+             } as any]);
           }
 
           if (currentExamId) {
@@ -301,7 +296,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               setSelectedExam(exam);
 
               // Calculate exam countdown
-              const examDate = userProfile?.selectedCourses?.find(c => c.examId === currentExamId)?.targetDate || userProfile?.examDate;
+              const examDate = userProfile?.currentExam?.targetDate;
               const examDaysLeft = examDate
                 ? Math.max(0, Math.ceil((((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
                 : undefined;
@@ -498,8 +493,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     try {
       setSwitchingCourse(true);
       
-      // Update Firebase
-      await updateUser(user.uid, { selectedExamId: courseId });
+      // Update Firebase - use new schema field
+      await updateUser(user.uid, { primaryCourseId: courseId });
       
       // Update local state
       setActiveCourseId(courseId);
@@ -607,7 +602,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                    <SelectContent>
                       {availableCourses.map(course => (
                          <SelectItem key={course.examId} value={course.examId}>
-                            {course.examName}
+                            {course.name}
                          </SelectItem>
                       ))}
                    </SelectContent>
@@ -1066,7 +1061,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Best Streak</span>
                     <Badge variant="outline" className="bg-orange-50">
-                      {Math.max(stats.currentStreak, 12)} days
+                      {stats.currentStreak} days
                     </Badge>
                   </div>
                 </CardContent>

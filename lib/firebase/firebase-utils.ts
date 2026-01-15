@@ -29,7 +29,7 @@ import {
 } from 'firebase/firestore';
 
 import { User, SyllabusSubject, Subtopic, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
-import { EXAMS_DATA } from '@/lib/data/exams-data';
+
 
 import { db } from './firebase';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
@@ -56,57 +56,19 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
     logInfo('Creating new user', {
       userId,
       displayName: userData.displayName ?? 'no-display-name',
-      selectedExamId: userData.selectedExamId ?? 'no-exam',
-      isCustomExam: userData.isCustomExam ?? false,
+      currentExamId: userData.currentExam?.id ?? 'no-exam',
     });
 
     try {
       const userRef = doc(db, 'users', userId);
 
-      // Filter out undefined values and clean customExam if not a custom exam
+      // Filter out undefined values
       const cleanUserData = { ...userData };
 
-      // If not a custom exam, remove customExam entirely
-      if (!userData.isCustomExam) {
-        delete cleanUserData.customExam;
-      } else if (cleanUserData.customExam) {
-        // If it is a custom exam, clean empty strings and undefined values
-        const { customExam } = cleanUserData;
-        const cleanedCustomExam: any = {};
-
-        if (customExam.name && customExam.name.trim() !== '') {
-          cleanedCustomExam.name = customExam.name;
-        }
-        if (customExam.description && customExam.description.trim() !== '') {
-          cleanedCustomExam.description = customExam.description;
-        }
-        if (customExam.category && customExam.category.trim() !== '') {
-          cleanedCustomExam.category = customExam.category;
-        }
-
-        // Only include customExam if it has actual content
-        if (Object.keys(cleanedCustomExam).length > 0) {
-          cleanUserData.customExam = cleanedCustomExam;
-        } else {
-          delete cleanUserData.customExam;
-        }
-      }
 
       const newUserData = {
         ...cleanUserData,
         createdAt: Timestamp.now(),
-        // Preserve onboardingComplete if provided, otherwise set to false
-        onboardingComplete: cleanUserData.onboardingComplete ?? false,
-        onboardingCompleted: cleanUserData.onboardingCompleted ?? false, // Legacy field
-        stats: {
-          totalStudyHours: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          totalMockTests: 0,
-          averageScore: 0,
-          topicsCompleted: 0,
-          totalTopics: 0,
-        },
       };
 
       await setDoc(userRef, newUserData);
@@ -114,7 +76,7 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
       logInfo('User created successfully', {
         userId,
         createdAt: newUserData.createdAt.toDate(),
-        onboardingComplete: newUserData.onboardingComplete,
+
       });
     } catch (error) {
       logError('Failed to create user', {
@@ -150,34 +112,11 @@ export const getUser = async (userId: string): Promise<User | null> => {
 
       if (userSnap.exists()) {
         const userData = { userId, ...userSnap.data() } as User;
-        
-        // Backward Compatibility: Populate selectedCourses if missing but legacy fields exist
-        if ((!userData.selectedCourses || userData.selectedCourses.length === 0) && userData.selectedExamId) {
-           const exam = EXAMS_DATA.find(e => e.id === userData.selectedExamId);
-           userData.selectedCourses = [{
-             examId: userData.selectedExamId,
-             examName: userData.isCustomExam 
-               ? (userData.customExam?.name || 'Custom Exam') 
-               : (exam?.name || 'Unknown Exam'),
-             targetDate: userData.examDate || Timestamp.now(),
-             priority: 1,
-             ...(userData.isCustomExam !== undefined ? { isCustom: userData.isCustomExam } : {}),
-             ...(userData.customExam ? {
-               customExam: {
-                 ...(userData.customExam.name ? { name: userData.customExam.name } : {}),
-                 ...(userData.customExam.description ? { description: userData.customExam.description } : {}),
-                 ...(userData.customExam.category ? { category: userData.customExam.category } : {})
-               }
-             } : {})
-           }];
-        }
 
         logInfo('User data retrieved successfully', {
           userId,
           hasDisplayName: !!userData.displayName,
-          onboardingComplete: userData.onboardingComplete ?? false,
-          selectedExamId: userData.selectedExamId ?? 'none',
-          selectedCoursesCount: userData.selectedCourses?.length ?? 0
+          primaryCourseId: userData.primaryCourseId ?? 'none',
         });
         return userData;
       }
@@ -213,7 +152,7 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
     logInfo('Updating user data', {
       userId,
       updateFields: Object.keys(updates),
-      onboardingComplete: updates.onboardingComplete,
+
     });
 
     try {
@@ -669,13 +608,12 @@ export const getSyllabusForCourse = async (userId: string, courseId: string): Pr
  */
 export const getAllSyllabi = async (userId: string): Promise<Record<string, SyllabusSubject[]>> => {
   const user = await getUser(userId);
-  if (!user?.selectedCourses) return {};
+  if (!user?.currentExam?.id) return {};
 
   const results: Record<string, SyllabusSubject[]> = {};
   
-  await Promise.all(user.selectedCourses.map(async (course) => {
-    results[course.examId] = await getSyllabusForCourse(userId, course.examId);
-  }));
+  // Currently focusing on primary exam
+  results[user.currentExam.id] = await getSyllabusForCourse(userId, user.currentExam.id);
 
   return results;
 };
@@ -826,8 +764,9 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
     const subject = syllabus.find(s => s.topics.some(t => t.id === progress.topicId));
     const topic = subject?.topics.find(t => t.id === progress.topicId);
 
+    const lastRevisedMillis = progress.lastRevised?.toMillis?.() || today.toMillis();
     const daysSinceLastRevision = Math.floor(
-      (today.toMillis() - progress.lastRevised.toMillis()) / (1000 * 60 * 60 * 24)
+      (today.toMillis() - lastRevisedMillis) / (1000 * 60 * 60 * 24)
     );
 
     let priority: 'overdue' | 'due_today' | 'due_soon' | 'scheduled' = 'scheduled';
@@ -1121,13 +1060,14 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
 };
 
 // Helper Functions
-const updateUserStats = async (userId: string, log: DailyLog) => {
+const updateUserStats = async (userId: string, _log: DailyLog) => {
   const user = await getUser(userId);
   if (!user) {
     return;
   }
 
-  // Initialize stats if they don't exist
+  // Stats logic disabled after schema refactor
+  /*
   const defaultStats = {
     totalStudyHours: 0,
     currentStreak: 0,
@@ -1138,43 +1078,9 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     totalTopics: 0,
   };
 
-  const currentStats = user.stats ?? defaultStats;
-
-  const totalMinutes = log.studiedTopics.reduce((sum, session) => sum + session.minutes, 0);
-  const totalHours = currentStats.totalStudyHours + totalMinutes / 60;
-
-  // Calculate streak
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const isoString = yesterday.toISOString();
-  const datePart = isoString.split('T')[0];
-  if (!datePart) {
-    throw new Error('Invalid date string format');
-  }
-  const yesterdayDateString = datePart;
-  const yesterdayLog = await getDailyLog(userId, yesterdayDateString);
-
-  let { currentStreak } = currentStats;
-  if (totalMinutes > 0) {
-    if (yesterdayLog && yesterdayLog.studiedTopics.length > 0) {
-      currentStreak += 1;
-    } else {
-      currentStreak = 1;
-    }
-  } else {
-    currentStreak = 0;
-  }
-
-  const longestStreak = Math.max(currentStats.longestStreak, currentStreak);
-
-  await updateUser(userId, {
-    stats: {
-      ...currentStats,
-      totalStudyHours: totalHours,
-      currentStreak,
-      longestStreak,
-    },
-  });
+  // Logic commented out...
+  */
+  return;
 };
 
 const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog) => {

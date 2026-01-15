@@ -158,10 +158,21 @@ export default function TopicDetailPage() {
     }
 
     try {
+      // Calculate next revision based on spaced repetition intervals
+      const revisionIntervals = [7, 14, 30]; // Default intervals in days
+      const currentCount = topicProgress.revisionCount || 0;
+      const intervalIndex = Math.min(currentCount, revisionIntervals.length - 1);
+      const daysUntilNext = revisionIntervals[intervalIndex] ?? 7;
+      
+      const nextRevisionDate = new Date();
+      nextRevisionDate.setDate(nextRevisionDate.getDate() + daysUntilNext);
+
       const updates = {
         lastRevised: Timestamp.now(),
-        revisionCount: topicProgress.revisionCount + 1,
+        revisionCount: currentCount + 1,
         masteryScore: Math.min(topicProgress.masteryScore + 5, 100),
+        nextRevision: Timestamp.fromDate(nextRevisionDate),
+        needsReview: false, // Clear review flag when revised
       };
 
       await updateTopicProgress(user.uid, topicId, updates);
@@ -170,7 +181,7 @@ export default function TopicDetailPage() {
 
       toast({
         title: 'Marked as Revised',
-        description: 'Topic marked as revised. Mastery score increased!',
+        description: `Next revision scheduled in ${daysUntilNext} days.`,
       });
     } catch (error) {
       console.error('Error marking as revised:', error);

@@ -116,7 +116,7 @@ export default function SyllabusPage() {
       try {
 
         const userProfile = await getUser(user.uid);
-        const examId = userProfile?.selectedExamId || '';
+        const examId = userProfile?.currentExam?.id || '';
         setCurrentExamId(examId);
 
         let syllabusData: SyllabusSubject[] = [];
@@ -811,6 +811,7 @@ export default function SyllabusPage() {
                     <p className="text-xl sm:text-2xl font-bold text-orange-900">
                       {
                         progress.filter(p => {
+                          if (!p.nextRevision?.toMillis) return false;
                           const daysSince = Math.floor(
                             (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
                           );

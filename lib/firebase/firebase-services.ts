@@ -626,16 +626,6 @@ export const userService = {
       ...safeSpread(userData),
       userId,
       createdAt: Timestamp.fromDate(new Date()),
-      onboardingComplete: false,
-      stats: {
-        totalStudyHours: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        totalMockTests: 0,
-        averageScore: 0,
-        topicsCompleted: 0,
-        totalTopics: 0,
-      },
     };
     return firebaseService.setDocument('users', userId, userDoc);
   },
@@ -655,13 +645,10 @@ export const userService = {
     });
   },
 
-  async getStats(userId: string): Promise<Result<UserStats | null>> {
-    const userResult = await this.get(userId);
-    if (!userResult.success) {
-      return userResult;
-    }
-
-    return createSuccess(userResult.data?.stats ?? null);
+  async getStats(_userId: string): Promise<Result<UserStats | null>> {
+    // Stats are now stored in a separate collection or aggregated dynamically
+    // Returning null for legacy compatibility
+    return createSuccess(null);
   },
 };
 
@@ -2452,7 +2439,7 @@ const journeyFirebaseService = {
    */
   async linkJourneyToProgress(userId: string, journeyId: string): Promise<Result<void>> {
     try {
-      const progressRef = doc(db, 'userProgress', userId);
+      const progressRef = doc(db, 'users', userId, 'progress', 'unified');
       await updateDoc(progressRef, {
         linkedJourneys: arrayUnion(journeyId),
         updatedAt: Timestamp.now(),

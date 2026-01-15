@@ -287,53 +287,39 @@ function ProfileContent() {
           setUserData(fetchedUser);
 
           // Load selected exam
-          if (fetchedUser.selectedExamId && fetchedUser.selectedExamId !== 'custom') {
-            const exam = getExamById(fetchedUser.selectedExamId);
+          if (fetchedUser.currentExam?.id && fetchedUser.currentExam.id !== 'custom') {
+            const exam = getExamById(fetchedUser.currentExam.id);
             setSelectedExam(exam ?? null);
           }
 
           // Initialize form with user data
-          // Normalize selectedCourses
-          let courses = fetchedUser.selectedCourses || [];
-          if (courses.length === 0 && fetchedUser.selectedExamId) {
-             const exam = getExamById(fetchedUser.selectedExamId);
-             if (exam || fetchedUser.isCustomExam) {
-                courses.push({
-                   examId: fetchedUser.selectedExamId,
-                   examName: fetchedUser.isCustomExam ? (fetchedUser.customExam?.name || 'Custom Exam') : (exam?.name || 'Unknown Exam'),
-                   targetDate: fetchedUser.examDate || Timestamp.now(),
-                   priority: 1,
-                   ...(fetchedUser.isCustomExam !== undefined ? { isCustom: fetchedUser.isCustomExam } : {}),
-                   ...(fetchedUser.customExam ? {
-                     customExam: {
-                       ...(fetchedUser.customExam.name ? { name: fetchedUser.customExam.name } : {}),
-                       ...(fetchedUser.customExam.description ? { description: fetchedUser.customExam.description } : {}),
-                       ...(fetchedUser.customExam.category ? { category: fetchedUser.customExam.category } : {})
-                     }
-                   } : {})
-                });
-             }
+          // Construct course list from cached currentExam
+          const courses: any[] = [];
+          if (fetchedUser.currentExam?.id) {
+
+             courses.push({
+                examId: fetchedUser.currentExam.id,
+                examName: fetchedUser.currentExam.name,
+                targetDate: fetchedUser.currentExam.targetDate,
+                priority: 1
+             });
           }
 
             const formData: ProfileFormData = {
              displayName: fetchedUser.displayName ?? user.displayName ?? '',
              email: fetchedUser.email ?? user.email ?? '',
-             userPersona: fetchedUser.userPersona ?? undefined,
-             selectedExamId: fetchedUser.selectedExamId ?? '',
+             userPersona: fetchedUser.persona ?? undefined,
+             selectedExamId: fetchedUser.currentExam?.id ?? '',
              selectedCourses: courses,
-             examDate: fetchedUser.examDate ? (fetchedUser.examDate.toDate().toISOString().split('T')[0] ?? '') : '',
+             examDate: fetchedUser.currentExam?.targetDate ? (fetchedUser.currentExam.targetDate.toDate().toISOString().split('T')[0] ?? '') : '',
             preparationStartDate: fetchedUser.preparationStartDate ? (fetchedUser.preparationStartDate.toDate().toISOString().split('T')[0] ?? '') : '',
-            isCustomExam: fetchedUser.isCustomExam ?? false,
-            customExam: fetchedUser.customExam ? {
-              name: fetchedUser.customExam.name ?? '',
-              description: fetchedUser.customExam.description ?? '',
-              category: fetchedUser.customExam.category ?? '',
-            } : { name: '', description: '', category: '' },
+            isCustomExam: false, // Legacy support removed
+            customExam: { name: '', description: '', category: '' },
             syllabus: userSyllabus ?? [],
             preferences: {
               dailyStudyGoalMinutes: fetchedUser.preferences?.dailyStudyGoalMinutes ?? DEFAULT_PREFERENCES.DAILY_STUDY_GOAL_MINUTES,
               preferredStudyTime: fetchedUser.preferences?.preferredStudyTime ?? DEFAULT_PREFERENCES.PREFERRED_STUDY_TIME,
-              tierDefinitions: fetchedUser.preferences?.tierDefinitions ?? { ...DEFAULT_PREFERENCES.TIER_DEFINITIONS } as any,
+              tierDefinitions: { ...DEFAULT_PREFERENCES.TIER_DEFINITIONS } as any,
               revisionIntervals: fetchedUser.preferences?.revisionIntervals ?? [...DEFAULT_PREFERENCES.REVISION_INTERVALS],
               notifications: fetchedUser.preferences?.notifications ?? { ...DEFAULT_PREFERENCES.NOTIFICATIONS },
             },
@@ -469,7 +455,7 @@ function ProfileContent() {
       setHasUnsavedChanges(true);
       toast({
         title: "Primary Course Updated",
-        description: `Set ${newPrimary.examName} as your primary course. Save changes to apply.`
+        description: `Set ${newPrimary.name} as your primary course. Save changes to apply.`
       });
     }
   }, [form, toast]);
@@ -478,7 +464,7 @@ function ProfileContent() {
     if (!form.data.selectedCourses) return;
     
     const courseToRemove = form.data.selectedCourses.find(c => c.examId === courseId);
-    if (courseToRemove?.priority === 1) {
+    if (courseToRemove?.isPrimary) {
       toast({
          title: "Cannot Remove Primary Course",
          description: "Please set another course as primary before removing this one.",
@@ -522,21 +508,31 @@ function ProfileContent() {
         return;
       }
 
-      // Prepare update data
+      // Prepare update data with new schema
+      const examName = form.data.isCustomExam 
+        ? (form.data.customExam?.name || 'Custom Course')
+        : (selectedExam?.name || 'Unknown Course');
+        
       const updateData: Partial<UserType> = {
         displayName: form.data.displayName,
-        selectedExamId: form.data.selectedExamId,
-        examDate: Timestamp.fromDate(new Date(form.data.examDate)),
+        // Use new currentExam structure
+        currentExam: {
+          id: form.data.selectedExamId,
+          name: examName,
+          targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
+        },
+        primaryCourseId: form.data.selectedExamId,
         ...(form.data.preparationStartDate ? { preparationStartDate: Timestamp.fromDate(new Date(form.data.preparationStartDate)) } : {}),
-        isCustomExam: form.data.isCustomExam,
-        ...(form.data.isCustomExam && form.data.customExam ? { customExam: form.data.customExam } : {}),
-        preferences: form.data.preferences,
+        preferences: {
+          ...form.data.preferences,
+          theme: form.data.settings.theme
+        },
         updatedAt: Timestamp.now(),
       };
 
       // Add userPersona only if it exists
       if (form.data.userPersona) {
-        updateData.userPersona = form.data.userPersona;
+        updateData.persona = form.data.userPersona;
       }
 
       // CRITICAL: Save sequentially to prevent partial data state
@@ -861,24 +857,24 @@ function ProfileContent() {
                        
                        {form.data.selectedCourses && form.data.selectedCourses.length > 0 ? (
                           <div className="grid gap-4">
-                             {form.data.selectedCourses.sort((a, b) => a.priority - b.priority).map((course) => (
-                                <div key={course.examId} className={`p-4 rounded-lg border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${course.priority === 1 ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'}`}>
+                             {form.data.selectedCourses.sort((a, b) => (a.isPrimary === b.isPrimary) ? 0 : a.isPrimary ? -1 : 1).map((course) => (
+                                <div key={course.examId} className={`p-4 rounded-lg border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${course.isPrimary ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'}`}>
                                    <div>
                                       <div className="flex items-center space-x-2">
-                                         <h4 className="font-semibold text-gray-900">{course.examName}</h4>
-                                         {course.priority === 1 && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Primary</Badge>}
+                                         <h4 className="font-semibold text-gray-900">{course.name}</h4>
+                                         {course.isPrimary && <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Primary</Badge>}
                                          {course.isCustom && <Badge variant="outline">Custom</Badge>}
                                       </div>
                                       <p className="text-sm text-gray-500 mt-1">Target: {course.targetDate && ((course.targetDate as any).toDate ? (course.targetDate as any).toDate().toLocaleDateString() : new Date(course.targetDate as any).toLocaleDateString())}</p>
                                    </div>
                                    <div className="flex items-center space-x-2 w-full sm:w-auto">
-                                      {course.priority !== 1 && (
+                                      {!course.isPrimary && (
                                          <>
                                             <Button size="sm" variant="ghost" onClick={() => handleSetPrimaryCourse(course.examId)}>Set Primary</Button>
                                             <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => handleRemoveCourse(course.examId)}><Trash2 className="h-4 w-4"/></Button>
                                          </>
                                       )}
-                                      {course.priority === 1 && (
+                                      {course.isPrimary && (
                                          <Button size="sm" variant="ghost" disabled className="text-gray-400">Current Primary</Button>
                                       )}
                                    </div>

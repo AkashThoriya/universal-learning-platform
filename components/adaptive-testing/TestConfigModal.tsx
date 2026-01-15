@@ -53,6 +53,7 @@ interface TestConfigModalProps {
   isGenerating?: boolean;
   preSelectedSubject?: string;
   preSelectedTopic?: string;
+  preSelectedQuestionCount?: number;
 }
 
 export interface TestConfig {
@@ -77,6 +78,7 @@ export function TestConfigModal({
   isGenerating = false,
   preSelectedSubject,
   preSelectedTopic,
+  preSelectedQuestionCount,
 }: TestConfigModalProps) {
   const { user } = useAuth();
   
@@ -93,7 +95,7 @@ export function TestConfigModal({
   const [selectedSubject, setSelectedSubject] = useState<string>(preSelectedSubject || '');
   const [selectedTopics, setSelectedTopics] = useState<string[]>(preSelectedTopic ? [preSelectedTopic] : []);
   const [difficulty, setDifficulty] = useState<MissionDifficulty>('intermediate');
-  const [questionCount, setQuestionCount] = useState(5);
+  const [questionCount, setQuestionCount] = useState(preSelectedQuestionCount || 5);
 
   // Load syllabus data
   useEffect(() => {

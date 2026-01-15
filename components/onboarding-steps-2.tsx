@@ -121,7 +121,7 @@ export function SyllabusManagementStep({
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
 
   // Get exam-specific strategy tips
-  const examTips = getExamSpecificTips(form.data.selectedExamId);
+  const examTips = getExamSpecificTips(form.data.selectedExamId || '');
 
   // Helper to get primary course name
   const primaryCourseName = useMemo(() => {

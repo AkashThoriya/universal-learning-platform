@@ -22,8 +22,6 @@ import { journeyService } from '@/lib/services/journey-service';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { cn } from '@/lib/utils/utils';
 import { UserJourney } from '@/types/journey';
-import { User } from '@/types/exam';
-import { getUser } from '@/lib/firebase/firebase-utils';
 import { CreateJourneyDialog } from '@/components/journey/CreateJourneyDialog';
 import { JourneySkeleton } from '@/components/skeletons';
 
@@ -38,7 +36,6 @@ export default function JourneyPlanningPage() {
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [journeyToDelete, setJourneyToDelete] = useState<UserJourney | null>(null);
-  const [userData, setUserData] = useState<User | null>(null);
 
 
   // Load journeys on component mount
@@ -57,13 +54,6 @@ export default function JourneyPlanningPage() {
     }
     setIsLoading(false);
     return undefined;
-  }, [user]);
-
-  // Load full user data for course context
-  useEffect(() => {
-    if (user?.uid) {
-      getUser(user.uid).then(data => setUserData(data));
-    }
   }, [user]);
 
   // Filter journeys based on search and status
@@ -188,7 +178,6 @@ export default function JourneyPlanningPage() {
                   <CreateJourneyDialog
                     userId={user?.uid || ''}
                     onJourneyCreated={() => {}}
-                    selectedCourses={userData?.selectedCourses}
                     trigger={
                        <Button variant="outline" size="sm" className="hidden sm:flex">
                          <Plus className="h-4 w-4 mr-2" />

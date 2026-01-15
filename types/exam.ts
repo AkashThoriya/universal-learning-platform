@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 
-import type { CustomGoal } from './mission-system';
+
 
 /**
  * @fileoverview Core type definitions for the Exam Strategy Engine
@@ -225,79 +225,77 @@ export interface SyllabusTopic {
  * Represents a user in the system with their profile, settings, and current exam
  *
  * @interface User
+ * @description Core user entity stored at /users/{userId} in Firestore.
+ * Contains profile data, exam configuration, and preferences.
+ * 
  * @example
  * ```typescript
  * const user: User = {
  *   userId: 'user123',
  *   email: 'student@example.com',
  *   displayName: 'John Doe',
- *   currentExam: { id: 'upsc_cse_prelims', name: 'UPSC CSE', targetDate: timestamp },
  *   onboardingComplete: true,
  *   createdAt: timestamp,
- *   settings: {...},
- *   stats: {...}
+ *   updatedAt: timestamp,
  * };
  * ```
  */
 export interface User {
+  // ============================================
+  // Core Identity (Required)
+  // ============================================
+  
   /** Firestore document ID for the user */
   userId: string;
   /** User's email address */
   email: string;
   /** User's display name */
   displayName: string;
-  /** Information about the user's current exam preparation */
-  currentExam: {
-    /** References the exam ID from the exams collection */
+  /** Timestamp when the user account was created */
+  createdAt: Timestamp;
+  /** Timestamp when the user account was last updated */
+  updatedAt: Timestamp;
+
+  // ============================================
+  // Current Focus
+  // ============================================
+  
+  /** Primary course ID - references /users/{userId}/courses/{courseId} */
+  primaryCourseId: string;
+  
+  /** 
+   * Cached current exam info for UI display (denormalized from primary course)
+   * Should be kept in sync when primary course changes
+   */
+  currentExam?: {
     id: string;
-    /** Cached exam name for quick display */
     name: string;
-    /** Target exam date */
     targetDate: Timestamp;
   };
-  /** Selected exam ID during onboarding (Deprecated: use selectedCourses) */
-  selectedExamId?: string;
-  /** Target exam date during onboarding (Deprecated: use selectedCourses) */
-  examDate?: Timestamp;
   
   /** Date when the user started their preparation */
   preparationStartDate?: Timestamp;
-  
-  /** 
-   * Active courses selected by the user
-   * Supports multi-course selection with progressive complexity
-   */
-  selectedCourses?: SelectedCourse[];
-  
-  /** ID of the primary/active course for dashboard display */
-  primaryCourseId?: string;
 
-  /** Whether the user has completed the onboarding process */
-  onboardingComplete?: boolean;
-  /** Whether onboarding has been completed (legacy field) */
-  onboardingCompleted?: boolean;
-  /** Whether this is a custom exam */
-  isCustomExam?: boolean;
-  /** Custom exam details if applicable */
-  customExam?:
-    | {
-        name?: string | undefined;
-        description?: string | undefined;
-        category?: string | undefined;
-      }
-    | undefined;
-  /** User persona information */
-  userPersona?: UserPersona;
-  /** User preferences for studying */
-  preferences?: {
+  // ============================================
+  // User Persona
+  // ============================================
+  
+  /** User persona information (student/professional/freelancer) */
+  persona?: {
+    type: 'student' | 'working_professional' | 'freelancer';
+    workSchedule?: WorkSchedule;
+    careerContext?: CareerContext;
+  };
+
+  // ============================================
+  // Preferences (Consolidated)
+  // ============================================
+  
+  /** All user preferences in one place */
+  preferences: {
     dailyStudyGoalMinutes: number;
     preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
-    tierDefinitions: {
-      1: string;
-      2: string;
-      3: string;
-      4?: string; // Optional 4th tier
-    };
+    theme: 'light' | 'dark' | 'system';
     revisionIntervals: number[];
     notifications: {
       revisionReminders: boolean;
@@ -305,86 +303,82 @@ export interface User {
       healthCheckReminders: boolean;
     };
   };
-  /** Timestamp when the user account was created */
-  createdAt?: Timestamp;
-  /** Timestamp when the user account was last updated */
-  updatedAt?: Timestamp;
-  /** User's personalized settings and preferences */
-  settings?: UserSettings;
-  /** User's study statistics and achievements */
-  stats?: UserStats;
 
-  // Custom Learning Path Fields (backward compatible)
-  /** User's custom learning goals */
-  customGoals?: CustomGoal[];
-  /** Learning preferences for custom paths */
-  learningPreferences?: {
-    /** Preferred content types for learning */
-    preferredContentTypes: ('video' | 'text' | 'practice' | 'interactive')[];
-    /** Estimated weekly hours available for learning */
-    estimatedWeeklyHours: number;
-    /** Difficulty preference progression */
-    difficultyPreference: 'gradual' | 'challenge' | 'mixed';
-    /** Learning style preference */
-    learningStyle: 'visual' | 'auditory' | 'kinesthetic' | 'mixed';
-  };
-  /** Achievement tracking for custom learning */
-  achievements?: {
-    /** Number of learning paths completed */
-    pathsCompleted: number;
-    /** Skills/certifications earned */
-    skillsCertified: string[];
-    /** Total hours spent on custom learning */
-    totalLearningHours: number;
-  };
+  // ============================================
+  // Onboarding Status
+  // ============================================
+  
+  /** Whether the user has completed the onboarding flow */
+  onboardingComplete?: boolean;
 }
 
 /**
- * Represents a specific course selected by the user
+ * Course document stored in /users/{userId}/courses/{courseId}
+ * Represents a course/exam the user is preparing for
  * 
- * @interface SelectedCourse
+ * @interface Course
  */
-export interface SelectedCourse {
-  /** Unique identifier for the exam/course */
+export interface Course {
+  /** Course document ID (same as examId) */
+  id: string;
+  /** Reference to the exam from catalog, or 'custom' */
   examId: string;
   /** Display name of the course */
-  examName: string;
+  name: string;
   /** Target completion/exam date */
   targetDate: Timestamp;
-  /** Priority level (1 = Primary, 2+ = Secondary) */
-  priority: number;
+  /** Whether this is the primary/active course */
+  isPrimary: boolean;
   /** Whether this is a custom-created course */
-  isCustom?: boolean;
-  /** Metadata for custom courses */
-  customExam?: {
-    name?: string;
+  isCustom: boolean;
+  /** Custom course details if isCustom is true */
+  customDetails?: {
     description?: string;
     category?: string;
   };
+  /** Timestamp when course was added */
+  createdAt: Timestamp;
+  /** Timestamp when course was last updated */
+  updatedAt: Timestamp;
 }
 
+/** @deprecated Use Course instead - kept for backward compat during migration */
+export type SelectedCourse = Course;
+
 /**
- * Enhanced onboarding form data structure with complete validation
+ * Onboarding form data structure
+ * Used by the multi-step onboarding wizard
+ * Note: This matches the form fields, not the final User type
  */
 export interface OnboardingFormData {
   // Step 1: Persona Detection
   userPersona?: UserPersona;
 
-  // Step 2: Personal Information
+  // Step 2: Personal Information & Course Selection
   displayName: string;
-  selectedExamId: string; // Deprecated, kept for backward compatibility
-  selectedCourses: SelectedCourse[]; // New multi-course field
-  examDate: string;
+  selectedExamId?: string;
+  // Use specific structure matching the form's Zod schema, not the new Course type
+  selectedCourses: {
+    examId: string;
+    examName: string;
+    targetDate: Timestamp;
+    priority: number;
+    isCustom?: boolean;
+    customExam?: {
+      name?: string;
+      description?: string;
+      category?: string;
+    };
+  }[];
+  examDate: string; // ISO date string for form handling
   isCustomExam: boolean;
-
-  // Step 3: Custom Exam Details (if applicable)
-  customExam: {
+  customExam?: {
     name?: string;
     description?: string;
     category?: string;
   };
 
-  // Step 4: Syllabus Configuration
+  // Step 3: Syllabus Configuration
   syllabus: SyllabusSubject[];
 
   // Step 4: Study Preferences
@@ -407,18 +401,7 @@ export interface OnboardingFormData {
     };
   };
 
-  // Step 6: Custom Learning Goals
-  customLearningGoals?: Array<{
-    id: string;
-    title: string;
-    description: string;
-    category: string;
-    targetValue: number;
-    unit: string;
-    priority: 'high' | 'medium' | 'low';
-  }>;
-
-  // Index signature to satisfy Record<string, unknown> constraint
+  // Index signature for form compatibility
   [key: string]: string | number | boolean | object | undefined;
 }
 

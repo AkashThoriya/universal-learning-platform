@@ -1,6 +1,7 @@
 'use client';
 
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendPasswordResetEmail } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Shield, CheckCircle, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -10,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { auth } from '@/lib/firebase/firebase';
+import { auth, db } from '@/lib/firebase/firebase';
 
 interface AuthStep {
   id: string;
@@ -127,9 +128,9 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
       setCurrentStep('password');
     } catch (err) {
       console.error('Email verification error:', err);
-      // If error occurs, still proceed but assume new user for safety
-      // This handles edge cases like email enumeration protection
-      setIsNewUser(authMode === 'signup' || true);
+      // If error occurs (e.g., email enumeration protection), use the selected mode
+      // For 'auto' mode, default to existing user (sign in) as safer option
+      setIsNewUser(authMode === 'signup');
       setCurrentStep('password');
     } finally {
       setLoading(false);
@@ -160,13 +161,39 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
 
       setCurrentStep('success');
 
-      // Delay navigation to show success state
+      // Smart redirect: check onboarding status before redirecting
       const REDIRECT_DELAY = 1500;
-      setTimeout(() => {
+      setTimeout(async () => {
         if (onSuccess) {
           onSuccess(userCredential.user);
         } else {
-          router.push('/');
+          // Check if user has completed onboarding
+          try {
+            const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              // Check explicit flag or presence of essential data
+              const hasExplicitFlag = userData?.onboardingComplete === true;
+              const hasEssentialData = !!(userData?.primaryCourseId && userData?.currentExam && userData?.preferences);
+              const isOnboardingComplete = hasExplicitFlag || hasEssentialData;
+
+              if (isOnboardingComplete) {
+                console.log('[Auth] Onboarding complete, redirecting to dashboard');
+                router.push('/dashboard');
+              } else {
+                console.log('[Auth] Onboarding incomplete, redirecting to onboarding');
+                router.push('/onboarding');
+              }
+            } else {
+              // No user document - new user, go to onboarding
+              console.log('[Auth] No user document found, redirecting to onboarding');
+              router.push('/onboarding');
+            }
+          } catch (error) {
+            console.error('[Auth] Error checking onboarding status:', error);
+            // Fallback: redirect to dashboard (AuthGuard will handle it)
+            router.push('/dashboard');
+          }
         }
       }, REDIRECT_DELAY);
     } catch (err: unknown) {

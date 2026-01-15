@@ -38,8 +38,8 @@ export class ProgressService {
    */
   async getUserProgress(userId: string): Promise<Result<UnifiedProgress>> {
     try {
-      // Get existing progress or create default
-      const progressResult = await firebaseService.getDocument<UnifiedProgress>('userProgress', userId);
+      // Use subcollection path: /users/{userId}/progress/unified
+      const progressResult = await firebaseService.getDocument<UnifiedProgress>(`users/${userId}/progress`, 'unified');
 
       if (progressResult.success && progressResult.data) {
         return createSuccess(progressResult.data);
@@ -47,7 +47,7 @@ export class ProgressService {
 
       // Create default progress if not exists
       const defaultProgress = this.createDefaultProgress(userId);
-      const saveResult = await firebaseService.setDocument('userProgress', userId, defaultProgress);
+      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', defaultProgress);
 
       if (!saveResult.success) {
         return saveResult;
@@ -106,7 +106,7 @@ export class ProgressService {
 
       // Save updated progress
       progress.updatedAt = new Date();
-      const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
+      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
 
       if (!saveResult.success) {
         return saveResult;
@@ -196,7 +196,7 @@ export class ProgressService {
 
       // Save updated progress
       progress.updatedAt = new Date();
-      const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
+      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
 
       return saveResult;
     } catch (error) {
@@ -405,7 +405,7 @@ export class ProgressService {
 
       // Save updated progress
       progress.updatedAt = new Date();
-      const updateResult = await firebaseService.setDocument('userProgress', userId, progress);
+      const updateResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
       return updateResult;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to update progress from adaptive test'));
@@ -634,7 +634,7 @@ export class ProgressService {
 
       // Save updated progress
       progress.updatedAt = new Date();
-      const updateResult = await firebaseService.setDocument('userProgress', userId, progress);
+      const updateResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
       return updateResult;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to update subject proficiency'));
@@ -693,7 +693,7 @@ export class ProgressService {
 
       progress.updatedAt = new Date();
 
-      const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
+      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
       if (!saveResult.success) {
         return saveResult;
       }
@@ -752,7 +752,7 @@ export class ProgressService {
 
       progress.updatedAt = new Date();
 
-      const saveResult = await firebaseService.setDocument('userProgress', userId, progress);
+      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
       return saveResult;
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to update journey progress'));

@@ -11,7 +11,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -30,49 +30,93 @@ interface AuthGuardProps {
  *
  * Features:
  * - Redirects unauthenticated users to /login
+ * - Redirects users with incomplete onboarding to /onboarding
  * - Shows loading spinner while checking authentication
- * - Only renders children when user is authenticated
- * - Handles authentication state changes in real-time
+ * - Only renders children when user is authenticated and onboarded
  *
  * @param {AuthGuardProps} props - Component props
  * @returns {JSX.Element | null} Loading spinner, null (during redirect), or protected content
- *
- * @example
- * ```typescript
- * // Protect a dashboard page
- * function DashboardPage() {
- *   return (
- *     <AuthGuard>
- *       <div>This content is only visible to authenticated users</div>
- *     </AuthGuard>
- *   );
- * }
- *
- * // In a layout file
- * function ProtectedLayout({ children }) {
- *   return (
- *     <AuthGuard>
- *       <Navigation />
- *       {children}
- *       <Footer />
- *     </AuthGuard>
- *   );
- * }
- * ```
  */
 export default function AuthGuard({ children }: AuthGuardProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
 
   useEffect(() => {
     // Redirect to login if user is not authenticated and loading is complete
     if (!loading && !user) {
       router.push('/login');
+      return;
+    }
+
+    // Check onboarding status for authenticated users
+    const checkOnboardingStatus = async () => {
+      if (!user) {
+        console.log('[AuthGuard] No user, skipping onboarding check');
+        setIsCheckingOnboarding(false);
+        return;
+      }
+
+      console.log('[AuthGuard] Checking onboarding status for user:', user.uid);
+
+      try {
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase/firebase');
+        
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        console.log('[AuthGuard] User doc exists:', userDoc.exists());
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          console.log('[AuthGuard] User data:', JSON.stringify(userData, null, 2));
+          console.log('[AuthGuard] onboardingComplete field:', userData?.onboardingComplete);
+          console.log('[AuthGuard] onboardingComplete type:', typeof userData?.onboardingComplete);
+          
+          // Check explicit field first, then fall back to detecting completed onboarding from essential data
+          // This handles legacy documents that don't have the explicit onboardingComplete field
+          const hasExplicitFlag = userData?.onboardingComplete === true;
+          const hasEssentialData = !!(userData?.primaryCourseId && userData?.currentExam && userData?.preferences);
+          const isOnboardingComplete = hasExplicitFlag || hasEssentialData;
+          
+          console.log('[AuthGuard] hasExplicitFlag:', hasExplicitFlag);
+          console.log('[AuthGuard] hasEssentialData:', hasEssentialData);
+          console.log('[AuthGuard] isOnboardingComplete evaluated to:', isOnboardingComplete);
+          
+          setOnboardingComplete(isOnboardingComplete);
+          
+          // Redirect to onboarding if not complete
+          if (!isOnboardingComplete) {
+            console.log('[AuthGuard] Onboarding NOT complete, redirecting to /onboarding');
+            router.push('/onboarding');
+            return;
+          } else {
+            console.log('[AuthGuard] Onboarding IS complete, allowing access');
+          }
+        } else {
+          // No user doc means new user, redirect to onboarding
+          console.log('[AuthGuard] No user document found, redirecting to /onboarding');
+          router.push('/onboarding');
+          return;
+        }
+      } catch (error) {
+        console.error('[AuthGuard] Error checking onboarding status:', error);
+        // On error, assume onboarding is complete to not block the user
+        setOnboardingComplete(true);
+      } finally {
+        setIsCheckingOnboarding(false);
+      }
+    };
+
+    if (user && !loading) {
+      checkOnboardingStatus();
     }
   }, [user, loading, router]);
 
-  // Show loading spinner while checking authentication status
-  if (loading) {
+  // Show loading spinner while checking authentication or onboarding status
+  if (loading || isCheckingOnboarding) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
@@ -80,8 +124,8 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  // Return null during redirect (user is not authenticated)
-  if (!user) {
+  // Return null during redirect (user is not authenticated or onboarding incomplete)
+  if (!user || !onboardingComplete) {
     return null;
   }
 

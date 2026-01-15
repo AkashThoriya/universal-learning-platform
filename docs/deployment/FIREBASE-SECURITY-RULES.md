@@ -54,16 +54,11 @@ service cloud.firestore {
       allow create: if isAuthenticated() && request.auth.uid == userId &&
         isValidCreate(['email', 'createdAt', 'updatedAt']);
 
-      // User subcollections
+      // User subcollections: courses, syllabus, progress, dailyLogs,
+      // mockTests, journeys, tests, sessions, missions, achievements
       match /{document=**} {
         allow read, write: if isOwner(userId);
       }
-    }
-
-    // User progress tracking
-    match /userProgress/{userId} {
-      allow read, write: if isOwner(userId);
-      allow create: if isAuthenticated() && request.auth.uid == userId;
     }
 
     // ========================================================================

@@ -71,6 +71,8 @@ const onboardingSchema = z.object({
       type: z.enum(['student', 'working_professional', 'freelancer'], {
         required_error: 'Please select your profile type',
       }),
+      workSchedule: z.any().optional(),
+      careerContext: z.any().optional(),
     })
     .optional(),
   displayName: z
@@ -325,7 +327,6 @@ export default function OnboardingSetupPage() {
         healthCheckReminders: true,
       },
     },
-    customLearningGoals: [],
   };
 
   // Enhanced multi-step form management with analytics
@@ -371,7 +372,7 @@ export default function OnboardingSetupPage() {
   // Enhanced form state management with auto-save
   const form = useForm({
     initialData: initialFormData,
-    validationSchema: onboardingSchema,
+    validationSchema: onboardingSchema as any,
     persistData: true,
     storageKey: 'onboarding-form-data-v2',
     validateOnChange: false,
@@ -453,7 +454,7 @@ export default function OnboardingSetupPage() {
           if (!form.data.selectedExamId) {
             errors.exam = 'Please select a learning path';
           }
-          if (form.data.isCustomExam && !form.data.customExam.name) {
+          if (form.data.isCustomExam && !form.data.customExam?.name) {
             errors.customExam = 'Please enter a name for your custom course';
           }
           break;
@@ -812,25 +813,36 @@ export default function OnboardingSetupPage() {
         userPersona: form.data.userPersona?.type ?? 'none',
       });
 
-      // Prepare user data
-      // Prepare user data
+      // Prepare user data with new schema structure
+      const selectedExam = form.data.selectedExamId ? getExamById(form.data.selectedExamId) : null;
+      const examName = form.data.isCustomExam 
+        ? (form.data.customExam?.name || 'Custom Course')
+        : (selectedExam?.name || 'Unknown Course');
+      
       const profileData: Partial<UserType> = {
         displayName: form.data.displayName,
-        ...(form.data.selectedExamId ? { selectedExamId: form.data.selectedExamId } : {}),
-        examDate: Timestamp.fromDate(new Date(form.data.examDate)),
-        preparationStartDate: Timestamp.now(), // Default to "Today" when user completes onboarding
-        onboardingComplete: true,
-        onboardingCompleted: true, // Legacy
+        // Use new currentExam structure instead of deprecated selectedExamId/examDate
+        currentExam: {
+          id: form.data.selectedExamId || 'custom',
+          name: examName,
+          targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
+        },
+        preparationStartDate: Timestamp.now(),
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-        ...(form.data.userPersona ? { userPersona: form.data.userPersona } : {}),
-        ...(form.data.preferences ? { preferences: form.data.preferences } : {}),
+        ...(form.data.userPersona ? { persona: form.data.userPersona } : {}),
+        ...(form.data.preferences ? { 
+          preferences: {
+            ...form.data.preferences,
+            theme: 'system' 
+          }
+        } : {}),
         ...(form.data.isCustomExam !== undefined ? { isCustomExam: form.data.isCustomExam } : {}),
         ...(form.data.isCustomExam && form.data.customExam ? {
           customExam: {
-            ...(form.data.customExam.name ? { name: form.data.customExam.name } : {}),
-            ...(form.data.customExam.description ? { description: form.data.customExam.description } : {}),
-            ...(form.data.customExam.category ? { category: form.data.customExam.category } : {})
+            name: form.data.customExam?.name || 'Custom Course',
+            ...(form.data.customExam?.description ? { description: form.data.customExam.description } : {}),
+            ...(form.data.customExam?.category ? { category: form.data.customExam.category } : {})
           }
         } : {}),
       };
@@ -850,11 +862,11 @@ export default function OnboardingSetupPage() {
             userId: user.uid,
             userData: {
               displayName: profileData.displayName,
-              selectedExamId: (profileData.selectedExamId || 'none') as string,
-              isCustomExam: profileData.isCustomExam,
-              onboardingComplete: profileData.onboardingComplete,
+              currentExamId: (profileData.currentExam?.id || 'none') as string,
+              isCustomExam: form.data.isCustomExam,
+              onboardingComplete: true,
               hasPreferences: !!profileData.preferences,
-              hasUserPersona: !!profileData.userPersona,
+              hasUserPersona: !!profileData.persona,
             },
             syllabusData: {
               subjectCount: form.data.syllabus.length,
@@ -899,48 +911,23 @@ export default function OnboardingSetupPage() {
             : [{
                 // Fallback if no selectedCourses (shouldn't happen with validation)
                 examId: primaryExamId || '',
-                examName: form.data.isCustomExam ? (form.data.customExam.name || 'Custom Exam') : (getExamById(primaryExamId || '')?.name || 'Unknown Exam'),
+                examName: form.data.isCustomExam ? (form.data.customExam?.name || 'Custom Exam') : (getExamById(primaryExamId || '')?.name || 'Unknown Exam'),
                 targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
                 priority: 1,
                 ...(form.data.isCustomExam !== undefined ? { isCustom: !!form.data.isCustomExam } : {}),
                 ...(form.data.customExam ? {
                   customExam: {
-                    ...(form.data.customExam.name ? { name: form.data.customExam.name } : {}),
-                    ...(form.data.customExam.description ? { description: form.data.customExam.description } : {}),
-                    ...(form.data.customExam.category ? { category: form.data.customExam.category } : {})
+                    ...(form.data.customExam?.name ? { name: form.data.customExam.name } : {}),
+                    ...(form.data.customExam?.description ? { description: form.data.customExam.description } : {}),
+                    ...(form.data.customExam?.category ? { category: form.data.customExam.category } : {})
                   }
                 } : {})
               }];
 
           const profileDataFinal: Partial<UserType> = {
             ...profileData,
-            selectedExamId: primaryExamId || '', // Legacy
-            primaryCourseId: primaryExamId || '', // New
-            selectedCourses: finalSelectedCourses, // New
-            ...(form.data.preferences && form.data.userPersona ? {
-              settings: {
-                 revisionIntervals: form.data.preferences.revisionIntervals,
-                 dailyStudyGoalMinutes: form.data.preferences.dailyStudyGoalMinutes,
-                 tierDefinition: form.data.preferences.tierDefinitions,
-                 notifications: form.data.preferences.notifications,
-                 preferences: {
-                    theme: 'system',
-                    language: 'en',
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                 },
-                 userPersona: form.data.userPersona
-              }
-            } : {}),
-            // Initialize stats
-            stats: {
-              totalStudyHours: 0,
-              currentStreak: 0,
-              longestStreak: 0,
-              totalMockTests: 0,
-              averageScore: 0,
-              topicsCompleted: 0,
-              totalTopics: 0,
-            },
+            primaryCourseId: primaryExamId || '',
+            onboardingComplete: true,
           };
 
           // Save User Profile

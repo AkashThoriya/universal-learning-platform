@@ -49,7 +49,8 @@ export interface GoogleAuthResult {
 }
 
 export interface GoogleUserData {
-  uid: string;
+  /** Match User.userId - Firestore document ID */
+  userId: string;
   email: string;
   displayName: string;
   photoURL: string | null;
@@ -59,18 +60,26 @@ export interface GoogleUserData {
   lastSignInAt: Timestamp;
   onboardingComplete: boolean;
   emailVerified: boolean;
+  
+  /** Primary course ID - empty until onboarding complete */
+  primaryCourseId: string;
+  
+  /** User preferences with defaults */
+  preferences: {
+    dailyStudyGoalMinutes: number;
+    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    theme: 'light' | 'dark' | 'system';
+    revisionIntervals: number[];
+    notifications: {
+      revisionReminders: boolean;
+      dailyGoalReminders: boolean;
+      healthCheckReminders: boolean;
+    };
+  };
+  
   metadata: {
     creationTime: string;
     lastSignInTime: string;
-  };
-  stats: {
-    totalStudyHours: number;
-    currentStreak: number;
-    longestStreak: number;
-    totalMockTests: number;
-    averageScore: number;
-    topicsCompleted: number;
-    totalTopics: number;
   };
 }
 
@@ -194,40 +203,47 @@ export async function signInWithGoogle(): Promise<GoogleAuthResult> {
 async function saveGoogleUserData(user: User, isNewUser: boolean): Promise<GoogleUserData> {
   const now = Timestamp.fromDate(new Date());
 
+  const existingData = isNewUser ? null : await getExistingUserData(user.uid);
+
   const userData: GoogleUserData = {
-    uid: user.uid,
+    userId: user.uid,
     email: user.email ?? '',
     displayName: user.displayName ?? 'Google User',
     photoURL: user.photoURL,
     provider: 'google',
-    createdAt: isNewUser ? now : ((await getExistingUserData(user.uid))?.createdAt ?? now),
+    createdAt: isNewUser ? now : (existingData?.createdAt ?? now),
     updatedAt: now,
     lastSignInAt: now,
-    onboardingComplete: isNewUser ? false : ((await getExistingUserData(user.uid))?.onboardingComplete ?? false),
+    onboardingComplete: isNewUser ? false : (existingData?.onboardingComplete ?? false),
     emailVerified: user.emailVerified ?? false,
+    primaryCourseId: isNewUser ? '' : (existingData?.primaryCourseId ?? ''),
+    preferences: isNewUser
+      ? {
+          dailyStudyGoalMinutes: 120,
+          preferredStudyTime: 'morning',
+          theme: 'system',
+          revisionIntervals: [1, 3, 7, 14, 30],
+          notifications: {
+            revisionReminders: true,
+            dailyGoalReminders: true,
+            healthCheckReminders: false,
+          },
+        }
+      : (existingData?.preferences ?? {
+          dailyStudyGoalMinutes: 120,
+          preferredStudyTime: 'morning',
+          theme: 'system',
+          revisionIntervals: [1, 3, 7, 14, 30],
+          notifications: {
+            revisionReminders: true,
+            dailyGoalReminders: true,
+            healthCheckReminders: false,
+          },
+        }),
     metadata: {
       creationTime: user.metadata.creationTime ?? new Date().toISOString(),
       lastSignInTime: user.metadata.lastSignInTime ?? new Date().toISOString(),
     },
-    stats: isNewUser
-      ? {
-          totalStudyHours: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          totalMockTests: 0,
-          averageScore: 0,
-          topicsCompleted: 0,
-          totalTopics: 0,
-        }
-      : ((await getExistingUserData(user.uid))?.stats ?? {
-          totalStudyHours: 0,
-          currentStreak: 0,
-          longestStreak: 0,
-          totalMockTests: 0,
-          averageScore: 0,
-          topicsCompleted: 0,
-          totalTopics: 0,
-        }),
   };
 
   // Save to Firestore

@@ -26,7 +26,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from '@/hooks/useForm';
 import { POPULAR_EXAM_CATEGORIES } from '@/lib/data/onboarding';
-import { Exam, SelectedCourse, OnboardingFormData } from '@/types/exam';
+import { Exam, OnboardingFormData } from '@/types/exam';
 
 // Interface for Google Analytics gtag function
 declare global {
@@ -91,7 +91,7 @@ export function BasicInfoStep({
     const currentCourses = form.data.selectedCourses || [];
     const isSelected = currentCourses.some(c => c.examId === exam.id);
 
-    let newCourses: SelectedCourse[];
+    let newCourses;
 
     if (isSelected) {
       newCourses = currentCourses.filter(c => c.examId !== exam.id);
@@ -100,7 +100,7 @@ export function BasicInfoStep({
         // Optional: Add toast notification for max limit
         return;
       }
-      const newCourse: SelectedCourse = {
+      const newCourse = {
         examId: exam.id,
         examName: exam.name,
         targetDate: Timestamp.now(), // Placeholder, updated in next step
@@ -132,7 +132,7 @@ export function BasicInfoStep({
       toggleCourse(exam);
     } else {
       // Standard single-select behavior
-      const newCourse: SelectedCourse = {
+      const newCourse = {
         examId: exam.id,
         examName: exam.name,
         targetDate: Timestamp.now(),
@@ -493,10 +493,10 @@ export function BasicInfoStep({
                 </Label>
                 <Input
                   id="custom-name"
-                  value={form.data.customExam.name || ''}
+                  value={form.data.customExam?.name || ''}
                   onChange={e =>
                     form.updateField('customExam', {
-                      ...form.data.customExam,
+                      ...(form.data.customExam || {}),
                       name: e.target.value,
                     })
                   }
@@ -510,10 +510,10 @@ export function BasicInfoStep({
                 </Label>
                 <Textarea
                   id="custom-description"
-                  value={form.data.customExam.description || ''}
+                  value={form.data.customExam?.description || ''}
                   onChange={e =>
                     form.updateField('customExam', {
-                      ...form.data.customExam,
+                      ...(form.data.customExam || {}),
                       description: e.target.value,
                     })
                   }
@@ -549,7 +549,7 @@ export function BasicInfoStep({
                   You've selected{' '}
                   <span className="font-medium">
                     {form.data.isCustomExam 
-                      ? form.data.customExam.name 
+                      ? form.data.customExam?.name 
                       : form.data.selectedCourses && form.data.selectedCourses.length > 0
                         ? `${form.data.selectedCourses.length} course${form.data.selectedCourses.length > 1 ? 's' : ''}`
                         : selectedExam?.name
