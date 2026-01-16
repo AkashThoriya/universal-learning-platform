@@ -790,15 +790,30 @@ export const insightsService = {
 
 /**
  * Enhanced mission system operations
+ * 
+ * CONSOLIDATED: All missions now use a single collection `users/{userId}/missions`
+ * with a `status` field for lifecycle management:
+ * - 'template' - Mission templates
+ * - 'draft' - Draft missions
+ * - 'active' - Active missions (not started or in progress)
+ * - 'in_progress' - Missions currently being worked on
+ * - 'completed' - Completed missions (formerly in mission-history)
+ * - 'archived' - Archived missions
  */
 export const missionFirebaseService = {
+  // Unified collection path
+  getMissionsPath(userId: string): string {
+    return `users/${userId}/missions`;
+  },
+
   async saveTemplate(userId: string, template: unknown): Promise<Result<void>> {
     try {
       const safeTemplate = safeSpread(template);
-      const templateId = safeTemplate.id ?? doc(collection(db, `users/${userId}/mission-templates`)).id;
-      return firebaseService.setDocument(`users/${userId}/mission-templates`, templateId as string, {
+      const templateId = safeTemplate.id ?? doc(collection(db, this.getMissionsPath(userId))).id;
+      return firebaseService.setDocument(this.getMissionsPath(userId), templateId as string, {
         ...safeTemplate,
         id: templateId,
+        status: 'template', // Mark as template
         createdAt: safeTemplate.createdAt ?? Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       });
@@ -809,16 +824,17 @@ export const missionFirebaseService = {
 
   async getTemplates(userId: string, track?: string): Promise<Result<unknown[]>> {
     try {
-      const options: Parameters<typeof firebaseService.queryCollection>[1] = {
-        useCache: true,
-        cacheTTL: 600000, // 10 minutes
-      };
+      const whereConditions = [{ field: 'status', operator: '==' as const, value: 'template' }];
 
       if (track) {
-        options.where = [{ field: 'track', operator: '==', value: track }];
+        whereConditions.push({ field: 'track', operator: '==' as const, value: track });
       }
 
-      return firebaseService.queryCollection(`users/${userId}/mission-templates`, options);
+      return firebaseService.queryCollection(this.getMissionsPath(userId), {
+        where: whereConditions,
+        useCache: true,
+        cacheTTL: 600000, // 10 minutes
+      });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get templates'));
     }
@@ -827,16 +843,17 @@ export const missionFirebaseService = {
   async saveActiveMission(userId: string, mission: unknown): Promise<Result<string>> {
     try {
       const safeMission = safeSpread(mission);
-      const missionId = safeMission.id ?? doc(collection(db, `users/${userId}/active-missions`)).id;
+      const missionId = safeMission.id ?? doc(collection(db, this.getMissionsPath(userId))).id;
       const missionData = {
         ...safeMission,
         id: missionId,
+        status: safeMission.status ?? 'active', // Default to active
         createdAt: safeMission.createdAt ?? Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
       };
 
       const result = await firebaseService.setDocument(
-        `users/${userId}/active-missions`,
+        this.getMissionsPath(userId),
         missionId as string,
         missionData
       );
@@ -852,8 +869,8 @@ export const missionFirebaseService = {
 
   async getActiveMissions(userId: string): Promise<Result<unknown[]>> {
     try {
-      return firebaseService.queryCollection(`users/${userId}/active-missions`, {
-        where: [{ field: 'status', operator: 'in', value: ['not_started', 'in_progress'] }],
+      return firebaseService.queryCollection(this.getMissionsPath(userId), {
+        where: [{ field: 'status', operator: 'in', value: ['active', 'not_started', 'in_progress'] }],
         orderBy: [{ field: 'deadline', direction: 'asc' }],
         useCache: true,
         cacheTTL: 300000, // 5 minutes
@@ -869,10 +886,11 @@ export const missionFirebaseService = {
       const completionPercentage =
         typeof safeProgress.completionPercentage === 'number' ? safeProgress.completionPercentage : 0;
       const status = completionPercentage >= 100 ? 'completed' : 'in_progress';
-      return firebaseService.updateDocument(`users/${userId}/active-missions`, missionId, {
+      return firebaseService.updateDocument(this.getMissionsPath(userId), missionId, {
         progress: safeProgress,
         status,
         updatedAt: Timestamp.fromDate(new Date()),
+        ...(completionPercentage >= 100 && { completedAt: Timestamp.fromDate(new Date()) }),
       });
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to update mission progress'));
@@ -881,35 +899,13 @@ export const missionFirebaseService = {
 
   async completeMission(userId: string, missionId: string, results: unknown): Promise<Result<void>> {
     try {
-      const mission = await firebaseService.getDocument(`users/${userId}/active-missions`, missionId);
-      if (!mission.success || !mission.data) {
-        return createError(new Error('Mission not found'));
-      }
-
-      // Move to history and update status using batch operation
-      const completedMission = {
-        ...safeSpread(mission.data),
+      // Simply update the status to 'completed' - no need to move between collections
+      const result = await firebaseService.updateDocument(this.getMissionsPath(userId), missionId, {
         status: 'completed',
         results,
         completedAt: Timestamp.fromDate(new Date()),
         updatedAt: Timestamp.fromDate(new Date()),
-      };
-
-      const operations = [
-        {
-          type: 'set' as const,
-          path: `users/${userId}/mission-history`,
-          docId: missionId,
-          data: completedMission,
-        },
-        {
-          type: 'delete' as const,
-          path: `users/${userId}/active-missions`,
-          docId: missionId,
-        },
-      ];
-
-      const result = await firebaseService.batchWrite(operations);
+      });
 
       if (result.success) {
         // Clear relevant cache entries
@@ -922,11 +918,12 @@ export const missionFirebaseService = {
     }
   },
 
-  async getMissionHistory(userId: string, limit = 20): Promise<Result<unknown[]>> {
+  async getMissionHistory(userId: string, limitCount = 20): Promise<Result<unknown[]>> {
     try {
-      return firebaseService.queryCollection(`users/${userId}/mission-history`, {
+      return firebaseService.queryCollection(this.getMissionsPath(userId), {
+        where: [{ field: 'status', operator: '==', value: 'completed' }],
         orderBy: [{ field: 'completedAt', direction: 'desc' }],
-        limit,
+        limit: limitCount,
         useCache: true,
         cacheTTL: 600000, // 10 minutes
       });
@@ -937,7 +934,7 @@ export const missionFirebaseService = {
 
   async deleteMission(userId: string, missionId: string): Promise<Result<void>> {
     try {
-      const result = await firebaseService.deleteDocument(`users/${userId}/active-missions`, missionId);
+      const result = await firebaseService.deleteDocument(this.getMissionsPath(userId), missionId);
 
       if (result.success) {
         this.clearMissionCache(userId);
@@ -1038,11 +1035,9 @@ export const missionFirebaseService = {
   },
 
   clearMissionCache(userId: string): void {
-    // Clear relevant cache entries
+    // Clear the unified missions cache
     if (firebaseService.cache) {
-      firebaseService.cache.delete(`users/${userId}/active-missions`);
-      firebaseService.cache.delete(`users/${userId}/mission-history`);
-      firebaseService.cache.delete(`users/${userId}/mission-templates`);
+      firebaseService.cache.delete(this.getMissionsPath(userId));
     }
   },
 };
@@ -2140,8 +2135,10 @@ const adaptiveTestingFirebaseService = {
 
   /**
    * Delete a test and all associated data
+   * @param userId - User ID for security validation
+   * @param testId - Test ID to delete
    */
-  async deleteTest(testId: string): Promise<Result<void>> {
+  async deleteTest(userId: string, testId: string): Promise<Result<void>> {
     try {
       const batch = writeBatch(db);
 
@@ -2149,17 +2146,25 @@ const adaptiveTestingFirebaseService = {
       const testRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS, testId);
       batch.delete(testRef);
 
-      // Delete associated sessions
+      // Delete associated sessions (filtered by userId for security)
       const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
-      const sessionsQuery = query(sessionsRef, where('testId', '==', testId));
+      const sessionsQuery = query(
+        sessionsRef, 
+        where('userId', '==', userId),
+        where('testId', '==', testId)
+      );
       const sessionsSnapshot = await getDocs(sessionsQuery);
       sessionsSnapshot.docs.forEach(doc => {
         batch.delete(doc.ref);
       });
 
-      // Delete associated responses
+      // Delete associated responses (filtered by userId for security)
       const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
-      const responsesQuery = query(responsesRef, where('testId', '==', testId));
+      const responsesQuery = query(
+        responsesRef, 
+        where('userId', '==', userId),
+        where('testId', '==', testId)
+      );
       const responsesSnapshot = await getDocs(responsesQuery);
       responsesSnapshot.docs.forEach(doc => {
         batch.delete(doc.ref);
@@ -2174,15 +2179,24 @@ const adaptiveTestingFirebaseService = {
 
   /**
    * Get all responses for a test
+   * @param userId - User ID for security validation
+   * @param testId - Test ID to get responses for
    */
-  async getTestResponses(testId: string): Promise<Result<TestResponse[]>> {
+  async getTestResponses(userId: string, testId: string): Promise<Result<TestResponse[]>> {
     try {
       const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
-      const q = query(responsesRef, where('testId', '==', testId), orderBy('timestamp', 'asc'));
+      const q = query(
+        responsesRef, 
+        where('userId', '==', userId),
+        where('testId', '==', testId), 
+        orderBy('timestamp', 'asc')
+      );
 
       const snapshot = await getDocs(q);
       const responses = snapshot.docs.map(doc => ({
         ...doc.data(),
+        userId: doc.data().userId,
+        testId: doc.data().testId,
         timestamp: doc.data().timestamp?.toDate() ?? new Date(),
       })) as TestResponse[];
 

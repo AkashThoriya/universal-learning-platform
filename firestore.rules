@@ -15,6 +15,26 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
+    // Check if the resource's userId field matches the authenticated user
+    function isResourceOwner() {
+      return isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Check if the document being created has the correct userId
+    function isCreatingOwned() {
+      return isAuthenticated() && request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Check if user created this resource (for question bank)
+    function isCreator() {
+      return isAuthenticated() && resource.data.createdBy == request.auth.uid;
+    }
+    
+    // Check if resource is a system/LLM-generated item (public access)
+    function isSystemResource() {
+      return resource.data.createdBy in ['system', 'llm'];
+    }
+    
     // ==========================================
     // USER DATA (All user data in subcollections)
     // ==========================================
@@ -28,6 +48,140 @@ service cloud.firestore {
       match /{document=**} {
         allow read, write: if isOwner(userId);
       }
+    }
+    
+    // ==========================================
+    // ADAPTIVE TESTING COLLECTIONS
+    // ==========================================
+    
+    // Adaptive Tests - User's test instances
+    match /adaptiveTests/{testId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Test Sessions - Active test sessions
+    match /testSessions/{sessionId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Test Responses - Individual question responses
+    // IMPORTANT: Requires userId field to be present in documents
+    match /testResponses/{responseId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Question Bank Items - Mixed user/system questions
+    match /questionBankItems/{questionId} {
+      // Anyone authenticated can read (for test generation)
+      allow read: if isAuthenticated();
+      // Users can create questions (from LLM) with their userId or 'llm' as createdBy
+      allow create: if isAuthenticated();
+      // Users can update/delete their own questions, or system/llm questions (for calibration)
+      allow update: if isCreator() || isSystemResource();
+      allow delete: if isCreator();
+    }
+    
+    // Question Banks - User's question bank collections
+    match /questionBanks/{bankId} {
+      allow read: if isResourceOwner() || resource.data.isPublic == true;
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Test-Journey Links
+    match /testJourneyLinks/{linkId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // User Test Preferences
+    match /userTestPreferences/{prefId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Adaptive Analytics
+    match /adaptiveAnalytics/{analyticsId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // ==========================================
+    // JOURNEY PLANNING COLLECTIONS
+    // ==========================================
+    
+    // User Journeys - Learning journey documents
+    match /userJourneys/{journeyId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Journey Analytics - Per-journey analytics
+    match /journeyAnalytics/{journeyId} {
+      // Allow read/write if user owns the parent journey
+      // Note: Checking ownership through the analytics document's userId field
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Journey Templates - Read-only templates
+    match /journeyTemplates/{templateId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Admin only
+    }
+    
+    // Journey Milestones
+    match /journeyMilestones/{milestoneId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Weekly Progress
+    match /weeklyProgress/{progressId} {
+      allow read: if isResourceOwner();
+      allow create: if isCreatingOwned();
+      allow update, delete: if isResourceOwner();
+    }
+    
+    // Journey Collaborators - Multi-user access
+    match /journeyCollaborators/{collabId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || 
+         resource.data.collaboratorId == request.auth.uid);
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // Journey Comments - Accessible by journey participants
+    match /journeyComments/{commentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && 
+        resource.data.authorId == request.auth.uid;
+    }
+    
+    // Journey Invitations - User can see their invitations
+    match /journeyInvitations/{inviteId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.inviterId == request.auth.uid || 
+         resource.data.inviteeEmail == request.auth.token.email);
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && 
+        (resource.data.inviterId == request.auth.uid || 
+         resource.data.inviteeEmail == request.auth.token.email);
+      allow delete: if isAuthenticated() && 
+        resource.data.inviterId == request.auth.uid;
     }
     
     // ==========================================

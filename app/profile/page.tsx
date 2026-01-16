@@ -68,7 +68,7 @@ import { AGE_LIMITS } from '@/lib/config/constants';
 import { DEFAULT_PREFERENCES } from '@/lib/config/defaults';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { getExamById } from '@/lib/data/exams-data';
-import { getUser, updateUser, getSyllabus, saveSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
+import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType, SelectedCourse } from '@/types/exam';
 
 /**
@@ -539,14 +539,8 @@ function ProfileContent() {
       // If updateUser succeeds but saveSyllabus fails (or vice versa), we'd have inconsistent data
       await updateUser(user.uid, updateData);
       
-      // Dual write: Save to legacy location (for backward compat)
+      // saveSyllabus now auto-resolves courseId and saves to course-specific storage
       await saveSyllabus(user.uid, form.data.syllabus);
-      
-      // Dual write: Save to course-specific location (for multi-course support)
-      // We use the selectedExamId from form data as the target course
-      if (form.data.selectedExamId) {
-          await saveSyllabusForCourse(user.uid, form.data.selectedExamId, form.data.syllabus);
-      }
 
       setHasUnsavedChanges(false);
       setValidationErrors({});

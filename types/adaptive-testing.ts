@@ -101,6 +101,8 @@ export interface QuestionOption {
 }
 
 export interface TestResponse {
+  userId: string;       // Required for security rules - identifies the response owner
+  testId: string;       // Required for querying responses by test
   questionId: string;
   userAnswer: string | string[];
   isCorrect: boolean;

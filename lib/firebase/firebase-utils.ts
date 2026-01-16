@@ -178,10 +178,13 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
 
 /**
  * Saves a complete syllabus for a user, replacing any existing syllabus
- * Uses batch operations for atomic updates
+ * 
+ * This function now automatically resolves the user's current exam/course
+ * and saves to the course-based storage.
  *
  * @param {string} userId - The unique user ID
  * @param {SyllabusSubject[]} syllabus - Array of syllabus subjects to save
+ * @param {string} [courseId] - Optional course ID (will use user's current exam if not provided)
  * @returns {Promise<void>} Promise that resolves when syllabus is saved
  *
  * @example
@@ -190,102 +193,48 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
  *   { id: 'history', name: 'History', tier: 1, topics: [...] },
  *   { id: 'geography', name: 'Geography', tier: 2, topics: [...] }
  * ];
+ * // Auto-resolve from user's current exam
  * await saveSyllabus('user123', syllabus);
+ * 
+ * // Or specify a specific course
+ * await saveSyllabus('user123', syllabus, 'upsc-cse');
  * ```
  */
-export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[]) => {
+export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[], courseId?: string) => {
   return measurePerformance('saveSyllabus', async () => {
-    logInfo('Saving syllabus', {
-      userId,
-      subjectCount: syllabus.length,
-      subjectIds: syllabus.map(s => s.id),
-      tierDistribution: {
-        tier1: syllabus.filter(s => s.tier === 1).length,
-        tier2: syllabus.filter(s => s.tier === 2).length,
-        tier3: syllabus.filter(s => s.tier === 3).length,
-      },
-    });
-
     try {
-      const batch = writeBatch(db);
-
-      // Clear existing syllabus
-      const syllabusRef = collection(db, 'users', userId, 'syllabus');
-      const existingSyllabus = await getDocs(syllabusRef);
-
-      logInfo('Clearing existing syllabus', {
+      // If courseId not provided, resolve from user's current exam
+      let resolvedCourseId = courseId;
+      
+      if (!resolvedCourseId) {
+        const user = await getUser(userId);
+        resolvedCourseId = user?.currentExam?.id;
+        
+        if (!resolvedCourseId) {
+          logError('Cannot save syllabus: No courseId provided and user has no current exam', { userId });
+          throw new Error('No course selected. Please select an exam first.');
+        }
+      }
+      
+      logInfo('Saving syllabus (delegating to course-based storage)', {
         userId,
-        existingSubjectCount: existingSyllabus.docs.length,
+        courseId: resolvedCourseId,
+        subjectCount: syllabus.length,
+        tierDistribution: {
+          tier1: syllabus.filter(s => s.tier === 1).length,
+          tier2: syllabus.filter(s => s.tier === 2).length,
+          tier3: syllabus.filter(s => s.tier === 3).length,
+        },
       });
-
-      existingSyllabus.docs.forEach(doc => {
-        batch.delete(doc.ref);
-      });
-
-      // Add new syllabus with user-specific topic tracking
-      syllabus.forEach(subject => {
-        const subjectRef = doc(db, 'users', userId, 'syllabus', subject.id);
-
-        // Create user-specific subject data with topic status tracking
-        const userSubjectData = {
-          ...subject,
-          order: syllabus.indexOf(subject), // Preserve subject order
-          userId, // Add user reference
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-          // Store topics with order index
-          topics: subject.topics?.map((topic, topicIndex) => ({
-            ...topic,
-            order: topicIndex, // Preserve topic order
-          })) ?? [],
-          // Initialize topic status tracking for each topic
-          topicStatus:
-            subject.topics?.reduce(
-              (statusMap, topic) => {
-                statusMap[topic.id] = {
-                  status: 'not_started', // not_started, in_progress, completed, mastered
-                  progress: 0, // 0-100
-                  timeSpent: 0, // in minutes
-                  lastAccessed: null,
-                  completedAt: null,
-                  masteryLevel: 0, // 0-100
-                  attempts: 0,
-                  averageScore: 0,
-                  notes: '',
-                  difficulty: 'medium', // Default difficulty as topic doesn't have this property
-                  estimatedHours: topic.estimatedHours ?? 0,
-                };
-                return statusMap;
-              },
-              {} as Record<string, any>
-            ) ?? {},
-          // Subject-level tracking
-          subjectProgress: {
-            overallProgress: 0,
-            completedTopics: 0,
-            totalTopics: subject.topics?.length ?? 0,
-            timeSpent: 0,
-            averageScore: 0,
-            status: 'not_started',
-            startedAt: null,
-            completedAt: null,
-          },
-        };
-
-        batch.set(subjectRef, userSubjectData);
-      });
-
-      await batch.commit();
-
-      logInfo('Syllabus saved successfully with topic tracking', {
-        userId,
-        newSubjectCount: syllabus.length,
-        totalTopics: syllabus.reduce((total, subject) => total + (subject.topics?.length || 0), 0),
-        topicTrackingEnabled: true,
-      });
+      
+      // Delegate to course-based syllabus save
+      await saveSyllabusForCourse(userId, resolvedCourseId, syllabus);
+      
+      logInfo('Syllabus saved successfully', { userId, courseId: resolvedCourseId });
     } catch (error) {
       logError('Failed to save syllabus', {
         userId,
+        courseId,
         subjectCount: syllabus.length,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
@@ -477,31 +426,44 @@ export const updateSubtopic = async (
 
 /**
  * Retrieves the complete syllabus for a user
+ * 
+ * This function now automatically resolves the user's current exam/course
+ * and fetches the syllabus from the course-based storage.
  *
  * @param {string} userId - The unique user ID
+ * @param {string} [courseId] - Optional course ID (will use user's current exam if not provided)
  * @returns {Promise<SyllabusSubject[]>} Promise that resolves to array of syllabus subjects
  *
  * @example
  * ```typescript
+ * // Auto-resolve from user's current exam
  * const syllabus = await getSyllabus('user123');
- * // console.log(`User has ${syllabus.length} subjects in their syllabus`);
+ * 
+ * // Or specify a specific course
+ * const syllabus = await getSyllabus('user123', 'upsc-cse');
  * ```
  */
-export const getSyllabus = async (userId: string): Promise<SyllabusSubject[]> => {
-  const syllabusRef = collection(db, 'users', userId, 'syllabus');
-  const syllabusSnap = await getDocs(syllabusRef);
-
-  const subjects = syllabusSnap.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as SyllabusSubject[];
-
-  // Sort subjects by order, then topics by order within each subject
-  return subjects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    .map(subject => ({
-      ...subject,
-      topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? [],
-    }));
+export const getSyllabus = async (userId: string, courseId?: string): Promise<SyllabusSubject[]> => {
+  try {
+    // If courseId not provided, resolve from user's current exam
+    let resolvedCourseId = courseId;
+    
+    if (!resolvedCourseId) {
+      const user = await getUser(userId);
+      resolvedCourseId = user?.currentExam?.id;
+      
+      if (!resolvedCourseId) {
+        logInfo('No courseId provided and user has no current exam, returning empty syllabus', { userId });
+        return [];
+      }
+    }
+    
+    // Delegate to course-based syllabus retrieval
+    return await getSyllabusForCourse(userId, resolvedCourseId);
+  } catch (error) {
+    logError('Failed to get syllabus', { userId, courseId, error });
+    return [];
+  }
 };
 
 /**

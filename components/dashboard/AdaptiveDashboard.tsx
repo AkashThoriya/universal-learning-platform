@@ -34,7 +34,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import { getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
-import { getUser, getSyllabus, getSyllabusForCourse, updateUser } from '@/lib/firebase/firebase-utils';
+import { getUser, getSyllabus, updateUser } from '@/lib/firebase/firebase-utils';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 import { progressService } from '@/lib/services/progress-service';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
@@ -303,11 +303,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
               // Generate today's recommendations
               try {
-                // Try course-specific syllabus first, fall back to global
-                let syllabus = await getSyllabusForCourse(user.uid, currentExamId);
-                if (!syllabus || syllabus.length === 0) {
-                   syllabus = await getSyllabus(user.uid);
-                }
+                // Syllabus now auto-resolves courseId from user's current exam
+                const syllabus = await getSyllabus(user.uid);
                 
                 const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
                 setTodayRecommendations(todayRecs);
@@ -504,11 +501,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       if (exam) {
         setSelectedExam(exam);
         
-        // Load syllabus for new course
-        let syllabus = await getSyllabusForCourse(user.uid, courseId);
-        if (!syllabus || syllabus.length === 0) {
-          syllabus = await getSyllabus(user.uid);
-        }
+        // Load syllabus for new course (explicitly passing courseId)
+        const syllabus = await getSyllabus(user.uid, courseId);
         
         // Find target date for the course
         const courseData = availableCourses.find(c => c.examId === courseId);

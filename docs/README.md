@@ -1,29 +1,17 @@
-# 📋 Exam Strategy Engine - Documentation Hub
+# Documentation Map
 
-## 🎯 **START HERE** - Essential Documents
+## 🚀 Setup & Development
+- **[Environment Setup](./setup/environment.md)** - API keys and config.
+- **[Development Guide](./development.md)** - Workflow and best practices.
+- **[Security Rules](./setup/security.md)** - Firestore security model.
 
-# 📋 Exam Strategy Engine — Documentation Hub
+## 🏗️ Architecture
+- **[Database Schema](./architecture/database-schema.md)** - Unified Phase 4 schema.
 
-This `docs/` folder contains the project's documentation. I've reorganized the hub to accurately list and categorize every markdown file currently present in the folder and added a lightweight, navigable index at `docs/INDEX.md`.
+## ✨ Features
+- **[Adaptive Testing](./features/adaptive-testing.md)** - AI-driven assessment engine.
+- **[Journey Planning](./features/journey-planning.md)** - Long-term goal tracking.
+- **[Custom Learning](./features/custom-learning.md)** - Personalized study paths.
 
-## How this is organized
-
-- Core docs: strategic and implementation guides
-- System & architecture: database and integration patterns
-- Implementation & setup: how-tos and troubleshooting
-- Reference & status: project status, issues, and notes
-
-Please open `docs/INDEX.md` for a categorized list of files and short descriptions.
-
----
-
-## Quick actions
-
-- Browse the full index: `docs/INDEX.md`
-- Read the implementation guide: `docs/core/IMPLEMENTATION-GUIDE.md`
-- Read the journey planning guide: `docs/features/JOURNEY-PLANNING-SYSTEM-IMPLEMENTATION.md`
-- Read the adaptive testing guide: `docs/architecture/ADAPTIVE-TESTING-SYSTEM-IMPLEMENTATION.md`
-
----
-
-_This README now reflects the actual contents of the `docs/` folder and points to `docs/INDEX.md` for a complete, categorized listing._ - 63% reduction in code violations and formatting automation in place
+## 🔌 Integrations
+- **[Google Auth](./setup/google-auth.md)** - Authentication setup.

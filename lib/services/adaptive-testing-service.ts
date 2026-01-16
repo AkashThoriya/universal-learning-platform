@@ -251,6 +251,8 @@ export class AdaptiveTestingService {
 
       // Create response record
       const response: TestResponse = {
+        userId,
+        testId: test.id,
         questionId: request.questionId,
         userAnswer: request.answer,
         isCorrect,
