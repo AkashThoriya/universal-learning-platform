@@ -8,34 +8,34 @@
       "id": "foundation",
       "name": "Foundation Assessment",
       "totalMarks": 100,
-      "duration": 120,
+      "duration": 180,
       "sections": [
         {
           "id": "programming_basics",
           "name": "Programming Fundamentals",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         },
         {
           "id": "problem_solving",
           "name": "Problem Solving & Logic",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         },
         {
           "id": "data_structures",
           "name": "Data Structures Fundamentals",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         },
         {
           "id": "algorithms",
           "name": "Algorithm Analysis",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         }
       ]
@@ -44,27 +44,27 @@
       "id": "intermediate",
       "name": "Intermediate Skills Assessment",
       "totalMarks": 150,
-      "duration": 180,
+      "duration": 270,
       "sections": [
         {
           "id": "advanced_ds",
           "name": "Advanced Data Structures",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "tree_graph",
           "name": "Trees and Graphs",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "dynamic_programming",
           "name": "Dynamic Programming & Greedy",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         }
       ]
@@ -75,18 +75,18 @@
       "id": "introduction",
       "name": "Introduction",
       "tier": 1,
-      "estimatedHours": 0.7,
+      "estimatedHours": 2.0,
       "topics": [
         {
           "id": "course_introduction",
           "name": "Introduction",
-          "estimatedHours": 0.546,
+          "estimatedHours": 1.5,
           "description": "Learn how to navigate the course and what you'll cover"
         },
         {
           "id": "language_choice",
           "name": "Which language?",
-          "estimatedHours": 0.152,
+          "estimatedHours": 0.5,
           "description": "Learn how to choose your preferred programming language for the course"
         }
       ]
@@ -95,73 +95,97 @@
       "id": "warm_up",
       "name": "Warm Up",
       "tier": 1,
-      "estimatedHours": 6.91,
+      "estimatedHours": 17.5,
       "topics": [
         {
           "id": "warm_up_introduction",
           "name": "Warm Up - Introduction",
-          "estimatedHours": 0.066,
+          "estimatedHours": 0.5,
           "description": "Warm-up session for diving into DSA concepts"
         },
         {
           "id": "programming_101",
           "name": "Programming 101",
-          "estimatedHours": 0.778,
+          "estimatedHours": 2.0,
           "description": "Learn the basics of programming with simple concepts explained clearly"
         },
         {
           "id": "function_if_else",
           "name": "Function, if-else",
-          "estimatedHours": 0.468,
+          "estimatedHours": 1.0,
           "description": "Master functions and conditional logic with if-else statements"
         },
         {
           "id": "loops_01",
           "name": "Loops 01",
-          "estimatedHours": 0.843,
+          "estimatedHours": 2.0,
           "description": "Learn looping constructs to repeat code effectively"
         },
         {
           "id": "loops_02",
           "name": "Loops 02",
-          "estimatedHours": 1.048,
+          "estimatedHours": 2.5,
           "description": "Deep dive into advanced loop techniques and nested loops"
         },
         {
           "id": "second_largest",
           "name": "Second Largest",
-          "estimatedHours": 0.635,
-          "description": "Find the second largest number in an array efficiently"
+          "estimatedHours": 1.5,
+          "description": "Find the second largest number in an array efficiently",
+          "practiceQuestions": [
+            {
+              "name": "Second Largest Digit in a String",
+              "slug": "second-largest-digit-in-a-string",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/second-largest-digit-in-a-string/"
+            }
+          ]
         },
         {
           "id": "loop_in_loop",
           "name": "Loop in Loop",
-          "estimatedHours": 0.735,
+          "estimatedHours": 2.0,
           "description": "Learn how to implement nested loops for complex patterns"
         },
         {
           "id": "star_pattern",
           "name": "Star Pattern",
-          "estimatedHours": 1.156,
+          "estimatedHours": 3.0,
           "description": "Draw star patterns using nested loops for practice"
         },
         {
           "id": "count_digit",
           "name": "Count Digit",
-          "estimatedHours": 0.409,
+          "estimatedHours": 1.0,
           "description": "Count the number of digits in an integer"
         },
         {
           "id": "palindrome",
           "name": "Palindrome",
-          "estimatedHours": 0.425,
-          "description": "Check if a string or number is a palindrome"
+          "estimatedHours": 1.0,
+          "description": "Check if a string or number is a palindrome",
+          "practiceQuestions": [
+            {
+              "name": "Palindrome Number",
+              "slug": "palindrome-number",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/palindrome-number/"
+            }
+          ]
         },
         {
           "id": "reverse_integer",
           "name": "Reverse Integer",
-          "estimatedHours": 0.343,
-          "description": "Reverse the digits of an integer programmatically"
+          "estimatedHours": 1.0,
+          "description": "Reverse the digits of an integer programmatically",
+          "practiceQuestions": [
+            {
+              "name": "Reverse Integer",
+              "slug": "reverse-integer",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/reverse-integer/"
+            }
+          ]
         }
       ]
     },
@@ -169,12 +193,12 @@
       "id": "time_space_complexity",
       "name": "Time/Space Complexity",
       "tier": 1,
-      "estimatedHours": 1.49,
+      "estimatedHours": 3.5,
       "topics": [
         {
           "id": "time_space_complexity_analysis",
           "name": "Time & Space Complexity",
-          "estimatedHours": 1.492,
+          "estimatedHours": 3.5,
           "description": "Understand how to analyze code performance using time complexity"
         }
       ]
@@ -183,61 +207,131 @@
       "id": "arrays_easy_medium",
       "name": "Arrays - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 4.06,
+      "estimatedHours": 13.0,
       "topics": [
         {
           "id": "remove_duplicates",
           "name": "Remove Duplicates",
-          "estimatedHours": 0.751,
-          "description": "Remove duplicate elements from a sorted array"
+          "estimatedHours": 2.5,
+          "description": "Remove duplicate elements from a sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Remove Duplicates from Sorted Array",
+              "slug": "remove-duplicates-from-sorted-array",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/"
+            },
+            {
+              "name": "Remove Duplicates from Sorted Array II",
+              "slug": "remove-duplicates-from-sorted-array-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/"
+            }
+          ]
         },
         {
           "id": "remove_element",
           "name": "Remove Element",
-          "estimatedHours": 0.379,
-          "description": "Remove specific elements from an array"
+          "estimatedHours": 1.0,
+          "description": "Remove specific elements from an array",
+          "practiceQuestions": [
+            {
+              "name": "Remove Element",
+              "slug": "remove-element",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-element/"
+            }
+          ]
         },
         {
           "id": "reverse_string",
           "name": "Reverse String",
-          "estimatedHours": 0.446,
+          "estimatedHours": 1.5,
           "description": "Reverse the characters of a string"
         },
         {
           "id": "best_time_buy_sell_stocks",
           "name": "Best Time to Buy and Sell Stocks",
-          "estimatedHours": 0.471,
-          "description": "Maximize profit from stock prices using smart strategy"
+          "estimatedHours": 1.5,
+          "description": "Maximize profit from stock prices using smart strategy",
+          "practiceQuestions": [
+            {
+              "name": "Best Time to Buy and Sell Stock",
+              "slug": "best-time-to-buy-and-sell-stock",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+            }
+          ]
         },
         {
           "id": "merge_sorted_arrays",
           "name": "Merge Sorted Arrays",
-          "estimatedHours": 0.693,
-          "description": "Merge two sorted arrays into one sorted array"
+          "estimatedHours": 2.0,
+          "description": "Merge two sorted arrays into one sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Merge Sorted Array",
+              "slug": "merge-sorted-array",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/merge-sorted-array/"
+            }
+          ]
         },
         {
           "id": "move_zeros",
           "name": "Move Zeros",
-          "estimatedHours": 0.442,
-          "description": "Move all zeros to the end of the array without changing order"
+          "estimatedHours": 1.5,
+          "description": "Move all zeros to the end of the array without changing order",
+          "practiceQuestions": [
+            {
+              "name": "Move Zeroes",
+              "slug": "move-zeroes",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/move-zeroes/"
+            }
+          ]
         },
         {
           "id": "max_consecutive_ones",
           "name": "Max Consecutive Ones",
-          "estimatedHours": 0.275,
-          "description": "Find the maximum streak of 1s in a binary array"
+          "estimatedHours": 1.0,
+          "description": "Find the maximum streak of 1s in a binary array",
+          "practiceQuestions": [
+            {
+              "name": "Max Consecutive Ones",
+              "slug": "max-consecutive-ones",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/max-consecutive-ones/"
+            }
+          ]
         },
         {
           "id": "missing_number",
           "name": "Missing Number",
-          "estimatedHours": 0.282,
-          "description": "Find the missing number in a sequence from 1 to N"
+          "estimatedHours": 1.0,
+          "description": "Find the missing number in a sequence from 1 to N",
+          "practiceQuestions": [
+            {
+              "name": "Missing Number",
+              "slug": "missing-number",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/missing-number/"
+            }
+          ]
         },
         {
           "id": "single_number",
           "name": "Single Number",
-          "estimatedHours": 0.323,
-          "description": "Find the unique element in an array where all others are repeated"
+          "estimatedHours": 1.0,
+          "description": "Find the unique element in an array where all others are repeated",
+          "practiceQuestions": [
+            {
+              "name": "Single Number",
+              "slug": "single-number",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/single-number/"
+            }
+          ]
         }
       ]
     },
@@ -245,42 +339,58 @@
       "id": "recursion_easy_medium",
       "name": "Recursion - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 3.66,
+      "estimatedHours": 11.0,
       "topics": [
         {
           "id": "recursion_101",
           "name": "Recursion 101",
-          "estimatedHours": 1.17,
-          "description": "Understand the basics of recursion with clear explanations and examples"
+          "estimatedHours": 3.5,
+          "description": "Understand the basics of recursion with clear explanations and examples",
+          "practiceQuestions": [
+            {
+              "name": "Fibonacci Number",
+              "slug": "fibonacci-number",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/fibonacci-number/"
+            }
+          ]
         },
         {
           "id": "sum_first_n_numbers",
           "name": "Sum of first n numbers",
-          "estimatedHours": 0.621,
+          "estimatedHours": 2.0,
           "description": "Calculate the sum of the first n natural numbers using recursion"
         },
         {
           "id": "sum_array_numbers",
           "name": "Sum of all numbers in Array",
-          "estimatedHours": 0.5,
+          "estimatedHours": 1.5,
           "description": "Find the sum of all elements in an array using simple logic"
         },
         {
           "id": "factorial_n",
           "name": "Factorial of n",
-          "estimatedHours": 0.149,
+          "estimatedHours": 0.5,
           "description": "Learn how to calculate factorials using recursion"
         },
         {
           "id": "power_of_two",
           "name": "Power of Two",
-          "estimatedHours": 0.162,
-          "description": "Solve Power of Two problem with recursion and logic"
+          "estimatedHours": 0.5,
+          "description": "Solve Power of Two problem with recursion and logic",
+          "practiceQuestions": [
+            {
+              "name": "Power of Two",
+              "slug": "power-of-two",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/power-of-two/"
+            }
+          ]
         },
         {
           "id": "recursion_masterclass",
           "name": "Recursion Masterclass",
-          "estimatedHours": 1.06,
+          "estimatedHours": 3.0,
           "description": "Master recursion with deep insights, patterns, and examples"
         }
       ]
@@ -289,42 +399,56 @@
       "id": "searching_sorting_easy_medium",
       "name": "Searching & Sorting - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 4.07,
+      "estimatedHours": 12.0,
       "topics": [
         {
           "id": "linear_search",
           "name": "Linear Search",
-          "estimatedHours": 0.136,
+          "estimatedHours": 0.5,
           "description": "Find an element in an array using linear search"
         },
         {
           "id": "binary_search",
           "name": "Binary Search",
-          "estimatedHours": 0.657,
-          "description": "Find an element in a sorted array using binary search"
+          "estimatedHours": 2.0,
+          "description": "Find an element in a sorted array using binary search",
+          "practiceQuestions": [
+            {
+              "name": "Binary Search",
+              "slug": "binary-search",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-search/"
+            },
+            {
+              "name": "Search Insert Position",
+              "slug": "search-insert-position",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/search-insert-position/"
+            }
+          ]
         },
         {
           "id": "bubble_sort",
           "name": "Bubble Sort",
-          "estimatedHours": 0.806,
+          "estimatedHours": 2.5,
           "description": "Sort an array using the bubble sort algorithm"
         },
         {
           "id": "selection_sort",
           "name": "Selection Sort",
-          "estimatedHours": 0.329,
+          "estimatedHours": 1.0,
           "description": "Sort an array using the selection sort algorithm"
         },
         {
           "id": "insertion_sort",
           "name": "Insertion Sort",
-          "estimatedHours": 0.573,
+          "estimatedHours": 1.5,
           "description": "Sort an array using the insertion sort algorithm"
         },
         {
           "id": "merge_sort",
           "name": "Merge Sort",
-          "estimatedHours": 1.572,
+          "estimatedHours": 4.5,
           "description": "Learn how Merge Sort works using recursion and divide & conquer"
         }
       ]
@@ -333,126 +457,244 @@
       "id": "linked_list_easy_medium",
       "name": "Linked List - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 9.56,
+      "estimatedHours": 29.0,
       "topics": [
         {
           "id": "introduction_linked_list",
           "name": "Introduction to Linked List",
-          "estimatedHours": 0.466,
+          "estimatedHours": 1.5,
           "description": "Get started with the basics of Linked Lists"
         },
         {
           "id": "design_linked_list",
           "name": "Design Linked List",
-          "estimatedHours": 0.352,
+          "estimatedHours": 1.0,
           "description": "Learn how to design and implement your own Linked List"
         },
         {
           "id": "adding_nodes_linked_list",
           "name": "Adding Nodes to Linked List",
-          "estimatedHours": 0.775,
+          "estimatedHours": 2.5,
           "description": "Learn to insert nodes into a Linked List at various positions"
         },
         {
           "id": "deleting_nodes_linked_list",
           "name": "Deleting Nodes in Linked List",
-          "estimatedHours": 0.339,
+          "estimatedHours": 1.0,
           "description": "Understand node deletion in a Linked List"
         },
         {
           "id": "middle_linked_list",
           "name": "Middle of Linked List",
-          "estimatedHours": 0.355,
-          "description": "Find the middle element in a Linked List efficiently"
+          "estimatedHours": 1.0,
+          "description": "Find the middle element in a Linked List efficiently",
+          "practiceQuestions": [
+            {
+              "name": "Middle of the Linked List",
+              "slug": "middle-of-the-linked-list",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/middle-of-the-linked-list/"
+            }
+          ]
         },
         {
           "id": "reverse_linked_list",
           "name": "Reverse Linked List",
-          "estimatedHours": 0.409,
-          "description": "Reverse a Linked List in-place using iteration"
+          "estimatedHours": 1.0,
+          "description": "Reverse a Linked List in-place using iteration",
+          "practiceQuestions": [
+            {
+              "name": "Reverse Linked List",
+              "slug": "reverse-linked-list",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-linked-list/"
+            },
+            {
+              "name": "Reverse Linked List II",
+              "slug": "reverse-linked-list-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/reverse-linked-list-ii/"
+            }
+          ]
         },
         {
           "id": "linked_list_cycle_hash_table",
           "name": "Linked List Cycle - Hash Table",
-          "estimatedHours": 0.442,
-          "description": "Detect cycles in a Linked List using extra space"
+          "estimatedHours": 1.5,
+          "description": "Detect cycles in a Linked List using extra space",
+          "practiceQuestions": [
+            {
+              "name": "Linked List Cycle",
+              "slug": "linked-list-cycle",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/linked-list-cycle/"
+            }
+          ]
         },
         {
           "id": "linked_list_cycle_floyd",
           "name": "Linked List Cycle - Floyd's Algorithm",
-          "estimatedHours": 0.492,
-          "description": "Detect cycles with Floyd's Tortoise & Hare algorithm"
+          "estimatedHours": 1.5,
+          "description": "Detect cycles with Floyd's Tortoise & Hare algorithm",
+          "practiceQuestions": [
+            {
+              "name": "Linked List Cycle II",
+              "slug": "linked-list-cycle-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/linked-list-cycle-ii/"
+            }
+          ]
         },
         {
           "id": "palindrome_linked_list",
           "name": "Palindrome Linked List",
-          "estimatedHours": 0.759,
-          "description": "Check if a Linked List is a palindrome"
+          "estimatedHours": 2.5,
+          "description": "Check if a Linked List is a palindrome",
+          "practiceQuestions": [
+            {
+              "name": "Palindrome Linked List",
+              "slug": "palindrome-linked-list",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/palindrome-linked-list/"
+            }
+          ]
         },
         {
           "id": "intersection_two_linked_lists",
           "name": "Intersection of two Linked Lists",
-          "estimatedHours": 0.369,
-          "description": "Find the intersection node of two Linked Lists"
+          "estimatedHours": 1.0,
+          "description": "Find the intersection node of two Linked Lists",
+          "practiceQuestions": [
+            {
+              "name": "Intersection of Two Linked Lists",
+              "slug": "intersection-of-two-linked-lists",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/intersection-of-two-linked-lists/"
+            }
+          ]
         },
         {
           "id": "remove_linked_list_elements",
           "name": "Remove Linked List Elements",
-          "estimatedHours": 0.343,
-          "description": "Remove nodes with a specific value from a Linked List"
+          "estimatedHours": 1.0,
+          "description": "Remove nodes with a specific value from a Linked List",
+          "practiceQuestions": [
+            {
+              "name": "Remove Linked List Elements",
+              "slug": "remove-linked-list-elements",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-linked-list-elements/"
+            }
+          ]
         },
         {
           "id": "remove_nth_node_end_two_pass",
           "name": "Remove nth node from end of List - Two Pass",
-          "estimatedHours": 0.353,
+          "estimatedHours": 1.0,
           "description": "Remove the nth node from the end using a two-pass method"
         },
         {
           "id": "remove_nth_node_end_one_pass",
           "name": "Remove nth Node from end - One Pass",
-          "estimatedHours": 0.474,
-          "description": "Remove the nth node from the end in one pass using two pointers"
+          "estimatedHours": 1.5,
+          "description": "Remove the nth node from the end in one pass using two pointers",
+          "practiceQuestions": [
+            {
+              "name": "Remove Nth Node From End of List",
+              "slug": "remove-nth-node-from-end-of-list",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+            }
+          ]
         },
         {
           "id": "remove_duplicates_sorted_list",
           "name": "Remove Duplicates from Sorted List",
-          "estimatedHours": 0.262,
-          "description": "Remove consecutive duplicates from a sorted Linked List"
+          "estimatedHours": 1.0,
+          "description": "Remove consecutive duplicates from a sorted Linked List",
+          "practiceQuestions": [
+            {
+              "name": "Remove Duplicates from Sorted List",
+              "slug": "remove-duplicates-from-sorted-list",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/"
+            }
+          ]
         },
         {
           "id": "odd_even_linked_list",
           "name": "Odd Even Linked List",
-          "estimatedHours": 0.39,
-          "description": "Rearrange nodes based on their position (odd/even index)"
+          "estimatedHours": 1.0,
+          "description": "Rearrange nodes based on their position (odd/even index)",
+          "practiceQuestions": [
+            {
+              "name": "Odd Even Linked List",
+              "slug": "odd-even-linked-list",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/odd-even-linked-list/"
+            }
+          ]
         },
         {
           "id": "add_two_numbers",
           "name": "Add Two Numbers",
-          "estimatedHours": 0.727,
-          "description": "Add two numbers represented as Linked Lists"
+          "estimatedHours": 2.0,
+          "description": "Add two numbers represented as Linked Lists",
+          "practiceQuestions": [
+            {
+              "name": "Add Two Numbers",
+              "slug": "add-two-numbers",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/add-two-numbers/"
+            }
+          ]
         },
         {
           "id": "merge_two_sorted_lists",
           "name": "Merge Two Sorted Lists",
-          "estimatedHours": 0.611,
-          "description": "Merge two sorted Linked Lists into one"
+          "estimatedHours": 2.0,
+          "description": "Merge two sorted Linked Lists into one",
+          "practiceQuestions": [
+            {
+              "name": "Merge Two Sorted Lists",
+              "slug": "merge-two-sorted-lists",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/merge-two-sorted-lists/"
+            }
+          ]
         },
         {
           "id": "rotate_list",
           "name": "Rotate List",
-          "estimatedHours": 0.498,
-          "description": "Rotate a Linked List to the right by k places"
+          "estimatedHours": 1.5,
+          "description": "Rotate a Linked List to the right by k places",
+          "practiceQuestions": [
+            {
+              "name": "Rotate List",
+              "slug": "rotate-list",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/rotate-list/"
+            }
+          ]
         },
         {
           "id": "swap_nodes_pairs_iterative",
           "name": "Swap Nodes in Pairs - Iterative Approach",
-          "estimatedHours": 0.616,
-          "description": "Swap every two adjacent nodes in a Linked List iteratively"
+          "estimatedHours": 2.0,
+          "description": "Swap every two adjacent nodes in a Linked List iteratively",
+          "practiceQuestions": [
+            {
+              "name": "Swap Nodes in Pairs",
+              "slug": "swap-nodes-in-pairs",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/swap-nodes-in-pairs/"
+            }
+          ]
         },
         {
           "id": "swap_nodes_pairs_recursive",
           "name": "Swap Nodes in Pair - Recursive Approach",
-          "estimatedHours": 0.526,
+          "estimatedHours": 1.5,
           "description": "Recursively swap every two adjacent nodes in a Linked List"
         }
       ]
@@ -461,97 +703,185 @@
       "id": "strings_easy_medium",
       "name": "Strings - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 7.81,
+      "estimatedHours": 23.0,
       "topics": [
         {
           "id": "length_last_word_two_loops",
           "name": "Length of Last Word - Approach 1 - Two Loops",
-          "estimatedHours": 0.674,
+          "estimatedHours": 2.0,
           "description": "Find the length of the last word using a basic loop approach"
         },
         {
           "id": "length_last_word_one_loop",
           "name": "Length of Last Word - Approach 2 - One Loop",
-          "estimatedHours": 0.438,
-          "description": "Optimized one-pass solution to find the last word's length"
+          "estimatedHours": 1.5,
+          "description": "Optimized one-pass solution to find the last word's length",
+          "practiceQuestions": [
+            {
+              "name": "Length of Last Word",
+              "slug": "length-of-last-word",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/length-of-last-word/"
+            }
+          ]
         },
         {
           "id": "find_words_containing_character",
           "name": "Find Words Containing Character",
-          "estimatedHours": 0.366,
-          "description": "Find words from a list that contain a specific character"
+          "estimatedHours": 1.0,
+          "description": "Find words from a list that contain a specific character",
+          "practiceQuestions": [
+            {
+              "name": "Find Words Containing Character",
+              "slug": "find-words-containing-character",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-words-containing-character/"
+            }
+          ]
         },
         {
           "id": "jewels_stones",
           "name": "Jewels and Stones",
-          "estimatedHours": 0.64,
-          "description": "Count how many stones are also jewels"
+          "estimatedHours": 2.0,
+          "description": "Count how many stones are also jewels",
+          "practiceQuestions": [
+            {
+              "name": "Jewels and Stones",
+              "slug": "jewels-and-stones",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/jewels-and-stones/"
+            }
+          ]
         },
         {
           "id": "find_most_frequent_vowel_consonant",
           "name": "Find Most Frequent Vowel and Consonant",
-          "estimatedHours": 0.804,
+          "estimatedHours": 2.5,
           "description": "Identify the most frequent vowel and consonant in a string"
         },
         {
           "id": "split_string_balanced",
           "name": "Split a String in Balanced Strings",
-          "estimatedHours": 0.394,
-          "description": "Split a string into maximum balanced substrings"
+          "estimatedHours": 1.0,
+          "description": "Split a string into maximum balanced substrings",
+          "practiceQuestions": [
+            {
+              "name": "Split a String in Balanced Strings",
+              "slug": "split-a-string-in-balanced-strings",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/split-a-string-in-balanced-strings/"
+            }
+          ]
         },
         {
           "id": "reverse_string_ii",
           "name": "Reverse String II",
-          "estimatedHours": 0.819,
-          "description": "Reverse parts of a string based on a pattern"
+          "estimatedHours": 2.5,
+          "description": "Reverse parts of a string based on a pattern",
+          "practiceQuestions": [
+            {
+              "name": "Reverse String II",
+              "slug": "reverse-string-ii",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-string-ii/"
+            }
+          ]
         },
         {
           "id": "valid_palindrome_extra_space",
           "name": "Valid Palindrome - Approach 1 - Extra Space",
-          "estimatedHours": 0.403,
+          "estimatedHours": 1.0,
           "description": "Check palindrome by cleaning and reversing a string"
         },
         {
           "id": "valid_palindrome_two_pointers",
           "name": "Valid Palindrome - Approach 2 - Two Pointers",
-          "estimatedHours": 0.405,
-          "description": "Use two-pointer technique to validate palindrome"
+          "estimatedHours": 1.0,
+          "description": "Use two-pointer technique to validate palindrome",
+          "practiceQuestions": [
+            {
+              "name": "Valid Palindrome",
+              "slug": "valid-palindrome",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-palindrome/"
+            }
+          ]
         },
         {
           "id": "largest_odd_number_string",
           "name": "Largest Odd Number in a String",
-          "estimatedHours": 0.25,
-          "description": "Find the largest odd number that can be formed from a string"
+          "estimatedHours": 1.0,
+          "description": "Find the largest odd number that can be formed from a string",
+          "practiceQuestions": [
+            {
+              "name": "Largest Odd Number in String",
+              "slug": "largest-odd-number-in-string",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/largest-odd-number-in-string/"
+            }
+          ]
         },
         {
           "id": "longest_common_prefix",
           "name": "Longest Common Prefix",
-          "estimatedHours": 0.41,
-          "description": "Find the longest common starting substring among strings"
+          "estimatedHours": 1.0,
+          "description": "Find the longest common starting substring among strings",
+          "practiceQuestions": [
+            {
+              "name": "Longest Common Prefix",
+              "slug": "longest-common-prefix",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-common-prefix/"
+            }
+          ]
         },
         {
           "id": "valid_anagram",
           "name": "Valid Anagram",
-          "estimatedHours": 0.683,
-          "description": "Check if two strings are anagrams of each other"
+          "estimatedHours": 2.0,
+          "description": "Check if two strings are anagrams of each other",
+          "practiceQuestions": [
+            {
+              "name": "Valid Anagram",
+              "slug": "valid-anagram",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-anagram/"
+            }
+          ]
         },
         {
           "id": "isomorphic_strings",
           "name": "Isomorphic Strings",
-          "estimatedHours": 0.665,
-          "description": "Check if two strings have a one-to-one character mapping"
+          "estimatedHours": 2.0,
+          "description": "Check if two strings have a one-to-one character mapping",
+          "practiceQuestions": [
+            {
+              "name": "Isomorphic Strings",
+              "slug": "isomorphic-strings",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/isomorphic-strings/"
+            }
+          ]
         },
         {
           "id": "group_anagrams_sorted_key",
           "name": "Group Anagrams - Approach 1 - Sorted Key",
-          "estimatedHours": 0.365,
+          "estimatedHours": 1.0,
           "description": "Group words that are anagrams using sorted string keys"
         },
         {
           "id": "group_anagrams_hashed_key",
           "name": "Group Anagrams - Approach 2 - Hashed Key",
-          "estimatedHours": 0.492,
-          "description": "Group anagrams using character frequency hash as key"
+          "estimatedHours": 1.5,
+          "description": "Group anagrams using character frequency hash as key",
+          "practiceQuestions": [
+            {
+              "name": "Group Anagrams",
+              "slug": "group-anagrams",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/group-anagrams/"
+            }
+          ]
         }
       ]
     },
@@ -559,91 +889,171 @@
       "id": "stack_queues",
       "name": "Stack and Queues",
       "tier": 2,
-      "estimatedHours": 8.49,
+      "estimatedHours": 25.5,
       "topics": [
         {
           "id": "introduction_stacks_queues",
           "name": "Introduction to Stacks & Queues",
-          "estimatedHours": 0.59,
+          "estimatedHours": 2.0,
           "description": "Get introduced to the fundamentals of Stacks and Queues"
         },
         {
           "id": "playing_stacks_queues",
           "name": "Playing with Stacks & Queues",
-          "estimatedHours": 0.387,
+          "estimatedHours": 1.0,
           "description": "Explore basic operations on stacks and queues hands-on"
         },
         {
           "id": "implement_stack_two_queues",
           "name": "Implement Stack using Two Queues",
-          "estimatedHours": 0.932,
-          "description": "Build a stack using two queues"
+          "estimatedHours": 3.0,
+          "description": "Build a stack using two queues",
+          "practiceQuestions": [
+            {
+              "name": "Implement Stack using Queues",
+              "slug": "implement-stack-using-queues",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-stack-using-queues/"
+            }
+          ]
         },
         {
           "id": "implement_stack_one_queue",
           "name": "Implement Stack using One Queue",
-          "estimatedHours": 0.224,
+          "estimatedHours": 0.5,
           "description": "Implement a stack using a single queue cleverly"
         },
         {
           "id": "implement_queue_stacks",
           "name": "Implement Queue using Stacks",
-          "estimatedHours": 0.73,
-          "description": "Simulate a queue using two stacks"
+          "estimatedHours": 2.0,
+          "description": "Simulate a queue using two stacks",
+          "practiceQuestions": [
+            {
+              "name": "Implement Queue using Stacks",
+              "slug": "implement-queue-using-stacks",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-queue-using-stacks/"
+            }
+          ]
         },
         {
           "id": "valid_parentheses",
           "name": "Valid Parentheses",
-          "estimatedHours": 0.428,
-          "description": "Check if a string of parentheses is valid"
+          "estimatedHours": 1.5,
+          "description": "Check if a string of parentheses is valid",
+          "practiceQuestions": [
+            {
+              "name": "Valid Parentheses",
+              "slug": "valid-parentheses",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-parentheses/"
+            }
+          ]
         },
         {
           "id": "min_stack",
           "name": "Min Stack",
-          "estimatedHours": 0.486,
-          "description": "Design a stack that supports retrieving the minimum in O(1)"
+          "estimatedHours": 1.5,
+          "description": "Design a stack that supports retrieving the minimum in O(1)",
+          "practiceQuestions": [
+            {
+              "name": "Min Stack",
+              "slug": "min-stack",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/min-stack/"
+            }
+          ]
         },
         {
           "id": "remove_outermost_parentheses_stack",
           "name": "Remove Outermost Parentheses - Using Stack",
-          "estimatedHours": 0.726,
-          "description": "Remove outermost parentheses using a stack-based approach"
+          "estimatedHours": 2.0,
+          "description": "Remove outermost parentheses using a stack-based approach",
+          "practiceQuestions": [
+            {
+              "name": "Remove Outermost Parentheses",
+              "slug": "remove-outermost-parentheses",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-outermost-parentheses/"
+            }
+          ]
         },
         {
           "id": "remove_outermost_parentheses_no_stack",
           "name": "Remove Outermost Parentheses - without Stack",
-          "estimatedHours": 0.218,
+          "estimatedHours": 0.5,
           "description": "Remove outer parentheses without using a stack"
         },
         {
           "id": "evaluate_reverse_polish_notation",
           "name": "Evaluate Reverse Polish Notation",
-          "estimatedHours": 0.854,
-          "description": "Evaluate mathematical expressions in postfix notation"
+          "estimatedHours": 2.5,
+          "description": "Evaluate mathematical expressions in postfix notation",
+          "practiceQuestions": [
+            {
+              "name": "Evaluate Reverse Polish Notation",
+              "slug": "evaluate-reverse-polish-notation",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/evaluate-reverse-polish-notation/"
+            }
+          ]
         },
         {
           "id": "next_greater_element",
           "name": "Next Greater Element",
-          "estimatedHours": 0.929,
-          "description": "Find the next greater element for each number in an array"
+          "estimatedHours": 3.0,
+          "description": "Find the next greater element for each number in an array",
+          "practiceQuestions": [
+            {
+              "name": "Next Greater Element I",
+              "slug": "next-greater-element-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/next-greater-element-i/"
+            }
+          ]
         },
         {
           "id": "daily_temperatures",
           "name": "Daily Temperatures",
-          "estimatedHours": 0.514,
-          "description": "Find how many days until a warmer temperature"
+          "estimatedHours": 1.5,
+          "description": "Find how many days until a warmer temperature",
+          "practiceQuestions": [
+            {
+              "name": "Daily Temperatures",
+              "slug": "daily-temperatures",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/daily-temperatures/"
+            }
+          ]
         },
         {
           "id": "next_greater_element_ii",
           "name": "Next Greater Element - II",
-          "estimatedHours": 0.658,
-          "description": "Solve the circular version of Next Greater Element"
+          "estimatedHours": 2.0,
+          "description": "Solve the circular version of Next Greater Element",
+          "practiceQuestions": [
+            {
+              "name": "Next Greater Element II",
+              "slug": "next-greater-element-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/next-greater-element-ii/"
+            }
+          ]
         },
         {
           "id": "rotting_oranges",
           "name": "Rotting Oranges",
-          "estimatedHours": 0.817,
-          "description": "BFS algorithm to find time for all oranges to rot"
+          "estimatedHours": 2.5,
+          "description": "BFS algorithm to find time for all oranges to rot",
+          "practiceQuestions": [
+            {
+              "name": "Rotting Oranges",
+              "slug": "rotting-oranges",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/rotting-oranges/"
+            }
+          ]
         }
       ]
     },
@@ -651,79 +1061,135 @@
       "id": "binary_search_algorithm",
       "name": "Binary Search Algorithm",
       "tier": 3,
-      "estimatedHours": 6.99,
+      "estimatedHours": 24.0,
       "topics": [
         {
           "id": "square_root_x",
           "name": "Square Root of X",
-          "estimatedHours": 0.612,
+          "estimatedHours": 2.0,
           "description": "Find the square root of a number using binary search"
         },
         {
           "id": "best_practice_finding_middle",
           "name": "Best Practice - Finding Middle Element",
-          "estimatedHours": 0.109,
+          "estimatedHours": 0.5,
           "description": "Learn the safe and optimal way to find the middle index"
         },
         {
           "id": "guess_higher_lower",
           "name": "Guess Higher or Lower",
-          "estimatedHours": 0.207,
+          "estimatedHours": 0.5,
           "description": "Use binary search to guess a hidden number"
         },
         {
           "id": "search_rotated_sorted_array",
           "name": "Search in Rotated Sorted Array",
-          "estimatedHours": 0.972,
-          "description": "Search an element in a rotated sorted array"
+          "estimatedHours": 3.5,
+          "description": "Search an element in a rotated sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Search in Rotated Sorted Array",
+              "slug": "search-in-rotated-sorted-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
+            }
+          ]
         },
         {
           "id": "first_bad_version",
           "name": "First Bad Version",
-          "estimatedHours": 0.554,
-          "description": "Identify the first bad version using binary search"
+          "estimatedHours": 2.0,
+          "description": "Identify the first bad version using binary search",
+          "practiceQuestions": [
+            {
+              "name": "First Bad Version",
+              "slug": "first-bad-version",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/first-bad-version/"
+            }
+          ]
         },
         {
           "id": "find_peak_element",
           "name": "Find Peak Element",
-          "estimatedHours": 0.703,
-          "description": "Locate a peak element using binary search"
+          "estimatedHours": 2.5,
+          "description": "Locate a peak element using binary search",
+          "practiceQuestions": [
+            {
+              "name": "Find Peak Element",
+              "slug": "find-peak-element",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/find-peak-element/"
+            }
+          ]
         },
         {
           "id": "find_minimum_rotated_sorted_array",
           "name": "Find Minimum in Rotated Sorted Array",
-          "estimatedHours": 0.708,
-          "description": "Find the smallest element in a rotated sorted array"
+          "estimatedHours": 2.5,
+          "description": "Find the smallest element in a rotated sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Find Minimum in Rotated Sorted Array",
+              "slug": "find-minimum-in-rotated-sorted-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/"
+            }
+          ]
         },
         {
           "id": "find_first_last_position_sorted_array",
           "name": "Find First & Last Position in Sorted Array",
-          "estimatedHours": 0.619,
-          "description": "Find the first and last index of a target in a sorted array"
+          "estimatedHours": 2.0,
+          "description": "Find the first and last index of a target in a sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Find First and Last Position of Element in Sorted Array",
+              "slug": "find-first-and-last-position-of-element-in-sorted-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/"
+            }
+          ]
         },
         {
           "id": "find_first_last_position_approach_2",
           "name": "Find First & Last Position in Sorted Array - Approach 2",
-          "estimatedHours": 0.325,
+          "estimatedHours": 1.0,
           "description": "Optimized approach for finding first and last index of target"
         },
         {
           "id": "find_peak_mountain_array",
           "name": "Find Peak in a Mountain Array",
-          "estimatedHours": 0.452,
+          "estimatedHours": 1.5,
           "description": "Find the peak element in a mountain-shaped array"
         },
         {
           "id": "single_element_sorted_array",
           "name": "Single Element in a Sorted Array",
-          "estimatedHours": 0.842,
-          "description": "Find the single non-duplicate element in a sorted array"
+          "estimatedHours": 3.0,
+          "description": "Find the single non-duplicate element in a sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Single Element in a Sorted Array",
+              "slug": "single-element-in-a-sorted-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/single-element-in-a-sorted-array/"
+            }
+          ]
         },
         {
           "id": "find_k_closest_elements",
           "name": "Find k Closest Elements",
-          "estimatedHours": 0.888,
-          "description": "Find the k elements closest to a target in a sorted array"
+          "estimatedHours": 3.0,
+          "description": "Find the k elements closest to a target in a sorted array",
+          "practiceQuestions": [
+            {
+              "name": "Find K Closest Elements",
+              "slug": "find-k-closest-elements",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/find-k-closest-elements/"
+            }
+          ]
         }
       ]
     },
@@ -731,85 +1197,179 @@
       "id": "two_pointers_sliding_window",
       "name": "Two Pointers & Sliding Window",
       "tier": 3,
-      "estimatedHours": 8.42,
+      "estimatedHours": 31.0,
       "topics": [
         {
           "id": "two_sum",
           "name": "Two Sum",
-          "estimatedHours": 0.506,
-          "description": "Find two numbers that add up to a target using hashing"
+          "estimatedHours": 2.0,
+          "description": "Find two numbers that add up to a target using hashing",
+          "practiceQuestions": [
+            {
+              "name": "Two Sum",
+              "slug": "two-sum",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/two-sum/"
+            },
+            {
+              "name": "4Sum",
+              "slug": "4sum",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/4sum/"
+            }
+          ]
         },
         {
           "id": "two_sum_ii_sorted",
           "name": "Two Sum II - Input Array Is Sorted",
-          "estimatedHours": 0.358,
-          "description": "Solve Two Sum with a sorted array using two pointers"
+          "estimatedHours": 1.5,
+          "description": "Solve Two Sum with a sorted array using two pointers",
+          "practiceQuestions": [
+            {
+              "name": "Two Sum II - Input Array Is Sorted",
+              "slug": "two-sum-ii-input-array-is-sorted",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+            }
+          ]
         },
         {
           "id": "is_subsequence",
           "name": "Is Subsequence",
-          "estimatedHours": 0.237,
-          "description": "Check if one string is a subsequence of another"
+          "estimatedHours": 1.0,
+          "description": "Check if one string is a subsequence of another",
+          "practiceQuestions": [
+            {
+              "name": "Is Subsequence",
+              "slug": "is-subsequence",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/is-subsequence/"
+            }
+          ]
         },
         {
           "id": "find_index_first_occurrence_string",
           "name": "Find Index of First Occurrence in String",
-          "estimatedHours": 0.383,
-          "description": "Locate the first occurrence of a substring in a string"
+          "estimatedHours": 1.5,
+          "description": "Locate the first occurrence of a substring in a string",
+          "practiceQuestions": [
+            {
+              "name": "Find the Index of the First Occurrence in a String",
+              "slug": "find-the-index-of-the-first-occurrence-in-a-string",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/"
+            }
+          ]
         },
         {
           "id": "kmp_algorithm",
           "name": "KMP (Knuth-Morris-Pratt) Algorithm",
-          "estimatedHours": 1.249,
+          "estimatedHours": 4.5,
           "description": "Efficient substring search using the KMP algorithm"
         },
         {
           "id": "intersection_two_linked_lists_two_pointers",
           "name": "Intersection of Two Linked Lists - Two Pointers",
-          "estimatedHours": 0.58,
+          "estimatedHours": 2.0,
           "description": "Find the intersection node of two linked lists using two pointers"
         },
         {
           "id": "container_most_water",
           "name": "Container with Most Water",
-          "estimatedHours": 0.371,
-          "description": "Maximize water between two lines using two pointers"
+          "estimatedHours": 1.5,
+          "description": "Maximize water between two lines using two pointers",
+          "practiceQuestions": [
+            {
+              "name": "Container With Most Water",
+              "slug": "container-with-most-water",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/container-with-most-water/"
+            }
+          ]
         },
         {
           "id": "three_sum",
           "name": "Three Sum",
-          "estimatedHours": 0.493,
-          "description": "Find all unique triplets that sum to zero"
+          "estimatedHours": 1.5,
+          "description": "Find all unique triplets that sum to zero",
+          "practiceQuestions": [
+            {
+              "name": "3Sum",
+              "slug": "3sum",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/3sum/"
+            }
+          ]
         },
         {
           "id": "trapping_rain_water",
           "name": "Trapping Rain Water",
-          "estimatedHours": 0.805,
-          "description": "Calculate how much water can be trapped after rain"
+          "estimatedHours": 3.0,
+          "description": "Calculate how much water can be trapped after rain",
+          "practiceQuestions": [
+            {
+              "name": "Trapping Rain Water",
+              "slug": "trapping-rain-water",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/trapping-rain-water/"
+            }
+          ]
         },
         {
           "id": "longest_substring_without_repeating",
           "name": "Longest Substring Without Repeating Characters",
-          "estimatedHours": 0.969,
-          "description": "Find the longest substring with all unique characters"
+          "estimatedHours": 3.5,
+          "description": "Find the longest substring with all unique characters",
+          "practiceQuestions": [
+            {
+              "name": "Longest Substring Without Repeating Characters",
+              "slug": "longest-substring-without-repeating-characters",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+            }
+          ]
         },
         {
           "id": "longest_repeating_character_replacement",
           "name": "Longest Repeating Character Replacement",
-          "estimatedHours": 0.972,
-          "description": "Maximize the length of a repeating character substring"
+          "estimatedHours": 3.5,
+          "description": "Maximize the length of a repeating character substring",
+          "practiceQuestions": [
+            {
+              "name": "Longest Repeating Character Replacement",
+              "slug": "longest-repeating-character-replacement",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+            }
+          ]
         },
         {
           "id": "permutation_in_string",
           "name": "Permutation in String",
-          "estimatedHours": 0.668,
-          "description": "Check if one string contains a permutation of another"
+          "estimatedHours": 2.5,
+          "description": "Check if one string contains a permutation of another",
+          "practiceQuestions": [
+            {
+              "name": "Permutation in String",
+              "slug": "permutation-in-string",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/permutation-in-string/"
+            }
+          ]
         },
         {
           "id": "sliding_window_maximum",
           "name": "Sliding Window Maximum",
-          "estimatedHours": 0.827,
-          "description": "Find the max value in every window of size k"
+          "estimatedHours": 3.0,
+          "description": "Find the max value in every window of size k",
+          "practiceQuestions": [
+            {
+              "name": "Sliding Window Maximum",
+              "slug": "sliding-window-maximum",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/sliding-window-maximum/"
+            }
+          ]
         }
       ]
     },
@@ -817,163 +1377,311 @@
       "id": "binary_tree",
       "name": "Binary Tree",
       "tier": 3,
-      "estimatedHours": 11.86,
+      "estimatedHours": 42.5,
       "topics": [
         {
           "id": "introduction_trees",
           "name": "Introduction to Trees",
-          "estimatedHours": 0.484,
+          "estimatedHours": 1.5,
           "description": "Understand what trees are and their core properties"
         },
         {
           "id": "binary_tree_traversals_explained",
           "name": "Binary Tree - Traversals Explained",
-          "estimatedHours": 0.576,
+          "estimatedHours": 2.0,
           "description": "Explore preorder, inorder, and postorder tree traversals"
         },
         {
           "id": "preorder_traversal_recursive",
           "name": "Preorder Traversal - Recursive Approach",
-          "estimatedHours": 0.684,
-          "description": "Perform preorder traversal using recursion"
+          "estimatedHours": 2.5,
+          "description": "Perform preorder traversal using recursion",
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Preorder Traversal",
+              "slug": "binary-tree-preorder-traversal",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-tree-preorder-traversal/"
+            }
+          ]
         },
         {
           "id": "inorder_postorder_recursive",
           "name": "Inorder & PostOrder - Recursive Approach",
-          "estimatedHours": 0.226,
-          "description": "Implement inorder and postorder recursively"
+          "estimatedHours": 1.0,
+          "description": "Implement inorder and postorder recursively",
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Inorder Traversal",
+              "slug": "binary-tree-inorder-traversal",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-tree-inorder-traversal/"
+            },
+            {
+              "name": "Binary Tree Postorder Traversal",
+              "slug": "binary-tree-postorder-traversal",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-tree-postorder-traversal/"
+            }
+          ]
         },
         {
           "id": "preorder_traversal_iterative",
           "name": "Preorder Traversal - Iterative Approach",
-          "estimatedHours": 0.592,
+          "estimatedHours": 2.0,
           "description": "Use a stack to perform preorder traversal iteratively"
         },
         {
           "id": "inorder_traversal_iterative",
           "name": "Inorder Traversal - Iterative Approach",
-          "estimatedHours": 0.546,
+          "estimatedHours": 2.0,
           "description": "Inorder traversal using a stack instead of recursion"
         },
         {
           "id": "postorder_iterative_two_stacks",
           "name": "Postorder - Iterative Approach - 2 Stacks",
-          "estimatedHours": 0.549,
+          "estimatedHours": 2.0,
           "description": "Use two stacks for iterative postorder traversal"
         },
         {
           "id": "postorder_iterative_one_stack",
           "name": "Postorder - Iterative Approach - One Stack",
-          "estimatedHours": 0.856,
+          "estimatedHours": 3.0,
           "description": "Efficient postorder traversal using just one stack"
         },
         {
           "id": "dfs_bfs_binary_tree",
           "name": "DFS and BFS in Binary Tree",
-          "estimatedHours": 0.452,
+          "estimatedHours": 1.5,
           "description": "Understand DFS vs BFS in binary trees"
         },
         {
           "id": "level_order_traversal_queue",
           "name": "Level Order Traversal - Queue - BFS",
-          "estimatedHours": 0.545,
-          "description": "Implement level order traversal using a queue"
+          "estimatedHours": 2.0,
+          "description": "Implement level order traversal using a queue",
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Level Order Traversal",
+              "slug": "binary-tree-level-order-traversal",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+            },
+            {
+              "name": "Average of Levels in Binary Tree",
+              "slug": "average-of-levels-in-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/average-of-levels-in-binary-tree/"
+            }
+          ]
         },
         {
           "id": "level_order_traversal_recursive",
           "name": "Level Order Traversal - Recursive Approach",
-          "estimatedHours": 0.411,
+          "estimatedHours": 1.5,
           "description": "Perform level order traversal recursively"
         },
         {
           "id": "maximum_depth_binary_tree",
           "name": "Maximum Depth of Binary Tree",
-          "estimatedHours": 0.844,
-          "description": "Find the max depth of a binary tree"
+          "estimatedHours": 3.0,
+          "description": "Find the max depth of a binary tree",
+          "practiceQuestions": [
+            {
+              "name": "Maximum Depth of Binary Tree",
+              "slug": "maximum-depth-of-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+            }
+          ]
         },
         {
           "id": "path_sum",
           "name": "Path Sum",
-          "estimatedHours": 0.508,
-          "description": "Check if a path adds up to a target sum"
+          "estimatedHours": 2.0,
+          "description": "Check if a path adds up to a target sum",
+          "practiceQuestions": [
+            {
+              "name": "Path Sum",
+              "slug": "path-sum",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/path-sum/"
+            }
+          ]
         },
         {
           "id": "symmetric_tree_recursive",
           "name": "Symmetric Tree - Recursive Approach",
-          "estimatedHours": 0.254,
-          "description": "Check if a binary tree is symmetric using recursion"
+          "estimatedHours": 1.0,
+          "description": "Check if a binary tree is symmetric using recursion",
+          "practiceQuestions": [
+            {
+              "name": "Symmetric Tree",
+              "slug": "symmetric-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/symmetric-tree/"
+            }
+          ]
         },
         {
           "id": "symmetric_tree_iterative",
           "name": "Symmetric Tree - Iterative Approach",
-          "estimatedHours": 0.35,
+          "estimatedHours": 1.0,
           "description": "Check symmetry in a binary tree using BFS"
         },
         {
           "id": "invert_binary_tree",
           "name": "Invert a Binary Tree",
-          "estimatedHours": 0.145,
-          "description": "Flip a binary tree by swapping left and right nodes"
+          "estimatedHours": 0.5,
+          "description": "Flip a binary tree by swapping left and right nodes",
+          "practiceQuestions": [
+            {
+              "name": "Invert Binary Tree",
+              "slug": "invert-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/invert-binary-tree/"
+            }
+          ]
         },
         {
           "id": "same_tree",
           "name": "Same Tree",
-          "estimatedHours": 0.131,
-          "description": "Check if two binary trees are exactly the same"
+          "estimatedHours": 0.5,
+          "description": "Check if two binary trees are exactly the same",
+          "practiceQuestions": [
+            {
+              "name": "Same Tree",
+              "slug": "same-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/same-tree/"
+            }
+          ]
         },
         {
           "id": "balanced_binary_tree",
           "name": "Balanced Binary Tree",
-          "estimatedHours": 0.239,
-          "description": "Check if a binary tree is height-balanced"
+          "estimatedHours": 1.0,
+          "description": "Check if a binary tree is height-balanced",
+          "practiceQuestions": [
+            {
+              "name": "Balanced Binary Tree",
+              "slug": "balanced-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/balanced-binary-tree/"
+            }
+          ]
         },
         {
           "id": "diameter_binary_tree",
           "name": "Diameter of a Binary Tree",
-          "estimatedHours": 0.379,
-          "description": "Find the longest path between any two nodes"
+          "estimatedHours": 1.5,
+          "description": "Find the longest path between any two nodes",
+          "practiceQuestions": [
+            {
+              "name": "Diameter of Binary Tree",
+              "slug": "diameter-of-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/diameter-of-binary-tree/"
+            }
+          ]
         },
         {
           "id": "zigzag_level_order_traversal",
           "name": "Zigzag Level Order Traversal",
-          "estimatedHours": 0.294,
-          "description": "Traverse a binary tree in zigzag order"
+          "estimatedHours": 1.0,
+          "description": "Traverse a binary tree in zigzag order",
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Zigzag Level Order Traversal",
+              "slug": "binary-tree-zigzag-level-order-traversal",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/"
+            }
+          ]
         },
         {
           "id": "subtree_another_tree",
           "name": "Subtree of another Tree",
-          "estimatedHours": 0.786,
-          "description": "Check if one binary tree is a subtree of another"
+          "estimatedHours": 3.0,
+          "description": "Check if one binary tree is a subtree of another",
+          "practiceQuestions": [
+            {
+              "name": "Subtree of Another Tree",
+              "slug": "subtree-of-another-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/subtree-of-another-tree/"
+            }
+          ]
         },
         {
           "id": "lowest_common_ancestor",
           "name": "Lowest Common Ancestor",
-          "estimatedHours": 0.464,
-          "description": "Find the lowest common ancestor of two nodes"
+          "estimatedHours": 1.5,
+          "description": "Find the lowest common ancestor of two nodes",
+          "practiceQuestions": [
+            {
+              "name": "Lowest Common Ancestor of a Binary Tree",
+              "slug": "lowest-common-ancestor-of-a-binary-tree",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/"
+            }
+          ]
         },
         {
           "id": "binary_tree_right_side_view",
           "name": "Binary Tree Right Side View",
-          "estimatedHours": 0.235,
-          "description": "Print the nodes visible from the right side"
+          "estimatedHours": 1.0,
+          "description": "Print the nodes visible from the right side",
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Right Side View",
+              "slug": "binary-tree-right-side-view",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/binary-tree-right-side-view/"
+            }
+          ]
         },
         {
           "id": "count_good_nodes_binary_tree",
           "name": "Count Good Nodes in Binary Tree",
-          "estimatedHours": 0.362,
-          "description": "Count nodes that are greater than all previous nodes on the path"
+          "estimatedHours": 1.5,
+          "description": "Count nodes that are greater than all previous nodes on the path",
+          "practiceQuestions": [
+            {
+              "name": "Count Good Nodes in Binary Tree",
+              "slug": "count-good-nodes-in-binary-tree",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/count-good-nodes-in-binary-tree/"
+            }
+          ]
         },
         {
           "id": "populating_next_right_pointers",
           "name": "Populating Next Right Pointers in Each Node",
-          "estimatedHours": 0.352,
-          "description": "Connect each node to its next right node in the same level"
+          "estimatedHours": 1.0,
+          "description": "Connect each node to its next right node in the same level",
+          "practiceQuestions": [
+            {
+              "name": "Populating Next Right Pointers in Each Node",
+              "slug": "populating-next-right-pointers-in-each-node",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/"
+            }
+          ]
         },
         {
           "id": "binary_tree_maximum_path_sum",
           "name": "Binary Tree Maximum Path Sum",
-          "estimatedHours": 0.592,
-          "description": "Find the path in a tree with the maximum sum"
+          "estimatedHours": 2.0,
+          "description": "Find the path in a tree with the maximum sum",
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Maximum Path Sum",
+              "slug": "binary-tree-maximum-path-sum",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+            }
+          ]
         }
       ]
     },
@@ -981,43 +1689,83 @@
       "id": "binary_search_tree",
       "name": "Binary Search Tree",
       "tier": 3,
-      "estimatedHours": 1.95,
+      "estimatedHours": 7.0,
       "topics": [
         {
           "id": "binary_search_tree_introduction",
           "name": "Binary Search Tree - Introduction",
-          "estimatedHours": 0.3,
+          "estimatedHours": 1.0,
           "description": "Learn the basics of Binary Search Trees"
         },
         {
           "id": "valid_binary_search_tree",
           "name": "Valid Binary Search Tree",
-          "estimatedHours": 0.516,
-          "description": "Check if a tree is a valid BST"
+          "estimatedHours": 2.0,
+          "description": "Check if a tree is a valid BST",
+          "practiceQuestions": [
+            {
+              "name": "Validate Binary Search Tree",
+              "slug": "validate-binary-search-tree",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/validate-binary-search-tree/"
+            }
+          ]
         },
         {
           "id": "search_in_bst",
           "name": "Search in a BST",
-          "estimatedHours": 0.293,
-          "description": "Search for a value in a Binary Search Tree"
+          "estimatedHours": 1.0,
+          "description": "Search for a value in a Binary Search Tree",
+          "practiceQuestions": [
+            {
+              "name": "Search in a Binary Search Tree",
+              "slug": "search-in-a-binary-search-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/search-in-a-binary-search-tree/"
+            }
+          ]
         },
         {
           "id": "insert_into_bst",
           "name": "Insert into a BST",
-          "estimatedHours": 0.265,
-          "description": "Insert a new node in a BST"
+          "estimatedHours": 1.0,
+          "description": "Insert a new node in a BST",
+          "practiceQuestions": [
+            {
+              "name": "Insert into a Binary Search Tree",
+              "slug": "insert-into-a-binary-search-tree",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/insert-into-a-binary-search-tree/"
+            }
+          ]
         },
         {
           "id": "kth_smallest_element",
           "name": "Kth Smallest Element",
-          "estimatedHours": 0.244,
-          "description": "Find the kth smallest element in BST"
+          "estimatedHours": 1.0,
+          "description": "Find the kth smallest element in BST",
+          "practiceQuestions": [
+            {
+              "name": "Kth Smallest Element in a BST",
+              "slug": "kth-smallest-element-in-a-bst",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/"
+            }
+          ]
         },
         {
           "id": "lowest_common_ancestor_bst",
           "name": "Lowest Common Ancestor of a BST",
-          "estimatedHours": 0.333,
-          "description": "Find the lowest common ancestor in a Binary Search Tree"
+          "estimatedHours": 1.0,
+          "description": "Find the lowest common ancestor in a Binary Search Tree",
+          "practiceQuestions": [
+            {
+              "name": "Lowest Common Ancestor of a Binary Search Tree",
+              "slug": "lowest-common-ancestor-of-a-binary-search-tree",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+            }
+          ]
         }
       ]
     },
@@ -1025,91 +1773,139 @@
       "id": "heap_priority_queue",
       "name": "Heap / Priority Queue",
       "tier": 3,
-      "estimatedHours": 8.77,
+      "estimatedHours": 31.0,
       "topics": [
         {
           "id": "introduction_heaps",
           "name": "Introduction to Heaps",
-          "estimatedHours": 0.592,
+          "estimatedHours": 2.0,
           "description": "Understand the fundamentals of Heaps"
         },
         {
           "id": "creating_heap",
           "name": "Creating a Heap",
-          "estimatedHours": 0.848,
+          "estimatedHours": 3.0,
           "description": "Learn how to build a heap from an array"
         },
         {
           "id": "inserting_node_heap",
           "name": "Inserting a node in Heap",
-          "estimatedHours": 0.856,
+          "estimatedHours": 3.0,
           "description": "Insert an element into a heap and maintain the heap property"
         },
         {
           "id": "extracting_values_heap_heapify_down",
           "name": "Extracting Values in Heap & HeapifyDown",
-          "estimatedHours": 0.776,
+          "estimatedHours": 2.5,
           "description": "Remove the root and restore heap order"
         },
         {
           "id": "heap_sort_algorithm",
           "name": "Heap Sort Algorithm",
-          "estimatedHours": 0.807,
-          "description": "Understand the Heap Sort algorithm step-by-step"
+          "estimatedHours": 3.0,
+          "description": "Understand the Heap Sort algorithm step-by-step",
+          "practiceQuestions": [
+            {
+              "name": "Sort an Array",
+              "slug": "sort-an-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sort-an-array/"
+            }
+          ]
         },
         {
           "id": "heap_sort_code",
           "name": "Heap Sort Code",
-          "estimatedHours": 0.636,
+          "estimatedHours": 2.0,
           "description": "Implement Heap Sort in code"
         },
         {
           "id": "heap_sort_dive_deep",
           "name": "Heap Sort - Dive Deep",
-          "estimatedHours": 0.503,
+          "estimatedHours": 2.0,
           "description": "Explore advanced insights into Heap Sort"
         },
         {
           "id": "priority_queues_introduction",
           "name": "Priority Queues - Introduction",
-          "estimatedHours": 0.664,
+          "estimatedHours": 2.5,
           "description": "Learn how priority queues work using heaps"
         },
         {
           "id": "priority_queue_code",
           "name": "Priority Queue Code",
-          "estimatedHours": 0.436,
+          "estimatedHours": 1.5,
           "description": "Implement a priority queue in code"
         },
         {
           "id": "kth_largest_element_array",
           "name": "Kth Largest Element in an Array",
-          "estimatedHours": 0.548,
-          "description": "Find the kth largest element using a heap"
+          "estimatedHours": 2.0,
+          "description": "Find the kth largest element using a heap",
+          "practiceQuestions": [
+            {
+              "name": "Kth Largest Element in an Array",
+              "slug": "kth-largest-element-in-an-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+            }
+          ]
         },
         {
           "id": "kth_largest_element_stream",
           "name": "Kth Largest Element in a Stream",
-          "estimatedHours": 0.359,
-          "description": "Maintain the kth largest value as numbers stream in"
+          "estimatedHours": 1.5,
+          "description": "Maintain the kth largest value as numbers stream in",
+          "practiceQuestions": [
+            {
+              "name": "Kth Largest Element in a Stream",
+              "slug": "kth-largest-element-in-a-stream",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-a-stream/"
+            }
+          ]
         },
         {
           "id": "last_stone_weight",
           "name": "Last Stone Weight",
-          "estimatedHours": 0.483,
-          "description": "Simulate a stone smashing game using heaps"
+          "estimatedHours": 1.5,
+          "description": "Simulate a stone smashing game using heaps",
+          "practiceQuestions": [
+            {
+              "name": "Last Stone Weight",
+              "slug": "last-stone-weight",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/last-stone-weight/"
+            }
+          ]
         },
         {
           "id": "top_k_frequent_elements",
           "name": "Top K Frequent Elements",
-          "estimatedHours": 0.547,
-          "description": "Find the k most frequent elements in an array"
+          "estimatedHours": 2.0,
+          "description": "Find the k most frequent elements in an array",
+          "practiceQuestions": [
+            {
+              "name": "Top K Frequent Elements",
+              "slug": "top-k-frequent-elements",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/top-k-frequent-elements/"
+            }
+          ]
         },
         {
           "id": "kth_smallest_element_sorted_matrix",
           "name": "Kth Smallest Element in a Sorted Matrix",
-          "estimatedHours": 0.71,
-          "description": "Find the kth smallest element in a sorted matrix"
+          "estimatedHours": 2.5,
+          "description": "Find the kth smallest element in a sorted matrix",
+          "practiceQuestions": [
+            {
+              "name": "Kth Smallest Element in a Sorted Matrix",
+              "slug": "kth-smallest-element-in-a-sorted-matrix",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/"
+            }
+          ]
         }
       ]
     },
@@ -1117,121 +1913,233 @@
       "id": "hashing",
       "name": "Hashing",
       "tier": 3,
-      "estimatedHours": 11.84,
+      "estimatedHours": 43.0,
       "topics": [
         {
           "id": "linked_list_cycle_hash_table_hashing",
           "name": "Linked List Cycle - Hash Table",
-          "estimatedHours": 0.442,
-          "description": "Detect cycles in a Linked List using extra space"
+          "estimatedHours": 1.5,
+          "description": "Detect cycles in a Linked List using extra space",
+          "practiceQuestions": [
+            {
+              "name": "Linked List Cycle",
+              "slug": "linked-list-cycle",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/linked-list-cycle/"
+            }
+          ]
         },
         {
           "id": "palindrome_linked_list_hashing",
           "name": "Palindrome Linked List",
-          "estimatedHours": 0.759,
-          "description": "Check if a Linked List is a palindrome"
+          "estimatedHours": 2.5,
+          "description": "Check if a Linked List is a palindrome",
+          "practiceQuestions": [
+            {
+              "name": "Palindrome Linked List",
+              "slug": "palindrome-linked-list",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/palindrome-linked-list/"
+            }
+          ]
         },
         {
           "id": "intersection_two_linked_lists_two_pointers_hashing",
           "name": "Intersection of Two Linked Lists - Two Pointers",
-          "estimatedHours": 0.58,
+          "estimatedHours": 2.0,
           "description": "Find the intersection node of two linked lists using two pointers"
         },
         {
           "id": "remove_duplicates_sorted_list_hashing",
           "name": "Remove Duplicates from Sorted List",
-          "estimatedHours": 0.262,
-          "description": "Remove consecutive duplicates from a sorted Linked List"
+          "estimatedHours": 1.0,
+          "description": "Remove consecutive duplicates from a sorted Linked List",
+          "practiceQuestions": [
+            {
+              "name": "Remove Duplicates from Sorted List",
+              "slug": "remove-duplicates-from-sorted-list",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/"
+            }
+          ]
         },
         {
           "id": "find_words_containing_character_hashing",
           "name": "Find Words Containing Character",
-          "estimatedHours": 0.366,
-          "description": "Find words from a list that contain a specific character"
+          "estimatedHours": 1.5,
+          "description": "Find words from a list that contain a specific character",
+          "practiceQuestions": [
+            {
+              "name": "Find Words Containing Character",
+              "slug": "find-words-containing-character",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-words-containing-character/"
+            }
+          ]
         },
         {
           "id": "jewels_stones_hashing",
           "name": "Jewels and Stones",
-          "estimatedHours": 0.64,
-          "description": "Count how many stones are also jewels"
+          "estimatedHours": 2.0,
+          "description": "Count how many stones are also jewels",
+          "practiceQuestions": [
+            {
+              "name": "Jewels and Stones",
+              "slug": "jewels-and-stones",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/jewels-and-stones/"
+            }
+          ]
         },
         {
           "id": "find_most_frequent_vowel_consonant_hashing",
           "name": "Find Most Frequent Vowel and Consonant",
-          "estimatedHours": 0.804,
+          "estimatedHours": 3.0,
           "description": "Identify the most frequent vowel and consonant in a string"
         },
         {
           "id": "valid_palindrome_extra_space_hashing",
           "name": "Valid Palindrome - Approach 1 - Extra Space",
-          "estimatedHours": 0.403,
+          "estimatedHours": 1.5,
           "description": "Check palindrome by cleaning and reversing a string"
         },
         {
           "id": "valid_anagram_hashing",
           "name": "Valid Anagram",
-          "estimatedHours": 0.683,
-          "description": "Check if two strings are anagrams of each other"
+          "estimatedHours": 2.5,
+          "description": "Check if two strings are anagrams of each other",
+          "practiceQuestions": [
+            {
+              "name": "Valid Anagram",
+              "slug": "valid-anagram",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-anagram/"
+            }
+          ]
         },
         {
           "id": "isomorphic_strings_hashing",
           "name": "Isomorphic Strings",
-          "estimatedHours": 0.665,
-          "description": "Check if two strings have a one-to-one character mapping"
+          "estimatedHours": 2.5,
+          "description": "Check if two strings have a one-to-one character mapping",
+          "practiceQuestions": [
+            {
+              "name": "Isomorphic Strings",
+              "slug": "isomorphic-strings",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/isomorphic-strings/"
+            }
+          ]
         },
         {
           "id": "group_anagrams_sorted_key_hashing",
           "name": "Group Anagrams - Approach 1 - Sorted Key",
-          "estimatedHours": 0.365,
+          "estimatedHours": 1.5,
           "description": "Group words that are anagrams using sorted string keys"
         },
         {
           "id": "group_anagrams_hashed_key_hashing",
           "name": "Group Anagrams - Approach 2 - Hashed Key",
-          "estimatedHours": 0.492,
-          "description": "Group anagrams using character frequency hash as key"
+          "estimatedHours": 1.5,
+          "description": "Group anagrams using character frequency hash as key",
+          "practiceQuestions": [
+            {
+              "name": "Group Anagrams",
+              "slug": "group-anagrams",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/group-anagrams/"
+            }
+          ]
         },
         {
           "id": "next_greater_element_hashing",
           "name": "Next Greater Element",
-          "estimatedHours": 0.929,
-          "description": "Find the next greater element for each number in an array"
+          "estimatedHours": 3.5,
+          "description": "Find the next greater element for each number in an array",
+          "practiceQuestions": [
+            {
+              "name": "Next Greater Element I",
+              "slug": "next-greater-element-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/next-greater-element-i/"
+            }
+          ]
         },
         {
           "id": "two_sum_ii_sorted_hashing",
           "name": "Two Sum II - Input Array Is Sorted",
-          "estimatedHours": 0.358,
-          "description": "Solve Two Sum with a sorted array using two pointers"
+          "estimatedHours": 1.5,
+          "description": "Solve Two Sum with a sorted array using two pointers",
+          "practiceQuestions": [
+            {
+              "name": "Two Sum II - Input Array Is Sorted",
+              "slug": "two-sum-ii-input-array-is-sorted",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+            }
+          ]
         },
         {
           "id": "find_index_first_occurrence_string_hashing",
           "name": "Find Index of First Occurrence in String",
-          "estimatedHours": 0.383,
-          "description": "Locate the first occurrence of a substring in a string"
+          "estimatedHours": 1.5,
+          "description": "Locate the first occurrence of a substring in a string",
+          "practiceQuestions": [
+            {
+              "name": "Find the Index of the First Occurrence in a String",
+              "slug": "find-the-index-of-the-first-occurrence-in-a-string",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/"
+            }
+          ]
         },
         {
           "id": "kmp_algorithm_hashing",
           "name": "KMP (Knuth-Morris-Pratt) Algorithm",
-          "estimatedHours": 1.249,
+          "estimatedHours": 4.5,
           "description": "Efficient substring search using the KMP algorithm"
         },
         {
           "id": "permutation_in_string_hashing",
           "name": "Permutation in String",
-          "estimatedHours": 0.668,
-          "description": "Check if one string contains a permutation of another"
+          "estimatedHours": 2.5,
+          "description": "Check if one string contains a permutation of another",
+          "practiceQuestions": [
+            {
+              "name": "Permutation in String",
+              "slug": "permutation-in-string",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/permutation-in-string/"
+            }
+          ]
         },
         {
           "id": "longest_substring_without_repeating_hashing",
           "name": "Longest Substring Without Repeating Characters",
-          "estimatedHours": 0.969,
-          "description": "Find the longest substring with all unique characters"
+          "estimatedHours": 3.5,
+          "description": "Find the longest substring with all unique characters",
+          "practiceQuestions": [
+            {
+              "name": "Longest Substring Without Repeating Characters",
+              "slug": "longest-substring-without-repeating-characters",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+            }
+          ]
         },
         {
           "id": "sliding_window_maximum_hashing",
           "name": "Sliding Window Maximum",
-          "estimatedHours": 0.827,
-          "description": "Find the max value in every window of size k"
+          "estimatedHours": 3.0,
+          "description": "Find the max value in every window of size k",
+          "practiceQuestions": [
+            {
+              "name": "Sliding Window Maximum",
+              "slug": "sliding-window-maximum",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/sliding-window-maximum/"
+            }
+          ]
         }
       ]
     },
@@ -1239,85 +2147,181 @@
       "id": "backtracking",
       "name": "Backtracking",
       "tier": 4,
-      "estimatedHours": 8.96,
+      "estimatedHours": 36.5,
       "topics": [
         {
           "id": "introduction_backtracking",
           "name": "Introduction to Backtracking",
-          "estimatedHours": 0.834,
+          "estimatedHours": 3.5,
           "description": "Understand the core concept of backtracking"
         },
         {
           "id": "subsets_power_set",
           "name": "Subsets - The Power Set",
-          "estimatedHours": 0.79,
-          "description": "Generate all subsets of a set"
+          "estimatedHours": 3.0,
+          "description": "Generate all subsets of a set",
+          "practiceQuestions": [
+            {
+              "name": "Subsets",
+              "slug": "subsets",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/subsets/"
+            }
+          ]
         },
         {
           "id": "combinations",
           "name": "Combinations",
-          "estimatedHours": 0.707,
-          "description": "Find all combinations of numbers"
+          "estimatedHours": 3.0,
+          "description": "Find all combinations of numbers",
+          "practiceQuestions": [
+            {
+              "name": "Combinations",
+              "slug": "combinations",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/combinations/"
+            }
+          ]
         },
         {
           "id": "permutations",
           "name": "Permutations",
-          "estimatedHours": 0.429,
-          "description": "Generate all permutations of a list"
+          "estimatedHours": 1.5,
+          "description": "Generate all permutations of a list",
+          "practiceQuestions": [
+            {
+              "name": "Permutations",
+              "slug": "permutations",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/permutations/"
+            }
+          ]
         },
         {
           "id": "subset_ii",
           "name": "Subset - II",
-          "estimatedHours": 0.446,
-          "description": "Subsets with duplicate elements"
+          "estimatedHours": 2.0,
+          "description": "Subsets with duplicate elements",
+          "practiceQuestions": [
+            {
+              "name": "Subsets II",
+              "slug": "subsets-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/subsets-ii/"
+            }
+          ]
         },
         {
           "id": "combination_sum",
           "name": "Combination Sum",
-          "estimatedHours": 0.753,
-          "description": "Find all combinations that sum to a target"
+          "estimatedHours": 3.0,
+          "description": "Find all combinations that sum to a target",
+          "practiceQuestions": [
+            {
+              "name": "Combination Sum",
+              "slug": "combination-sum",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/combination-sum/"
+            }
+          ]
         },
         {
           "id": "combination_sum_ii",
           "name": "Combination Sum - II",
-          "estimatedHours": 0.5,
-          "description": "Combination sum with single-use elements"
+          "estimatedHours": 2.0,
+          "description": "Combination sum with single-use elements",
+          "practiceQuestions": [
+            {
+              "name": "Combination Sum II",
+              "slug": "combination-sum-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/combination-sum-ii/"
+            }
+          ]
         },
         {
           "id": "combination_sum_iii",
           "name": "Combination Sum - III",
-          "estimatedHours": 0.459,
-          "description": "Find k numbers that sum to n"
+          "estimatedHours": 2.0,
+          "description": "Find k numbers that sum to n",
+          "practiceQuestions": [
+            {
+              "name": "Combination Sum III",
+              "slug": "combination-sum-iii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/combination-sum-iii/"
+            }
+          ]
         },
         {
           "id": "letter_combinations_phone_number",
           "name": "Letter Combinations of a Phone Number",
-          "estimatedHours": 0.459,
-          "description": "Generate letter combinations from digits"
+          "estimatedHours": 2.0,
+          "description": "Generate letter combinations from digits",
+          "practiceQuestions": [
+            {
+              "name": "Letter Combinations of a Phone Number",
+              "slug": "letter-combinations-of-a-phone-number",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/"
+            }
+          ]
         },
         {
           "id": "permutations_ii",
           "name": "Permutations - II",
-          "estimatedHours": 0.564,
-          "description": "Unique permutations with duplicates"
+          "estimatedHours": 2.5,
+          "description": "Unique permutations with duplicates",
+          "practiceQuestions": [
+            {
+              "name": "Permutations II",
+              "slug": "permutations-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/permutations-ii/"
+            }
+          ]
         },
         {
           "id": "palindrome_partitioning",
           "name": "Palindrome Partitioning",
-          "estimatedHours": 0.795,
-          "description": "Partition a string into palindromes"
+          "estimatedHours": 3.0,
+          "description": "Partition a string into palindromes",
+          "practiceQuestions": [
+            {
+              "name": "Palindrome Partitioning",
+              "slug": "palindrome-partitioning",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/palindrome-partitioning/"
+            }
+          ]
         },
         {
           "id": "word_search",
           "name": "Word Search",
-          "estimatedHours": 0.881,
-          "description": "Search a word in a grid"
+          "estimatedHours": 3.5,
+          "description": "Search a word in a grid",
+          "practiceQuestions": [
+            {
+              "name": "Word Search",
+              "slug": "word-search",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/word-search/"
+            }
+          ]
         },
         {
           "id": "n_queens",
           "name": "N Queens",
-          "estimatedHours": 1.339,
-          "description": "Place queens safely on a chessboard"
+          "estimatedHours": 5.5,
+          "description": "Place queens safely on a chessboard",
+          "practiceQuestions": [
+            {
+              "name": "N-Queens",
+              "slug": "n-queens",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/n-queens/"
+            }
+          ]
         }
       ]
     },
@@ -1325,40 +2329,64 @@
       "id": "greedy_algorithm",
       "name": "Greedy Algorithm",
       "tier": 4,
-      "estimatedHours": 1.98,
+      "estimatedHours": 8.0,
       "topics": [
         {
           "id": "introduction_greedy_algorithm",
           "name": "Introduction to Greedy Algorithm",
-          "estimatedHours": 0.705,
+          "estimatedHours": 3.0,
           "description": "Learn the basics of the Greedy Algorithm technique with simple examples"
         },
         {
           "id": "two_city_scheduling",
           "name": "Two City Scheduling",
-          "estimatedHours": 0.384,
+          "estimatedHours": 1.5,
           "description": "Solve the classic Two City Scheduling problem using a greedy approach"
         },
         {
           "id": "assign_cookies",
           "name": "Assign Cookies",
-          "estimatedHours": 0.27,
-          "description": "Understand how to maximize content children by assigning cookies efficiently"
+          "estimatedHours": 1.0,
+          "description": "Understand how to maximize content children by assigning cookies efficiently",
+          "practiceQuestions": [
+            {
+              "name": "Assign Cookies",
+              "slug": "assign-cookies",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/assign-cookies/"
+            }
+          ]
         },
         {
           "id": "lemonade_change",
           "name": "Lemonade Change",
-          "estimatedHours": 0.333,
-          "description": "Learn how to apply greedy techniques to manage change in the Lemonade Stand problem"
+          "estimatedHours": 1.5,
+          "description": "Learn how to apply greedy techniques to manage change in the Lemonade Stand problem",
+          "practiceQuestions": [
+            {
+              "name": "Lemonade Change",
+              "slug": "lemonade-change",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/lemonade-change/"
+            }
+          ]
         },
         {
           "id": "best_time_buy_sell_stock_ii",
           "name": "Best Time to Buy and Sell Stock - II",
-          "estimatedHours": 0.289,
-          "description": "Master stock trading with multiple transactions using greedy techniques"
+          "estimatedHours": 1.0,
+          "description": "Master stock trading with multiple transactions using greedy techniques",
+          "practiceQuestions": [
+            {
+              "name": "Best Time to Buy and Sell Stock II",
+              "slug": "best-time-to-buy-and-sell-stock-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/"
+            }
+          ]
         }
       ]
     }
   ],
-  "totalEstimatedHours": 107.52
+  "totalEstimatedHours": 359.5
 }
