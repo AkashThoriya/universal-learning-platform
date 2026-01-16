@@ -1,6 +1,7 @@
 # Exam Strategy Engine
 
-A production-ready adaptive learning platform combining AI-driven testing with strategic study planning.
+![Version](https://img.shields.io/badge/version-1.0.7-00DC82?style=for-the-badge)
+![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=for-the-badge&logo=pwa)
 
 ## 🚀 Key Features
 
