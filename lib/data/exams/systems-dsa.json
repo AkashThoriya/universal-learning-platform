@@ -3,41 +3,41 @@
   "name": "Systems DSA (The C Foundation)",
   "description": "Intensive 25-week Systems DSA bootcamp focused on C language for semiconductor/embedded systems interviews at Nvidia, Qualcomm, NXP, and Google Silicon. Covers pointers, memory, bit manipulation, data structures with hardware context including registers, UART, SPI, and RTOS concepts. Theme: 'Memory is a Flat Line' - understanding that variables are physical addresses in SRAM.",
   "category": "Computer Science",
-  "totalEstimatedHours": 436,
+  "totalEstimatedHours": 500.5,
   "recommendedHoursPerWeek": 18,
   "stages": [
     {
       "id": "foundation",
       "name": "C Foundation Assessment",
       "totalMarks": 100,
-      "duration": 120,
+      "duration": 180,
       "sections": [
         {
           "id": "pointers_memory",
           "name": "Pointers & Memory Management",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         },
         {
           "id": "arrays_matrices",
           "name": "Arrays & 2D Matrices",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         },
         {
           "id": "bit_manipulation",
           "name": "Bit Manipulation & Registers",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         },
         {
           "id": "math_number_theory",
           "name": "Math & Number Theory",
           "maxMarks": 25,
-          "maxTime": 30,
+          "maxTime": 45,
           "negativeMarking": 0
         }
       ]
@@ -46,27 +46,27 @@
       "id": "intermediate",
       "name": "Intermediate Systems Assessment",
       "totalMarks": 150,
-      "duration": 180,
+      "duration": 270,
       "sections": [
         {
           "id": "string_parsing",
           "name": "String Parsing & UART Context",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "sliding_windows",
           "name": "Sliding Windows & Buffers",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "linked_lists_stacks",
           "name": "Linked Lists & Stacks",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         }
       ]
@@ -75,34 +75,34 @@
       "id": "advanced",
       "name": "Advanced Systems Assessment",
       "totalMarks": 200,
-      "duration": 240,
+      "duration": 360,
       "sections": [
         {
           "id": "queues_heaps",
           "name": "Circular Queues & Heaps",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "trees_graphs",
           "name": "Trees & Graphs",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "dynamic_programming",
           "name": "Dynamic Programming",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         },
         {
           "id": "hard_problems",
           "name": "Hard Problems & Capstone",
           "maxMarks": 50,
-          "maxTime": 60,
+          "maxTime": 90,
           "negativeMarking": 0
         }
       ]
@@ -113,451 +113,368 @@
       "id": "month_1_pointers_arrays_memory",
       "name": "Pointers, Arrays & Memory",
       "tier": 1,
-      "estimatedHours": 68,
+      "estimatedHours": 58.0,
       "topics": [
         {
           "id": "week_1_physics_of_c",
           "name": "Week 1: The Physics of C (Pointers & Memory)",
-          "estimatedHours": 18,
+          "estimatedHours": 15.5,
           "description": "Master & (Address of) and * (Value at). Understand that arr[i] is syntax sugar for *(arr + i). Semiconductor context: Sensors dump data into linear buffers that cannot be resized. Passing a 1MB image buffer by pointer takes 4 bytes instead of copying.",
-          "subtopics": [
+          "learningTip": [
+            "In C, YOU control memory - no garbage collector, no safety net",
+            "Pointers are just variables holding memory addresses (4 bytes on 32-bit, 8 bytes on 64-bit)",
+            "arr[i] is syntactic sugar for *(arr + i) - understand this equivalence deeply",
+            "Every pointer bug becomes a segfault or silent corruption - master pointers completely",
+            "Drill: Write swap(int *a, int *b) from scratch - understand pointer dereferencing",
+            "Drill: Write strlen(char *s) using pointer arithmetic only",
+            "Drill: Write memcpy(void *dest, void *src, size_t n) from scratch",
+            "Project: Memory Alignment Drill - Create struct with char, int, char. Verify sizeof is 12 bytes (padding). Use #pragma pack(1) to force 6 bytes. Proves Data Bus Width knowledge."
+          ],
+          "mustNotMiss": [
+            "& (address-of): Gets memory address. int x = 5; int *p = &x; // p holds address of x",
+            "* (dereference): Gets value at address. *p = 10; // changes x to 10",
+            "Pointer arithmetic: p+1 moves by sizeof(*p) bytes, not 1 byte. int* increments by 4 bytes",
+            "void* is the universal pointer - can hold any address but cannot be dereferenced directly",
+            "Always initialize pointers: int *p = NULL; prevents undefined behavior"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_1_physics_of_c_sub_0",
-              "name": "LC 1929: Concatenation of Array - Understanding memory copying",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Concatenation of Array",
+              "slug": "concatenation-of-array",
+              "number": 1929,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/concatenation-of-array/"
             },
             {
-              "id": "week_1_physics_of_c_sub_1",
-              "name": "LC 1470: Shuffle the Array - Index manipulation",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Shuffle the Array",
+              "slug": "shuffle-the-array",
+              "number": 1470,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/shuffle-the-array/"
             },
             {
-              "id": "week_1_physics_of_c_sub_2",
-              "name": "LC 412: Fizz Buzz - Modulo arithmetic (used in hardware timers)",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Fizz Buzz",
+              "slug": "fizz-buzz",
+              "number": 412,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/fizz-buzz/"
             },
             {
-              "id": "week_1_physics_of_c_sub_3",
-              "name": "LC 1108: Defanging an IP Address - String/Memory replacement logic",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Defanging an IP Address",
+              "slug": "defanging-an-ip-address",
+              "number": 1108,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/defanging-an-ip-address/"
             },
             {
-              "id": "week_1_physics_of_c_sub_4",
-              "name": "LC 3110: Score of a String - Pointer traversal",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Score of a String",
+              "slug": "score-of-a-string",
+              "number": 3110,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/score-of-a-string/"
             },
             {
-              "id": "week_1_physics_of_c_sub_5",
-              "name": "LC 3146: Permutation Difference between Two Strings",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Permutation Difference between Two Strings",
+              "slug": "permutation-difference-between-two-strings",
+              "number": 3146,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/permutation-difference-between-two-strings/"
             },
             {
-              "id": "week_1_physics_of_c_sub_6",
-              "name": "LC 3131: Find the Integer Added to Array",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find the Integer Added to Array",
+              "slug": "find-the-integer-added-to-array",
+              "number": 3131,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-the-integer-added-to-array/"
             },
             {
-              "id": "week_1_physics_of_c_sub_7",
-              "name": "LC 2469: Convert the Temperature - Floating point math",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Convert the Temperature",
+              "slug": "convert-the-temperature",
+              "number": 2469,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/convert-the-temperature/"
             },
             {
-              "id": "week_1_physics_of_c_sub_8",
-              "name": "LC 189: Rotate Array - In-place buffer rotation (circular buffer concept)",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_1_physics_of_c_sub_9",
-              "name": "Drill: Write swap(int *a, int *b) from scratch - understand pointer dereferencing",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_1_physics_of_c_sub_10",
-              "name": "Drill: Write strlen(char *s) using pointer arithmetic only",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_1_physics_of_c_sub_11",
-              "name": "Drill: Write memcpy(void *dest, void *src, size_t n) from scratch",
-              "order": 11,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_1_physics_of_c_sub_12",
-              "name": "Project: Memory Alignment Drill - Create struct with char, int, char. Verify sizeof is 12 bytes (padding). Use #pragma pack(1) to force 6 bytes. Proves Data Bus Width knowledge.",
-              "order": 12,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Rotate Array",
+              "slug": "rotate-array",
+              "number": 189,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rotate-array/"
             }
           ]
         },
         {
           "id": "week_2_prefix_sums",
           "name": "Week 2: Prefix Sums (Time vs. Space)",
-          "estimatedHours": 16,
+          "estimatedHours": 13.5,
           "description": "Pre-calculating running totals for O(1) range queries. Semiconductor context: Telemetry & Battery - calculate total energy consumed between t=100ms and t=500ms without iterating the loop every time.",
-          "subtopics": [
+          "learningTip": [
+            "Pre-compute running totals for O(1) range queries",
+            "Trade-off: O(n) space and build time for O(1) query time",
+            "Critical for telemetry: 'What was total energy between t=100ms and t=500ms?'",
+            "In embedded, CPU cycles are precious - precompute what you can"
+          ],
+          "mustNotMiss": [
+            "Build: prefix[i] = prefix[i-1] + arr[i] with prefix[0] = arr[0]",
+            "Query: sum(l, r) = prefix[r] - prefix[l-1] (handle l=0 edge case)",
+            "C code: int prefix[n]; prefix[0] = arr[0]; for(int i=1; i<n; i++) prefix[i] = prefix[i-1] + arr[i];",
+            "Watch for integer overflow in cumulative sums - use int64_t for safety",
+            "Pattern extends to 2D: compute row prefix, then column prefix for O(1) rectangle sums"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_2_prefix_sums_sub_0",
-              "name": "LC 1480: Running Sum of 1d Array - The definition of Prefix Sum",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Running Sum of 1d Array",
+              "slug": "running-sum-of-1d-array",
+              "number": 1480,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/running-sum-of-1d-array/"
             },
             {
-              "id": "week_2_prefix_sums_sub_1",
-              "name": "LC 724: Find Pivot Index - Finding 'Center of Gravity' in data stream",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find Pivot Index",
+              "slug": "find-pivot-index",
+              "number": 724,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-pivot-index/"
             },
             {
-              "id": "week_2_prefix_sums_sub_2",
-              "name": "LC 303: Range Sum Query - Immutable - Fast lookups, saves battery/CPU cycles",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Range Sum Query",
+              "slug": "range-sum-query",
+              "number": 303,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/range-sum-query/"
             },
             {
-              "id": "week_2_prefix_sums_sub_3",
-              "name": "LC 238: Product of Array Except Self - Nvidia Classic (hardware dividers are slow/expensive)",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Product of Array Except Self",
+              "slug": "product-of-array-except-self",
+              "number": 238,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/product-of-array-except-self/"
             },
             {
-              "id": "week_2_prefix_sums_sub_4",
-              "name": "LC 560: Subarray Sum Equals K - Identifying specific signal patterns",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Subarray Sum Equals K",
+              "slug": "subarray-sum-equals-k",
+              "number": 560,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/subarray-sum-equals-k/"
             },
             {
-              "id": "week_2_prefix_sums_sub_5",
-              "name": "LC 1732: Find the Highest Altitude",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find the Highest Altitude",
+              "slug": "find-the-highest-altitude",
+              "number": 1732,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-the-highest-altitude/"
             },
             {
-              "id": "week_2_prefix_sums_sub_6",
-              "name": "LC 525: Contiguous Array - Binary signal balancing",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Contiguous Array",
+              "slug": "contiguous-array",
+              "number": 525,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/contiguous-array/"
             },
             {
-              "id": "week_2_prefix_sums_sub_7",
-              "name": "LC 1854: Maximum Population Year",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximum Population Year",
+              "slug": "maximum-population-year",
+              "number": 1854,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-population-year/"
             },
             {
-              "id": "week_2_prefix_sums_sub_8",
-              "name": "LC 2574: Left and Right Sum Differences - Useful for sensor calibration offsets",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_2_prefix_sums_sub_9",
-              "name": "Deep Dive: Why pre-calculation trades memory for speed - critical embedded tradeoff",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Left and Right Sum Differences",
+              "slug": "left-and-right-sum-differences",
+              "number": 2574,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/left-and-right-sum-differences/"
             }
           ]
         },
         {
           "id": "week_3_two_pointer",
           "name": "Week 3: The Two-Pointer Technique (Static)",
-          "estimatedHours": 18,
-          "description": "Using left and right indices to scan buffers from both ends in O(n) instead of O(n²). Semiconductor context: Buffer Compaction - remove dead bytes (zeros) without creating new array (In-Place algorithm).",
-          "subtopics": [
+          "estimatedHours": 15.5,
+          "description": "Using left and right indices to scan buffers from both ends in O(n) instead of O(n\u00b2). Semiconductor context: Buffer Compaction - remove dead bytes (zeros) without creating new array (In-Place algorithm).",
+          "learningTip": [
+            "Two pointers avoid O(n\u00b2) nested loops by moving intelligently",
+            "Sorted array: left from start, right from end - O(n) for pair finding",
+            "Fast/slow: detect cycles, find middle in one pass",
+            "This pattern appears in 40%+ of array/string problems"
+          ],
+          "mustNotMiss": [
+            "Pair sum in sorted array: if sum < target, move left++; if sum > target, move right--",
+            "Fast/slow for linked list: fast = fast->next->next; slow = slow->next; - cycle if they meet",
+            "Remove duplicates: slow writes, fast scans - maintain invariant that [0..slow] has unique elements",
+            "Partition: swap with two pointers from ends - foundation for QuickSort",
+            "C pattern: int left = 0, right = n-1; while(left < right) { ... left++; ... right--; }"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_3_two_pointer_sub_0",
-              "name": "LC 26: Remove Duplicates from Sorted Array - Data compression, master Slow/Fast pointer",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Remove Duplicates from Sorted Array",
+              "slug": "remove-duplicates-from-sorted-array",
+              "number": 26,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/"
             },
             {
-              "id": "week_3_two_pointer_sub_1",
-              "name": "LC 27: Remove Element - Filtering noise from signals",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Remove Element",
+              "slug": "remove-element",
+              "number": 27,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-element/"
             },
             {
-              "id": "week_3_two_pointer_sub_2",
-              "name": "LC 283: Move Zeroes - CRUCIAL: Compacting a buffer in-place",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Move Zeroes",
+              "slug": "move-zeroes",
+              "number": 283,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/move-zeroes/"
             },
             {
-              "id": "week_3_two_pointer_sub_3",
-              "name": "LC 167: Two Sum II - Sorted input with Binary Search logic",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Two Sum II",
+              "slug": "two-sum-ii",
+              "number": 167,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/two-sum-ii/"
             },
             {
-              "id": "week_3_two_pointer_sub_4",
-              "name": "LC 344: Reverse String - Swapping memory bytes",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse String",
+              "slug": "reverse-string",
+              "number": 344,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-string/"
             },
             {
-              "id": "week_3_two_pointer_sub_5",
-              "name": "LC 977: Squares of a Sorted Array",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Squares of a Sorted Array",
+              "slug": "squares-of-a-sorted-array",
+              "number": 977,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/squares-of-a-sorted-array/"
             },
             {
-              "id": "week_3_two_pointer_sub_6",
-              "name": "LC 125: Valid Palindrome - Checking data symmetry",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Valid Palindrome",
+              "slug": "valid-palindrome",
+              "number": 125,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-palindrome/"
             },
             {
-              "id": "week_3_two_pointer_sub_7",
-              "name": "LC 75: Sort Colors - Dutch National Flag problem (Signal sorting by priority)",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sort Colors",
+              "slug": "sort-colors",
+              "number": 75,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sort-colors/"
             },
             {
-              "id": "week_3_two_pointer_sub_8",
-              "name": "LC 88: Merge Sorted Array - Merge from the BACK to avoid overwriting",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Merge Sorted Array",
+              "slug": "merge-sorted-array",
+              "number": 88,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/merge-sorted-array/"
             },
             {
-              "id": "week_3_two_pointer_sub_9",
-              "name": "LC 11: Container With Most Water (Medium) - Optimization with two pointers",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Container With Most Water (Medium)",
+              "slug": "container-with-most-water-(medium)",
+              "number": 11,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/container-with-most-water-(medium)/"
             },
             {
-              "id": "week_3_two_pointer_sub_10",
-              "name": "LC 15: 3Sum (Medium) - Extension of two-pointer technique",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "3Sum (Medium)",
+              "slug": "3sum-(medium)",
+              "number": 15,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/3sum-(medium)/"
             }
           ]
         },
         {
           "id": "week_4_2d_arrays",
           "name": "Week 4: 2D Arrays (Matrices)",
-          "estimatedHours": 16,
+          "estimatedHours": 13.5,
           "description": "Mapping Row-Major [i][j] coordinates to linear memory addresses. Semiconductor context: Image Sensors & Displays - camera frames are 2D pixel matrices for ROI processing.",
-          "subtopics": [
+          "learningTip": [
+            "2D arrays in C are contiguous memory - int arr[R][C] is R*C integers in a row",
+            "Row-major order: arr[i][j] = *(arr + i*COLS + j) - understand the address calculation",
+            "Cache locality matters: row-major iteration is 10-100x faster than column-major",
+            "Image buffers, sensor grids, lookup tables - 2D arrays are everywhere in embedded",
+            "Drill: Why row-major iteration is faster than column-major (cache locality)",
+            "Project: Write two functions to sum 1024x1024 int matrix - Row-Major vs Column-Major. Measure execution time difference. Understand CPU cache behavior."
+          ],
+          "mustNotMiss": [
+            "Memory layout: int arr[2][3] = {{1,2,3},{4,5,6}} stored as [1,2,3,4,5,6] contiguously",
+            "Access: arr[i][j] = *((int*)arr + i*COLS + j) - pointer decay when passed to function",
+            "Row-major iteration: for(i) for(j) is cache-friendly; for(j) for(i) causes cache misses",
+            "Passing to function: void f(int arr[][COLS], int rows) - column size must be compile-time constant",
+            "Or use: void f(int *arr, int rows, int cols) and access arr[i*cols + j]"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_4_2d_arrays_sub_0",
-              "name": "LC 48: Rotate Image - In-place matrix rotation (critical for display drivers)",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Rotate Image",
+              "slug": "rotate-image",
+              "number": 48,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rotate-image/"
             },
             {
-              "id": "week_4_2d_arrays_sub_1",
-              "name": "LC 54: Spiral Matrix - Serializing 2D data for transmission",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Spiral Matrix",
+              "slug": "spiral-matrix",
+              "number": 54,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/spiral-matrix/"
             },
             {
-              "id": "week_4_2d_arrays_sub_2",
-              "name": "LC 59: Spiral Matrix II - Writing data in spiral pattern (display buffer filling)",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Spiral Matrix II",
+              "slug": "spiral-matrix-ii",
+              "number": 59,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/spiral-matrix-ii/"
             },
             {
-              "id": "week_4_2d_arrays_sub_3",
-              "name": "LC 867: Transpose Matrix - Axis swapping",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Transpose Matrix",
+              "slug": "transpose-matrix",
+              "number": 867,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/transpose-matrix/"
             },
             {
-              "id": "week_4_2d_arrays_sub_4",
-              "name": "LC 566: Reshape the Matrix - Memory re-mapping",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reshape the Matrix",
+              "slug": "reshape-the-matrix",
+              "number": 566,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reshape-the-matrix/"
             },
             {
-              "id": "week_4_2d_arrays_sub_5",
-              "name": "LC 73: Set Matrix Zeroes - Masking rows/cols (pixel masking)",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Set Matrix Zeroes",
+              "slug": "set-matrix-zeroes",
+              "number": 73,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/set-matrix-zeroes/"
             },
             {
-              "id": "week_4_2d_arrays_sub_6",
-              "name": "LC 74: Search a 2D Matrix - Efficient lookup tables",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Search a 2D Matrix",
+              "slug": "search-a-2d-matrix",
+              "number": 74,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/search-a-2d-matrix/"
             },
             {
-              "id": "week_4_2d_arrays_sub_7",
-              "name": "LC 1572: Matrix Diagonal Sum",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Matrix Diagonal Sum",
+              "slug": "matrix-diagonal-sum",
+              "number": 1572,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/matrix-diagonal-sum/"
             },
             {
-              "id": "week_4_2d_arrays_sub_8",
-              "name": "LC 766: Toeplitz Matrix - Verifying diagonal consistency",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Toeplitz Matrix",
+              "slug": "toeplitz-matrix",
+              "number": 766,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/toeplitz-matrix/"
             },
             {
-              "id": "week_4_2d_arrays_sub_9",
-              "name": "LC 36: Valid Sudoku - Constraint checking in fixed grids",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_4_2d_arrays_sub_10",
-              "name": "Drill: Why row-major iteration is faster than column-major (cache locality)",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_4_2d_arrays_sub_11",
-              "name": "Project: Write two functions to sum 1024x1024 int matrix - Row-Major vs Column-Major. Measure execution time difference. Understand CPU cache behavior.",
-              "order": 11,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Valid Sudoku",
+              "slug": "valid-sudoku",
+              "number": 36,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-sudoku/"
             }
           ]
         }
@@ -567,407 +484,299 @@
       "id": "month_2_bit_manipulation",
       "name": "Bit Manipulation (The Register Interface)",
       "tier": 1,
-      "estimatedHours": 72,
+      "estimatedHours": 61.5,
       "topics": [
         {
           "id": "week_5_boolean_logic",
           "name": "Week 5: Basic Boolean Logic",
-          "estimatedHours": 20,
+          "estimatedHours": 17.0,
           "description": "Master & (Clear/Check), | (Set), ^ (Toggle), ~ (Flip), << (Shift). HIGHEST ROI section - in Embedded C, you control hardware by writing to 32-bit Registers. Set Bit 5 to turn on LED, read Bit 3 to check button press. Changing the wrong bit crashes the system.",
-          "subtopics": [
+          "learningTip": [
+            "Bit manipulation is THE core skill for embedded/firmware engineering",
+            "Hardware registers are 32-bit words where each bit controls something",
+            "Set bit 5 = turn on LED. Read bit 3 = check button state. Wrong bit = system crash",
+            "Think in binary: 0x1F = 0001_1111 = bits 0-4 set. Visualize the bit pattern",
+            "Project: Write is_little_endian() function - detect system endianness",
+            "Project: SWAP_ENDIAN(x) macro - Flip 32-bit integer using shifts",
+            "Project: Write SET_BIT(reg, n), CLEAR_BIT(reg, n), TOGGLE_BIT(reg, n), CHECK_BIT(reg, n) macros - the building blocks of all firmware"
+          ],
+          "mustNotMiss": [
+            "SET bit n:   reg |= (1 << n)     // OR with 1 at position n",
+            "CLEAR bit n: reg &= ~(1 << n)    // AND with 0 at position n (invert mask)",
+            "TOGGLE bit n: reg ^= (1 << n)    // XOR flips the bit",
+            "CHECK bit n: (reg >> n) & 1      // Shift to LSB, mask with 1. Returns 0 or 1",
+            "Create mask for bits m to n: ((1 << (n-m+1)) - 1) << m",
+            "Example: GPIO_PORT |= (1 << LED_PIN); // Set LED pin high"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_5_boolean_logic_sub_0",
-              "name": "LC 191: Number of 1 Bits - Hamming Weight (Parity Checks for error detection)",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Number of 1 Bits",
+              "slug": "number-of-1-bits",
+              "number": 191,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-1-bits/"
             },
             {
-              "id": "week_5_boolean_logic_sub_1",
-              "name": "LC 136: Single Number - XOR to cancel duplicates",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Single Number",
+              "slug": "single-number",
+              "number": 136,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/single-number/"
             },
             {
-              "id": "week_5_boolean_logic_sub_2",
-              "name": "LC 268: Missing Number - XOR application for data integrity",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Missing Number",
+              "slug": "missing-number",
+              "number": 268,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/missing-number/"
             },
             {
-              "id": "week_5_boolean_logic_sub_3",
-              "name": "LC 67: Add Binary - Implementing a hardware adder in software",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Add Binary",
+              "slug": "add-binary",
+              "number": 67,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/add-binary/"
             },
             {
-              "id": "week_5_boolean_logic_sub_4",
-              "name": "LC 190: Reverse Bits - Little Endian to Big Endian (Network byte order) - CRUCIAL",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse Bits",
+              "slug": "reverse-bits",
+              "number": 190,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-bits/"
             },
             {
-              "id": "week_5_boolean_logic_sub_5",
-              "name": "LC 231: Power of Two - Memory alignment checking (must be 2, 4, 8...)",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Power of Two",
+              "slug": "power-of-two",
+              "number": 231,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/power-of-two/"
             },
             {
-              "id": "week_5_boolean_logic_sub_6",
-              "name": "LC 461: Hamming Distance - Comparing binary signals (error detection)",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Hamming Distance",
+              "slug": "hamming-distance",
+              "number": 461,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/hamming-distance/"
             },
             {
-              "id": "week_5_boolean_logic_sub_7",
-              "name": "LC 1009: Complement of Base 10 Integer",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Complement of Base 10 Integer",
+              "slug": "complement-of-base-10-integer",
+              "number": 1009,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/complement-of-base-10-integer/"
             },
             {
-              "id": "week_5_boolean_logic_sub_8",
-              "name": "LC 389: Find the Difference - XOR for detecting inserted bytes",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_5_boolean_logic_sub_9",
-              "name": "Project: Write is_little_endian() function - detect system endianness",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_5_boolean_logic_sub_10",
-              "name": "Project: SWAP_ENDIAN(x) macro - Flip 32-bit integer using shifts",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_5_boolean_logic_sub_11",
-              "name": "Project: Write SET_BIT(reg, n), CLEAR_BIT(reg, n), TOGGLE_BIT(reg, n), CHECK_BIT(reg, n) macros - the building blocks of all firmware",
-              "order": 11,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find the Difference",
+              "slug": "find-the-difference",
+              "number": 389,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-the-difference/"
             }
           ]
         },
         {
           "id": "week_6_advanced_bit_hacks",
           "name": "Week 6: Advanced Bit Hacks",
-          "estimatedHours": 18,
+          "estimatedHours": 15.5,
           "description": "Using masks to pack/unpack data. Semiconductor context: Packet Headers - a single 32-bit integer stores [Version: 4 bits][Length: 8 bits][Type: 4 bits][ID: 16 bits]. Extract using shifts and masks.",
-          "subtopics": [
+          "learningTip": [
+            "Pack multiple fields into single integer - save memory, save bandwidth",
+            "Packet headers: 32 bits = [Version:4][Length:8][Type:4][ID:16]",
+            "Extract field: mask and shift. Insert field: clear, shift, and OR",
+            "Bitfields exist in C but are implementation-dependent - prefer manual bit ops",
+            "Project: Parse a 32-bit packet header - extract Version (bits 28-31), Length (bits 20-27), Type (bits 16-19), ID (bits 0-15)"
+          ],
+          "mustNotMiss": [
+            "Extract bits m to n from x: (x >> m) & ((1 << (n-m+1)) - 1)",
+            "Set bits m to n to val: x = (x & ~mask) | ((val << m) & mask)",
+            "Swap without temp: a ^= b; b ^= a; a ^= b; // XOR swap trick",
+            "Check power of 2: (n & (n-1)) == 0 && n > 0",
+            "Count set bits (fast): while(n) { n &= n-1; count++; } // Brian Kernighan's algorithm",
+            "Isolate lowest set bit: n & (-n) // returns power of 2"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_6_advanced_bit_hacks_sub_0",
-              "name": "LC 137: Single Number II - Track state across 32 individual bits",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Single Number II",
+              "slug": "single-number-ii",
+              "number": 137,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/single-number-ii/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_1",
-              "name": "LC 260: Single Number III - Separating two unique elements using XOR",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Single Number III",
+              "slug": "single-number-iii",
+              "number": 260,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/single-number-iii/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_2",
-              "name": "LC 201: Bitwise AND of Numbers Range - Understanding bit-ranges in registers",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Bitwise AND of Numbers Range",
+              "slug": "bitwise-and-of-numbers-range",
+              "number": 201,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/bitwise-and-of-numbers-range/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_3",
-              "name": "LC 371: Sum of Two Integers - Addition without + operator (half adder logic)",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sum of Two Integers",
+              "slug": "sum-of-two-integers",
+              "number": 371,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sum-of-two-integers/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_4",
-              "name": "LC 338: Counting Bits - DP + Bits combination",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Counting Bits",
+              "slug": "counting-bits",
+              "number": 338,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/counting-bits/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_5",
-              "name": "LC 762: Prime Number of Set Bits in Binary Representation",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Prime Number of Set Bits in Binary Representation",
+              "slug": "prime-number-of-set-bits-in-binary-representation",
+              "number": 762,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/prime-number-of-set-bits-in-binary-representation/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_6",
-              "name": "LC 693: Binary Number with Alternating Bits",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Binary Number with Alternating Bits",
+              "slug": "binary-number-with-alternating-bits",
+              "number": 693,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-number-with-alternating-bits/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_7",
-              "name": "LC 1342: Number of Steps to Reduce a Number to Zero",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Number of Steps to Reduce a Number to Zero",
+              "slug": "number-of-steps-to-reduce-a-number-to-zero",
+              "number": 1342,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_8",
-              "name": "LC 78: Subsets - Bit masking for generating all combinations (config variations)",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Subsets",
+              "slug": "subsets",
+              "number": 78,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/subsets/"
             },
             {
-              "id": "week_6_advanced_bit_hacks_sub_9",
-              "name": "LC 477: Total Hamming Distance - Batch error analysis",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_6_advanced_bit_hacks_sub_10",
-              "name": "Project: Parse a 32-bit packet header - extract Version (bits 28-31), Length (bits 20-27), Type (bits 16-19), ID (bits 0-15)",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Total Hamming Distance",
+              "slug": "total-hamming-distance",
+              "number": 477,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/total-hamming-distance/"
             }
           ]
         },
         {
           "id": "week_7_math_number_theory",
           "name": "Week 7: Math & Number Theory",
-          "estimatedHours": 18,
+          "estimatedHours": 15.5,
           "description": "Modulo arithmetic, GCD, Primes. Semiconductor context: Timers & Clocks - calculate divisor for 80MHz clock to 9600 baud rate. Cryptography relies on Primes and GCD.",
-          "subtopics": [
+          "learningTip": [
+            "GCD, primes, modular arithmetic appear in checksums, crypto, hashing",
+            "Euclidean GCD: gcd(a,b) = gcd(b, a%b) until b=0",
+            "Modular arithmetic: (a + b) % m = ((a%m) + (b%m)) % m - prevents overflow",
+            "Prime checks: trial division up to sqrt(n) is O(sqrt(n))"
+          ],
+          "mustNotMiss": [
+            "GCD iterative: while(b) { int t = b; b = a % b; a = t; } return a;",
+            "LCM: lcm(a,b) = a * b / gcd(a,b) - but compute as a / gcd(a,b) * b to avoid overflow",
+            "Overflow-safe modular multiply: ((a%m) * (b%m)) % m",
+            "Sieve of Eratosthenes for all primes up to n: O(n log log n)",
+            "Fast power: x^n in O(log n) using repeated squaring"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_7_math_number_theory_sub_0",
-              "name": "LC 204: Count Primes - Sieve of Eratosthenes",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Count Primes",
+              "slug": "count-primes",
+              "number": 204,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/count-primes/"
             },
             {
-              "id": "week_7_math_number_theory_sub_1",
-              "name": "LC 326: Power of Three",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Power of Three",
+              "slug": "power-of-three",
+              "number": 326,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/power-of-three/"
             },
             {
-              "id": "week_7_math_number_theory_sub_2",
-              "name": "LC 171: Excel Sheet Column Number - Base conversion",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Excel Sheet Column Number",
+              "slug": "excel-sheet-column-number",
+              "number": 171,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/excel-sheet-column-number/"
             },
             {
-              "id": "week_7_math_number_theory_sub_3",
-              "name": "LC 202: Happy Number - Cycle detection in computations",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Happy Number",
+              "slug": "happy-number",
+              "number": 202,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/happy-number/"
             },
             {
-              "id": "week_7_math_number_theory_sub_4",
-              "name": "LC 66: Plus One - Array math with carry propagation",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Plus One",
+              "slug": "plus-one",
+              "number": 66,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/plus-one/"
             },
             {
-              "id": "week_7_math_number_theory_sub_5",
-              "name": "LC 9: Palindrome Number",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Palindrome Number",
+              "slug": "palindrome-number",
+              "number": 9,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/palindrome-number/"
             },
             {
-              "id": "week_7_math_number_theory_sub_6",
-              "name": "LC 69: Sqrt(x) - Hardware square root approximation (Binary Search)",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sqrt(x)",
+              "slug": "sqrt(x)",
+              "number": 69,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sqrt(x)/"
             },
             {
-              "id": "week_7_math_number_theory_sub_7",
-              "name": "LC 29: Divide Two Integers - Division using shifts only (hardware dividers are slow)",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Divide Two Integers",
+              "slug": "divide-two-integers",
+              "number": 29,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/divide-two-integers/"
             },
             {
-              "id": "week_7_math_number_theory_sub_8",
-              "name": "LC 7: Reverse Integer - INTEGER OVERFLOW handling (CRITICAL in embedded!)",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse Integer",
+              "slug": "reverse-integer",
+              "number": 7,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-integer/"
             },
             {
-              "id": "week_7_math_number_theory_sub_9",
-              "name": "LC 50: Pow(x, n) - Binary exponentiation (fast power calculation)",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_7_math_number_theory_sub_10",
-              "name": "Understanding: Why modulo is used for timer wraparound, why GCD matters for clock dividers",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Pow(x, n)",
+              "slug": "pow(x,-n)",
+              "number": 50,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/pow(x,-n)/"
             }
           ]
         },
         {
           "id": "week_8_review_floating_point",
           "name": "Week 8: Review & Floating Point",
-          "estimatedHours": 16,
+          "estimatedHours": 13.5,
           "description": "Review hardest Bit Manipulation problems. Project: Manual IEEE 754 Parser - proves understanding of how hardware stores decimals. Deep dive into floating point quirks.",
-          "subtopics": [
-            {
-              "id": "week_8_review_floating_point_sub_0",
-              "name": "Review: Most challenging bit manipulation problems from Weeks 5-7",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_8_review_floating_point_sub_1",
-              "name": "Project: IEEE 754 Parser - C function that takes float and prints sign, exponent, mantissa bits",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_8_review_floating_point_sub_2",
-              "name": "Constraint: Do NOT just cast pointers - use union to overlay float and uint32_t",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_8_review_floating_point_sub_3",
-              "name": "Bitmask extraction: Sign (bit 31), Exponent (bits 30-23), Mantissa (bits 22-0)",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_8_review_floating_point_sub_4",
-              "name": "Understanding: Why 0.1 + 0.2 != 0.3 in floating point (critical for sensor math)",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_8_review_floating_point_sub_5",
-              "name": "Understanding: When to use fixed-point vs floating-point in MCUs",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_8_review_floating_point_sub_6",
-              "name": "Project: Implement fixed-point multiplication for Q16.16 format",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
+          "learningTip": [
+            "IEEE 754: sign(1) + exponent(8) + mantissa(23) for 32-bit float",
+            "Floats have precision issues: 0.1 + 0.2 != 0.3 in binary floating point",
+            "In embedded: avoid float for timing-critical code, fixed-point is often better",
+            "Comparison: use epsilon tolerance, never compare floats with ==",
+            "Project: IEEE 754 Parser - C function that takes float and prints sign, exponent, mantissa bits",
+            "Project: Implement fixed-point multiplication for Q16.16 format"
+          ],
+          "mustNotMiss": [
+            "float: ~7 significant digits. double: ~15 significant digits",
+            "Comparison: fabs(a - b) < epsilon instead of a == b",
+            "Infinity: 1.0/0.0 = inf. NaN: 0.0/0.0 = nan. Check with isnan(), isinf()",
+            "Fixed-point alternative: store mV as int (1234 = 1.234V) - no float HW needed",
+            "Casting: (int)3.7 = 3 (truncates toward zero)"
           ]
         }
       ]
@@ -976,371 +785,281 @@
       "id": "month_3_data_streams_sliding_windows",
       "name": "Data Streams & Sliding Windows",
       "tier": 1,
-      "estimatedHours": 68,
+      "estimatedHours": 53.0,
       "topics": [
         {
           "id": "week_9_string_parsing",
           "name": "Week 9: String Parsing (UART Context)",
-          "estimatedHours": 18,
+          "estimatedHours": 14.0,
           "description": "Handling char arrays without standard libraries. Semiconductor context: AT Commands - ESP32 WiFi module sends '+WIFI:CONNECTED', need to parse this string to know state. Data arrives byte-by-byte via UART or SPI.",
-          "subtopics": [
+          "learningTip": [
+            "C strings are null-terminated char arrays - no built-in length tracking",
+            "String functions: strlen, strcpy, strcat, strcmp, strstr - know their complexity",
+            "Buffer overflow is #1 security vulnerability - always check bounds",
+            "Protocol parsing: extract fields from byte streams using pointers",
+            "Project: State Machine Parser - Parse stream byte-by-byte, trigger 'Command Found' only when exact sequence \\r\\nOK\\r\\n is detected",
+            "Project: Implement a simple AT command parser that handles: AT, AT+RST, AT+CWJAP=\"ssid\",\"pass\""
+          ],
+          "mustNotMiss": [
+            "Null terminator: char s[] = \"abc\" is actually 4 bytes: {'a','b','c','\\0'}",
+            "Safe copy: strncpy(dest, src, sizeof(dest)-1); dest[sizeof(dest)-1] = '\\0';",
+            "Parse number: int n = 0; while(*s >= '0' && *s <= '9') n = n*10 + (*s++ - '0');",
+            "Find char: char *p = s; while(*p && *p != target) p++; // p points to target or \\0",
+            "Compare: strcmp returns <0, 0, >0 for less, equal, greater"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_9_string_parsing_sub_0",
-              "name": "LC 242: Valid Anagram - Character frequency counting",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Valid Anagram",
+              "slug": "valid-anagram",
+              "number": 242,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-anagram/"
             },
             {
-              "id": "week_9_string_parsing_sub_1",
-              "name": "LC 387: First Unique Character in a String",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "First Unique Character in a String",
+              "slug": "first-unique-character-in-a-string",
+              "number": 387,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/first-unique-character-in-a-string/"
             },
             {
-              "id": "week_9_string_parsing_sub_2",
-              "name": "LC 28: Implement strStr() - KMP logic for finding commands in UART stream",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Implement strStr()",
+              "slug": "implement-strstr()",
+              "number": 28,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-strstr()/"
             },
             {
-              "id": "week_9_string_parsing_sub_3",
-              "name": "LC 14: Longest Common Prefix - Matching command prefixes",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Longest Common Prefix",
+              "slug": "longest-common-prefix",
+              "number": 14,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-common-prefix/"
             },
             {
-              "id": "week_9_string_parsing_sub_4",
-              "name": "LC 58: Length of Last Word",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Length of Last Word",
+              "slug": "length-of-last-word",
+              "number": 58,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/length-of-last-word/"
             },
             {
-              "id": "week_9_string_parsing_sub_5",
-              "name": "LC 392: Is Subsequence - Checking if command is valid sequence",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Is Subsequence",
+              "slug": "is-subsequence",
+              "number": 392,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/is-subsequence/"
             },
             {
-              "id": "week_9_string_parsing_sub_6",
-              "name": "LC 151: Reverse Words in a String - Parsing multi-word commands",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse Words in a String",
+              "slug": "reverse-words-in-a-string",
+              "number": 151,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-words-in-a-string/"
             },
             {
-              "id": "week_9_string_parsing_sub_7",
-              "name": "LC 8: String to Integer (atoi) - Essential for CLI/sensor command parsing",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "String to Integer (atoi)",
+              "slug": "string-to-integer-(atoi)",
+              "number": 8,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/string-to-integer-(atoi)/"
             },
             {
-              "id": "week_9_string_parsing_sub_8",
-              "name": "LC 5: Longest Palindromic Substring (Medium) - Pattern matching preparation",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_9_string_parsing_sub_9",
-              "name": "Project: State Machine Parser - Parse stream byte-by-byte, trigger 'Command Found' only when exact sequence \\r\\nOK\\r\\n is detected",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_9_string_parsing_sub_10",
-              "name": "Project: Implement a simple AT command parser that handles: AT, AT+RST, AT+CWJAP=\"ssid\",\"pass\"",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Longest Palindromic Substring (Medium)",
+              "slug": "longest-palindromic-substring-(medium)",
+              "number": 5,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-palindromic-substring-(medium)/"
             }
           ]
         },
         {
           "id": "week_10_fixed_sliding_window",
           "name": "Week 10: Fixed Sliding Window",
-          "estimatedHours": 16,
+          "estimatedHours": 12.5,
           "description": "Window of size k moves across array. Semiconductor context: Moving Average Filter - smooth noisy temperature sensor by averaging last 10 readings. Foundation of Digital Signal Processing.",
-          "subtopics": [
+          "learningTip": [
+            "Fixed window: maintain sum/data of exactly k elements",
+            "Slide by removing left element, adding right element - O(1) per slide",
+            "In embedded: moving average filters for sensor smoothing",
+            "Pattern: initialize window, then slide maintaining invariant",
+            "Project: Implement a moving average filter in C with configurable window size"
+          ],
+          "mustNotMiss": [
+            "Initialize: for(int i=0; i<k; i++) windowSum += arr[i];",
+            "Slide: for(int i=k; i<n; i++) { windowSum = windowSum - arr[i-k] + arr[i]; update_max(); }",
+            "Moving average: avg = windowSum / k; uses integer division by default in C",
+            "Deque for min/max in window: O(n) total for all elements",
+            "Fixed window always has exactly k elements - simpler than dynamic"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_10_fixed_sliding_window_sub_0",
-              "name": "LC 643: Maximum Average Subarray I - Foundation of DSP",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximum Average Subarray I",
+              "slug": "maximum-average-subarray-i",
+              "number": 643,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-average-subarray-i/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_1",
-              "name": "LC 1343: Number of Sub-arrays of Size K with Average >= Threshold",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Number of Sub",
+              "slug": "number-of-sub",
+              "number": 1343,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-sub/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_2",
-              "name": "LC 567: Permutation in String - Pattern matching in buffer",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Permutation in String",
+              "slug": "permutation-in-string",
+              "number": 567,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/permutation-in-string/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_3",
-              "name": "LC 438: Find All Anagrams in a String - Signal pattern detection",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find All Anagrams in a String",
+              "slug": "find-all-anagrams-in-a-string",
+              "number": 438,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-all-anagrams-in-a-string/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_4",
-              "name": "LC 219: Contains Duplicate II - Detecting repeated events in time window",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Contains Duplicate II",
+              "slug": "contains-duplicate-ii",
+              "number": 219,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/contains-duplicate-ii/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_5",
-              "name": "LC 1176: Diet Plan Performance",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Diet Plan Performance",
+              "slug": "diet-plan-performance",
+              "number": 1176,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/diet-plan-performance/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_6",
-              "name": "LC 2090: K Radius Subarray Averages",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "K Radius Subarray Averages",
+              "slug": "k-radius-subarray-averages",
+              "number": 2090,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/k-radius-subarray-averages/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_7",
-              "name": "LC 239: Sliding Window Maximum (Hard) - Peak detection using Deque",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sliding Window Maximum (Hard)",
+              "slug": "sliding-window-maximum-(hard)",
+              "number": 239,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sliding-window-maximum-(hard)/"
             },
             {
-              "id": "week_10_fixed_sliding_window_sub_8",
-              "name": "LC 1456: Maximum Number of Vowels in a Substring - Pattern detection",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_10_fixed_sliding_window_sub_9",
-              "name": "Project: Implement a moving average filter in C with configurable window size",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximum Number of Vowels in a Substring",
+              "slug": "maximum-number-of-vowels-in-a-substring",
+              "number": 1456,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring/"
             }
           ]
         },
         {
           "id": "week_11_dynamic_sliding_window",
           "name": "Week 11: Dynamic Sliding Window",
-          "estimatedHours": 18,
+          "estimatedHours": 14.0,
           "description": "Window expands and shrinks based on data validity. Semiconductor context: Debouncing - look for longest continuous window of 'High' signals to confirm button press.",
-          "subtopics": [
+          "learningTip": [
+            "Dynamic window: grow right, shrink left based on condition",
+            "Find longest/shortest subarray satisfying constraint",
+            "Pattern: expand right, then contract left while condition holds",
+            "Time: O(n) - each element enters and exits window at most once"
+          ],
+          "mustNotMiss": [
+            "Template: for(right=0; right<n; right++) { add arr[right] to window; while(invalid) { remove arr[left]; left++; } update_answer(); }",
+            "Longest subarray with sum \u2264 K: shrink while sum > K",
+            "Shortest subarray with sum \u2265 K: update answer inside the while loop",
+            "Character frequency: int freq[256] = {0}; freq[(unsigned char)s[i]]++;",
+            "Track distinct count: if(freq[c] == 0) distinct++; freq[c]++;"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_11_dynamic_sliding_window_sub_0",
-              "name": "LC 3: Longest Substring Without Repeating Characters - Buffer boundary management",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Longest Substring Without Repeating Characters",
+              "slug": "longest-substring-without-repeating-characters",
+              "number": 3,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_1",
-              "name": "LC 1004: Max Consecutive Ones III - Simulates 'debouncing' a digital signal",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Max Consecutive Ones III",
+              "slug": "max-consecutive-ones-iii",
+              "number": 1004,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/max-consecutive-ones-iii/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_2",
-              "name": "LC 209: Minimum Size Subarray Sum - Finding minimal window",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Minimum Size Subarray Sum",
+              "slug": "minimum-size-subarray-sum",
+              "number": 209,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/minimum-size-subarray-sum/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_3",
-              "name": "LC 424: Longest Repeating Character Replacement",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Longest Repeating Character Replacement",
+              "slug": "longest-repeating-character-replacement",
+              "number": 424,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-repeating-character-replacement/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_4",
-              "name": "LC 904: Fruit Into Baskets - Resource constraint optimization",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Fruit Into Baskets",
+              "slug": "fruit-into-baskets",
+              "number": 904,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/fruit-into-baskets/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_5",
-              "name": "LC 2024: Maximize the Confusion of an Exam",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximize the Confusion of an Exam",
+              "slug": "maximize-the-confusion-of-an-exam",
+              "number": 2024,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximize-the-confusion-of-an-exam/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_6",
-              "name": "LC 930: Binary Subarrays With Sum",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Binary Subarrays With Sum",
+              "slug": "binary-subarrays-with-sum",
+              "number": 930,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-subarrays-with-sum/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_7",
-              "name": "LC 2799: Count Complete Subarrays in an Array",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Count Complete Subarrays in an Array",
+              "slug": "count-complete-subarrays-in-an-array",
+              "number": 2799,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/count-complete-subarrays-in-an-array/"
             },
             {
-              "id": "week_11_dynamic_sliding_window_sub_8",
-              "name": "LC 76: Minimum Window Substring (Hard) - IMPORTANT: Finding smallest window containing all required elements",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Minimum Window Substring (Hard)",
+              "slug": "minimum-window-substring-(hard)",
+              "number": 76,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/minimum-window-substring-(hard)/"
             }
           ]
         },
         {
           "id": "week_12_buffer_review",
           "name": "Week 12: Buffer Review & Fixed-Point Arithmetic",
-          "estimatedHours": 16,
+          "estimatedHours": 12.5,
           "description": "Re-solve hardest Sliding Window problems. Challenge: Implement Moving Average without float/double for FPU-less microcontrollers. Real embedded constraint.",
-          "subtopics": [
-            {
-              "id": "week_12_buffer_review_sub_0",
-              "name": "Review: LC 239, LC 76, LC 3 - The three pillars of sliding window",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_12_buffer_review_sub_1",
-              "name": "Corner Cases: Empty array, Window size > Array size, All same elements",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_12_buffer_review_sub_2",
-              "name": "Implement: Sliding window median using two heaps",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_12_buffer_review_sub_3",
-              "name": "Project: Fixed-Point Arithmetic - Re-implement Moving Average without float/double",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_12_buffer_review_sub_4",
-              "name": "Technique: Scale inputs by 1000 (Q10.22 format), perform integer division",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_12_buffer_review_sub_5",
-              "name": "Technique: Manually format decimal point when printing",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_12_buffer_review_sub_6",
-              "name": "Understanding: Why FPU-less MCUs (like Cortex-M0) require fixed-point math",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
+          "learningTip": [
+            "Review and solidify Month 3 concepts before moving to data structures",
+            "Focus on: pointer arithmetic, two-pointer, sliding window patterns",
+            "In embedded: buffers are everywhere - data acquisition, communication, logging",
+            "Practice implementing standard library functions from scratch",
+            "Project: Fixed-Point Arithmetic - Re-implement Moving Average without float/double"
+          ],
+          "mustNotMiss": [
+            "Implement memcpy: while(n--) *dest++ = *src++;",
+            "Implement memmove: handle overlap by copying backward if dest > src",
+            "Implement strrev: two pointers swap from ends",
+            "Circular buffer: if(++head >= SIZE) head = 0; // or head = (head+1) % SIZE",
+            "Review: what's the complexity? What's the space? Can we do better?"
           ]
         }
       ]
@@ -1349,397 +1068,346 @@
       "id": "month_4_linked_lists_stacks",
       "name": "Linked Lists & Stacks (The Kernel)",
       "tier": 2,
-      "estimatedHours": 72,
+      "estimatedHours": 94.5,
       "topics": [
         {
           "id": "week_13_singly_linked_lists",
           "name": "Week 13: Singly Linked Lists (Basics)",
-          "estimatedHours": 18,
+          "estimatedHours": 23.0,
           "description": "Manipulating next pointers. Semiconductor context: OS Kernel (FreeRTOS/Linux) manages processes using Linked Lists - the 'Ready Queue' is a Linked List of tasks waiting to run.",
-          "subtopics": [
+          "learningTip": [
+            "Linked list = dynamic data structure with O(1) insert/delete at known position",
+            "Node structure: struct Node { int data; struct Node *next; };",
+            "In embedded: used for dynamic queues, memory pools, event lists",
+            "Draw the pointers before coding - most bugs are incorrect pointer updates",
+            "Project: Implement a simple task queue using linked list with add_task() and get_next_task()"
+          ],
+          "mustNotMiss": [
+            "Create node: struct Node *n = (struct Node*)malloc(sizeof(struct Node)); n->data = val; n->next = NULL;",
+            "Insert at head: newNode->next = head; head = newNode;",
+            "Delete node: prev->next = curr->next; free(curr);",
+            "Traverse: while(curr != NULL) { process(curr); curr = curr->next; }",
+            "ALWAYS free() what you malloc() - memory leaks crash embedded systems",
+            "Sentinel/dummy node simplifies edge cases: struct Node dummy; dummy.next = head;"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_13_singly_linked_lists_sub_0",
-              "name": "LC 206: Reverse Linked List - MEMORIZE THIS, most asked pointer question",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse Linked List",
+              "slug": "reverse-linked-list",
+              "number": 206,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-linked-list/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_1",
-              "name": "LC 876: Middle of the Linked List - Fast/slow pointer foundation",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Middle of the Linked List",
+              "slug": "middle-of-the-linked-list",
+              "number": 876,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/middle-of-the-linked-list/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_2",
-              "name": "LC 237: Delete Node in a Linked List - Unusual deletion technique",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Delete Node in a Linked List",
+              "slug": "delete-node-in-a-linked-list",
+              "number": 237,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/delete-node-in-a-linked-list/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_3",
-              "name": "LC 21: Merge Two Sorted Lists - Merging task priority lists",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Merge Two Sorted Lists",
+              "slug": "merge-two-sorted-lists",
+              "number": 21,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/merge-two-sorted-lists/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_4",
-              "name": "LC 83: Remove Duplicates from Sorted List",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Remove Duplicates from Sorted List",
+              "slug": "remove-duplicates-from-sorted-list",
+              "number": 83,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_5",
-              "name": "LC 160: Intersection of Two Linked Lists - Finding common resources",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Intersection of Two Linked Lists",
+              "slug": "intersection-of-two-linked-lists",
+              "number": 160,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/intersection-of-two-linked-lists/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_6",
-              "name": "LC 234: Palindrome Linked List - In-place verification",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Palindrome Linked List",
+              "slug": "palindrome-linked-list",
+              "number": 234,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/palindrome-linked-list/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_7",
-              "name": "LC 203: Remove Linked List Elements - Filtering tasks by criteria",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Remove Linked List Elements",
+              "slug": "remove-linked-list-elements",
+              "number": 203,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-linked-list-elements/"
             },
             {
-              "id": "week_13_singly_linked_lists_sub_8",
-              "name": "LC 141: Linked List Cycle - Essential for detecting infinite loops in system tasks",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_13_singly_linked_lists_sub_9",
-              "name": "Project: Implement a simple task queue using linked list with add_task() and get_next_task()",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Linked List Cycle",
+              "slug": "linked-list-cycle",
+              "number": 141,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/linked-list-cycle/"
             }
           ]
         },
         {
           "id": "week_14_advanced_lists",
           "name": "Week 14: Advanced Lists (Cycles & Doubly Linked)",
-          "estimatedHours": 20,
+          "estimatedHours": 25.5,
           "description": "prev and next pointers. Cycle detection. Semiconductor context: Deadlock Detection - if Task A waits for Task B and vice versa, you have a cycle. Tortoise and Hare algorithm detects this.",
-          "subtopics": [
+          "learningTip": [
+            "Doubly linked: O(1) delete with just the node pointer, bidirectional traversal",
+            "Reverse, merge, detect cycle - core linked list patterns",
+            "LRU cache = hashmap + doubly linked list",
+            "In embedded: task lists, memory allocators, undo buffers",
+            "Project: No-Malloc Pool - Pre-allocate array of 100 Nodes, write alloc_node() and free_node() functions (Automotive safety-critical pattern)"
+          ],
+          "mustNotMiss": [
+            "Reverse: prev=NULL, curr=head; while(curr) { next=curr->next; curr->next=prev; prev=curr; curr=next; } return prev;",
+            "Detect cycle (Floyd's): slow=fast=head; while(fast && fast->next) { slow=slow->next; fast=fast->next->next; if(slow==fast) return true; }",
+            "Find cycle start: after detection, reset slow=head, advance both by 1 until meet",
+            "Merge sorted: dummy head, compare and link smaller, handle remaining tail",
+            "Doubly linked delete: if(n->prev) n->prev->next = n->next; if(n->next) n->next->prev = n->prev; free(n);"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_14_advanced_lists_sub_0",
-              "name": "LC 141: Linked List Cycle - Revisit with deeper understanding",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Linked List Cycle",
+              "slug": "linked-list-cycle",
+              "number": 141,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/linked-list-cycle/"
             },
             {
-              "id": "week_14_advanced_lists_sub_1",
-              "name": "LC 142: Linked List Cycle II - Find where the cycle starts",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Linked List Cycle II",
+              "slug": "linked-list-cycle-ii",
+              "number": 142,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/linked-list-cycle-ii/"
             },
             {
-              "id": "week_14_advanced_lists_sub_2",
-              "name": "LC 19: Remove Nth Node From End of List - Two-pointer distance",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Remove Nth Node From End of List",
+              "slug": "remove-nth-node-from-end-of-list",
+              "number": 19,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
             },
             {
-              "id": "week_14_advanced_lists_sub_3",
-              "name": "LC 61: Rotate List - Circular buffer rotation concept",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Rotate List",
+              "slug": "rotate-list",
+              "number": 61,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rotate-list/"
             },
             {
-              "id": "week_14_advanced_lists_sub_4",
-              "name": "LC 24: Swap Nodes in Pairs - Batch processing pattern",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Swap Nodes in Pairs",
+              "slug": "swap-nodes-in-pairs",
+              "number": 24,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/swap-nodes-in-pairs/"
             },
             {
-              "id": "week_14_advanced_lists_sub_5",
-              "name": "LC 143: Reorder List - Complex pointer manipulation",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reorder List",
+              "slug": "reorder-list",
+              "number": 143,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reorder-list/"
             },
             {
-              "id": "week_14_advanced_lists_sub_6",
-              "name": "LC 2: Add Two Numbers - Big integer math (multi-precision)",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Add Two Numbers",
+              "slug": "add-two-numbers",
+              "number": 2,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/add-two-numbers/"
             },
             {
-              "id": "week_14_advanced_lists_sub_7",
-              "name": "LC 138: Copy List with Random Pointer - Deep copy of complex structures",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Copy List with Random Pointer",
+              "slug": "copy-list-with-random-pointer",
+              "number": 138,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/copy-list-with-random-pointer/"
             },
             {
-              "id": "week_14_advanced_lists_sub_8",
-              "name": "LC 92: Reverse Linked List II - Partial reversal",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse Linked List II",
+              "slug": "reverse-linked-list-ii",
+              "number": 92,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-linked-list-ii/"
             },
             {
-              "id": "week_14_advanced_lists_sub_9",
-              "name": "LC 25: Reverse Nodes in k-Group (Hard) - Batch processing in chunks",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_14_advanced_lists_sub_10",
-              "name": "Project: No-Malloc Pool - Pre-allocate array of 100 Nodes, write alloc_node() and free_node() functions (Automotive safety-critical pattern)",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Reverse Nodes in k",
+              "slug": "reverse-nodes-in-k",
+              "number": 25,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-nodes-in-k/"
             }
           ]
         },
         {
           "id": "week_15_stacks",
           "name": "Week 15: Stacks (LIFO)",
-          "estimatedHours": 18,
+          "estimatedHours": 23.0,
           "description": "Last In, First Out. Semiconductor context: Nested Interrupts - CPU pushes context to stack when ISR fires, pops it back when done. Stack overflow causes Hard Fault.",
-          "subtopics": [
+          "learningTip": [
+            "Stack: LIFO - Last In First Out",
+            "Used for: function calls (call stack), expression evaluation, undo, DFS",
+            "Array implementation: O(1) push/pop, fixed size",
+            "Understanding call stack is essential for debugging and recursion"
+          ],
+          "mustNotMiss": [
+            "Array stack: int stack[SIZE]; int top = -1;",
+            "Push: if(top < SIZE-1) stack[++top] = val; else overflow_error();",
+            "Pop: if(top >= 0) return stack[top--]; else underflow_error();",
+            "Peek: if(top >= 0) return stack[top];",
+            "In C: function calls use stack - local variables, return addresses stored there",
+            "Stack overflow: recursion too deep, or large local arrays - use static/heap instead"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_15_stacks_sub_0",
-              "name": "LC 20: Valid Parentheses - Parsing nested JSON or commands",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Valid Parentheses",
+              "slug": "valid-parentheses",
+              "number": 20,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/valid-parentheses/"
             },
             {
-              "id": "week_15_stacks_sub_1",
-              "name": "LC 155: Min Stack - Hardware Monitor tracking peak voltage",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Min Stack",
+              "slug": "min-stack",
+              "number": 155,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/min-stack/"
             },
             {
-              "id": "week_15_stacks_sub_2",
-              "name": "LC 232: Implement Queue using Stacks - Data structure conversion",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Implement Queue using Stacks",
+              "slug": "implement-queue-using-stacks",
+              "number": 232,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-queue-using-stacks/"
             },
             {
-              "id": "week_15_stacks_sub_3",
-              "name": "LC 150: Evaluate Reverse Polish Notation - How CPU evaluates expressions",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Evaluate Reverse Polish Notation",
+              "slug": "evaluate-reverse-polish-notation",
+              "number": 150,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/evaluate-reverse-polish-notation/"
             },
             {
-              "id": "week_15_stacks_sub_4",
-              "name": "LC 682: Baseball Game - State tracking with undo",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Baseball Game",
+              "slug": "baseball-game",
+              "number": 682,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/baseball-game/"
             },
             {
-              "id": "week_15_stacks_sub_5",
-              "name": "LC 1047: Remove All Adjacent Duplicates In String",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Remove All Adjacent Duplicates In String",
+              "slug": "remove-all-adjacent-duplicates-in-string",
+              "number": 1047,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/"
             },
             {
-              "id": "week_15_stacks_sub_6",
-              "name": "LC 1544: Make The String Great - Pair cancellation",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Make The String Great",
+              "slug": "make-the-string-great",
+              "number": 1544,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/make-the-string-great/"
             },
             {
-              "id": "week_15_stacks_sub_7",
-              "name": "LC 71: Simplify Path - File system navigation",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Simplify Path",
+              "slug": "simplify-path",
+              "number": 71,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/simplify-path/"
             },
             {
-              "id": "week_15_stacks_sub_8",
-              "name": "LC 394: Decode String (Medium) - Nested parsing with multipliers",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Decode String (Medium)",
+              "slug": "decode-string-(medium)",
+              "number": 394,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/decode-string-(medium)/"
             },
             {
-              "id": "week_15_stacks_sub_9",
-              "name": "LC 224: Basic Calculator (Hard) - Expression parsing (compiler internals)",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_15_stacks_sub_10",
-              "name": "Understanding: Calculate stack frame size and max stack depth for recursive functions",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Basic Calculator (Hard)",
+              "slug": "basic-calculator-(hard)",
+              "number": 224,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/basic-calculator-(hard)/"
             }
           ]
         },
         {
           "id": "week_16_monotonic_stacks",
           "name": "Week 16: Monotonic Stacks",
-          "estimatedHours": 18,
+          "estimatedHours": 23.0,
           "description": "Finding the 'Next Greater Element'. Semiconductor context: Telemetry Spikes - finding next time temperature exceeds current threshold. Critical for alerting systems.",
-          "subtopics": [
+          "learningTip": [
+            "Monotonic stack: maintain increasing/decreasing order for next greater/smaller element",
+            "Pop smaller/larger elements when new element arrives - they found their answer",
+            "O(n) total: each element pushed and popped at most once",
+            "Pattern solves: next greater, previous greater, stock span, largest rectangle",
+            "Project: Implement a peak detector that finds the next time a sensor reading exceeds a threshold"
+          ],
+          "mustNotMiss": [
+            "Next greater element: stack stores indices, decreasing order of values",
+            "When arr[i] > arr[stack[top]], pop and set answer[popped] = arr[i]",
+            "Template: for(i=0; i<n; i++) { while(top>=0 && arr[stack[top]] < arr[i]) ans[stack[top--]]=arr[i]; stack[++top]=i; }",
+            "Remaining in stack have no next greater - set answer to -1",
+            "Previous greater: same logic but iterate from right or use different condition"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_16_monotonic_stacks_sub_0",
-              "name": "LC 496: Next Greater Element I - Basic monotonic stack",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Next Greater Element I",
+              "slug": "next-greater-element-i",
+              "number": 496,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/next-greater-element-i/"
             },
             {
-              "id": "week_16_monotonic_stacks_sub_1",
-              "name": "LC 739: Daily Temperatures - Finding 'next peak' in signal stream",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Daily Temperatures",
+              "slug": "daily-temperatures",
+              "number": 739,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/daily-temperatures/"
             },
             {
-              "id": "week_16_monotonic_stacks_sub_2",
-              "name": "LC 901: Online Stock Span - Looking back in time",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Online Stock Span",
+              "slug": "online-stock-span",
+              "number": 901,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/online-stock-span/"
             },
             {
-              "id": "week_16_monotonic_stacks_sub_3",
-              "name": "LC 735: Asteroid Collision - Signal interference simulation",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Asteroid Collision",
+              "slug": "asteroid-collision",
+              "number": 735,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/asteroid-collision/"
             },
             {
-              "id": "week_16_monotonic_stacks_sub_4",
-              "name": "LC 907: Sum of Subarray Minimums",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sum of Subarray Minimums",
+              "slug": "sum-of-subarray-minimums",
+              "number": 907,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sum-of-subarray-minimums/"
             },
             {
-              "id": "week_16_monotonic_stacks_sub_5",
-              "name": "LC 84: Largest Rectangle in Histogram (Hard) - Memory allocation optimization",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Largest Rectangle in Histogram (Hard)",
+              "slug": "largest-rectangle-in-histogram-(hard)",
+              "number": 84,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/largest-rectangle-in-histogram-(hard)/"
             },
             {
-              "id": "week_16_monotonic_stacks_sub_6",
-              "name": "LC 85: Maximal Rectangle (Hard) - Extension of histogram problem",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_16_monotonic_stacks_sub_7",
-              "name": "Project: Implement a peak detector that finds the next time a sensor reading exceeds a threshold",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximal Rectangle (Hard)",
+              "slug": "maximal-rectangle-(hard)",
+              "number": 85,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximal-rectangle-(hard)/"
             }
           ]
         }
@@ -1749,451 +1417,370 @@
       "id": "month_5_queues_heaps_trees",
       "name": "Queues, Heaps & Trees (Buffering & Hierarchy)",
       "tier": 2,
-      "estimatedHours": 80,
+      "estimatedHours": 96.5,
       "topics": [
         {
           "id": "week_17_circular_queues",
           "name": "Week 17: Circular Queues (CRITICAL)",
-          "estimatedHours": 22,
+          "estimatedHours": 27.0,
           "description": "Fixed array that wraps around using Modulo %. THE #1 MOST USED structure in firmware - connects hardware (UART) to software. Master this completely.",
-          "subtopics": [
+          "learningTip": [
+            "Queue: FIFO - First In First Out. Circular queue wraps around fixed array",
+            "Ring buffer is THE most common data structure in embedded systems",
+            "In embedded: UART buffers, sensor data, interrupt-safe producer-consumer",
+            "Fixed size, no malloc - perfect for constrained environments",
+            "Project: Implement a full UART RX circular buffer with: enqueue (called from ISR), dequeue (called from main), is_empty, is_full, available_space"
+          ],
+          "mustNotMiss": [
+            "Structure: struct CircQueue { int data[SIZE]; int front, rear, count; };",
+            "Enqueue: if(count < SIZE) { data[rear] = val; rear = (rear+1) % SIZE; count++; }",
+            "Dequeue: if(count > 0) { val = data[front]; front = (front+1) % SIZE; count--; return val; }",
+            "Empty: count == 0. Full: count == SIZE",
+            "ISR-safe single producer/consumer: producer only writes rear, consumer only writes front - no lock needed",
+            "volatile for shared variables: volatile int front; - prevents compiler optimization"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_17_circular_queues_sub_0",
-              "name": "LC 622: Design Circular Queue - THE MOST IMPORTANT QUESTION, used in every UART/SPI driver",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Design Circular Queue",
+              "slug": "design-circular-queue",
+              "number": 622,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/design-circular-queue/"
             },
             {
-              "id": "week_17_circular_queues_sub_1",
-              "name": "LC 641: Design Circular Deque - Bidirectional network data buffer",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Design Circular Deque",
+              "slug": "design-circular-deque",
+              "number": 641,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/design-circular-deque/"
             },
             {
-              "id": "week_17_circular_queues_sub_2",
-              "name": "LC 346: Moving Average from Data Stream - Real-time filtering",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Moving Average from Data Stream",
+              "slug": "moving-average-from-data-stream",
+              "number": 346,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/moving-average-from-data-stream/"
             },
             {
-              "id": "week_17_circular_queues_sub_3",
-              "name": "LC 225: Implement Stack using Queues",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Implement Stack using Queues",
+              "slug": "implement-stack-using-queues",
+              "number": 225,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-stack-using-queues/"
             },
             {
-              "id": "week_17_circular_queues_sub_4",
-              "name": "LC 933: Number of Recent Calls - Rate limiting pattern",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Number of Recent Calls",
+              "slug": "number-of-recent-calls",
+              "number": 933,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-recent-calls/"
             },
             {
-              "id": "week_17_circular_queues_sub_5",
-              "name": "LC 2073: Time Needed to Buy Tickets",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Time Needed to Buy Tickets",
+              "slug": "time-needed-to-buy-tickets",
+              "number": 2073,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/time-needed-to-buy-tickets/"
             },
             {
-              "id": "week_17_circular_queues_sub_6",
-              "name": "LC 387: First Unique Character in a String",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "First Unique Character in a String",
+              "slug": "first-unique-character-in-a-string",
+              "number": 387,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/first-unique-character-in-a-string/"
             },
             {
-              "id": "week_17_circular_queues_sub_7",
-              "name": "LC 649: Dota2 Senate - Priority-based elimination",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_17_circular_queues_sub_8",
-              "name": "Constraint: Implement with volatile head/tail indices for ISR safety",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_17_circular_queues_sub_9",
-              "name": "Project: Implement a full UART RX circular buffer with: enqueue (called from ISR), dequeue (called from main), is_empty, is_full, available_space",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_17_circular_queues_sub_10",
-              "name": "Understanding: Why volatile prevents compiler from caching values when ISR modifies queue",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Dota2 Senate",
+              "slug": "dota2-senate",
+              "number": 649,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/dota2-senate/"
             }
           ]
         },
         {
           "id": "week_18_heaps",
           "name": "Week 18: Heaps (Priority Queues)",
-          "estimatedHours": 18,
+          "estimatedHours": 22.5,
           "description": "Accessing Min or Max element in O(1). Semiconductor context: RTOS Event Scheduling - 'Run Task A in 5ms, Task B in 2ms'. Min-Heap organizes timer events by expiry time.",
-          "subtopics": [
+          "learningTip": [
+            "Heap = complete binary tree with heap property, stored in array",
+            "Min-heap: parent \u2264 children. Max-heap: parent \u2265 children",
+            "O(1) get-min/max, O(log n) insert and extract",
+            "Used for: priority queues, heapsort, top-k, scheduling",
+            "Project: Implement a timer event queue using min-heap - add_timer(callback, delay_ms), tick()"
+          ],
+          "mustNotMiss": [
+            "Array indexing: parent(i) = (i-1)/2, left(i) = 2*i+1, right(i) = 2*i+2",
+            "Insert (heapify-up): add at end, while child < parent: swap with parent",
+            "Extract (heapify-down): swap root with last, remove last, bubble down swapping with smaller child",
+            "Build heap in O(n): start from last parent ((n-1)/2), heapify-down each",
+            "In C: int heap[SIZE]; int size = 0; // implement push(), pop(), peek()",
+            "Heapsort in-place: build max-heap, repeatedly extract to end of array"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_18_heaps_sub_0",
-              "name": "LC 215: Kth Largest Element in Array - Quick select vs heap",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Kth Largest Element in Array",
+              "slug": "kth-largest-element-in-array",
+              "number": 215,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-array/"
             },
             {
-              "id": "week_18_heaps_sub_1",
-              "name": "LC 1046: Last Stone Weight - Repeated max extraction",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Last Stone Weight",
+              "slug": "last-stone-weight",
+              "number": 1046,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/last-stone-weight/"
             },
             {
-              "id": "week_18_heaps_sub_2",
-              "name": "LC 347: Top K Frequent Elements - Frequency-based prioritization",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Top K Frequent Elements",
+              "slug": "top-k-frequent-elements",
+              "number": 347,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/top-k-frequent-elements/"
             },
             {
-              "id": "week_18_heaps_sub_3",
-              "name": "LC 451: Sort Characters By Frequency",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sort Characters By Frequency",
+              "slug": "sort-characters-by-frequency",
+              "number": 451,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sort-characters-by-frequency/"
             },
             {
-              "id": "week_18_heaps_sub_4",
-              "name": "LC 973: K Closest Points to Origin - Distance-based prioritization",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "K Closest Points to Origin",
+              "slug": "k-closest-points-to-origin",
+              "number": 973,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/k-closest-points-to-origin/"
             },
             {
-              "id": "week_18_heaps_sub_5",
-              "name": "LC 506: Relative Ranks - Mapping rankings",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Relative Ranks",
+              "slug": "relative-ranks",
+              "number": 506,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/relative-ranks/"
             },
             {
-              "id": "week_18_heaps_sub_6",
-              "name": "LC 621: Task Scheduler - RTOS scheduling simulation",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Task Scheduler",
+              "slug": "task-scheduler",
+              "number": 621,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/task-scheduler/"
             },
             {
-              "id": "week_18_heaps_sub_7",
-              "name": "LC 295: Find Median from Data Stream (Hard) - Two-heap technique",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find Median from Data Stream (Hard)",
+              "slug": "find-median-from-data-stream-(hard)",
+              "number": 295,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-median-from-data-stream-(hard)/"
             },
             {
-              "id": "week_18_heaps_sub_8",
-              "name": "LC 355: Design Twitter (Medium) - System design with heap for feed",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Design Twitter (Medium)",
+              "slug": "design-twitter-(medium)",
+              "number": 355,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/design-twitter-(medium)/"
             },
             {
-              "id": "week_18_heaps_sub_9",
-              "name": "LC 703: Kth Largest Element in a Stream - Online algorithm",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_18_heaps_sub_10",
-              "name": "Project: Implement a timer event queue using min-heap - add_timer(callback, delay_ms), tick()",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Kth Largest Element in a Stream",
+              "slug": "kth-largest-element-in-a-stream",
+              "number": 703,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-a-stream/"
             }
           ]
         },
         {
           "id": "week_19_hash_maps",
           "name": "Week 19: Hash Maps & Sets",
-          "estimatedHours": 18,
+          "estimatedHours": 22.5,
           "description": "O(1) lookup using keys. Semiconductor context: Device Whitelisting - checking if Bluetooth MAC address is authorized. Symbol tables for debuggers.",
-          "subtopics": [
+          "learningTip": [
+            "Hash table trades space for O(1) average lookup",
+            "In C: implement with array + linked list (chaining) or open addressing",
+            "For embedded: often use perfect hashing or direct arrays when key range is known",
+            "Understanding collision resolution is essential for system reliability",
+            "Project: Implement an LRU cache for firmware config parameters"
+          ],
+          "mustNotMiss": [
+            "Hash function: h(key) = key % TABLE_SIZE - choose prime TABLE_SIZE",
+            "Chaining: struct Entry { int key; int val; struct Entry *next; }; Entry *table[SIZE];",
+            "Open addressing: linear probing h(k,i) = (h(k) + i) % SIZE - watch for clustering",
+            "Load factor \u03b1 = n/SIZE: keep \u03b1 < 0.75 for chaining, \u03b1 < 0.5 for open addressing",
+            "In embedded: fixed arrays when key range bounded, perfect hash when keys known",
+            "String hash: h = 0; while(*s) h = h * 31 + *s++; return h % SIZE;"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_19_hash_maps_sub_0",
-              "name": "LC 1: Two Sum - The classic hashmap problem",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Two Sum",
+              "slug": "two-sum",
+              "number": 1,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/two-sum/"
             },
             {
-              "id": "week_19_hash_maps_sub_1",
-              "name": "LC 217: Contains Duplicate - Existence checking",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Contains Duplicate",
+              "slug": "contains-duplicate",
+              "number": 217,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/contains-duplicate/"
             },
             {
-              "id": "week_19_hash_maps_sub_2",
-              "name": "LC 169: Majority Element - Boyer-Moore voting",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Majority Element",
+              "slug": "majority-element",
+              "number": 169,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/majority-element/"
             },
             {
-              "id": "week_19_hash_maps_sub_3",
-              "name": "LC 383: Ransom Note - Character frequency matching",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Ransom Note",
+              "slug": "ransom-note",
+              "number": 383,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/ransom-note/"
             },
             {
-              "id": "week_19_hash_maps_sub_4",
-              "name": "LC 49: Group Anagrams - Grouping by signature",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Group Anagrams",
+              "slug": "group-anagrams",
+              "number": 49,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/group-anagrams/"
             },
             {
-              "id": "week_19_hash_maps_sub_5",
-              "name": "LC 128: Longest Consecutive Sequence - O(n) sequence finding",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Longest Consecutive Sequence",
+              "slug": "longest-consecutive-sequence",
+              "number": 128,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-consecutive-sequence/"
             },
             {
-              "id": "week_19_hash_maps_sub_6",
-              "name": "LC 290: Word Pattern - Bijection mapping",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Word Pattern",
+              "slug": "word-pattern",
+              "number": 290,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/word-pattern/"
             },
             {
-              "id": "week_19_hash_maps_sub_7",
-              "name": "LC 706: Design HashMap - Collision handling in memory-constrained environments",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Design HashMap",
+              "slug": "design-hashmap",
+              "number": 706,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/design-hashmap/"
             },
             {
-              "id": "week_19_hash_maps_sub_8",
-              "name": "LC 146: LRU Cache (Medium) - NVIDIA FAVORITE: Cache management",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "LRU Cache (Medium)",
+              "slug": "lru-cache-(medium)",
+              "number": 146,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/lru-cache-(medium)/"
             },
             {
-              "id": "week_19_hash_maps_sub_9",
-              "name": "LC 380: Insert Delete GetRandom O(1) (Medium) - Randomized access pattern",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_19_hash_maps_sub_10",
-              "name": "Project: Implement an LRU cache for firmware config parameters",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Insert Delete GetRandom O(1) (Medium)",
+              "slug": "insert-delete-getrandom-o(1)-(medium)",
+              "number": 380,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/insert-delete-getrandom-o(1)-(medium)/"
             }
           ]
         },
         {
           "id": "week_20_binary_trees",
           "name": "Week 20: Binary Trees (BFS/DFS)",
-          "estimatedHours": 20,
+          "estimatedHours": 24.5,
           "description": "Hierarchical data nodes. Semiconductor context: Filesystems (FAT/LittleFS), device trees, interrupt hierarchies. Understanding recursive traversal.",
-          "subtopics": [
+          "learningTip": [
+            "Trees model hierarchical data: file systems, parse trees, decision trees",
+            "Recursion is natural: each subtree is itself a tree",
+            "In embedded: expression parsing, protocol state machines, config hierarchies",
+            "Stack space for recursion is limited - know max depth or use iterative",
+            "Project: Calculate exactly how much stack memory Merge Sort uses for 1M elements"
+          ],
+          "mustNotMiss": [
+            "Node: struct TreeNode { int val; struct TreeNode *left, *right; };",
+            "Traversals: Preorder (root-L-R), Inorder (L-root-R), Postorder (L-R-root)",
+            "Recursive inorder: void inorder(Node *n) { if(!n) return; inorder(n->left); process(n); inorder(n->right); }",
+            "Iterative with stack: push, go left, pop, process, go right",
+            "Height = 1 + max(left_height, right_height); base: height of NULL is 0 (or -1 depending on convention)",
+            "BST property: left < root < right for all nodes - inorder gives sorted sequence"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_20_binary_trees_sub_0",
-              "name": "LC 104: Maximum Depth of Binary Tree - Recursion fundamentals",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximum Depth of Binary Tree",
+              "slug": "maximum-depth-of-binary-tree",
+              "number": 104,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
             },
             {
-              "id": "week_20_binary_trees_sub_1",
-              "name": "LC 226: Invert Binary Tree - Classic recursion",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Invert Binary Tree",
+              "slug": "invert-binary-tree",
+              "number": 226,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/invert-binary-tree/"
             },
             {
-              "id": "week_20_binary_trees_sub_2",
-              "name": "LC 100: Same Tree - Structure comparison",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Same Tree",
+              "slug": "same-tree",
+              "number": 100,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/same-tree/"
             },
             {
-              "id": "week_20_binary_trees_sub_3",
-              "name": "LC 101: Symmetric Tree - Mirror verification",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Symmetric Tree",
+              "slug": "symmetric-tree",
+              "number": 101,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/symmetric-tree/"
             },
             {
-              "id": "week_20_binary_trees_sub_4",
-              "name": "LC 102: Binary Tree Level Order Traversal - BFS for diagnostics",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Binary Tree Level Order Traversal",
+              "slug": "binary-tree-level-order-traversal",
+              "number": 102,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
             },
             {
-              "id": "week_20_binary_trees_sub_5",
-              "name": "LC 112: Path Sum - Root-to-leaf path analysis",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Path Sum",
+              "slug": "path-sum",
+              "number": 112,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/path-sum/"
             },
             {
-              "id": "week_20_binary_trees_sub_6",
-              "name": "LC 617: Merge Two Binary Trees - Combining config trees",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Merge Two Binary Trees",
+              "slug": "merge-two-binary-trees",
+              "number": 617,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/merge-two-binary-trees/"
             },
             {
-              "id": "week_20_binary_trees_sub_7",
-              "name": "LC 236: Lowest Common Ancestor - Root cause analysis",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Lowest Common Ancestor",
+              "slug": "lowest-common-ancestor",
+              "number": 236,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/lowest-common-ancestor/"
             },
             {
-              "id": "week_20_binary_trees_sub_8",
-              "name": "LC 98: Validate Binary Search Tree (Medium) - Data integrity validation",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Validate Binary Search Tree (Medium)",
+              "slug": "validate-binary-search-tree-(medium)",
+              "number": 98,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/validate-binary-search-tree-(medium)/"
             },
             {
-              "id": "week_20_binary_trees_sub_9",
-              "name": "LC 230: Kth Smallest Element in a BST (Medium) - In-order traversal",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Kth Smallest Element in a BST (Medium)",
+              "slug": "kth-smallest-element-in-a-bst-(medium)",
+              "number": 230,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/kth-smallest-element-in-a-bst-(medium)/"
             },
             {
-              "id": "week_20_binary_trees_sub_10",
-              "name": "LC 912: Sort an Array - MERGE SORT implementation from scratch",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_20_binary_trees_sub_11",
-              "name": "Project: Calculate exactly how much stack memory Merge Sort uses for 1M elements",
-              "order": 11,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_20_binary_trees_sub_12",
-              "name": "Understanding: When recursion is dangerous in embedded (stack limits)",
-              "order": 12,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sort an Array",
+              "slug": "sort-an-array",
+              "number": 912,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sort-an-array/"
             }
           ]
         }
@@ -2203,362 +1790,289 @@
       "id": "month_6_graphs_dp_final",
       "name": "Graphs, DP & The Final Exam",
       "tier": 3,
-      "estimatedHours": 76,
+      "estimatedHours": 137.0,
       "topics": [
         {
           "id": "week_21_graphs",
           "name": "Week 21: Graphs (DFS/BFS)",
-          "estimatedHours": 18,
-          "description": "Visiting nodes in a network. Semiconductor context: State Machines (FSM) - device moves from Init → Idle → Active → Error. Network topology analysis.",
-          "subtopics": [
+          "estimatedHours": 32.5,
+          "description": "Visiting nodes in a network. Semiconductor context: State Machines (FSM) - device moves from Init \u2192 Idle \u2192 Active \u2192 Error. Network topology analysis.",
+          "learningTip": [
+            "Graph = vertices + edges. Trees are connected acyclic graphs",
+            "Representations: adjacency matrix O(V\u00b2), adjacency list O(V+E)",
+            "BFS for shortest path in unweighted, DFS for connectivity and cycles",
+            "In embedded: state machines, network topology, dependency graphs",
+            "Project: Traffic Light Controller FSM - States (RED, YEL, GRN), Events (TIMER, BTN), switch-case transitions. This IS firmware."
+          ],
+          "mustNotMiss": [
+            "Adjacency matrix: int adj[V][V]; adj[i][j] = 1 if edge i\u2192j",
+            "Adjacency list in C: int adj[V][MAX_EDGES]; int adj_count[V]; or linked lists",
+            "BFS: queue-based, O(V+E), finds shortest path in unweighted graphs",
+            "DFS: stack/recursion-based, O(V+E), for connectivity, cycles, topological sort",
+            "Topological sort: DFS post-order reversed, or Kahn's BFS with in-degree",
+            "Cycle detection: DFS with 3 states (WHITE/GRAY/BLACK) - cycle if visit GRAY"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_21_graphs_sub_0",
-              "name": "LC 200: Number of Islands - Grouping connected sensors/pixels",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Number of Islands",
+              "slug": "number-of-islands",
+              "number": 200,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-islands/"
             },
             {
-              "id": "week_21_graphs_sub_1",
-              "name": "LC 733: Flood Fill - Region filling algorithm",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Flood Fill",
+              "slug": "flood-fill",
+              "number": 733,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/flood-fill/"
             },
             {
-              "id": "week_21_graphs_sub_2",
-              "name": "LC 997: Find the Town Judge - Finding authority node",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find the Town Judge",
+              "slug": "find-the-town-judge",
+              "number": 997,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-the-town-judge/"
             },
             {
-              "id": "week_21_graphs_sub_3",
-              "name": "LC 1791: Find Center of Star Graph - Hub detection",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Find Center of Star Graph",
+              "slug": "find-center-of-star-graph",
+              "number": 1791,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-center-of-star-graph/"
             },
             {
-              "id": "week_21_graphs_sub_4",
-              "name": "LC 841: Keys and Rooms - Reachability analysis",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Keys and Rooms",
+              "slug": "keys-and-rooms",
+              "number": 841,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/keys-and-rooms/"
             },
             {
-              "id": "week_21_graphs_sub_5",
-              "name": "LC 994: Rotting Oranges - Multi-source BFS (signal propagation)",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Rotting Oranges",
+              "slug": "rotting-oranges",
+              "number": 994,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rotting-oranges/"
             },
             {
-              "id": "week_21_graphs_sub_6",
-              "name": "LC 133: Clone Graph - Deep copy of network topology",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Clone Graph",
+              "slug": "clone-graph",
+              "number": 133,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/clone-graph/"
             },
             {
-              "id": "week_21_graphs_sub_7",
-              "name": "LC 207: Course Schedule - Cycle detection for deadlock prevention",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Course Schedule",
+              "slug": "course-schedule",
+              "number": 207,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/course-schedule/"
             },
             {
-              "id": "week_21_graphs_sub_8",
-              "name": "LC 210: Course Schedule II (Medium) - Topological sort for task ordering",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Course Schedule II (Medium)",
+              "slug": "course-schedule-ii-(medium)",
+              "number": 210,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/course-schedule-ii-(medium)/"
             },
             {
-              "id": "week_21_graphs_sub_9",
-              "name": "LC 743: Network Delay Time (Medium) - Dijkstra's for signal propagation timing",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_21_graphs_sub_10",
-              "name": "Project: Traffic Light Controller FSM - States (RED, YEL, GRN), Events (TIMER, BTN), switch-case transitions. This IS firmware.",
-              "order": 10,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Network Delay Time (Medium)",
+              "slug": "network-delay-time-(medium)",
+              "number": 743,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/network-delay-time-(medium)/"
             }
           ]
         },
         {
           "id": "week_22_dynamic_programming",
           "name": "Week 22: Dynamic Programming (1D)",
-          "estimatedHours": 16,
+          "estimatedHours": 29.5,
           "description": "Solving sub-problems once. Semiconductor context: Path Optimization - finding most power-efficient route for packet in mesh network. Resource allocation.",
-          "subtopics": [
+          "learningTip": [
+            "DP = recursion + memoization (or bottom-up tabulation)",
+            "Key insight: optimal solution uses optimal solutions to subproblems",
+            "Identify: overlapping subproblems + optimal substructure",
+            "In embedded: minimize memory with 1D DP or rolling array when possible"
+          ],
+          "mustNotMiss": [
+            "Top-down: recursive with memo - if(memo[n] != -1) return memo[n]; return memo[n] = compute(n);",
+            "Bottom-up: fill table from base cases - often more cache-friendly",
+            "State: what parameters define a subproblem? These become array dimensions",
+            "Transition: how does dp[i] depend on smaller subproblems?",
+            "Space optimization: often only need previous row - dp[2][n] or dp[n] with careful ordering",
+            "Common patterns: Fibonacci, Knapsack, LCS, Edit Distance, Longest Increasing Subsequence"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_22_dynamic_programming_sub_0",
-              "name": "LC 70: Climbing Stairs - Fibonacci pattern",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Climbing Stairs",
+              "slug": "climbing-stairs",
+              "number": 70,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/climbing-stairs/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_1",
-              "name": "LC 746: Min Cost Climbing Stairs - Path cost optimization",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Min Cost Climbing Stairs",
+              "slug": "min-cost-climbing-stairs",
+              "number": 746,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/min-cost-climbing-stairs/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_2",
-              "name": "LC 198: House Robber - Non-adjacent selection (sensor sampling)",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "House Robber",
+              "slug": "house-robber",
+              "number": 198,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/house-robber/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_3",
-              "name": "LC 322: Coin Change - Minimum resource usage",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Coin Change",
+              "slug": "coin-change",
+              "number": 322,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/coin-change/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_4",
-              "name": "LC 53: Maximum Subarray - Kadane's Algorithm (peak signal detection)",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximum Subarray",
+              "slug": "maximum-subarray",
+              "number": 53,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-subarray/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_5",
-              "name": "LC 121: Best Time to Buy and Sell Stock - Single pass optimization",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Best Time to Buy and Sell Stock",
+              "slug": "best-time-to-buy-and-sell-stock",
+              "number": 121,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_6",
-              "name": "LC 118: Pascal's Triangle - Binomial coefficients",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Pascal's Triangle",
+              "slug": "pascals-triangle",
+              "number": 118,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/pascals-triangle/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_7",
-              "name": "LC 91: Decode Ways - State machine enumeration",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Decode Ways",
+              "slug": "decode-ways",
+              "number": 91,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/decode-ways/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_8",
-              "name": "LC 300: Longest Increasing Subsequence (Medium) - Trend detection",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Longest Increasing Subsequence (Medium)",
+              "slug": "longest-increasing-subsequence-(medium)",
+              "number": 300,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/longest-increasing-subsequence-(medium)/"
             },
             {
-              "id": "week_22_dynamic_programming_sub_9",
-              "name": "LC 152: Maximum Product Subarray (Medium) - Handling negatives",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Maximum Product Subarray (Medium)",
+              "slug": "maximum-product-subarray-(medium)",
+              "number": 152,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-product-subarray-(medium)/"
             }
           ]
         },
         {
           "id": "week_23_hard_problems",
           "name": "Week 23: Hard Problems (The Capstone)",
-          "estimatedHours": 24,
+          "estimatedHours": 42.5,
           "description": "Deep focus sessions: 3-4 hours per problem. These are the problems that separate senior engineers from juniors. Expect to struggle. Each problem requires multiple attempts.",
-          "subtopics": [
+          "learningTip": [
+            "Hard problems combine multiple techniques",
+            "Pattern recognition from previous weeks is key",
+            "Time pressure: 45 min for medium, 60 min for hard",
+            "Don't panic - break problem into smaller parts"
+          ],
+          "mustNotMiss": [
+            "Start with brute force, then optimize",
+            "Common optimizations: sorting, hashing, binary search, two pointers",
+            "If stuck: try different data structure, work backwards from answer",
+            "Test edge cases: empty input, single element, maximum size",
+            "Analyze: What's the complexity? Can we do better theoretically?",
+            "For embedded: mention memory constraints, no malloc, interrupt considerations"
+          ],
+          "practiceQuestions": [
             {
-              "id": "week_23_hard_problems_sub_0",
-              "name": "LC 42: Trapping Rain Water - Classic 'Senior' logic test (Two pointer + DP)",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Trapping Rain Water",
+              "slug": "trapping-rain-water",
+              "number": 42,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/trapping-rain-water/"
             },
             {
-              "id": "week_23_hard_problems_sub_1",
-              "name": "LC 23: Merge k Sorted Lists - Merging multiple sensor streams (Heap)",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Merge k Sorted Lists",
+              "slug": "merge-k-sorted-lists",
+              "number": 23,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/merge-k-sorted-lists/"
             },
             {
-              "id": "week_23_hard_problems_sub_2",
-              "name": "LC 239: Sliding Window Maximum - Peak detection at scale (Monotonic Deque)",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Sliding Window Maximum",
+              "slug": "sliding-window-maximum",
+              "number": 239,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sliding-window-maximum/"
             },
             {
-              "id": "week_23_hard_problems_sub_3",
-              "name": "LC 84: Largest Rectangle in Histogram - Memory block allocation",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Largest Rectangle in Histogram",
+              "slug": "largest-rectangle-in-histogram",
+              "number": 84,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/largest-rectangle-in-histogram/"
             },
             {
-              "id": "week_23_hard_problems_sub_4",
-              "name": "LC 297: Serialize and Deserialize Binary Tree - Config persistence",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Serialize and Deserialize Binary Tree",
+              "slug": "serialize-and-deserialize-binary-tree",
+              "number": 297,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"
             },
             {
-              "id": "week_23_hard_problems_sub_5",
-              "name": "LC 208: Implement Trie (Prefix Tree) - Fast network routing lookups",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Implement Trie (Prefix Tree)",
+              "slug": "implement-trie-(prefix-tree)",
+              "number": 208,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-trie-(prefix-tree)/"
             },
             {
-              "id": "week_23_hard_problems_sub_6",
-              "name": "LC 212: Word Search II (Hard) - Trie + DFS combination",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Word Search II (Hard)",
+              "slug": "word-search-ii-(hard)",
+              "number": 212,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/word-search-ii-(hard)/"
             },
             {
-              "id": "week_23_hard_problems_sub_7",
-              "name": "LC 4: Median of Two Sorted Arrays (Hard) - O(log n) binary search mastery",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
+              "name": "Median of Two Sorted Arrays (Hard)",
+              "slug": "median-of-two-sorted-arrays-(hard)",
+              "number": 4,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/median-of-two-sorted-arrays-(hard)/"
             }
           ]
         },
         {
           "id": "week_24_25_mock_interviews",
           "name": "Week 24-25: Mock Interviews (Whiteboard Mode)",
-          "estimatedHours": 18,
+          "estimatedHours": 32.5,
           "description": "Two full weeks of intensive mock interview practice. No IDE. No Google. Paper and Pen only. This is how real interviews work. Practice speaking your logic out loud. Aim for 2-3 problems per day.",
-          "subtopics": [
-            {
-              "id": "week_24_25_mock_interviews_sub_0",
-              "name": "Daily practice: Pick random Medium problem, solve on paper",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_24_25_mock_interviews_sub_1",
-              "name": "Speak logic out loud - explain every line as you write it",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_24_25_mock_interviews_sub_2",
-              "name": "For every recursive solution, calculate Max Stack Depth (N frames × 16 bytes = KB)",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_24_25_mock_interviews_sub_3",
-              "name": "Reality check: Would this overflow a 4KB microcontroller stack?",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_24_25_mock_interviews_sub_4",
-              "name": "Time yourself: 45 minutes per problem (real interview pace)",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_24_25_mock_interviews_sub_5",
-              "name": "Practice: Writing valid C syntax on whiteboard without compiler help",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "week_24_25_mock_interviews_sub_6",
-              "name": "Mock: Have a friend ask you to explain your solution",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
+          "learningTip": [
+            "Practice under time pressure - simulate real interview conditions",
+            "Communicate your thought process clearly",
+            "Start with brute force, discuss trade-offs, then optimize",
+            "For embedded roles: always mention memory, real-time, power considerations"
+          ],
+          "mustNotMiss": [
+            "Clarify: input size, constraints, edge cases BEFORE coding",
+            "Think aloud: 'I'm considering a hashmap for O(1) lookup because...'",
+            "Test with examples, including edge cases",
+            "Analyze complexity: 'This is O(n) time, O(1) space'",
+            "Embedded context: 'In a real system, I'd consider memory footprint, cache behavior, ISR safety'",
+            "Know projects on resume cold - be ready to go deep on anything listed"
           ]
         }
       ]

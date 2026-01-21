@@ -178,8 +178,10 @@
   }
 
   /* Smooth scrolling */
+  /* Smooth scrolling & Stable layout */
   html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
   }
 
   @media (prefers-reduced-motion: reduce) {

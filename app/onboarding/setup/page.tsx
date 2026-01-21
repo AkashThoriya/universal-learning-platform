@@ -123,19 +123,20 @@ const onboardingSchema = z.object({
           z.object({
             id: z.string(),
             name: z.string(),
-            subtopics: z.array(z.object({
-              id: z.string(),
-              name: z.string(),
-              order: z.number().default(0),
-              status: z.enum(['not_started', 'in_progress', 'completed', 'mastered']).default('not_started'),
-              needsReview: z.boolean().default(false),
-              practiceCount: z.number().default(0),
-              revisionCount: z.number().default(0),
-            })).optional().default([]),
             estimatedHours: z
               .number()
               .optional()
               .transform(val => val || undefined),
+            description: z.string().optional(),
+            learningTip: z.array(z.string()).optional(),
+            mustNotMiss: z.array(z.string()).optional(),
+            practiceQuestions: z.array(z.object({
+              name: z.string(),
+              slug: z.string(),
+              number: z.number().optional(),
+              difficulty: z.enum(['Easy', 'Medium', 'Hard']),
+              link: z.string(),
+            })).optional(),
           })
         ),
         estimatedHours: z

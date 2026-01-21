@@ -105,7 +105,7 @@ interface SyllabusManagementStepProps {
 
 export function SyllabusManagementStep({
   form,
-  onUpdateSubjectTier,
+  onUpdateSubjectTier: _onUpdateSubjectTier,
   onAddSubject,
   onRemoveSubject,
   onAddTopic,
@@ -182,26 +182,7 @@ export function SyllabusManagementStep({
     setExpandedSubjects(newExpanded);
   };
 
-  const getTierColor = (tier: number) => {
-    switch (tier) {
-      case 1:
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 2:
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 3:
-        return 'bg-green-100 text-green-800 border-green-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
 
-  const tierCounts = form.data.syllabus.reduce(
-    (acc: Record<number, number>, subject: SyllabusSubject) => {
-      acc[subject.tier] = (acc[subject.tier] || 0) + 1;
-      return acc;
-    },
-    {} as Record<number, number>
-  );
 
   return (
     <CardContent className="space-y-6">
@@ -213,49 +194,9 @@ export function SyllabusManagementStep({
         <CardDescription>Organize your subjects by priority tiers to optimize your study strategy.</CardDescription>
       </CardHeader>
 
-      {/* Tier Legend */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg">
-        <h4 className="font-semibold mb-3">Priority Tiers</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded" />
-            <div>
-              <div className="font-medium text-sm">Tier 1 - High Priority</div>
-              <div className="text-xs text-gray-600">Core topics, high weightage</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-yellow-500 rounded" />
-            <div>
-              <div className="font-medium text-sm">Tier 2 - Medium Priority</div>
-              <div className="text-xs text-gray-600">Important but manageable</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-500 rounded" />
-            <div>
-              <div className="font-medium text-sm">Tier 3 - Low Priority</div>
-              <div className="text-xs text-gray-600">Time permitting topics</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="text-center p-3 bg-red-50 rounded-lg">
-          <div className="text-2xl font-bold text-red-600">{tierCounts[1] || 0}</div>
-          <div className="text-sm text-red-600">Tier 1</div>
-        </div>
-        <div className="text-center p-3 bg-yellow-50 rounded-lg">
-          <div className="text-2xl font-bold text-yellow-600">{tierCounts[2] || 0}</div>
-          <div className="text-sm text-yellow-600">Tier 2</div>
-        </div>
-        <div className="text-center p-3 bg-green-50 rounded-lg">
-          <div className="text-2xl font-bold text-green-600">{tierCounts[3] || 0}</div>
-          <div className="text-sm text-green-600">Tier 3</div>
-        </div>
-      </div>
+
+
 
       {/* Subjects List */}
       <div className="space-y-3">
@@ -349,26 +290,7 @@ export function SyllabusManagementStep({
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      {/* Tier Selection */}
-                      <Select
-                        value={subject.tier.toString()}
-                        onValueChange={value => onUpdateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">
-                            <Badge className={getTierColor(1)}>Tier 1</Badge>
-                          </SelectItem>
-                          <SelectItem value="2">
-                            <Badge className={getTierColor(2)}>Tier 2</Badge>
-                          </SelectItem>
-                          <SelectItem value="3">
-                            <Badge className={getTierColor(3)}>Tier 3</Badge>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+
 
                       {/* Remove Subject Button */}
                       <Button
@@ -609,30 +531,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
         </Select>
       </div>
 
-      {/* Tier Definitions */}
-      <div className="space-y-4">
-        <Label className="text-sm font-medium">Customize Tier Definitions</Label>
 
-        {[1, 2, 3].map(tier => (
-          <div key={tier} className="space-y-2">
-            <Label className="text-xs font-medium text-gray-600">Tier {tier} Definition</Label>
-            <Input
-              value={form.data.preferences.tierDefinitions[tier as keyof typeof form.data.preferences.tierDefinitions]}
-              onChange={e =>
-                form.updateField('preferences', {
-                  ...form.data.preferences,
-                  tierDefinitions: {
-                    ...form.data.preferences.tierDefinitions,
-                    [tier]: e.target.value,
-                  },
-                })
-              }
-              placeholder={`Define what Tier ${tier} represents...`}
-              className="text-sm"
-            />
-          </div>
-        ))}
-      </div>
 
       {/* Revision Intervals */}
       <div className="space-y-4">

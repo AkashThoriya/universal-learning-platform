@@ -193,6 +193,34 @@ export interface Subtopic {
 }
 
 /**
+ * Represents a practice question/problem for coding practice
+ *
+ * @interface PracticeQuestion
+ * @example
+ * ```typescript
+ * const question: PracticeQuestion = {
+ *   name: 'Two Sum',
+ *   slug: 'two-sum',
+ *   number: 1,
+ *   difficulty: 'Easy',
+ *   link: 'https://leetcode.com/problems/two-sum/'
+ * };
+ * ```
+ */
+export interface PracticeQuestion {
+  /** Display name of the problem */
+  name: string;
+  /** URL-friendly slug identifier */
+  slug: string;
+  /** Problem number (e.g., LeetCode problem number) */
+  number?: number;
+  /** Difficulty level */
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  /** External link to the problem */
+  link: string;
+}
+
+/**
  * Represents an individual topic within a subject
  *
  * @interface SyllabusTopic
@@ -202,7 +230,10 @@ export interface Subtopic {
  *   id: 'british_rule',
  *   name: 'British Administration in India',
  *   subtopics: [{ id: 'sub_1', name: 'East India Company', ... }],
- *   estimatedHours: 15
+ *   estimatedHours: 15,
+ *   learningTip: ['Focus on key dates', 'Understand cause and effect'],
+ *   mustNotMiss: ['1857 Revolt', 'Partition of Bengal'],
+ *   practiceQuestions: []
  * };
  * ```
  */
@@ -219,6 +250,12 @@ export interface SyllabusTopic {
   description?: string;
   /** Sort order for the topic */
   order?: number;
+  /** Expert learning tips and advice for mastering this topic */
+  learningTip?: string[];
+  /** Critical concepts that must not be missed */
+  mustNotMiss?: string[];
+  /** Practice problems/questions for hands-on learning */
+  practiceQuestions?: PracticeQuestion[];
 }
 
 /**
@@ -658,6 +695,9 @@ export interface TopicProgress {
     action: 'completed' | 'practiced' | 'revised' | 'needs_review' | 'unmarked';
     timestamp: Timestamp;
   }>;
+
+  /** Array of practice question slugs that user has solved */
+  solvedQuestions?: string[];
 }
 
 /**

@@ -155,256 +155,95 @@
           "name": "Episode 1: Inception - Introduction to React",
           "estimatedHours": 1.65,
           "description": "Introduction to React, setting up development environment, understanding the React ecosystem",
-          "subtopics": [
-            {
-              "id": "inception_sub_0",
-              "name": "What is React?",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "inception_sub_1",
-              "name": "React vs Other Frameworks",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "inception_sub_2",
-              "name": "Setting up Development Environment",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "inception_sub_3",
-              "name": "Understanding the React Ecosystem",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "React is a library, not a framework - understand the difference",
+            "Component-based thinking: break UI into reusable pieces",
+            "Declarative vs Imperative: describe WHAT you want, not HOW",
+            "Virtual DOM is React's performance secret - it minimizes real DOM updates"
+          ],
+          "mustNotMiss": [
+            "React creates a virtual representation of the DOM in memory",
+            "Reconciliation: React compares virtual DOM with real DOM to find minimal changes",
+            "npm init creates package.json, npx runs packages without installing globally",
+            "CDN links for quick prototyping: react.development.js and react-dom.development.js"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "igniting_app",
           "name": "Episode 2: Igniting our App - Build Tools & Bundlers",
           "estimatedHours": 2.208,
           "description": "Understanding build tools, bundlers like Parcel/Webpack, and setting up a React project",
-          "subtopics": [
-            {
-              "id": "igniting_app_sub_0",
-              "name": "Understanding Bundlers",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "igniting_app_sub_1",
-              "name": "Parcel vs Webpack",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "igniting_app_sub_2",
-              "name": "Setting up React Project",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "igniting_app_sub_3",
-              "name": "Understanding package.json",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "igniting_app_sub_4",
-              "name": "NPM Scripts",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Bundlers (Parcel/Webpack) transform your code for production",
+            "Dev server provides hot module replacement for instant feedback",
+            "package.json vs package-lock.json: specs vs exact versions",
+            "node_modules is huge - always .gitignore it"
+          ],
+          "mustNotMiss": [
+            "npm install creates node_modules and package-lock.json",
+            "Parcel: zero-config bundler, just 'npx parcel index.html'",
+            "devDependencies vs dependencies: dev tools vs production code",
+            "npx parcel build index.html creates production bundle"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "laying_foundation",
           "name": "Episode 3: Laying the Foundation - JSX & Components",
           "estimatedHours": 2,
           "description": "Deep dive into JSX, creating React components, and understanding the virtual DOM",
-          "subtopics": [
-            {
-              "id": "laying_foundation_sub_0",
-              "name": "What is JSX?",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "laying_foundation_sub_1",
-              "name": "Creating React Components",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "laying_foundation_sub_2",
-              "name": "Functional vs Class Components",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "laying_foundation_sub_3",
-              "name": "Virtual DOM Concepts",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "laying_foundation_sub_4",
-              "name": "React.createElement",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "JSX is syntactic sugar for React.createElement() calls",
+            "JSX looks like HTML but has key differences (className, htmlFor)",
+            "Components must return a single root element (use Fragment if needed)",
+            "Functional components are just functions that return JSX"
+          ],
+          "mustNotMiss": [
+            "JSX compiles to React.createElement(type, props, ...children)",
+            "Curly braces {} embed JavaScript expressions in JSX",
+            "Component names MUST start with uppercase (MyComponent, not myComponent)",
+            "React.Fragment or <></> wraps multiple elements without extra DOM nodes"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "show_me_code",
           "name": "Episode 4: Talk is Cheap, Show Me the Code - Building UI",
           "estimatedHours": 2.242,
           "description": "Building actual UI components, props, and creating reusable components",
-          "subtopics": [
-            {
-              "id": "show_me_code_sub_0",
-              "name": "Building Food Ordering App UI",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "show_me_code_sub_1",
-              "name": "Understanding Props",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "show_me_code_sub_2",
-              "name": "Component Composition",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "show_me_code_sub_3",
-              "name": "Reusable Components",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "show_me_code_sub_4",
-              "name": "Component Structure",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Props flow down from parent to child (unidirectional data flow)",
+            "Props are read-only - never modify props directly",
+            "Destructuring props: const { name, age } = props or ({name, age})",
+            "Component composition: build complex UIs from simple components"
+          ],
+          "mustNotMiss": [
+            "Props: const Card = (props) => <div>{props.title}</div>",
+            "Destructured: const Card = ({title, desc}) => <div>{title}</div>",
+            "key prop is required when rendering lists: arr.map(item => <Card key={item.id}/>)",
+            "key must be unique among siblings and stable (not index if list changes)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "lets_get_hooked",
           "name": "Episode 5: Let's Get Hooked - React Hooks Introduction",
           "estimatedHours": 2.155,
           "description": "Introduction to React Hooks, useState, and functional component state management",
-          "subtopics": [
-            {
-              "id": "lets_get_hooked_sub_0",
-              "name": "What are React Hooks?",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "lets_get_hooked_sub_1",
-              "name": "useState Hook",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "lets_get_hooked_sub_2",
-              "name": "Rules of Hooks",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "lets_get_hooked_sub_3",
-              "name": "Functional vs Class Components",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "lets_get_hooked_sub_4",
-              "name": "State Management Basics",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "useState returns [value, setter] - always destructure both",
+            "State updates trigger re-renders - this is React's reactivity",
+            "Never mutate state directly: use setter function",
+            "Previous state: setCount(prev => prev + 1) for updates based on current value"
+          ],
+          "mustNotMiss": [
+            "const [count, setCount] = useState(0) - 0 is initial value",
+            "setCount(5) replaces, setCount(prev => prev + 1) updates based on previous",
+            "Hooks must be called at top level - not inside loops, conditions, or nested functions",
+            "Hooks can only be called in functional components or custom hooks"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -419,318 +258,114 @@
           "name": "Episode 6: Exploring the World - API Integration",
           "estimatedHours": 2.379,
           "description": "Making API calls, useEffect hook, handling asynchronous operations, and CORS",
-          "subtopics": [
-            {
-              "id": "exploring_world_sub_0",
-              "name": "useEffect Hook",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "exploring_world_sub_1",
-              "name": "Making API Calls",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "exploring_world_sub_2",
-              "name": "Handling Async Operations",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "exploring_world_sub_3",
-              "name": "Understanding CORS",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "exploring_world_sub_4",
-              "name": "Error Handling in API Calls",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "useEffect handles side effects: API calls, subscriptions, DOM changes",
+            "Dependency array controls when effect runs: [], [deps], or nothing",
+            "async/await works inside useEffect with IIFE pattern",
+            "Always handle loading and error states for better UX"
+          ],
+          "mustNotMiss": [
+            "useEffect(() => { fetchData() }, []) - runs once on mount",
+            "useEffect(() => { ... }, [dep]) - runs when dep changes",
+            "Return cleanup function: useEffect(() => { return () => cleanup() }, [])",
+            "fetch().then().catch() or async IIFE: (async () => { await fetch() })()"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "api_issues_resolution",
           "name": "Episode 6.1 & 6.2: API Issues Resolution",
           "estimatedHours": 0.777,
           "description": "Resolving Swiggy API issues and CORS plugin problems",
-          "subtopics": [
-            {
-              "id": "api_issues_resolution_sub_0",
-              "name": "Swiggy API Integration",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "api_issues_resolution_sub_1",
-              "name": "CORS Plugin Setup",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "api_issues_resolution_sub_2",
-              "name": "Mock API Implementation",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "api_issues_resolution_sub_3",
-              "name": "Debugging API Issues",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "CORS errors happen when browser blocks cross-origin requests",
+            "CORS is a browser security feature, not a server issue",
+            "Proxy during development avoids CORS without backend changes",
+            "Production: configure server CORS headers properly"
+          ],
+          "mustNotMiss": [
+            "CORS error: 'Access to fetch has been blocked by CORS policy'",
+            "Dev solution: browser extension or dev server proxy",
+            "Production: server must send Access-Control-Allow-Origin header",
+            "API mocking with json-server for development and testing"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "finding_path",
           "name": "Episode 7: Finding the Path - React Router",
           "estimatedHours": 2.307,
           "description": "Implementing client-side routing with React Router",
-          "subtopics": [
-            {
-              "id": "finding_path_sub_0",
-              "name": "React Router Setup",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "finding_path_sub_1",
-              "name": "Client-side Routing",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "finding_path_sub_2",
-              "name": "Route Parameters",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "finding_path_sub_3",
-              "name": "Nested Routing",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "finding_path_sub_4",
-              "name": "Navigation Components",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "React Router enables SPA routing without page reloads",
+            "BrowserRouter wraps your app, Routes contains Route components",
+            "Link replaces <a> for navigation without page reload",
+            "useParams() gets URL parameters, useNavigate() for programmatic navigation"
+          ],
+          "mustNotMiss": [
+            "createBrowserRouter() with createRoutesFromElements() is the modern API",
+            "<Route path='/user/:id' element={<User/>}/> - :id is dynamic parameter",
+            "const {id} = useParams() gets the dynamic segment",
+            "<Outlet/> renders child routes in parent component"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "get_classy",
           "name": "Episode 8: Let's Get Classy - Class Components",
           "estimatedHours": 2.771,
           "description": "Understanding class components, lifecycle methods, and component patterns",
-          "subtopics": [
-            {
-              "id": "get_classy_sub_0",
-              "name": "Class Components Syntax",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "get_classy_sub_1",
-              "name": "Component Lifecycle Methods",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "get_classy_sub_2",
-              "name": "componentDidMount",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "get_classy_sub_3",
-              "name": "componentDidUpdate",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "get_classy_sub_4",
-              "name": "componentWillUnmount",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "get_classy_sub_5",
-              "name": "this.state and this.setState",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Class components are older but still important to understand",
+            "Lifecycle methods replaced by useEffect in functional components",
+            "this.state and this.setState for state management",
+            "Know class components for legacy code maintenance"
+          ],
+          "mustNotMiss": [
+            "constructor(props) { super(props); this.state = {} }",
+            "componentDidMount() \u2248 useEffect(() => {}, [])",
+            "componentDidUpdate() \u2248 useEffect(() => {}, [deps])",
+            "componentWillUnmount() \u2248 useEffect cleanup function"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "optimizing_app",
           "name": "Episode 9: Optimizing our App - Performance",
           "estimatedHours": 1.636,
           "description": "Performance optimization techniques, lazy loading, and code splitting",
-          "subtopics": [
-            {
-              "id": "optimizing_app_sub_0",
-              "name": "Code Splitting",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "optimizing_app_sub_1",
-              "name": "Lazy Loading",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "optimizing_app_sub_2",
-              "name": "Suspense Component",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "optimizing_app_sub_3",
-              "name": "Performance Best Practices",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "optimizing_app_sub_4",
-              "name": "Bundle Analysis",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "React.lazy() enables code splitting for smaller initial bundles",
+            "Suspense provides fallback UI while lazy components load",
+            "Code splitting reduces initial load time significantly",
+            "Split by route: each route loads only when accessed"
+          ],
+          "mustNotMiss": [
+            "const LazyComponent = React.lazy(() => import('./Component'))",
+            "<Suspense fallback={<Loading/>}><LazyComponent/></Suspense>",
+            "Dynamic imports with import() return Promises",
+            "Analyze bundle with webpack-bundle-analyzer or Parcel's --detailed-report"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "styling_ui",
           "name": "Episode 10: Jo Dikhta Hai, Vo Bikta Hai - Styling",
           "estimatedHours": 1.626,
           "description": "Styling React applications, CSS-in-JS, and UI libraries",
-          "subtopics": [
-            {
-              "id": "styling_ui_sub_0",
-              "name": "CSS in React",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "styling_ui_sub_1",
-              "name": "Styled Components",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "styling_ui_sub_2",
-              "name": "CSS Modules",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "styling_ui_sub_3",
-              "name": "Tailwind CSS",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "styling_ui_sub_4",
-              "name": "Material-UI",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Multiple CSS-in-JS approaches: styled-components, CSS Modules, Tailwind",
+            "CSS Modules scope styles locally to avoid global conflicts",
+            "Tailwind provides utility classes for rapid styling",
+            "Choose based on team preference and project needs"
+          ],
+          "mustNotMiss": [
+            "CSS Modules: import styles from './Component.module.css'",
+            "Styled-components: const Button = styled.button`color: blue;`",
+            "Tailwind: className='bg-blue-500 text-white p-4 rounded'",
+            "Inline styles: style={{backgroundColor: 'blue'}} - camelCase properties"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -745,327 +380,114 @@
           "name": "Episode 11: Data is the New Oil - State Management",
           "estimatedHours": 3.133,
           "description": "Advanced state management patterns, prop drilling solutions, and context API",
-          "subtopics": [
-            {
-              "id": "data_new_oil_sub_0",
-              "name": "Prop Drilling Problems",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_new_oil_sub_1",
-              "name": "Context API",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_new_oil_sub_2",
-              "name": "useContext Hook",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_new_oil_sub_3",
-              "name": "State Management Patterns",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_new_oil_sub_4",
-              "name": "Data Flow in React",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Context API solves prop drilling for global state",
+            "Create context, provide value, consume with useContext",
+            "Context re-renders all consumers when value changes",
+            "For complex state, consider Redux or Zustand"
+          ],
+          "mustNotMiss": [
+            "const MyContext = React.createContext(defaultValue)",
+            "<MyContext.Provider value={data}>{children}</MyContext.Provider>",
+            "const value = useContext(MyContext) in consumer component",
+            "Split contexts by concern to minimize unnecessary re-renders"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "build_store",
           "name": "Episode 12: Let's Build Our Store - Redux",
           "estimatedHours": 2.659,
           "description": "Introduction to Redux, Redux Toolkit, and state management with Redux",
-          "subtopics": [
-            {
-              "id": "build_store_sub_0",
-              "name": "What is Redux?",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "build_store_sub_1",
-              "name": "Redux Store",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "build_store_sub_2",
-              "name": "Actions and Reducers",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "build_store_sub_3",
-              "name": "Redux Toolkit",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "build_store_sub_4",
-              "name": "useSelector and useDispatch",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Redux: single source of truth for predictable state",
+            "Actions describe what happened, reducers update state",
+            "Redux Toolkit simplifies Redux with less boilerplate",
+            "createSlice combines actions and reducers"
+          ],
+          "mustNotMiss": [
+            "configureStore({ reducer: { cart: cartReducer } })",
+            "createSlice({ name, initialState, reducers: {} })",
+            "useSelector(state => state.cart.items) reads state",
+            "useDispatch() returns dispatch function for actions"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "time_for_test",
           "name": "Episode 13: Time for Test - Testing in React",
           "estimatedHours": 4.167,
           "description": "Testing React applications, Jest, React Testing Library, and test-driven development",
-          "subtopics": [
-            {
-              "id": "time_for_test_sub_0",
-              "name": "Introduction to Testing",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "time_for_test_sub_1",
-              "name": "Jest Framework",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "time_for_test_sub_2",
-              "name": "React Testing Library",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "time_for_test_sub_3",
-              "name": "Writing Unit Tests",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "time_for_test_sub_4",
-              "name": "Integration Testing",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "time_for_test_sub_5",
-              "name": "Test-Driven Development",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Testing gives confidence when refactoring code",
+            "React Testing Library tests behavior, not implementation",
+            "Test what users see and do, not internal component logic",
+            "Jest provides test runner and assertions"
+          ],
+          "mustNotMiss": [
+            "render(<Component/>) renders component for testing",
+            "screen.getByText('Hello') finds element by text",
+            "screen.getByRole('button') finds by accessibility role",
+            "fireEvent.click() or userEvent.click() simulates user actions"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "netflixgpt_beginning",
           "name": "Episode 14: NetflixGPT - The Beginning",
           "estimatedHours": 3.919,
           "description": "Starting a complex project, project architecture, and advanced React patterns",
-          "subtopics": [
-            {
-              "id": "netflixgpt_beginning_sub_0",
-              "name": "Project Architecture",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_beginning_sub_1",
-              "name": "Advanced React Patterns",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_beginning_sub_2",
-              "name": "Authentication in React",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_beginning_sub_3",
-              "name": "Firebase Integration",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_beginning_sub_4",
-              "name": "Project Structure",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "netflixgpt_core",
           "name": "Episode 15: NetflixGPT - Building the Core",
           "estimatedHours": 3.606,
           "description": "Building core features, API integration, and complex state management",
-          "subtopics": [
-            {
-              "id": "netflixgpt_core_sub_0",
-              "name": "Complex API Integration",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_core_sub_1",
-              "name": "Multiple API Handling",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_core_sub_2",
-              "name": "Advanced State Management",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_core_sub_3",
-              "name": "Error Boundaries",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_core_sub_4",
-              "name": "Performance Optimization",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "netflixgpt_wrap",
           "name": "Episode 16: NetflixGPT - Wrapping Up",
           "estimatedHours": 4.073,
           "description": "Finalizing the project, deployment, and production best practices",
-          "subtopics": [
-            {
-              "id": "netflixgpt_wrap_sub_0",
-              "name": "Project Finalization",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_wrap_sub_1",
-              "name": "Deployment Strategies",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_wrap_sub_2",
-              "name": "Production Best Practices",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_wrap_sub_3",
-              "name": "Performance Monitoring",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "netflixgpt_wrap_sub_4",
-              "name": "Security Considerations",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -1080,204 +502,57 @@
           "name": "Machine Coding Interview & YouTube Project",
           "estimatedHours": 6,
           "description": "Building YouTube clone, machine coding interview preparation, and advanced features",
-          "subtopics": [
-            {
-              "id": "youtube_project_sub_0",
-              "name": "Machine Coding Interview Prep",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "youtube_project_sub_1",
-              "name": "YouTube Clone Development",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "youtube_project_sub_2",
-              "name": "Advanced Features Implementation",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "youtube_project_sub_3",
-              "name": "Project Optimization",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "youtube_project_sub_4",
-              "name": "Video Streaming Concepts",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "advanced_hooks",
           "name": "Advanced React Hooks",
           "estimatedHours": 1.5,
           "description": "Deep dive into useMemo, useCallback, useRef, and performance optimization hooks",
-          "subtopics": [
-            {
-              "id": "advanced_hooks_sub_0",
-              "name": "useMemo Hook",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "advanced_hooks_sub_1",
-              "name": "useCallback Hook",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "advanced_hooks_sub_2",
-              "name": "useRef Hook",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "advanced_hooks_sub_3",
-              "name": "Performance Optimization",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "advanced_hooks_sub_4",
-              "name": "When to Use Each Hook",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "devtinder_project",
           "name": "DevTinder UI Project",
           "estimatedHours": 10,
           "description": "Building a complete dating app UI for developers with modern React patterns",
-          "subtopics": [
-            {
-              "id": "devtinder_project_sub_0",
-              "name": "Complex UI Development",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_1",
-              "name": "State Management in Large Apps",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_2",
-              "name": "Component Design Patterns",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_3",
-              "name": "Responsive Design",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_4",
-              "name": "Modern React Patterns",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_5",
-              "name": "UI/UX Best Practices",
-              "order": 5,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_6",
-              "name": "Animation in React",
-              "order": 6,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_7",
-              "name": "Form Handling",
-              "order": 7,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_8",
-              "name": "Data Validation",
-              "order": 8,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_project_sub_9",
-              "name": "Performance Optimization",
-              "order": 9,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -1292,212 +567,76 @@
           "name": "Debugging & Troubleshooting",
           "estimatedHours": 2,
           "description": "Essential debugging skills and troubleshooting common React issues",
-          "subtopics": [
-            {
-              "id": "debugging_troubleshooting_sub_0",
-              "name": "React Developer Tools",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "debugging_troubleshooting_sub_1",
-              "name": "Console Debugging",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "debugging_troubleshooting_sub_2",
-              "name": "Common Error Patterns",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "debugging_troubleshooting_sub_3",
-              "name": "Performance Debugging",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "debugging_troubleshooting_sub_4",
-              "name": "Network Issues",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "best_practices",
           "name": "React Best Practices",
           "estimatedHours": 2,
           "description": "Industry best practices, code organization, and maintainable React code",
-          "subtopics": [
-            {
-              "id": "best_practices_sub_0",
-              "name": "Code Organization",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "best_practices_sub_1",
-              "name": "Component Design Principles",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "best_practices_sub_2",
-              "name": "Performance Best Practices",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "best_practices_sub_3",
-              "name": "Accessibility in React",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "best_practices_sub_4",
-              "name": "SEO Considerations",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "deployment_production",
           "name": "Deployment & Production",
           "estimatedHours": 2,
           "description": "Deploying React applications and production considerations",
-          "subtopics": [
-            {
-              "id": "deployment_production_sub_0",
-              "name": "Build Process",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "deployment_production_sub_1",
-              "name": "Environment Variables",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "deployment_production_sub_2",
-              "name": "Deployment Platforms",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "deployment_production_sub_3",
-              "name": "CI/CD Pipelines",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "deployment_production_sub_4",
-              "name": "Monitoring and Analytics",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "interview_preparation",
           "name": "Interview Preparation",
           "estimatedHours": 2,
           "description": "React interview questions, coding challenges, and career preparation",
-          "subtopics": [
-            {
-              "id": "interview_preparation_sub_0",
-              "name": "Common Interview Questions",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "interview_preparation_sub_1",
-              "name": "Coding Challenges",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "interview_preparation_sub_2",
-              "name": "System Design for React",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "interview_preparation_sub_3",
-              "name": "Portfolio Development",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "interview_preparation_sub_4",
-              "name": "Resume Building",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept thoroughly before moving on",
+            "Practice by building small projects with each concept",
+            "Read official React documentation for authoritative guidance",
+            "Break complex problems into smaller, manageable pieces"
+          ],
+          "mustNotMiss": [
+            "React components should be pure - same inputs, same output",
+            "State updates are asynchronous and batched",
+            "Always use key prop when rendering lists",
+            "Keep components small and focused on single responsibility"
+          ],
+          "practiceQuestions": []
         }
       ]
     }

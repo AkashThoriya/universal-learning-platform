@@ -689,6 +689,93 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
   })) as TopicProgress[];
 };
 
+/**
+ * Marks a practice question as solved for a topic
+ * Adds the question slug to solvedQuestions array and increments practiceCount
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} topicId - The unique topic ID
+ * @param {string} questionSlug - The unique slug of the question being marked as solved
+ * @returns {Promise<void>} Promise that resolves when question is marked as solved
+ *
+ * @example
+ * ```typescript
+ * await markQuestionSolved('user123', 'arrays', 'two-sum');
+ * ```
+ */
+export const markQuestionSolved = async (
+  userId: string,
+  topicId: string,
+  questionSlug: string
+): Promise<void> => {
+  try {
+    const current = await getTopicProgress(userId, topicId);
+    const solvedQuestions = current?.solvedQuestions || [];
+
+    // Only add if not already solved
+    if (!solvedQuestions.includes(questionSlug)) {
+      await updateTopicProgress(userId, topicId, {
+        solvedQuestions: [...solvedQuestions, questionSlug],
+        practiceCount: (current?.practiceCount || 0) + 1,
+        lastPracticed: Timestamp.now(),
+      });
+
+      logInfo('Question marked as solved', { userId, topicId, questionSlug });
+    }
+  } catch (error) {
+    logError('Failed to mark question as solved', { userId, topicId, questionSlug, error });
+    throw error;
+  }
+};
+
+/**
+ * Toggles a practice question's solved status for a topic
+ * Adds or removes the question slug from solvedQuestions array
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} topicId - The unique topic ID
+ * @param {string} questionSlug - The unique slug of the question to toggle
+ * @returns {Promise<boolean>} Promise that resolves to true if now solved, false if unsolved
+ *
+ * @example
+ * ```typescript
+ * const isSolved = await toggleQuestionSolved('user123', 'arrays', 'two-sum');
+ * console.log(isSolved ? 'Now solved!' : 'Marked as unsolved');
+ * ```
+ */
+export const toggleQuestionSolved = async (
+  userId: string,
+  topicId: string,
+  questionSlug: string
+): Promise<boolean> => {
+  try {
+    const current = await getTopicProgress(userId, topicId);
+    const solvedQuestions = current?.solvedQuestions || [];
+    const isSolved = solvedQuestions.includes(questionSlug);
+
+    if (isSolved) {
+      // Remove from solved list
+      await updateTopicProgress(userId, topicId, {
+        solvedQuestions: solvedQuestions.filter(slug => slug !== questionSlug),
+      });
+      logInfo('Question unmarked as solved', { userId, topicId, questionSlug });
+      return false;
+    } else {
+      // Add to solved list
+      await updateTopicProgress(userId, topicId, {
+        solvedQuestions: [...solvedQuestions, questionSlug],
+        practiceCount: (current?.practiceCount || 0) + 1,
+        lastPracticed: Timestamp.now(),
+      });
+      logInfo('Question marked as solved', { userId, topicId, questionSlug });
+      return true;
+    }
+  } catch (error) {
+    logError('Failed to toggle question solved status', { userId, topicId, questionSlug, error });
+    throw error;
+  }
+};
+
 // Revision Queue
 
 /**

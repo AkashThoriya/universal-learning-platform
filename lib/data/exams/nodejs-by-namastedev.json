@@ -162,688 +162,266 @@
           "name": "Season 1 Episode 00: Welcome to NamasteNodeJS",
           "estimatedHours": 1.5,
           "description": "Introduction to the course, roadmap, and what you'll learn in this comprehensive NodeJS journey",
-          "subtopics": [
-            {
-              "id": "welcome_intro_sub_0",
-              "name": "Course Overview and Roadmap",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "welcome_intro_sub_1",
-              "name": "Prerequisites and Setup",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "welcome_intro_sub_2",
-              "name": "Community and Resources",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "welcome_intro_sub_3",
-              "name": "Learning Approach",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "NodeJS enables JavaScript on the server - same language, different environment",
+            "Understanding the fundamentals will make everything else click",
+            "Focus on the 'why' behind NodeJS design decisions",
+            "Practice by building small utilities and scripts"
+          ],
+          "mustNotMiss": [
+            "NodeJS is NOT a language - it's a runtime environment for JavaScript",
+            "Built on Chrome's V8 JavaScript engine for high performance",
+            "Non-blocking I/O is the core design principle",
+            "NPM (Node Package Manager) is the world's largest software registry"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "nodejs_introduction",
           "name": "Season 1 Episode 01: Introduction to NodeJS",
           "estimatedHours": 2,
           "description": "Understanding what NodeJS is, its history, and why it's revolutionary for JavaScript development",
-          "subtopics": [
-            {
-              "id": "nodejs_introduction_sub_0",
-              "name": "What is NodeJS?",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nodejs_introduction_sub_1",
-              "name": "History and Evolution",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nodejs_introduction_sub_2",
-              "name": "NodeJS vs Browser JavaScript",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nodejs_introduction_sub_3",
-              "name": "Use Cases and Applications",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "NodeJS was created by Ryan Dahl in 2009 to handle concurrent connections",
+            "Single-threaded but non-blocking - handles many connections efficiently",
+            "Perfect for I/O heavy applications (APIs, real-time apps)",
+            "Not ideal for CPU-intensive tasks (video encoding, ML)"
+          ],
+          "mustNotMiss": [
+            "NodeJS runs JavaScript outside the browser",
+            "Uses event-driven, non-blocking I/O model",
+            "process object provides info about current Node process",
+            "global object in Node is like window in browser"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "js_on_server",
           "name": "Season 1 Episode 02: JS on Server",
           "estimatedHours": 2,
           "description": "Understanding how JavaScript runs on the server-side and the differences from client-side execution",
-          "subtopics": [
-            {
-              "id": "js_on_server_sub_0",
-              "name": "Server-side JavaScript Execution",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "js_on_server_sub_1",
-              "name": "Differences from Browser Environment",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "js_on_server_sub_2",
-              "name": "Global Objects in NodeJS",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "js_on_server_sub_3",
-              "name": "File System Access",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Browser has window, DOM, fetch - Node has process, fs, http",
+            "Node adds server capabilities JavaScript never had",
+            "Same language, different built-in objects and APIs",
+            "console.log works the same - outputs to terminal instead of browser"
+          ],
+          "mustNotMiss": [
+            "No window or document objects in NodeJS",
+            "process.argv gives command line arguments",
+            "process.env contains environment variables",
+            "__dirname and __filename give current file path info"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "write_code",
           "name": "Season 1 Episode 03: Let's write code",
           "estimatedHours": 2,
           "description": "Writing your first NodeJS programs and understanding the development workflow",
-          "subtopics": [
-            {
-              "id": "write_code_sub_0",
-              "name": "Setting up Development Environment",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "write_code_sub_1",
-              "name": "Writing First NodeJS Program",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "write_code_sub_2",
-              "name": "Running NodeJS Scripts",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "write_code_sub_3",
-              "name": "Debugging Basics",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "node filename.js runs your code - simple and direct",
+            "Use nodemon for auto-restart during development",
+            "REPL mode: just type 'node' for interactive console",
+            "Debug with console.log or use --inspect flag for Chrome DevTools"
+          ],
+          "mustNotMiss": [
+            "node index.js runs the file",
+            "npm init -y creates package.json quickly",
+            "npm install --save-dev nodemon for development",
+            "package.json scripts: 'start': 'node index.js'"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "modules_require",
           "name": "Season 1 Episode 04: module.export & require",
           "estimatedHours": 2,
           "description": "Understanding NodeJS module system, exports, and require mechanism",
-          "subtopics": [
-            {
-              "id": "modules_require_sub_0",
-              "name": "CommonJS Module System",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "modules_require_sub_1",
-              "name": "module.exports vs exports",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "modules_require_sub_2",
-              "name": "require() Function",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "modules_require_sub_3",
-              "name": "Module Resolution",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "modules_require_sub_4",
-              "name": "Creating Custom Modules",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "CommonJS: require/module.exports - the Node standard",
+            "ES Modules: import/export - modern JavaScript standard",
+            "Each file is a module with its own scope",
+            "Module caching: require() caches on first load"
+          ],
+          "mustNotMiss": [
+            "module.exports = function() {} exports the function",
+            "const fn = require('./myModule') imports it",
+            "exports is shorthand for module.exports (but can't reassign)",
+            "For ES modules: add 'type': 'module' in package.json"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "nodejs_github",
           "name": "Season 1 Episode 05: Diving into the NodeJS github repo",
           "estimatedHours": 2,
           "description": "Exploring NodeJS source code, understanding its architecture and contribution process",
-          "subtopics": [
-            {
-              "id": "nodejs_github_sub_0",
-              "name": "NodeJS Repository Structure",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nodejs_github_sub_1",
-              "name": "C++ and JavaScript Integration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nodejs_github_sub_2",
-              "name": "Understanding NodeJS Architecture",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nodejs_github_sub_3",
-              "name": "Open Source Contribution Process",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "NodeJS is open source - you can read the actual implementation",
+            "C++ handles low-level operations, JS provides the API",
+            "Understanding internals helps debug complex issues",
+            "Contributing to open source is great for learning and career"
+          ],
+          "mustNotMiss": [
+            "lib/ folder contains JavaScript implementation",
+            "src/ folder contains C++ bindings",
+            "deps/ contains dependencies like V8, libuv, OpenSSL",
+            "Good first issues are tagged for new contributors"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "libuv_async",
           "name": "Season 1 Episode 06: libuv & async IO",
           "estimatedHours": 2.5,
           "description": "Deep dive into libuv library and asynchronous I/O operations in NodeJS",
-          "subtopics": [
-            {
-              "id": "libuv_async_sub_0",
-              "name": "What is libuv?",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_async_sub_1",
-              "name": "Asynchronous I/O Concepts",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_async_sub_2",
-              "name": "Non-blocking Operations",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_async_sub_3",
-              "name": "Cross-platform Compatibility",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "libuv provides the async I/O - Node's secret sauce",
+            "It's a C library that handles file system, network, timers",
+            "Abstracts OS differences (Windows vs Linux)",
+            "This is why Node can be non-blocking"
+          ],
+          "mustNotMiss": [
+            "libuv provides the event loop implementation",
+            "Thread pool handles file system and DNS operations",
+            "Network I/O uses OS-level async primitives (epoll, kqueue)",
+            "Default thread pool size is 4 (UV_THREADPOOL_SIZE)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "sync_async_timeout",
           "name": "Season 1 Episode 07: sync, async, setTimeoutZero - code",
           "estimatedHours": 2.5,
           "description": "Understanding synchronous vs asynchronous code execution and timeout mechanisms",
-          "subtopics": [
-            {
-              "id": "sync_async_timeout_sub_0",
-              "name": "Synchronous Code Execution",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "sync_async_timeout_sub_1",
-              "name": "Asynchronous Code Patterns",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "sync_async_timeout_sub_2",
-              "name": "setTimeout and setImmediate",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "sync_async_timeout_sub_3",
-              "name": "Event Loop Timing",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "sync_async_timeout_sub_4",
-              "name": "Practical Examples",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Sync operations block - the whole server waits",
+            "Async operations use callbacks/promises - server continues",
+            "setTimeout(fn, 0) doesn't run immediately - goes to event loop",
+            "Promises and async/await are cleaner than callbacks"
+          ],
+          "mustNotMiss": [
+            "fs.readFileSync blocks, fs.readFile is async",
+            "setTimeout(fn, 0) runs after current code and microtasks",
+            "Promise callbacks run before setTimeout (microtask queue)",
+            "process.nextTick runs before Promise.then"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "v8_engine",
           "name": "Season 1 Episode 08: Deep dive into v8 JS Engine",
           "estimatedHours": 2.5,
           "description": "Understanding V8 JavaScript engine, compilation, and optimization processes",
-          "subtopics": [
-            {
-              "id": "v8_engine_sub_0",
-              "name": "V8 Engine Architecture",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "v8_engine_sub_1",
-              "name": "Just-in-Time Compilation",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "v8_engine_sub_2",
-              "name": "Memory Management",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "v8_engine_sub_3",
-              "name": "Garbage Collection",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "v8_engine_sub_4",
-              "name": "Performance Optimization",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "V8 compiles JavaScript to machine code (JIT compilation)",
+            "Hidden classes optimize object property access",
+            "Garbage collection is automatic but understand its impact",
+            "Use --v8-options to see all V8 flags"
+          ],
+          "mustNotMiss": [
+            "V8 compiles JS to native machine code, not bytecode",
+            "TurboFan optimizer makes hot code faster",
+            "Memory limit: ~1.5GB on 64-bit (adjustable with --max-old-space-size)",
+            "Garbage collection pauses can affect latency"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "libuv_event_loop",
           "name": "Season 1 Episode 09: libuv & Event Loop",
           "estimatedHours": 2.5,
           "description": "Comprehensive understanding of the event loop and its phases",
-          "subtopics": [
-            {
-              "id": "libuv_event_loop_sub_0",
-              "name": "Event Loop Architecture",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_event_loop_sub_1",
-              "name": "Event Loop Phases",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_event_loop_sub_2",
-              "name": "Callback Queue",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_event_loop_sub_3",
-              "name": "Microtasks vs Macrotasks",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "libuv_event_loop_sub_4",
-              "name": "Event Loop Debugging",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Event loop is the heartbeat of NodeJS",
+            "It processes callbacks in specific phases in order",
+            "Understanding phases helps predict execution order",
+            "Don't block the event loop - use worker threads for CPU work"
+          ],
+          "mustNotMiss": [
+            "Phases: timers \u2192 pending callbacks \u2192 poll \u2192 check \u2192 close",
+            "process.nextTick runs between phases (before microtasks)",
+            "Promise.then runs in microtask queue (after nextTick)",
+            "setImmediate runs in check phase (after poll)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "thread_pool",
           "name": "Season 1 Episode 10: Thread pool in libuv",
           "estimatedHours": 2,
           "description": "Understanding thread pool concepts and their role in NodeJS operations",
-          "subtopics": [
-            {
-              "id": "thread_pool_sub_0",
-              "name": "Thread Pool Basics",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "thread_pool_sub_1",
-              "name": "File System Operations",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "thread_pool_sub_2",
-              "name": "CPU-Intensive Tasks",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "thread_pool_sub_3",
-              "name": "Thread Pool Size Configuration",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "thread_pool_sub_4",
-              "name": "Performance Implications",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Thread pool handles blocking operations asynchronously",
+            "File system, crypto, compression use the thread pool",
+            "Network I/O doesn't use thread pool - uses OS async",
+            "Increase pool size for I/O heavy apps"
+          ],
+          "mustNotMiss": [
+            "Default: 4 threads, max: 1024",
+            "Set with UV_THREADPOOL_SIZE environment variable",
+            "fs, crypto, zlib use thread pool",
+            "Too many concurrent file operations can exhaust pool"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "creating_server",
           "name": "Season 1 Episode 11: Creating a Server",
           "estimatedHours": 2.5,
           "description": "Building your first HTTP server using NodeJS built-in modules",
-          "subtopics": [
-            {
-              "id": "creating_server_sub_0",
-              "name": "HTTP Module",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "creating_server_sub_1",
-              "name": "Creating Basic Server",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "creating_server_sub_2",
-              "name": "Request and Response Objects",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "creating_server_sub_3",
-              "name": "Handling Different Routes",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "creating_server_sub_4",
-              "name": "Server Configuration",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "http module is built-in - no npm install needed",
+            "Request and response objects are streams",
+            "This is low-level - Express abstracts it nicely",
+            "Understand raw http before using frameworks"
+          ],
+          "mustNotMiss": [
+            "const server = http.createServer((req, res) => {})",
+            "req.url and req.method for routing",
+            "res.statusCode, res.setHeader(), res.end()",
+            "server.listen(3000) starts the server"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "databases_intro",
           "name": "Season 1 Episode 12: Databases - SQL & NoSQL",
           "estimatedHours": 2,
           "description": "Introduction to databases, understanding SQL vs NoSQL paradigms",
-          "subtopics": [
-            {
-              "id": "databases_intro_sub_0",
-              "name": "Database Fundamentals",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "databases_intro_sub_1",
-              "name": "SQL vs NoSQL Comparison",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "databases_intro_sub_2",
-              "name": "When to Use Each Type",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "databases_intro_sub_3",
-              "name": "Popular Database Options",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "databases_intro_sub_4",
-              "name": "Database Design Principles",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "SQL: structured, relational, ACID compliant (PostgreSQL, MySQL)",
+            "NoSQL: flexible schema, horizontal scaling (MongoDB, Redis)",
+            "Choose based on data structure and access patterns",
+            "Most apps use a combination of both"
+          ],
+          "mustNotMiss": [
+            "SQL: tables, rows, joins, foreign keys",
+            "NoSQL: collections, documents, embedded data",
+            "SQL for complex queries and transactions",
+            "NoSQL for flexible schema and horizontal scaling"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "mongodb_setup",
           "name": "Season 1 Episode 13: Creating a database & mongodb",
           "estimatedHours": 2.5,
           "description": "Setting up MongoDB and understanding document-based database concepts",
-          "subtopics": [
-            {
-              "id": "mongodb_setup_sub_0",
-              "name": "MongoDB Installation and Setup",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "mongodb_setup_sub_1",
-              "name": "Document-based Storage",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "mongodb_setup_sub_2",
-              "name": "Collections and Documents",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "mongodb_setup_sub_3",
-              "name": "Basic CRUD Operations",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "mongodb_setup_sub_4",
-              "name": "MongoDB Compass Introduction",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "MongoDB stores JSON-like documents (BSON)",
+            "Mongoose provides schema validation and helpful methods",
+            "Connection pooling is handled automatically",
+            "Use indexes for query performance"
+          ],
+          "mustNotMiss": [
+            "mongoose.connect('mongodb://localhost:27017/dbname')",
+            "const schema = new mongoose.Schema({ name: String })",
+            "const Model = mongoose.model('Name', schema)",
+            "Model.find(), Model.findById(), Model.create()"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -858,786 +436,285 @@
           "name": "Season 2 Episode 00: Introduction to Project",
           "estimatedHours": 1.5,
           "description": "Overview of the DevTinder project that will be built throughout the course",
-          "subtopics": [
-            {
-              "id": "project_intro_sub_0",
-              "name": "Project Overview - DevTinder",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "project_intro_sub_1",
-              "name": "Features and Functionality",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "project_intro_sub_2",
-              "name": "Technology Stack",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "project_intro_sub_3",
-              "name": "Development Timeline",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "architecture_patterns",
           "name": "Season 2 Episode 01: Microservices vs Monolith",
           "estimatedHours": 2,
           "description": "Understanding different architectural patterns and how to approach project building",
-          "subtopics": [
-            {
-              "id": "architecture_patterns_sub_0",
-              "name": "Monolithic Architecture",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "architecture_patterns_sub_1",
-              "name": "Microservices Architecture",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "architecture_patterns_sub_2",
-              "name": "Pros and Cons of Each",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "architecture_patterns_sub_3",
-              "name": "When to Choose What",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "architecture_patterns_sub_4",
-              "name": "Project Structure Planning",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "planning_design",
           "name": "Season 2 Episode 02: Features, HLD, LLD & Planning",
           "estimatedHours": 2,
           "description": "High-level and low-level design concepts, feature planning and system architecture",
-          "subtopics": [
-            {
-              "id": "planning_design_sub_0",
-              "name": "High-Level Design (HLD)",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "planning_design_sub_1",
-              "name": "Low-Level Design (LLD)",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "planning_design_sub_2",
-              "name": "Feature Breakdown",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "planning_design_sub_3",
-              "name": "System Architecture Planning",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "planning_design_sub_4",
-              "name": "Database Design",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "express_server",
           "name": "Season 2 Episode 03: Creating our Express Server",
           "estimatedHours": 2,
           "description": "Setting up Express.js server and understanding the Express framework",
-          "subtopics": [
-            {
-              "id": "express_server_sub_0",
-              "name": "Express.js Introduction",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "express_server_sub_1",
-              "name": "Server Setup and Configuration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "express_server_sub_2",
-              "name": "Basic Routing",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "express_server_sub_3",
-              "name": "Express Application Structure",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "express_server_sub_4",
-              "name": "Development Server Setup",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "routing_handlers",
           "name": "Season 2 Episode 04: Routing and Request Handlers",
           "estimatedHours": 2.5,
           "description": "Advanced routing concepts and request handling in Express",
-          "subtopics": [
-            {
-              "id": "routing_handlers_sub_0",
-              "name": "Advanced Routing Patterns",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "routing_handlers_sub_1",
-              "name": "Route Parameters",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "routing_handlers_sub_2",
-              "name": "Query Parameters",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "routing_handlers_sub_3",
-              "name": "Request Body Handling",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "routing_handlers_sub_4",
-              "name": "Response Methods",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "middlewares_errors",
           "name": "Season 2 Episode 05: Middlewares & Error Handlers",
           "estimatedHours": 2.5,
           "description": "Understanding middleware concept and implementing error handling",
-          "subtopics": [
-            {
-              "id": "middlewares_errors_sub_0",
-              "name": "Middleware Concepts",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "middlewares_errors_sub_1",
-              "name": "Built-in Middlewares",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "middlewares_errors_sub_2",
-              "name": "Custom Middleware Creation",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "middlewares_errors_sub_3",
-              "name": "Error Handling Middleware",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "middlewares_errors_sub_4",
-              "name": "Middleware Chain",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "database_mongoose",
           "name": "Season 2 Episode 06: Database, Schema & Models | Mongoose",
           "estimatedHours": 3,
           "description": "Integrating MongoDB with Express using Mongoose ODM",
-          "subtopics": [
-            {
-              "id": "database_mongoose_sub_0",
-              "name": "Mongoose Introduction",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "database_mongoose_sub_1",
-              "name": "Schema Definition",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "database_mongoose_sub_2",
-              "name": "Model Creation",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "database_mongoose_sub_3",
-              "name": "Database Connection",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "database_mongoose_sub_4",
-              "name": "Schema Validation",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "apis_development",
           "name": "Season 2 Episode 07: Diving into the APIs",
           "estimatedHours": 2.5,
           "description": "Building RESTful APIs and understanding API design principles",
-          "subtopics": [
-            {
-              "id": "apis_development_sub_0",
-              "name": "RESTful API Principles",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_development_sub_1",
-              "name": "HTTP Methods",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_development_sub_2",
-              "name": "API Endpoints Design",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_development_sub_3",
-              "name": "Request/Response Structure",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_development_sub_4",
-              "name": "API Testing",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "data_validation",
           "name": "Season 2 Episode 08: Data Sanitization & Schema Validations",
           "estimatedHours": 2.5,
           "description": "Implementing data validation and sanitization for security",
-          "subtopics": [
-            {
-              "id": "data_validation_sub_0",
-              "name": "Input Validation",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_validation_sub_1",
-              "name": "Data Sanitization",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_validation_sub_2",
-              "name": "Schema Validation Rules",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_validation_sub_3",
-              "name": "Custom Validators",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "data_validation_sub_4",
-              "name": "Error Handling for Validation",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "password_encryption",
           "name": "Season 2 Episode 09: Encrypting Passwords",
           "estimatedHours": 2,
           "description": "Implementing secure password hashing and encryption",
-          "subtopics": [
-            {
-              "id": "password_encryption_sub_0",
-              "name": "Password Security Concepts",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "password_encryption_sub_1",
-              "name": "Hashing vs Encryption",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "password_encryption_sub_2",
-              "name": "bcrypt Implementation",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "password_encryption_sub_3",
-              "name": "Salt and Rounds",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "password_encryption_sub_4",
-              "name": "Password Comparison",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "auth_jwt_cookies",
           "name": "Season 2 Episode 10: Authentication, JWT & Cookies",
           "estimatedHours": 3,
           "description": "Implementing authentication using JWT tokens and cookie management",
-          "subtopics": [
-            {
-              "id": "auth_jwt_cookies_sub_0",
-              "name": "Authentication vs Authorization",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "auth_jwt_cookies_sub_1",
-              "name": "JWT Token Concepts",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "auth_jwt_cookies_sub_2",
-              "name": "Token Creation and Verification",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "auth_jwt_cookies_sub_3",
-              "name": "Cookie Management",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "auth_jwt_cookies_sub_4",
-              "name": "Session Management",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "apis_router",
           "name": "Season 2 Episode 11: Diving into the APIs and express Router",
           "estimatedHours": 2.5,
           "description": "Advanced API development and Express Router for modular routing",
-          "subtopics": [
-            {
-              "id": "apis_router_sub_0",
-              "name": "Express Router",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_router_sub_1",
-              "name": "Modular Routing",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_router_sub_2",
-              "name": "Route Organization",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_router_sub_3",
-              "name": "API Versioning",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "apis_router_sub_4",
-              "name": "Route Protection",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "db_queries_indexes",
           "name": "Season 2 Episode 12: Logical DB Query & Compound Indexes",
           "estimatedHours": 3,
           "description": "Advanced database queries and performance optimization with indexes",
-          "subtopics": [
-            {
-              "id": "db_queries_indexes_sub_0",
-              "name": "Complex MongoDB Queries",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "db_queries_indexes_sub_1",
-              "name": "Aggregation Pipeline",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "db_queries_indexes_sub_2",
-              "name": "Database Indexes",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "db_queries_indexes_sub_3",
-              "name": "Compound Indexes",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "db_queries_indexes_sub_4",
-              "name": "Query Performance Optimization",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "populate_apis",
           "name": "Season 2 Episode 13: ref, Populate & Thought process of writing APIs",
           "estimatedHours": 2.5,
           "description": "Database relationships, population, and API design thinking",
-          "subtopics": [
-            {
-              "id": "populate_apis_sub_0",
-              "name": "MongoDB References",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "populate_apis_sub_1",
-              "name": "Populate Functionality",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "populate_apis_sub_2",
-              "name": "Relationship Management",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "populate_apis_sub_3",
-              "name": "API Design Patterns",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "populate_apis_sub_4",
-              "name": "Performance Considerations",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "feed_pagination",
           "name": "Season 2 Episode 14: Building Feed API & Pagination",
           "estimatedHours": 3,
           "description": "Building complex feed APIs with pagination and filtering",
-          "subtopics": [
-            {
-              "id": "feed_pagination_sub_0",
-              "name": "Feed Algorithm Design",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "feed_pagination_sub_1",
-              "name": "Pagination Implementation",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "feed_pagination_sub_2",
-              "name": "Skip and Limit",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "feed_pagination_sub_3",
-              "name": "Cursor-based Pagination",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "feed_pagination_sub_4",
-              "name": "Feed Optimization",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -1652,220 +729,95 @@
           "name": "Season 2 Episode 15: DevTinder UI - Part 1",
           "estimatedHours": 2,
           "description": "Starting the frontend development for DevTinder application",
-          "subtopics": [
-            {
-              "id": "devtinder_ui_1_sub_0",
-              "name": "Frontend Setup",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_1_sub_1",
-              "name": "Project Structure",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_1_sub_2",
-              "name": "Component Architecture",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_1_sub_3",
-              "name": "Initial UI Components",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "devtinder_ui_2",
           "name": "Season 2 Episode 16: DevTinder UI - Part 2",
           "estimatedHours": 2,
           "description": "Continuing UI development with more complex components",
-          "subtopics": [
-            {
-              "id": "devtinder_ui_2_sub_0",
-              "name": "Advanced Components",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_2_sub_1",
-              "name": "State Management",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_2_sub_2",
-              "name": "API Integration",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_2_sub_3",
-              "name": "User Authentication UI",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "devtinder_ui_3",
           "name": "Season 2 Episode 17: DevTinder UI - Part 3",
           "estimatedHours": 2,
           "description": "Building core features and user interactions",
-          "subtopics": [
-            {
-              "id": "devtinder_ui_3_sub_0",
-              "name": "Core Feature Implementation",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_3_sub_1",
-              "name": "User Interactions",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_3_sub_2",
-              "name": "Form Handling",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_3_sub_3",
-              "name": "Real-time Updates",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "devtinder_ui_4",
           "name": "Season 2 Episode 18: DevTinder UI - Part 4",
           "estimatedHours": 2,
           "description": "Advanced UI features and user experience improvements",
-          "subtopics": [
-            {
-              "id": "devtinder_ui_4_sub_0",
-              "name": "Advanced UI Features",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_4_sub_1",
-              "name": "User Experience Optimization",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_4_sub_2",
-              "name": "Performance Improvements",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_4_sub_3",
-              "name": "Mobile Responsiveness",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "devtinder_ui_5",
           "name": "Season 2 Episode 19: DevTinder UI - Part 5",
           "estimatedHours": 2,
           "description": "Finalizing the UI and connecting all components",
-          "subtopics": [
-            {
-              "id": "devtinder_ui_5_sub_0",
-              "name": "Final UI Polish",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_5_sub_1",
-              "name": "Component Integration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_5_sub_2",
-              "name": "Testing and Debugging",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "devtinder_ui_5_sub_3",
-              "name": "UI/UX Best Practices",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -1880,477 +832,171 @@
           "name": "Season 3 Episode 01: Launching AWS Instance and deploying frontend",
           "estimatedHours": 2.5,
           "description": "Setting up AWS EC2 instance and deploying frontend application",
-          "subtopics": [
-            {
-              "id": "aws_frontend_deployment_sub_0",
-              "name": "AWS EC2 Setup",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "aws_frontend_deployment_sub_1",
-              "name": "Instance Configuration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "aws_frontend_deployment_sub_2",
-              "name": "Frontend Deployment",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "aws_frontend_deployment_sub_3",
-              "name": "Security Groups",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "aws_frontend_deployment_sub_4",
-              "name": "SSH Access",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "nginx_backend_deployment",
           "name": "Season 3 Episode 02: Nginx & Backend Node App Deployment",
           "estimatedHours": 2.5,
           "description": "Configuring Nginx as reverse proxy and deploying NodeJS backend",
-          "subtopics": [
-            {
-              "id": "nginx_backend_deployment_sub_0",
-              "name": "Nginx Installation and Configuration",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_backend_deployment_sub_1",
-              "name": "Reverse Proxy Setup",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_backend_deployment_sub_2",
-              "name": "NodeJS App Deployment",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_backend_deployment_sub_3",
-              "name": "Process Management",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_backend_deployment_sub_4",
-              "name": "Load Balancing",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "custom_domain",
           "name": "Season 3 Episode 03: Adding a Custom Domain Name",
           "estimatedHours": 2,
           "description": "Setting up custom domain and SSL certificates",
-          "subtopics": [
-            {
-              "id": "custom_domain_sub_0",
-              "name": "Domain Registration",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "custom_domain_sub_1",
-              "name": "DNS Configuration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "custom_domain_sub_2",
-              "name": "SSL Certificate Setup",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "custom_domain_sub_3",
-              "name": "Domain Mapping",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "custom_domain_sub_4",
-              "name": "HTTPS Configuration",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "email_services",
           "name": "Season 3 Episode 04: Sending Emails using Amazon SES",
           "estimatedHours": 2,
           "description": "Implementing email functionality using AWS Simple Email Service",
-          "subtopics": [
-            {
-              "id": "email_services_sub_0",
-              "name": "AWS SES Setup",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "email_services_sub_1",
-              "name": "Email Templates",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "email_services_sub_2",
-              "name": "SMTP Configuration",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "email_services_sub_3",
-              "name": "Email Verification",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "email_services_sub_4",
-              "name": "Bounce and Complaint Handling",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "env_security",
           "name": "Season 3 Episode 05: Keeping Our Credentials Safe Using dotenv Files",
           "estimatedHours": 1.5,
           "description": "Environment variable management and security best practices",
-          "subtopics": [
-            {
-              "id": "env_security_sub_0",
-              "name": "Environment Variables",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "env_security_sub_1",
-              "name": "dotenv Configuration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "env_security_sub_2",
-              "name": "Secret Management",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "env_security_sub_3",
-              "name": "Production vs Development Config",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "env_security_sub_4",
-              "name": "Security Best Practices",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "cron_jobs",
           "name": "Season 3 Episode 06: Scheduling Cron Jobs",
           "estimatedHours": 2,
           "description": "Implementing scheduled tasks and background jobs",
-          "subtopics": [
-            {
-              "id": "cron_jobs_sub_0",
-              "name": "Cron Job Concepts",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "cron_jobs_sub_1",
-              "name": "Task Scheduling",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "cron_jobs_sub_2",
-              "name": "Background Processing",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "cron_jobs_sub_3",
-              "name": "Job Queues",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "cron_jobs_sub_4",
-              "name": "Error Handling in Jobs",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "payment_gateway",
           "name": "Season 3 Episode 07: Payment Gateway Integration ft. Razorpay",
           "estimatedHours": 2.5,
           "description": "Integrating payment processing with Razorpay",
-          "subtopics": [
-            {
-              "id": "payment_gateway_sub_0",
-              "name": "Payment Gateway Setup",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "payment_gateway_sub_1",
-              "name": "Razorpay Integration",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "payment_gateway_sub_2",
-              "name": "Payment Processing",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "payment_gateway_sub_3",
-              "name": "Webhook Handling",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "payment_gateway_sub_4",
-              "name": "Payment Security",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "websockets",
           "name": "Season 3 Episode 08: Web Sockets & socket.io",
           "estimatedHours": 2.5,
           "description": "Implementing real-time communication with WebSockets",
-          "subtopics": [
-            {
-              "id": "websockets_sub_0",
-              "name": "WebSocket Concepts",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "websockets_sub_1",
-              "name": "Socket.io Setup",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "websockets_sub_2",
-              "name": "Real-time Communication",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "websockets_sub_3",
-              "name": "Event Handling",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "websockets_sub_4",
-              "name": "Connection Management",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "live_chat",
           "name": "Season 3 Episode 09: Building Real-time Live Chat Feature",
           "estimatedHours": 2.5,
           "description": "Building a complete real-time chat system",
-          "subtopics": [
-            {
-              "id": "live_chat_sub_0",
-              "name": "Chat Architecture",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "live_chat_sub_1",
-              "name": "Message Broadcasting",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "live_chat_sub_2",
-              "name": "User Presence",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "live_chat_sub_3",
-              "name": "Chat History",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "live_chat_sub_4",
-              "name": "Message Persistence",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         }
       ]
     },
@@ -2365,265 +1011,95 @@
           "name": "Nginx Configuration Optimization",
           "estimatedHours": 2,
           "description": "Advanced Nginx configuration and performance optimization",
-          "subtopics": [
-            {
-              "id": "nginx_optimization_sub_0",
-              "name": "Nginx Performance Tuning",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_optimization_sub_1",
-              "name": "Caching Strategies",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_optimization_sub_2",
-              "name": "Compression Configuration",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_optimization_sub_3",
-              "name": "Rate Limiting",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "nginx_optimization_sub_4",
-              "name": "Security Headers",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "monitoring_logging",
           "name": "Production Monitoring & Logging",
           "estimatedHours": 2,
           "description": "Implementing comprehensive monitoring and logging solutions",
-          "subtopics": [
-            {
-              "id": "monitoring_logging_sub_0",
-              "name": "Application Monitoring",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "monitoring_logging_sub_1",
-              "name": "Log Management",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "monitoring_logging_sub_2",
-              "name": "Error Tracking",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "monitoring_logging_sub_3",
-              "name": "Performance Metrics",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "monitoring_logging_sub_4",
-              "name": "Alerting Systems",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "scalability_optimization",
           "name": "Scalability & Performance Optimization",
           "estimatedHours": 2.5,
           "description": "Optimizing application for scale and performance",
-          "subtopics": [
-            {
-              "id": "scalability_optimization_sub_0",
-              "name": "Code Optimization",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "scalability_optimization_sub_1",
-              "name": "Database Performance",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "scalability_optimization_sub_2",
-              "name": "Caching Strategies",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "scalability_optimization_sub_3",
-              "name": "Load Testing",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "scalability_optimization_sub_4",
-              "name": "Horizontal Scaling",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "security_hardening",
           "name": "Security Hardening & Best Practices",
           "estimatedHours": 2,
           "description": "Implementing security best practices and hardening",
-          "subtopics": [
-            {
-              "id": "security_hardening_sub_0",
-              "name": "Security Vulnerabilities",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "security_hardening_sub_1",
-              "name": "Input Validation",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "security_hardening_sub_2",
-              "name": "SQL Injection Prevention",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "security_hardening_sub_3",
-              "name": "XSS Protection",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "security_hardening_sub_4",
-              "name": "CSRF Protection",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         },
         {
           "id": "ci_cd_automation",
           "name": "CI/CD & Deployment Automation",
           "estimatedHours": 1.5,
           "description": "Setting up continuous integration and deployment pipelines",
-          "subtopics": [
-            {
-              "id": "ci_cd_automation_sub_0",
-              "name": "CI/CD Concepts",
-              "order": 0,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "ci_cd_automation_sub_1",
-              "name": "Automated Testing",
-              "order": 1,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "ci_cd_automation_sub_2",
-              "name": "Deployment Pipelines",
-              "order": 2,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "ci_cd_automation_sub_3",
-              "name": "Version Control Integration",
-              "order": 3,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            },
-            {
-              "id": "ci_cd_automation_sub_4",
-              "name": "Rollback Strategies",
-              "order": 4,
-              "status": "not_started",
-              "needsReview": false,
-              "practiceCount": 0,
-              "revisionCount": 0
-            }
-          ]
+          "learningTip": [
+            "Understand the concept before moving to the next topic",
+            "Build small projects to reinforce learning",
+            "Read official NodeJS documentation for authoritative info",
+            "Practice with real-world scenarios"
+          ],
+          "mustNotMiss": [
+            "NodeJS is single-threaded but non-blocking",
+            "Use async/await for cleaner async code",
+            "Always handle errors - unhandled rejections crash the app",
+            "Environment variables for configuration (never hardcode secrets)"
+          ],
+          "practiceQuestions": []
         }
       ]
     }

@@ -28,8 +28,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, updateTopicProgress, getTopicProgress, getUser } from '@/lib/firebase/firebase-utils';
-import { SyllabusSubject, Subtopic, TopicProgress, User as UserProfile } from '@/types/exam';
+import { getSyllabus, updateTopicProgress, getAllProgress, getUser } from '@/lib/firebase/firebase-utils';
+import { SyllabusSubject, TopicProgress, User as UserProfile } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
 
 interface ReviewItem {
@@ -64,27 +64,21 @@ export default function ConceptReviewPage() {
       if (!user) return;
       
       try {
-        const [syllabusData, profileData] = await Promise.all([
+        // Use Promise.all for parallel fetching - OPTIMIZED: Single batch query instead of N+1
+        const [syllabusData, profileData, allProgress] = await Promise.all([
           getSyllabus(user.uid),
-          getUser(user.uid)
+          getUser(user.uid),
+          getAllProgress(user.uid) // Single collection query instead of N individual reads
         ]);
         
         setSyllabus(syllabusData);
         setUserProfile(profileData);
         
-        // Fetch progress for all topics
-        const progressPromises = syllabusData.flatMap(subject =>
-          subject.topics.map(async topic => {
-            const progress = await getTopicProgress(user.uid, topic.id);
-            return { topicId: topic.id, progress };
-          })
-        );
-        
-        const progressResults = await Promise.all(progressPromises);
+        // Build progress map from batch result
         const progressMap = new Map<string, TopicProgress>();
-        progressResults.forEach(({ topicId, progress }) => {
-          if (progress) {
-            progressMap.set(topicId, progress);
+        allProgress.forEach((progress) => {
+          if (progress.topicId) {
+            progressMap.set(progress.topicId, progress);
           }
         });
         setTopicProgressMap(progressMap);
@@ -166,43 +160,6 @@ export default function ConceptReviewPage() {
             });
           }
         }
-        
-        // Check subtopics
-        topic.subtopics?.forEach((subtopic: Subtopic) => {
-          const startDate = userProfile?.preparationStartDate?.toDate();
-          const effectiveSubtopic = { ...subtopic };
-
-          if (startDate) {
-            // Ignore flags from before start date
-            if (effectiveSubtopic.reviewRequestedAt && effectiveSubtopic.reviewRequestedAt.toDate() < startDate) {
-              effectiveSubtopic.needsReview = false;
-            }
-            // If revision old, reset needsReview if it was somehow based on that?
-            // Actually needsReview is explicit.
-          }
-
-          if (effectiveSubtopic.needsReview) {
-            const lastRevisedDate = effectiveSubtopic.lastRevised?.toDate();
-            
-            // Should we show lastRevised if it's old? Probably not relevant.
-            // But let's keep it for context unless it's strictly excluded.
-             
-            items.push({
-              type: 'subtopic',
-              id: subtopic.id, // Use original ID
-              name: subtopic.name,
-              subjectId: subject.id,
-              subjectName: subject.name,
-              topicId: topic.id,
-              topicName: topic.name,
-              needsReview: true,
-              ...(lastRevisedDate && { lastRevised: lastRevisedDate }),
-              status: subtopic.status,
-              practiceCount: subtopic.practiceCount,
-              revisionCount: subtopic.revisionCount,
-            });
-          }
-        });
       });
     });
     
@@ -309,7 +266,7 @@ export default function ConceptReviewPage() {
           {/* Header */}
           <FeaturePageHeader
             title="Concept Review"
-            description="Topics and subtopics flagged for review or due for revision"
+            description="Topics flagged for review or due for revision"
             icon={<AlertTriangle className="h-5 w-5 text-amber-500" />}
             actions={
               <Badge variant="outline" className="text-base px-4 py-2">
@@ -356,7 +313,7 @@ export default function ConceptReviewPage() {
                     icon={CheckCircle}
                     title={filter === 'all' ? 'All caught up!' : 'No items in this category'}
                     description={filter === 'all' 
-                      ? 'You have no topics or subtopics flagged for review. Great work!'
+                      ? 'You have no topics flagged for review. Great work!'
                       : 'Check other tabs or mark items for review from topic pages.'
                     }
                   />
