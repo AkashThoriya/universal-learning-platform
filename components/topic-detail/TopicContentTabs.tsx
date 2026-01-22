@@ -10,7 +10,8 @@ import {
   Scale,
   CornerUpRight,
   Cpu,
-  Microscope
+  Microscope,
+  PenLine
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { SyllabusTopic, TopicProgress } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
+import { HandwrittenNotesTab } from './HandwrittenNotesTab';
 
 // Helper to parse concept text into category and intent
 function parseConcept(text: string): { category: string | null; content: string; icon: React.ReactNode; borderColor: string; textColor: string } {
@@ -71,6 +73,7 @@ interface TopicContentTabsProps {
   progress: TopicProgress | null;
   userNotes: string;
   saving?: boolean;
+  userId: string;
   onNotesChange: (value: string) => void;
   onSaveNotes: () => void;
   onToggleQuestion: (slug: string, link?: string, name?: string) => void;
@@ -81,6 +84,7 @@ export function TopicContentTabs({
   progress,
   userNotes,
   saving,
+  userId,
   onNotesChange,
   onSaveNotes,
   onToggleQuestion
@@ -97,6 +101,7 @@ export function TopicContentTabs({
             <TabTriggerItem value="concepts" icon={<Sparkles size={18} />} label="Key Concepts" />
             <TabTriggerItem value="practice" icon={<Code size={18} />} label="Practice" count={topic.practiceQuestions?.length || 0} />
             <TabTriggerItem value="notes" icon={<FileText size={18} />} label="Notes" />
+            <TabTriggerItem value="handwritten" icon={<PenLine size={18} />} label="Handwritten" />
           </TabsList>
         </div>
 
@@ -288,6 +293,13 @@ export function TopicContentTabs({
             <p className="text-xs text-slate-400 text-right font-medium">
               Markdown supported • Changes must be saved manually
             </p>
+          </TabsContent>
+
+          {/* Handwritten Notes Tab - Lazy Loaded */}
+          <TabsContent value="handwritten" className="mt-0 animate-in fade-in duration-200">
+            {activeTab === 'handwritten' && (
+              <HandwrittenNotesTab userId={userId} topicId={topic.id} />
+            )}
           </TabsContent>
         </div>
       </Tabs>

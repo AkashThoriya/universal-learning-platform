@@ -273,6 +273,7 @@ export default function TopicDetailPage() {
                 progress={topicProgress}
                 userNotes={userNotes}
                 saving={saving}
+                userId={user?.uid ?? ''}
                 onNotesChange={setUserNotes}
                 onSaveNotes={handleSaveNotes}
                 onToggleQuestion={handleToggleQuestion}

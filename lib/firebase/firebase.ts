@@ -12,6 +12,7 @@ import { getAnalytics, Analytics } from 'firebase/analytics';
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore, enableNetwork, disableNetwork, doc, getDoc } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 // ============================================================================
 // ENVIRONMENT VALIDATION
@@ -89,6 +90,7 @@ const validateFirebaseConfig = (): FirebaseConfig => {
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
+let storage: FirebaseStorage;
 let analytics: Analytics | null = null;
 
 try {
@@ -109,6 +111,7 @@ try {
   // Initialize services
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
 
   // Initialize analytics only in browser and production
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
@@ -191,8 +194,8 @@ export const getConnectionStatus = (): Promise<boolean> => {
 // EXPORTS
 // ============================================================================
 
-export { auth, db, analytics };
+export { auth, db, storage, analytics };
 export default app;
 
 // Type exports for better development experience
-export type { FirebaseApp, Auth, Firestore, Analytics };
+export type { FirebaseApp, Auth, Firestore, FirebaseStorage, Analytics };

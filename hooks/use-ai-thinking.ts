@@ -60,6 +60,7 @@ export function useAiThinking({
     }
 
     const currentStep = steps[currentStepIndex];
+    if (!currentStep) return;
     const duration = currentStep.duration ?? defaultStepDuration;
 
     const timer = setTimeout(() => {

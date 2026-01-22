@@ -26,7 +26,24 @@ const STEPS = [
   { id: 'finalize', label: 'Finalizing Personal Plan', icon: CheckCircle2, duration: 1000 },
 ];
 
-// ... types remain same ...
+// Types
+interface JourneyArchitectProps {
+  userId: string;
+  onJourneyCreated: () => void;
+  trigger?: React.ReactNode;
+}
+
+interface GeneratedJourneyPlan {
+  title: string;
+  description: string;
+  targetWeeks: number;
+  priority: 'high' | 'low' | 'medium' | 'critical';
+  track: string;
+  milestones: {
+    title: string;
+    deadlineOffsetWeeks: number;
+  }[];
+}
 
 export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyArchitectProps) {
   const [isOpen, setIsOpen] = useState(false);
