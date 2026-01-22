@@ -6,12 +6,10 @@ import {
   CheckCircle,
   ExternalLink,
   BookOpen,
-  Lightbulb,
   GraduationCap,
   Scale,
   CornerUpRight,
   Cpu,
-  Zap,
   Microscope
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -62,7 +60,7 @@ function parseConcept(text: string): { category: string | null; content: string;
   return { 
     category: null, // No label for general insights to avoid repetition
     content: text.replace(/^DO NOT MISS:/i, '').trim(), 
-    icon: <Zap className="h-4 w-4" />,
+    icon: null,
     borderColor: 'border-slate-200', // Subtle neutral border
     textColor: 'text-slate-600'
   };
@@ -106,7 +104,7 @@ export function TopicContentTabs({
         <div className="p-4 sm:p-6 lg:p-8">
           
           {/* Overview Tab */}
-          <TabsContent value="overview" className="mt-0 space-y-8 animate-in fade-in duration-300">
+          <TabsContent value="overview" className="mt-0 space-y-8 animate-in fade-in duration-200">
             {/* Description - Enhanced Typography */}
             <div className="prose prose-slate max-w-none">
               <h3 className="text-xl font-medium text-slate-900 mb-4 tracking-tight">Introduction</h3>
@@ -118,9 +116,6 @@ export function TopicContentTabs({
             {/* Pro Tips - Insight Card Style */}
             {topic.learningTip && topic.learningTip.length > 0 && (
               <div className="bg-slate-50/50 rounded-lg p-6 border border-slate-100/50 relative overflow-hidden">
-               {/* Decorative background icon */}
-               <Lightbulb className="absolute -right-4 -top-4 w-32 h-32 text-slate-200 rotate-12 -z-10 opacity-20" />
-               
                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
                  <Sparkles className="h-4 w-4" />
                  Pro Tips
@@ -140,7 +135,7 @@ export function TopicContentTabs({
           </TabsContent>
 
           {/* Concepts Tab - Zen List Style */}
-          <TabsContent value="concepts" className="mt-0 space-y-8 animate-in fade-in duration-300">
+          <TabsContent value="concepts" className="mt-0 space-y-8 animate-in fade-in duration-200">
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                  <div className="space-y-1">
@@ -182,7 +177,7 @@ export function TopicContentTabs({
           </TabsContent>
 
           {/* Practice Tab - with Concept Mastery State */}
-          <TabsContent value="practice" className="mt-0 space-y-6 animate-in fade-in duration-300">
+          <TabsContent value="practice" className="mt-0 space-y-6 animate-in fade-in duration-200">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-slate-900 tracking-tight">Practice Problems</h3>
               {topic.practiceQuestions && topic.practiceQuestions.length > 0 && (
@@ -275,7 +270,7 @@ export function TopicContentTabs({
           </TabsContent>
 
           {/* Notes Tab */}
-          <TabsContent value="notes" className="mt-0 space-y-6 animate-in fade-in duration-300">
+          <TabsContent value="notes" className="mt-0 space-y-6 animate-in fade-in duration-200">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xl font-semibold text-slate-900 tracking-tight">Personal Notes</h3>
               <Button onClick={onSaveNotes} disabled={saving} size="sm" className={cn("transition-all", saving ? "opacity-80" : "")}>

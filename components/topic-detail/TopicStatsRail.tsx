@@ -33,8 +33,8 @@ export function TopicStatsRail({
   return (
     <div className="space-y-6 sticky top-24">
       {/* Primary Action Card */}
-      <Card className="border-indigo-100 shadow-sm overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500" />
+      <Card className="border-blue-100 shadow-sm overflow-hidden">
+        <div className="h-2 bg-gradient-to-r from-blue-500 to-blue-600" />
         <CardContent className="p-5 space-y-4">
           <div className="space-y-1">
             <h3 className="font-semibold text-slate-900">Topic Status</h3>
@@ -123,14 +123,14 @@ export function TopicStatsRail({
       </div>
 
       {/* Motivation / Tip */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-indigo-100 rounded-xl p-4">
+      <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
         <div className="flex gap-3">
-          <div className="p-2 bg-white rounded-lg shadow-sm h-fit">
-            <TrendingUp className="h-4 w-4 text-indigo-600" />
+          <div className="p-2 bg-white rounded-lg shadow-sm h-fit border border-slate-100">
+            <TrendingUp className="h-4 w-4 text-slate-600" />
           </div>
           <div>
-            <p className="text-xs font-bold text-indigo-900 uppercase tracking-wide mb-1">Pro Tip</p>
-            <p className="text-sm text-indigo-800 leading-relaxed">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pro Tip</p>
+            <p className="text-sm text-slate-700 leading-relaxed">
               Consistent small revisions beat marathon cramming. Try to review this topic again in 3 days.
             </p>
           </div>

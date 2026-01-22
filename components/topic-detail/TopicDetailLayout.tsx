@@ -8,10 +8,10 @@ interface TopicDetailLayoutProps {
 
 export function TopicDetailLayout({ hero, content, rail }: TopicDetailLayoutProps) {
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20 md:pb-10">
+    <div className="min-h-screen bg-slate-50 pb-32 md:pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 py-8">
         
-        {/* Full wwidth Hero Section */}
+        {/* Full width Hero Section */}
         <section className="w-full">
           {hero}
         </section>
@@ -29,18 +29,11 @@ export function TopicDetailLayout({ hero, content, rail }: TopicDetailLayoutProp
           <aside className="hidden lg:block lg:col-span-4 w-full">
             {rail}
           </aside>
-
-          {/* Mobile Rail Fallback (could be below content or specific mobile view) */}
-          {/* For now, we rely on the Rail being hidden on mobile and key stats shown in Hero or a separate mobile footer if needed. 
-              The current design puts primary actions in the Content area for mobile? 
-              Actually, the Stats Rail has the "Mark Complete" button. 
-              On mobile, we should probably show the Rail BELOW the content or have a sticky footer. 
-              Let's show it below content on mobile for now. 
-          */}
-          <aside className="lg:hidden w-full order-last">
+          
+          {/* Mobile Fallback: Render Rail at bottom */}
+          <aside className="block lg:hidden w-full mt-8">
             {rail}
           </aside>
-
         </div>
       </div>
     </div>

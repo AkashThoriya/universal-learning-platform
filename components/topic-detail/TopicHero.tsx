@@ -23,12 +23,6 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
 
   return (
     <div className="relative w-full">
-      {/* Decorative Background Mesh - Refined */}
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-50/50 rounded-full blur-3xl opacity-60" />
-        <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-indigo-50/50 rounded-full blur-3xl opacity-60" />
-      </div>
-
       <div className="space-y-6 py-2">
         {/* Navigation Breadcrumb */}
         <Link 
@@ -74,7 +68,7 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
           </div>
 
           {/* Mastery Ring Indicator */}
-          <div className="flex-shrink-0 flex items-center md:flex-col gap-4 bg-white/50 backdrop-blur-sm p-4 rounded-2xl border border-white/50 shadow-sm">
+          <div className="flex-shrink-0 flex items-center md:flex-col gap-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
             <div className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
               {/* SVG Ring */}
               <svg className="w-full h-full transform -rotate-90">

@@ -21,6 +21,7 @@ import { TopicDetailLayout } from '@/components/topic-detail/TopicDetailLayout';
 import { TopicHero } from '@/components/topic-detail/TopicHero';
 import { TopicStatsRail } from '@/components/topic-detail/TopicStatsRail';
 import { TopicContentTabs } from '@/components/topic-detail/TopicContentTabs';
+import confetti from 'canvas-confetti';
 
 export default function TopicDetailPage() {
   const { user } = useAuth();
@@ -144,6 +145,15 @@ export default function TopicDetailPage() {
         title: isCompleted ? 'Marked In-Progress' : 'Topic Completed! 🎉',
         description: isCompleted ? 'Status reverted to in-progress.' : 'Great job! Mastery score updated.',
       });
+
+      // Trigger confetti if marking as complete
+      if (newStatus === 'completed') {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
     } catch (error) {
       console.error('Error toggling completion:', error);
       toast({ title: 'Error', variant: 'destructive', description: 'Failed to update status.' });
@@ -195,6 +205,12 @@ export default function TopicDetailPage() {
         await toggleQuestionSolved(user.uid, topicId, slug);
         if (!isSolved) {
            toast({ title: 'Problem Solved! 🚀', description: `Marked "${name || 'Problem'}" as solved.` });
+           // Trigger confetti if marking as solved
+           confetti({
+             particleCount: 100,
+             spread: 70,
+             origin: { y: 0.6 }
+           });
         }
       } catch (error) {
         // Revert on failure

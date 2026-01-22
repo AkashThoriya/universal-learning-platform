@@ -32,6 +32,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
+import { AdaptiveAlgorithm } from '@/lib/algorithms/adaptive-testing-algorithms';
 import QuestionInterface from '@/components/adaptive-testing/QuestionInterface';
 import TestAnalyticsDashboard from '@/components/adaptive-testing/TestAnalyticsDashboard';
 import confetti from 'canvas-confetti';
@@ -161,48 +162,54 @@ export default function TestDetailPage() {
   const handleResumeTest = async () => {
       if (!activeSession) return;
       
-      // If we have active session, we should have nextQuestionPreview in it?
-      // Or we need to fetch the current question?
-      // TestSession logic: currentQuestionIndex.
-      // We might need to "get current question".
-      // Usually `resumeTestSession` returns the session. 
-      // Does it return the question?
-      // `nextQuestionPreview` is on the session object if present.
-      
-      // If nextQuestionPreview is missing, we need to fetch it?
-      // Service `resumeTestSession` doesn't fetch question.
-      // But... how do we get the question?
-      // Maybe calls to `submitResponse` with no answer? No.
-      
-      // If we recovered the session, check if question exists.
-      if (activeSession.nextQuestionPreview) {
-          setCurrentQuestion(activeSession.nextQuestionPreview || null);
-          setMode('active');
-      } else {
-          // Fallback: This shouldn't happen if session is active and not finished?
-          // Maybe we need to re-fetch the question from test.questions[currentQuestionIndex]?
-          // But test.questions might be hidden/partial?
-          // The Service loads the test.
-          // Let's try to assume nextQuestionPreview is populated by `recoverActiveSession`?
-          // It's part of Session interface.
-          
-          // If null, maybe we are at start?
-          // But Resuming implies we started.
-          
-          // Let's just setMode('active') and see.
-          // Ideally passing null currentQuestion is bad.
-          
-          // Workaround: We have `test.questions`.
-          // We can find the question by `test.questions[session.currentQuestionIndex]`.
-          // This assumes `test.questions` is populated.
-          
-          if (test && test.questions && activeSession.currentQuestionIndex < test.questions.length) {
-              const q = test.questions[activeSession.currentQuestionIndex];
-              setCurrentQuestion(q || null);
+      try {
+          // Case 1: Session has the next question preview cached (Ideal)
+          if (activeSession.nextQuestionPreview) {
+              setCurrentQuestion(activeSession.nextQuestionPreview);
               setMode('active');
-          } else {
-              toast({ title: 'Error', description: 'Could not restore question.', variant: 'destructive' });
+              return;
           }
+
+          // Case 2: Session is missing preview, we need to recover it using the algorithm
+          if (test && test.questions) {
+              const currentAbility = activeSession.currentAbilityEstimate ?? 0;
+              const nextQ = AdaptiveAlgorithm.selectNextQuestion(
+                  test.questions,
+                  currentAbility,
+                  test.responses || []
+              );
+
+              if (nextQ) {
+                   setCurrentQuestion(nextQ);
+                   setMode('active');
+                   
+                   // Optional: Update session in background to persist this recovery
+                   // This prevents re-calculating if they refresh again immediately
+                   // But for now, client-side recovery is sufficient for the user experience
+                   return;
+              }
+          }
+          
+          // Case 3: Fallback - Attempt to use index if adaptive selection failed (e.g. out of questions?)
+          // or if we simply want to show *something* rather than crashing
+          if (test && test.questions && activeSession.currentQuestionIndex < test.questions.length) {
+              const fallbackQ = test.questions[activeSession.currentQuestionIndex];
+              if (fallbackQ) {
+                  setCurrentQuestion(fallbackQ);
+                  setMode('active');
+                  return;
+              }
+          }
+
+          throw new Error('Unable to determine next question');
+
+      } catch (error) {
+          console.error('Resume error:', error);
+          toast({ 
+              title: 'Resume Failed', 
+              description: 'We could not restore your last question. Please try restarting the test.',
+              variant: 'destructive' 
+          });
       }
   };
 

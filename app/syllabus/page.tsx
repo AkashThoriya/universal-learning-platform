@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import PageTransition from '@/components/layout/PageTransition';
 import {
@@ -8,8 +7,6 @@ import {
   ChevronRight,
   Search,
   Filter,
-  Grid,
-  List,
   Clock,
   Target,
   TrendingUp,
@@ -84,11 +81,10 @@ export default function SyllabusPage() {
   const [userProfile, setUserProfile] = useState<any>(null); // Using any temporarily to avoid Import hell, but ideally User type
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [tierFilter, setTierFilter] = useState<string>('all');
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
 
-  const [viewMode, setViewMode] = useState<'subjects' | 'topics'>('subjects');
+
 
   
   // Enhanced edit state management
@@ -185,9 +181,7 @@ export default function SyllabusPage() {
   }, [user, syllabus, toast]);
 
   // Subject management functions
-  const updateSubjectTier = useCallback((subjectId: string, tier: 1 | 2 | 3) => {
-    setSyllabus(prev => prev.map(subject => (subject.id === subjectId ? { ...subject, tier } : subject)));
-  }, []);
+
 
   const addCustomSubject = useCallback(() => {
     const newSubjectId = `custom-${Date.now()}`;
@@ -416,8 +410,6 @@ export default function SyllabusPage() {
       subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       subject.topics.some(topic => topic.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    // Tier filter
-    const matchesTier = tierFilter === 'all' || subject.tier.toString() === tierFilter;
 
     // Mastery filter
     let matchesMastery = true;
@@ -436,94 +428,27 @@ export default function SyllabusPage() {
       }
     }
 
-    return matchesSearch && matchesTier && matchesMastery;
+    return matchesSearch && matchesMastery;
   }); // Keep natural order - first subjects appear at the top
 
-  // Get all topics with subject information for topics view
-  const getAllTopics = () => {
-    return syllabus.flatMap(subject =>
-      subject.topics.map(topic => ({
-        ...topic,
-        subjectId: subject.id,
-        subjectName: subject.name,
-        subjectTier: subject.tier,
-      }))
-    );
-  };
-
-  const filteredTopics = getAllTopics().filter(topic => {
-    // Search filter
-    const matchesSearch =
-      searchQuery === '' ||
-      topic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      topic.subjectName.toLowerCase().includes(searchQuery.toLowerCase());
-
-    // Tier filter
-    const matchesTier = tierFilter === 'all' || topic.subjectTier.toString() === tierFilter;
-
-    // Mastery filter
-    let matchesMastery = true;
-    if (masteryFilter !== 'all') {
-      const topicProgress = getTopicProgress(topic.id);
-      const masteryScore = topicProgress?.masteryScore || 0;
-      switch (masteryFilter) {
-        case 'low':
-          matchesMastery = masteryScore < MEDIUM_MASTERY_THRESHOLD;
-          break;
-        case 'medium':
-          matchesMastery = masteryScore >= MEDIUM_MASTERY_THRESHOLD && masteryScore < MASTERY_THRESHOLD;
-          break;
-        case 'high':
-          matchesMastery = masteryScore >= MASTERY_THRESHOLD;
-          break;
-      }
-    }
-
-    return matchesSearch && matchesTier && matchesMastery;
-  }); // Keep natural order - first topics appear at the top
   // Calculate completed topics count for Strategy Insights
   const completedTopicsCount = progress.filter(p => p.status === 'completed').length;
 
-  const getTierColor = (tier: number) => {
-    switch (tier) {
-      case 1:
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 2:
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 3:
-        return 'bg-green-100 text-green-800 border-green-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getTierLabel = (tier: number) => {
-    switch (tier) {
-      case 1:
-        return 'High Priority';
-      case 2:
-        return 'Medium Priority';
-      case 3:
-        return 'Low Priority';
-      default:
-        return 'Standard';
-    }
-  };
 
   const getMasteryColor = (score: number) => {
     if (score >= MASTERY_THRESHOLD) {
-      return 'text-green-600';
+      return 'text-emerald-600';
     }
     if (score >= MEDIUM_MASTERY_THRESHOLD) {
-      return 'text-yellow-600';
+      return 'text-amber-600';
     }
-    return 'text-red-600';
+    return 'text-rose-600';
   };
 
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="min-h-screen bg-slate-50">
           <Navigation />
           <BottomNav />
           <SyllabusDashboardSkeleton />
@@ -534,7 +459,7 @@ export default function SyllabusPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
+      <div className="min-h-screen bg-slate-50">
         <Navigation />
         <BottomNav />
 
@@ -614,7 +539,7 @@ export default function SyllabusPage() {
 
           {/* Strategy Insights Section */}
           {!loading && userProfile && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+            <div className="animate-in fade-in duration-200">
               <StrategyInsights 
                 user={userProfile} 
                 syllabus={syllabus} 
@@ -623,31 +548,7 @@ export default function SyllabusPage() {
             </div>
           )}
 
-          {/* View Mode Toggle */}
-          <div className="flex justify-center">
-            <div className="bg-white rounded-lg p-1 shadow-sm border">
-              <div className="flex space-x-1">
-                <Button
-                  variant={viewMode === 'subjects' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('subjects')}
-                  className="px-4 py-2 text-sm font-medium"
-                >
-                  <List className="h-4 w-4 mr-2" />
-                  Subjects View
-                </Button>
-                <Button
-                  variant={viewMode === 'topics' ? 'default' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('topics')}
-                  className="px-4 py-2 text-sm font-medium"
-                >
-                  <Grid className="h-4 w-4 mr-2" />
-                  Topics View
-                </Button>
-              </div>
-            </div>
-          </div>
+
 
           {/* Filters */}
           <Card>
@@ -658,7 +559,7 @@ export default function SyllabusPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="search-topics" className="text-sm font-medium">
                     Search Topics
@@ -673,23 +574,6 @@ export default function SyllabusPage() {
                       className="pl-10"
                     />
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="tier-filter" className="text-sm font-medium">
-                    Filter by Tier
-                  </label>
-                  <Select value={tierFilter} onValueChange={setTierFilter}>
-                    <SelectTrigger id="tier-filter">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Tiers</SelectItem>
-                      <SelectItem value="1">Tier 1 (High Priority)</SelectItem>
-                      <SelectItem value="2">Tier 2 (Medium Priority)</SelectItem>
-                      <SelectItem value="3">Tier 3 (Low Priority)</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 <div className="space-y-2">
@@ -716,7 +600,6 @@ export default function SyllabusPage() {
                     className="w-full"
                     onClick={() => {
                       setSearchQuery('');
-                      setTierFilter('all');
                       setMasteryFilter('all');
                     }}
                   >
@@ -727,88 +610,79 @@ export default function SyllabusPage() {
             </CardContent>
           </Card>
 
-          {/* Overview Stats - Enhanced Responsive Grid */}
+          {/* Overview Stats - Clean Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Total Subjects */}
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200/50 hover:shadow-md transition-all duration-200">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 sm:p-3 rounded-xl bg-blue-500/10">
-                    <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl sm:text-2xl font-bold text-blue-900">{syllabus.length}</p>
-                    <p className="text-xs sm:text-sm text-blue-700/70 font-medium truncate">Total Subjects</p>
-                  </div>
+            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-slate-100">
+                  <BookOpen className="h-5 w-5 text-slate-600" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="min-w-0">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900">{syllabus.length}</p>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Total Subjects</p>
+                </div>
+              </div>
+            </div>
 
             {/* Total Topics */}
-            <Card className="bg-gradient-to-br from-green-50 to-green-100/50 border-green-200/50 hover:shadow-md transition-all duration-200">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 sm:p-3 rounded-xl bg-green-500/10">
-                    <Target className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl sm:text-2xl font-bold text-green-900">
-                      {syllabus.reduce((sum, subject) => sum + subject.topics.length, 0)}
-                    </p>
-                    <p className="text-xs sm:text-sm text-green-700/70 font-medium truncate">Total Topics</p>
-                  </div>
+            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-slate-100">
+                  <Target className="h-5 w-5 text-slate-600" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="min-w-0">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900">
+                    {syllabus.reduce((sum, subject) => sum + subject.topics.length, 0)}
+                  </p>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Total Topics</p>
+                </div>
+              </div>
+            </div>
 
             {/* Average Mastery */}
-            <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200/50 hover:shadow-md transition-all duration-200">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 sm:p-3 rounded-xl bg-purple-500/10">
-                    <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl sm:text-2xl font-bold text-purple-900">
-                      {Math.round(
-                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
-                      )}%
-                    </p>
-                    <p className="text-xs sm:text-sm text-purple-700/70 font-medium truncate">Avg Mastery</p>
-                  </div>
+            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-blue-50">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="min-w-0">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900">
+                    {Math.round(
+                      syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
+                    )}%
+                  </p>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Avg Mastery</p>
+                </div>
+              </div>
+            </div>
 
             {/* Due for Revision */}
-            <Card className="bg-gradient-to-br from-orange-50 to-orange-100/50 border-orange-200/50 hover:shadow-md transition-all duration-200">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 sm:p-3 rounded-xl bg-orange-500/10">
-                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xl sm:text-2xl font-bold text-orange-900">
-                      {
-                        progress.filter(p => {
-                          if (!p.nextRevision?.toMillis) return false;
-                          const daysSince = Math.floor(
-                            (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
-                          );
-                          return daysSince >= 0;
-                        }).length
-                      }
-                    </p>
-                    <p className="text-xs sm:text-sm text-orange-700/70 font-medium truncate">Due for Revision</p>
-                  </div>
+            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-amber-50">
+                  <Clock className="h-5 w-5 text-amber-600" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="min-w-0">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-900">
+                    {
+                      progress.filter(p => {
+                        if (!p.nextRevision?.toMillis) return false;
+                        const daysSince = Math.floor(
+                          (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
+                        );
+                        return daysSince >= 0;
+                      }).length
+                    }
+                  </p>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Due for Revision</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Content based on view mode */}
-          {viewMode === 'subjects' ? (
-            <>
+          {/* Subjects List */}
+          <>
               {/* Enhanced Edit Mode Controls */}
               {editMode && (
                 <div className="space-y-4">
@@ -922,7 +796,7 @@ export default function SyllabusPage() {
                                   <div>
                                     <CardTitle className="text-xl">{subject.name}</CardTitle>
                                     <CardDescription>
-                                      {subject.topics.length} topics • {getTierLabel(subject.tier)}
+                                      {subject.topics.length} topic{subject.topics.length !== 1 ? 's' : ''}
                                     </CardDescription>
                                   </div>
                                   {editMode && (
@@ -943,34 +817,13 @@ export default function SyllabusPage() {
                           <div className="flex items-center space-x-4">
                             {editMode ? (
                               <>
-                                {/* Tier Selection */}
-                                <Select
-                                  value={subject.tier.toString()}
-                                  onValueChange={value => updateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)}
-                                >
-                                  <SelectTrigger className="w-32">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="1">
-                                      <Badge className="bg-red-100 text-red-800 border-red-200">Tier 1</Badge>
-                                    </SelectItem>
-                                    <SelectItem value="2">
-                                      <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Tier 2</Badge>
-                                    </SelectItem>
-                                    <SelectItem value="3">
-                                      <Badge className="bg-green-100 text-green-800 border-green-200">Tier 3</Badge>
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-
                                 {/* Remove Subject Button */}
                                 {subject.isCustom && (
                                   <Button
                                     size="sm"
                                     variant="ghost"
                                     onClick={() => removeSubject(subject.id)}
-                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    className="text-rose-600 hover:text-rose-700 hover:bg-rose-50"
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
@@ -984,7 +837,6 @@ export default function SyllabusPage() {
                                   </p>
                                   <p className="text-sm text-muted-foreground">Mastery</p>
                                 </div>
-                                <Badge className={getTierColor(subject.tier)}>Tier {subject.tier}</Badge>
                               </>
                             )}
                           </div>
@@ -1327,7 +1179,17 @@ inputMode="numeric"
                             </div>
                           ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                              {subject.topics.map(topic => {
+                              {subject.topics.length === 0 ? (
+                                <div className="col-span-full py-12 text-center bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                                   <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                                   <p className="text-sm text-slate-500 font-medium">No topics yet</p>
+                                   <p className="text-xs text-slate-400 mt-1 mb-4">Add topics to start tracking your progress</p>
+                                   <Button variant="outline" size="sm" onClick={() => setEditMode(true)} className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                                     Switch to Edit Mode
+                                   </Button>
+                                </div>
+                              ) : (
+                                subject.topics.map(topic => {
                                 const topicProgress = getTopicProgress(topic.id);
                                 const masteryScore = topicProgress?.masteryScore || 0;
 
@@ -1363,7 +1225,7 @@ inputMode="numeric"
                                     </Card>
                                   </Link>
                                 );
-                              })}
+                              }))}
                             </div>
                           )}
                         </CardContent>
@@ -1384,98 +1246,15 @@ inputMode="numeric"
                   </CardContent>
                 </Card>
               )}
-            </>
-          ) : (
-            <>
-              {/* Topics Grid View */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {filteredTopics.map((topic, index) => {
-                  const topicProgress = getTopicProgress(topic.id);
-                  const masteryScore = topicProgress?.masteryScore || 0;
-
-                  return (
-                    <motion.div
-                      key={`${topic.subjectId}-${topic.id}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05, duration: 0.3 }}
-                    >
-                    <Link
-                      href={`/syllabus/${topic.id}?subject=${topic.subjectId}`}
-                    >
-                      <Card className="hover:shadow-md transition-shadow cursor-pointer h-full group">
-                        <CardContent className="p-5">
-                          <div className="space-y-4">
-                            {/* Topic Header */}
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1 min-w-0">
-                                <h3 className="font-semibold text-base line-clamp-2 group-hover:text-blue-600 transition-colors">
-                                  {topic.name}
-                                </h3>
-                                <div className="text-sm text-muted-foreground mt-1 flex items-center">
-                                  <span className="truncate">{topic.subjectName}</span>
-                                  <Badge className={`ml-2 text-xs ${getTierColor(topic.subjectTier)}`}>
-                                    T{topic.subjectTier}
-                                  </Badge>
-                                </div>
-                              </div>
-                              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors mt-1 flex-shrink-0" />
-                            </div>
-
-                            {/* Progress Section */}
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">Mastery</span>
-                                <span className={`text-sm font-semibold ${getMasteryColor(masteryScore)}`}>
-                                  {masteryScore}%
-                                </span>
-                              </div>
-                              <Progress value={masteryScore} className="h-2" />
-                            </div>
-
-                            {/* Last Study Info */}
-                            {topicProgress?.lastRevised && (
-                              <div className="text-xs text-muted-foreground">
-                                Last studied: {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
-                              </div>
-                            )}
-
-                            {/* Study Time if available */}
-                            {topic.estimatedHours && (
-                              <div className="text-xs text-muted-foreground flex items-center">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {topic.estimatedHours}h estimated
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                    </motion.div>
-                  );
-                })}
-              </div>
-
-              {filteredTopics.length === 0 && (
-                <Card>
-                  <CardContent className="py-12 text-center">
-                    <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No topics found</h3>
-                    <p className="text-muted-foreground">Try adjusting your filters or search query to find topics.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </>
-          )}
+          </>
         </div>
-
           {/* Edit Syllabus Toggle - At bottom, subtle but noticeable */}
           {!editMode && (
             <div className="flex justify-center py-8 mt-8">
               <Button
                 variant="outline"
                 onClick={() => setEditMode(true)}
-                className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 hover:border-blue-400 text-blue-700 dark:text-blue-300 flex items-center gap-2 shadow-sm hover:shadow-md transition-all"
+                className="bg-blue-50 border-blue-100 hover:bg-blue-100 hover:border-blue-200 text-blue-700 flex items-center gap-2 shadow-sm hover:shadow-md transition-all"
               >
                 <Settings className="h-4 w-4" />
                 <span>Edit Syllabus</span>

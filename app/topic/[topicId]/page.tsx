@@ -6,7 +6,7 @@ import { Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-r
 import Link from 'next/link';
 import PageTransition from '@/components/layout/PageTransition';
 import { DetailPageHeader } from '@/components/layout/PageHeader';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
@@ -41,6 +41,7 @@ const getMasteryBadgeClass = (score: number): string => {
 export default function TopicPage() {
   const { user } = useAuth();
   const params = useParams();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const topicId = params.topicId as string;
   const subjectId = searchParams.get('subject');
@@ -423,14 +424,14 @@ export default function TopicPage() {
                 <p className="text-sm text-blue-700">Ready to study this topic?</p>
                 <div className="flex gap-3">
                   <Button
-                    onClick={() => (window.location.href = '/syllabus')}
+                    onClick={() => router.push('/syllabus')}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
                     View Full Syllabus
                   </Button>
                   <Button
-                    onClick={() => (window.location.href = '/test')}
+                    onClick={() => router.push(`/test?topic=${topicId}`)}
                     variant="outline"
                     className="border-blue-300"
                   >

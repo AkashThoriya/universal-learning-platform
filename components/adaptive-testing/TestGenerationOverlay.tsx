@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Sparkles, Target, CheckCircle2, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { useAiThinking } from '@/hooks/use-ai-thinking';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils/utils';
 
@@ -36,49 +37,33 @@ const TIPS = [
 ];
 
 export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
-  // Reset state when visibility toggles
+  const { 
+    currentStepIndex, 
+    start, 
+    reset 
+  } = useAiThinking({
+    steps: STEPS,
+    autoStart: false
+  });
+
+  // Handle visibility changes
   useEffect(() => {
-    if (!isVisible) {
-      setCurrentStepIndex(0);
+    if (isVisible) {
+      start();
       setCurrentTipIndex(0);
+    } else {
+      reset();
     }
-  }, [isVisible]);
-
-  // Handle steps progression
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let timeoutId: NodeJS.Timeout;
-
-    const processStep = (index: number) => {
-      // If we are at the last step, we stay there until isVisible becomes false
-      if (index >= STEPS.length - 1) {
-        return;
-      }
-
-      const step = STEPS[index];
-      timeoutId = setTimeout(() => {
-        setCurrentStepIndex(prev => prev + 1);
-        processStep(index + 1);
-      }, step?.duration ?? 1000);
-    };
-
-    processStep(currentStepIndex);
-
-    return () => clearTimeout(timeoutId);
-  }, [isVisible, currentStepIndex]); // Re-run if isVisible changes, but we manage index internally
+  }, [isVisible, start, reset]);
 
   // Rotate tips
   useEffect(() => {
     if (!isVisible) return;
-
     const interval = setInterval(() => {
       setCurrentTipIndex(prev => (prev + 1) % TIPS.length);
     }, 3000);
-
     return () => clearInterval(interval);
   }, [isVisible]);
 

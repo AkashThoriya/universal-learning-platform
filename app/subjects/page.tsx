@@ -2,6 +2,7 @@
 
 import { BookOpen, Target, Zap, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
@@ -13,6 +14,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { SUBJECTS_DATA } from '@/lib/data/subjects-data';
 
 export default function SubjectsPage() {
+  const router = useRouter();
+
   const getTierColor = (tier: number) => {
     switch (tier) {
       case 1:
@@ -61,14 +64,14 @@ export default function SubjectsPage() {
                 <p className="text-sm text-indigo-700 mb-4">Choose your path to learning excellence</p>
                 <div className="flex gap-3 justify-center">
                   <Button
-                    onClick={() => (window.location.href = '/syllabus')}
+                    onClick={() => router.push('/syllabus')}
                     className="bg-indigo-600 hover:bg-indigo-700"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
                     View Syllabus
                   </Button>
                   <Button
-                    onClick={() => (window.location.href = '/test')}
+                    onClick={() => router.push('/test')}
                     variant="outline"
                     className="border-indigo-300"
                   >

@@ -14,6 +14,11 @@ import { useToast } from '@/hooks/use-toast';
 import { llmService } from '@/lib/ai/llm-service';
 
 // Thinking Steps
+import { useAiThinking } from '@/hooks/use-ai-thinking';
+
+// ... imports remain same ...
+
+// Thinking Steps
 const STEPS = [
   { id: 'analyze', label: 'Analyzing your Goal', icon: Brain, duration: 1500 },
   { id: 'structure', label: 'Structuring Milestones', icon: Target, duration: 1500 },
@@ -21,54 +26,33 @@ const STEPS = [
   { id: 'finalize', label: 'Finalizing Personal Plan', icon: CheckCircle2, duration: 1000 },
 ];
 
-// Type definition for AI-generated journey plan
-interface GeneratedJourneyPlan {
-  title: string;
-  description: string;
-  targetWeeks: number;
-  priority?: 'low' | 'medium' | 'high' | 'critical';
-  track?: string;
-  milestones: Array<{
-    title: string;
-    deadlineOffsetWeeks: number;
-  }>;
-}
-
-interface JourneyArchitectProps {
-  userId: string;
-  onJourneyCreated: () => void;
-  trigger?: React.ReactNode;
-}
+// ... types remain same ...
 
 export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyArchitectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [goal, setGoal] = useState('');
   const [status, setStatus] = useState<'idle' | 'thinking' | 'review'>('idle');
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedJourneyPlan | null>(null);
   const { toast } = useToast();
+
+  const { 
+    currentStepIndex, 
+    start: startThinking, 
+    reset: resetThinking 
+  } = useAiThinking({
+    steps: STEPS,
+    autoStart: false
+  });
 
   const startArchitect = async () => {
     if (!goal.trim()) return;
     setStatus('thinking');
-    setCurrentStepIndex(0);
-
-    // Simulate thinking steps visually while fetching
-    // We start the visual thinking process
-    const stepInterval = setInterval(() => {
-      setCurrentStepIndex(prev => {
-        if (prev < STEPS.length - 1) return prev + 1;
-        return prev;
-      });
-    }, 1500);
+    startThinking();
 
     try {
       // Parallel execution: Visuals run while API calls
       const response = await llmService.generateJourneyPlan(goal);
       
-      clearInterval(stepInterval);
-      setCurrentStepIndex(STEPS.length); // Done
-
       if (response.success && response.data) {
         setGeneratedPlan(response.data);
         setStatus('review');
@@ -76,7 +60,7 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
         throw new Error(response.error || 'Failed to generate plan');
       }
     } catch (error) {
-      clearInterval(stepInterval);
+      resetThinking();
       setStatus('idle');
       toast({
         title: 'Architect Error',
@@ -87,7 +71,8 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
   };
 
   const confirmJourney = async () => {
-    if (!generatedPlan) return;
+     // ... logic remains same ...
+     if (!generatedPlan) return;
     
     try {
       const result = await journeyService.createJourney(userId, {
@@ -122,6 +107,7 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
         setIsOpen(false);
         setStatus('idle');
         setGoal('');
+        resetThinking();
         onJourneyCreated();
       }
     } catch (error) {
@@ -130,7 +116,7 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if(!open) { setStatus('idle'); resetThinking(); } }}>
       <DialogTrigger asChild>
         {trigger || (
           <Button className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/20">
