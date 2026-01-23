@@ -88,8 +88,29 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
   });
 };
 
+// ============================================================================
+// USER CACHE (Reduces redundant API calls across pages)
+// ============================================================================
+
+interface UserCacheEntry {
+  data: User;
+  timestamp: number;
+}
+
+const userCache = new Map<string, UserCacheEntry>();
+const USER_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Invalidate user cache for a specific user
+ * Call this after any update operation to ensure fresh data
+ */
+export const invalidateUserCache = (userId: string): void => {
+  userCache.delete(userId);
+};
+
 /**
  * Retrieves a user document from Firestore by user ID
+ * Uses in-memory caching with 5-minute TTL to reduce redundant API calls
  *
  * @param {string} userId - The unique user ID
  * @returns {Promise<User | null>} Promise that resolves to User object or null if not found
@@ -104,6 +125,14 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
  */
 export const getUser = async (userId: string): Promise<User | null> => {
   return measurePerformance('getUser', async () => {
+    // Check cache first
+    const cached = userCache.get(userId);
+    
+    if (cached && Date.now() - cached.timestamp < USER_CACHE_TTL) {
+      logInfo('User cache hit', { userId, cacheAge: Date.now() - cached.timestamp });
+      return cached.data;
+    }
+
     logInfo('Fetching user data', { userId });
 
     try {
@@ -113,7 +142,10 @@ export const getUser = async (userId: string): Promise<User | null> => {
       if (userSnap.exists()) {
         const userData = { userId, ...userSnap.data() } as User;
 
-        logInfo('User data retrieved successfully', {
+        // Cache the result
+        userCache.set(userId, { data: userData, timestamp: Date.now() });
+
+        logInfo('User data retrieved and cached', {
           userId,
           hasDisplayName: !!userData.displayName,
           primaryCourseId: userData.primaryCourseId ?? 'none',
@@ -158,6 +190,9 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
     try {
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, updates);
+
+      // Invalidate cache after update to ensure fresh data
+      invalidateUserCache(userId);
 
       logInfo('User data updated successfully', {
         userId,
@@ -582,6 +617,26 @@ export const getAllSyllabi = async (userId: string): Promise<Record<string, Syll
 
 // Progress Tracking
 
+// ============================================================================
+// PROGRESS CACHE (Reduces redundant API calls on page switches)
+// ============================================================================
+
+interface ProgressCacheEntry {
+  data: TopicProgress[];
+  timestamp: number;
+}
+
+const progressCache = new Map<string, ProgressCacheEntry>();
+const PROGRESS_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+
+/**
+ * Invalidate progress cache for a specific user
+ * Call this after any update operation to ensure fresh data
+ */
+export const invalidateProgressCache = (userId: string): void => {
+  progressCache.delete(userId);
+};
+
 /**
  * Updates or creates progress tracking for a specific topic
  * Automatically creates new progress entry if one doesn't exist
@@ -627,6 +682,9 @@ export const updateTopicProgress = async (userId: string, topicId: string, updat
       });
     }
 
+    // Invalidate cache after update to ensure fresh data
+    invalidateProgressCache(userId);
+
     logInfo('Topic progress updated', {
       userId,
       topicId,
@@ -669,6 +727,7 @@ export const getTopicProgress = async (userId: string, topicId: string): Promise
 
 /**
  * Retrieves all progress data for a user across all topics
+ * Uses in-memory caching with 2-minute TTL to reduce redundant API calls
  *
  * @param {string} userId - The unique user ID
  * @returns {Promise<TopicProgress[]>} Promise that resolves to array of all topic progress
@@ -680,13 +739,28 @@ export const getTopicProgress = async (userId: string, topicId: string): Promise
  * ```
  */
 export const getAllProgress = async (userId: string): Promise<TopicProgress[]> => {
+  // Check cache first
+  const cached = progressCache.get(userId);
+  
+  if (cached && Date.now() - cached.timestamp < PROGRESS_CACHE_TTL) {
+    logInfo('Progress cache hit', { userId, cacheAge: Date.now() - cached.timestamp });
+    return cached.data;
+  }
+
+  // Fetch from Firestore
   const progressRef = collection(db, 'users', userId, 'progress');
   const progressSnap = await getDocs(progressRef);
 
-  return progressSnap.docs.map(doc => ({
+  const progressData = progressSnap.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as TopicProgress[];
+
+  // Cache the result
+  progressCache.set(userId, { data: progressData, timestamp: Date.now() });
+  
+  logInfo('Progress fetched and cached', { userId, count: progressData.length });
+  return progressData;
 };
 
 /**

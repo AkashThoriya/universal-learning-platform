@@ -43,6 +43,20 @@ service firebase.storage {
       // Users can delete their own files
       allow delete: if isOwner(userId);
     }
+
+    // ==========================================
+    // THUMBNAILS STORAGE
+    // Path: users/{userId}/notes/{topicId}/thumbnails/{fileName}
+    // ==========================================
+    
+    match /users/{userId}/notes/{topicId}/thumbnails/{fileName} {
+      // Same rules apply to thumbnails
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) 
+                   && isValidFileSize() 
+                   && isValidContentType();
+      allow delete: if isOwner(userId);
+    }
     
     // ==========================================
     // DENY ALL OTHER ACCESS

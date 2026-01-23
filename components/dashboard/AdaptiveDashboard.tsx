@@ -266,12 +266,15 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           }
 
           // Fetch real user data including profile and exam info
-          const [progressResult, activeJourneysResult, userProfile, userTests] = await Promise.all([
+          // OPTIMIZED: Fetch all independent data in parallel to reduce latency
+          const [progressResult, activeJourneysResult, userProfile, userTests, syllabus, customGoalsResult] = await Promise.all([
             progressService.getUserProgress(user.uid),
             // journeyService.getActiveJourneys(user.uid), // Using placeholder for now
             Promise.resolve({ success: true, data: [] }), // Placeholder for journeys
             getUser(user.uid),
             adaptiveTestingService.getUserTests(user.uid),
+            getSyllabus(user.uid).catch(() => []), // Fetch syllabus in parallel (auto-resolves courseId)
+            customLearningService.getUserCustomGoals(user.uid), // Fetch custom goals in parallel
           ]);
 
           // Load selected exam information
@@ -301,21 +304,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 ? Math.max(0, Math.ceil((((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
                 : undefined;
 
-              // Generate today's recommendations
-              try {
-                // Syllabus now auto-resolves courseId from user's current exam
-                const syllabus = await getSyllabus(user.uid);
-                
-                const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
-                setTodayRecommendations(todayRecs);
-              } catch (error) {
-                logError('Failed to load syllabus for recommendations', { error });
-                setTodayRecommendations({
-                  nextAction: 'Review your syllabus',
-                  studyGoal: 'Plan your study schedule',
-                  ...(examDaysLeft !== undefined && { examDaysLeft }),
-                });
-              }
+              // Use pre-fetched syllabus from Promise.all (faster load)
+              const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
+              setTodayRecommendations(todayRecs);
             }
           }
 
@@ -423,8 +414,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           // Only show the most recent achievement to avoid spam
           const finalAchievements = recentAchievements.slice(-1);
 
-          // Load custom goals data for stats (display removed but stats still tracked)
-          const customGoalsResult = await customLearningService.getUserCustomGoals(user.uid);
+          // Use pre-fetched custom goals data from Promise.all (faster load)
           if (customGoalsResult.success) {
             // Update stats with real custom learning data
             const activeGoals = customGoalsResult.data.filter((goal: any) => goal.isActive).length;

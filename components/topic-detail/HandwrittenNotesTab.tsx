@@ -293,7 +293,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                   >
                     {/* Thumbnail */}
                     <img
-                      src={note.downloadUrl}
+                      src={note.thumbnailUrl || note.downloadUrl}
                       alt={note.fileName}
                       className="w-full h-full object-cover"
                       loading="lazy"

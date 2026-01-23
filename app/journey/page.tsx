@@ -1,8 +1,8 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Filter, Grid3X3, List, Target, Clock, Trophy, BookOpen, BarChart3, MapPin } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Plus, Search, Filter, Grid3X3, List, Target, Clock, Trophy, BookOpen, BarChart3, MapPin, RefreshCw } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import { JourneyCard, GoalManagement, JourneyAnalytics } from '@/components/journey-planning';
@@ -38,23 +38,27 @@ export default function JourneyPlanningPage() {
   const [journeyToDelete, setJourneyToDelete] = useState<UserJourney | null>(null);
 
 
-  // Load journeys on component mount
-  useEffect(() => {
-    if (user?.uid) {
-      setIsLoading(true);
-
-      // Subscribe to real-time journey updates
-      const unsubscribe = journeyService.subscribeToUserJourneys(user.uid, userJourneys => {
-        setJourneys(userJourneys);
-        setIsLoading(false);
-      });
-
-      // Cleanup subscription on unmount
-      return () => unsubscribe();
+  // OPTIMIZED: Use one-time fetch instead of real-time listener
+  // This reduces continuous Firebase billing from onSnapshot
+  const loadJourneys = useCallback(async () => {
+    if (!user?.uid) {
+      setIsLoading(false);
+      return;
+    }
+    
+    setIsLoading(true);
+    const result = await journeyService.getUserJourneys(user.uid);
+    
+    if (result.success) {
+      setJourneys(result.data);
     }
     setIsLoading(false);
-    return undefined;
-  }, [user]);
+  }, [user?.uid]);
+
+  // Load journeys on component mount
+  useEffect(() => {
+    loadJourneys();
+  }, [loadJourneys]);
 
   // Filter journeys based on search and status
   useEffect(() => {
@@ -151,7 +155,17 @@ export default function JourneyPlanningPage() {
               description="Create, manage, and track your personalized learning journeys"
               icon={<MapPin className="h-5 w-5" />}
               actions={
-                <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => loadJourneys()}
+                    disabled={isLoading}
+                    className="border-gray-200 hover:border-gray-300"
+                    title="Refresh journeys"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                  </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -166,7 +180,7 @@ export default function JourneyPlanningPage() {
 
                   <JourneyArchitect
                     userId={user?.uid || ''}
-                    onJourneyCreated={() => {}}
+                    onJourneyCreated={() => loadJourneys()}
                     trigger={
                       <Button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 px-4 py-2">
                         <Plus className="h-4 w-4" />
@@ -177,7 +191,7 @@ export default function JourneyPlanningPage() {
 
                   <CreateJourneyDialog
                     userId={user?.uid || ''}
-                    onJourneyCreated={() => {}}
+                    onJourneyCreated={() => loadJourneys()}
                     trigger={
                        <Button variant="outline" size="sm" className="hidden sm:flex">
                          <Plus className="h-4 w-4 mr-2" />
@@ -332,7 +346,7 @@ export default function JourneyPlanningPage() {
                     </p>
                     <JourneyArchitect
                       userId={user?.uid || ''}
-                      onJourneyCreated={() => {}}
+                      onJourneyCreated={() => loadJourneys()}
                       trigger={
                         <Button
                           className="mb-8 h-auto py-3 px-8 text-lg font-medium shadow-lg hover:shadow-xl transition-all"

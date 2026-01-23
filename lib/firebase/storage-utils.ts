@@ -17,6 +17,7 @@ import {
   listAll,
   deleteObject,
   getMetadata,
+  updateMetadata,
   UploadTaskSnapshot,
 } from 'firebase/storage';
 import { storage } from './firebase';
@@ -43,6 +44,8 @@ export interface UploadedNote {
   fileSize: number;
   /** Content type (MIME) */
   contentType: string;
+  /** Thumbnail download URL (if available) */
+  thumbnailUrl?: string;
 }
 
 export interface UploadProgress {
@@ -55,6 +58,34 @@ export interface UploadProgress {
   /** Current state */
   state: 'running' | 'paused' | 'success' | 'canceled' | 'error' | 'compressing';
 }
+
+// ============================================================================
+// NOTES CACHE (Reduces redundant API calls on tab switches)
+// ============================================================================
+
+interface CacheEntry {
+  data: UploadedNote[];
+  timestamp: number;
+}
+
+const notesCache = new Map<string, CacheEntry>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Get cache key for notes
+ */
+const getCacheKey = (userId: string, topicId: string): string => {
+  return `${userId}:${topicId}`;
+};
+
+/**
+ * Invalidate notes cache for a specific topic
+ * Call this after upload or delete operations
+ */
+export const invalidateNotesCache = (userId: string, topicId: string): void => {
+  const key = getCacheKey(userId, topicId);
+  notesCache.delete(key);
+};
 
 // ============================================================================
 // HELPER FUNCTIONS
@@ -223,6 +254,34 @@ const compressImage = async (
   }
 };
 
+/**
+ * Generate a small thumbnail for an image
+ * Max 300px, lower quality - optimized for grid display
+ */
+const generateThumbnail = async (file: File): Promise<File> => {
+  // If not an image, return original (shouldn't happen due to checks)
+  if (!isCompressibleImage(file.type)) return file;
+
+  console.log(`Generating thumbnail for ${file.name}...`);
+  
+  try {
+    const options = {
+      maxWidthOrHeight: 300,
+      useWebWorker: true,
+      initialQuality: 0.6, // 60% quality is fine for thumbnails
+      fileType: 'image/jpeg' as const,
+    };
+    
+    const thumbnail = await imageCompression(file, options);
+    console.log(`✓ Thumbnail created: ${formatFileSize(thumbnail.size)}`);
+    return thumbnail;
+  } catch (error) {
+    console.error('Thumbnail generation failed:', error);
+    // If thumbnail fails, we'll just skip it (return null logic handled in upload)
+    throw error;
+  }
+};
+
 // ============================================================================
 // UPLOAD FUNCTIONS
 // ============================================================================
@@ -254,7 +313,6 @@ export const uploadTopicNote = async (
   }
 
   // Compress ALL images for optimal storage and loading
-  // (compressImage will skip tiny <100KB images and handle oversized images)
   let fileToUpload = file;
   if (isCompressibleImage(file.type)) {
     fileToUpload = await compressImage(file, onProgress);
@@ -272,6 +330,32 @@ export const uploadTopicNote = async (
   const storagePath = getNotePath(userId, topicId, uniqueFileName);
   const storageRef = ref(storage, storagePath);
 
+  // 1. Generate & Upload Thumbnail (if it's an image)
+  let thumbnailUrl = '';
+  if (isCompressibleImage(file.type) && file.size > 0) {
+    // We notify 'compressing' state for thumbnail too
+    onProgress?.({ progress: 99, bytesTransferred: 0, totalBytes: 0, state: 'compressing' });
+    
+    try {
+      // Use original file for thumbnail source to ensure quality
+      const thumbFile = await generateThumbnail(file); 
+      const thumbPath = `users/${userId}/notes/${topicId}/thumbnails/thumb_${uniqueFileName}`;
+      const thumbRef = ref(storage, thumbPath);
+      
+      // Simple upload for thumbnail (small file)
+      const thumbSnapshot = await uploadBytesResumable(thumbRef, thumbFile, {
+        contentType: 'image/jpeg',
+        customMetadata: { originalId: uniqueFileName }
+      });
+      
+      thumbnailUrl = await getDownloadURL(thumbSnapshot.ref);
+    } catch (error) {
+      console.warn('Skipping thumbnail generation due to error:', error);
+      // Proceed without thumbnail
+    }
+  }
+
+  // 2. Upload Main File
   return new Promise((resolve, reject) => {
     const uploadTask = uploadBytesResumable(storageRef, fileToUpload, {
       contentType: fileToUpload.type,
@@ -280,6 +364,7 @@ export const uploadTopicNote = async (
         uploadedAt: new Date().toISOString(),
         wasCompressed: (fileToUpload !== file).toString(),
         originalSize: file.size.toString(),
+        thumbnailUrl: thumbnailUrl, // Store link to thumbnail
       },
     });
 
@@ -301,6 +386,20 @@ export const uploadTopicNote = async (
       async () => {
         try {
           const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          
+          // Store downloadUrl in metadata for fast retrieval in getTopicNotes
+          // This eliminates the need to call getDownloadURL for each file during listing
+          await updateMetadata(uploadTask.snapshot.ref, {
+            customMetadata: {
+              originalName: file.name,
+              uploadedAt: new Date().toISOString(),
+              wasCompressed: (fileToUpload !== file).toString(),
+              originalSize: file.size.toString(),
+              thumbnailUrl: thumbnailUrl,
+              downloadUrl: downloadUrl, // Store for fast retrieval
+            },
+          });
+          
           const metadata = await getMetadata(uploadTask.snapshot.ref);
 
           const uploadedNote: UploadedNote = {
@@ -312,7 +411,11 @@ export const uploadTopicNote = async (
             uploadedAt: metadata.customMetadata?.uploadedAt || new Date().toISOString(),
             fileSize: metadata.size,
             contentType: metadata.contentType || file.type,
+            thumbnailUrl: metadata.customMetadata?.thumbnailUrl || '',
           };
+
+          // Invalidate cache so next getTopicNotes fetches fresh data
+          invalidateNotesCache(userId, topicId);
 
           resolve(uploadedNote);
         } catch (error) {
@@ -339,6 +442,15 @@ export const getTopicNotes = async (
   userId: string,
   topicId: string
 ): Promise<UploadedNote[]> => {
+  // Check cache first
+  const cacheKey = getCacheKey(userId, topicId);
+  const cached = notesCache.get(cacheKey);
+  
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    console.log(`Cache hit for notes: ${cacheKey}`);
+    return cached.data;
+  }
+
   const folderPath = `users/${userId}/notes/${topicId}`;
   const folderRef = ref(storage, folderPath);
 
@@ -346,16 +458,21 @@ export const getTopicNotes = async (
     const result = await listAll(folderRef);
 
     if (result.items.length === 0) {
+      // Cache empty result too
+      notesCache.set(cacheKey, { data: [], timestamp: Date.now() });
       return [];
     }
 
     const notes = await Promise.all(
       result.items.map(async (itemRef) => {
         try {
-          const [downloadUrl, metadata] = await Promise.all([
-            getDownloadURL(itemRef),
-            getMetadata(itemRef),
-          ]);
+          // Optimized: Only fetch metadata (contains cached downloadUrl)
+          // This reduces API calls by 50% compared to fetching both
+          const metadata = await getMetadata(itemRef);
+          
+          // Use cached URL from metadata, fallback to API call for old files
+          const downloadUrl = metadata.customMetadata?.downloadUrl 
+            || await getDownloadURL(itemRef);
 
           return {
             id: itemRef.name,
@@ -366,6 +483,7 @@ export const getTopicNotes = async (
             uploadedAt: metadata.customMetadata?.uploadedAt || metadata.timeCreated,
             fileSize: metadata.size,
             contentType: metadata.contentType || '',
+            thumbnailUrl: metadata.customMetadata?.thumbnailUrl || '',
           } as UploadedNote;
         } catch (error) {
           console.error(`Error fetching metadata for ${itemRef.name}:`, error);
@@ -375,9 +493,14 @@ export const getTopicNotes = async (
     );
 
     // Filter out any failed items and sort by upload date (newest first)
-    return notes
+    const sortedNotes = notes
       .filter((note): note is UploadedNote => note !== null)
       .sort((a, b) => new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime());
+    
+    // Cache the result
+    notesCache.set(cacheKey, { data: sortedNotes, timestamp: Date.now() });
+    
+    return sortedNotes;
   } catch (error) {
     // If folder doesn't exist, return empty array
     console.error('Error listing notes:', error);
@@ -395,11 +518,32 @@ export const getTopicNotes = async (
  * @param storagePath - Full storage path of the file
  * @returns Promise resolving when delete is complete
  */
-export const deleteTopicNote = async (storagePath: string): Promise<void> => {
+export const deleteTopicNote = async (storagePath: string, userId?: string, topicId?: string): Promise<void> => {
   const fileRef = ref(storage, storagePath);
 
   try {
+    // Delete the main file
     await deleteObject(fileRef);
+
+    // Try to delete the thumbnail as well
+    // Path: .../topicId/fileName -> .../topicId/thumbnails/thumb_fileName
+    try {
+      const pathParts = storagePath.split('/');
+      const fileName = pathParts.pop();
+      if (fileName) {
+        const thumbPath = [...pathParts, 'thumbnails', `thumb_${fileName}`].join('/');
+        const thumbRef = ref(storage, thumbPath);
+        await deleteObject(thumbRef);
+      }
+    } catch (thumbError) {
+      // It's okay if thumbnail deletion fails (might not exist)
+      console.warn('Thumbnail deletion failed (might not exist):', thumbError);
+    }
+    
+    // Invalidate cache if userId and topicId provided
+    if (userId && topicId) {
+      invalidateNotesCache(userId, topicId);
+    }
   } catch (error) {
     console.error('Error deleting note:', error);
     throw new Error('Failed to delete file. Please try again.');

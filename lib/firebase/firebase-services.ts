@@ -2300,6 +2300,56 @@ const journeyFirebaseService = {
   },
 
   /**
+   * Get user's journeys with one-time fetch (no real-time updates)
+   * OPTIMIZED: Use this instead of subscribeToUserJourneys when real-time isn't needed
+   * Reduces continuous Firebase billing from onSnapshot listeners
+   */
+  async getUserJourneys(userId: string): Promise<Result<UserJourney[]>> {
+    try {
+      const q = query(
+        collection(db, JOURNEY_COLLECTIONS.USER_JOURNEYS),
+        where('userId', '==', userId),
+        orderBy('createdAt', 'desc')
+      );
+
+      const snapshot = await getDocs(q);
+      const journeys = snapshot.docs.map((docSnapshot) => {
+        const data = docSnapshot.data();
+        return {
+          ...data,
+          id: docSnapshot.id,
+          createdAt: data.createdAt?.toDate() ?? new Date(),
+          updatedAt: data.updatedAt?.toDate() ?? new Date(),
+          targetCompletionDate: data.targetCompletionDate?.toDate() ?? new Date(),
+          customGoals:
+            data.customGoals?.map((goal: any) => ({
+              ...goal,
+              deadline: goal.deadline?.toDate() ?? new Date(),
+            })) ?? [],
+          progressTracking: {
+            ...data.progressTracking,
+            lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() ?? new Date(),
+            weeklyProgress:
+              data.progressTracking?.weeklyProgress?.map((week: any) => ({
+                ...week,
+                weekStarting: week.weekStarting?.toDate() ?? new Date(),
+              })) ?? [],
+            milestoneAchievements:
+              data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
+                ...milestone,
+                achievedAt: milestone.achievedAt?.toDate() ?? new Date(),
+              })) ?? [],
+          },
+        };
+      }) as UserJourney[];
+
+      return createSuccess(journeys);
+    } catch (error) {
+      return createError(error instanceof Error ? error : new Error('Failed to get user journeys'));
+    }
+  },
+
+  /**
    * Update journey progress
    */
   async updateJourneyProgress(journeyId: string, updates: UpdateJourneyProgressRequest): Promise<Result<void>> {

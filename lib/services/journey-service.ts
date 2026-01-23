@@ -151,6 +151,27 @@ export class JourneyService {
   }
 
   /**
+   * Get journeys for a user with one-time fetch (no real-time updates)
+   * OPTIMIZED: Use this instead of subscribeToUserJourneys when real-time updates aren't needed
+   * This reduces continuous Firebase billing from onSnapshot listeners
+   * @param courseId Optional - Filter journeys by specific course/exam ID
+   */
+  async getUserJourneys(userId: string, courseId?: string): Promise<Result<UserJourney[]>> {
+    const result = await journeyFirebaseService.getUserJourneys(userId);
+    
+    if (!result.success) {
+      return result;
+    }
+    
+    if (courseId) {
+      const filteredJourneys = result.data.filter(j => !j.examId || j.examId === courseId);
+      return createSuccess(filteredJourneys);
+    }
+    
+    return result;
+  }
+
+  /**
    * Update journey progress
    */
   async updateJourneyProgress(updates: UpdateJourneyProgressRequest): Promise<Result<void>> {

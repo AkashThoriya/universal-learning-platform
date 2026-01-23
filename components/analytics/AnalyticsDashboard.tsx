@@ -126,8 +126,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         setState(prev => ({ ...prev, isLoading: true, error: null }));
 
         // Load initial analytics data
+
+        // OPTIMIZED: Pass time range to reduce fetch volume
         const [analytics, weakAreas, recommendations] = await Promise.all([
-          intelligentAnalyticsService.getPerformanceAnalytics(user.uid),
+          intelligentAnalyticsService.getPerformanceAnalytics(user.uid, { timeRange: state.selectedTimeRange }),
           intelligentAnalyticsService.identifyWeakAreas(user.uid),
           intelligentAnalyticsService.getImprovementRecommendations(user.uid, []),
         ]);
@@ -168,7 +170,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         unsubscribe();
       }
     };
-  }, [user?.uid]);
+  }, [user?.uid, state.selectedTimeRange]);
 
   // ============================================================================
   // COMPUTED VALUES & CHART DATA

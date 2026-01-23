@@ -476,12 +476,28 @@ export class IntelligentAnalyticsService {
   /**
    * Get comprehensive performance analytics for user
    */
-  async getPerformanceAnalytics(userId: string): Promise<PerformanceAnalytics> {
+
+  async getPerformanceAnalytics(
+    userId: string, 
+    options?: { timeRange?: '7d' | '30d' | '90d' | '1y' }
+  ): Promise<PerformanceAnalytics> {
     try {
-      logger.debug('Fetching performance analytics', { userId });
+      logger.debug('Fetching performance analytics', { userId, options });
+
+      // Calculate date range if provided
+      let startDate: Date | undefined;
+      if (options?.timeRange) {
+        const now = new Date();
+        const days = options.timeRange === '7d' ? 7 
+          : options.timeRange === '30d' ? 30 
+          : options.timeRange === '90d' ? 90 
+          : 365;
+        startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+      }
 
       // Check if user has sufficient data for real analytics
-      const userEvents = await this.getUserEvents(userId);
+      // OPTIMIZED: Pass date range to reduce read volume
+      const userEvents = await this.getUserEvents(userId, undefined, startDate);
       const hasMinimumData = userEvents.length >= 5; // Minimum events for meaningful analytics
 
       if (!hasMinimumData) {
@@ -551,9 +567,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  // ============================================================================
-  // WEAK AREA ANALYSIS
-  // ============================================================================
+
 
   /**
    * Identify and analyze weak areas across both tracks
@@ -806,22 +820,28 @@ export class IntelligentAnalyticsService {
     }
   }
 
-  private async getUserEvents(userId: string, category?: string): Promise<AnalyticsEvent[]> {
+  private async getUserEvents(userId: string, category?: string, startDate?: Date): Promise<AnalyticsEvent[]> {
     try {
-      const eventsQuery = category
-        ? query(
-            collection(db, this.COLLECTION_EVENTS),
-            where('userId', '==', userId),
-            where('category', '==', category),
-            orderBy('timestamp', 'desc'),
-            limit(1000)
-          )
-        : query(
-            collection(db, this.COLLECTION_EVENTS),
-            where('userId', '==', userId),
-            orderBy('timestamp', 'desc'),
-            limit(1000)
-          );
+      // Base constraints
+      const constraints: any[] = [
+        where('userId', '==', userId),
+        orderBy('timestamp', 'desc')
+      ];
+
+      // Add category filter
+      if (category) {
+        constraints.push(where('category', '==', category));
+      }
+
+      // Add date range filter
+      if (startDate) {
+        constraints.push(where('timestamp', '>=', Timestamp.fromDate(startDate)));
+      } else {
+        // Default limit only if no date range specified
+        constraints.push(limit(1000));
+      }
+
+      const eventsQuery = query(collection(db, this.COLLECTION_EVENTS), ...constraints);
 
       const snapshot = await getDocs(eventsQuery);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as AnalyticsEvent);
