@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { logInfo, logError } from '@/lib/utils/logger';
 
 /**
  * AuthGuard component props
@@ -53,12 +54,9 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     // Check onboarding status for authenticated users
     const checkOnboardingStatus = async () => {
       if (!user) {
-        console.log('[AuthGuard] No user, skipping onboarding check');
         setIsCheckingOnboarding(false);
         return;
       }
-
-      console.log('[AuthGuard] Checking onboarding status for user:', user.uid);
 
       try {
         const { doc, getDoc } = await import('firebase/firestore');
@@ -67,13 +65,8 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         
-        console.log('[AuthGuard] User doc exists:', userDoc.exists());
-        
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          console.log('[AuthGuard] User data:', JSON.stringify(userData, null, 2));
-          console.log('[AuthGuard] onboardingComplete field:', userData?.onboardingComplete);
-          console.log('[AuthGuard] onboardingComplete type:', typeof userData?.onboardingComplete);
           
           // Check explicit field first, then fall back to detecting completed onboarding from essential data
           // This handles legacy documents that don't have the explicit onboardingComplete field
@@ -81,28 +74,22 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           const hasEssentialData = !!(userData?.primaryCourseId && userData?.currentExam && userData?.preferences);
           const isOnboardingComplete = hasExplicitFlag || hasEssentialData;
           
-          console.log('[AuthGuard] hasExplicitFlag:', hasExplicitFlag);
-          console.log('[AuthGuard] hasEssentialData:', hasEssentialData);
-          console.log('[AuthGuard] isOnboardingComplete evaluated to:', isOnboardingComplete);
-          
           setOnboardingComplete(isOnboardingComplete);
           
           // Redirect to onboarding if not complete
           if (!isOnboardingComplete) {
-            console.log('[AuthGuard] Onboarding NOT complete, redirecting to /onboarding');
+            logInfo('[AuthGuard] Onboarding incomplete, redirecting', { userId: user.uid });
             router.push('/onboarding');
             return;
-          } else {
-            console.log('[AuthGuard] Onboarding IS complete, allowing access');
           }
         } else {
           // No user doc means new user, redirect to onboarding
-          console.log('[AuthGuard] No user document found, redirecting to /onboarding');
+          logInfo('[AuthGuard] No user document found, redirecting', { userId: user.uid });
           router.push('/onboarding');
           return;
         }
       } catch (error) {
-        console.error('[AuthGuard] Error checking onboarding status:', error);
+        logError('[AuthGuard] Error checking onboarding status', error as Error);
         // On error, assume onboarding is complete to not block the user
         setOnboardingComplete(true);
       } finally {

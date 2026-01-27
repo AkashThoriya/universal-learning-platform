@@ -39,6 +39,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { MissionDifficulty } from '@/types/mission-system';
+import { logInfo, logError } from '@/lib/utils/logger';
 
 interface SyllabusSubject {
   id: string;
@@ -83,9 +84,8 @@ export function TestConfigModal({
   const { user } = useAuth();
   
   useEffect(() => {
-    if (open) {
-      console.log('[TestConfigModal] Opened with props:', { preSelectedSubject, preSelectedTopic });
-    }
+    // Optional: Log when opened via props for tracking?
+    // logInfo('[TestConfigModal] Opened', { preSelectedSubject, preSelectedTopic });
   }, [open, preSelectedSubject, preSelectedTopic]);
 
   const [loading, setLoading] = useState(true);
@@ -125,7 +125,7 @@ export function TestConfigModal({
           setSelectedTopics([preSelectedTopic]);
         }
       } catch (error) {
-        console.error('Failed to load syllabus:', error);
+        logError('Failed to load syllabus', error as Error);
       } finally {
         setLoading(false);
       }
@@ -169,7 +169,7 @@ export function TestConfigModal({
         : undefined,
     };
 
-    console.log('[TestConfigModal] Generating with config:', config);
+    logInfo('[TestConfigModal] Generating with config', { config });
     onGenerate(config);
   };
 

@@ -25,6 +25,7 @@ import {
   ArrowUpDown,
   Timer,
   Info,
+  FileText,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -515,7 +516,14 @@ export default function SyllabusPage() {
                     Cancel
                   </Button>
                 </div>
-              ) : undefined
+              ) : (
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/notes-revision">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Revision Notes
+                  </Link>
+                </Button>
+              )
             }
           />
 

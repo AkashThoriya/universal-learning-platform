@@ -16,6 +16,8 @@ import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DailyLogSkeleton } from '@/components/skeletons';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Dialog,
   DialogContent,
@@ -32,6 +34,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase/firebase-utils';
 import { DailyLog, StudySession } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
+import { logError } from '@/lib/utils/logger';
 
 // Helper component for visual mood/productivity selector
 const VisualSelector = ({ 
@@ -230,7 +233,7 @@ export default function DailyLogPage() {
           setWins(existingLog.wins);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        logError('Error fetching data', error as Error);
       } finally {
         setLoading(false);
       }
@@ -317,7 +320,7 @@ export default function DailyLogPage() {
       await saveDailyLog(user.uid, logData);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Error saving daily log:', error);
+      logError('Error saving daily log', error as Error);
     } finally {
       setSaving(false);
     }
@@ -326,21 +329,9 @@ export default function DailyLogPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
-          <Navigation />
-          <BottomNav />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-6">
-              <div className="relative">
-                <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-pulse" />
-                <div className="relative glass rounded-2xl p-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-                  <p className="text-muted-foreground">Preparing your daily log...</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Navigation />
+        <DailyLogSkeleton />
+        <BottomNav />
       </AuthGuard>
     );
   }
@@ -584,10 +575,17 @@ export default function DailyLogPage() {
                 ))}
 
                 {studySessions.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No study sessions logged yet.</p>
-                    <p className="text-sm">Click "Add Session" to start tracking your study time.</p>
-                  </div>
+                  <EmptyState
+                    icon={BookOpen}
+                    title="No study sessions logged yet"
+                    description="Click 'Add Session' to start tracking your study time."
+                    action={
+                      <Button onClick={addStudySession}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Session
+                      </Button>
+                    }
+                  />
                 )}
 
                 {studySessions.length > 0 && (

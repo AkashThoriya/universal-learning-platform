@@ -486,7 +486,8 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
               <div className="space-y-4">
                 {(() => {
                   const dailyMinutes = form.data.preferences?.dailyStudyGoalMinutes ?? 240;
-                  const dailyHours = dailyMinutes / 60;
+                  const dailyHoursRaw = dailyMinutes / 60;
+                  const dailyHours = Number(dailyHoursRaw.toFixed(1)); // Round to 1 decimal for display
                   const totalHours = selectedExam.totalEstimatedHours;
                   const daysNeeded = Math.ceil((totalHours / dailyHours) * 1.2); // 20% buffer
                   
@@ -500,7 +501,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                     ? Math.ceil((userChosenDate.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000))
                     : null;
                   const requiredHoursPerDay = userDaysAvailable && userDaysAvailable > 0
-                    ? Math.ceil((totalHours / userDaysAvailable) * 10) / 10
+                    ? Number(((totalHours * 1.2) / userDaysAvailable).toFixed(1)) // Round to 1 decimal
                     : null;
                   const isAggressive = requiredHoursPerDay && requiredHoursPerDay > dailyHours;
                   

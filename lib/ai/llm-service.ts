@@ -18,6 +18,7 @@ import {
   LLMQuestionResponse,
 } from '@/lib/ai/types';
 import { createError, createSuccess, Result } from '@/lib/utils/types-utils';
+import { logInfo, logError, logWarning } from '@/lib/utils/logger';
 import { AdaptiveQuestion } from '@/types/adaptive-testing';
 import { MissionDifficulty } from '@/types/mission-system';
 
@@ -182,16 +183,16 @@ class GeminiProvider {
         const validated = this.validateAndNormalizeQuestions(rawData, request);
         
         if (validated.length > 0) {
-          console.log(`[LLM] Successfully parsed ${validated.length} questions using strategy ${i + 1}`);
+          logInfo(`[LLM] Successfully parsed ${validated.length} questions using strategy ${i + 1}`);
           return validated;
         }
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        console.warn(`[LLM] Parse strategy ${i + 1} failed:`, lastError.message);
+        logWarning(`[LLM] Parse strategy ${i + 1} failed: ${lastError.message}`);
       }
     }
 
-    console.error('[LLM] All JSON parsing strategies failed. Raw content:', content.substring(0, 500));
+    logError('[LLM] All JSON parsing strategies failed', { rawContent: content.substring(0, 500) });
     throw new Error(`Failed to parse LLM response: ${lastError?.message || 'Unknown error'}`);
   }
 

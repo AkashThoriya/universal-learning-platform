@@ -84,6 +84,22 @@
     /* Accessibility colors */
     --focus-ring: 221.2 83.2% 53.3%;
     --focus-ring-offset: 0 0% 100%;
+
+    /* Animation timing - standardized across the app */
+    --transition-fast: 150ms;
+    --transition-default: 200ms;
+    --transition-slow: 300ms;
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+    /* Semantic chart colors (hex for Recharts compatibility) */
+    --chart-blue-hex: #3b82f6;
+    --chart-green-hex: #10b981;
+    --chart-orange-hex: #f59e0b;
+    --chart-purple-hex: #8b5cf6;
+    --chart-red-hex: #ef4444;
+    --chart-gray-hex: #6b7280;
   }
 
   .dark {

@@ -107,7 +107,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4">
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+              <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl group">
                 <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
                   <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
                     <Brain className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -119,7 +119,7 @@ export default function HomePage() {
                 </CardHeader>
               </Card>
 
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+              <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl group">
                 <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
                   <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
                     <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -131,7 +131,7 @@ export default function HomePage() {
                 </CardHeader>
               </Card>
 
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+              <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl group">
                 <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
                   <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
                     <Target className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -143,7 +143,7 @@ export default function HomePage() {
                 </CardHeader>
               </Card>
 
-              <Card className="glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group">
+              <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl group">
                 <CardHeader className="text-center pb-3 sm:pb-4 px-3 sm:px-6">
                   <div className="mx-auto mb-3 sm:mb-4 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
                     <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -187,9 +187,9 @@ export default function HomePage() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 px-4">
               <div className="group cursor-pointer">
-                <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
+                <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl">
                   <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition-transform duration-300 mb-1 sm:mb-2">
                       25K+
                     </div>
                     <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">
@@ -201,9 +201,9 @@ export default function HomePage() {
               </div>
 
               <div className="group cursor-pointer">
-                <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
+                <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl">
                   <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent transition-transform duration-300 mb-1 sm:mb-2">
                       150+
                     </div>
                     <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">
@@ -215,9 +215,9 @@ export default function HomePage() {
               </div>
 
               <div className="group cursor-pointer">
-                <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
+                <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl">
                   <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent transition-transform duration-300 mb-1 sm:mb-2">
                       98%
                     </div>
                     <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">
@@ -229,9 +229,9 @@ export default function HomePage() {
               </div>
 
               <div className="group cursor-pointer">
-                <Card className="glass border-0 hover:scale-110 transition-all duration-500 hover:shadow-2xl">
+                <Card className="glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl">
                   <CardContent className="p-4 sm:p-6 lg:p-8 text-center">
-                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300 mb-1 sm:mb-2">
+                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent transition-transform duration-300 mb-1 sm:mb-2">
                       5M+
                     </div>
                     <div className="text-muted-foreground font-medium text-xs sm:text-sm lg:text-base">Study Hours</div>
@@ -321,7 +321,7 @@ export default function HomePage() {
               ].map((testimonial, index) => (
                 <Card
                   key={index}
-                  className={`glass border-0 hover:scale-105 transition-all duration-500 hover:shadow-2xl group overflow-hidden ${
+                  className={`glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl group overflow-hidden ${
                     index === 2 ? 'sm:col-span-2 lg:col-span-1' : ''
                   }`}
                 >
@@ -484,7 +484,7 @@ export default function HomePage() {
               {/* Enhanced Dashboard Preview */}
               <div className="relative mt-8 lg:mt-0">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-3xl" />
-                <Card className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:scale-105 transition-all duration-500 relative border-0 shadow-2xl">
+                <Card className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 hover:-translate-y-1 transition-all duration-300 relative border-0 shadow-2xl hover:shadow-floating">
                   <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <h4 className="text-lg sm:text-xl font-bold">Performance Dashboard</h4>
                     <Badge className="bg-green-500 text-white border-0 px-2 sm:px-3 py-1 text-xs sm:text-sm">
@@ -571,7 +571,7 @@ export default function HomePage() {
                 return (
                   <Card
                     key={index}
-                    className={`glass border-0 hover:scale-105 transition-all duration-300 hover:shadow-xl ${
+                    className={`glass border-0 hover:-translate-y-1 transition-all duration-300 hover:shadow-xl ${
                       index >= MOBILE_SPAN_THRESHOLD ? 'sm:col-span-2 lg:col-span-1' : ''
                     }`}
                   >

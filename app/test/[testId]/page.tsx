@@ -36,6 +36,7 @@ import { AdaptiveAlgorithm } from '@/lib/algorithms/adaptive-testing-algorithms'
 import QuestionInterface from '@/components/adaptive-testing/QuestionInterface';
 import TestAnalyticsDashboard from '@/components/adaptive-testing/TestAnalyticsDashboard';
 import confetti from 'canvas-confetti';
+import { logInfo, logError } from '@/lib/utils/logger';
 
 export default function TestDetailPage() {
   const { testId } = useParams();
@@ -111,7 +112,7 @@ export default function TestDetailPage() {
         // 2. Check for Active Session
         const sessionResult = await adaptiveTestingService.recoverActiveSession(user.uid, testId as string);
         if (sessionResult.success && sessionResult.data) {
-            console.log('Resumed active session:', sessionResult.data.id);
+            logInfo('Resumed active session', { sessionId: sessionResult.data.id });
             setActiveSession(sessionResult.data);
             // Don't auto-start? Let user click Resume.
             // Or auto-resume?
@@ -119,7 +120,7 @@ export default function TestDetailPage() {
         }
 
       } catch (error) {
-        console.error('Error loading test:', error);
+        logError('Error loading test', error as Error);
         toast({
           title: 'Error',
           description: 'Failed to load test details.',
@@ -153,8 +154,10 @@ export default function TestDetailPage() {
              throw new Error('Failed to start session');
         }
 
+
+
     } catch (e) {
-        console.error(e);
+        logError('Failed to start test session', e as Error);
         toast({ title: 'Error', variant: 'destructive', description: 'Could not start test.' });
     }
   };
@@ -204,7 +207,7 @@ export default function TestDetailPage() {
           throw new Error('Unable to determine next question');
 
       } catch (error) {
-          console.error('Resume error:', error);
+          logError('Resume error', error as Error);
           toast({ 
               title: 'Resume Failed', 
               description: 'We could not restore your last question. Please try restarting the test.',

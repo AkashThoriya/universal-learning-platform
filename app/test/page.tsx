@@ -18,7 +18,7 @@ import {
   Play,
   Calendar,
 } from 'lucide-react';
-import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import { AdaptiveTestCard, TestConfigModal, TestConfig } from '@/components/adaptive-testing';
@@ -40,6 +40,7 @@ import { AdaptiveTest } from '@/types/adaptive-testing';
 import PageTransition from '@/components/layout/PageTransition';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
+import { logInfo, logError } from '@/lib/utils/logger';
 import { cn } from '@/lib/utils/utils';
 
 interface TestOverviewStats {
@@ -94,88 +95,91 @@ function AdaptiveTestingPageContent() {
 
 
   // Handle URL params for "Take Test" from syllabus
+
+  // Handle URL params for "Take Test" from syllabus
   useEffect(() => {
     const subject = searchParams.get('subject');
     const topic = searchParams.get('topic');
     
     if (subject || topic) {
-      console.log('[TestPage] URL Params detected:', { subject, topic });
+      logInfo('[TestPage] URL Params detected', { subject, topic });
       setPreSelectedSubject(subject || undefined);
       setPreSelectedTopic(topic || undefined);
       setShowConfigModal(true);
-      console.log('[TestPage] Auto-opening config modal');
       
       // Clean up URL params
       router.replace('/test', { scroll: false });
     }
   }, [searchParams, router]);
 
-  // Load tests and stats on mount
-  useEffect(() => {
-    if (user?.uid) {
-      loadTestsAndStats();
-    }
-  }, [user]);
-
-  const loadTestsAndStats = async () => {
+  // Data Fetching Functions
+  const loadTestsAndStats = useCallback(async () => {
+    if (!user?.uid) return;
+    
     try {
-      setLoading(true);
-
-      // Load user's tests
-      if (!user?.uid) return;
-      const userTests = await adaptiveTestingService.getUserTests(user.uid);
-      setTests(userTests);
-
+      const testsResult = await adaptiveTestingService.getUserTests(user.uid);
+      setTests(testsResult);
+      
       // Calculate stats
-      const completedTests = userTests.filter(test => test.status === 'completed');
+      const completedTests = testsResult.filter(test => test.status === 'completed');
       const totalQuestions = completedTests.reduce((sum, test) => sum + test.totalQuestions, 0);
       const totalAccuracy = completedTests.reduce((sum, test) => sum + (test.performance?.accuracy || 0), 0);
       const totalTime = completedTests.reduce((sum, test) => sum + (test.performance?.totalTime || 0), 0);
 
       setStats({
-        totalTests: userTests.length,
+        totalTests: testsResult.length,
         completedTests: completedTests.length,
         averageAccuracy: completedTests.length > 0 ? totalAccuracy / completedTests.length : 0,
         totalQuestions,
         timeSpent: totalTime,
-        timeSaved: totalQuestions * 120000 - totalTime, // Assuming 2min per question saved
+        timeSaved: totalQuestions * 120000 - totalTime,
       });
     } catch (error) {
-      console.error('Error loading tests:', error);
+      logError('Error loading tests', error as Error);
       toast({
         title: 'Error',
-        description: 'Failed to load your tests. Please try again.',
+        description: 'Failed to load your tests.',
         variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [user?.uid, toast]);
 
-  // Load recommendations
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     if (!user?.uid) return;
     
     try {
       setLoadingRecommendations(true);
-      const result = await adaptiveTestingService.generateTestRecommendations(user.uid);
-      if (result.success && result.data) {
-        setRecommendations(result.data);
+      const recsResult = await adaptiveTestingService.generateTestRecommendations(user.uid);
+      
+      if (recsResult.success && recsResult.data) {
+        setRecommendations(recsResult.data);
+      } else {
+        logError('Error loading recommendations', recsResult.error || new Error('Unknown error'));
       }
     } catch (error) {
-      console.error('Error loading recommendations:', error);
+      logError('Error loading recommendations', error as Error);
     } finally {
       setLoadingRecommendations(false);
     }
-  };
-
-  // Load recommendations when tab changes to recommendations
-  useEffect(() => {
-    if (user?.uid && recommendations.length === 0 && !loadingRecommendations) {
-      loadRecommendations();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.uid]);
+
+  // Load initial data
+  useEffect(() => {
+    const loadAllData = async () => {
+      if (!user?.uid) return;
+      setLoading(true);
+      
+      // Parallel fetch
+      await Promise.allSettled([
+        loadTestsAndStats(),
+        loadRecommendations()
+      ]);
+      
+      setLoading(false);
+    };
+    
+    loadAllData();
+  }, [user?.uid, loadTestsAndStats, loadRecommendations]);
 
   // Navigation Handlers
   const handleStartTest = (testId: string) => {
@@ -194,7 +198,6 @@ function AdaptiveTestingPageContent() {
 
   // Handle test generation from modal config
   const handleGenerateFromConfig = async (config: TestConfig) => {
-    console.log('[TestPage] handleGenerateFromConfig called with:', config);
     if (!user?.uid) {
       toast({
         title: 'Error',
@@ -227,16 +230,17 @@ function AdaptiveTestingPageContent() {
       ]);
 
       if (!testResult.success || !testResult.data) {
-        console.error('[TestPage] Failed to create test:', testResult.error);
+        logError('[TestPage] Failed to create test', testResult.error);
         throw new Error('Failed to create test');
       }
       
-      console.log('[TestPage] Test created successfully:', testResult.data.id);
-      await loadTestsAndStats();
+      logInfo('[TestPage] Test created successfully', { testId: testResult.data.id });
+      // Reload everything
+      router.refresh(); 
       setIsGenerating(false);
       handleStartTest(testResult.data.id);
     } catch (error) {
-      console.error('[TestPage] Error generating test:', error);
+      logError('[TestPage] Error generating test', error as Error);
       setIsGenerating(false);
       toast({
         title: 'Error',

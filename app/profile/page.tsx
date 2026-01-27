@@ -56,7 +56,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -299,9 +298,10 @@ function ProfileContent() {
 
              courses.push({
                 examId: fetchedUser.currentExam.id,
-                examName: fetchedUser.currentExam.name,
+                name: fetchedUser.currentExam.name || fetchedUser.currentExam.id,
                 targetDate: fetchedUser.currentExam.targetDate,
-                priority: 1
+                isPrimary: true,
+                isCustom: false,
              });
           }
 
@@ -367,17 +367,6 @@ function ProfileContent() {
 
 
   // Syllabus management functions
-  const updateSubjectTier = useCallback(
-    (subjectId: string, tier: 1 | 2 | 3) => {
-      const updatedSyllabus = form.data.syllabus.map((subject: SyllabusSubject) =>
-        subject.id === subjectId ? { ...subject, tier } : subject
-      );
-      form.updateField('syllabus', updatedSyllabus);
-      setHasUnsavedChanges(true);
-    },
-    [form]
-  );
-
   const addCustomSubject = useCallback(() => {
     const newSubject: SyllabusSubject = {
       id: `custom-${Date.now()}`,
@@ -1000,10 +989,10 @@ function ProfileContent() {
                  <div className="flex flex-col space-y-2">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
                       <Target className="h-5 w-5 text-primary" />
-                      Syllabus Organization
+                      Syllabus
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      Organize your subjects by priority levels for effective study planning
+                      Manage your subjects for this course
                     </p>
                  </div>
 
@@ -1020,145 +1009,48 @@ function ProfileContent() {
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-8">
-                        {/* Tier Definitions */}
-                        <Card>
-                             <CardHeader className="pb-3">
-                                <CardTitle className="text-base">Tier Definitions</CardTitle>
-                             </CardHeader>
-                             <CardContent>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                  {[1, 2, 3].map(tier => (
-                                    <div key={tier} className="space-y-2">
-                                      <Label htmlFor={`tier-${tier}`} className="text-xs uppercase text-muted-foreground font-bold tracking-wider">
-                                        Tier {tier}
-                                        <span className="text-red-500 ml-1">*</span>
-                                      </Label>
+                      <div className="space-y-6">
+                        {/* Subjects Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {form.data.syllabus.map(subject => (
+                            <Card key={subject.id} className="bg-background shadow-sm hover:shadow-md transition-shadow border ring-1 ring-black/5">
+                              <CardContent className="p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex-1 min-w-0">
+                                    {subject.isCustom ? (
                                       <Input
-                                        id={`tier-${tier}`}
-                                        value={form.data.preferences.tierDefinitions[tier as 1 | 2 | 3]}
-                                        onChange={e =>
-                                          form.updateField('preferences', {
-                                            ...form.data.preferences,
-                                            tierDefinitions: {
-                                              ...form.data.preferences.tierDefinitions,
-                                              [tier]: e.target.value,
-                                            },
-                                          })
-                                        }
-                                        placeholder={`Define Tier ${tier}...`}
-                                        className={
-                                          tier === 1
-                                            ? 'border-red-200 focus:border-red-500 bg-red-50/30'
-                                            : tier === 2
-                                              ? 'border-yellow-200 focus:border-yellow-500 bg-yellow-50/30'
-                                              : 'border-green-200 focus:border-green-500 bg-green-50/30'
-                                        }
+                                        value={subject.name}
+                                        onChange={e => updateSubjectName(subject.id, e.target.value)}
+                                        className="font-semibold text-sm border-transparent hover:border-input p-0 h-auto bg-transparent focus:ring-0 px-1 -ml-1 truncate"
                                       />
-                                    </div>
-                                  ))}
+                                    ) : (
+                                      <h4 className="font-semibold text-sm truncate pr-2" title={subject.name}>{subject.name}</h4>
+                                    )}
+                                    {subject.topics && (
+                                      <p className="text-xs text-muted-foreground mt-1 flex items-center">
+                                        <BookOpen className="h-3 w-3 mr-1" />
+                                        {subject.topics.length} topics
+                                      </p>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center flex-shrink-0">
+                                    {/* Remove Subject */}
+                                    {subject.isCustom && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => removeSubject(subject.id)}
+                                        className="h-7 w-7 p-0 ml-1 text-muted-foreground hover:text-red-600"
+                                      >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      </Button>
+                                    )}
+                                  </div>
                                 </div>
-                             </CardContent>
-                        </Card>
-
-                        {/* Subjects by Tier */}
-                        <div className="space-y-6">
-                          {[1, 2, 3].map(tier => {
-                            const tierSubjects = form.data.syllabus.filter(subject => subject.tier === tier);
-                            const tierColor =
-                              tier === 1
-                                ? 'border-red-200 bg-red-50/50'
-                                : tier === 2
-                                  ? 'border-yellow-200 bg-yellow-50/50'
-                                  : 'border-green-200 bg-green-50/50';
-
-                            return (
-                              <div key={tier} className={`p-6 rounded-xl border ${tierColor}`}>
-                                <div className="flex items-center justify-between mb-6">
-                                  <div className="flex items-center gap-3">
-                                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                                          tier === 1 ? 'bg-red-100 text-red-700' :
-                                          tier === 2 ? 'bg-yellow-100 text-yellow-700' :
-                                          'bg-green-100 text-green-700'
-                                      }`}>
-                                          T{tier}
-                                      </div>
-                                      <h3 className="font-semibold text-foreground text-lg">
-                                        {form.data.preferences.tierDefinitions[tier as 1 | 2 | 3] || `Tier ${tier}`}
-                                      </h3>
-                                  </div>
-                                  <Badge variant="outline" className="bg-background">
-                                    {tierSubjects.length} subjects
-                                  </Badge>
-                                </div>
-
-                                {tierSubjects.length === 0 ? (
-                                  <div className="text-center py-8 border-2 border-dashed border-muted-foreground/10 rounded-lg bg-background/50">
-                                      <p className="text-muted-foreground text-sm">No subjects in this tier</p>
-                                  </div>
-                                ) : (
-                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {tierSubjects.map(subject => (
-                                      <Card key={subject.id} className="bg-background shadow-sm hover:shadow-md transition-shadow border-0 ring-1 ring-black/5">
-                                        <CardContent className="p-4">
-                                          <div className="flex items-start justify-between gap-3">
-                                            <div className="flex-1 min-w-0">
-                                              {subject.isCustom ? (
-                                                <Input
-                                                  value={subject.name}
-                                                  onChange={e => updateSubjectName(subject.id, e.target.value)}
-                                                  className="font-semibold text-sm border-transparent hover:border-input p-0 h-auto bg-transparent focus:ring-0 px-1 -ml-1 truncate"
-                                                />
-                                              ) : (
-                                                <h4 className="font-semibold text-sm truncate pr-2" title={subject.name}>{subject.name}</h4>
-                                              )}
-                                              {subject.topics && (
-                                                <p className="text-xs text-muted-foreground mt-1 flex items-center">
-                                                  <BookOpen className="h-3 w-3 mr-1" />
-                                                  {subject.topics.length} topics
-                                                </p>
-                                              )}
-                                            </div>
-
-                                            <div className="flex items-center flex-shrink-0">
-                                              {/* Tier Selection */}
-                                              <Select
-                                                value={subject.tier.toString()}
-                                                onValueChange={value =>
-                                                  updateSubjectTier(subject.id, parseInt(value) as 1 | 2 | 3)
-                                                }
-                                              >
-                                                <SelectTrigger className="w-14 h-7 text-xs px-1 gap-1">
-                                                  <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                  <SelectItem value="1">T1</SelectItem>
-                                                  <SelectItem value="2">T2</SelectItem>
-                                                  <SelectItem value="3">T3</SelectItem>
-                                                </SelectContent>
-                                              </Select>
-
-                                              {/* Remove Subject */}
-                                              {subject.isCustom && (
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  onClick={() => removeSubject(subject.id)}
-                                                  className="h-7 w-7 p-0 ml-1 text-muted-foreground hover:text-red-600"
-                                                >
-                                                  <Trash2 className="h-3.5 w-3.5" />
-                                                </Button>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </CardContent>
-                                      </Card>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
+                              </CardContent>
+                            </Card>
+                          ))}
                         </div>
 
                         {/* Add Custom Subject */}

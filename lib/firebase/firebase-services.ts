@@ -44,6 +44,7 @@ import { User, UserStats, TopicProgress, MockTestLog } from '@/types/exam';
 import { db } from './firebase';
 import { serviceContainer, PerformanceMonitor, ConsoleLogger } from '@/lib/services/service-layer';
 import { Result, createSuccess, createError, LoadingState as _LoadingState } from '@/lib/utils/types-utils';
+import { logInfo, logError } from '@/lib/utils/logger';
 
 // ============================================================================
 // ADAPTIVE TESTING FIREBASE SERVICE
@@ -323,12 +324,13 @@ class FirebaseService {
       }
 
       this.logger.debug(`Document set: ${collectionPath}/${docId}`);
-      console.log(`[Firebase] setDocument success: ${collectionPath}/${docId}`);
+      logInfo(`[Firebase] setDocument success: ${collectionPath}/${docId}`);
       return createSuccess(undefined);
     } catch (error) {
       this.logger.error(`Error setting document ${collectionPath}/${docId}`, error as Error);
-      console.error(`[Firebase] setDocument failed: ${collectionPath}/${docId}`, error);
-      return createError(error instanceof Error ? error : new Error('Unknown error'));
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      logError(`[Firebase] setDocument failed: ${collectionPath}/${docId}`, error as Error);
+      return createError(error instanceof Error ? error : new Error(errorMessage));
     }
   }
 
@@ -1364,7 +1366,7 @@ export const customLearningService = {
       const isIndexError = error?.code === 'failed-precondition' && error?.message?.includes('index');
 
       if (isIndexError) {
-        console.log('Firestore indexes are still building, returning empty custom missions', { userId, goalId });
+        logInfo('Firestore indexes are still building, returning empty custom missions', { userId, goalId });
         return createSuccess([]);
       }
 
@@ -1497,7 +1499,7 @@ export const customLearningService = {
       const isIndexError = error?.code === 'failed-precondition' && error?.message?.includes('index');
 
       if (isIndexError) {
-        console.log('Firestore indexes are still building, returning empty custom missions list', { userId });
+        logInfo('Firestore indexes are still building, returning empty custom missions list', { userId });
         return createSuccess([]);
       }
 

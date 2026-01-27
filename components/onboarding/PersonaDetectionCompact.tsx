@@ -276,8 +276,8 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                         key={persona.id}
                         className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-2 group relative ${
                           isSelected
-                            ? 'border-blue-500 shadow-lg transform scale-105 ring-blue-200 bg-blue-50'
-                            : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
+                            ? 'border-blue-500 shadow-lg ring-2 ring-blue-200 bg-blue-50'
+                            : 'border-gray-200 hover:border-blue-300 hover:shadow-md hover:-translate-y-0.5'
                         }`}
                         onClick={e => {
                           e.preventDefault();
@@ -308,8 +308,8 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                           <div
                             className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
                               isSelected
-                                ? `${persona.bgColor} scale-110 ring-4 ring-blue-200`
-                                : `${persona.bgColor} group-hover:scale-110`
+                                ? `${persona.bgColor} ring-4 ring-blue-200`
+                                : `${persona.bgColor}`
                             }`}
                           >
                             <Icon
@@ -382,7 +382,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     <Button
                       onClick={handleProceedToNextStep}
                       size="lg"
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 text-base shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 min-w-[280px] rounded-xl"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 min-w-[280px] rounded-xl"
                     >
                       <span>Continue with {PERSONA_OPTIONS.find(p => p.id === selectedPersona)?.title}</span>
                       <ArrowRight className="ml-3 h-5 w-5" />
@@ -532,7 +532,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                   <div className="grid grid-cols-3 gap-3 text-xs">
                     <button
                       type="button"
-                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:scale-105 border-2 ${
+                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:-translate-y-0.5 border-2 ${
                         currentStudyHours <= 2
                           ? 'bg-yellow-100 text-yellow-800 border-yellow-300 ring-2 ring-yellow-200'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200 hover:border-gray-300'
@@ -544,7 +544,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     </button>
                     <button
                       type="button"
-                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:scale-105 border-2 ${
+                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:-translate-y-0.5 border-2 ${
                         currentStudyHours > 2 && currentStudyHours <= 6
                           ? 'bg-green-100 text-green-800 border-green-300 ring-2 ring-green-200'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200 hover:border-gray-300'
@@ -556,7 +556,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     </button>
                     <button
                       type="button"
-                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:scale-105 border-2 ${
+                      className={`p-3 rounded-lg text-center transition-all duration-300 hover:-translate-y-0.5 border-2 ${
                         currentStudyHours > 6
                           ? 'bg-blue-100 text-blue-800 border-blue-300 ring-2 ring-blue-200'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-gray-200 hover:border-gray-300'
@@ -622,8 +622,8 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
                     key={timeSlot.id}
                     className={`cursor-pointer transition-all duration-300 hover:shadow-md border-2 group ${
                       selectedTimeSlot === timeSlot.id
-                        ? 'border-blue-500 bg-blue-50 ring-4 ring-blue-200 transform scale-105'
-                        : 'border-gray-200 hover:border-blue-300 hover:shadow-lg'
+                        ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
+                        : 'border-gray-200 hover:border-blue-300 hover:shadow-lg hover:-translate-y-0.5'
                     }`}
                     onClick={e => {
                       e.preventDefault();

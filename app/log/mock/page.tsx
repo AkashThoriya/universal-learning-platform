@@ -13,6 +13,7 @@ import Navigation from '@/components/Navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { MockLogSkeleton } from '@/components/skeletons';
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ import { getExamById } from '@/lib/data/exams-data';
 import { saveMockTest, getUser } from '@/lib/firebase/firebase-utils';
 import { MockTestLog, User, Exam } from '@/types/exam';
 import { useToast } from '@/hooks/use-toast';
+import { logError } from '@/lib/utils/logger';
 
 export default function MockTestLogPage() {
   const { user } = useAuth();
@@ -116,7 +118,7 @@ export default function MockTestLogPage() {
           }
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        logError('Error fetching data', error as Error);
       } finally {
         setLoading(false);
       }
@@ -219,7 +221,7 @@ export default function MockTestLogPage() {
       await saveMockTest(user.uid, testData);
       router.push('/dashboard');
     } catch (error) {
-      console.error('Error saving mock test:', error);
+      logError('Error saving mock test', error as Error);
     } finally {
       setSaving(false);
     }
@@ -228,16 +230,9 @@ export default function MockTestLogPage() {
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-          <Navigation />
-          <BottomNav />
-          <div className="flex items-center justify-center min-h-[60vh]">
-            <div className="text-center space-y-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
-              <p className="text-muted-foreground">Loading mock test logger...</p>
-            </div>
-          </div>
-        </div>
+        <Navigation />
+        <MockLogSkeleton />
+        <BottomNav />
       </AuthGuard>
     );
   }

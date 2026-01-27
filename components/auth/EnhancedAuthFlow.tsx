@@ -1,6 +1,6 @@
 'use client';
 
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, fetchSignInMethodsForEmail, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Shield, CheckCircle, Loader2 } from 'lucide-react';
@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { auth, db } from '@/lib/firebase/firebase';
+import { logInfo, logError } from '@/lib/utils/logger';
 
 interface AuthStep {
   id: string;
@@ -113,24 +114,23 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     setError('');
 
     try {
-      // If user manually selected a mode, use that instead of auto-detection
+      // If user manually selected a mode, use that
       if (authMode !== 'auto') {
         setIsNewUser(authMode === 'signup');
         setCurrentStep('password');
         return;
       }
 
-      // Auto-detect: Check if user exists by checking sign-in methods for this email
-      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-      // If signInMethods array is empty, user doesn't exist (new user)
-      // If it has methods, user exists (returning user)
-      setIsNewUser(signInMethods.length === 0);
+      // For 'auto' mode: Default to sign-in (existing user) as the safer and more common case.
+      // Firebase's Email Enumeration Protection makes fetchSignInMethodsForEmail unreliable
+      // (it returns empty array for security), so we can't reliably detect if user exists.
+      // Instead, we default to sign-in and handle 'user-not-found' error gracefully in password step.
+      setIsNewUser(false);
       setCurrentStep('password');
     } catch (err) {
-      console.error('Email verification error:', err);
-      // If error occurs (e.g., email enumeration protection), use the selected mode
-      // For 'auto' mode, default to existing user (sign in) as safer option
-      setIsNewUser(authMode === 'signup');
+      logError('Email verification error', err as Error);
+      // Default to sign-in on any error
+      setIsNewUser(false);
       setCurrentStep('password');
     } finally {
       setLoading(false);
@@ -178,19 +178,19 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
               const isOnboardingComplete = hasExplicitFlag || hasEssentialData;
 
               if (isOnboardingComplete) {
-                console.log('[Auth] Onboarding complete, redirecting to dashboard');
+                logInfo('[Auth] Onboarding complete, redirecting to dashboard', { userId: userCredential.user.uid });
                 router.push('/dashboard');
               } else {
-                console.log('[Auth] Onboarding incomplete, redirecting to onboarding');
+                logInfo('[Auth] Onboarding incomplete, redirecting to onboarding', { userId: userCredential.user.uid });
                 router.push('/onboarding');
               }
             } else {
               // No user document - new user, go to onboarding
-              console.log('[Auth] No user document found, redirecting to onboarding');
+              logInfo('[Auth] No user document found, redirecting to onboarding', { userId: userCredential.user.uid });
               router.push('/onboarding');
             }
           } catch (error) {
-            console.error('[Auth] Error checking onboarding status:', error);
+            logError('[Auth] Error checking onboarding status', error as Error);
             // Fallback: redirect to dashboard (AuthGuard will handle it)
             router.push('/dashboard');
           }
@@ -202,12 +202,16 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
       if (err && typeof err === 'object' && 'code' in err) {
         const firebaseError = err as { code: string };
 
-        if (firebaseError.code === 'auth/wrong-password') {
+        if (firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/invalid-credential') {
           errorMessage = 'Incorrect password. Please try again.';
         } else if (firebaseError.code === 'auth/user-not-found') {
-          errorMessage = 'No account found with this email.';
+          // User doesn't exist - switch to signup mode
+          setIsNewUser(true);
+          errorMessage = 'No account found with this email. Create a new account instead?';
         } else if (firebaseError.code === 'auth/email-already-in-use') {
-          errorMessage = 'An account with this email already exists.';
+          // Email exists - switch to sign-in mode
+          setIsNewUser(false);
+          errorMessage = 'An account with this email already exists. Please sign in instead.';
         } else if (firebaseError.code === 'auth/weak-password') {
           errorMessage = 'Password is too weak. Please choose a stronger password.';
         }
@@ -233,7 +237,7 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
       setError('');
       setCurrentStep('resetSent'); 
     } catch (err) {
-      console.error('Password reset error:', err);
+      logError('Password reset error', err as Error);
       setError('Failed to send reset email. Please try again.');
     } finally {
       setLoading(false);

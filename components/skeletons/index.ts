@@ -26,3 +26,6 @@ export * from './ProfileSkeleton';
 export * from './DashboardSkeleton';
 export * from './JourneySkeleton';
 export * from './TestPageSkeleton';
+export * from './SubjectsSkeleton';
+export * from './DailyLogSkeleton';
+export * from './MockLogSkeleton';

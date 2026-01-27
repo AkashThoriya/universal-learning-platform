@@ -41,7 +41,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
               className="min-w-[280px] h-full"
             >
               <Card 
-                className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 h-full"
+                className="group hover:shadow-elevated transition-all duration-300 cursor-pointer hover:-translate-y-0.5 h-full"
                 onClick={() => (window.location.href = action.href)}
               >
                 <CardHeader className="pb-3">

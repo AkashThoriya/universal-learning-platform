@@ -177,7 +177,7 @@ export default function Navigation() {
       aria-label={`${label}: ${description}`}
     >
       <Icon
-        className={cn('h-5 w-5 transition-transform duration-200', isActive ? 'text-primary' : 'group-hover:scale-110')}
+        className={cn('h-5 w-5 transition-transform duration-200', isActive ? 'text-primary' : '')}
       />
       <span className="font-medium">{label}</span>
       {badge && (
@@ -208,7 +208,7 @@ export default function Navigation() {
               aria-label="Exam Strategy Engine - Go to dashboard"
             >
               <div className="relative flex-shrink-0">
-                <Target className="h-7 w-7 text-primary group-hover:scale-110 transition-transform duration-200" />
+                <Target className="h-7 w-7 text-primary transition-transform duration-200" />
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
               </div>
               <span className="text-lg font-bold text-gradient hidden sm:block">ESE</span>
@@ -223,7 +223,7 @@ export default function Navigation() {
                   variant={item.isActive ? 'default' : 'ghost'}
                   size="sm"
                   className={cn(
-                    'relative transition-all duration-200 hover:scale-105',
+                    'relative transition-all duration-200 hover:-translate-y-0.5',
                     item.isActive ? 'gradient-primary text-white shadow-lg' : 'hover:bg-white/10 hover:text-primary'
                   )}
                 >

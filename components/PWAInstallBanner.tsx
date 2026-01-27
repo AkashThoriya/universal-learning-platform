@@ -13,7 +13,7 @@
 'use client';
 
 import { X, Download, Smartphone, Monitor, Rocket, ChevronRight, Share, Plus, MoreHorizontal } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -31,13 +31,11 @@ interface PWAInstallBannerProps {
 
 export function PWAInstallBanner({
   variant = 'banner',
-  autoShow = true,
   showBenefits = true,
   className = '',
 }: PWAInstallBannerProps) {
   const {
     isInstalled,
-    shouldShowPrompt,
     canAutoInstall,
     needsManualInstall,
     platform,
@@ -51,43 +49,16 @@ export function PWAInstallBanner({
   const [showInstructions, setShowInstructions] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
 
-  // Debug log
-  useEffect(() => {
-    console.log('PWA Install Banner state:', {
-      isInstalled,
-      shouldShowPrompt,
-      canAutoInstall,
-      needsManualInstall,
-      platform,
-      isVisible,
-    });
-  }, [isInstalled, shouldShowPrompt, canAutoInstall, needsManualInstall, platform, isVisible]);
-
-  // Auto-show logic
-  useEffect(() => {
-    if (autoShow && !isInstalled) {
-      // Show banner even if shouldShowPrompt is false for testing
-      const timer = setTimeout(() => setIsVisible(true), 1000);
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [autoShow, shouldShowPrompt, isInstalled]);
-
   // Don't show if already installed
   if (isInstalled) {
-    console.log('PWA is already installed, hiding banner');
     return null;
   }
 
   const handleInstall = async () => {
-    console.log('Install button clicked', { canAutoInstall, needsManualInstall, platform });
-
     if (canAutoInstall) {
       setIsInstalling(true);
       try {
-        console.log('Attempting auto install...');
         const result = await promptInstall();
-        console.log('Install result:', result);
         if (result.success) {
           setIsVisible(false);
         }
@@ -97,28 +68,19 @@ export function PWAInstallBanner({
         setIsInstalling(false);
       }
     } else if (needsManualInstall) {
-      console.log('Showing manual install instructions');
       setShowInstructions(true);
     } else {
-      console.log('Install not available - showing fallback instructions');
-      // TODO: Replace alert with proper modal/toast
-      // alert(
-      //   'To install this app:\n\nOn Chrome: Click the menu (⋮) → "Install app"\nOn Safari: Click Share → "Add to Home Screen"'
-      // );
       setShowInstructions(true);
     }
   };
 
   const handleDismiss = () => {
-    console.log('Dismiss button clicked');
     setIsVisible(false);
     dismissInstallPrompt();
   };
 
   const handleDebugReset = () => {
-    console.log('DEBUG: Resetting PWA install prompt...');
     resetInstallPrompt();
-    console.log('DEBUG: Reset complete');
   };
 
   const instructions = getManualInstallInstructions();
