@@ -3,17 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  Target, 
-  CheckCircle2, 
-  TrendingUp,
-  Trash2,
-  Play,
-  Pause,
-  Trophy,
-  Edit
-} from 'lucide-react';
+import { Calendar, Target, CheckCircle2, TrendingUp, Trash2, Play, Pause, Trophy, Edit } from 'lucide-react';
 
 import PageTransition from '@/components/layout/PageTransition';
 import PageContainer from '@/components/layout/PageContainer';
@@ -39,7 +29,7 @@ export default function JourneyDetailPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const journeyId = params.id as string;
-  
+
   const [journey, setJourney] = useState<UserJourney | null>(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -48,21 +38,18 @@ export default function JourneyDetailPage() {
     if (!user || !journeyId) return;
 
     // Subscribe to real-time updates for this journey
-    const unsubscribe = journeyService.subscribeToUserJourneys(
-      user.uid,
-      (journeys) => {
-        const found = journeys.find(j => j.id === journeyId);
-        setJourney(found || null);
-        setLoading(false);
-      }
-    );
+    const unsubscribe = journeyService.subscribeToUserJourneys(user.uid, journeys => {
+      const found = journeys.find(j => j.id === journeyId);
+      setJourney(found || null);
+      setLoading(false);
+    });
 
     return () => unsubscribe();
   }, [user, journeyId]);
 
   const handleStatusChange = async (newStatus: UserJourney['status']) => {
     if (!journey) return;
-    
+
     try {
       await journeyService.updateJourneyStatus(journey.id, newStatus);
       toast({
@@ -80,7 +67,7 @@ export default function JourneyDetailPage() {
 
   const handleDelete = async () => {
     if (!journey) return;
-    
+
     try {
       await journeyService.updateJourneyStatus(journey.id, 'cancelled');
       toast({
@@ -99,20 +86,29 @@ export default function JourneyDetailPage() {
 
   const getPriorityColor = (priority: UserJourney['priority']) => {
     switch (priority) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'low': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'medium':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'low':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusColor = (status: UserJourney['status']) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'completed': return 'bg-purple-100 text-purple-800';
-      case 'paused': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active':
+        return 'bg-green-100 text-green-800';
+      case 'completed':
+        return 'bg-purple-100 text-purple-800';
+      case 'paused':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -125,9 +121,7 @@ export default function JourneyDetailPage() {
   const getDaysRemaining = () => {
     if (!journey?.targetCompletionDate) return null;
     const targetDate = journey.targetCompletionDate as any;
-    const target = targetDate.toDate 
-      ? targetDate.toDate() 
-      : new Date(targetDate);
+    const target = targetDate.toDate ? targetDate.toDate() : new Date(targetDate);
     const days = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     return days;
   };
@@ -157,11 +151,7 @@ export default function JourneyDetailPage() {
               icon={Target}
               title="Journey Not Found"
               description="This journey doesn't exist or you don't have access to it."
-              action={
-                <Button onClick={() => router.push('/journey')}>
-                  Back to Journeys
-                </Button>
-              }
+              action={<Button onClick={() => router.push('/journey')}>Back to Journeys</Button>}
             />
           </PageContainer>
         </PageTransition>
@@ -184,9 +174,7 @@ export default function JourneyDetailPage() {
             backLabel="Journeys"
             actions={
               <div className="flex items-center gap-2">
-                <Badge className={getStatusColor(journey.status)}>
-                  {journey.status}
-                </Badge>
+                <Badge className={getStatusColor(journey.status)}>{journey.status}</Badge>
                 <Badge variant="outline" className={getPriorityColor(journey.priority)}>
                   {journey.priority}
                 </Badge>
@@ -195,10 +183,7 @@ export default function JourneyDetailPage() {
           />
 
           {/* Progress Overview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="mb-6 border-0 shadow-lg bg-gradient-to-r from-indigo-50 to-purple-50">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -212,7 +197,7 @@ export default function JourneyDetailPage() {
                       <span className="text-2xl font-bold text-indigo-600">{overallProgress}%</span>
                     </div>
                   </div>
-                  
+
                   {daysRemaining !== null && (
                     <div className="text-center md:text-right px-4 py-2 bg-white/60 rounded-lg">
                       <div className="text-2xl font-bold text-indigo-900">{daysRemaining}</div>
@@ -271,9 +256,7 @@ export default function JourneyDetailPage() {
                           <h4 className="font-medium text-gray-900">{goal.title}</h4>
                           <p className="text-sm text-gray-600">{goal.description}</p>
                         </div>
-                        {completion >= 100 && (
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
-                        )}
+                        {completion >= 100 && <CheckCircle2 className="h-5 w-5 text-green-600" />}
                       </div>
                       <div className="flex items-center gap-4">
                         <Progress value={completion} className="flex-1 h-2" />
@@ -303,33 +286,33 @@ export default function JourneyDetailPage() {
           </Card>
 
           {/* Milestones Section */}
-          {journey.progressTracking?.milestoneAchievements && 
-           journey.progressTracking.milestoneAchievements.length > 0 && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-yellow-600" />
-                  Milestones Achieved
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {journey.progressTracking.milestoneAchievements.map((milestone, index) => (
-                    <div 
-                      key={milestone.id || index} 
-                      className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200"
-                    >
-                      <Trophy className="h-5 w-5 text-yellow-600" />
-                      <div>
-                        <div className="font-medium text-yellow-900">{milestone.title}</div>
-                        <div className="text-sm text-yellow-700">{milestone.celebrationMessage}</div>
+          {journey.progressTracking?.milestoneAchievements &&
+            journey.progressTracking.milestoneAchievements.length > 0 && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-yellow-600" />
+                    Milestones Achieved
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {journey.progressTracking.milestoneAchievements.map((milestone, index) => (
+                      <div
+                        key={milestone.id || index}
+                        className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200"
+                      >
+                        <Trophy className="h-5 w-5 text-yellow-600" />
+                        <div>
+                          <div className="font-medium text-yellow-900">{milestone.title}</div>
+                          <div className="text-sm text-yellow-700">{milestone.celebrationMessage}</div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
           {/* Actions */}
           <div className="flex flex-wrap gap-3">
@@ -344,26 +327,19 @@ export default function JourneyDetailPage() {
               }
             />
             {journey.status === 'active' && (
-              <Button 
-                variant="outline" 
-                onClick={() => handleStatusChange('paused')}
-                className="gap-2"
-              >
+              <Button variant="outline" onClick={() => handleStatusChange('paused')} className="gap-2">
                 <Pause className="h-4 w-4" />
                 Pause Journey
               </Button>
             )}
             {journey.status === 'paused' && (
-              <Button 
-                onClick={() => handleStatusChange('active')}
-                className="gap-2 bg-green-600 hover:bg-green-700"
-              >
+              <Button onClick={() => handleStatusChange('active')} className="gap-2 bg-green-600 hover:bg-green-700">
                 <Play className="h-4 w-4" />
                 Resume Journey
               </Button>
             )}
             {journey.status === 'active' && (
-              <Button 
+              <Button
                 onClick={() => handleStatusChange('completed')}
                 className="gap-2 bg-purple-600 hover:bg-purple-700"
               >
@@ -371,11 +347,7 @@ export default function JourneyDetailPage() {
                 Mark Complete
               </Button>
             )}
-            <Button 
-              variant="destructive" 
-              onClick={() => setShowDeleteDialog(true)}
-              className="gap-2"
-            >
+            <Button variant="destructive" onClick={() => setShowDeleteDialog(true)} className="gap-2">
               <Trash2 className="h-4 w-4" />
               Cancel Journey
             </Button>

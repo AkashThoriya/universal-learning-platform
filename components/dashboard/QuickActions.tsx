@@ -40,7 +40,7 @@ export function QuickActions({ actions }: QuickActionsProps) {
               transition={{ delay: ANIMATION_DELAY_INCREMENT * index }}
               className="min-w-[280px] h-full"
             >
-              <Card 
+              <Card
                 className="group hover:shadow-elevated transition-all duration-300 cursor-pointer hover:-translate-y-0.5 h-full"
                 onClick={() => (window.location.href = action.href)}
               >
@@ -65,7 +65,6 @@ export function QuickActions({ actions }: QuickActionsProps) {
                     variant="outline"
                     size="sm"
                     className="w-full mt-3 group-hover:bg-blue-50 group-hover:border-blue-200"
-                    
                   >
                     {action.priority === 'high' ? 'Start Now' : 'Explore'}
                   </Button>

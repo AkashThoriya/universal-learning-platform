@@ -2,7 +2,6 @@
 
 import { Loader2, Target, Brain, TrendingUp } from 'lucide-react';
 
-
 import { Card, CardContent } from '@/components/ui/card';
 
 interface LoadingSpinnerProps {

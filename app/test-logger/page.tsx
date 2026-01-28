@@ -121,18 +121,18 @@ export default function TestLoggerPage() {
     const validationError = validateErrorAnalysis();
     if (validationError) {
       toast({
-        title: "Validation Error",
+        title: 'Validation Error',
         description: validationError,
-        variant: "destructive",
+        variant: 'destructive',
       });
       return;
     }
 
     if (!date) {
       toast({
-        title: "Missing Date",
-        description: "Please select a test date before submitting.",
-        variant: "destructive",
+        title: 'Missing Date',
+        description: 'Please select a test date before submitting.',
+        variant: 'destructive',
       });
       return;
     }
@@ -174,8 +174,6 @@ export default function TestLoggerPage() {
     }
   };
 
-
-
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -184,326 +182,327 @@ export default function TestLoggerPage() {
 
         <PageTransition>
           <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-6">
-          <FeaturePageHeader
-            title="Test Logger"
-            description="Log your mock test performance and analyze weaknesses"
-            icon={<Target className="h-5 w-5 text-primary" />}
-          />
+            <FeaturePageHeader
+              title="Test Logger"
+              description="Log your mock test performance and analyze weaknesses"
+              icon={<Target className="h-5 w-5 text-primary" />}
+            />
 
-
-          {step === 1 && (
-            <Card>
-              <CardHeader className="text-center">
-                <Target className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <CardTitle>Test Details</CardTitle>
-                <CardDescription>Basic information about your mock test</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="test-date-input" className="text-sm font-medium">
-                      Test Date
-                    </label>
-                    <Input id="test-date-input" type="date" value={date} onChange={e => setDate(e.target.value)} />
+            {step === 1 && (
+              <Card>
+                <CardHeader className="text-center">
+                  <Target className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <CardTitle>Test Details</CardTitle>
+                  <CardDescription>Basic information about your mock test</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label htmlFor="test-date-input" className="text-sm font-medium">
+                        Test Date
+                      </label>
+                      <Input id="test-date-input" type="date" value={date} onChange={e => setDate(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="platform-select" className="text-sm font-medium">
+                        Platform
+                      </label>
+                      <Select value={platform} onValueChange={setPlatform}>
+                        <SelectTrigger id="platform-select">
+                          <SelectValue placeholder="Select platform" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TEST_PLATFORMS.map(platform => (
+                            <SelectItem key={platform.value} value={platform.value}>
+                              {platform.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <label htmlFor="platform-select" className="text-sm font-medium">
-                      Platform
+                    <label htmlFor="test-type-select" className="text-sm font-medium">
+                      Test Type
                     </label>
-                    <Select value={platform} onValueChange={setPlatform}>
-                      <SelectTrigger id="platform-select">
-                        <SelectValue placeholder="Select platform" />
+                    <Select value={type} onValueChange={setType}>
+                      <SelectTrigger id="test-type-select">
+                        <SelectValue placeholder="Select test type" />
                       </SelectTrigger>
                       <SelectContent>
-                        {TEST_PLATFORMS.map(platform => (
-                          <SelectItem key={platform.value} value={platform.value}>
-                            {platform.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="test-type-select" className="text-sm font-medium">
-                    Test Type
-                  </label>
-                  <Select value={type} onValueChange={setType}>
-                    <SelectTrigger id="test-type-select">
-                      <SelectValue placeholder="Select test type" />
-                    </SelectTrigger>
-                    <SelectContent>
                         {TEST_TYPES.map(type => (
                           <SelectItem key={type.value} value={type.value}>
                             {type.label}
                           </SelectItem>
                         ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={() => setStep(2)} className="w-full" disabled={!platform || !type}>
-                  Continue to Scores
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={() => setStep(2)} className="w-full" disabled={!platform || !type}>
+                    Continue to Scores
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
 
-          {step === 2 && (
-            <Card>
-              <CardHeader className="text-center">
-                <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <CardTitle>Test Scores & Timing</CardTitle>
-                <CardDescription>Enter your scores (out of 50 each) and time taken</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {[
-                  {
-                    label: 'Quantitative Aptitude',
-                    score: quantScore,
-                    setScore: setQuantScore,
-                    time: quantTime,
-                    setTime: setQuantTime,
-                  },
-                  {
-                    label: 'Reasoning',
-                    score: reasoningScore,
-                    setScore: setReasoningScore,
-                    time: reasoningTime,
-                    setTime: setReasoningTime,
-                  },
-                  {
-                    label: 'English',
-                    score: englishScore,
-                    setScore: setEnglishScore,
-                    time: englishTime,
-                    setTime: setEnglishTime,
-                  },
-                  {
-                    label: 'Professional Knowledge',
-                    score: pkScore,
-                    setScore: setPkScore,
-                    time: pkTime,
-                    setTime: setPkTime,
-                  },
-                ].map((section, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-3">{section.label}</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label htmlFor={`score-${index}`} className="text-sm font-medium">
-                          Score (out of 50)
-                        </label>
-                        <Input
-                          id={`score-${index}`}
-                          type="number"
-inputMode="numeric"
-                          min="0"
-                          max="50"
-                          value={section.score}
-                          onChange={e => section.setScore(Number(e.target.value))}
-                        />
+            {step === 2 && (
+              <Card>
+                <CardHeader className="text-center">
+                  <BarChart3 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                  <CardTitle>Test Scores & Timing</CardTitle>
+                  <CardDescription>Enter your scores (out of 50 each) and time taken</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {[
+                    {
+                      label: 'Quantitative Aptitude',
+                      score: quantScore,
+                      setScore: setQuantScore,
+                      time: quantTime,
+                      setTime: setQuantTime,
+                    },
+                    {
+                      label: 'Reasoning',
+                      score: reasoningScore,
+                      setScore: setReasoningScore,
+                      time: reasoningTime,
+                      setTime: setReasoningTime,
+                    },
+                    {
+                      label: 'English',
+                      score: englishScore,
+                      setScore: setEnglishScore,
+                      time: englishTime,
+                      setTime: setEnglishTime,
+                    },
+                    {
+                      label: 'Professional Knowledge',
+                      score: pkScore,
+                      setScore: setPkScore,
+                      time: pkTime,
+                      setTime: setPkTime,
+                    },
+                  ].map((section, index) => (
+                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-semibold mb-3">{section.label}</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label htmlFor={`score-${index}`} className="text-sm font-medium">
+                            Score (out of 50)
+                          </label>
+                          <Input
+                            id={`score-${index}`}
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            max="50"
+                            value={section.score}
+                            onChange={e => section.setScore(Number(e.target.value))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label htmlFor={`time-${index}`} className="text-sm font-medium">
+                            Time Taken (minutes)
+                          </label>
+                          <Input
+                            id={`time-${index}`}
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            value={section.time}
+                            onChange={e => section.setTime(Number(e.target.value))}
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <label htmlFor={`time-${index}`} className="text-sm font-medium">
-                          Time Taken (minutes)
-                        </label>
-                        <Input
-                          id={`time-${index}`}
-                          type="number"
-inputMode="numeric"
-                          min="0"
-                          value={section.time}
-                          onChange={e => section.setTime(Number(e.target.value))}
-                        />
+                    </div>
+                  ))}
+
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-blue-900">Total Score: {getTotalScore()}/200</h4>
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <Button variant="outline" onClick={() => setStep(1)} className="w-full">
+                      Back
+                    </Button>
+                    <Button onClick={() => setStep(3)} className="w-full">
+                      Analyze Errors
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {step === 3 && (
+              <Card>
+                <CardHeader className="text-center">
+                  <Clock className="h-12 w-12 text-orange-600 mx-auto mb-4" />
+                  <CardTitle>Error Analysis</CardTitle>
+                  <CardDescription>Categorize your errors to identify improvement areas</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {[
+                    {
+                      label: 'Quantitative Aptitude',
+                      totalErrors: getTotalErrors('quant'),
+                      concepts: quantConcepts,
+                      setConcepts: setQuantConcepts,
+                      careless: quantCareless,
+                      setCareless: setQuantCareless,
+                      guesses: quantGuesses,
+                      setGuesses: setQuantGuesses,
+                      timePressure: quantTimePressure,
+                      setTimePressure: setQuantTimePressure,
+                    },
+                    {
+                      label: 'Reasoning',
+                      totalErrors: getTotalErrors('reasoning'),
+                      concepts: reasoningConcepts,
+                      setConcepts: setReasoningConcepts,
+                      careless: reasoningCareless,
+                      setCareless: setReasoningCareless,
+                      guesses: reasoningGuesses,
+                      setGuesses: setReasoningGuesses,
+                      timePressure: reasoningTimePressure,
+                      setTimePressure: setReasoningTimePressure,
+                    },
+                    {
+                      label: 'English',
+                      totalErrors: getTotalErrors('english'),
+                      concepts: englishConcepts,
+                      setConcepts: setEnglishConcepts,
+                      careless: englishCareless,
+                      setCareless: setEnglishCareless,
+                      guesses: englishGuesses,
+                      setGuesses: setEnglishGuesses,
+                      timePressure: englishTimePressure,
+                      setTimePressure: setEnglishTimePressure,
+                    },
+                    {
+                      label: 'Professional Knowledge',
+                      totalErrors: getTotalErrors('pk'),
+                      concepts: pkConcepts,
+                      setConcepts: setPkConcepts,
+                      careless: pkCareless,
+                      setCareless: setPkCareless,
+                      guesses: pkGuesses,
+                      setGuesses: setPkGuesses,
+                      timePressure: pkTimePressure,
+                      setTimePressure: setPkTimePressure,
+                    },
+                  ].map((section, index) => (
+                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-semibold">{section.label}</h4>
+                        <span className="text-sm text-red-600 font-medium">
+                          {section.totalErrors} errors to analyze
+                        </span>
                       </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium text-red-700">Concept Gaps</label>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            max={section.totalErrors}
+                            value={section.concepts}
+                            onChange={e => section.setConcepts(Number(e.target.value))}
+                            className="text-sm"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium text-orange-700">Careless Errors</label>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            max={section.totalErrors}
+                            value={section.careless}
+                            onChange={e => section.setCareless(Number(e.target.value))}
+                            className="text-sm"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium text-blue-700">Lucky Guesses</label>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            max={section.totalErrors}
+                            value={section.guesses}
+                            onChange={e => section.setGuesses(Number(e.target.value))}
+                            className="text-sm"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium text-purple-700">Time Pressure</label>
+                          <Input
+                            type="number"
+                            inputMode="numeric"
+                            min="0"
+                            max={section.totalErrors}
+                            value={section.timePressure}
+                            onChange={e => section.setTimePressure(Number(e.target.value))}
+                            className="text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-600">
+                        Analyzed: {section.concepts + section.careless + section.guesses + section.timePressure}/
+                        {section.totalErrors}
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="flex space-x-2">
+                    <Button variant="outline" onClick={() => setStep(2)} className="w-full">
+                      Back
+                    </Button>
+                    <Button onClick={() => setStep(4)} className="w-full">
+                      Add Feedback
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {step === 4 && (
+              <Card>
+                <CardHeader className="text-center">
+                  <MessageSquare className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                  <CardTitle>Test Feedback</CardTitle>
+                  <CardDescription>How did you feel during the test? Any observations?</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Textarea
+                    value={feedback}
+                    onChange={e => setFeedback(e.target.value)}
+                    placeholder="Mental state, concentration level, test environment, specific difficulties faced..."
+                    rows={6}
+                  />
+
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-blue-900 mb-2">Test Summary</h4>
+                    <div className="space-y-1 text-sm text-blue-800">
+                      <p>Total Score: {getTotalScore()}/200</p>
+                      <p>Total Concept Gaps: {quantConcepts + reasoningConcepts + englishConcepts + pkConcepts}</p>
+                      <p>Total Careless Errors: {quantCareless + reasoningCareless + englishCareless + pkCareless}</p>
                     </div>
                   </div>
-                ))}
 
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900">Total Score: {getTotalScore()}/200</h4>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Button variant="outline" onClick={() => setStep(1)} className="w-full">
-                    Back
-                  </Button>
-                  <Button onClick={() => setStep(3)} className="w-full">
-                    Analyze Errors
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {step === 3 && (
-            <Card>
-              <CardHeader className="text-center">
-                <Clock className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-                <CardTitle>Error Analysis</CardTitle>
-                <CardDescription>Categorize your errors to identify improvement areas</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {[
-                  {
-                    label: 'Quantitative Aptitude',
-                    totalErrors: getTotalErrors('quant'),
-                    concepts: quantConcepts,
-                    setConcepts: setQuantConcepts,
-                    careless: quantCareless,
-                    setCareless: setQuantCareless,
-                    guesses: quantGuesses,
-                    setGuesses: setQuantGuesses,
-                    timePressure: quantTimePressure,
-                    setTimePressure: setQuantTimePressure,
-                  },
-                  {
-                    label: 'Reasoning',
-                    totalErrors: getTotalErrors('reasoning'),
-                    concepts: reasoningConcepts,
-                    setConcepts: setReasoningConcepts,
-                    careless: reasoningCareless,
-                    setCareless: setReasoningCareless,
-                    guesses: reasoningGuesses,
-                    setGuesses: setReasoningGuesses,
-                    timePressure: reasoningTimePressure,
-                    setTimePressure: setReasoningTimePressure,
-                  },
-                  {
-                    label: 'English',
-                    totalErrors: getTotalErrors('english'),
-                    concepts: englishConcepts,
-                    setConcepts: setEnglishConcepts,
-                    careless: englishCareless,
-                    setCareless: setEnglishCareless,
-                    guesses: englishGuesses,
-                    setGuesses: setEnglishGuesses,
-                    timePressure: englishTimePressure,
-                    setTimePressure: setEnglishTimePressure,
-                  },
-                  {
-                    label: 'Professional Knowledge',
-                    totalErrors: getTotalErrors('pk'),
-                    concepts: pkConcepts,
-                    setConcepts: setPkConcepts,
-                    careless: pkCareless,
-                    setCareless: setPkCareless,
-                    guesses: pkGuesses,
-                    setGuesses: setPkGuesses,
-                    timePressure: pkTimePressure,
-                    setTimePressure: setPkTimePressure,
-                  },
-                ].map((section, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold">{section.label}</h4>
-                      <span className="text-sm text-red-600 font-medium">{section.totalErrors} errors to analyze</span>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-red-700">Concept Gaps</label>
-                        <Input
-                          type="number"
-inputMode="numeric"
-                          min="0"
-                          max={section.totalErrors}
-                          value={section.concepts}
-                          onChange={e => section.setConcepts(Number(e.target.value))}
-                          className="text-sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-orange-700">Careless Errors</label>
-                        <Input
-                          type="number"
-inputMode="numeric"
-                          min="0"
-                          max={section.totalErrors}
-                          value={section.careless}
-                          onChange={e => section.setCareless(Number(e.target.value))}
-                          className="text-sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-blue-700">Lucky Guesses</label>
-                        <Input
-                          type="number"
-inputMode="numeric"
-                          min="0"
-                          max={section.totalErrors}
-                          value={section.guesses}
-                          onChange={e => section.setGuesses(Number(e.target.value))}
-                          className="text-sm"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium text-purple-700">Time Pressure</label>
-                        <Input
-                          type="number"
-inputMode="numeric"
-                          min="0"
-                          max={section.totalErrors}
-                          value={section.timePressure}
-                          onChange={e => section.setTimePressure(Number(e.target.value))}
-                          className="text-sm"
-                        />
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-gray-600">
-                      Analyzed: {section.concepts + section.careless + section.guesses + section.timePressure}/
-                      {section.totalErrors}
-                    </div>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" onClick={() => setStep(3)} className="w-full">
+                      Back
+                    </Button>
+                    <Button onClick={handleSubmit} disabled={loading} className="w-full">
+                      {loading ? 'Saving Test...' : 'Save Test & Analysis'}
+                    </Button>
                   </div>
-                ))}
-
-                <div className="flex space-x-2">
-                  <Button variant="outline" onClick={() => setStep(2)} className="w-full">
-                    Back
-                  </Button>
-                  <Button onClick={() => setStep(4)} className="w-full">
-                    Add Feedback
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {step === 4 && (
-            <Card>
-              <CardHeader className="text-center">
-                <MessageSquare className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                <CardTitle>Test Feedback</CardTitle>
-                <CardDescription>How did you feel during the test? Any observations?</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  value={feedback}
-                  onChange={e => setFeedback(e.target.value)}
-                  placeholder="Mental state, concentration level, test environment, specific difficulties faced..."
-                  rows={6}
-                />
-
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">Test Summary</h4>
-                  <div className="space-y-1 text-sm text-blue-800">
-                    <p>Total Score: {getTotalScore()}/200</p>
-                    <p>Total Concept Gaps: {quantConcepts + reasoningConcepts + englishConcepts + pkConcepts}</p>
-                    <p>Total Careless Errors: {quantCareless + reasoningCareless + englishCareless + pkCareless}</p>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Button variant="outline" onClick={() => setStep(3)} className="w-full">
-                    Back
-                  </Button>
-                  <Button onClick={handleSubmit} disabled={loading} className="w-full">
-                    {loading ? 'Saving Test...' : 'Save Test & Analysis'}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </PageTransition>
       </div>
     </AuthGuard>

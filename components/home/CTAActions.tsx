@@ -6,9 +6,7 @@ import { Suspense, lazy } from 'react';
 const AuthAwareCTAButton = lazy(() => import('./AuthAwareCTAButton'));
 
 function CTAButtonSkeleton() {
-  return (
-    <div className="h-16 w-80 bg-primary/20 rounded-lg animate-pulse" />
-  );
+  return <div className="h-16 w-80 bg-primary/20 rounded-lg animate-pulse" />;
 }
 
 export default function CTAActions() {

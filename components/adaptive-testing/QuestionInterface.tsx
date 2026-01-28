@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 // import { Separator } from '@/components/ui/separator'; <-- Remove or comment out
-// import { Slider } from '@/components/ui/slider'; 
+// import { Slider } from '@/components/ui/slider';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/utils';
 import { AdaptiveQuestion } from '@/types/adaptive-testing';
@@ -40,7 +40,7 @@ interface QuestionInterfaceProps {
   onFlag?: (questionId: string) => void;
   isBookmarked?: boolean;
   isFlagged?: boolean;
-  // showConfidenceSlider?: boolean; 
+  // showConfidenceSlider?: boolean;
   showTimer?: boolean;
   adaptiveMode?: boolean;
   className?: string;
@@ -63,14 +63,14 @@ export default function QuestionInterface({
   onFlag,
   isBookmarked = false,
   isFlagged = false,
-  // showConfidenceSlider = true, 
+  // showConfidenceSlider = true,
   showTimer = true,
   adaptiveMode = true,
   className,
   result,
 }: QuestionInterfaceProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [confidence] = useState<number[]>([75]); 
+  const [confidence] = useState<number[]>([75]);
   const [timeSpent, setTimeSpent] = useState(0);
   const [isAnswered, setIsAnswered] = useState(false);
   const [questionStartTime] = useState(Date.now());
@@ -110,7 +110,7 @@ export default function QuestionInterface({
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;
       }
-      
+
       // Option selection with 1-4 keys
       if (!isAnswered && question.options) {
         const num = parseInt(e.key);
@@ -118,20 +118,20 @@ export default function QuestionInterface({
           handleOptionSelect(`option-${num - 1}`);
         }
       }
-      
+
       // Submit with Enter key
       if (e.key === 'Enter' && selectedOption && !isAnswered) {
         e.preventDefault();
         handleSubmitAnswer();
       }
-      
+
       // Next question with Enter or Space after answering
       if ((e.key === 'Enter' || e.key === ' ') && isAnswered && onNext) {
         e.preventDefault();
         onNext();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isAnswered, question.options, selectedOption, handleOptionSelect, handleSubmitAnswer, onNext]);
@@ -167,14 +167,14 @@ export default function QuestionInterface({
         <Card className="border-0 shadow-md bg-gradient-to-r from-blue-50 via-white to-purple-50 overflow-hidden">
           <CardHeader className="pb-3 pt-4 px-5 relative">
             {/* Animated background gradient */}
-            <motion.div 
+            <motion.div
               className="absolute inset-0 bg-gradient-to-r from-blue-100/50 via-transparent to-purple-100/50"
-              animate={{ 
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              animate={{
+                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
               }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             />
-            
+
             <div className="relative z-10">
               <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-3 mb-3">
                 <div className="flex flex-wrap items-center gap-2">
@@ -182,7 +182,7 @@ export default function QuestionInterface({
                     Q{questionNumber}/{totalQuestions}
                   </Badge>
                   {adaptiveMode && (
-                    <Badge className={cn(getDifficultyColor(String(question.difficulty)), "shadow-sm h-7")}>
+                    <Badge className={cn(getDifficultyColor(String(question.difficulty)), 'shadow-sm h-7')}>
                       <Brain className="h-3 w-3 mr-1" />
                       {String(question.difficulty)}
                     </Badge>
@@ -194,10 +194,12 @@ export default function QuestionInterface({
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
                   {showTimer && (
-                    <motion.div 
+                    <motion.div
                       className={cn(
-                        "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border",
-                        timeSpent > 120000 ? "bg-orange-100 text-orange-700 border-orange-200" : "bg-white text-gray-700 border-gray-200"
+                        'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors border',
+                        timeSpent > 120000
+                          ? 'bg-orange-100 text-orange-700 border-orange-200'
+                          : 'bg-white text-gray-700 border-gray-200'
                       )}
                       animate={timeSpent > 120000 ? { scale: [1, 1.02, 1] } : {}}
                       transition={{ duration: 1, repeat: Infinity }}
@@ -207,10 +209,12 @@ export default function QuestionInterface({
                     </motion.div>
                   )}
                   {timeRemaining && (
-                    <motion.div 
+                    <motion.div
                       className={cn(
-                        "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border",
-                        timeRemaining < 60000 ? "bg-red-100 text-red-700 border-red-200" : "bg-orange-50 text-orange-700 border-orange-200"
+                        'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border',
+                        timeRemaining < 60000
+                          ? 'bg-red-100 text-red-700 border-red-200'
+                          : 'bg-orange-50 text-orange-700 border-orange-200'
                       )}
                       animate={timeRemaining < 60000 ? { scale: [1, 1.05, 1] } : {}}
                       transition={{ duration: 0.5, repeat: Infinity }}
@@ -228,11 +232,11 @@ export default function QuestionInterface({
                   <span className="font-medium text-gray-500">Progress</span>
                   <span className="text-gray-600 font-mono">{getProgressPercentage().toFixed(0)}%</span>
                 </div>
-                
+
                 {/* Animated progress bar */}
                 <div className="relative">
                   <Progress value={getProgressPercentage()} className="h-2" />
-                  <motion.div 
+                  <motion.div
                     className="absolute top-0 left-0 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-30"
                     style={{ width: `${getProgressPercentage()}%` }}
                     animate={{ opacity: [0.2, 0.4, 0.2] }}
@@ -247,15 +251,17 @@ export default function QuestionInterface({
                       <motion.div
                         key={i}
                         className={cn(
-                          "h-1.5 rounded-full transition-all duration-300",
-                          i + 1 === questionNumber ? "w-4 bg-gradient-to-r from-blue-500 to-purple-500" :
-                          i + 1 < questionNumber ? "w-1.5 bg-green-500" :
-                          "w-1.5 bg-gray-200"
+                          'h-1.5 rounded-full transition-all duration-300',
+                          i + 1 === questionNumber
+                            ? 'w-4 bg-gradient-to-r from-blue-500 to-purple-500'
+                            : i + 1 < questionNumber
+                              ? 'w-1.5 bg-green-500'
+                              : 'w-1.5 bg-gray-200'
                         )}
                         initial={{ scale: 0.8, opacity: 0.5 }}
-                        animate={{ 
-                          scale: i + 1 === questionNumber ? 1 : 1, 
-                          opacity: 1 
+                        animate={{
+                          scale: i + 1 === questionNumber ? 1 : 1,
+                          opacity: 1,
                         }}
                         transition={{ duration: 0.3 }}
                       />
@@ -279,10 +285,8 @@ export default function QuestionInterface({
             <CardHeader className="p-5 sm:p-6 bg-white pb-2">
               <div className="flex items-start justify-between">
                 <div className="flex-1 prose prose-lg max-w-none text-gray-900 pr-4">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {question.question}
-                  </ReactMarkdown>
-                  
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{question.question}</ReactMarkdown>
+
                   {/* Explanation showing below options now */}
                 </div>
                 <div className="flex items-center gap-1 ml-2 shrink-0">
@@ -291,7 +295,10 @@ export default function QuestionInterface({
                       <Button
                         variant="ghost"
                         onClick={() => onBookmark?.(question.id)}
-                        className={cn('h-8 w-8 p-0 rounded-full hover:bg-gray-100', isBookmarked && 'text-yellow-600 bg-yellow-50')}
+                        className={cn(
+                          'h-8 w-8 p-0 rounded-full hover:bg-gray-100',
+                          isBookmarked && 'text-yellow-600 bg-yellow-50'
+                        )}
                       >
                         <Bookmark className="h-4 w-4" />
                       </Button>
@@ -306,7 +313,10 @@ export default function QuestionInterface({
                       <Button
                         variant="ghost"
                         onClick={() => onFlag?.(question.id)}
-                        className={cn('h-8 w-8 p-0 rounded-full hover:bg-gray-100', isFlagged && 'text-red-600 bg-red-50')}
+                        className={cn(
+                          'h-8 w-8 p-0 rounded-full hover:bg-gray-100',
+                          isFlagged && 'text-red-600 bg-red-50'
+                        )}
                       >
                         <Flag className="h-4 w-4" />
                       </Button>
@@ -321,8 +331,8 @@ export default function QuestionInterface({
               {/* Adaptive Insights */}
               {adaptiveMode && !isAnswered && (
                 <div className="mt-4 flex items-center gap-2 text-xs font-medium text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full w-fit">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>Adaptive Question</span>
+                  <TrendingUp className="h-3 w-3" />
+                  <span>Adaptive Question</span>
                 </div>
               )}
             </CardHeader>
@@ -330,142 +340,171 @@ export default function QuestionInterface({
             <CardContent className="space-y-4 p-5 sm:p-6 pt-0">
               {/* Answer Options */}
               <div className="flex flex-col gap-3">
-                  {question.options?.map((option: string, index: number) => {
-                    const optionId = `option-${index}`;
-                    const isSelected = selectedOption === optionId;
-                    
-                    // Determine status for styling
-                    let status: 'default' | 'selected' | 'correct' | 'incorrect' = 'default';
-                    
-                    if (result) {
-                      const isOptionCorrect = option === result.correctAnswer || (index + 1) === result.correctAnswer || optionId === result.correctAnswer;
-                      
-                      if (isOptionCorrect) {
-                        status = 'correct';
-                      } else if (isSelected) {
-                        status = 'incorrect';
-                      }
+                {question.options?.map((option: string, index: number) => {
+                  const optionId = `option-${index}`;
+                  const isSelected = selectedOption === optionId;
+
+                  // Determine status for styling
+                  let status: 'default' | 'selected' | 'correct' | 'incorrect' = 'default';
+
+                  if (result) {
+                    const isOptionCorrect =
+                      option === result.correctAnswer ||
+                      index + 1 === result.correctAnswer ||
+                      optionId === result.correctAnswer;
+
+                    if (isOptionCorrect) {
+                      status = 'correct';
                     } else if (isSelected) {
-                      status = 'selected';
+                      status = 'incorrect';
                     }
+                  } else if (isSelected) {
+                    status = 'selected';
+                  }
 
-                    return (
-                      <motion.div
-                        key={optionId}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ 
-                          opacity: 1, 
-                          y: 0,
-                          scale: status === 'correct' ? [1, 1.01, 1] : 1,
-                          x: status === 'incorrect' ? [0, -2, 2, 0] : 0,
-                        }}
-                        transition={{ 
-                          duration: 0.2,
-                          delay: index * 0.03,
-                        }}
-                        whileHover={!isAnswered ? { 
-                          scale: 1.002, 
-                          backgroundColor: "rgba(59, 130, 246, 0.02)",
-                          borderColor: "rgba(59, 130, 246, 0.3)",
-                          transition: { duration: 0.2 }
-                        } : {}}
-                        whileTap={!isAnswered ? { scale: 0.995 } : {}}
-                        className={cn(
-                          'group relative p-4 rounded-xl border transition-all duration-200 cursor-pointer flex items-center', // Flex Items Center for vertical alignment
-                          status === 'selected' && 'border-blue-500 bg-blue-50/50 shadow-sm ring-1 ring-blue-200',
-                          status === 'correct' && 'border-green-500 bg-green-50/50 shadow-sm ring-1 ring-green-200',
-                          status === 'incorrect' && 'border-red-400 bg-red-50/50 shadow-sm ring-1 ring-red-200',
-                          status === 'default' && 'border-gray-200 bg-white hover:border-blue-300',
-                          isAnswered && status === 'default' && 'opacity-50 grayscale-[0.5] cursor-not-allowed'
-                        )}
-                        onClick={() => handleOptionSelect(optionId)}
-                      >
-                        {/* Selection glow effect using direct border instead of absolute div for cleaner look */}
-                        
-                        <div className="flex items-center gap-4 w-full"> 
-                          {/* Option indicator */}
-                          <div className="flex-shrink-0">
-                            <motion.div
-                              animate={status === 'correct' ? { scale: [1, 1.1, 1] } : {}}
-                              transition={{ duration: 0.3 }}
-                            >
-                              {status === 'correct' ? (
-                                <div className="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center shadow-sm">
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-white" />
-                                </div>
-                              ) : status === 'incorrect' ? (
-                                <div className="h-6 w-6 rounded-full border-2 border-red-400 bg-red-50 flex items-center justify-center">
-                                  <div className="h-2 w-2 rounded-full bg-red-400" />
-                                </div>
-                              ) : status === 'selected' ? (
-                                <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center shadow-sm">
-                                  <div className="h-2.5 w-2.5 rounded-full bg-white" />
-                                </div>
-                              ) : (
-                                <div className="h-6 w-6 rounded-full border border-gray-300 bg-white flex items-center justify-center group-hover:border-blue-400 group-hover:bg-blue-50 transition-all duration-200">
-                                  <span className="text-[10px] font-bold text-gray-400 group-hover:text-blue-500 transition-colors">{index + 1}</span>
-                                </div>
-                              )}
-                            </motion.div>
-                          </div>
+                  return (
+                    <motion.div
+                      key={optionId}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        scale: status === 'correct' ? [1, 1.01, 1] : 1,
+                        x: status === 'incorrect' ? [0, -2, 2, 0] : 0,
+                      }}
+                      transition={{
+                        duration: 0.2,
+                        delay: index * 0.03,
+                      }}
+                      whileHover={
+                        !isAnswered
+                          ? {
+                              scale: 1.002,
+                              backgroundColor: 'rgba(59, 130, 246, 0.02)',
+                              borderColor: 'rgba(59, 130, 246, 0.3)',
+                              transition: { duration: 0.2 },
+                            }
+                          : {}
+                      }
+                      whileTap={!isAnswered ? { scale: 0.995 } : {}}
+                      className={cn(
+                        'group relative p-4 rounded-xl border transition-all duration-200 cursor-pointer flex items-center', // Flex Items Center for vertical alignment
+                        status === 'selected' && 'border-blue-500 bg-blue-50/50 shadow-sm ring-1 ring-blue-200',
+                        status === 'correct' && 'border-green-500 bg-green-50/50 shadow-sm ring-1 ring-green-200',
+                        status === 'incorrect' && 'border-red-400 bg-red-50/50 shadow-sm ring-1 ring-red-200',
+                        status === 'default' && 'border-gray-200 bg-white hover:border-blue-300',
+                        isAnswered && status === 'default' && 'opacity-50 grayscale-[0.5] cursor-not-allowed'
+                      )}
+                      onClick={() => handleOptionSelect(optionId)}
+                    >
+                      {/* Selection glow effect using direct border instead of absolute div for cleaner look */}
 
-                          {/* Option Text */}
-                          <div className="flex-1">
-                            <span className={cn(
-                              "text-sm sm:text-base leading-relaxed block",
-                              status === 'selected' ? "font-semibold text-blue-900" : 
-                              status === 'correct' ? "font-semibold text-green-900" :
-                              status === 'incorrect' ? "font-medium text-red-800" :
-                              "font-medium text-gray-700 group-hover:text-gray-900"
-                            )}>
-                              <ReactMarkdown components={{ p: 'span' }} remarkPlugins={[remarkGfm]}>
-                                {option}
-                              </ReactMarkdown>
-                            </span>
-                          </div>
+                      <div className="flex items-center gap-4 w-full">
+                        {/* Option indicator */}
+                        <div className="flex-shrink-0">
+                          <motion.div
+                            animate={status === 'correct' ? { scale: [1, 1.1, 1] } : {}}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {status === 'correct' ? (
+                              <div className="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center shadow-sm">
+                                <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                              </div>
+                            ) : status === 'incorrect' ? (
+                              <div className="h-6 w-6 rounded-full border-2 border-red-400 bg-red-50 flex items-center justify-center">
+                                <div className="h-2 w-2 rounded-full bg-red-400" />
+                              </div>
+                            ) : status === 'selected' ? (
+                              <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center shadow-sm">
+                                <div className="h-2.5 w-2.5 rounded-full bg-white" />
+                              </div>
+                            ) : (
+                              <div className="h-6 w-6 rounded-full border border-gray-300 bg-white flex items-center justify-center group-hover:border-blue-400 group-hover:bg-blue-50 transition-all duration-200">
+                                <span className="text-[10px] font-bold text-gray-400 group-hover:text-blue-500 transition-colors">
+                                  {index + 1}
+                                </span>
+                              </div>
+                            )}
+                          </motion.div>
                         </div>
-                      </motion.div>
-                    );
-                  })}
+
+                        {/* Option Text */}
+                        <div className="flex-1">
+                          <span
+                            className={cn(
+                              'text-sm sm:text-base leading-relaxed block',
+                              status === 'selected'
+                                ? 'font-semibold text-blue-900'
+                                : status === 'correct'
+                                  ? 'font-semibold text-green-900'
+                                  : status === 'incorrect'
+                                    ? 'font-medium text-red-800'
+                                    : 'font-medium text-gray-700 group-hover:text-gray-900'
+                            )}
+                          >
+                            <ReactMarkdown components={{ p: 'span' }} remarkPlugins={[remarkGfm]}>
+                              {option}
+                            </ReactMarkdown>
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
               {/* Explanation Section - Moved here to prevent layout shift */}
               {(result?.explanation || question.explanation) && isAnswered && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={cn(
+                    'mt-6 p-4 rounded-xl border-l-4 shadow-sm',
+                    result?.isCorrect === false ? 'bg-red-50/50 border-red-400' : 'bg-blue-50/50 border-blue-400'
+                  )}
+                >
+                  <h4
                     className={cn(
-                      "mt-6 p-4 rounded-xl border-l-4 shadow-sm",
-                      result?.isCorrect === false ? "bg-red-50/50 border-red-400" : "bg-blue-50/50 border-blue-400"
+                      'flex items-center gap-2 font-bold mb-2 text-sm',
+                      result?.isCorrect === false ? 'text-red-900' : 'text-blue-900'
                     )}
                   >
-                    <h4 className={cn(
-                      "flex items-center gap-2 font-bold mb-2 text-sm",
-                      result?.isCorrect === false ? "text-red-900" : "text-blue-900"
-                    )}>
-                        <Zap className={cn("h-4 w-4", result?.isCorrect === false ? "fill-red-500 text-red-500" : "fill-blue-500 text-blue-500")} />
-                        {result?.isCorrect === false ? "Correction" : "Explanation"}
-                    </h4>
-                    <div className={cn("prose prose-sm max-w-none text-gray-700", result?.isCorrect === false ? "prose-red" : "prose-blue")}>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {result?.explanation || question.explanation}
-                        </ReactMarkdown>
-                    </div>
-                  </motion.div>
+                    <Zap
+                      className={cn(
+                        'h-4 w-4',
+                        result?.isCorrect === false ? 'fill-red-500 text-red-500' : 'fill-blue-500 text-blue-500'
+                      )}
+                    />
+                    {result?.isCorrect === false ? 'Correction' : 'Explanation'}
+                  </h4>
+                  <div
+                    className={cn(
+                      'prose prose-sm max-w-none text-gray-700',
+                      result?.isCorrect === false ? 'prose-red' : 'prose-blue'
+                    )}
+                  >
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {result?.explanation || question.explanation}
+                    </ReactMarkdown>
+                  </div>
+                </motion.div>
               )}
 
               {/* Removed Confidence Slider */}
 
               {/* Warning for unanswered questions */}
-              {!selectedOption && !isAnswered && (
-                   <div className="h-4" />
-              )}
+              {!selectedOption && !isAnswered && <div className="h-4" />}
 
               {/* Sticky Action Buttons Footer */}
               <div className="sticky bottom-0 -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 z-20 flex items-center justify-between mt-2 rounded-b-xl shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center gap-2">
                   {onPrevious && questionNumber > 1 && (
-                    <Button variant="ghost" size="sm" onClick={onPrevious} className="gap-2 text-gray-500 hover:text-gray-900 h-9">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={onPrevious}
+                      className="gap-2 text-gray-500 hover:text-gray-900 h-9"
+                    >
                       <ChevronLeft className="h-4 w-4" />
                       Prev
                     </Button>
@@ -494,7 +533,7 @@ export default function QuestionInterface({
                   )}
                 </div>
               </div>
-              
+
               {/* Spacer to prevent content from being hidden behind sticky footer */}
               {/* <div className="h-4" /> */}
 
@@ -510,7 +549,11 @@ export default function QuestionInterface({
           </div>
           <div className="flex items-center gap-2">
             {question.tags?.map(tag => (
-              <Badge key={tag} variant="secondary" className="text-[10px] px-2 py-0 h-5 bg-gray-100 text-gray-500 hover:bg-gray-200 border-0">
+              <Badge
+                key={tag}
+                variant="secondary"
+                className="text-[10px] px-2 py-0 h-5 bg-gray-100 text-gray-500 hover:bg-gray-200 border-0"
+              >
                 #{tag}
               </Badge>
             ))}

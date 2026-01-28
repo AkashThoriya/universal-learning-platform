@@ -14,13 +14,10 @@ interface MobileScrollGridProps {
  * A hybrid layout component that:
  * - Shows a horizontal scrollable strip on mobile (snap-x)
  * - Shows a standard grid on desktop
- * 
+ *
  * Perfect for "Stats" cards that take up too much vertical space on phones.
  */
-export default function MobileScrollGrid({
-  children,
-  className,
-}: MobileScrollGridProps) {
+export default function MobileScrollGrid({ children, className }: MobileScrollGridProps) {
   return (
     <div
       className={cn(

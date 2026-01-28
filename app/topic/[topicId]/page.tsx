@@ -275,7 +275,6 @@ export default function TopicPage() {
     );
   }
 
-
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -284,165 +283,162 @@ export default function TopicPage() {
 
         <PageTransition>
           <div className="max-w-5xl mx-auto p-4 sm:p-6 pb-40 sm:pb-40 xl:pb-6 space-y-6">
+            <DetailPageHeader
+              title={topic.name}
+              description={subject.name}
+              backHref={`/subjects/${subjectId}`}
+              backLabel={subject.name}
+              actions={
+                <div className="flex items-center gap-2">
+                  {userProgress && (
+                    <Badge className={getMasteryBadgeClass(userProgress.masteryScore)}>
+                      Mastery: {userProgress.masteryScore}%
+                    </Badge>
+                  )}
+                  {userProgress?.lastRevised && (
+                    <Badge variant="secondary">
+                      Last revised: {format(userProgress.lastRevised.toDate(), 'MMM dd')}
+                    </Badge>
+                  )}
+                </div>
+              }
+            />
 
+            {/* Banking Context */}
+            <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Building2 className="h-5 w-5 text-yellow-600" />
+                  <span className="text-yellow-900">Banking Context</span>
+                </CardTitle>
+                <CardDescription className="text-yellow-700">Why this topic matters in banking IT</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-white p-4 rounded-lg border border-yellow-200">
+                  <p className="text-gray-700 leading-relaxed">{topic.bankingContext}</p>
+                </div>
 
-          <DetailPageHeader
-            title={topic.name}
-            description={subject.name}
-            backHref={`/subjects/${subjectId}`}
-            backLabel={subject.name}
-            actions={
-              <div className="flex items-center gap-2">
-                {userProgress && (
-                  <Badge className={getMasteryBadgeClass(userProgress.masteryScore)}>
-                    Mastery: {userProgress.masteryScore}%
-                  </Badge>
-                )}
-                {userProgress?.lastRevised && (
-                  <Badge variant="secondary">Last revised: {format(userProgress.lastRevised.toDate(), 'MMM dd')}</Badge>
-                )}
-              </div>
-            }
-          />
-
-          {/* Banking Context */}
-          <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Building2 className="h-5 w-5 text-yellow-600" />
-                <span className="text-yellow-900">Banking Context</span>
-              </CardTitle>
-              <CardDescription className="text-yellow-700">Why this topic matters in banking IT</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-white p-4 rounded-lg border border-yellow-200">
-                <p className="text-gray-700 leading-relaxed">{topic.bankingContext}</p>
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="banking-context-notes" className="text-sm font-medium text-yellow-900">
-                  Your Personal Banking Context Notes
-                </label>
-                <Textarea
-                  id="banking-context-notes"
-                  value={userBankingContext}
-                  onChange={e => setUserBankingContext(e.target.value)}
-                  placeholder="Add your own insights about how this topic applies to banking scenarios..."
-                  rows={3}
-                  className="bg-white border-yellow-200 focus:border-yellow-400"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Study Notes */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <BookOpen className="h-5 w-5 text-blue-600" />
-                <span>Study Notes</span>
-              </CardTitle>
-              <CardDescription>Your personal notes and key points for this topic</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={userNotes}
-                onChange={e => setUserNotes(e.target.value)}
-                placeholder="Add your study notes, important formulas, key concepts, practice questions..."
-                rows={8}
-                className="mb-4"
-              />
-              <div className="flex space-x-2">
-                <Button onClick={handleSave} disabled={saving}>
-                  <Save className="h-4 w-4 mr-2" />
-                  {saving ? 'Saving...' : 'Save Notes'}
-                </Button>
-                <Button onClick={handleMarkRevised} variant="outline">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Mark as Revised
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Current Affairs */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Calendar className="h-5 w-5 text-green-600" />
-                <span>Current Affairs & Updates</span>
-              </CardTitle>
-              <CardDescription>Latest banking news and updates related to this topic</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex space-x-2">
-                <Input
-                  value={newCurrentAffair}
-                  onChange={e => setNewCurrentAffair(e.target.value)}
-                  placeholder="Add a current affairs note..."
-                  className="flex-1"
-                />
-                <Button onClick={handleAddCurrentAffair} disabled={!newCurrentAffair.trim()}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add
-                </Button>
-              </div>
-
-              {userProgress?.currentAffairs && userProgress.currentAffairs.length > 0 ? (
                 <div className="space-y-2">
-                  {userProgress.currentAffairs
-                    .sort((a, b) => (b.date?.toMillis?.() || 0) - (a.date?.toMillis?.() || 0))
-                    .map((affair, index) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                        <div className="flex items-start justify-between">
-                          <p className="text-gray-700 flex-1">{affair.note}</p>
-                          <span className="text-xs text-gray-500 ml-2">
-                            {format(affair.date.toDate(), 'MMM dd, yyyy')}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                  <label htmlFor="banking-context-notes" className="text-sm font-medium text-yellow-900">
+                    Your Personal Banking Context Notes
+                  </label>
+                  <Textarea
+                    id="banking-context-notes"
+                    value={userBankingContext}
+                    onChange={e => setUserBankingContext(e.target.value)}
+                    placeholder="Add your own insights about how this topic applies to banking scenarios..."
+                    rows={3}
+                    className="bg-white border-yellow-200 focus:border-yellow-400"
+                  />
                 </div>
-              ) : (
-                <p className="text-muted-foreground text-center py-4">
-                  No current affairs notes yet. Add your first one above!
-                </p>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Micro-Learning for this Topic */}
-          <Card className="border-blue-200 bg-blue-50">
-            <CardHeader>
-              <CardTitle className="text-blue-900">Quick Learning Sessions</CardTitle>
-              <CardDescription className="text-blue-700">
-                Start focused learning sessions for this specific topic
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <p className="text-sm text-blue-700">Ready to study this topic?</p>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={() => router.push('/syllabus')}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    View Full Syllabus
+            {/* Study Notes */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <BookOpen className="h-5 w-5 text-blue-600" />
+                  <span>Study Notes</span>
+                </CardTitle>
+                <CardDescription>Your personal notes and key points for this topic</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  value={userNotes}
+                  onChange={e => setUserNotes(e.target.value)}
+                  placeholder="Add your study notes, important formulas, key concepts, practice questions..."
+                  rows={8}
+                  className="mb-4"
+                />
+                <div className="flex space-x-2">
+                  <Button onClick={handleSave} disabled={saving}>
+                    <Save className="h-4 w-4 mr-2" />
+                    {saving ? 'Saving...' : 'Save Notes'}
                   </Button>
-                  <Button
-                    onClick={() => router.push(`/test?topic=${topicId}`)}
-                    variant="outline"
-                    className="border-blue-300"
-                  >
+                  <Button onClick={handleMarkRevised} variant="outline">
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Take Test
+                    Mark as Revised
                   </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+
+            {/* Current Affairs */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Calendar className="h-5 w-5 text-green-600" />
+                  <span>Current Affairs & Updates</span>
+                </CardTitle>
+                <CardDescription>Latest banking news and updates related to this topic</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex space-x-2">
+                  <Input
+                    value={newCurrentAffair}
+                    onChange={e => setNewCurrentAffair(e.target.value)}
+                    placeholder="Add a current affairs note..."
+                    className="flex-1"
+                  />
+                  <Button onClick={handleAddCurrentAffair} disabled={!newCurrentAffair.trim()}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add
+                  </Button>
+                </div>
+
+                {userProgress?.currentAffairs && userProgress.currentAffairs.length > 0 ? (
+                  <div className="space-y-2">
+                    {userProgress.currentAffairs
+                      .sort((a, b) => (b.date?.toMillis?.() || 0) - (a.date?.toMillis?.() || 0))
+                      .map((affair, index) => (
+                        <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                          <div className="flex items-start justify-between">
+                            <p className="text-gray-700 flex-1">{affair.note}</p>
+                            <span className="text-xs text-gray-500 ml-2">
+                              {format(affair.date.toDate(), 'MMM dd, yyyy')}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No current affairs notes yet. Add your first one above!
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Micro-Learning for this Topic */}
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader>
+                <CardTitle className="text-blue-900">Quick Learning Sessions</CardTitle>
+                <CardDescription className="text-blue-700">
+                  Start focused learning sessions for this specific topic
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-blue-700">Ready to study this topic?</p>
+                  <div className="flex gap-3">
+                    <Button onClick={() => router.push('/syllabus')} className="bg-blue-600 hover:bg-blue-700">
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      View Full Syllabus
+                    </Button>
+                    <Button
+                      onClick={() => router.push(`/test?topic=${topicId}`)}
+                      variant="outline"
+                      className="border-blue-300"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Take Test
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </PageTransition>
       </div>
     </AuthGuard>

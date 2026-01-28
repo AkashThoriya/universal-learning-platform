@@ -52,13 +52,13 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedJourneyPlan | null>(null);
   const { toast } = useToast();
 
-  const { 
-    currentStepIndex, 
-    start: startThinking, 
-    reset: resetThinking 
+  const {
+    currentStepIndex,
+    start: startThinking,
+    reset: resetThinking,
   } = useAiThinking({
     steps: STEPS,
-    autoStart: false
+    autoStart: false,
   });
 
   const startArchitect = async () => {
@@ -69,7 +69,7 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
     try {
       // Parallel execution: Visuals run while API calls
       const response = await llmService.generateJourneyPlan(goal);
-      
+
       if (response.success && response.data) {
         setGeneratedPlan(response.data);
         setStatus('review');
@@ -82,23 +82,23 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
       toast({
         title: 'Architect Error',
         description: 'Failed to design your journey. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   };
 
   const confirmJourney = async () => {
-     // ... logic remains same ...
-     if (!generatedPlan) return;
-    
+    // ... logic remains same ...
+    if (!generatedPlan) return;
+
     try {
       const result = await journeyService.createJourney(userId, {
         title: generatedPlan.title,
         description: generatedPlan.description,
-        targetCompletionDate: new Date(Date.now() + (generatedPlan.targetWeeks * 7 * 24 * 60 * 60 * 1000)),
+        targetCompletionDate: new Date(Date.now() + generatedPlan.targetWeeks * 7 * 24 * 60 * 60 * 1000),
         priority: generatedPlan.priority || 'medium',
         track: (generatedPlan.track as 'exam' | 'course_tech') || 'exam',
-        customGoals: generatedPlan.milestones.map((m) => ({
+        customGoals: generatedPlan.milestones.map(m => ({
           title: m.title,
           description: m.title,
           targetValue: 100,
@@ -109,11 +109,11 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
           isAchievable: true,
           isRelevant: true,
           isTimeBound: true,
-          deadline: new Date(Date.now() + (m.deadlineOffsetWeeks * 7 * 24 * 60 * 60 * 1000)),
+          deadline: new Date(Date.now() + m.deadlineOffsetWeeks * 7 * 24 * 60 * 60 * 1000),
           linkedSubjects: [],
           linkedTopics: [],
           autoUpdateFrom: 'manual' as const,
-        }))
+        })),
       });
 
       if (result.success) {
@@ -133,7 +133,16 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { setIsOpen(open); if(!open) { setStatus('idle'); resetThinking(); } }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={open => {
+        setIsOpen(open);
+        if (!open) {
+          setStatus('idle');
+          resetThinking();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         {trigger || (
           <Button className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/20">
@@ -160,19 +169,26 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
                   <Brain className="w-6 h-6 text-indigo-600" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">What's your next goal?</h3>
-                <p className="text-gray-500">Tell our AI what you want to achieve (e.g., "Master Python for Data Science in 3 months")</p>
+                <p className="text-gray-500">
+                  Tell our AI what you want to achieve (e.g., "Master Python for Data Science in 3 months")
+                </p>
               </div>
-              
+
               <div className="flex gap-2">
-                <Input 
-                  value={goal} 
-                  onChange={(e) => setGoal(e.target.value)}
+                <Input
+                  value={goal}
+                  onChange={e => setGoal(e.target.value)}
                   placeholder="I want to learn..."
                   className="text-lg h-12"
-                  onKeyDown={(e) => e.key === 'Enter' && startArchitect()}
+                  onKeyDown={e => e.key === 'Enter' && startArchitect()}
                   autoFocus
                 />
-                <Button size="lg" onClick={startArchitect} disabled={!goal.trim()} className="bg-indigo-600 hover:bg-indigo-700">
+                <Button
+                  size="lg"
+                  onClick={startArchitect}
+                  disabled={!goal.trim()}
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                >
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </div>
@@ -187,7 +203,7 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
               exit={{ opacity: 0 }}
               className="space-y-6"
             >
-               <div className="text-center space-y-2">
+              <div className="text-center space-y-2">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 animate-pulse mb-4">
                   <Sparkles className="w-8 h-8 text-indigo-600" />
                 </div>
@@ -195,27 +211,37 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
                   Architecting Your Path
                 </h3>
               </div>
-              
+
               <Card className="border-0 bg-gray-50/50">
                 <CardContent className="p-6 space-y-4">
                   {STEPS.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
-                    
+
                     return (
                       <div key={step.id} className="flex items-center gap-3">
-                        <div className={cn(
-                          "w-6 h-6 rounded-full flex items-center justify-center transition-colors",
-                          isCompleted ? "bg-green-100 text-green-600" : isCurrent ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-300"
-                        )}>
+                        <div
+                          className={cn(
+                            'w-6 h-6 rounded-full flex items-center justify-center transition-colors',
+                            isCompleted
+                              ? 'bg-green-100 text-green-600'
+                              : isCurrent
+                                ? 'bg-indigo-100 text-indigo-600'
+                                : 'bg-gray-100 text-gray-300'
+                          )}
+                        >
                           {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <step.icon className="w-3 h-3" />}
                         </div>
-                        <span className={cn(
-                          "text-sm font-medium transition-colors",
-                          isCurrent ? "text-indigo-900" : isCompleted ? "text-gray-500" : "text-gray-400"
-                        )}>{step.label}</span>
+                        <span
+                          className={cn(
+                            'text-sm font-medium transition-colors',
+                            isCurrent ? 'text-indigo-900' : isCompleted ? 'text-gray-500' : 'text-gray-400'
+                          )}
+                        >
+                          {step.label}
+                        </span>
                       </div>
-                    )
+                    );
                   })}
                 </CardContent>
               </Card>
@@ -223,7 +249,7 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
           )}
 
           {status === 'review' && generatedPlan && (
-             <motion.div
+            <motion.div
               key="review"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -231,10 +257,10 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                   <h3 className="text-xl font-bold text-gray-900">{generatedPlan.title}</h3>
-                   <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
-                     {generatedPlan.targetWeeks} Weeks
-                   </span>
+                  <h3 className="text-xl font-bold text-gray-900">{generatedPlan.title}</h3>
+                  <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
+                    {generatedPlan.targetWeeks} Weeks
+                  </span>
                 </div>
                 <p className="text-gray-600">{generatedPlan.description}</p>
               </div>

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils/utils';
 interface PageContainerProps {
   children: ReactNode;
   className?: string;
-  /** 
+  /**
    * Whether to add bottom padding for the mobile bottom navigation bar.
    * Default: true (adds pb-24 on mobile/tablet, pb-6 on xl screens)
    */
@@ -30,12 +30,12 @@ const maxWidthClasses = {
 
 /**
  * PageContainer - Standardized page wrapper with consistent padding
- * 
+ *
  * Handles:
  * - Bottom navigation padding on mobile/tablet (pb-24 xl:pb-6)
  * - Responsive horizontal padding (p-4 sm:p-6)
  * - Max-width constraint with auto margins
- * 
+ *
  * Use this wrapper for all authenticated pages to ensure consistent
  * layout across the application.
  */

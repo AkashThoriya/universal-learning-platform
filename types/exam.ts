@@ -1,7 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
 
-
-
 /**
  * @fileoverview Core type definitions for the Exam Strategy Engine
  *
@@ -264,7 +262,7 @@ export interface SyllabusTopic {
  * @interface User
  * @description Core user entity stored at /users/{userId} in Firestore.
  * Contains profile data, exam configuration, and preferences.
- * 
+ *
  * @example
  * ```typescript
  * const user: User = {
@@ -281,7 +279,7 @@ export interface User {
   // ============================================
   // Core Identity (Required)
   // ============================================
-  
+
   /** Firestore document ID for the user */
   userId: string;
   /** User's email address */
@@ -296,11 +294,11 @@ export interface User {
   // ============================================
   // Current Focus
   // ============================================
-  
+
   /** Primary course ID - references /users/{userId}/courses/{courseId} */
   primaryCourseId: string;
-  
-  /** 
+
+  /**
    * Cached current exam info for UI display (denormalized from primary course)
    * Should be kept in sync when primary course changes
    */
@@ -309,14 +307,14 @@ export interface User {
     name: string;
     targetDate: Timestamp;
   };
-  
+
   /** Date when the user started their preparation */
   preparationStartDate?: Timestamp;
 
   // ============================================
   // User Persona
   // ============================================
-  
+
   /** User persona information (student/professional/freelancer) */
   persona?: {
     type: 'student' | 'working_professional' | 'freelancer';
@@ -327,7 +325,7 @@ export interface User {
   // ============================================
   // Preferences (Consolidated)
   // ============================================
-  
+
   /** All user preferences in one place */
   preferences: {
     dailyStudyGoalMinutes: number;
@@ -344,7 +342,7 @@ export interface User {
   // ============================================
   // Onboarding Status
   // ============================================
-  
+
   /** Whether the user has completed the onboarding flow */
   onboardingComplete?: boolean;
 }
@@ -352,7 +350,7 @@ export interface User {
 /**
  * Course document stored in /users/{userId}/courses/{courseId}
  * Represents a course/exam the user is preparing for
- * 
+ *
  * @interface Course
  */
 export interface Course {
@@ -441,7 +439,6 @@ export interface OnboardingFormData {
   // Index signature for form compatibility
   [key: string]: string | number | boolean | object | undefined;
 }
-
 
 /**
  * User persona types for adaptive learning experience

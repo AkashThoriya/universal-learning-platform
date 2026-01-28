@@ -109,7 +109,7 @@ export class AdaptiveTestingService {
         linkedJourneyId: request.linkedJourneyId ?? `journey_${Date.now()}`,
         linkedSubjects: request.subjects,
         ...(request.topics && { linkedTopics: request.topics }),
-        track: request.track ?? 'exam' as const,
+        track: request.track ?? ('exam' as const),
         totalQuestions: request.questionCount ?? request.targetQuestions ?? 5,
         estimatedDuration: (request.questionCount ?? request.targetQuestions ?? 5) * 2, // 2 minutes per question
         difficultyRange: request.difficultyRange ?? {
@@ -163,7 +163,6 @@ export class AdaptiveTestingService {
   async getTest(testId: string): Promise<Result<AdaptiveTest | null>> {
     return adaptiveTestingFirebaseService.getAdaptiveTest(testId);
   }
-
 
   /**
    * Start an adaptive test session
@@ -228,7 +227,16 @@ export class AdaptiveTestingService {
   async submitResponse(
     userId: string,
     request: SubmitResponseRequest
-  ): Promise<Result<{ nextQuestion?: AdaptiveQuestion; testCompleted: boolean; performance?: TestPerformance; isCorrect: boolean; correctAnswer: string | number; explanation?: string }>> {
+  ): Promise<
+    Result<{
+      nextQuestion?: AdaptiveQuestion;
+      testCompleted: boolean;
+      performance?: TestPerformance;
+      isCorrect: boolean;
+      correctAnswer: string | number;
+      explanation?: string;
+    }>
+  > {
     try {
       const session = this.activeSessions.get(request.sessionId);
       if (!session || session.userId !== userId) {
@@ -490,7 +498,7 @@ export class AdaptiveTestingService {
       }
 
       const result = await adaptiveTestingFirebaseService.getUserTests(userId);
-      return result.success ? result.data ?? [] : [];
+      return result.success ? (result.data ?? []) : [];
     } catch (error) {
       console.error('Error getting user tests:', error);
       return [];
@@ -544,15 +552,15 @@ export class AdaptiveTestingService {
     try {
       // First check memory
       let session = this.activeSessions.get(sessionId);
-      
+
       if (!session) {
         // Try to fetch from Firebase
         const sessionResult = await adaptiveTestingFirebaseService.getTestSession(sessionId);
         if (sessionResult.success && sessionResult.data) {
-           session = sessionResult.data;
-           this.activeSessions.set(session.id, session);
+          session = sessionResult.data;
+          this.activeSessions.set(session.id, session);
         } else {
-           return createError(new Error('Session not found'));
+          return createError(new Error('Session not found'));
         }
       }
 
@@ -561,8 +569,8 @@ export class AdaptiveTestingService {
 
       // Update in Firebase
       await adaptiveTestingFirebaseService.updateTest(session.testId, {
-          status: 'active',
-          updatedAt: new Date(),
+        status: 'active',
+        updatedAt: new Date(),
       });
 
       return createSuccess(session);
@@ -658,7 +666,7 @@ export class AdaptiveTestingService {
           // Tag questions with user ID to ensure ownership/privacy
           const taggedQuestions = llmResult.data.map(q => ({
             ...q,
-            createdBy: test.userId 
+            createdBy: test.userId,
           }));
 
           // Save generated questions to Firebase for future use
@@ -714,8 +722,6 @@ export class AdaptiveTestingService {
       console.warn('Failed to save generated questions to Firebase:', error);
     }
   }
-
-
 
   private selectFirstQuestion(test: AdaptiveTest): AdaptiveQuestion | null {
     // Start with intermediate difficulty question from first subject
@@ -935,9 +941,15 @@ export class AdaptiveTestingService {
     }
 
     // Map numeric difficulty to MissionDifficulty
-    if (difficulty <= 1) { return 'beginner'; }
-    if (difficulty <= 2) { return 'intermediate'; }
-    if (difficulty <= 3) { return 'advanced'; }
+    if (difficulty <= 1) {
+      return 'beginner';
+    }
+    if (difficulty <= 2) {
+      return 'intermediate';
+    }
+    if (difficulty <= 3) {
+      return 'advanced';
+    }
     return 'expert';
   }
 }

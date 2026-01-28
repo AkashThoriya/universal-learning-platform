@@ -1,28 +1,28 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { 
-  Upload, 
-  Image as ImageIcon, 
-  FileText, 
-  Trash2, 
-  ExternalLink, 
+import {
+  Upload,
+  Image as ImageIcon,
+  FileText,
+  Trash2,
+  ExternalLink,
   Download,
   X,
   Loader2,
   ZoomIn,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/utils';
-import { 
-  uploadTopicNote, 
-  getTopicNotes, 
-  deleteTopicNote, 
+import {
+  uploadTopicNote,
+  getTopicNotes,
+  deleteTopicNote,
   formatFileSize,
   UploadedNote,
-  UploadProgress 
+  UploadProgress,
 } from '@/lib/firebase/storage-utils';
 import { useToast } from '@/hooks/use-toast';
 
@@ -34,7 +34,7 @@ interface HandwrittenNotesTabProps {
 export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProps) {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // State
   const [notes, setNotes] = useState<UploadedNote[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
   // Load notes on first render (lazy loading)
   const loadNotes = useCallback(async () => {
     if (hasLoaded || loading) return;
-    
+
     setLoading(true);
     try {
       const fetchedNotes = await getTopicNotes(userId, topicId);
@@ -78,14 +78,9 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
     setUploading(true);
     setUploadProgress(null);
 
-    const uploadPromises = Array.from(files).map(async (file) => {
+    const uploadPromises = Array.from(files).map(async file => {
       try {
-        const uploadedNote = await uploadTopicNote(
-          userId,
-          topicId,
-          file,
-          (progress) => setUploadProgress(progress)
-        );
+        const uploadedNote = await uploadTopicNote(userId, topicId, file, progress => setUploadProgress(progress));
         return uploadedNote;
       } catch (error) {
         console.error('Upload error:', error);
@@ -102,7 +97,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
     const successfulUploads = results.filter((note): note is UploadedNote => note !== null);
 
     if (successfulUploads.length > 0) {
-      setNotes((prev) => [...successfulUploads, ...prev]);
+      setNotes(prev => [...successfulUploads, ...prev]);
       toast({
         title: 'Upload Complete',
         description: `${successfulUploads.length} file(s) uploaded successfully.`,
@@ -111,7 +106,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
     setUploading(false);
     setUploadProgress(null);
-    
+
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -123,7 +118,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
     setDeleting(note.id);
     try {
       await deleteTopicNote(note.storagePath);
-      setNotes((prev) => prev.filter((n) => n.id !== note.id));
+      setNotes(prev => prev.filter(n => n.id !== note.id));
       toast({
         title: 'Deleted',
         description: 'File removed successfully.',
@@ -160,9 +155,9 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
   // Preview navigation
   const navigatePreview = (direction: 'prev' | 'next') => {
     if (!previewNote) return;
-    const imageNotes = notes.filter((n) => n.fileType === 'image');
-    const currentImageIndex = imageNotes.findIndex((n) => n.id === previewNote.id);
-    
+    const imageNotes = notes.filter(n => n.fileType === 'image');
+    const currentImageIndex = imageNotes.findIndex(n => n.id === previewNote.id);
+
     if (direction === 'prev' && currentImageIndex > 0) {
       const prevNote = imageNotes[currentImageIndex - 1];
       if (prevNote) setPreviewNote(prevNote);
@@ -173,8 +168,8 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
   };
 
   // Separate images and PDFs
-  const imageNotes = notes.filter((n) => n.fileType === 'image');
-  const pdfNotes = notes.filter((n) => n.fileType === 'pdf');
+  const imageNotes = notes.filter(n => n.fileType === 'image');
+  const pdfNotes = notes.filter(n => n.fileType === 'pdf');
 
   // Loading state
   if (loading) {
@@ -193,11 +188,9 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          "relative border-2 border-dashed rounded-xl p-8 transition-all duration-200",
-          isDragging
-            ? "border-blue-400 bg-blue-50/50"
-            : "border-slate-200 hover:border-slate-300 bg-slate-50/30",
-          uploading && "pointer-events-none opacity-60"
+          'relative border-2 border-dashed rounded-xl p-8 transition-all duration-200',
+          isDragging ? 'border-blue-400 bg-blue-50/50' : 'border-slate-200 hover:border-slate-300 bg-slate-50/30',
+          uploading && 'pointer-events-none opacity-60'
         )}
       >
         <input
@@ -205,10 +198,10 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
           type="file"
           accept="image/*,.pdf"
           multiple
-          onChange={(e) => handleUpload(e.target.files)}
+          onChange={e => handleUpload(e.target.files)}
           className="hidden"
         />
-        
+
         <div className="flex flex-col items-center justify-center text-center space-y-4">
           {uploading ? (
             <>
@@ -220,19 +213,18 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                 {uploadProgress && (
                   <div className="w-48 mx-auto">
                     <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className={cn(
-                          "h-full transition-all duration-300",
+                          'h-full transition-all duration-300',
                           uploadProgress.state === 'compressing' ? 'bg-amber-500' : 'bg-blue-500'
                         )}
                         style={{ width: `${uploadProgress.progress}%` }}
                       />
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
-                      {uploadProgress.state === 'compressing' 
+                      {uploadProgress.state === 'compressing'
                         ? `Optimizing quality... ${Math.round(uploadProgress.progress)}%`
-                        : `${Math.round(uploadProgress.progress)}%`
-                      }
+                        : `${Math.round(uploadProgress.progress)}%`}
                     </p>
                   </div>
                 )}
@@ -244,18 +236,12 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                 <Upload className="h-7 w-7 text-slate-500" />
               </div>
               <div>
-                <p className="font-medium text-slate-700">
-                  Drag and drop your handwritten notes
-                </p>
+                <p className="font-medium text-slate-700">Drag and drop your handwritten notes</p>
                 <p className="text-sm text-slate-500 mt-1">
                   or click to browse • Images auto-optimized • PDFs up to 5MB
                 </p>
               </div>
-              <Button 
-                variant="outline" 
-                onClick={() => fileInputRef.current?.click()}
-                className="mt-2"
-              >
+              <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="mt-2">
                 <Upload className="h-4 w-4 mr-2" />
                 Choose Files
               </Button>
@@ -286,7 +272,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                 <span className="text-sm font-normal text-slate-500">({imageNotes.length})</span>
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {imageNotes.map((note) => (
+                {imageNotes.map(note => (
                   <div
                     key={note.id}
                     className="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100 hover:shadow-lg transition-all duration-200"
@@ -298,14 +284,14 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
-                    
+
                     {/* Overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <div className="absolute bottom-0 left-0 right-0 p-3">
                         <p className="text-white text-sm font-medium truncate">{note.fileName}</p>
                         <p className="text-white/70 text-xs">{formatFileSize(note.fileSize)}</p>
                       </div>
-                      
+
                       {/* Action buttons */}
                       <div className="absolute top-2 right-2 flex gap-1">
                         <button
@@ -361,7 +347,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                 <span className="text-sm font-normal text-slate-500">({pdfNotes.length})</span>
               </h3>
               <div className="space-y-2">
-                {pdfNotes.map((note) => (
+                {pdfNotes.map(note => (
                   <div
                     key={note.id}
                     className="group flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm transition-all duration-200"
@@ -375,7 +361,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                         <p className="text-sm text-slate-500">{formatFileSize(note.fileSize)}</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <a
                         href={note.downloadUrl}
@@ -417,7 +403,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
       {/* Image Preview Modal */}
       {previewNote && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
           onClick={() => setPreviewNote(null)}
         >
@@ -433,14 +419,20 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
           {imageNotes.length > 1 && (
             <>
               <button
-                onClick={(e) => { e.stopPropagation(); navigatePreview('prev'); }}
+                onClick={e => {
+                  e.stopPropagation();
+                  navigatePreview('prev');
+                }}
                 className="absolute left-4 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors disabled:opacity-30"
                 disabled={imageNotes.findIndex(n => n.id === previewNote.id) === 0}
               >
                 <ChevronLeft className="h-6 w-6 text-white" />
               </button>
               <button
-                onClick={(e) => { e.stopPropagation(); navigatePreview('next'); }}
+                onClick={e => {
+                  e.stopPropagation();
+                  navigatePreview('next');
+                }}
                 className="absolute right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors disabled:opacity-30"
                 disabled={imageNotes.findIndex(n => n.id === previewNote.id) === imageNotes.length - 1}
               >
@@ -454,7 +446,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
             src={previewNote.downloadUrl}
             alt={previewNote.fileName}
             className="max-w-full max-h-[85vh] object-contain rounded-lg"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           />
 
           {/* Info bar */}
@@ -466,7 +458,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
                 href={previewNote.downloadUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="p-1.5 hover:bg-white/10 rounded transition-colors"
                 title="Open in new tab"
               >
@@ -475,7 +467,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
               <a
                 href={previewNote.downloadUrl}
                 download={previewNote.fileName}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="p-1.5 hover:bg-white/10 rounded transition-colors"
                 title="Download"
               >

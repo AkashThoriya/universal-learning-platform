@@ -53,8 +53,8 @@ export class AdaptiveAlgorithm {
           continue;
         }
 
-        const difficulty = (
-          typeof question.difficulty === 'string'
+        const difficulty =
+          (typeof question.difficulty === 'string'
             ? this.DIFFICULTY_SCORES[question.difficulty as keyof typeof this.DIFFICULTY_SCORES]
             : 0.25) ?? 0.25;
         const discrimination = question.discriminationIndex;
@@ -103,9 +103,10 @@ export class AdaptiveAlgorithm {
         continue;
       }
 
-      const difficulty = typeof question.difficulty === 'string' 
-        ? this.DIFFICULTY_SCORES[question.difficulty as keyof typeof this.DIFFICULTY_SCORES] 
-        : question.difficulty;
+      const difficulty =
+        typeof question.difficulty === 'string'
+          ? this.DIFFICULTY_SCORES[question.difficulty as keyof typeof this.DIFFICULTY_SCORES]
+          : question.difficulty;
       const discrimination = question.discriminationIndex;
       const guessing = question.guessingParameter ?? 0.25;
 
@@ -154,7 +155,11 @@ export class AdaptiveAlgorithm {
       }
 
       // Difficulty constraints
-      if (constraints?.difficultyConstraints && typeof question.difficulty === 'string' && !constraints.difficultyConstraints.includes(question.difficulty)) {
+      if (
+        constraints?.difficultyConstraints &&
+        typeof question.difficulty === 'string' &&
+        !constraints.difficultyConstraints.includes(question.difficulty)
+      ) {
         return false;
       }
 
@@ -163,9 +168,10 @@ export class AdaptiveAlgorithm {
 
     // Calculate information value for each candidate question
     const questionScores = candidateQuestions.map(question => {
-      const difficulty = typeof question.difficulty === 'string' 
-        ? this.DIFFICULTY_SCORES[question.difficulty as keyof typeof this.DIFFICULTY_SCORES] 
-        : question.difficulty;
+      const difficulty =
+        typeof question.difficulty === 'string'
+          ? this.DIFFICULTY_SCORES[question.difficulty as keyof typeof this.DIFFICULTY_SCORES]
+          : question.difficulty;
       const discrimination = question.discriminationIndex;
       const guessing = question.guessingParameter ?? 0.25;
 
@@ -199,7 +205,7 @@ export class AdaptiveAlgorithm {
     // Select question with highest information value
     questionScores.sort((a, b) => b.score - a.score);
 
-    return questionScores.length > 0 ? questionScores[0]?.question ?? null : null;
+    return questionScores.length > 0 ? (questionScores[0]?.question ?? null) : null;
   }
 
   /**
@@ -368,8 +374,8 @@ export class SpecializedAdaptiveAlgorithms {
     targetDifficulties: MissionDifficulty[]
   ): AdaptiveQuestion | null {
     // Favor questions that align with recent mission difficulties
-    const missionAlignedQuestions = availableQuestions.filter(question =>
-      typeof question.difficulty === 'string' && targetDifficulties.includes(question.difficulty)
+    const missionAlignedQuestions = availableQuestions.filter(
+      question => typeof question.difficulty === 'string' && targetDifficulties.includes(question.difficulty)
     );
 
     if (missionAlignedQuestions.length === 0) {

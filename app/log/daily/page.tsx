@@ -2,9 +2,22 @@
 
 import { format } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
-import { 
-  Zap, Moon, Star, Plus, Minus, X, Save, Calendar, 
-  BookOpen, PenTool, Brain, RotateCcw, MonitorPlay, AlertCircle, Target,
+import {
+  Zap,
+  Moon,
+  Star,
+  Plus,
+  Minus,
+  X,
+  Save,
+  Calendar,
+  BookOpen,
+  PenTool,
+  Brain,
+  RotateCcw,
+  MonitorPlay,
+  AlertCircle,
+  Target,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -37,13 +50,7 @@ import { cn } from '@/lib/utils/utils';
 import { logError } from '@/lib/utils/logger';
 
 // Helper component for visual mood/productivity selector
-const VisualSelector = ({ 
-  value, 
-  onChange, 
-  options, 
-  label,
-  colorClass = "border-primary text-primary" 
-}: any) => (
+const VisualSelector = ({ value, onChange, options, label, colorClass = 'border-primary text-primary' }: any) => (
   <div className="space-y-3">
     <label className="text-sm font-medium">{label}</label>
     <div className="grid grid-cols-5 gap-2 sm:gap-3">
@@ -53,19 +60,21 @@ const VisualSelector = ({
           type="button"
           onClick={() => onChange(option.value)}
           className={cn(
-            "flex flex-col items-center justify-center p-2 sm:p-3 rounded-xl border-2 transition-all duration-200 gap-1.5 sm:gap-2",
+            'flex flex-col items-center justify-center p-2 sm:p-3 rounded-xl border-2 transition-all duration-200 gap-1.5 sm:gap-2',
             value === option.value
-              ? cn("bg-primary/5 shadow-md scale-105", colorClass)
-              : "bg-background border-transparent hover:bg-muted hover:scale-105 text-muted-foreground"
+              ? cn('bg-primary/5 shadow-md scale-105', colorClass)
+              : 'bg-background border-transparent hover:bg-muted hover:scale-105 text-muted-foreground'
           )}
         >
           <span className="text-2xl sm:text-3xl filter drop-shadow-sm" role="img" aria-label={option.label}>
             {option.icon}
           </span>
-          <span className={cn(
-            "text-[10px] sm:text-xs font-semibold truncate w-full text-center transition-colors",
-             value === option.value ? "opacity-100" : "opacity-70"
-          )}>
+          <span
+            className={cn(
+              'text-[10px] sm:text-xs font-semibold truncate w-full text-center transition-colors',
+              value === option.value ? 'opacity-100' : 'opacity-70'
+            )}
+          >
             {option.label}
           </span>
         </button>
@@ -73,8 +82,6 @@ const VisualSelector = ({
     </div>
   </div>
 );
-
-
 
 // Helper component for Star Rating
 const StarRating = ({ value, onChange, max = 5 }: any) => (
@@ -88,8 +95,8 @@ const StarRating = ({ value, onChange, max = 5 }: any) => (
       >
         <Star
           className={cn(
-            "h-6 w-6 transition-colors",
-            i < value ? "fill-yellow-400 text-yellow-400" : "fill-muted/20 text-muted-foreground/30"
+            'h-6 w-6 transition-colors',
+            i < value ? 'fill-yellow-400 text-yellow-400' : 'fill-muted/20 text-muted-foreground/30'
           )}
         />
       </button>
@@ -109,7 +116,7 @@ const MethodSelector = ({ value, onChange }: any) => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {methods.map((method) => {
+      {methods.map(method => {
         const Icon = method.icon;
         const isSelected = value === method.id;
         return (
@@ -118,10 +125,10 @@ const MethodSelector = ({ value, onChange }: any) => {
             type="button"
             onClick={() => onChange(method.id)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all",
-              isSelected 
-                ? "bg-primary text-primary-foreground border-primary shadow-sm" 
-                : "bg-background text-muted-foreground border-border hover:border-primary/50 hover:bg-muted"
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all',
+              isSelected
+                ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                : 'bg-background text-muted-foreground border-border hover:border-primary/50 hover:bg-muted'
             )}
           >
             <Icon className="h-3.5 w-3.5" />
@@ -147,7 +154,8 @@ const StepperInput = ({ value, onChange, min, max, step = 1, suffix = '' }: any)
       <Minus className="h-4 w-4" />
     </Button>
     <div className="flex-1 min-w-[3rem] text-center font-mono font-medium text-sm">
-      {value}{suffix}
+      {value}
+      {suffix}
     </div>
     <Button
       type="button"
@@ -360,11 +368,11 @@ export default function DailyLogPage() {
                   </div>
                   <span>Health & Wellness</span>
                 </CardTitle>
-                <CardDescription className="text-sm">Your physical state directly impacts study performance</CardDescription>
+                <CardDescription className="text-sm">
+                  Your physical state directly impacts study performance
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-
-
                 {/* Sleep and Activity Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2 p-4 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20">
@@ -435,7 +443,7 @@ export default function DailyLogPage() {
                       { value: 9, label: 'Max', icon: '🚀' },
                     ]}
                   />
-                  
+
                   <VisualSelector
                     label="Sleep Quality"
                     value={sleepQuality}
@@ -483,10 +491,21 @@ export default function DailyLogPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {studySessions.map((session, index) => (
-                  <div key={index} className="p-4 border rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors space-y-4">
+                  <div
+                    key={index}
+                    className="p-4 border rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors space-y-4"
+                  >
                     <div className="flex items-center justify-between">
-                      <Badge variant="secondary" className="text-xs font-medium">Session {index + 1}</Badge>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => removeStudySession(index)} className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive">
+                      <Badge variant="secondary" className="text-xs font-medium">
+                        Session {index + 1}
+                      </Badge>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeStudySession(index)}
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
@@ -523,11 +542,11 @@ export default function DailyLogPage() {
                             </SelectContent>
                           </Select>
                         </div>
-                        
+
                         <div className="space-y-1.5">
                           <label className="text-sm font-medium text-muted-foreground">Duration</label>
-                          <StepperInput 
-                            value={session.minutes} 
+                          <StepperInput
+                            value={session.minutes}
                             onChange={(val: number) => updateStudySession(index, { minutes: val })}
                             min={5}
                             max={480}
@@ -541,18 +560,18 @@ export default function DailyLogPage() {
                       <div className="lg:col-span-7 space-y-5">
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-muted-foreground">Study Method</label>
-                          <MethodSelector 
-                            value={session.method} 
-                            onChange={(val: string) => updateStudySession(index, { method: val as any })} 
+                          <MethodSelector
+                            value={session.method}
+                            onChange={(val: string) => updateStudySession(index, { method: val as any })}
                           />
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-6">
                           <div className="space-y-2">
                             <label className="text-sm font-medium text-muted-foreground">Effectiveness</label>
-                            <StarRating 
-                              value={session.effectiveness} 
-                              onChange={(val: number) => updateStudySession(index, { effectiveness: val as any })} 
+                            <StarRating
+                              value={session.effectiveness}
+                              onChange={(val: number) => updateStudySession(index, { effectiveness: val as any })}
                             />
                           </div>
 
@@ -561,8 +580,8 @@ export default function DailyLogPage() {
                               Distractions
                               <AlertCircle className="h-3 w-3 text-muted-foreground" />
                             </label>
-                            <StepperInput 
-                              value={session.distractions} 
+                            <StepperInput
+                              value={session.distractions}
                               onChange={(val: number) => updateStudySession(index, { distractions: val })}
                               min={0}
                               max={50}
@@ -688,15 +707,13 @@ export default function DailyLogPage() {
                         <DialogContent className="sm:max-w-md">
                           <DialogHeader>
                             <DialogTitle>Add Challenge</DialogTitle>
-                            <DialogDescription>
-                              What challenge did you face during your study today?
-                            </DialogDescription>
+                            <DialogDescription>What challenge did you face during your study today?</DialogDescription>
                           </DialogHeader>
                           <Input
                             value={newChallenge}
-                            onChange={(e) => setNewChallenge(e.target.value)}
+                            onChange={e => setNewChallenge(e.target.value)}
                             placeholder="Describe the challenge..."
-                            onKeyDown={(e) => e.key === 'Enter' && addChallenge()}
+                            onKeyDown={e => e.key === 'Enter' && addChallenge()}
                           />
                           <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => setChallengeDialogOpen(false)}>
@@ -744,9 +761,9 @@ export default function DailyLogPage() {
                           </DialogHeader>
                           <Input
                             value={newWin}
-                            onChange={(e) => setNewWin(e.target.value)}
+                            onChange={e => setNewWin(e.target.value)}
                             placeholder="Describe your win..."
-                            onKeyDown={(e) => e.key === 'Enter' && addWin()}
+                            onKeyDown={e => e.key === 'Enter' && addWin()}
                           />
                           <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => setWinDialogOpen(false)}>
@@ -791,10 +808,19 @@ export default function DailyLogPage() {
 
             {/* Submit Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={() => router.push('/dashboard')} className="w-full sm:w-auto sm:flex-1 h-12 text-base">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push('/dashboard')}
+                className="w-full sm:w-auto sm:flex-1 h-12 text-base"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={saving} className="w-full sm:w-auto sm:flex-1 h-12 text-base bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700">
+              <Button
+                type="submit"
+                disabled={saving}
+                className="w-full sm:w-auto sm:flex-1 h-12 text-base bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700"
+              >
                 {saving ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />

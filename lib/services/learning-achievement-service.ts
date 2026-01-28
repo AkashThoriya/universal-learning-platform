@@ -449,7 +449,7 @@ class LearningAchievementService {
         achievementCount,
         currentStreak: 0, // Would need additional calculation based on recent activity
         longestStreak: 0, // Would need historical data analysis
-        lastActivityDate: achievements.length > 0 ? achievements[0]?.earnedAt ?? new Date() : new Date(),
+        lastActivityDate: achievements.length > 0 ? (achievements[0]?.earnedAt ?? new Date()) : new Date(),
         categoryProgress,
       };
 

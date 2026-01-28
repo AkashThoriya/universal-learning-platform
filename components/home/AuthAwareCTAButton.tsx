@@ -9,9 +9,7 @@ export default function AuthAwareCTAButton() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="h-16 w-80 bg-primary/20 rounded-lg animate-pulse" />
-    );
+    return <div className="h-16 w-80 bg-primary/20 rounded-lg animate-pulse" />;
   }
 
   const href = user ? '/dashboard' : '/login';

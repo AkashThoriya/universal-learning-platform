@@ -9,9 +9,7 @@ export default function AuthAwareHeroButton() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="h-14 w-72 bg-primary/20 rounded-lg animate-pulse" />
-    );
+    return <div className="h-14 w-72 bg-primary/20 rounded-lg animate-pulse" />;
   }
 
   const href = user ? '/dashboard' : '/login';

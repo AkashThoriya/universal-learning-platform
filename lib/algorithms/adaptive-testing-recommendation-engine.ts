@@ -30,14 +30,17 @@ interface UnifiedProgress {
     longestStreak: number;
     consistencyRating: number;
   };
-  trackProgress: Record<string, {
-    averageAccuracy: number;
-    timeInvested: number;
-    subjectProgress: Array<{
-      subject: string;
-      accuracy: number;
-    }>;
-  }>;
+  trackProgress: Record<
+    string,
+    {
+      averageAccuracy: number;
+      timeInvested: number;
+      subjectProgress: Array<{
+        subject: string;
+        accuracy: number;
+      }>;
+    }
+  >;
 }
 
 interface RecommendationContext {
@@ -88,47 +91,47 @@ export class AdaptiveTestingRecommendationEngine {
 
       // Try AI Generation First
       const { llmService } = await import('@/lib/ai/llm-service');
-      
-      if (llmService.isAvailable()) {
-         // Construct Prompt Context
-         const promptContext = {
-           userId,
-           weakAreas: context.data.weakAreas,
-           strongAreas: context.data.strongAreas,
-           recentActivity: context.data.userProgress.overallProgress,
-           preferredDifficulty: context.data.preferredDifficulty
-         };
 
-         const aiResult = await llmService.generateTestRecommendations(promptContext);
-         
-         if (aiResult.success && aiResult.data && Array.isArray(aiResult.data)) {
-           const aiRecommendations: TestRecommendation[] = aiResult.data.map((rec: any, index: number) => ({
-             testId: `ai-rec-${Date.now()}-${index}`,
-             title: rec.title,
-             description: rec.description,
-             reasons: [rec.reason],
-             subjects: rec.subjects ?? [],
-             difficulty: rec.difficulty ?? context.data.preferredDifficulty,
-             questionCount: 15,
-             estimatedDuration: 20,
-             priority: rec.priority ?? 'medium',
-             tags: ['ai-recommended', 'personalized'],
-             missionAlignment: 1,
-             estimatedAccuracy: 0.7, // Estimate
-             aiGenerated: true, // Truly AI generated now
-             createdFrom: 'recommendation',
-             linkedMissions: [],
-             confidence: 0.9,
-             expectedBenefit: rec.expectedBenefit ?? 'Personalized test to strengthen your weakest areas',
-             adaptiveConfig: {
-               algorithmType: 'CAT',
-               convergenceCriteria: { standardError: 0.3, minQuestions: 10, maxQuestions: 20 },
-               difficultyRange: { min: 'beginner', max: 'advanced' },
-             },
-           }));
-           
-           return createSuccess(aiRecommendations);
-         }
+      if (llmService.isAvailable()) {
+        // Construct Prompt Context
+        const promptContext = {
+          userId,
+          weakAreas: context.data.weakAreas,
+          strongAreas: context.data.strongAreas,
+          recentActivity: context.data.userProgress.overallProgress,
+          preferredDifficulty: context.data.preferredDifficulty,
+        };
+
+        const aiResult = await llmService.generateTestRecommendations(promptContext);
+
+        if (aiResult.success && aiResult.data && Array.isArray(aiResult.data)) {
+          const aiRecommendations: TestRecommendation[] = aiResult.data.map((rec: any, index: number) => ({
+            testId: `ai-rec-${Date.now()}-${index}`,
+            title: rec.title,
+            description: rec.description,
+            reasons: [rec.reason],
+            subjects: rec.subjects ?? [],
+            difficulty: rec.difficulty ?? context.data.preferredDifficulty,
+            questionCount: 15,
+            estimatedDuration: 20,
+            priority: rec.priority ?? 'medium',
+            tags: ['ai-recommended', 'personalized'],
+            missionAlignment: 1,
+            estimatedAccuracy: 0.7, // Estimate
+            aiGenerated: true, // Truly AI generated now
+            createdFrom: 'recommendation',
+            linkedMissions: [],
+            confidence: 0.9,
+            expectedBenefit: rec.expectedBenefit ?? 'Personalized test to strengthen your weakest areas',
+            adaptiveConfig: {
+              algorithmType: 'CAT',
+              convergenceCriteria: { standardError: 0.3, minQuestions: 10, maxQuestions: 20 },
+              difficultyRange: { min: 'beginner', max: 'advanced' },
+            },
+          }));
+
+          return createSuccess(aiRecommendations);
+        }
       }
 
       // Fallback to Heuristic Engine (Renamed to Adaptive Insights)
@@ -234,13 +237,13 @@ export class AdaptiveTestingRecommendationEngine {
     try {
       // Gather user data
       const progressResult = await progressService.getUserProgress(userId);
-      
+
       if (!progressResult.success) {
         return createError(`Failed to get user progress: ${progressResult.error}`);
       }
 
       const rawProgress = progressResult.data;
-      
+
       // Cast the progress to our simplified interface
       const userProgress: UnifiedProgress = {
         overallProgress: rawProgress.overallProgress,
@@ -250,30 +253,31 @@ export class AdaptiveTestingRecommendationEngine {
             {
               averageAccuracy: track.averageScore ?? 70,
               timeInvested: track.timeInvested ?? 0,
-              subjectProgress: track.topicBreakdown?.map((topic: any) => ({
-                subject: topic.topic,
-                accuracy: topic.averageScore ?? topic.proficiency ?? 70,
-              })) ?? [],
+              subjectProgress:
+                track.topicBreakdown?.map((topic: any) => ({
+                  subject: topic.topic,
+                  accuracy: topic.averageScore ?? topic.proficiency ?? 70,
+                })) ?? [],
             },
           ])
         ),
       };
-      
+
       // Fetch actual completed tests
       const { adaptiveTestingService } = await import('@/lib/services/adaptive-testing-service');
       const completedTests = await adaptiveTestingService.getUserTests(userId);
       const finishedTests = completedTests.filter(t => t.status === 'completed');
-      
+
       // For now, use empty arrays for journeys
       const activeJourneys: UserJourney[] = [];
 
       // Extract weak areas from actual failed questions in recent tests
       const weakAreasFromTests = this.extractFailedTopicsFromTests(finishedTests);
-      
+
       // Combine with progress-based weak areas
       const progressWeakAreas = this.identifyWeakAreas(userProgress);
       const weakAreas = [...new Set([...weakAreasFromTests, ...progressWeakAreas])].slice(0, 8);
-      
+
       const strongAreas = this.identifyStrongAreas(userProgress);
       const preferredDifficulty = this.inferPreferredDifficulty(userProgress, finishedTests);
       const learningGoals = this.extractLearningGoals(activeJourneys);
@@ -301,13 +305,13 @@ export class AdaptiveTestingRecommendationEngine {
    */
   private extractFailedTopicsFromTests(tests: AdaptiveTest[]): string[] {
     const failedTopics: Map<string, number> = new Map(); // topic -> fail count
-    
+
     // Analyze last 10 completed tests
     const recentTests = tests.slice(0, 10);
-    
+
     for (const test of recentTests) {
       if (!test.responses || !test.questions) continue;
-      
+
       for (const response of test.responses) {
         if (!response.isCorrect) {
           // Find the question to get its topic
@@ -322,14 +326,13 @@ export class AdaptiveTestingRecommendationEngine {
         }
       }
     }
-    
+
     // Sort by fail count and return top failed topics
     return Array.from(failedTopics.entries())
       .sort((a, b) => b[1] - a[1])
       .map(([topic]) => topic)
       .slice(0, 5);
   }
-
 
   /**
    * Generate candidate tests based on context
@@ -345,27 +348,27 @@ export class AdaptiveTestingRecommendationEngine {
     const candidates: TestRecommendation[] = [];
     const maxQuestions = constraints?.maxQuestions ?? 25;
     const maxDuration = constraints?.maxDuration ?? 45;
-      // Remove unused variable warning
-      // const _focusAreas = constraints?.focusAreas || [...context.weakAreas, ...context.learningGoals];
+    // Remove unused variable warning
+    // const _focusAreas = constraints?.focusAreas || [...context.weakAreas, ...context.learningGoals];
 
     // Generate tests for weak areas (from actual failed topics)
     for (let i = 0; i < Math.min(context.weakAreas.length, 3); i++) {
       const subject = context.weakAreas[i];
       if (!subject) continue;
-      
+
       const isFromRecentFailure = i < 2; // First 2 are likely from actual failures
-      
+
       candidates.push({
         testId: `weak-area-${subject.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}-${i}`,
         title: `Improve: ${subject}`,
-        description: isFromRecentFailure 
+        description: isFromRecentFailure
           ? `Practice test focused on ${subject} - you've had difficulty with this topic in recent assessments`
           : `Targeted practice to strengthen your ${subject} skills`,
         estimatedDuration: Math.min(maxDuration, 25),
         difficulty: this.getProgressiveDifficulty(context.preferredDifficulty),
         subjects: [subject],
         questionCount: Math.min(maxQuestions, 15),
-        reasons: isFromRecentFailure 
+        reasons: isFromRecentFailure
           ? [`You got questions wrong in ${subject} in recent tests`, 'Targeted practice for improvement']
           : [`Identified as an area for improvement`, 'Skill-building opportunity'],
         expectedBenefit: 'Strengthen weak areas',
@@ -590,7 +593,12 @@ export class AdaptiveTestingRecommendationEngine {
 
     // Analyze track progress for weak subjects
     Object.entries(progress.trackProgress).forEach(([_track, trackData]) => {
-      if (trackData && typeof trackData === 'object' && 'averageAccuracy' in trackData && 'subjectProgress' in trackData) {
+      if (
+        trackData &&
+        typeof trackData === 'object' &&
+        'averageAccuracy' in trackData &&
+        'subjectProgress' in trackData
+      ) {
         if (trackData.averageAccuracy < 70) {
           trackData.subjectProgress.forEach((subject: { subject: string; accuracy: number }) => {
             if (subject.accuracy < 65) {
@@ -643,19 +651,19 @@ export class AdaptiveTestingRecommendationEngine {
   private extractJourneySubjects(journey: UserJourney): string[] {
     // Extract subjects from journey goals and linked subjects
     const subjects: string[] = [];
-    
+
     // Extract from custom goals
     journey.customGoals.forEach(goal => {
       if (goal.linkedSubjects) {
         subjects.push(...goal.linkedSubjects);
       }
     });
-    
+
     // If no subjects found, use journey track as default
     if (subjects.length === 0) {
       subjects.push(journey.track ?? 'General');
     }
-    
+
     return [...new Set(subjects)]; // Remove duplicates
   }
 
@@ -689,7 +697,9 @@ export class AdaptiveTestingRecommendationEngine {
     let accuracy = 70; // Default
     Object.values(context.userProgress.trackProgress).forEach(track => {
       if (track && typeof track === 'object' && 'subjectProgress' in track) {
-        const subjectData = track.subjectProgress.find((s: { subject: string; accuracy: number }) => s.subject === subject);
+        const subjectData = track.subjectProgress.find(
+          (s: { subject: string; accuracy: number }) => s.subject === subject
+        );
         if (subjectData) {
           accuracy = subjectData.accuracy;
         }
@@ -700,21 +710,21 @@ export class AdaptiveTestingRecommendationEngine {
   }
 
   private getProgressiveDifficulty(current: DifficultyLevel): DifficultyLevel {
-    const progression: Record<DifficultyLevel, DifficultyLevel> = { 
-      beginner: 'intermediate', 
-      intermediate: 'intermediate', 
+    const progression: Record<DifficultyLevel, DifficultyLevel> = {
+      beginner: 'intermediate',
+      intermediate: 'intermediate',
       advanced: 'advanced',
-      expert: 'expert'
+      expert: 'expert',
     };
     return progression[current] ?? 'intermediate';
   }
 
   private getAdvancedDifficulty(current: DifficultyLevel): DifficultyLevel {
-    const advancement: Record<DifficultyLevel, DifficultyLevel> = { 
-      beginner: 'intermediate', 
-      intermediate: 'advanced', 
+    const advancement: Record<DifficultyLevel, DifficultyLevel> = {
+      beginner: 'intermediate',
+      intermediate: 'advanced',
       advanced: 'expert',
-      expert: 'expert'
+      expert: 'expert',
     };
     return advancement[current] ?? 'advanced';
   }
@@ -724,7 +734,7 @@ export class AdaptiveTestingRecommendationEngine {
    */
   private inferJourneyDifficulty(journey: UserJourney): DifficultyLevel {
     // Base difficulty on journey priority and target completion date
-    const daysToComplete = journey.targetCompletionDate 
+    const daysToComplete = journey.targetCompletionDate
       ? Math.ceil((journey.targetCompletionDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
       : 90;
 
@@ -739,7 +749,7 @@ export class AdaptiveTestingRecommendationEngine {
     if (goalsCount > 3 || daysToComplete < 90) {
       return 'intermediate';
     }
-    
+
     return 'beginner';
   }
 }

@@ -1,6 +1,5 @@
-
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export function MockLogSkeleton() {
   return (
@@ -33,7 +32,7 @@ export function MockLogSkeleton() {
                 <Skeleton className="h-10 w-full" />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-10 w-full" />
@@ -55,5 +54,5 @@ export function MockLogSkeleton() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

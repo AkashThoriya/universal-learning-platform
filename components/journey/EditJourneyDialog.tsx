@@ -16,24 +16,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { journeyService } from '@/lib/services/journey-service';
 import { UserJourney } from '@/types/journey';
@@ -42,7 +28,7 @@ import { UserJourney } from '@/types/journey';
 const editJourneySchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(100),
   description: z.string().min(10, 'Description must be at least 10 characters').max(500),
-  targetCompletionDate: z.string().refine((val) => {
+  targetCompletionDate: z.string().refine(val => {
     const date = new Date(val);
     return date > new Date();
   }, 'Completion date must be in the future'),
@@ -133,9 +119,7 @@ export function EditJourneyDialog({ journey, onJourneyUpdated, trigger }: EditJo
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Journey</DialogTitle>
-          <DialogDescription>
-            Update your learning journey details and settings.
-          </DialogDescription>
+          <DialogDescription>Update your learning journey details and settings.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -167,9 +151,7 @@ export function EditJourneyDialog({ journey, onJourneyUpdated, trigger }: EditJo
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    A brief description of your learning goals
-                  </FormDescription>
+                  <FormDescription>A brief description of your learning goals</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -241,12 +223,7 @@ export function EditJourneyDialog({ journey, onJourneyUpdated, trigger }: EditJo
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-                disabled={isSubmitting}
-              >
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isSubmitting}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>

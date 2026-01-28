@@ -33,7 +33,6 @@ declare global {
   }
 }
 
-
 /**
  * Props for persona schedule step
  */
@@ -66,8 +65,6 @@ const validateExamDate = (date: string): string | null => {
   return null;
 };
 
-
-
 /**
  * Persona selection & schedule configuration step - Step 2 of onboarding
  */
@@ -81,17 +78,12 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
   const [useWeekendSchedule, setUseWeekendSchedule] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-
-
   // Helper function to calculate average daily hours from weekend schedule
-
-
-
 
   // Update form with specialized schedule
   const updateFormWithSchedule = useCallback(() => {
     const avgMinutes = ((weekdayHours * 5 + weekendHours * 2) / 7) * 60;
-    
+
     // Only update if weekend schedule is explicitly enabled
     if (useWeekendSchedule) {
       form.updateField('preferences', {
@@ -490,21 +482,22 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                   const dailyHours = Number(dailyHoursRaw.toFixed(1)); // Round to 1 decimal for display
                   const totalHours = selectedExam.totalEstimatedHours;
                   const daysNeeded = Math.ceil((totalHours / dailyHours) * 1.2); // 20% buffer
-                  
+
                   const predictedDate = new Date();
                   predictedDate.setDate(predictedDate.getDate() + daysNeeded);
                   const predictedDateString = predictedDate.toISOString().split('T')[0];
-                  
+
                   // Calculate what hours/day would be needed for user's chosen date
                   const userChosenDate = form.data.examDate ? new Date(form.data.examDate) : null;
-                  const userDaysAvailable = userChosenDate 
+                  const userDaysAvailable = userChosenDate
                     ? Math.ceil((userChosenDate.getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000))
                     : null;
-                  const requiredHoursPerDay = userDaysAvailable && userDaysAvailable > 0
-                    ? Number(((totalHours * 1.2) / userDaysAvailable).toFixed(1)) // Round to 1 decimal
-                    : null;
+                  const requiredHoursPerDay =
+                    userDaysAvailable && userDaysAvailable > 0
+                      ? Number(((totalHours * 1.2) / userDaysAvailable).toFixed(1)) // Round to 1 decimal
+                      : null;
                   const isAggressive = requiredHoursPerDay && requiredHoursPerDay > dailyHours;
-                  
+
                   return (
                     <>
                       {/* AI Suggested Date */}
@@ -514,7 +507,11 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                           <span className="font-medium text-blue-800">AI Predicted Finish Date</span>
                         </div>
                         <div className="text-2xl font-bold text-blue-700 mb-2">
-                          {predictedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                          {predictedDate.toLocaleDateString('en-US', {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
                         </div>
                         <div className="text-sm text-blue-600 mb-3">
                           Based on {dailyHours}h/day × {totalHours} hours of content (with 20% buffer)
@@ -560,8 +557,16 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                             <span className="font-medium text-amber-800">Ambitious Timeline!</span>
                           </div>
                           <p className="text-sm text-amber-700 mb-3">
-                            To finish by <strong>{userChosenDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</strong>, 
-                            you'll need to study <strong className="text-lg">{requiredHoursPerDay}h/day</strong> instead of {dailyHours}h/day.
+                            To finish by{' '}
+                            <strong>
+                              {userChosenDate.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </strong>
+                            , you'll need to study <strong className="text-lg">{requiredHoursPerDay}h/day</strong>{' '}
+                            instead of {dailyHours}h/day.
                           </p>
                           <Button
                             size="sm"
@@ -588,7 +593,8 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
                             <span className="font-medium text-green-800">Target is achievable!</span>
                           </div>
                           <p className="text-sm text-green-700 mt-1">
-                            With {dailyHours}h/day, you have comfortable buffer to complete by {userChosenDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.
+                            With {dailyHours}h/day, you have comfortable buffer to complete by{' '}
+                            {userChosenDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.
                           </p>
                         </div>
                       )}

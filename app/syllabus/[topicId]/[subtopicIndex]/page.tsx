@@ -4,16 +4,7 @@ import PageTransition from '@/components/layout/PageTransition';
 import { DetailPageHeader } from '@/components/layout/PageHeader';
 import { format } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
-import {
-  Save,
-  CheckCircle,
-  TrendingUp,
-  FileText,
-  Lightbulb,
-  Plus,
-  Trash2,
-  Brain,
-} from 'lucide-react';
+import { Save, CheckCircle, TrendingUp, FileText, Lightbulb, Plus, Trash2, Brain } from 'lucide-react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -58,11 +49,11 @@ export default function SubtopicDetailPage() {
       try {
         const syllabusData = await getSyllabus(user.uid);
         const foundSubject = syllabusData.find(s => s.id === subjectId);
-        
+
         if (foundSubject) {
           setSubject(foundSubject);
           const foundTopic = foundSubject.topics.find(t => t.id === topicId);
-          
+
           if (foundTopic && foundTopic.subtopics && foundTopic.subtopics[subtopicIndex]) {
             const data = foundTopic.subtopics[subtopicIndex];
             setSubtopic(data);
@@ -90,7 +81,7 @@ export default function SubtopicDetailPage() {
     if (!user || !subjectId || !subtopic) return;
 
     // Optimistic update
-    setSubtopic(prev => prev ? { ...prev, ...updates } : null);
+    setSubtopic(prev => (prev ? { ...prev, ...updates } : null));
 
     try {
       await updateSubtopic(user.uid, subjectId, topicId, subtopic.id, updates);
@@ -112,7 +103,7 @@ export default function SubtopicDetailPage() {
       await handleUpdate({
         userNotes: localNotes,
         personalContext: localContext,
-        currentAffairs: localCurrentAffairs
+        currentAffairs: localCurrentAffairs,
       });
       toast({
         title: 'Saved',
@@ -155,7 +146,9 @@ export default function SubtopicDetailPage() {
       <AuthGuard>
         <div className="min-h-screen p-8 text-center">
           <h1 className="text-xl font-bold">Subtopic not found</h1>
-          <Button onClick={() => router.back()} className="mt-4">Go Back</Button>
+          <Button onClick={() => router.back()} className="mt-4">
+            Go Back
+          </Button>
         </div>
       </AuthGuard>
     );
@@ -166,7 +159,7 @@ export default function SubtopicDetailPage() {
       <PageTransition>
         <div className="min-h-screen bg-background pb-40 sm:pb-40">
           <Navigation />
-          
+
           <main className="container max-w-5xl mx-auto p-4 space-y-6">
             {/* Header */}
             <DetailPageHeader
@@ -179,11 +172,13 @@ export default function SubtopicDetailPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleUpdate({
-                      practiceCount: (subtopic.practiceCount || 0) + 1,
-                      lastPracticed: Timestamp.now(),
-                      status: subtopic.status === 'not_started' ? 'in_progress' : subtopic.status
-                    })}
+                    onClick={() =>
+                      handleUpdate({
+                        practiceCount: (subtopic.practiceCount || 0) + 1,
+                        lastPracticed: Timestamp.now(),
+                        status: subtopic.status === 'not_started' ? 'in_progress' : subtopic.status,
+                      })
+                    }
                   >
                     <Brain className="h-4 w-4 mr-2" />
                     Practice
@@ -193,7 +188,7 @@ export default function SubtopicDetailPage() {
                     size="sm"
                     onClick={() => {
                       const updates: Partial<Subtopic> = {
-                        status: subtopic.status === 'completed' ? 'in_progress' : 'completed'
+                        status: subtopic.status === 'completed' ? 'in_progress' : 'completed',
                       };
                       if (subtopic.status !== 'completed') {
                         updates.completedAt = Timestamp.now();
@@ -223,9 +218,7 @@ export default function SubtopicDetailPage() {
                       <FileText className="h-5 w-5" />
                       Study Notes
                     </CardTitle>
-                    <CardDescription>
-                      Capture key concepts, formulas, and important points.
-                    </CardDescription>
+                    <CardDescription>Capture key concepts, formulas, and important points.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <MarkdownEditor
@@ -279,17 +272,15 @@ export default function SubtopicDetailPage() {
                       <TrendingUp className="h-5 w-5" />
                       Current Affairs & Updates
                     </CardTitle>
-                    <CardDescription>
-                      Link recent news and updates to this subtopic.
-                    </CardDescription>
+                    <CardDescription>Link recent news and updates to this subtopic.</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex gap-2">
                       <Input
                         value={newAffair}
-                        onChange={(e) => setNewAffair(e.target.value)}
+                        onChange={e => setNewAffair(e.target.value)}
                         placeholder="Add a new update..."
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddCurrentAffair()}
+                        onKeyDown={e => e.key === 'Enter' && handleAddCurrentAffair()}
                       />
                       <Button onClick={handleAddCurrentAffair} size="icon">
                         <Plus className="h-4 w-4" />
@@ -303,7 +294,10 @@ export default function SubtopicDetailPage() {
                         </div>
                       ) : (
                         localCurrentAffairs.map((affair, index) => (
-                          <div key={index} className="flex items-start justify-between p-3 rounded-lg border bg-muted/50">
+                          <div
+                            key={index}
+                            className="flex items-start justify-between p-3 rounded-lg border bg-muted/50"
+                          >
                             <div className="space-y-1">
                               <p className="text-sm">{affair.note}</p>
                               <p className="text-xs text-muted-foreground">

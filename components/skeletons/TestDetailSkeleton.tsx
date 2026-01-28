@@ -28,11 +28,7 @@ export function TestDetailSkeleton() {
 
       <div className="container mx-auto max-w-4xl px-4 py-8 space-y-6">
         {/* Question Card Skeleton */}
-        <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.5 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="border-0 shadow-sm overflow-hidden bg-white">
             <CardHeader className="bg-gray-50/50 pb-6 border-b">
               <div className="flex justify-between items-center mb-4">
@@ -45,13 +41,13 @@ export function TestDetailSkeleton() {
               <Skeleton className="h-24 w-full rounded-lg" /> {/* Question text */}
             </CardHeader>
             <CardContent className="p-6 md:p-8 space-y-4 relative">
-               {/* Shimmer effect */}
-               <motion.div
+              {/* Shimmer effect */}
+              <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50/50 to-transparent z-10 pointer-events-none"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
               />
-              
+
               {/* Answer Options */}
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="flex gap-3 items-center p-4 rounded-xl border border-gray-100 bg-white">

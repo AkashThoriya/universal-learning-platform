@@ -792,7 +792,7 @@ export const insightsService = {
 
 /**
  * Enhanced mission system operations
- * 
+ *
  * CONSOLIDATED: All missions now use a single collection `users/{userId}/missions`
  * with a `status` field for lifecycle management:
  * - 'template' - Mission templates
@@ -854,11 +854,7 @@ export const missionFirebaseService = {
         updatedAt: Timestamp.fromDate(new Date()),
       };
 
-      const result = await firebaseService.setDocument(
-        this.getMissionsPath(userId),
-        missionId as string,
-        missionData
-      );
+      const result = await firebaseService.setDocument(this.getMissionsPath(userId), missionId as string, missionData);
 
       if (result.success) {
         return createSuccess(missionId as string);
@@ -1635,10 +1631,7 @@ const adaptiveTestingFirebaseService = {
             where('userId', '==', userId),
             orderBy('createdAt', 'desc')
           )
-        : query(
-            collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
-            orderBy('createdAt', 'desc')
-          );
+        : query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), orderBy('createdAt', 'desc'));
 
       const snapshot = await getDocs(q);
       const tests = snapshot.docs.map(doc => ({
@@ -1655,29 +1648,24 @@ const adaptiveTestingFirebaseService = {
       if (error.code === 'failed-precondition' || error.message?.includes('index')) {
         console.warn('Index missing for tests query, falling back to client-side sorting');
         try {
-           const qFallback = userId
-            ? query(
-                collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
-                where('userId', '==', userId)
-              )
-            : query(
-                collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS)
-              );
-            
-            const snapshot = await getDocs(qFallback);
-            const tests = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-                createdAt: doc.data().createdAt?.toDate() ?? new Date(),
-                updatedAt: doc.data().updatedAt?.toDate() ?? new Date(),
-                completedAt: doc.data().completedAt?.toDate() ?? null,
-            })) as AdaptiveTest[];
-            
-            // Client-side sort
-            tests.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-            return createSuccess(tests);
+          const qFallback = userId
+            ? query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), where('userId', '==', userId))
+            : query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS));
+
+          const snapshot = await getDocs(qFallback);
+          const tests = snapshot.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id,
+            createdAt: doc.data().createdAt?.toDate() ?? new Date(),
+            updatedAt: doc.data().updatedAt?.toDate() ?? new Date(),
+            completedAt: doc.data().completedAt?.toDate() ?? null,
+          })) as AdaptiveTest[];
+
+          // Client-side sort
+          tests.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          return createSuccess(tests);
         } catch (e2) {
-            return createError(e2 instanceof Error ? e2 : new Error('Failed to fetch user tests fallback'));
+          return createError(e2 instanceof Error ? e2 : new Error('Failed to fetch user tests fallback'));
         }
       }
       return createError(error instanceof Error ? error : new Error('Failed to fetch user tests'));
@@ -1695,15 +1683,15 @@ const adaptiveTestingFirebaseService = {
   ): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const questionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS);
-      
+
       // Query 1: System/Public Questions
       // We look for questions created by 'system' or 'llm' (public pool)
       // Note: We run separate queries because Firestore limits 'in' clauses
       const systemQuery = query(
         questionsRef,
-        where('subject', 'in', subjects.slice(0, 10)), 
+        where('subject', 'in', subjects.slice(0, 10)),
         where('difficulty', 'in', difficulties),
-        where('createdBy', 'in', ['system', 'llm']), 
+        where('createdBy', 'in', ['system', 'llm']),
         orderBy('discriminationIndex', 'desc'),
         limit(maxQuestions)
       );
@@ -1720,10 +1708,7 @@ const adaptiveTestingFirebaseService = {
       );
 
       // Execute in parallel
-      const [systemSnap, userSnap] = await Promise.all([
-        getDocs(systemQuery),
-        getDocs(userQuery)
-      ]);
+      const [systemSnap, userSnap] = await Promise.all([getDocs(systemQuery), getDocs(userQuery)]);
 
       const systemQuestions = systemSnap.docs.map(doc => ({
         ...doc.data(),
@@ -1737,9 +1722,7 @@ const adaptiveTestingFirebaseService = {
 
       // Merge and deduplicate
       const allQuestions = [...userQuestions, ...systemQuestions];
-      const uniquequestions = Array.from(
-        new Map(allQuestions.map(q => [q.id, q])).values()
-      );
+      const uniquequestions = Array.from(new Map(allQuestions.map(q => [q.id, q])).values());
 
       // Sort by discrimination index (desc) and success rate (asc)
       const sortedQuestions = uniquequestions.sort((a, b) => {
@@ -1917,8 +1900,8 @@ const adaptiveTestingFirebaseService = {
    */
   async getTestAnalytics(userId: string, dateRange?: { start: Date; end: Date }): Promise<Result<TestAnalyticsData>> {
     try {
-  const endDate = dateRange?.end ?? new Date();
-  const startDate = dateRange?.start ?? new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const endDate = dateRange?.end ?? new Date();
+      const startDate = dateRange?.start ?? new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       // Get user's tests in the date range
       const testsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS);
@@ -1943,8 +1926,14 @@ const adaptiveTestingFirebaseService = {
         period: { startDate, endDate },
         overallMetrics: {
           testsCompleted: tests.length,
-          averageAccuracy: (tests.length > 0 ? tests.reduce((sum, test) => sum + (test.performance?.accuracy ?? 0), 0) / tests.length : 0),
-          averageAbilityEstimate: (tests.length > 0 ? tests.reduce((sum, test) => sum + (test.performance?.finalAbilityEstimate ?? 0), 0) / tests.length : 0),
+          averageAccuracy:
+            tests.length > 0
+              ? tests.reduce((sum, test) => sum + (test.performance?.accuracy ?? 0), 0) / tests.length
+              : 0,
+          averageAbilityEstimate:
+            tests.length > 0
+              ? tests.reduce((sum, test) => sum + (test.performance?.finalAbilityEstimate ?? 0), 0) / tests.length
+              : 0,
           totalTimeSpent: tests.reduce((sum, test) => sum + (test.performance?.totalTime ?? 0), 0),
           improvementTrend: 'stable', // This would be calculated based on historical data
         },
@@ -2095,24 +2084,24 @@ const adaptiveTestingFirebaseService = {
     } catch (error) {
       // Fallback: Try without orderBy if index is missing
       try {
-         const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
-         const q = query(
-            sessionsRef,
-            where('userId', '==', userId),
-            where('testId', '==', testId),
-            where('status', '==', 'active'),
-            limit(1)
-         );
-         const snapshot = await getDocs(q);
-         if (snapshot.empty) return createSuccess(null);
-         const data = snapshot.docs[0]!.data();
-         return createSuccess({
-            ...data,
-            startedAt: data.startedAt.toDate(),
-            lastActivity: data.lastActivity.toDate(),
-         } as TestSession);
+        const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
+        const q = query(
+          sessionsRef,
+          where('userId', '==', userId),
+          where('testId', '==', testId),
+          where('status', '==', 'active'),
+          limit(1)
+        );
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) return createSuccess(null);
+        const data = snapshot.docs[0]!.data();
+        return createSuccess({
+          ...data,
+          startedAt: data.startedAt.toDate(),
+          lastActivity: data.lastActivity.toDate(),
+        } as TestSession);
       } catch (retryError) {
-         return createError(error instanceof Error ? error : new Error('Failed to get active session'));
+        return createError(error instanceof Error ? error : new Error('Failed to get active session'));
       }
     }
   },
@@ -2150,11 +2139,7 @@ const adaptiveTestingFirebaseService = {
 
       // Delete associated sessions (filtered by userId for security)
       const sessionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_SESSIONS);
-      const sessionsQuery = query(
-        sessionsRef, 
-        where('userId', '==', userId),
-        where('testId', '==', testId)
-      );
+      const sessionsQuery = query(sessionsRef, where('userId', '==', userId), where('testId', '==', testId));
       const sessionsSnapshot = await getDocs(sessionsQuery);
       sessionsSnapshot.docs.forEach(doc => {
         batch.delete(doc.ref);
@@ -2162,11 +2147,7 @@ const adaptiveTestingFirebaseService = {
 
       // Delete associated responses (filtered by userId for security)
       const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
-      const responsesQuery = query(
-        responsesRef, 
-        where('userId', '==', userId),
-        where('testId', '==', testId)
-      );
+      const responsesQuery = query(responsesRef, where('userId', '==', userId), where('testId', '==', testId));
       const responsesSnapshot = await getDocs(responsesQuery);
       responsesSnapshot.docs.forEach(doc => {
         batch.delete(doc.ref);
@@ -2188,9 +2169,9 @@ const adaptiveTestingFirebaseService = {
     try {
       const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
       const q = query(
-        responsesRef, 
+        responsesRef,
         where('userId', '==', userId),
-        where('testId', '==', testId), 
+        where('testId', '==', testId),
         orderBy('timestamp', 'asc')
       );
 
@@ -2315,7 +2296,7 @@ const journeyFirebaseService = {
       );
 
       const snapshot = await getDocs(q);
-      const journeys = snapshot.docs.map((docSnapshot) => {
+      const journeys = snapshot.docs.map(docSnapshot => {
         const data = docSnapshot.data();
         return {
           ...data,

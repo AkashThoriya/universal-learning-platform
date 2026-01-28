@@ -1089,9 +1089,7 @@
               "link": "https://leetcode.com/problems/remove-linked-list-elements/"
             }
           ],
-          "learningTip": [
-            "Remove all nodes with a given value. The DUMMY HEAD technique handles edge cases cleanly."
-          ],
+          "learningTip": ["Remove all nodes with a given value. The DUMMY HEAD technique handles edge cases cleanly."],
           "mustNotMiss": [
             "Create dummy with dummy.next = head. Use prev = dummy, curr = head. If curr.val == val, prev.next = curr.next (skip curr). Else, prev = curr. Always advance curr. Return dummy.next. Why dummy? If head itself needs removal, dummy handles it - no special case needed. This is cleaner than checking 'if head needs removal' separately."
           ]
@@ -1486,9 +1484,7 @@
               "link": "https://leetcode.com/problems/valid-palindrome/"
             }
           ],
-          "learningTip": [
-            "Skip non-alphanumeric from both ends, compare lowercase characters. O(1) space solution."
-          ],
+          "learningTip": ["Skip non-alphanumeric from both ends, compare lowercase characters. O(1) space solution."],
           "mustNotMiss": [
             "Algorithm: left = 0, right = len-",
             "While left < right: skip non-alnum characters from left and right; if left >= right, break (all processed); if lower(s[left]) != lower(s[right]), return false; left++; right--. Return true. Use Character.isLetterOrDigit() in Java, c.isalnum() in Python. Time O(n), Space O",
@@ -1588,9 +1584,7 @@
           "name": "Group Anagrams - Approach 1 - Sorted Key",
           "estimatedHours": 0.5,
           "description": "Group words that are anagrams using sorted string keys",
-          "learningTip": [
-            "Sort each string to use as a dictionary key. All anagrams produce the same sorted key."
-          ],
+          "learningTip": ["Sort each string to use as a dictionary key. All anagrams produce the same sorted key."],
           "mustNotMiss": [
             "Algorithm: Create HashMap<String, List<String>>. For each word, key = sorted word. Append word to map[key]. Return map.values(). Time O(n * k log k) where k is max word length (sorting each word). Space O(n * k). This is the simple, intuitive approach. Sorting is the bottleneck."
           ]
@@ -1608,9 +1602,7 @@
               "link": "https://leetcode.com/problems/group-anagrams/"
             }
           ],
-          "learningTip": [
-            "Use character counts as key instead of sorted string. Avoids sorting cost."
-          ],
+          "learningTip": ["Use character counts as key instead of sorted string. Avoids sorting cost."],
           "mustNotMiss": [
             "Algorithm: For each word, create count array of 26 zeros. Count characters. Convert to tuple or string as key. This is O(n * k) - no sorting. Key format example: '#1#0#0#...' (count of each letter). Or in Python, use tuple(counts). This is faster for longer strings where k log k > 26. Space is same. Know both approaches and when each is better."
           ]
@@ -1666,9 +1658,7 @@
               "link": "https://leetcode.com/problems/implement-stack-using-queues/"
             }
           ],
-          "learningTip": [
-            "One queue is main, other is helper. Make either push O(n) or pop O(n), not both."
-          ],
+          "learningTip": ["One queue is main, other is helper. Make either push O(n) or pop O(n), not both."],
           "mustNotMiss": [
             "Approach 1 (Push O(n)): To push, enqueue to q",
             "Dequeue all from q1 to q",
@@ -2774,9 +2764,7 @@
           "name": "Symmetric Tree - Iterative Approach",
           "estimatedHours": 1.0,
           "description": "Check symmetry in a binary tree using BFS",
-          "learningTip": [
-            "Use queue/stack to compare pairs of nodes that should be mirror images of each other."
-          ],
+          "learningTip": ["Use queue/stack to compare pairs of nodes that should be mirror images of each other."],
           "mustNotMiss": [
             "Algorithm: queue = [(root.left, root.right)]. While queue: (t1, t",
             "= queue.popleft(). If both null: continue. If one null or vals differ: return False. Queue.append((t",
@@ -5528,9 +5516,7 @@
           "name": "Kruskal + Union Find - Code",
           "estimatedHours": 2.5,
           "description": "Implement Kruskal's Algorithm using Union-Find",
-          "learningTip": [
-            "Sort edges, iterate through, use union-find for cycle detection"
-          ],
+          "learningTip": ["Sort edges, iterate through, use union-find for cycle detection"],
           "mustNotMiss": [
             "edges.sort((a, b) => a[2] - b[2]); // sort by weight",
             "for (const [u, v, w] of edges) { if (find(u) !== find(v)) { mst.push([u, v, w]); union(u, v); } }",

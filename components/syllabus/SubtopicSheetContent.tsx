@@ -2,7 +2,18 @@
 
 import { format } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
-import { CheckCircle, Target, BookOpen, AlertCircle, FileText, Lightbulb, Save, Calendar, Plus, Trash2 } from 'lucide-react';
+import {
+  CheckCircle,
+  Target,
+  BookOpen,
+  AlertCircle,
+  FileText,
+  Lightbulb,
+  Save,
+  Calendar,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -52,10 +63,10 @@ export function SubtopicSheetContent({ subtopic, onUpdate }: SubtopicSheetConten
   const handleSaveContent = async () => {
     setSaving(true);
     try {
-      onUpdate({ 
-        userNotes: localNotes, 
+      onUpdate({
+        userNotes: localNotes,
         personalContext: localContext,
-        currentAffairs: localCurrentAffairs 
+        currentAffairs: localCurrentAffairs,
       });
       setHasChanges(false);
     } finally {
@@ -116,17 +127,21 @@ export function SubtopicSheetContent({ subtopic, onUpdate }: SubtopicSheetConten
       {/* Header */}
       <div>
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <div className={cn(
-            "w-3 h-3 rounded-full shrink-0",
-            subtopic.status === 'completed' && "bg-green-500",
-            subtopic.status === 'in_progress' && "bg-yellow-500",
-            subtopic.status === 'not_started' && "bg-gray-300",
-            subtopic.status === 'mastered' && "bg-blue-500"
-          )} />
+          <div
+            className={cn(
+              'w-3 h-3 rounded-full shrink-0',
+              subtopic.status === 'completed' && 'bg-green-500',
+              subtopic.status === 'in_progress' && 'bg-yellow-500',
+              subtopic.status === 'not_started' && 'bg-gray-300',
+              subtopic.status === 'mastered' && 'bg-blue-500'
+            )}
+          />
           {subtopic.name}
         </h2>
         <div className="flex items-center gap-2 mt-2">
-          <Badge variant="outline" className="capitalize">{subtopic.status.replace('_', ' ')}</Badge>
+          <Badge variant="outline" className="capitalize">
+            {subtopic.status.replace('_', ' ')}
+          </Badge>
           {subtopic.needsReview && <Badge variant="destructive">⚠️ Needs Review</Badge>}
         </div>
       </div>
@@ -161,10 +176,7 @@ export function SubtopicSheetContent({ subtopic, onUpdate }: SubtopicSheetConten
                 onClick={handleComplete}
                 variant={subtopic.status === 'completed' ? 'default' : 'outline'}
                 size="sm"
-                className={cn(
-                  "min-h-[44px]",
-                  subtopic.status === 'completed' && 'bg-green-600 hover:bg-green-700'
-                )}
+                className={cn('min-h-[44px]', subtopic.status === 'completed' && 'bg-green-600 hover:bg-green-700')}
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
                 {subtopic.status === 'completed' ? 'Completed ✓' : 'Complete'}
@@ -250,25 +262,19 @@ export function SubtopicSheetContent({ subtopic, onUpdate }: SubtopicSheetConten
         <TabsContent value="current-affairs" className="space-y-4">
           <div className="space-y-2">
             <p className="text-sm font-medium text-muted-foreground">Current Affairs</p>
-            <p className="text-xs text-muted-foreground">
-              Track recent news and developments related to this subtopic
-            </p>
+            <p className="text-xs text-muted-foreground">Track recent news and developments related to this subtopic</p>
           </div>
 
           {/* Add new affair */}
           <div className="flex gap-2">
             <Input
               value={newAffair}
-              onChange={(e) => setNewAffair(e.target.value)}
+              onChange={e => setNewAffair(e.target.value)}
               placeholder="Add a current affairs note..."
               className="flex-1"
-              onKeyDown={(e) => e.key === 'Enter' && handleAddCurrentAffair()}
+              onKeyDown={e => e.key === 'Enter' && handleAddCurrentAffair()}
             />
-            <Button 
-              onClick={handleAddCurrentAffair} 
-              disabled={!newAffair.trim()}
-              className="shrink-0 min-h-[44px]"
-            >
+            <Button onClick={handleAddCurrentAffair} disabled={!newAffair.trim()} className="shrink-0 min-h-[44px]">
               <Plus className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Add</span>
             </Button>
@@ -284,15 +290,10 @@ export function SubtopicSheetContent({ subtopic, onUpdate }: SubtopicSheetConten
           ) : (
             <div className="space-y-2">
               {localCurrentAffairs.map((affair, idx) => (
-                <div 
-                  key={idx} 
-                  className="p-3 border rounded-lg flex justify-between items-start gap-2 bg-card"
-                >
+                <div key={idx} className="p-3 border rounded-lg flex justify-between items-start gap-2 bg-card">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm break-words">{affair.note}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {format(affair.date.toDate(), 'MMM d, yyyy')}
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{format(affair.date.toDate(), 'MMM d, yyyy')}</p>
                   </div>
                   <Button
                     variant="ghost"

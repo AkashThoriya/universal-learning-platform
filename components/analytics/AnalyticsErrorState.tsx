@@ -16,9 +16,9 @@ export function AnalyticsErrorState() {
       <div className="bg-red-50 p-6 rounded-full mb-6">
         <BarChart3 className="h-12 w-12 text-red-500 opacity-80" />
       </div>
-      
+
       <h2 className="text-2xl font-bold text-gray-900 mb-2">Analytics Temporarily Unavailable</h2>
-      
+
       <p className="text-gray-600 max-w-md mb-8">
         We encountered an issue loading your performance insights. This is likely a temporary glitch.
       </p>

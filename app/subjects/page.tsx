@@ -31,7 +31,7 @@ export default function SubjectsPage() {
 
   const loadSyllabus = useCallback(async () => {
     if (!user?.uid) return;
-    
+
     try {
       setLoading(true);
       const data = await getSyllabus(user.uid);
@@ -60,12 +60,7 @@ export default function SubjectsPage() {
               description="Master every topic with strategic insights"
               icon={<BookOpen className="h-5 w-5 text-indigo-600" />}
               actions={
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={loadSyllabus}
-                  disabled={loading}
-                >
+                <Button variant="outline" size="sm" onClick={loadSyllabus} disabled={loading}>
                   <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                   Refresh
                 </Button>
@@ -84,18 +79,11 @@ export default function SubjectsPage() {
                       <h3 className="font-semibold text-indigo-900 mb-2">Ready to Study?</h3>
                       <p className="text-sm text-indigo-700 mb-4">Choose your path to learning excellence</p>
                       <div className="flex gap-3 justify-center">
-                        <Button
-                          onClick={() => router.push('/syllabus')}
-                          className="bg-indigo-600 hover:bg-indigo-700"
-                        >
+                        <Button onClick={() => router.push('/syllabus')} className="bg-indigo-600 hover:bg-indigo-700">
                           <BookOpen className="h-4 w-4 mr-2" />
                           View Syllabus
                         </Button>
-                        <Button
-                          onClick={() => router.push('/test')}
-                          variant="outline"
-                          className="border-indigo-300"
-                        >
+                        <Button onClick={() => router.push('/test')} variant="outline" className="border-indigo-300">
                           <Target className="h-4 w-4 mr-2" />
                           Take Test
                         </Button>
@@ -127,18 +115,11 @@ export default function SubjectsPage() {
                       <h3 className="font-semibold text-indigo-900 mb-2">Ready to Study?</h3>
                       <p className="text-sm text-indigo-700 mb-4">Choose your path to learning excellence</p>
                       <div className="flex gap-3 justify-center">
-                        <Button
-                          onClick={() => router.push('/syllabus')}
-                          className="bg-indigo-600 hover:bg-indigo-700"
-                        >
+                        <Button onClick={() => router.push('/syllabus')} className="bg-indigo-600 hover:bg-indigo-700">
                           <BookOpen className="h-4 w-4 mr-2" />
                           View Syllabus
                         </Button>
-                        <Button
-                          onClick={() => router.push('/test')}
-                          variant="outline"
-                          className="border-indigo-300"
-                        >
+                        <Button onClick={() => router.push('/test')} variant="outline" className="border-indigo-300">
                           <Target className="h-4 w-4 mr-2" />
                           Take Test
                         </Button>

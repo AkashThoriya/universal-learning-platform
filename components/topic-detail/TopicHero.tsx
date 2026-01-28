@@ -11,7 +11,7 @@ interface TopicHeroProps {
 
 export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
   const masteryScore = progress?.masteryScore || 0;
-  
+
   // Calculate color based on mastery
   const getMasteryColor = (score: number) => {
     if (score >= 80) return 'text-green-600 ring-green-600 bg-green-50';
@@ -25,12 +25,12 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
     <div className="relative w-full">
       <div className="space-y-6 py-2">
         {/* Navigation Breadcrumb */}
-        <Link 
-          href="/syllabus" 
+        <Link
+          href="/syllabus"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors group"
         >
           <div className="p-1 rounded-full group-hover:bg-muted transition-colors mr-1">
-             <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4" />
           </div>
           Back to Syllabus
         </Link>
@@ -39,14 +39,20 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
           <div className="space-y-4 flex-1">
             {/* Badges Row */}
             <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="secondary" className="px-3 py-1 font-medium bg-white/60 backdrop-blur border-blue-100 text-blue-700 hover:bg-white/80 transition-colors">
+              <Badge
+                variant="secondary"
+                className="px-3 py-1 font-medium bg-white/60 backdrop-blur border-blue-100 text-blue-700 hover:bg-white/80 transition-colors"
+              >
                 {subject.name}
               </Badge>
               <Badge variant="outline" className="px-3 py-1 bg-white/40 border-slate-200 text-slate-600">
                 Tier {subject.tier}
               </Badge>
               {topic.estimatedHours && (
-                <Badge variant="outline" className="px-3 py-1 bg-white/40 border-slate-200 text-slate-600 flex items-center gap-1.5">
+                <Badge
+                  variant="outline"
+                  className="px-3 py-1 bg-white/40 border-slate-200 text-slate-600 flex items-center gap-1.5"
+                >
                   <Clock className="w-3.5 h-3.5" />
                   {topic.estimatedHours}h
                 </Badge>

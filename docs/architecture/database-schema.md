@@ -5,12 +5,16 @@ Unified Firestore schema for the Exam Strategy Engine (Phase 4 Consolidated).
 ## Core Collections
 
 ### `users`
+
 User profiles and settings.
+
 - **Path**: `users/{userId}`
 - **Security**: Owner-only read/write.
 
 ### `missions` (Unified)
+
 consolidated collection for all task and goal tracking.
+
 - **Path**: `users/{userId}/missions/{missionId}`
 - **Fields**:
   - `status`: `'template' | 'draft' | 'active' | 'in_progress' | 'completed' | 'archived'` (Lifecycle)
@@ -21,7 +25,9 @@ consolidated collection for all task and goal tracking.
 - **Indexes**: Composite indexes on `status`, `deadline`, and `priority`.
 
 ### `syllabus` (Course-Scoped)
+
 Strategic curriculum storage.
+
 - **Path**: `users/{userId}/courses/{courseId}/syllabus/{subjectId}`
 - **Access Pattern**: Auto-resolved via `getSyllabus(userId, courseId?)`.
 - **Fields**:
@@ -32,7 +38,9 @@ Strategic curriculum storage.
     - `revisionDue`: Timestamp (Spaced repetition)
 
 ### `adaptiveTests`
+
 AI-generated adaptive test sessions.
+
 - **Path**: `adaptiveTests/{testId}`
 - **Security**: Strict `userId` ownership check.
 - **Fields**:

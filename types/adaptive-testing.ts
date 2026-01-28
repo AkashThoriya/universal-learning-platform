@@ -101,8 +101,8 @@ export interface QuestionOption {
 }
 
 export interface TestResponse {
-  userId: string;       // Required for security rules - identifies the response owner
-  testId: string;       // Required for querying responses by test
+  userId: string; // Required for security rules - identifies the response owner
+  testId: string; // Required for querying responses by test
   questionId: string;
   userAnswer: string | string[];
   isCorrect: boolean;
@@ -439,8 +439,10 @@ export interface QuestionGenerationRequest {
   excludeTopics?: string[];
 }
 
-export interface GeneratedQuestion
-  extends Omit<AdaptiveQuestion, 'id' | 'timesAsked' | 'averageResponseTime' | 'successRate'> {
+export interface GeneratedQuestion extends Omit<
+  AdaptiveQuestion,
+  'id' | 'timesAsked' | 'averageResponseTime' | 'successRate'
+> {
   generationMetadata: {
     model: string;
     prompt: string;

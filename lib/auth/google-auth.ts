@@ -60,10 +60,10 @@ export interface GoogleUserData {
   lastSignInAt: Timestamp;
   onboardingComplete: boolean;
   emailVerified: boolean;
-  
+
   /** Primary course ID - empty until onboarding complete */
   primaryCourseId: string;
-  
+
   /** User preferences with defaults */
   preferences: {
     dailyStudyGoalMinutes: number;
@@ -76,7 +76,7 @@ export interface GoogleUserData {
       healthCheckReminders: boolean;
     };
   };
-  
+
   metadata: {
     creationTime: string;
     lastSignInTime: string;

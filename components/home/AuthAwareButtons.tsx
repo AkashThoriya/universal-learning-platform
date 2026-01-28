@@ -19,9 +19,7 @@ export default function AuthAwareButtons() {
   if (user) {
     return (
       <Link href="/dashboard">
-        <Button className="text-sm gradient-primary text-white border-0">
-          Go to Dashboard
-        </Button>
+        <Button className="text-sm gradient-primary text-white border-0">Go to Dashboard</Button>
       </Link>
     );
   }

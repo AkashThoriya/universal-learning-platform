@@ -11,7 +11,12 @@ import BottomNav from '@/components/BottomNav';
 import Navigation from '@/components/Navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, getTopicProgress, updateTopicProgress, toggleQuestionSolved } from '@/lib/firebase/firebase-utils';
+import {
+  getSyllabus,
+  getTopicProgress,
+  updateTopicProgress,
+  toggleQuestionSolved,
+} from '@/lib/firebase/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
 import { TopicDetailSkeleton } from '@/components/skeletons';
 import { Timestamp } from 'firebase/firestore';
@@ -130,7 +135,7 @@ export default function TopicDetailPage() {
       const isCompleted = topicProgress.status === 'completed';
       const newStatus = isCompleted ? 'in_progress' : 'completed';
       const scoreChange = isCompleted ? -10 : 10;
-      
+
       const updates = {
         status: newStatus as 'completed' | 'in_progress',
         masteryScore: Math.min(Math.max((topicProgress.masteryScore || 0) + scoreChange, 0), 100),
@@ -151,7 +156,7 @@ export default function TopicDetailPage() {
         confetti({
           particleCount: 150,
           spread: 70,
-          origin: { y: 0.6 }
+          origin: { y: 0.6 },
         });
       }
     } catch (error) {
@@ -181,59 +186,67 @@ export default function TopicDetailPage() {
     }
   };
 
-  const handleToggleQuestion = useCallback(async (slug: string, _link?: string, name?: string) => {
+  const handleToggleQuestion = useCallback(
+    async (slug: string, _link?: string, name?: string) => {
       if (!user || !topicProgress) return;
-      
+
       const isSolved = topicProgress.solvedQuestions?.includes(slug);
-      
+
       // Optimistic Update
       const newSolved = isSolved
         ? (topicProgress.solvedQuestions || []).filter(s => s !== slug)
         : [...(topicProgress.solvedQuestions || []), slug];
-      
-      const newPracticeCount = isSolved 
-         ? (topicProgress.practiceCount || 0)
-         : (topicProgress.practiceCount || 0) + 1;
 
-      setTopicProgress(prev => prev ? {
-        ...prev,
-        solvedQuestions: newSolved,
-        practiceCount: newPracticeCount
-      } : null);
+      const newPracticeCount = isSolved ? topicProgress.practiceCount || 0 : (topicProgress.practiceCount || 0) + 1;
+
+      setTopicProgress(prev =>
+        prev
+          ? {
+              ...prev,
+              solvedQuestions: newSolved,
+              practiceCount: newPracticeCount,
+            }
+          : null
+      );
 
       try {
         await toggleQuestionSolved(user.uid, topicId, slug);
         if (!isSolved) {
-           toast({ title: 'Problem Solved! 🚀', description: `Marked "${name || 'Problem'}" as solved.` });
-           // Trigger confetti if marking as solved
-           confetti({
-             particleCount: 100,
-             spread: 70,
-             origin: { y: 0.6 }
-           });
+          toast({ title: 'Problem Solved! 🚀', description: `Marked "${name || 'Problem'}" as solved.` });
+          // Trigger confetti if marking as solved
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
         }
       } catch (error) {
         // Revert on failure
-        setTopicProgress(prev => prev ? {
-           ...prev, 
-           solvedQuestions: topicProgress.solvedQuestions || [],
-           practiceCount: topicProgress.practiceCount || 0
-        } : null);
+        setTopicProgress(prev =>
+          prev
+            ? {
+                ...prev,
+                solvedQuestions: topicProgress.solvedQuestions || [],
+                practiceCount: topicProgress.practiceCount || 0,
+              }
+            : null
+        );
         toast({ title: 'Error', variant: 'destructive', description: 'Failed to save progress.' });
       }
-  }, [user, topicProgress, topicId, toast]);
-
+    },
+    [user, topicProgress, topicId, toast]
+  );
 
   if (loading) {
-     return (
-       <AuthGuard>
-         <div className="min-h-screen bg-slate-50">
-           <Navigation />
-           <BottomNav />
-           <TopicDetailSkeleton />
-         </div>
-       </AuthGuard>
-     );
+    return (
+      <AuthGuard>
+        <div className="min-h-screen bg-slate-50">
+          <Navigation />
+          <BottomNav />
+          <TopicDetailSkeleton />
+        </div>
+      </AuthGuard>
+    );
   }
 
   if (!topic || !subject) {
@@ -243,9 +256,11 @@ export default function TopicDetailPage() {
           <Navigation />
           <BottomNav />
           <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-4">
-             <h1 className="text-2xl font-bold text-slate-900">Topic Not Found</h1>
-             <p className="text-slate-500">The requested topic could not be loaded.</p>
-             <Link href="/syllabus"><Button>Back to Syllabus</Button></Link>
+            <h1 className="text-2xl font-bold text-slate-900">Topic Not Found</h1>
+            <p className="text-slate-500">The requested topic could not be loaded.</p>
+            <Link href="/syllabus">
+              <Button>Back to Syllabus</Button>
+            </Link>
           </div>
         </div>
       </AuthGuard>
@@ -257,16 +272,10 @@ export default function TopicDetailPage() {
       <div className="min-h-screen bg-slate-50">
         <Navigation />
         <BottomNav />
-        
+
         <PageTransition>
           <TopicDetailLayout
-            hero={
-              <TopicHero 
-                 topic={topic} 
-                 subject={subject} 
-                 progress={topicProgress} 
-              />
-            }
+            hero={<TopicHero topic={topic} subject={subject} progress={topicProgress} />}
             content={
               <TopicContentTabs
                 topic={topic}

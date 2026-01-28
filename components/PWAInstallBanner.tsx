@@ -29,11 +29,7 @@ interface PWAInstallBannerProps {
   className?: string;
 }
 
-export function PWAInstallBanner({
-  variant = 'banner',
-  showBenefits = true,
-  className = '',
-}: PWAInstallBannerProps) {
+export function PWAInstallBanner({ variant = 'banner', showBenefits = true, className = '' }: PWAInstallBannerProps) {
   const {
     isInstalled,
     canAutoInstall,

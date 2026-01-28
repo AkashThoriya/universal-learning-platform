@@ -42,50 +42,69 @@ import { EXAMS_DATA } from '@/lib/data/exams-data';
  */
 function getExamSpecificTips(selectedExamId: string) {
   const exam = EXAMS_DATA.find(e => e.id === selectedExamId);
-  
+
   if (!exam) {
     return {
-      strategyTip: "Focus 60% effort on high-weightage topics, 30% on medium-weightage topics, and 10% on low-weightage topics for optimal score maximization.",
-      topicManagement: "Expand subjects to manage topics - add specialized areas, remove irrelevant ones, and customize names to match your study material or coaching notes."
+      strategyTip:
+        'Focus 60% effort on high-weightage topics, 30% on medium-weightage topics, and 10% on low-weightage topics for optimal score maximization.',
+      topicManagement:
+        'Expand subjects to manage topics - add specialized areas, remove irrelevant ones, and customize names to match your study material or coaching notes.',
     };
   }
 
   // Exam-specific strategy tips
   const examTips: Record<string, { strategyTip: string; topicManagement: string }> = {
-    'upsc_cse_prelims': {
-      strategyTip: "For UPSC Prelims: 40% focus on Current Affairs & Polity (daily changing), 30% on Geography & History (static), 30% on Economics & Science (semi-static). Prioritize newspaper reading and monthly magazines.",
-      topicManagement: "Customize topics to match your optional subject and coaching material. Add monthly current affairs, remove overlapping history topics, and focus on areas frequently asked in recent years."
+    upsc_cse_prelims: {
+      strategyTip:
+        'For UPSC Prelims: 40% focus on Current Affairs & Polity (daily changing), 30% on Geography & History (static), 30% on Economics & Science (semi-static). Prioritize newspaper reading and monthly magazines.',
+      topicManagement:
+        'Customize topics to match your optional subject and coaching material. Add monthly current affairs, remove overlapping history topics, and focus on areas frequently asked in recent years.',
     },
-    'ssc_cgl': {
-      strategyTip: "For SSC CGL: 35% on Quantitative Aptitude (high scoring), 30% on Reasoning (accuracy crucial), 25% on General Awareness (fact-based), 10% on English (qualifying). Time management is critical - aim 50 seconds per question.",
-      topicManagement: "Focus on high-frequency topics like Data Interpretation, Simplification in Quant. Add recent government schemes in GA and remove outdated historical facts."
+    ssc_cgl: {
+      strategyTip:
+        'For SSC CGL: 35% on Quantitative Aptitude (high scoring), 30% on Reasoning (accuracy crucial), 25% on General Awareness (fact-based), 10% on English (qualifying). Time management is critical - aim 50 seconds per question.',
+      topicManagement:
+        'Focus on high-frequency topics like Data Interpretation, Simplification in Quant. Add recent government schemes in GA and remove outdated historical facts.',
     },
-    'neet': {
-      strategyTip: "For NEET: 50% on Biology (360 marks - highest weightage), 25% on Physics (conceptual clarity), 25% on Chemistry (memory + concepts). NCERT is 85% of paper - master it completely before moving to other books.",
-      topicManagement: "Prioritize NCERT line-by-line for Biology. Add previous year questions as topics. Remove very advanced topics not in NCERT. Focus on diagrams and table format for quick revision."
+    neet: {
+      strategyTip:
+        'For NEET: 50% on Biology (360 marks - highest weightage), 25% on Physics (conceptual clarity), 25% on Chemistry (memory + concepts). NCERT is 85% of paper - master it completely before moving to other books.',
+      topicManagement:
+        'Prioritize NCERT line-by-line for Biology. Add previous year questions as topics. Remove very advanced topics not in NCERT. Focus on diagrams and table format for quick revision.',
     },
-    'jee_main': {
-      strategyTip: "For JEE Main: Equal 33% weightage to PCM, but Mathematics often has easier scoring topics. Focus 40% on Mathematics (Calculus, Algebra), 30% on Physics (Mechanics, Electrostatics), 30% on Chemistry (Organic reactions).",
-      topicManagement: "Add numerical practice as separate topics under each subject. Include previous year question trends. Remove very theoretical topics - focus on application-based problem solving."
+    jee_main: {
+      strategyTip:
+        'For JEE Main: Equal 33% weightage to PCM, but Mathematics often has easier scoring topics. Focus 40% on Mathematics (Calculus, Algebra), 30% on Physics (Mechanics, Electrostatics), 30% on Chemistry (Organic reactions).',
+      topicManagement:
+        'Add numerical practice as separate topics under each subject. Include previous year question trends. Remove very theoretical topics - focus on application-based problem solving.',
     },
-    'sbi_po': {
-      strategyTip: "For Banking PO: 35% on Reasoning (puzzle-heavy), 30% on Quantitative Aptitude (speed crucial), 25% on English (vocabulary focus), 10% on Current Affairs. Mock tests are essential for time management.",
-      topicManagement: "Add monthly banking current affairs. Focus on high-speed topics like Simplification, Percentage. Include sectional time management as separate practice topics."
+    sbi_po: {
+      strategyTip:
+        'For Banking PO: 35% on Reasoning (puzzle-heavy), 30% on Quantitative Aptitude (speed crucial), 25% on English (vocabulary focus), 10% on Current Affairs. Mock tests are essential for time management.',
+      topicManagement:
+        'Add monthly banking current affairs. Focus on high-speed topics like Simplification, Percentage. Include sectional time management as separate practice topics.',
     },
-    'cat': {
-      strategyTip: "For CAT: 40% on VARC (Reading speed crucial), 35% on DILR (logical thinking), 25% on QA (selective attempt). Focus on accuracy over speed - each wrong answer costs 3 correct ones due to negative marking.",
-      topicManagement: "Add Reading Comprehension passages by topic (business, science, etc.). Include mock analysis sessions. Remove low-yield quantitative topics and focus on high-probability areas."
+    cat: {
+      strategyTip:
+        'For CAT: 40% on VARC (Reading speed crucial), 35% on DILR (logical thinking), 25% on QA (selective attempt). Focus on accuracy over speed - each wrong answer costs 3 correct ones due to negative marking.',
+      topicManagement:
+        'Add Reading Comprehension passages by topic (business, science, etc.). Include mock analysis sessions. Remove low-yield quantitative topics and focus on high-probability areas.',
     },
-    'gate_cse': {
-      strategyTip: "For GATE CSE: 70% on technical subjects (algorithms, programming, etc.), 20% on Engineering Mathematics, 10% on General Aptitude. Previous years show 60% weightage to core CS subjects.",
-      topicManagement: "Break down programming topics into implementation and theory. Add specific algorithms as separate topics. Include numerical answer type question practice for each subject."
-    }
+    gate_cse: {
+      strategyTip:
+        'For GATE CSE: 70% on technical subjects (algorithms, programming, etc.), 20% on Engineering Mathematics, 10% on General Aptitude. Previous years show 60% weightage to core CS subjects.',
+      topicManagement:
+        'Break down programming topics into implementation and theory. Add specific algorithms as separate topics. Include numerical answer type question practice for each subject.',
+    },
   };
 
-  return examTips[selectedExamId] || {
-    strategyTip: `Focus on high-weightage subjects first. For ${exam.category} exams, prioritize accuracy over speed and maintain consistent daily practice across all subjects.`,
-    topicManagement: "Expand each subject to see topics. Customize based on your exam pattern - add emerging areas, remove outdated topics, and align with latest syllabus changes."
-  };
+  return (
+    examTips[selectedExamId] || {
+      strategyTip: `Focus on high-weightage subjects first. For ${exam.category} exams, prioritize accuracy over speed and maintain consistent daily practice across all subjects.`,
+      topicManagement:
+        'Expand each subject to see topics. Customize based on your exam pattern - add emerging areas, remove outdated topics, and align with latest syllabus changes.',
+    }
+  );
 }
 
 /**
@@ -127,8 +146,8 @@ export function SyllabusManagementStep({
   const primaryCourseName = useMemo(() => {
     if (form.data.isCustomExam) return form.data.customExam?.name || 'Custom Course';
     if (form.data.selectedExamId && form.data.selectedCourses) {
-       const course = form.data.selectedCourses.find(c => c.examId === form.data.selectedExamId);
-       if (course) return course.examName;
+      const course = form.data.selectedCourses.find(c => c.examId === form.data.selectedExamId);
+      if (course) return course.examName;
     }
     return 'Selected Course';
   }, [form.data.isCustomExam, form.data.customExam, form.data.selectedExamId, form.data.selectedCourses]);
@@ -182,8 +201,6 @@ export function SyllabusManagementStep({
     setExpandedSubjects(newExpanded);
   };
 
-
-
   return (
     <CardContent className="space-y-6">
       <CardHeader className="px-0 pt-0">
@@ -194,26 +211,25 @@ export function SyllabusManagementStep({
         <CardDescription>Organize your subjects by priority tiers to optimize your study strategy.</CardDescription>
       </CardHeader>
 
-
-
-
-
       {/* Subjects List */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-semibold">Subjects ({form.data.syllabus.length})</h4>
-          <Button variant="outline" size="default" onClick={onAddSubject} className="flex items-center space-x-1 h-10"> {/* Larger on Tablet */}
+          <Button variant="outline" size="default" onClick={onAddSubject} className="flex items-center space-x-1 h-10">
+            {' '}
+            {/* Larger on Tablet */}
             <Plus className="h-4 w-4" />
             <span>Add Subject</span>
           </Button>
         </div>
-        
+
         {/* Multi-course clarification alert */}
         {form.data.selectedCourses && form.data.selectedCourses.length > 1 && (
           <Alert className="border-amber-200 bg-amber-50">
             <AlertCircle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-amber-800 text-sm">
-               Customizing syllabus for <strong>{primaryCourseName}</strong>. Other selected courses will use a standard recommended syllabus which you can customize later in your profile.
+              Customizing syllabus for <strong>{primaryCourseName}</strong>. Other selected courses will use a standard
+              recommended syllabus which you can customize later in your profile.
             </AlertDescription>
           </Alert>
         )}
@@ -290,8 +306,6 @@ export function SyllabusManagementStep({
                     </div>
 
                     <div className="flex items-center space-x-3">
-
-
                       {/* Remove Subject Button */}
                       <Button
                         size="sm"
@@ -323,7 +337,9 @@ export function SyllabusManagementStep({
                               className="flex items-center justify-between p-3 md:p-4 bg-white border rounded-md hover:shadow-sm transition-shadow"
                             >
                               <div className="flex items-center gap-2 flex-1">
-                                <div className="p-3 -ml-3 md:p-4 md:-ml-4 cursor-grab opacity-50 hover:opacity-100 transition-opacity"> {/* Increased touch target for tablet */}
+                                <div className="p-3 -ml-3 md:p-4 md:-ml-4 cursor-grab opacity-50 hover:opacity-100 transition-opacity">
+                                  {' '}
+                                  {/* Increased touch target for tablet */}
                                   <GripVertical className="h-5 w-5 text-gray-400" />
                                 </div>
                                 {editingTopic === topic.id ? (
@@ -465,9 +481,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
           <Settings className="h-6 w-6 text-indigo-600" />
           <CardTitle>Study Preferences</CardTitle>
         </div>
-        <CardDescription>
-          Customize your study schedule and revision preferences for optimal learning.
-        </CardDescription>
+        <CardDescription>Customize your study schedule and revision preferences for optimal learning.</CardDescription>
       </CardHeader>
 
       {/* Daily Study Goal */}
@@ -530,8 +544,6 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
           </SelectContent>
         </Select>
       </div>
-
-
 
       {/* Revision Intervals */}
       <div className="space-y-4">

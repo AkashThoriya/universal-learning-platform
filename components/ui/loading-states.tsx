@@ -346,7 +346,7 @@ export function ErrorDisplay({
   showDetails?: boolean;
   variant?: 'default' | 'compact' | 'inline';
 }) {
-  const errorMessage = typeof error === 'string' ? error : (error?.message || message);
+  const errorMessage = typeof error === 'string' ? error : error?.message || message;
 
   if (variant === 'compact') {
     return (

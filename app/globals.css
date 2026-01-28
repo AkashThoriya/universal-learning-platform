@@ -155,15 +155,14 @@
     @apply border-border;
   }
 
-                html,
-                body {
-      @apply bg-background text-foreground;
-        -webkit-tap-highlight-color: transparent;
+  html,
+  body {
+    @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
   }
-
 
   /* Enhanced accessibility */
   :focus {

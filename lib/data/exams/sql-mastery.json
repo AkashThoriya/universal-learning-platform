@@ -894,9 +894,7 @@
           "id": "restoring_databases",
           "name": "Restoring the Databases",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "Re-import from backup SQL files. Understand mysqldump for backup and mysql for restore."
-          ],
+          "learningTip": ["Re-import from backup SQL files. Understand mysqldump for backup and mysql for restore."],
           "mustNotMiss": [
             "Restore command: mysql -u user -p database < backup.sql. For large databases, use --single-transaction flag during dump to avoid locking. Test restores regularly - backups are useless if you can't restore."
           ],
@@ -1472,9 +1470,7 @@
           "id": "with_check_option",
           "name": "THE WITH OPTION CHECK Clause",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "WITH CHECK OPTION prevents INSERT/UPDATE that would make row invisible to the view."
-          ],
+          "learningTip": ["WITH CHECK OPTION prevents INSERT/UPDATE that would make row invisible to the view."],
           "mustNotMiss": [
             "CREATE VIEW expensive_products AS SELECT * FROM products WHERE price > 100 WITH CHECK OPTION. Trying to set price = 50 through this view fails. Two types: LOCAL (check this view only) and CASCADED (check all underlying views). Cascaded is default."
           ],
@@ -1588,9 +1584,7 @@
           "id": "parameter_validation",
           "name": "Parameter Validation",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "Validate parameters early. Use IF statements and SIGNAL to raise errors for invalid input."
-          ],
+          "learningTip": ["Validate parameters early. Use IF statements and SIGNAL to raise errors for invalid input."],
           "mustNotMiss": [
             "SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid parameter'; raises custom error. Pattern: IF param IS NULL OR param < 0 THEN SIGNAL... END IF. Validate before processing to fail fast with clear errors."
           ],
@@ -1600,9 +1594,7 @@
           "id": "output_parameters",
           "name": "Output Parameters",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "OUT parameters return multiple values. Set values with SELECT INTO or SET statements."
-          ],
+          "learningTip": ["OUT parameters return multiple values. Set values with SELECT INTO or SET statements."],
           "mustNotMiss": [
             "Pattern: CREATE PROCEDURE GetStats(OUT minVal DECIMAL, OUT maxVal DECIMAL, OUT avgVal DECIMAL) BEGIN SELECT MIN(price), MAX(price), AVG(price) INTO minVal, maxVal, avgVal FROM products; END. CALL GetStats(@min, @max, @avg); returns three values."
           ],
@@ -1677,9 +1669,7 @@
           "id": "viewing_triggers",
           "name": "Viewing Triggers",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "SHOW TRIGGERS shows active triggers. Check information_schema.triggers for details."
-          ],
+          "learningTip": ["SHOW TRIGGERS shows active triggers. Check information_schema.triggers for details."],
           "mustNotMiss": [
             "SHOW TRIGGERS FROM database_name. Triggers don't show in SHOW CREATE TABLE. Debug by temporarily disabling: Set trigger body to empty or drop and recreate. For complex trigger logic, consider moving to application code for visibility."
           ],
@@ -1689,9 +1679,7 @@
           "id": "dropping_triggers",
           "name": "Dropping Triggers",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "DROP TRIGGER IF EXISTS name. Triggers tied to tables - dropping table drops its triggers."
-          ],
+          "learningTip": ["DROP TRIGGER IF EXISTS name. Triggers tied to tables - dropping table drops its triggers."],
           "mustNotMiss": [
             "Cannot ALTER TRIGGER - must drop and recreate. Store trigger definitions in SQL files for version control and recovery. During migration, may need to disable/re-enable triggers to avoid side effects during bulk operations."
           ],
@@ -1701,9 +1689,7 @@
           "id": "auditing_triggers",
           "name": "Using Triggers for Auditing",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "Common pattern: Log changes to audit table. Capture who, when, what changed."
-          ],
+          "learningTip": ["Common pattern: Log changes to audit table. Capture who, when, what changed."],
           "mustNotMiss": [
             "Audit table: timestamp, table_name, operation (INSERT/UPDATE/DELETE), old_values (JSON), new_values (JSON), user. In trigger: INSERT INTO audit_log VALUES (NOW(), 'orders', 'UPDATE', JSON_OBJECT('status', OLD.status), JSON_OBJECT('status', NEW.status), USER())."
           ],
@@ -1883,9 +1869,7 @@
               "link": "https://leetcode.com/problems/exchange-seats/"
             }
           ],
-          "learningTip": [
-            "Deadlock: Two transactions each waiting for lock held by the other. Neither can proceed."
-          ],
+          "learningTip": ["Deadlock: Two transactions each waiting for lock held by the other. Neither can proceed."],
           "mustNotMiss": [
             "MySQL detects deadlocks and kills one transaction (victim). Application should catch error and retry. Prevent by: accessing tables in same order, locking all needed rows upfront, keeping transactions short. SHOW ENGINE INNODB STATUS shows recent deadlocks."
           ],
@@ -1943,9 +1927,7 @@
           "id": "floating_point_types",
           "name": "Fixed-point and Floating-point Types",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "FLOAT, DOUBLE for approximate decimals. DECIMAL(p,s) for exact decimals (money!)."
-          ],
+          "learningTip": ["FLOAT, DOUBLE for approximate decimals. DECIMAL(p,s) for exact decimals (money!)."],
           "mustNotMiss": [
             "FLOAT/DOUBLE have rounding errors:",
             "1 +",
@@ -1960,9 +1942,7 @@
           "id": "boolean_types",
           "name": "Boolean Types",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "MySQL's BOOL/BOOLEAN is actually TINYINT(1). 0 = false, non-zero = true."
-          ],
+          "learningTip": ["MySQL's BOOL/BOOLEAN is actually TINYINT(1). 0 = false, non-zero = true."],
           "mustNotMiss": [
             "Common values: 0 and",
             "WHERE is_active = TRUE works (TRUE =",
@@ -2175,9 +2155,7 @@
           "id": "first_normal_form",
           "name": "1NF- First Normal Form",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "1NF: Each column contains atomic values, each row is unique (has primary key)."
-          ],
+          "learningTip": ["1NF: Each column contains atomic values, each row is unique (has primary key)."],
           "mustNotMiss": [
             "Violations: Comma-separated values in a column, repeating groups (phone1, phone2, phone3). Fix: Split into separate table with proper relationships. Example: products table with 'colors: red,blue' \u2192 product_colors junction table."
           ],
@@ -2319,9 +2297,7 @@
           "id": "video_rental_project",
           "name": "Project - Video Rental Application",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "Classic case study. Entities: Customer, Movie, Rental, Category, Actor, Inventory."
-          ],
+          "learningTip": ["Classic case study. Entities: Customer, Movie, Rental, Category, Actor, Inventory."],
           "mustNotMiss": [
             "Many-to-many: Movies \u2194 Actors, Movies \u2194 Categories. One-to-many: Customer \u2192 Rentals. Inventory layer: physical copies that can be rented vs movie titles. Due dates, late fees, return status add complexity."
           ],
@@ -2379,9 +2355,7 @@
           "id": "altering_tables",
           "name": "Altering Tables",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "ALTER TABLE adds/removes/modifies columns and constraints. Changes live schema."
-          ],
+          "learningTip": ["ALTER TABLE adds/removes/modifies columns and constraints. Changes live schema."],
           "mustNotMiss": [
             "ADD COLUMN: ALTER TABLE t ADD col VARCHAR",
             "AFTER existing_col. DROP COLUMN: ALTER TABLE t DROP COLUMN col. MODIFY COLUMN: ALTER TABLE t MODIFY col VARCHAR",
@@ -2393,9 +2367,7 @@
           "id": "creating_relationships",
           "name": "Creating Relationships",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "Add foreign keys to establish relationships. Reference primary key of related table."
-          ],
+          "learningTip": ["Add foreign keys to establish relationships. Reference primary key of related table."],
           "mustNotMiss": [
             "ALTER TABLE orders ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT ON UPDATE CASCADE. Name constraints descriptively. Foreign keys require compatible types (both INT UNSIGNED, etc.)."
           ],
@@ -2515,9 +2487,7 @@
           "id": "fulltext_indexes",
           "name": "Full-text Indexes",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "For text search: CREATE FULLTEXT INDEX ON table(column). Enables MATCH...AGAINST queries."
-          ],
+          "learningTip": ["For text search: CREATE FULLTEXT INDEX ON table(column). Enables MATCH...AGAINST queries."],
           "mustNotMiss": [
             "MATCH(column) AGAINST('search terms') returns relevance score. Boolean mode: MATCH(col) AGAINST('+required -excluded' IN BOOLEAN MODE). Better than LIKE '%term%' for large text. InnoDB supports fulltext since MySQL"
           ],
@@ -2648,9 +2618,7 @@
           "id": "viewing_users",
           "name": "Viewing Users",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "SELECT user, host FROM mysql.user. SHOW GRANTS FOR user@host shows privileges."
-          ],
+          "learningTip": ["SELECT user, host FROM mysql.user. SHOW GRANTS FOR user@host shows privileges."],
           "mustNotMiss": [
             "Query mysql.user table for user list. SHOW GRANTS FOR 'app'@'localhost'; shows exactly what user can do. Regular audit: who has access? Are old accounts removed? Any overly permissive grants?"
           ],
@@ -2672,9 +2640,7 @@
           "id": "changing_passwords",
           "name": "Changing Passwords",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "ALTER USER 'name'@'host' IDENTIFIED BY 'newpassword'. Or SET PASSWORD for current user."
-          ],
+          "learningTip": ["ALTER USER 'name'@'host' IDENTIFIED BY 'newpassword'. Or SET PASSWORD for current user."],
           "mustNotMiss": [
             "For current user: SET PASSWORD = 'newpassword'; Enforce password policies: REQUIRE SSL, PASSWORD EXPIRE INTERVAL 90 DAY, PASSWORD HISTORY 5. Use strong passwords: length, complexity, uniqueness."
           ],
@@ -2696,9 +2662,7 @@
           "id": "viewing_privileges",
           "name": "Viewing Privileges",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "Views are saved queries that act like virtual tables. Great for abstraction and security."
-          ],
+          "learningTip": ["Views are saved queries that act like virtual tables. Great for abstraction and security."],
           "mustNotMiss": [
             "Views don't store data - they run the underlying query each time. Understand updatable vs read-only views."
           ],
@@ -2708,9 +2672,7 @@
           "id": "revoking_privileges",
           "name": "Revoking Privileges",
           "estimatedHours": 0.5,
-          "learningTip": [
-            "REVOKE privilege ON database.table FROM user@host. Mirrors GRANT syntax."
-          ],
+          "learningTip": ["REVOKE privilege ON database.table FROM user@host. Mirrors GRANT syntax."],
           "mustNotMiss": [
             "REVOKE DELETE ON myapp.* FROM 'app'@'localhost'; Note: Revoking doesn't affect active sessions until reconnection. To see current grants: SHOW GRANTS. Regular privilege audits: who has what? Is it still needed?"
           ],

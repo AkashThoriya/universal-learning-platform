@@ -17,13 +17,7 @@ interface SkeletonCardProps {
  * Base skeleton card wrapper with shimmer effect and staggered animation.
  * Use this as a foundation for specific skeleton components.
  */
-export function SkeletonCard({
-  children,
-  className,
-  index = 0,
-  showHeader = false,
-  headerContent,
-}: SkeletonCardProps) {
+export function SkeletonCard({ children, className, index = 0, showHeader = false, headerContent }: SkeletonCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.95 }}

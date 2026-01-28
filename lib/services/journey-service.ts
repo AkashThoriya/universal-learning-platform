@@ -101,11 +101,7 @@ export class JourneyService {
   /**
    * Create initial journey from onboarding data
    */
-  async createJourneyFromOnboarding(
-    userId: string,
-    examId: string,
-    targetDate: Date
-  ): Promise<Result<UserJourney>> {
+  async createJourneyFromOnboarding(userId: string, examId: string, targetDate: Date): Promise<Result<UserJourney>> {
     try {
       const exam = EXAMS_DATA.find(e => e.id === examId);
       if (!exam) {
@@ -136,7 +132,7 @@ export class JourneyService {
    * @param courseId Optional - Filter journeys by specific course/exam ID
    */
   subscribeToUserJourneys(userId: string, callback: (journeys: UserJourney[]) => void, courseId?: string): () => void {
-    const unsubscribe = journeyFirebaseService.subscribeToUserJourneys(userId, (journeys) => {
+    const unsubscribe = journeyFirebaseService.subscribeToUserJourneys(userId, journeys => {
       if (courseId) {
         // Filter journeys by examId if a course context is provided
         // Journeys without examId are considered general/global
@@ -158,16 +154,16 @@ export class JourneyService {
    */
   async getUserJourneys(userId: string, courseId?: string): Promise<Result<UserJourney[]>> {
     const result = await journeyFirebaseService.getUserJourneys(userId);
-    
+
     if (!result.success) {
       return result;
     }
-    
+
     if (courseId) {
       const filteredJourneys = result.data.filter(j => !j.examId || j.examId === courseId);
       return createSuccess(filteredJourneys);
     }
-    
+
     return result;
   }
 

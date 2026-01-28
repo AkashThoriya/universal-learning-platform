@@ -1,13 +1,13 @@
 /**
  * Skeleton Components
- * 
+ *
  * Reusable loading state components with shimmer effects and staggered animations.
  * Use these throughout the application for consistent loading experience.
- * 
+ *
  * Usage:
  * ```tsx
  * import { StatCardSkeletonGrid, TestCardSkeletonGrid } from '@/components/skeletons';
- * 
+ *
  * {loading ? <StatCardSkeletonGrid count={4} /> : <ActualContent />}
  * ```
  */

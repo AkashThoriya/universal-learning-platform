@@ -83,7 +83,8 @@ export function QuickSessionLauncher({
 
       // Load personalized recommendations from Firebase
       const { simpleLearningRecommendationsService } = await import('@/lib/algorithms/simple-learning-recommendations');
-      const recommendationsResult = await simpleLearningRecommendationsService.generateBasicRecommendations(activeUserId);
+      const recommendationsResult =
+        await simpleLearningRecommendationsService.generateBasicRecommendations(activeUserId);
 
       // Convert recommendations to quick session format if successful
       if (recommendationsResult.success && recommendationsResult.data) {
@@ -91,15 +92,19 @@ export function QuickSessionLauncher({
           id: rec.id,
           title: rec.title,
           description: rec.description,
-          duration: 15 + (index * 5), // Default durations: 15, 20, 25 minutes
-          difficulty: (rec.priority === 'high' ? 'beginner' : rec.priority === 'medium' ? 'intermediate' : 'advanced') as 'beginner' | 'intermediate' | 'advanced',
+          duration: 15 + index * 5, // Default durations: 15, 20, 25 minutes
+          difficulty: (rec.priority === 'high'
+            ? 'beginner'
+            : rec.priority === 'medium'
+              ? 'intermediate'
+              : 'advanced') as 'beginner' | 'intermediate' | 'advanced',
           track: 'exam' as const,
           subjectId: 'general',
           topicId: rec.category,
           icon: '📚',
           color: 'blue',
         }));
-        
+
         setDisplaySessions(personalizedSessions.length > 0 ? personalizedSessions : defaultSessions);
       } else {
         setDisplaySessions(defaultSessions);

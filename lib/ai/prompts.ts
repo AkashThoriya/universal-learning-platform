@@ -40,14 +40,10 @@ export const PROMPTS = {
   generateQuestions: (request: QuestionGenerationRequest): string => {
     const difficultyDescription = getDifficultyDescription(request.difficulty);
     const bloomsLevels = getBloomsLevels(request.difficulty);
-    
+
     // Build topic context if available
-    const topicsContext = request.topics?.length 
-      ? `- Specific Topics to Cover: ${request.topics.join(', ')}` 
-      : '';
-    const syllabusContext = request.syllabusContext 
-      ? `- Syllabus/Chapter Context: ${request.syllabusContext}` 
-      : '';
+    const topicsContext = request.topics?.length ? `- Specific Topics to Cover: ${request.topics.join(', ')}` : '';
+    const syllabusContext = request.syllabusContext ? `- Syllabus/Chapter Context: ${request.syllabusContext}` : '';
 
     return `IMPORTANT: You MUST respond with ONLY valid JSON. No markdown code fences, no comments, no explanations before or after. Start your response with [ and end with ].
 
@@ -133,5 +129,5 @@ OUTPUT FORMAT: JSON Object
 CONSTRAINTS:
 - Be realistic with timelines.
 - Create 3-5 key milestones.`;
-  }
+  },
 };

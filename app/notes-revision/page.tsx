@@ -72,8 +72,8 @@ export default function NotesRevisionPage() {
 
       // Step 2: Collect all topic IDs
       const topicFetches: { subject: SyllabusSubject; topic: SyllabusTopic }[] = [];
-      syllabus.forEach((subject) => {
-        subject.topics.forEach((topic) => {
+      syllabus.forEach(subject => {
+        subject.topics.forEach(topic => {
           topicFetches.push({ subject, topic });
         });
       });
@@ -100,13 +100,13 @@ export default function NotesRevisionPage() {
       // Step 4: Build SubjectNotes structure
       let totalNotes = 0;
       const aggregated: SubjectNotes[] = syllabus
-        .map((subject) => {
+        .map(subject => {
           const topics: TopicNotes[] = subject.topics
-            .map((topic) => ({
+            .map(topic => ({
               topic,
               notes: notesMap.get(topic.id) || [],
             }))
-            .filter((t) => t.notes.length > 0); // Only include topics with notes
+            .filter(t => t.notes.length > 0); // Only include topics with notes
 
           const subjectTotal = topics.reduce((acc, t) => acc + t.notes.length, 0);
           totalNotes += subjectTotal;
@@ -117,7 +117,7 @@ export default function NotesRevisionPage() {
             totalNotes: subjectTotal,
           };
         })
-        .filter((s) => s.totalNotes > 0); // Only include subjects with notes
+        .filter(s => s.totalNotes > 0); // Only include subjects with notes
 
       setSubjectNotes(aggregated);
       setTotalNotesCount(totalNotes);
@@ -144,7 +144,7 @@ export default function NotesRevisionPage() {
 
   // Toggle subject expansion
   const toggleSubject = (subjectId: string) => {
-    setExpandedSubjects((prev) => {
+    setExpandedSubjects(prev => {
       const next = new Set(prev);
       if (next.has(subjectId)) {
         next.delete(subjectId);
@@ -157,7 +157,7 @@ export default function NotesRevisionPage() {
 
   // Toggle topic expansion
   const toggleTopic = (topicId: string) => {
-    setExpandedTopics((prev) => {
+    setExpandedTopics(prev => {
       const next = new Set(prev);
       if (next.has(topicId)) {
         next.delete(topicId);
@@ -240,7 +240,7 @@ export default function NotesRevisionPage() {
             )}
 
             {/* Notes organized by Subject/Topic */}
-            {subjectNotes.map((subjectData) => (
+            {subjectNotes.map(subjectData => (
               <Card key={subjectData.subject.id} className="overflow-hidden">
                 {/* Subject Header */}
                 <CardHeader
@@ -260,7 +260,8 @@ export default function NotesRevisionPage() {
                       <div>
                         <CardTitle className="text-lg">{subjectData.subject.name}</CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          {subjectData.topics.length} topic{subjectData.topics.length !== 1 ? 's' : ''} • {subjectData.totalNotes} note{subjectData.totalNotes !== 1 ? 's' : ''}
+                          {subjectData.topics.length} topic{subjectData.topics.length !== 1 ? 's' : ''} •{' '}
+                          {subjectData.totalNotes} note{subjectData.totalNotes !== 1 ? 's' : ''}
                         </p>
                       </div>
                     </div>
@@ -278,11 +279,8 @@ export default function NotesRevisionPage() {
                 {/* Topics within Subject */}
                 {expandedSubjects.has(subjectData.subject.id) && (
                   <CardContent className="pt-0 space-y-3">
-                    {subjectData.topics.map((topicData) => (
-                      <div
-                        key={topicData.topic.id}
-                        className="border rounded-lg overflow-hidden"
-                      >
+                    {subjectData.topics.map(topicData => (
+                      <div key={topicData.topic.id} className="border rounded-lg overflow-hidden">
                         {/* Topic Header */}
                         <div
                           className={cn(
@@ -307,7 +305,7 @@ export default function NotesRevisionPage() {
                         {/* Notes List */}
                         {expandedTopics.has(topicData.topic.id) && (
                           <div className="divide-y bg-white">
-                            {topicData.notes.map((note) => (
+                            {topicData.notes.map(note => (
                               <div
                                 key={note.id}
                                 className="flex items-center justify-between p-3 hover:bg-slate-50 transition-colors"
@@ -334,12 +332,7 @@ export default function NotesRevisionPage() {
                                 </div>
 
                                 <div className="flex items-center gap-1 flex-shrink-0">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                    asChild
-                                  >
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
                                     <a
                                       href={note.downloadUrl}
                                       target="_blank"
@@ -349,17 +342,8 @@ export default function NotesRevisionPage() {
                                       <ExternalLink className="h-4 w-4" />
                                     </a>
                                   </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                    asChild
-                                  >
-                                    <a
-                                      href={note.downloadUrl}
-                                      download={note.fileName}
-                                      title="Download"
-                                    >
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                                    <a href={note.downloadUrl} download={note.fileName} title="Download">
                                       <Download className="h-4 w-4" />
                                     </a>
                                   </Button>

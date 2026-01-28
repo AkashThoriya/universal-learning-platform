@@ -478,7 +478,7 @@ export class IntelligentAnalyticsService {
    */
 
   async getPerformanceAnalytics(
-    userId: string, 
+    userId: string,
     options?: { timeRange?: '7d' | '30d' | '90d' | '1y' }
   ): Promise<PerformanceAnalytics> {
     try {
@@ -488,10 +488,8 @@ export class IntelligentAnalyticsService {
       let startDate: Date | undefined;
       if (options?.timeRange) {
         const now = new Date();
-        const days = options.timeRange === '7d' ? 7 
-          : options.timeRange === '30d' ? 30 
-          : options.timeRange === '90d' ? 90 
-          : 365;
+        const days =
+          options.timeRange === '7d' ? 7 : options.timeRange === '30d' ? 30 : options.timeRange === '90d' ? 90 : 365;
         startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
       }
 
@@ -566,8 +564,6 @@ export class IntelligentAnalyticsService {
       unsubscribePerformance();
     };
   }
-
-
 
   /**
    * Identify and analyze weak areas across both tracks
@@ -823,10 +819,7 @@ export class IntelligentAnalyticsService {
   private async getUserEvents(userId: string, category?: string, startDate?: Date): Promise<AnalyticsEvent[]> {
     try {
       // Base constraints
-      const constraints: any[] = [
-        where('userId', '==', userId),
-        orderBy('timestamp', 'desc')
-      ];
+      const constraints: any[] = [where('userId', '==', userId), orderBy('timestamp', 'desc')];
 
       // Add category filter
       if (category) {
@@ -949,7 +942,6 @@ export class IntelligentAnalyticsService {
    * Create empty analytics structure for users with insufficient data
    */
   private createEmptyAnalytics(): PerformanceAnalytics {
-
     return {
       examPerformance: {
         totalMockTests: 0,

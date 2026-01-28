@@ -373,36 +373,38 @@ export function PersonalInfoStepCompact({
                 </Badge>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {POPULAR_EXAM_CATEGORIES.filter(category => (examsByCategory[category.id]?.length || 0) > 0).map(category => {
-                  const Icon = category.icon;
-                  const isActive = activeCategory === category.id;
-                  const examCount = examsByCategory[category.id]?.length || 0;
-                  const activeClasses = getCategoryClasses(category.id, isActive);
+                {POPULAR_EXAM_CATEGORIES.filter(category => (examsByCategory[category.id]?.length || 0) > 0).map(
+                  category => {
+                    const Icon = category.icon;
+                    const isActive = activeCategory === category.id;
+                    const examCount = examsByCategory[category.id]?.length || 0;
+                    const activeClasses = getCategoryClasses(category.id, isActive);
 
-                  return (
-                    <Card
-                      key={category.id}
-                      className={`cursor-pointer transition-all duration-200 hover:shadow-md border-2 ${
-                        isActive
-                          ? `shadow-md transform scale-105 ${activeClasses}`
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      onClick={() => setActiveCategory(isActive ? null : category.id)}
-                      role="button"
-                      tabIndex={0}
-                      aria-pressed={isActive}
-                    >
-                      <CardContent className="p-4 text-center">
-                        <Icon className={`h-6 w-6 mx-auto mb-2 ${isActive ? 'text-current' : 'text-gray-600'}`} />
-                        <h3 className="font-medium text-sm mb-1">{category.name}</h3>
-                        <p className="text-xs text-gray-600 mb-2 line-clamp-2">{category.description}</p>
-                        <Badge variant="secondary" className="text-xs">
-                          {examCount} paths
-                        </Badge>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                    return (
+                      <Card
+                        key={category.id}
+                        className={`cursor-pointer transition-all duration-200 hover:shadow-md border-2 ${
+                          isActive
+                            ? `shadow-md transform scale-105 ${activeClasses}`
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        onClick={() => setActiveCategory(isActive ? null : category.id)}
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={isActive}
+                      >
+                        <CardContent className="p-4 text-center">
+                          <Icon className={`h-6 w-6 mx-auto mb-2 ${isActive ? 'text-current' : 'text-gray-600'}`} />
+                          <h3 className="font-medium text-sm mb-1">{category.name}</h3>
+                          <p className="text-xs text-gray-600 mb-2 line-clamp-2">{category.description}</p>
+                          <Badge variant="secondary" className="text-xs">
+                            {examCount} paths
+                          </Badge>
+                        </CardContent>
+                      </Card>
+                    );
+                  }
+                )}
               </div>
 
               {activeCategory && (
@@ -684,8 +686,12 @@ export function PersonalInfoStepCompact({
                         <p className="text-sm text-green-700">
                           Based on <strong>{selectedExam.totalEstimatedHours} hours</strong> of content
                           {selectedExam.recommendedHoursPerWeek && (
-                            <> (recommended: <strong>{selectedExam.recommendedHoursPerWeek} hrs/week</strong>)</>
-                          )} and your
+                            <>
+                              {' '}
+                              (recommended: <strong>{selectedExam.recommendedHoursPerWeek} hrs/week</strong>)
+                            </>
+                          )}{' '}
+                          and your
                           <strong> {dailyHours}h daily</strong> study plan:
                         </p>
                         <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-200">
@@ -907,7 +913,7 @@ export function PersonalInfoStepCompact({
         )}
 
       {/* Validation Summary */}
-      {(validationErrors.displayName || (validationErrors.examDate || !form.data.selectedExamId)) && (
+      {(validationErrors.displayName || validationErrors.examDate || !form.data.selectedExamId) && (
         <Alert className="border-amber-200 bg-amber-50">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-800">

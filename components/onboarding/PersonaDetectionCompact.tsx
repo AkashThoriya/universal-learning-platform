@@ -307,9 +307,7 @@ export function PersonaDetectionStep({ form }: PersonaDetectionStepProps) {
 
                           <div
                             className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center transition-all duration-300 ${
-                              isSelected
-                                ? `${persona.bgColor} ring-4 ring-blue-200`
-                                : `${persona.bgColor}`
+                              isSelected ? `${persona.bgColor} ring-4 ring-blue-200` : `${persona.bgColor}`
                             }`}
                           >
                             <Icon

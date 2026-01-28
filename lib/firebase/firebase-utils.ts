@@ -28,8 +28,16 @@ import {
   DocumentData as _DocumentData,
 } from 'firebase/firestore';
 
-import { User, SyllabusSubject, Subtopic, TopicProgress, DailyLog, MockTestLog, RevisionItem, StudyInsight } from '@/types/exam';
-
+import {
+  User,
+  SyllabusSubject,
+  Subtopic,
+  TopicProgress,
+  DailyLog,
+  MockTestLog,
+  RevisionItem,
+  StudyInsight,
+} from '@/types/exam';
 
 import { db } from './firebase';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
@@ -65,7 +73,6 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
       // Filter out undefined values
       const cleanUserData = { ...userData };
 
-
       const newUserData = {
         ...cleanUserData,
         createdAt: Timestamp.now(),
@@ -76,7 +83,6 @@ export const createUser = async (userId: string, userData: Partial<User>) => {
       logInfo('User created successfully', {
         userId,
         createdAt: newUserData.createdAt.toDate(),
-
       });
     } catch (error) {
       logError('Failed to create user', {
@@ -127,7 +133,7 @@ export const getUser = async (userId: string): Promise<User | null> => {
   return measurePerformance('getUser', async () => {
     // Check cache first
     const cached = userCache.get(userId);
-    
+
     if (cached && Date.now() - cached.timestamp < USER_CACHE_TTL) {
       logInfo('User cache hit', { userId, cacheAge: Date.now() - cached.timestamp });
       return cached.data;
@@ -184,7 +190,6 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
     logInfo('Updating user data', {
       userId,
       updateFields: Object.keys(updates),
-
     });
 
     try {
@@ -213,7 +218,7 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
 
 /**
  * Saves a complete syllabus for a user, replacing any existing syllabus
- * 
+ *
  * This function now automatically resolves the user's current exam/course
  * and saves to the course-based storage.
  *
@@ -230,7 +235,7 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
  * ];
  * // Auto-resolve from user's current exam
  * await saveSyllabus('user123', syllabus);
- * 
+ *
  * // Or specify a specific course
  * await saveSyllabus('user123', syllabus, 'upsc-cse');
  * ```
@@ -240,17 +245,17 @@ export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[], 
     try {
       // If courseId not provided, resolve from user's current exam
       let resolvedCourseId = courseId;
-      
+
       if (!resolvedCourseId) {
         const user = await getUser(userId);
         resolvedCourseId = user?.currentExam?.id;
-        
+
         if (!resolvedCourseId) {
           logError('Cannot save syllabus: No courseId provided and user has no current exam', { userId });
           throw new Error('No course selected. Please select an exam first.');
         }
       }
-      
+
       logInfo('Saving syllabus (delegating to course-based storage)', {
         userId,
         courseId: resolvedCourseId,
@@ -261,10 +266,10 @@ export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[], 
           tier3: syllabus.filter(s => s.tier === 3).length,
         },
       });
-      
+
       // Delegate to course-based syllabus save
       await saveSyllabusForCourse(userId, resolvedCourseId, syllabus);
-      
+
       logInfo('Syllabus saved successfully', { userId, courseId: resolvedCourseId });
     } catch (error) {
       logError('Failed to save syllabus', {
@@ -411,7 +416,7 @@ export const updateSubtopic = async (
 
       const subjectData = subjectDoc.data() as SyllabusSubject;
       const subjectsTopics = [...subjectData.topics];
-      
+
       const topicIndex = subjectsTopics.findIndex(t => t.id === topicId);
       if (topicIndex === -1) throw new Error(`Topic ${topicId} not found`);
 
@@ -420,7 +425,7 @@ export const updateSubtopic = async (
       if (!topic) throw new Error(`Topic at index ${topicIndex} is undefined`);
 
       const subtopics = topic.subtopics ? [...topic.subtopics] : [];
-      
+
       const subtopicIndex = subtopics.findIndex(s => s.id === subtopicId);
       if (subtopicIndex === -1) throw new Error(`Subtopic ${subtopicId} not found`);
 
@@ -436,19 +441,18 @@ export const updateSubtopic = async (
 
       subtopics[subtopicIndex] = {
         ...currentSubtopic,
-        ...cleanUpdates
+        ...cleanUpdates,
       } as Subtopic;
 
       // Update nested array
       subjectsTopics[topicIndex] = {
         ...topic,
-        subtopics
+        subtopics,
       };
-
 
       await updateDoc(subjectRef, {
         topics: subjectsTopics,
-        updatedAt: Timestamp.now()
+        updatedAt: Timestamp.now(),
       });
 
       logInfo('Subtopic updated successfully', { userId, subtopicId });
@@ -461,7 +465,7 @@ export const updateSubtopic = async (
 
 /**
  * Retrieves the complete syllabus for a user
- * 
+ *
  * This function now automatically resolves the user's current exam/course
  * and fetches the syllabus from the course-based storage.
  *
@@ -473,7 +477,7 @@ export const updateSubtopic = async (
  * ```typescript
  * // Auto-resolve from user's current exam
  * const syllabus = await getSyllabus('user123');
- * 
+ *
  * // Or specify a specific course
  * const syllabus = await getSyllabus('user123', 'upsc-cse');
  * ```
@@ -482,17 +486,17 @@ export const getSyllabus = async (userId: string, courseId?: string): Promise<Sy
   try {
     // If courseId not provided, resolve from user's current exam
     let resolvedCourseId = courseId;
-    
+
     if (!resolvedCourseId) {
       const user = await getUser(userId);
       resolvedCourseId = user?.currentExam?.id;
-      
+
       if (!resolvedCourseId) {
         logInfo('No courseId provided and user has no current exam, returning empty syllabus', { userId });
         return [];
       }
     }
-    
+
     // Delegate to course-based syllabus retrieval
     return await getSyllabusForCourse(userId, resolvedCourseId);
   } catch (error) {
@@ -511,7 +515,7 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
 
     try {
       const batch = writeBatch(db);
-      
+
       // Collection path: users/{userId}/courses/{courseId}/syllabus
       const syllabusRef = collection(db, 'users', userId, 'courses', courseId, 'syllabus');
       const existingSyllabus = await getDocs(syllabusRef);
@@ -524,7 +528,7 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
       // Add new syllabus subjects
       syllabus.forEach((subject, index) => {
         const subjectRef = doc(syllabusRef, subject.id);
-        
+
         // Similar to main saveSyllabus but scoped
         const userSubjectData = {
           ...subject,
@@ -533,24 +537,29 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
           courseId,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
-          topics: subject.topics?.map((topic, topicIndex) => ({
-             ...topic, 
-             order: topicIndex 
-          })) ?? [],
+          topics:
+            subject.topics?.map((topic, topicIndex) => ({
+              ...topic,
+              order: topicIndex,
+            })) ?? [],
           // Initialize topic status (same logic as main saveSyllabus)
-          topicStatus: subject.topics?.reduce((acc, topic) => ({
-            ...acc,
-            [topic.id]: {
-              status: 'not_started',
-              progress: 0,
-              timeSpent: 0,
-              masteryLevel: 0,
-              attempts: 0,
-              averageScore: 0,
-              difficulty: 'medium',
-              estimatedHours: topic.estimatedHours ?? 0,
-            }
-          }), {} as Record<string, any>) ?? {},
+          topicStatus:
+            subject.topics?.reduce(
+              (acc, topic) => ({
+                ...acc,
+                [topic.id]: {
+                  status: 'not_started',
+                  progress: 0,
+                  timeSpent: 0,
+                  masteryLevel: 0,
+                  attempts: 0,
+                  averageScore: 0,
+                  difficulty: 'medium',
+                  estimatedHours: topic.estimatedHours ?? 0,
+                },
+              }),
+              {} as Record<string, any>
+            ) ?? {},
           subjectProgress: {
             // ... copy standard init logic
             totalTopics: subject.topics?.length ?? 0,
@@ -559,7 +568,7 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
             totalTimeSpent: 0,
             averageMastery: 0,
             status: 'not_started',
-          }
+          },
         };
 
         batch.set(subjectRef, userSubjectData);
@@ -585,13 +594,14 @@ export const getSyllabusForCourse = async (userId: string, courseId: string): Pr
 
       const subjects = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       })) as SyllabusSubject[];
 
-      return subjects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      return subjects
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
         .map(subject => ({
           ...subject,
-          topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? []
+          topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? [],
         }));
     } catch (error) {
       logError('Failed to get course syllabus', { userId, courseId, error });
@@ -608,7 +618,7 @@ export const getAllSyllabi = async (userId: string): Promise<Record<string, Syll
   if (!user?.currentExam?.id) return {};
 
   const results: Record<string, SyllabusSubject[]> = {};
-  
+
   // Currently focusing on primary exam
   results[user.currentExam.id] = await getSyllabusForCourse(userId, user.currentExam.id);
 
@@ -741,7 +751,7 @@ export const getTopicProgress = async (userId: string, topicId: string): Promise
 export const getAllProgress = async (userId: string): Promise<TopicProgress[]> => {
   // Check cache first
   const cached = progressCache.get(userId);
-  
+
   if (cached && Date.now() - cached.timestamp < PROGRESS_CACHE_TTL) {
     logInfo('Progress cache hit', { userId, cacheAge: Date.now() - cached.timestamp });
     return cached.data;
@@ -758,7 +768,7 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
 
   // Cache the result
   progressCache.set(userId, { data: progressData, timestamp: Date.now() });
-  
+
   logInfo('Progress fetched and cached', { userId, count: progressData.length });
   return progressData;
 };
@@ -777,11 +787,7 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
  * await markQuestionSolved('user123', 'arrays', 'two-sum');
  * ```
  */
-export const markQuestionSolved = async (
-  userId: string,
-  topicId: string,
-  questionSlug: string
-): Promise<void> => {
+export const markQuestionSolved = async (userId: string, topicId: string, questionSlug: string): Promise<void> => {
   try {
     const current = await getTopicProgress(userId, topicId);
     const solvedQuestions = current?.solvedQuestions || [];
@@ -817,11 +823,7 @@ export const markQuestionSolved = async (
  * console.log(isSolved ? 'Now solved!' : 'Marked as unsolved');
  * ```
  */
-export const toggleQuestionSolved = async (
-  userId: string,
-  topicId: string,
-  questionSlug: string
-): Promise<boolean> => {
+export const toggleQuestionSolved = async (userId: string, topicId: string, questionSlug: string): Promise<boolean> => {
   try {
     const current = await getTopicProgress(userId, topicId);
     const solvedQuestions = current?.solvedQuestions || [];
@@ -888,9 +890,7 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
     const topic = subject?.topics.find(t => t.id === progress.topicId);
 
     const lastRevisedMillis = progress.lastRevised?.toMillis?.() || today.toMillis();
-    const daysSinceLastRevision = Math.floor(
-      (today.toMillis() - lastRevisedMillis) / (1000 * 60 * 60 * 24)
-    );
+    const daysSinceLastRevision = Math.floor((today.toMillis() - lastRevisedMillis) / (1000 * 60 * 60 * 24));
 
     let priority: 'overdue' | 'due_today' | 'due_soon' | 'scheduled' = 'scheduled';
     if (daysSinceLastRevision > 1) {

@@ -6,9 +6,7 @@ import { Suspense, lazy } from 'react';
 const AuthAwareHeroButton = lazy(() => import('./AuthAwareHeroButton'));
 
 function HeroButtonSkeleton() {
-  return (
-    <div className="h-14 w-72 bg-primary/20 rounded-lg animate-pulse" />
-  );
+  return <div className="h-14 w-72 bg-primary/20 rounded-lg animate-pulse" />;
 }
 
 export default function HeroActions() {

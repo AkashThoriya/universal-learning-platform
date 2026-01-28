@@ -359,7 +359,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
               a few study sessions to generate meaningful insights.
             </p>
             <div className="flex gap-3">
-                            <Button onClick={() => (window.location.href = '/journey')} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={() => (window.location.href = '/journey')} className="bg-blue-600 hover:bg-blue-700">
                 View Journey
               </Button>
               <Button onClick={() => (window.location.href = '/dashboard')} variant="outline">
@@ -467,10 +467,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         onValueChange={value => handleMetricChange(value as 'performance' | 'efficiency' | 'progress' | 'predictions')}
       >
         <TabsList className="flex w-full overflow-x-auto no-scrollbar pb-1 md:grid md:grid-cols-4">
-          <TabsTrigger value="performance" className="flex-shrink-0">Performance</TabsTrigger>
-          <TabsTrigger value="efficiency" className="flex-shrink-0">Efficiency</TabsTrigger>
-          <TabsTrigger value="progress" className="flex-shrink-0">Progress</TabsTrigger>
-          <TabsTrigger value="predictions" className="flex-shrink-0">Predictions</TabsTrigger>
+          <TabsTrigger value="performance" className="flex-shrink-0">
+            Performance
+          </TabsTrigger>
+          <TabsTrigger value="efficiency" className="flex-shrink-0">
+            Efficiency
+          </TabsTrigger>
+          <TabsTrigger value="progress" className="flex-shrink-0">
+            Progress
+          </TabsTrigger>
+          <TabsTrigger value="predictions" className="flex-shrink-0">
+            Predictions
+          </TabsTrigger>
         </TabsList>
 
         {/* Performance Tab */}

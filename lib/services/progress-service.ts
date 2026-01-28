@@ -386,9 +386,9 @@ export class ProgressService {
         };
       }
 
-            // Subject-specific progress is tracked via trackProgress.exam and trackProgress.course_tech
+      // Subject-specific progress is tracked via trackProgress.exam and trackProgress.course_tech
       // The subjectProgress property is not part of the UnifiedProgress interface
-      
+
       // for (const [subjectId, subjectPerf] of Object.entries(testResults.subjectPerformance)) {
       //   // This section was causing TypeScript errors as subjectProgress doesn't exist in UnifiedProgress
       // }
@@ -397,7 +397,7 @@ export class ProgressService {
       const testWeight = 0.1; // 10% weight for test results
       const currentAverage = progress.overallProgress.averageScore;
       const newAverage = currentAverage * (1 - testWeight) + testResults.accuracy * testWeight;
-      
+
       progress.overallProgress = {
         ...progress.overallProgress,
         averageScore: newAverage,
@@ -430,7 +430,7 @@ export class ProgressService {
       // Analyze weak areas for testing opportunities based on track progress
       const examTrack = progress.trackProgress.exam;
       const techTrack = progress.trackProgress.course_tech;
-      
+
       // Check exam track performance
       if (examTrack.averageScore < 75 && examTrack.skillsInProgress.length > 0) {
         recommendations.push({
@@ -469,7 +469,7 @@ export class ProgressService {
           linkedMissions: [],
         });
       }
-      
+
       // Check tech track performance
       if (techTrack.averageScore < 75 && techTrack.skillsInProgress.length > 0) {
         recommendations.push({
@@ -511,7 +511,8 @@ export class ProgressService {
 
       // Add general assessment if no specific weaknesses
       if (recommendations.length === 0) {
-        const overallScore = (progress.trackProgress.exam.averageScore + progress.trackProgress.course_tech.averageScore) / 2;
+        const overallScore =
+          (progress.trackProgress.exam.averageScore + progress.trackProgress.course_tech.averageScore) / 2;
 
         recommendations.push({
           testId: `comprehensive_assessment_${Date.now()}`,
@@ -579,11 +580,11 @@ export class ProgressService {
           adaptiveTestingLevel: (progress.overallProgress as any).adaptiveTestingLevel ?? 'Beginner',
           strongSubjects: [
             ...(examTrack.averageScore > 85 ? ['exam'] : []),
-            ...(techTrack.averageScore > 85 ? ['course_tech'] : [])
+            ...(techTrack.averageScore > 85 ? ['course_tech'] : []),
           ],
           weakSubjects: [
             ...(examTrack.averageScore < 70 ? ['exam'] : []),
-            ...(techTrack.averageScore < 70 ? ['course_tech'] : [])
+            ...(techTrack.averageScore < 70 ? ['course_tech'] : []),
           ],
           recommendedTestFrequency: this.calculateRecommendedTestFrequency(progress),
         },
@@ -615,15 +616,15 @@ export class ProgressService {
 
       // Update proficiency based on ability estimate using track progress
       const proficiencyScore = Math.max(0, Math.min(100, (abilityEstimate + 2) * 25)); // Map -2 to +2 ability to 0-100 score
-      
+
       // Determine which track to update based on subject
       const isExamSubject = subjectId.includes('exam') || subjectId.includes('test');
       const trackKey = isExamSubject ? 'exam' : 'course_tech';
       const trackProgress = progress.trackProgress[trackKey];
-      
+
       const weightedScore = trackProgress.averageScore * 0.7 + proficiencyScore * 0.3; // 30% weight for new test
       trackProgress.averageScore = weightedScore;
-      
+
       // Update skills based on proficiency
       if (proficiencyScore > 80 && !trackProgress.masteredSkills.includes(subjectId)) {
         trackProgress.masteredSkills.push(subjectId);
@@ -748,7 +749,10 @@ export class ProgressService {
 
       // Update consistency rating based on journey progress
       const consistencyBoost = Math.min(0.1, update.overallCompletion / 1000); // Small boost from journey completion
-      progress.overallProgress.consistencyRating = Math.min(1, progress.overallProgress.consistencyRating + consistencyBoost);
+      progress.overallProgress.consistencyRating = Math.min(
+        1,
+        progress.overallProgress.consistencyRating + consistencyBoost
+      );
 
       progress.updatedAt = new Date();
 

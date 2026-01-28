@@ -32,7 +32,13 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/utils';
-import { TestPerformance, AdaptiveMetrics, SubjectPerformance, AdaptiveQuestion, TestResponse } from '@/types/adaptive-testing';
+import {
+  TestPerformance,
+  AdaptiveMetrics,
+  SubjectPerformance,
+  AdaptiveQuestion,
+  TestResponse,
+} from '@/types/adaptive-testing';
 
 interface TestAnalyticsDashboardProps {
   performance: TestPerformance;
@@ -236,12 +242,22 @@ export default function TestAnalyticsDashboard({
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-5 p-1 bg-muted/50 rounded-xl">
-                  <TabsTrigger value="overview" className="snap-start flex-1 min-w-[90px]">Overview</TabsTrigger>
-                  <TabsTrigger value="subjects" className="snap-start flex-1 min-w-[90px]">Subjects</TabsTrigger>
-                  <TabsTrigger value="adaptive" className="snap-start flex-1 min-w-[90px]">Adaptive</TabsTrigger>
-                  <TabsTrigger value="patterns" className="snap-start flex-1 min-w-[90px]">Patterns</TabsTrigger>
+                  <TabsTrigger value="overview" className="snap-start flex-1 min-w-[90px]">
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="subjects" className="snap-start flex-1 min-w-[90px]">
+                    Subjects
+                  </TabsTrigger>
+                  <TabsTrigger value="adaptive" className="snap-start flex-1 min-w-[90px]">
+                    Adaptive
+                  </TabsTrigger>
+                  <TabsTrigger value="patterns" className="snap-start flex-1 min-w-[90px]">
+                    Patterns
+                  </TabsTrigger>
                   {questions.length > 0 && (
-                    <TabsTrigger value="review" className="snap-start flex-1 min-w-[90px]">Review</TabsTrigger>
+                    <TabsTrigger value="review" className="snap-start flex-1 min-w-[90px]">
+                      Review
+                    </TabsTrigger>
                   )}
                 </TabsList>
 
@@ -582,15 +598,15 @@ export default function TestAnalyticsDashboard({
                         {responses.filter(r => r.isCorrect).length}/{responses.length} Correct
                       </Badge>
                     </div>
-                    
+
                     <div className="space-y-4">
                       {questions.map((question, index) => {
                         const response = responses.find(r => r.questionId === question.id);
                         const isCorrect = response?.isCorrect || false;
-                        
+
                         return (
-                          <Card 
-                            key={question.id} 
+                          <Card
+                            key={question.id}
                             className={cn(
                               'border-l-4',
                               isCorrect ? 'border-l-green-500 bg-green-50/30' : 'border-l-red-500 bg-red-50/30'
@@ -607,21 +623,18 @@ export default function TestAnalyticsDashboard({
                                   )}
                                 </div>
                                 <Badge variant="outline" className="text-xs">
-                                  {typeof question.difficulty === 'string' ? question.difficulty : `Level ${question.difficulty}`}
+                                  {typeof question.difficulty === 'string'
+                                    ? question.difficulty
+                                    : `Level ${question.difficulty}`}
                                 </Badge>
                               </div>
-                              
-                              <p className="text-gray-900 font-medium mb-3">
-                                {question.question || question.content}
-                              </p>
-                              
+
+                              <p className="text-gray-900 font-medium mb-3">{question.question || question.content}</p>
+
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                                 <div>
                                   <span className="text-gray-500">Your answer:</span>
-                                  <p className={cn(
-                                    'font-medium mt-1',
-                                    isCorrect ? 'text-green-700' : 'text-red-700'
-                                  )}>
+                                  <p className={cn('font-medium mt-1', isCorrect ? 'text-green-700' : 'text-red-700')}>
                                     {response?.userAnswer || 'No answer'}
                                   </p>
                                 </div>
@@ -634,7 +647,7 @@ export default function TestAnalyticsDashboard({
                                   </div>
                                 )}
                               </div>
-                              
+
                               {question.explanation && (
                                 <div className="mt-3 pt-3 border-t border-gray-200">
                                   <span className="text-xs text-gray-500 flex items-center gap-1">
@@ -716,23 +729,15 @@ export default function TestAnalyticsDashboard({
               <Separator />
 
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                <Button 
-                  variant="outline" 
-                  className="gap-2"
-                  onClick={() => (window.location.href = '/review')}
-                >
+                <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/review')}>
                   <LineChart className="h-4 w-4" />
                   View Progress Trends
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="gap-2"
-                  onClick={() => (window.location.href = '/journey')}
-                >
+                <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/journey')}>
                   <Target className="h-4 w-4" />
                   Set New Goals
                 </Button>
-                <Button 
+                <Button
                   className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                   onClick={() => (window.location.href = '/test')}
                 >

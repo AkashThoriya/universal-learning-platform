@@ -29,7 +29,7 @@ export function RecommendationCardSkeleton({ index = 0, className }: Recommendat
             animate={{ x: ['-100%', '100%'] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: index * 0.2 }}
           />
-          
+
           <div className="space-y-4 relative z-0 flex-1 flex flex-col">
             {/* Header: Title/Desc and Priority Badge */}
             <div className="flex justify-between items-start gap-3">

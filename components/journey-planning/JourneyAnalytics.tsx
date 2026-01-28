@@ -214,11 +214,22 @@ export default function JourneyAnalytics({ journey, analytics, className }: Jour
 
       {/* Charts and Analytics */}
       <Tabs defaultValue="progress" className="space-y-4">
-        <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-4 p-1 bg-muted/50 rounded-xl"> {/* Added bg and rounded */}
-          <TabsTrigger value="progress" className="snap-start flex-1 min-w-[100px]">Progress</TabsTrigger> {/* Added snap-start */}
-          <TabsTrigger value="goals" className="snap-start flex-1 min-w-[100px]">Goals</TabsTrigger>
-          <TabsTrigger value="insights" className="snap-start flex-1 min-w-[100px]">Insights</TabsTrigger>
-          <TabsTrigger value="comparison" className="snap-start flex-1 min-w-[100px]">Comparison</TabsTrigger>
+        <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-4 p-1 bg-muted/50 rounded-xl">
+          {' '}
+          {/* Added bg and rounded */}
+          <TabsTrigger value="progress" className="snap-start flex-1 min-w-[100px]">
+            Progress
+          </TabsTrigger>{' '}
+          {/* Added snap-start */}
+          <TabsTrigger value="goals" className="snap-start flex-1 min-w-[100px]">
+            Goals
+          </TabsTrigger>
+          <TabsTrigger value="insights" className="snap-start flex-1 min-w-[100px]">
+            Insights
+          </TabsTrigger>
+          <TabsTrigger value="comparison" className="snap-start flex-1 min-w-[100px]">
+            Comparison
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="progress" className="space-y-4">

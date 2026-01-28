@@ -1,7 +1,20 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Filter, Grid3X3, List, Target, Clock, Trophy, BookOpen, BarChart3, MapPin, RefreshCw } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  Filter,
+  Grid3X3,
+  List,
+  Target,
+  Clock,
+  Trophy,
+  BookOpen,
+  BarChart3,
+  MapPin,
+  RefreshCw,
+} from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
@@ -37,7 +50,6 @@ export default function JourneyPlanningPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [journeyToDelete, setJourneyToDelete] = useState<UserJourney | null>(null);
 
-
   // OPTIMIZED: Use one-time fetch instead of real-time listener
   // This reduces continuous Firebase billing from onSnapshot
   const loadJourneys = useCallback(async () => {
@@ -45,10 +57,10 @@ export default function JourneyPlanningPage() {
       setIsLoading(false);
       return;
     }
-    
+
     setIsLoading(true);
     const result = await journeyService.getUserJourneys(user.uid);
-    
+
     if (result.success) {
       setJourneys(result.data);
     }
@@ -80,8 +92,6 @@ export default function JourneyPlanningPage() {
 
     setFilteredJourneys(filtered);
   }, [journeys, searchQuery, statusFilter]);
-
-
 
   const handleStartJourney = async (journey: UserJourney) => {
     try {
@@ -131,8 +141,8 @@ export default function JourneyPlanningPage() {
   };
 
   const stats = getJourneyStats();
-  
-  const cardClass = "min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center";
+
+  const cardClass = 'min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center';
 
   if (isLoading) {
     return (
@@ -150,15 +160,15 @@ export default function JourneyPlanningPage() {
         <PageTransition className="space-y-8">
           {/* Header with improved spacing */}
           <div className="mb-6">
-             <FeaturePageHeader
+            <FeaturePageHeader
               title="Journey Planning"
               description="Create, manage, and track your personalized learning journeys"
               icon={<MapPin className="h-5 w-5" />}
               actions={
-              <div className="flex items-center gap-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => loadJourneys()}
                     disabled={isLoading}
                     className="border-gray-200 hover:border-gray-300"
@@ -166,16 +176,14 @@ export default function JourneyPlanningPage() {
                   >
                     <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
                     className="border-gray-200 hover:border-gray-300"
                   >
                     {viewMode === 'grid' ? <List className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
-                    <span className="ml-2 hidden sm:inline">
-                      {viewMode === 'grid' ? 'List' : 'Grid'}
-                    </span>
+                    <span className="ml-2 hidden sm:inline">{viewMode === 'grid' ? 'List' : 'Grid'}</span>
                   </Button>
 
                   <JourneyArchitect
@@ -193,25 +201,21 @@ export default function JourneyPlanningPage() {
                     userId={user?.uid || ''}
                     onJourneyCreated={() => loadJourneys()}
                     trigger={
-                       <Button variant="outline" size="sm" className="hidden sm:flex">
-                         <Plus className="h-4 w-4 mr-2" />
-                         Manual
-                       </Button>
+                      <Button variant="outline" size="sm" className="hidden sm:flex">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Manual
+                      </Button>
                     }
                   />
-              </div>
-            }
-          />
+                </div>
+              }
+            />
           </div>
 
           {/* Stats Overview with improved layout */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <MobileScrollGrid className="md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50", cardClass)}>
+              <Card className={cn('border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100/50', cardClass)}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -225,7 +229,7 @@ export default function JourneyPlanningPage() {
                 </CardContent>
               </Card>
 
-              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100/50", cardClass)}>
+              <Card className={cn('border-0 shadow-sm bg-gradient-to-br from-green-50 to-green-100/50', cardClass)}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -239,7 +243,7 @@ export default function JourneyPlanningPage() {
                 </CardContent>
               </Card>
 
-              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100/50", cardClass)}>
+              <Card className={cn('border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100/50', cardClass)}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -253,7 +257,7 @@ export default function JourneyPlanningPage() {
                 </CardContent>
               </Card>
 
-              <Card className={cn("border-0 shadow-sm bg-gradient-to-br from-yellow-50 to-yellow-100/50", cardClass)}>
+              <Card className={cn('border-0 shadow-sm bg-gradient-to-br from-yellow-50 to-yellow-100/50', cardClass)}>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -323,7 +327,7 @@ export default function JourneyPlanningPage() {
                           onStart={handleStartJourney}
                           onPause={handlePauseJourney}
                           onDelete={handleDeleteJourney}
-                          onViewDetails={(j) => window.location.href = `/journey/${j.id}`}
+                          onViewDetails={j => (window.location.href = `/journey/${j.id}`)}
                           className={cn(
                             'transition-all duration-200 hover:shadow-lg',
                             selectedJourney?.id === journey.id && 'ring-2 ring-blue-500 shadow-lg'
@@ -336,49 +340,46 @@ export default function JourneyPlanningPage() {
               ) : journeys.length === 0 ? (
                 // Empty state for no journeys
                 <div className="rounded-xl border-2 border-dashed border-muted bg-muted/10 p-12 text-center">
-                    <div className="bg-primary/10 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                      <MapPin className="h-12 w-12 text-primary" />
+                  <div className="bg-primary/10 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                    <MapPin className="h-12 w-12 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">Start Your Learning Journey</h3>
+                  <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
+                    Create your first personalized learning journey to achieve your educational and professional goals.
+                  </p>
+                  <JourneyArchitect
+                    userId={user?.uid || ''}
+                    onJourneyCreated={() => loadJourneys()}
+                    trigger={
+                      <Button className="mb-8 h-auto py-3 px-8 text-lg font-medium shadow-lg hover:shadow-xl transition-all">
+                        <Plus className="h-5 w-5 mr-2" />
+                        Create Your First Journey
+                      </Button>
+                    }
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 max-w-3xl mx-auto">
+                    <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
+                      <div className="bg-blue-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <Target className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <h4 className="font-semibold text-foreground mb-2">Set Goals</h4>
+                      <p className="text-sm text-muted-foreground">Define clear, measurable learning objectives</p>
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-3">Start Your Learning Journey</h3>
-                    <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
-                      Create your first personalized learning journey to achieve your educational and professional
-                      goals.
-                    </p>
-                    <JourneyArchitect
-                      userId={user?.uid || ''}
-                      onJourneyCreated={() => loadJourneys()}
-                      trigger={
-                        <Button
-                          className="mb-8 h-auto py-3 px-8 text-lg font-medium shadow-lg hover:shadow-xl transition-all"
-                        >
-                          <Plus className="h-5 w-5 mr-2" />
-                          Create Your First Journey
-                        </Button>
-                      }
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 max-w-3xl mx-auto">
-                      <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
-                        <div className="bg-blue-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                          <Target className="h-8 w-8 text-blue-600" />
-                        </div>
-                        <h4 className="font-semibold text-foreground mb-2">Set Goals</h4>
-                        <p className="text-sm text-muted-foreground">Define clear, measurable learning objectives</p>
+                    <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
+                      <div className="bg-green-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <BarChart3 className="h-8 w-8 text-green-600" />
                       </div>
-                      <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
-                        <div className="bg-green-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                          <BarChart3 className="h-8 w-8 text-green-600" />
-                        </div>
-                        <h4 className="font-semibold text-foreground mb-2">Track Progress</h4>
-                        <p className="text-sm text-muted-foreground">Monitor your advancement with detailed analytics</p>
-                      </div>
-                      <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
-                        <div className="bg-yellow-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                          <Trophy className="h-8 w-8 text-yellow-600" />
-                        </div>
-                        <h4 className="font-semibold text-foreground mb-2">Achieve Success</h4>
-                        <p className="text-sm text-muted-foreground">Celebrate milestones and complete your goals</p>
-                      </div>
+                      <h4 className="font-semibold text-foreground mb-2">Track Progress</h4>
+                      <p className="text-sm text-muted-foreground">Monitor your advancement with detailed analytics</p>
                     </div>
+                    <div className="text-center p-6 bg-card rounded-xl shadow-sm border">
+                      <div className="bg-yellow-100 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <Trophy className="h-8 w-8 text-yellow-600" />
+                      </div>
+                      <h4 className="font-semibold text-foreground mb-2">Achieve Success</h4>
+                      <p className="text-sm text-muted-foreground">Celebrate milestones and complete your goals</p>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 // No results from search/filter
@@ -411,31 +412,36 @@ export default function JourneyPlanningPage() {
                   className="lg:col-span-1 space-y-6"
                 >
                   <div className="sticky top-6 space-y-6">
-                     <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                           <h2 className="text-xl font-semibold tracking-tight">{selectedJourney.title}</h2>
-                           <p className="text-sm text-muted-foreground line-clamp-2">{selectedJourney.description}</p>
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 -mt-1 -mr-2 text-muted-foreground" onClick={() => setSelectedJourney(null)}>
-                           <span className="sr-only">Close</span>
-                           <span className="text-xl">×</span>
-                        </Button>
-                     </div>
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <h2 className="text-xl font-semibold tracking-tight">{selectedJourney.title}</h2>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{selectedJourney.description}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 -mt-1 -mr-2 text-muted-foreground"
+                        onClick={() => setSelectedJourney(null)}
+                      >
+                        <span className="sr-only">Close</span>
+                        <span className="text-xl">×</span>
+                      </Button>
+                    </div>
 
-                      <Tabs defaultValue="goals" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2 mb-6">
-                          <TabsTrigger value="goals">Goals</TabsTrigger>
-                          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                        </TabsList>
+                    <Tabs defaultValue="goals" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2 mb-6">
+                        <TabsTrigger value="goals">Goals</TabsTrigger>
+                        <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                      </TabsList>
 
-                        <TabsContent value="goals" className="mt-0">
-                          <GoalManagement journey={selectedJourney} />
-                        </TabsContent>
+                      <TabsContent value="goals" className="mt-0">
+                        <GoalManagement journey={selectedJourney} />
+                      </TabsContent>
 
-                        <TabsContent value="analytics" className="mt-0">
-                          <JourneyAnalytics journey={selectedJourney} />
-                        </TabsContent>
-                      </Tabs>
+                      <TabsContent value="analytics" className="mt-0">
+                        <JourneyAnalytics journey={selectedJourney} />
+                      </TabsContent>
+                    </Tabs>
                   </div>
                 </motion.div>
               )}
@@ -444,7 +450,7 @@ export default function JourneyPlanningPage() {
 
           <ConfirmationDialog
             open={!!journeyToDelete}
-            onOpenChange={(open) => !open && setJourneyToDelete(null)}
+            onOpenChange={open => !open && setJourneyToDelete(null)}
             title="Delete Journey"
             description="Are you sure you want to delete this journey? This action cannot be undone."
             confirmText="Delete"

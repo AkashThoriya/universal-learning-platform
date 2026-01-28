@@ -14,19 +14,15 @@ import {
   LogOut,
   Home,
   BookOpen,
-  
   Target,
   Calendar,
-
   Menu,
-
   Brain,
   Map,
   Sparkles,
   AlertTriangle,
   type LucideIcon,
   User,
-
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
@@ -48,39 +44,39 @@ interface NavItem {
 }
 
 const MotivationalRotator = () => {
-    const [index, setIndex] = useState(0);
-    const messages = [
-        "Focus on progress ⚡",
-        "You got this! 🚀", 
-        "Stay consistent 💎",
-        "Trust the process 🌱",
-        "Dream big 🌟"
-    ];
+  const [index, setIndex] = useState(0);
+  const messages = [
+    'Focus on progress ⚡',
+    'You got this! 🚀',
+    'Stay consistent 💎',
+    'Trust the process 🌱',
+    'Dream big 🌟',
+  ];
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % messages.length);
-        }, 8000);
-        return () => clearInterval(timer);
-    }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex(prev => (prev + 1) % messages.length);
+    }, 8000);
+    return () => clearInterval(timer);
+  }, []);
 
-    return (
-        <div className="h-6 relative w-full max-w-[200px] flex items-center justify-center">
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.5 }}
-                    className="absolute text-sm font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5 whitespace-nowrap"
-                >
-                    <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                    {messages[index]}
-                </motion.div>
-            </AnimatePresence>
-        </div>
-    );
+  return (
+    <div className="h-6 relative w-full max-w-[200px] flex items-center justify-center">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.5 }}
+          className="absolute text-sm font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5 whitespace-nowrap"
+        >
+          <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+          {messages[index]}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
 };
 
 export default function Navigation() {
@@ -176,9 +172,7 @@ export default function Navigation() {
       )}
       aria-label={`${label}: ${description}`}
     >
-      <Icon
-        className={cn('h-5 w-5 transition-transform duration-200', isActive ? 'text-primary' : '')}
-      />
+      <Icon className={cn('h-5 w-5 transition-transform duration-200', isActive ? 'text-primary' : '')} />
       <span className="font-medium">{label}</span>
       {badge && (
         <Badge variant={typeof badge === 'number' ? 'default' : 'secondary'} className="h-5 px-1.5 text-xs">
@@ -251,7 +245,6 @@ export default function Navigation() {
           {/* User Menu - Redesigned for better UX */}
           <div className="flex items-center space-x-2 flex-shrink-0">
             {/* Notifications - Always visible */}
-
 
             {/* More Menu - Desktop (contains secondary items + user actions) */}
             <div className="hidden xl:block">

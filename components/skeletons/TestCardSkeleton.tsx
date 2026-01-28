@@ -70,7 +70,7 @@ export function TestCardSkeleton({ index = 0, className }: TestCardSkeletonProps
                 <Skeleton className="h-6 w-20 rounded-full" />
               </div>
             </div>
-            
+
             {/* Subjects/tags */}
             <div className="space-y-2">
               <Skeleton className="h-4 w-16 rounded-md" />

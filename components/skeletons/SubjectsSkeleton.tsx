@@ -1,5 +1,4 @@
-
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function SubjectsSkeleton() {
   return (
@@ -15,7 +14,7 @@ export function SubjectsSkeleton() {
 
       {/* Grid Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
           <div key={i} className="border rounded-xl p-6 space-y-4">
             <div className="flex justify-between items-start">
               <Skeleton className="h-12 w-12 rounded-lg" />
@@ -36,5 +35,5 @@ export function SubjectsSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }

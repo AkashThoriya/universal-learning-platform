@@ -1,6 +1,5 @@
-
-import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export function DailyLogSkeleton() {
   return (
@@ -31,11 +30,11 @@ export function DailyLogSkeleton() {
               </div>
               <div className="h-px bg-border/50 my-6" />
               <div className="space-y-6">
-                {[1, 2, 3].map((i) => (
+                {[1, 2, 3].map(i => (
                   <div key={i} className="space-y-3">
                     <Skeleton className="h-4 w-24" />
                     <div className="grid grid-cols-5 gap-2">
-                      {[1, 2, 3, 4, 5].map((j) => (
+                      {[1, 2, 3, 4, 5].map(j => (
                         <Skeleton key={j} className="h-20 rounded-xl" />
                       ))}
                     </div>
@@ -57,14 +56,14 @@ export function DailyLogSkeleton() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-               <div className="text-center py-8 space-y-3">
-                  <Skeleton className="h-4 w-48 mx-auto" />
-                  <Skeleton className="h-4 w-64 mx-auto" />
-               </div>
+              <div className="text-center py-8 space-y-3">
+                <Skeleton className="h-4 w-48 mx-auto" />
+                <Skeleton className="h-4 w-64 mx-auto" />
+              </div>
             </CardContent>
           </Card>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -19,7 +19,6 @@ import {
 
 import { useEffect, useState } from 'react';
 
-
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
 import { DashboardSkeleton } from '@/components/skeletons';
@@ -29,7 +28,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
 
 import { useAuth } from '@/contexts/AuthContext';
 import { getExamById } from '@/lib/data/exams-data';
@@ -171,9 +169,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   const { user } = useAuth();
   const { toast } = useToast();
 
-
-
-
   logInfo('AdaptiveDashboard component initialized', {
     userId: user?.uid ?? 'no-user',
     timestamp: new Date().toISOString(),
@@ -267,15 +262,16 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           // Fetch real user data including profile and exam info
           // OPTIMIZED: Fetch all independent data in parallel to reduce latency
-          const [progressResult, activeJourneysResult, userProfile, userTests, syllabus, customGoalsResult] = await Promise.all([
-            progressService.getUserProgress(user.uid),
-            // journeyService.getActiveJourneys(user.uid), // Using placeholder for now
-            Promise.resolve({ success: true, data: [] }), // Placeholder for journeys
-            getUser(user.uid),
-            adaptiveTestingService.getUserTests(user.uid),
-            getSyllabus(user.uid).catch(() => []), // Fetch syllabus in parallel (auto-resolves courseId)
-            customLearningService.getUserCustomGoals(user.uid), // Fetch custom goals in parallel
-          ]);
+          const [progressResult, activeJourneysResult, userProfile, userTests, syllabus, customGoalsResult] =
+            await Promise.all([
+              progressService.getUserProgress(user.uid),
+              // journeyService.getActiveJourneys(user.uid), // Using placeholder for now
+              Promise.resolve({ success: true, data: [] }), // Placeholder for journeys
+              getUser(user.uid),
+              adaptiveTestingService.getUserTests(user.uid),
+              getSyllabus(user.uid).catch(() => []), // Fetch syllabus in parallel (auto-resolves courseId)
+              customLearningService.getUserCustomGoals(user.uid), // Fetch custom goals in parallel
+            ]);
 
           // Load selected exam information
           const currentExamId = userProfile?.currentExam?.id || '';
@@ -283,14 +279,16 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           // Populate available courses
           if (currentExamId && userProfile?.currentExam) {
-             const exam = getExamById(currentExamId);
-             setAvailableCourses([{
+            const exam = getExamById(currentExamId);
+            setAvailableCourses([
+              {
                 examId: currentExamId,
                 examName: userProfile.currentExam.name || (exam?.name ?? 'Unknown Exam'),
                 targetDate: userProfile.currentExam.targetDate,
                 priority: 1,
-                isPrimary: true
-             } as any]);
+                isPrimary: true,
+              } as any,
+            ]);
           }
 
           if (currentExamId) {
@@ -301,7 +299,14 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               // Calculate exam countdown
               const examDate = userProfile?.currentExam?.targetDate;
               const examDaysLeft = examDate
-                ? Math.max(0, Math.ceil((((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+                ? Math.max(
+                    0,
+                    Math.ceil(
+                      (((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() -
+                        Date.now()) /
+                        (1000 * 60 * 60 * 24)
+                    )
+                  )
                 : undefined;
 
               // Use pre-fetched syllabus from Promise.all (faster load)
@@ -344,9 +349,13 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 (progress.trackProgress.exam.timeInvested + progress.trackProgress.course_tech.timeInvested) / 60
               ),
               adaptiveTestsCompleted: userTests.filter(t => t.status === 'completed').length,
-              adaptiveTestsAverage: userTests.filter(t => t.status === 'completed').length > 0
-                ? userTests.filter(t => t.status === 'completed').reduce((sum, t) => sum + (t.performance?.accuracy || 0), 0) / userTests.filter(t => t.status === 'completed').length
-                : 0,
+              adaptiveTestsAverage:
+                userTests.filter(t => t.status === 'completed').length > 0
+                  ? userTests
+                      .filter(t => t.status === 'completed')
+                      .reduce((sum, t) => sum + (t.performance?.accuracy || 0), 0) /
+                    userTests.filter(t => t.status === 'completed').length
+                  : 0,
               adaptiveTestsTotal: userTests.length,
               activeJourneys: (progress as any).linkedJourneys?.length ?? 0,
               journeyCompletion: Math.round(
@@ -432,7 +441,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           setStats(realStats);
           setRecentAchievements(finalAchievements);
 
-
           logInfo('Dashboard data loaded successfully', {
             userId: user?.uid ?? 'no-user',
             stats: realStats,
@@ -464,7 +472,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           };
           setStats(fallbackStats);
           setRecentAchievements([]);
-
         } finally {
           setIsLoading(false);
         }
@@ -476,39 +483,44 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
   const handleCourseSwitch = async (courseId: string) => {
     if (!user || switchingCourse || courseId === activeCourseId) return;
-    
+
     try {
       setSwitchingCourse(true);
-      
+
       // Update Firebase - use new schema field
       await updateUser(user.uid, { primaryCourseId: courseId });
-      
+
       // Update local state
       setActiveCourseId(courseId);
-      
+
       // Load new exam data
       const exam = getExamById(courseId);
       if (exam) {
         setSelectedExam(exam);
-        
+
         // Load syllabus for new course (explicitly passing courseId)
         const syllabus = await getSyllabus(user.uid, courseId);
-        
+
         // Find target date for the course
         const courseData = availableCourses.find(c => c.examId === courseId);
         const examDaysLeft = courseData?.targetDate
-          ? Math.max(0, Math.ceil((
-              ((courseData.targetDate as any).toDate 
-                ? (courseData.targetDate as any).toDate() 
-                : new Date(courseData.targetDate as any)
-              ).getTime() - Date.now()
-            ) / (1000 * 60 * 60 * 24)))
+          ? Math.max(
+              0,
+              Math.ceil(
+                (((courseData.targetDate as any).toDate
+                  ? (courseData.targetDate as any).toDate()
+                  : new Date(courseData.targetDate as any)
+                ).getTime() -
+                  Date.now()) /
+                  (1000 * 60 * 60 * 24)
+              )
+            )
           : undefined;
-        
+
         // Generate new recommendations
         const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
         setTodayRecommendations(todayRecs);
-        
+
         toast({
           title: 'Course Switched',
           description: `Now focusing on ${exam.name}`,
@@ -525,8 +537,6 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       setSwitchingCourse(false);
     }
   };
-
-
 
   const formatTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
@@ -565,120 +575,118 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   };
 
   if (isLoading) {
-    return (
-      <DashboardSkeleton />
-    );
+    return <DashboardSkeleton />;
   }
 
   return (
     <div className={cn('space-y-6', className)}>
       {/* Personalized Welcome Header */}
       {/* Personalized Welcome Header & Achievements */}
-        {/* Header with Course Switcher */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-           {availableCourses.length > 1 ? (
-             <div className="w-full md:w-auto flex items-center gap-2 bg-white/50 backdrop-blur-sm p-1 rounded-lg border border-white/20">
-                <span className="text-sm font-medium text-gray-600 pl-2">Current Focus:</span>
-                <Select value={activeCourseId} onValueChange={handleCourseSwitch} disabled={switchingCourse}>
-                   <SelectTrigger className="w-[200px] h-8 bg-white border-0 shadow-sm">
-                      <SelectValue placeholder="Select Course" />
-                   </SelectTrigger>
-                   <SelectContent>
-                      {availableCourses.map(course => (
-                         <SelectItem key={course.examId} value={course.examId}>
-                            {course.name}
-                         </SelectItem>
-                      ))}
-                   </SelectContent>
-                </Select>
-             </div>
-           ) : (
-             <div/> 
-           )}
-           {/* Placeholder for future header items */}
-        </div>
-
-        <WelcomeHeader
-          user={user}
-          timeOfDay={timeOfDay}
-          recentAchievements={recentAchievements}
-          onDismissAchievement={() => setRecentAchievements(prev => prev.slice(1))}
-          onViewAllAchievements={() => {
-            /* TODO: Navigate to achievements page */
-          }}
-        />
-
-        {/* Continue Where Left Off Card */}
-        {todayRecommendations?.currentTopic && todayRecommendations?.currentTopicId && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-4"
-          >
-            <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-l-4 border-l-green-500">
-              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="p-1.5 bg-green-100 rounded-full">
-                      <PlayCircle className="h-4 w-4 text-green-600" />
-                    </div>
-                    <span className="text-sm font-semibold text-green-700">Continue where you left off</span>
-                  </div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                    {todayRecommendations.currentTopic}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-0.5">
-                    {todayRecommendations.subjectRecommendation} • Ready to continue
-                  </p>
-                </div>
-                <Button
-                  onClick={() => (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)}
-                  className="bg-green-600 hover:bg-green-700 gap-2 w-full sm:w-auto"
-                >
-                  <PlayCircle className="h-4 w-4" />
-                  Resume
-                </Button>
-              </CardContent>
-            </Card>
-          </motion.div>
+      {/* Header with Course Switcher */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        {availableCourses.length > 1 ? (
+          <div className="w-full md:w-auto flex items-center gap-2 bg-white/50 backdrop-blur-sm p-1 rounded-lg border border-white/20">
+            <span className="text-sm font-medium text-gray-600 pl-2">Current Focus:</span>
+            <Select value={activeCourseId} onValueChange={handleCourseSwitch} disabled={switchingCourse}>
+              <SelectTrigger className="w-[200px] h-8 bg-white border-0 shadow-sm">
+                <SelectValue placeholder="Select Course" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableCourses.map(course => (
+                  <SelectItem key={course.examId} value={course.examId}>
+                    {course.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : (
+          <div />
         )}
+        {/* Placeholder for future header items */}
+      </div>
 
-        {/* Daily Log Quick Action */}
+      <WelcomeHeader
+        user={user}
+        timeOfDay={timeOfDay}
+        recentAchievements={recentAchievements}
+        onDismissAchievement={() => setRecentAchievements(prev => prev.slice(1))}
+        onViewAllAchievements={() => {
+          /* TODO: Navigate to achievements page */
+        }}
+      />
+
+      {/* Continue Where Left Off Card */}
+      {todayRecommendations?.currentTopic && todayRecommendations?.currentTopicId && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
+          transition={{ delay: 0.2 }}
           className="mb-4"
         >
-          <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-l-4 border-l-amber-500">
+          <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-l-4 border-l-green-500">
             <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="p-1.5 bg-amber-100 rounded-full">
-                    <Calendar className="h-4 w-4 text-amber-600" />
+                  <div className="p-1.5 bg-green-100 rounded-full">
+                    <PlayCircle className="h-4 w-4 text-green-600" />
                   </div>
-                  <span className="text-sm font-semibold text-amber-700">Track Your Progress</span>
+                  <span className="text-sm font-semibold text-green-700">Continue where you left off</span>
                 </div>
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                  Log Today&apos;s Study Session
+                  {todayRecommendations.currentTopic}
                 </h3>
                 <p className="text-sm text-gray-600 mt-0.5">
-                  Record topics covered, time spent, and notes for better tracking
+                  {todayRecommendations.subjectRecommendation} • Ready to continue
                 </p>
               </div>
               <Button
-                onClick={() => (window.location.href = '/log/daily')}
-                className="bg-amber-600 hover:bg-amber-700 gap-2 w-full sm:w-auto"
+                onClick={() =>
+                  (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)
+                }
+                className="bg-green-600 hover:bg-green-700 gap-2 w-full sm:w-auto"
               >
-                <Calendar className="h-4 w-4" />
-                Daily Log
+                <PlayCircle className="h-4 w-4" />
+                Resume
               </Button>
             </CardContent>
           </Card>
         </motion.div>
+      )}
 
-        {/* Selected Exam and Today's Recommendations */}
+      {/* Daily Log Quick Action */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="mb-4"
+      >
+        <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-l-4 border-l-amber-500">
+          <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-1.5 bg-amber-100 rounded-full">
+                  <Calendar className="h-4 w-4 text-amber-600" />
+                </div>
+                <span className="text-sm font-semibold text-amber-700">Track Your Progress</span>
+              </div>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Log Today&apos;s Study Session</h3>
+              <p className="text-sm text-gray-600 mt-0.5">
+                Record topics covered, time spent, and notes for better tracking
+              </p>
+            </div>
+            <Button
+              onClick={() => (window.location.href = '/log/daily')}
+              className="bg-amber-600 hover:bg-amber-700 gap-2 w-full sm:w-auto"
+            >
+              <Calendar className="h-4 w-4" />
+              Daily Log
+            </Button>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Selected Exam and Today's Recommendations */}
       {selectedExam && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -688,7 +696,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         >
           <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-semibold text-indigo-900 mb-2">📚 Currently preparing for {selectedExam.name}</h2>
+              <h2 className="text-xl font-semibold text-indigo-900 mb-2">
+                📚 Currently preparing for {selectedExam.name}
+              </h2>
               <p className="text-indigo-700 mb-2 line-clamp-2">{selectedExam.description}</p>
               <Badge variant="outline" className="text-indigo-600 border-indigo-300">
                 {selectedExam.category}
@@ -696,7 +706,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             </div>
             {todayRecommendations.examDaysLeft !== undefined && (
               <div className="flex items-center md:flex-col md:items-end gap-2 md:gap-0 md:text-right shrink-0">
-                <div className="text-2xl font-bold text-indigo-900 leading-tight">{todayRecommendations.examDaysLeft}</div>
+                <div className="text-2xl font-bold text-indigo-900 leading-tight">
+                  {todayRecommendations.examDaysLeft}
+                </div>
                 <div className="text-sm text-indigo-600 leading-tight">days left</div>
               </div>
             )}
@@ -715,7 +727,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       size="sm"
                       variant="outline"
                       className="h-8 text-xs bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-                      onClick={() => (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)}
+                      onClick={() =>
+                        (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)
+                      }
                     >
                       Log Progress
                     </Button>
@@ -780,323 +794,322 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
       {/* Dashboard Content */}
       <div className="space-y-6">
-          {/* Stats Grid - always shown */}
-          <StatsGrid stats={stats} />
+        {/* Stats Grid - always shown */}
+        <StatsGrid stats={stats} />
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Today's Focus & Achievements */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-500" />
-                    Today's Focus
-                  </CardTitle>
-                  <CardDescription>Personalized recommendations based on your progress</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Dynamic content based on user's actual progress */}
-                  {stats.activeJourneys > 0 ? (
-                    <div className="p-3 sm:p-4 rounded-lg bg-purple-50 border border-purple-200">
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div>
-                          <h4 className="font-medium text-purple-900">Active Journeys</h4>
-                          <p className="text-sm text-purple-700 mt-1">
-                            You have {stats.activeJourneys} active journey{stats.activeJourneys > 1 ? 's' : ''} in
-                            progress
-                          </p>
-                          <p className="text-xs text-purple-600 mt-2">Continue your personalized learning path</p>
-                        </div>
-                        <Button
-                          size="sm"
-                          className="bg-purple-600 hover:bg-purple-700"
-                          onClick={() => (window.location.href = '/journey')}
-                        >
-                          View Journeys
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-3 sm:p-4 rounded-lg bg-blue-50 border border-blue-200">
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div>
-                          <h4 className="font-medium text-blue-900">Plan Your Journey</h4>
-                          <p className="text-sm text-blue-700 mt-1">Create a personalized learning path</p>
-                          <p className="text-xs text-blue-600 mt-2">
-                            Design journeys tailored to your learning goals and schedule
-                          </p>
-                        </div>
-                        <Button
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700"
-                          onClick={() => (window.location.href = '/journey')}
-                        >
-                          Create Journey
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Study recommendations based on actual data */}
-                  {stats.completedTopics > 0 ? (
-                    <div className="p-3 sm:p-4 rounded-lg bg-green-50 border border-green-200">
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div>
-                          <h4 className="font-medium text-green-900">Keep Momentum</h4>
-                          <p className="text-sm text-green-700 mt-1">
-                            You've mastered {stats.completedTopics} topic{stats.completedTopics > 1 ? 's' : ''}!
-                          </p>
-                          <p className="text-xs text-green-600 mt-2">Take an adaptive test to assess your knowledge</p>
-                        </div>
-                        <Button
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700"
-                          onClick={() => (window.location.href = '/test')}
-                        >
-                          Take Test
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-3 sm:p-4 rounded-lg bg-orange-50 border border-orange-200">
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                        <div>
-                          <h4 className="font-medium text-orange-900">Start Learning</h4>
-                          <p className="text-sm text-orange-700 mt-1">Begin with your syllabus and topics</p>
-                          <p className="text-xs text-orange-600 mt-2">Perfect for building your study foundation</p>
-                        </div>
-                        <Button
-                          size="sm"
-                          className="bg-orange-600 hover:bg-orange-700"
-                          onClick={() => (window.location.href = '/syllabus')}
-                        >
-                          View Syllabus
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Today's Study Plan - NEW SECTION */}
-                  {selectedExam && todayRecommendations.todaysPlan && (
-                    <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
-                      <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3">
-                        <div>
-                          <h4 className="font-semibold text-blue-900 flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            Today's Study Plan - {selectedExam.name}
-                          </h4>
-                          <p className="text-sm text-blue-700 mt-1">
-                            {todayRecommendations.subjectRecommendation &&
-                              `Focus on: ${todayRecommendations.subjectRecommendation}`}
-                          </p>
-                          {todayRecommendations.examDaysLeft && (
-                            <p className="text-xs text-blue-600 mt-1">
-                              📅 {todayRecommendations.examDaysLeft} days until exam
-                            </p>
-                          )}
-                        </div>
-                        <Button
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700"
-                          onClick={() => (window.location.href = '/syllabus')}
-                        >
-                          Start Now
-                        </Button>
-                      </div>
-                      <div className="space-y-2">
-                        {todayRecommendations.todaysPlan.map((item, index) => (
-                          <div key={index} className="flex items-center gap-2 text-sm text-blue-800">
-                            <div className="w-2 h-2 rounded-full bg-blue-400" />
-                            {item}
-                          </div>
-                        ))}
-                      </div>
-                      {todayRecommendations.studyGoal && (
-                        <div className="mt-3 pt-3 border-t border-blue-200">
-                          <p className="text-xs text-blue-600 font-medium">🎯 Goal: {todayRecommendations.studyGoal}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
-                    <div className="flex items-start justify-between">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Today's Focus & Achievements */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-yellow-500" />
+                  Today's Focus
+                </CardTitle>
+                <CardDescription>Personalized recommendations based on your progress</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Dynamic content based on user's actual progress */}
+                {stats.activeJourneys > 0 ? (
+                  <div className="p-3 sm:p-4 rounded-lg bg-purple-50 border border-purple-200">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div>
-                        <h4 className="font-medium text-indigo-900 flex items-center gap-2">
-                          <Brain className="h-4 w-4" />
-                          Adaptive Testing
-                        </h4>
-                        <p className="text-sm text-indigo-700 mt-1">
-                          {stats.adaptiveTestsCompleted > 0
-                            ? 'Continue your personalized assessment journey'
-                            : 'Try AI-powered tests that adapt to your knowledge level'}
+                        <h4 className="font-medium text-purple-900">Active Journeys</h4>
+                        <p className="text-sm text-purple-700 mt-1">
+                          You have {stats.activeJourneys} active journey{stats.activeJourneys > 1 ? 's' : ''} in
+                          progress
                         </p>
-                        <p className="text-xs text-indigo-600 mt-2">
-                          {stats.adaptiveTestsCompleted > 0
-                            ? `${stats.adaptiveTestsCompleted} tests completed${stats.adaptiveTestsAverage > 0 ? ` • Average: ${stats.adaptiveTestsAverage.toFixed(1)}%` : ''}`
-                            : 'Smart questions that adjust difficulty in real-time'}
+                        <p className="text-xs text-purple-600 mt-2">Continue your personalized learning path</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-purple-600 hover:bg-purple-700"
+                        onClick={() => (window.location.href = '/journey')}
+                      >
+                        View Journeys
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 sm:p-4 rounded-lg bg-blue-50 border border-blue-200">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div>
+                        <h4 className="font-medium text-blue-900">Plan Your Journey</h4>
+                        <p className="text-sm text-blue-700 mt-1">Create a personalized learning path</p>
+                        <p className="text-xs text-blue-600 mt-2">
+                          Design journeys tailored to your learning goals and schedule
                         </p>
                       </div>
                       <Button
                         size="sm"
-                        className="bg-indigo-600 hover:bg-indigo-700"
-                        onClick={() => (window.location.href = '/test')}
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => (window.location.href = '/journey')}
                       >
-                        {stats.adaptiveTestsCompleted > 0 ? 'Continue' : 'Try Now'}
+                        Create Journey
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                )}
 
-              {/* Recent Achievements */}
-              {recentAchievements.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-yellow-500" />
-                      Recent Achievements
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {recentAchievements.map(achievement => {
-                        const IconComponent = achievement.icon;
-                        return (
-                          <div
-                            key={achievement.id}
-                            className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-                          >
-                            <div className={`p-2 rounded-full bg-white ${getRarityColor(achievement.rarity)}`}>
-                              <IconComponent className="h-4 w-4" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2">
-                                <p className="font-medium text-gray-900">{achievement.title}</p>
-                                <Badge className={`text-xs ${getRarityBadgeColor(achievement.rarity)}`}>
-                                  {achievement.rarity}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-gray-600">{achievement.description}</p>
-                              <p className="text-xs text-gray-500 mt-1">{achievement.earnedAt.toLocaleDateString()}</p>
-                            </div>
+                {/* Study recommendations based on actual data */}
+                {stats.completedTopics > 0 ? (
+                  <div className="p-3 sm:p-4 rounded-lg bg-green-50 border border-green-200">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div>
+                        <h4 className="font-medium text-green-900">Keep Momentum</h4>
+                        <p className="text-sm text-green-700 mt-1">
+                          You've mastered {stats.completedTopics} topic{stats.completedTopics > 1 ? 's' : ''}!
+                        </p>
+                        <p className="text-xs text-green-600 mt-2">Take an adaptive test to assess your knowledge</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => (window.location.href = '/test')}
+                      >
+                        Take Test
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 sm:p-4 rounded-lg bg-orange-50 border border-orange-200">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                      <div>
+                        <h4 className="font-medium text-orange-900">Start Learning</h4>
+                        <p className="text-sm text-orange-700 mt-1">Begin with your syllabus and topics</p>
+                        <p className="text-xs text-orange-600 mt-2">Perfect for building your study foundation</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-orange-600 hover:bg-orange-700"
+                        onClick={() => (window.location.href = '/syllabus')}
+                      >
+                        View Syllabus
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Today's Study Plan - NEW SECTION */}
+                {selectedExam && todayRecommendations.todaysPlan && (
+                  <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-3">
+                      <div>
+                        <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Today's Study Plan - {selectedExam.name}
+                        </h4>
+                        <p className="text-sm text-blue-700 mt-1">
+                          {todayRecommendations.subjectRecommendation &&
+                            `Focus on: ${todayRecommendations.subjectRecommendation}`}
+                        </p>
+                        {todayRecommendations.examDaysLeft && (
+                          <p className="text-xs text-blue-600 mt-1">
+                            📅 {todayRecommendations.examDaysLeft} days until exam
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => (window.location.href = '/syllabus')}
+                      >
+                        Start Now
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      {todayRecommendations.todaysPlan.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm text-blue-800">
+                          <div className="w-2 h-2 rounded-full bg-blue-400" />
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                    {todayRecommendations.studyGoal && (
+                      <div className="mt-3 pt-3 border-t border-blue-200">
+                        <p className="text-xs text-blue-600 font-medium">🎯 Goal: {todayRecommendations.studyGoal}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="p-4 rounded-lg bg-indigo-50 border border-indigo-200">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="font-medium text-indigo-900 flex items-center gap-2">
+                        <Brain className="h-4 w-4" />
+                        Adaptive Testing
+                      </h4>
+                      <p className="text-sm text-indigo-700 mt-1">
+                        {stats.adaptiveTestsCompleted > 0
+                          ? 'Continue your personalized assessment journey'
+                          : 'Try AI-powered tests that adapt to your knowledge level'}
+                      </p>
+                      <p className="text-xs text-indigo-600 mt-2">
+                        {stats.adaptiveTestsCompleted > 0
+                          ? `${stats.adaptiveTestsCompleted} tests completed${stats.adaptiveTestsAverage > 0 ? ` • Average: ${stats.adaptiveTestsAverage.toFixed(1)}%` : ''}`
+                          : 'Smart questions that adjust difficulty in real-time'}
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-indigo-600 hover:bg-indigo-700"
+                      onClick={() => (window.location.href = '/test')}
+                    >
+                      {stats.adaptiveTestsCompleted > 0 ? 'Continue' : 'Try Now'}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Achievements */}
+            {recentAchievements.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-yellow-500" />
+                    Recent Achievements
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {recentAchievements.map(achievement => {
+                      const IconComponent = achievement.icon;
+                      return (
+                        <div
+                          key={achievement.id}
+                          className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                        >
+                          <div className={`p-2 rounded-full bg-white ${getRarityColor(achievement.rarity)}`}>
+                            <IconComponent className="h-4 w-4" />
                           </div>
-                        );
-                      })}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Quick Stats & Insights */}
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    Quick Stats
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Active Missions</span>
-                    <Badge variant="outline" className="bg-blue-50">
-                      {stats.activeJourneys}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Topics Mastered</span>
-                    <Badge variant="outline" className="bg-green-50">
-                      {stats.completedTopics}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Custom Goals Active</span>
-                    <Badge variant="outline" className="bg-purple-50">
-                      {stats.customGoalsActive}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Adaptive Tests</span>
-                    <Badge variant="outline" className="bg-indigo-50">
-                      {stats.adaptiveTestsCompleted}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Active Journeys</span>
-                    <Badge variant="outline" className="bg-emerald-50">
-                      {stats.activeJourneys}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Journey Progress</span>
-                    <Badge variant="outline" className="bg-teal-50">
-                      {stats.journeyCompletion}%
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">This Week</span>
-                    <Badge variant="outline" className="bg-orange-50">
-                      {formatTime(stats.totalStudyTime)}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Best Streak</span>
-                    <Badge variant="outline" className="bg-orange-50">
-                      {stats.currentStreak} days
-                    </Badge>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <p className="font-medium text-gray-900">{achievement.title}</p>
+                              <Badge className={`text-xs ${getRarityBadgeColor(achievement.rarity)}`}>
+                                {achievement.rarity}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-600">{achievement.description}</p>
+                            <p className="text-xs text-gray-500 mt-1">{achievement.earnedAt.toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Study Schedule
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="text-sm">
-                    <p className="font-medium text-gray-900">Study Progress</p>
-                    <div className="mt-2 space-y-2">
-                      {stats.currentStreak > 0 ? (
-                        <div className="flex items-center justify-between p-2 bg-orange-50 rounded">
-                          <span className="text-orange-700">Current Streak</span>
-                          <Badge className="bg-orange-100 text-orange-700">{stats.currentStreak} days</Badge>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-gray-700">Start Your Streak</span>
-                          <Badge variant="outline">0 days</Badge>
-                        </div>
-                      )}
-                      {stats.totalStudyTime > 0 ? (
-                        <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                          <span className="text-blue-700">Weekly Study Time</span>
-                          <Badge className="bg-blue-100 text-blue-700">{formatTime(stats.totalStudyTime)}</Badge>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-gray-700">No study time yet</span>
-                          <Badge variant="outline">Start today</Badge>
-                        </div>
-                      )}
-                      {stats.customGoalsActive > 0 && (
-                        <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                          <span className="text-purple-700">Active Goals</span>
-                          <Badge className="bg-purple-100 text-purple-700">{stats.customGoalsActive}</Badge>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            )}
           </div>
 
+          {/* Quick Stats & Insights */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Quick Stats
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Active Missions</span>
+                  <Badge variant="outline" className="bg-blue-50">
+                    {stats.activeJourneys}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Topics Mastered</span>
+                  <Badge variant="outline" className="bg-green-50">
+                    {stats.completedTopics}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Custom Goals Active</span>
+                  <Badge variant="outline" className="bg-purple-50">
+                    {stats.customGoalsActive}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Adaptive Tests</span>
+                  <Badge variant="outline" className="bg-indigo-50">
+                    {stats.adaptiveTestsCompleted}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Active Journeys</span>
+                  <Badge variant="outline" className="bg-emerald-50">
+                    {stats.activeJourneys}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Journey Progress</span>
+                  <Badge variant="outline" className="bg-teal-50">
+                    {stats.journeyCompletion}%
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">This Week</span>
+                  <Badge variant="outline" className="bg-orange-50">
+                    {formatTime(stats.totalStudyTime)}
+                  </Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Best Streak</span>
+                  <Badge variant="outline" className="bg-orange-50">
+                    {stats.currentStreak} days
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Study Schedule
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-sm">
+                  <p className="font-medium text-gray-900">Study Progress</p>
+                  <div className="mt-2 space-y-2">
+                    {stats.currentStreak > 0 ? (
+                      <div className="flex items-center justify-between p-2 bg-orange-50 rounded">
+                        <span className="text-orange-700">Current Streak</span>
+                        <Badge className="bg-orange-100 text-orange-700">{stats.currentStreak} days</Badge>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-gray-700">Start Your Streak</span>
+                        <Badge variant="outline">0 days</Badge>
+                      </div>
+                    )}
+                    {stats.totalStudyTime > 0 ? (
+                      <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                        <span className="text-blue-700">Weekly Study Time</span>
+                        <Badge className="bg-blue-100 text-blue-700">{formatTime(stats.totalStudyTime)}</Badge>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-gray-700">No study time yet</span>
+                        <Badge variant="outline">Start today</Badge>
+                      </div>
+                    )}
+                    {stats.customGoalsActive > 0 && (
+                      <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                        <span className="text-purple-700">Active Goals</span>
+                        <Badge className="bg-purple-100 text-purple-700">{stats.customGoalsActive}</Badge>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

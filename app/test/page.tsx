@@ -30,7 +30,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { StatCardSkeletonGrid, TestCardSkeletonGrid, RecommendationCardSkeletonGrid, TestPageSkeleton } from '@/components/skeletons';
+import {
+  StatCardSkeletonGrid,
+  TestCardSkeletonGrid,
+  RecommendationCardSkeletonGrid,
+  TestPageSkeleton,
+} from '@/components/skeletons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
@@ -76,7 +81,7 @@ function AdaptiveTestingPageContent() {
   const [preSelectedQuestionCount, setPreSelectedQuestionCount] = useState<number | undefined>(undefined);
   const [recommendations, setRecommendations] = useState<any[]>([]); // TestRecommendation[]
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
-  
+
   // Month filter - default to current month in format "YYYY-MM"
   const getCurrentMonth = () => {
     const now = new Date();
@@ -92,21 +97,19 @@ function AdaptiveTestingPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-
-
   // Handle URL params for "Take Test" from syllabus
 
   // Handle URL params for "Take Test" from syllabus
   useEffect(() => {
     const subject = searchParams.get('subject');
     const topic = searchParams.get('topic');
-    
+
     if (subject || topic) {
       logInfo('[TestPage] URL Params detected', { subject, topic });
       setPreSelectedSubject(subject || undefined);
       setPreSelectedTopic(topic || undefined);
       setShowConfigModal(true);
-      
+
       // Clean up URL params
       router.replace('/test', { scroll: false });
     }
@@ -115,11 +118,11 @@ function AdaptiveTestingPageContent() {
   // Data Fetching Functions
   const loadTestsAndStats = useCallback(async () => {
     if (!user?.uid) return;
-    
+
     try {
       const testsResult = await adaptiveTestingService.getUserTests(user.uid);
       setTests(testsResult);
-      
+
       // Calculate stats
       const completedTests = testsResult.filter(test => test.status === 'completed');
       const totalQuestions = completedTests.reduce((sum, test) => sum + test.totalQuestions, 0);
@@ -146,11 +149,11 @@ function AdaptiveTestingPageContent() {
 
   const loadRecommendations = useCallback(async () => {
     if (!user?.uid) return;
-    
+
     try {
       setLoadingRecommendations(true);
       const recsResult = await adaptiveTestingService.generateTestRecommendations(user.uid);
-      
+
       if (recsResult.success && recsResult.data) {
         setRecommendations(recsResult.data);
       } else {
@@ -168,16 +171,13 @@ function AdaptiveTestingPageContent() {
     const loadAllData = async () => {
       if (!user?.uid) return;
       setLoading(true);
-      
+
       // Parallel fetch
-      await Promise.allSettled([
-        loadTestsAndStats(),
-        loadRecommendations()
-      ]);
-      
+      await Promise.allSettled([loadTestsAndStats(), loadRecommendations()]);
+
       setLoading(false);
     };
-    
+
     loadAllData();
   }, [user?.uid, loadTestsAndStats, loadRecommendations]);
 
@@ -194,7 +194,6 @@ function AdaptiveTestingPageContent() {
     // Retake logic will be handled by detail page
     router.push(`/test/${testId}`);
   };
-
 
   // Handle test generation from modal config
   const handleGenerateFromConfig = async (config: TestConfig) => {
@@ -216,9 +215,10 @@ function AdaptiveTestingPageContent() {
       const [testResult] = await Promise.all([
         adaptiveTestingService.createAdaptiveTest(user.uid, {
           title: `${config.subjects[0]} Test - ${config.difficulty}`,
-          description: config.topics.length > 0 
-            ? `Testing: ${config.topics.join(', ')}` 
-            : `Comprehensive ${config.subjects[0]} test`,
+          description:
+            config.topics.length > 0
+              ? `Testing: ${config.topics.join(', ')}`
+              : `Comprehensive ${config.subjects[0]} test`,
           subjects: config.subjects,
           ...(config.topics.length > 0 && { topics: config.topics }),
           difficulty: config.difficulty,
@@ -226,17 +226,17 @@ function AdaptiveTestingPageContent() {
           questionType: 'multiple_choice',
           ...(config.syllabusContext && { syllabusContext: config.syllabusContext }),
         }),
-        minAnimationTime
+        minAnimationTime,
       ]);
 
       if (!testResult.success || !testResult.data) {
         logError('[TestPage] Failed to create test', testResult.error);
         throw new Error('Failed to create test');
       }
-      
+
       logInfo('[TestPage] Test created successfully', { testId: testResult.data.id });
       // Reload everything
-      router.refresh(); 
+      router.refresh();
       setIsGenerating(false);
       handleStartTest(testResult.data.id);
     } catch (error) {
@@ -266,12 +266,12 @@ function AdaptiveTestingPageContent() {
     // This promise wrapper ensures the animation plays for at least 6s (sum of step durations)
     // so the user sees the "Magic" fully, even if the API is fast.
     const minAnimationTime = new Promise(resolve => setTimeout(resolve, 8000));
-    
+
     try {
       // Run generation in parallel with animation
       const [recommendations] = await Promise.all([
         adaptiveTestingService.generateTestRecommendations(user.uid),
-        minAnimationTime
+        minAnimationTime,
       ]);
 
       if (recommendations.success && recommendations.data && recommendations.data.length > 0) {
@@ -314,12 +314,14 @@ function AdaptiveTestingPageContent() {
     const matchesSubject = filterSubject === 'all' || test.linkedSubjects.includes(filterSubject);
 
     // Month filter - check if test's createdAt matches selected month
-    const matchesMonth = filterMonth === 'all' || (() => {
-      if (!test.createdAt) return false;
-      const testDate = test.createdAt instanceof Date ? test.createdAt : new Date(test.createdAt);
-      const testMonth = `${testDate.getFullYear()}-${String(testDate.getMonth() + 1).padStart(2, '0')}`;
-      return testMonth === filterMonth;
-    })();
+    const matchesMonth =
+      filterMonth === 'all' ||
+      (() => {
+        if (!test.createdAt) return false;
+        const testDate = test.createdAt instanceof Date ? test.createdAt : new Date(test.createdAt);
+        const testMonth = `${testDate.getFullYear()}-${String(testDate.getMonth() + 1).padStart(2, '0')}`;
+        return testMonth === filterMonth;
+      })();
 
     return matchesSearch && matchesStatus && matchesSubject && matchesMonth;
   });
@@ -333,7 +335,7 @@ function AdaptiveTestingPageContent() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
-    
+
     // Find earliest test date
     let earliestDate = currentDate;
     tests.forEach(test => {
@@ -342,22 +344,22 @@ function AdaptiveTestingPageContent() {
         if (testDate < earliestDate) earliestDate = testDate;
       }
     });
-    
+
     // Generate months from earliest to current (reverse order - newest first)
     const startYear = earliestDate.getFullYear();
     const startMonth = earliestDate.getMonth();
-    
+
     for (let year = currentYear; year >= startYear; year--) {
       const endM = year === currentYear ? currentMonth : 11;
       const startM = year === startYear ? startMonth : 0;
-      
+
       for (let month = endM; month >= startM; month--) {
         const value = `${year}-${String(month + 1).padStart(2, '0')}`;
         const label = new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
         months.push({ value, label });
       }
     }
-    
+
     return months;
   }, [tests]);
 
@@ -386,34 +388,32 @@ function AdaptiveTestingPageContent() {
     setTestsPage(1);
   }, [searchQuery, filterStatus, filterSubject, filterMonth]);
 
-  const cardClass = "min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center";
-
-
+  const cardClass = 'min-w-[85vw] sm:min-w-[300px] md:min-w-0 snap-center';
 
   if (loading) {
-     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-           <Navigation />
-           <BottomNav />
-           <PageTransition>
-              <TestPageSkeleton />
-           </PageTransition>
-        </div>
-     );
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <Navigation />
+        <BottomNav />
+        <PageTransition>
+          <TestPageSkeleton />
+        </PageTransition>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <Navigation />
       <BottomNav />
-      
+
       {/* Test Generation Overlay */}
       <TestGenerationOverlay isVisible={isGenerating} />
 
       {/* Test Configuration Modal */}
       <TestConfigModal
         open={showConfigModal}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           setShowConfigModal(open);
           if (!open) {
             // Clear pre-selected values when modal closes
@@ -437,7 +437,7 @@ function AdaptiveTestingPageContent() {
             description="Personalized assessments that adapt to your knowledge level in real-time"
             icon={<Brain className="h-5 w-5 text-purple-600" />}
             actions={
-              <Button 
+              <Button
                 onClick={() => setShowConfigModal(true)}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
@@ -464,12 +464,17 @@ function AdaptiveTestingPageContent() {
                       <div>
                         <h3 className="font-bold text-lg">Continue Your Assessment</h3>
                         <p className="text-sm text-white/90">
-                          {tests.filter(t => t.status === 'active')[0]?.title} — 
-                          {' '}{Math.round((tests.filter(t => t.status === 'active')[0]?.currentQuestion || 0) / (tests.filter(t => t.status === 'active')[0]?.totalQuestions || 1) * 100)}% complete
+                          {tests.filter(t => t.status === 'active')[0]?.title} —{' '}
+                          {Math.round(
+                            ((tests.filter(t => t.status === 'active')[0]?.currentQuestion || 0) /
+                              (tests.filter(t => t.status === 'active')[0]?.totalQuestions || 1)) *
+                              100
+                          )}
+                          % complete
                         </p>
                       </div>
                     </div>
-                    <Button 
+                    <Button
                       onClick={() => router.push(`/test/${tests.filter(t => t.status === 'active')[0]?.id}`)}
                       className="bg-white text-orange-600 hover:bg-white/90 font-semibold shadow-md"
                     >
@@ -486,12 +491,11 @@ function AdaptiveTestingPageContent() {
           {loading ? (
             <StatCardSkeletonGrid count={4} />
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <MobileScrollGrid className="md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white", cardClass)}>
+                <Card
+                  className={cn('border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white', cardClass)}
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -503,7 +507,12 @@ function AdaptiveTestingPageContent() {
                   </CardContent>
                 </Card>
 
-                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white", cardClass)}>
+                <Card
+                  className={cn(
+                    'border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white',
+                    cardClass
+                  )}
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -515,7 +524,12 @@ function AdaptiveTestingPageContent() {
                   </CardContent>
                 </Card>
 
-                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white", cardClass)}>
+                <Card
+                  className={cn(
+                    'border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white',
+                    cardClass
+                  )}
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -527,7 +541,12 @@ function AdaptiveTestingPageContent() {
                   </CardContent>
                 </Card>
 
-                <Card className={cn("border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white", cardClass)}>
+                <Card
+                  className={cn(
+                    'border-0 shadow-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white',
+                    cardClass
+                  )}
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -547,7 +566,7 @@ function AdaptiveTestingPageContent() {
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Quick Start</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Card 
+                <Card
                   className="border-0 shadow-md bg-gradient-to-br from-emerald-50 to-teal-50 hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => {
                     setPreSelectedQuestionCount(3);
@@ -567,7 +586,7 @@ function AdaptiveTestingPageContent() {
                   </CardContent>
                 </Card>
 
-                <Card 
+                <Card
                   className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => {
                     setPreSelectedQuestionCount(7);
@@ -587,7 +606,7 @@ function AdaptiveTestingPageContent() {
                   </CardContent>
                 </Card>
 
-                <Card 
+                <Card
                   className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-pink-50 hover:shadow-lg transition-all cursor-pointer group"
                   onClick={() => {
                     setPreSelectedQuestionCount(15);
@@ -614,9 +633,15 @@ function AdaptiveTestingPageContent() {
           <Tabs defaultValue="analytics" className="space-y-6 min-h-[60vh]">
             <ScrollableTabsList>
               <TabsList className="flex w-full md:grid md:grid-cols-3">
-                <TabsTrigger value="analytics" className="flex-shrink-0 snap-start">Analytics</TabsTrigger>
-                <TabsTrigger value="tests" className="flex-shrink-0 snap-start">My Tests</TabsTrigger>
-                <TabsTrigger value="recommendations" className="flex-shrink-0 snap-start">Recommendations</TabsTrigger>
+                <TabsTrigger value="analytics" className="flex-shrink-0 snap-start">
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="tests" className="flex-shrink-0 snap-start">
+                  My Tests
+                </TabsTrigger>
+                <TabsTrigger value="recommendations" className="flex-shrink-0 snap-start">
+                  Recommendations
+                </TabsTrigger>
               </TabsList>
             </ScrollableTabsList>
 
@@ -720,8 +745,8 @@ function AdaptiveTestingPageContent() {
                   {/* Pagination Controls */}
                   {totalTestPages > 1 && (
                     <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         disabled={testsPage === 1}
                         onClick={() => setTestsPage(p => Math.max(1, p - 1))}
@@ -732,8 +757,8 @@ function AdaptiveTestingPageContent() {
                         Page {testsPage} of {totalTestPages}
                         <span className="text-gray-400 ml-2">({filteredTests.length} tests)</span>
                       </span>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         disabled={testsPage === totalTestPages}
                         onClick={() => setTestsPage(p => Math.min(totalTestPages, p + 1))}
@@ -805,8 +830,8 @@ function AdaptiveTestingPageContent() {
                             .filter(t => t.status === 'completed')
                             .slice(0, 5)
                             .map((test, index) => (
-                              <div 
-                                key={test.id} 
+                              <div
+                                key={test.id}
                                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                                 onClick={() => handleViewResults(test.id)}
                               >
@@ -817,12 +842,15 @@ function AdaptiveTestingPageContent() {
                                   <div>
                                     <p className="font-medium text-gray-900">{test.title}</p>
                                     <p className="text-xs text-gray-500">
-                                      {test.performance?.totalQuestions || 0} questions • {formatTime(test.performance?.totalTime || 0)}
+                                      {test.performance?.totalQuestions || 0} questions •{' '}
+                                      {formatTime(test.performance?.totalTime || 0)}
                                     </p>
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <p className={`font-bold ${(test.performance?.accuracy || 0) >= 70 ? 'text-green-600' : 'text-orange-600'}`}>
+                                  <p
+                                    className={`font-bold ${(test.performance?.accuracy || 0) >= 70 ? 'text-green-600' : 'text-orange-600'}`}
+                                  >
                                     {test.performance?.accuracy.toFixed(0) || 0}%
                                   </p>
                                   <p className="text-xs text-gray-500">Score</p>
@@ -842,11 +870,11 @@ function AdaptiveTestingPageContent() {
                           <div>
                             <h5 className="font-medium text-blue-900">Performance Tip</h5>
                             <p className="text-sm text-blue-700 mt-1">
-                              {stats.averageAccuracy >= 80 
-                                ? "Excellent work! Consider challenging yourself with harder topics."
+                              {stats.averageAccuracy >= 80
+                                ? 'Excellent work! Consider challenging yourself with harder topics.'
                                 : stats.averageAccuracy >= 60
-                                ? "Good progress! Focus on weak areas identified in test reviews."
-                                : "Keep practicing! Review explanations after each test to improve."}
+                                  ? 'Good progress! Focus on weak areas identified in test reviews.'
+                                  : 'Keep practicing! Review explanations after each test to improve.'}
                             </p>
                           </div>
                         </div>
@@ -935,12 +963,7 @@ function AdaptiveTestingPageContent() {
                       </CardTitle>
                       <CardDescription>AI-powered recommendations tailored to your learning journey</CardDescription>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={loadRecommendations}
-                      disabled={loadingRecommendations}
-                    >
+                    <Button variant="outline" size="sm" onClick={loadRecommendations} disabled={loadingRecommendations}>
                       {loadingRecommendations ? 'Refreshing...' : 'Refresh'}
                     </Button>
                   </div>
@@ -965,14 +988,20 @@ function AdaptiveTestingPageContent() {
                                     <h3 className="font-semibold text-gray-900">{rec.title}</h3>
                                     <p className="text-sm text-gray-600 line-clamp-2">{rec.description}</p>
                                   </div>
-                                  <Badge 
-                                    variant={rec.priority === 'high' ? 'destructive' : rec.priority === 'medium' ? 'default' : 'secondary'}
+                                  <Badge
+                                    variant={
+                                      rec.priority === 'high'
+                                        ? 'destructive'
+                                        : rec.priority === 'medium'
+                                          ? 'default'
+                                          : 'secondary'
+                                    }
                                     className="flex-shrink-0"
                                   >
                                     {rec.priority}
                                   </Badge>
                                 </div>
-                                
+
                                 <div className="flex flex-wrap gap-1 mb-3">
                                   {rec.subjects?.slice(0, 3).map((subject: string) => (
                                     <Badge key={subject} variant="outline" className="text-xs">
@@ -983,8 +1012,7 @@ function AdaptiveTestingPageContent() {
 
                                 <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
                                   <span className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    ~{rec.estimatedDuration || 20} min
+                                    <Clock className="h-3 w-3" />~{rec.estimatedDuration || 20} min
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <Target className="h-3 w-3" />
@@ -1010,19 +1038,26 @@ function AdaptiveTestingPageContent() {
                                 )}
 
                                 <div className="mt-auto">
-                                  <Button 
+                                  <Button
                                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                                     onClick={async () => {
                                       if (!user?.uid) return;
                                       setIsGenerating(true);
                                       try {
-                                        const result = await adaptiveTestingService.createTestFromRecommendation(user.uid, rec);
+                                        const result = await adaptiveTestingService.createTestFromRecommendation(
+                                          user.uid,
+                                          rec
+                                        );
                                         if (result.success && result.data) {
                                           router.push(`/test/${result.data.id}`);
                                         }
                                       } catch (error) {
                                         console.error('Failed to create test:', error);
-                                        toast({ title: 'Error', description: 'Failed to create test', variant: 'destructive' });
+                                        toast({
+                                          title: 'Error',
+                                          description: 'Failed to create test',
+                                          variant: 'destructive',
+                                        });
                                       } finally {
                                         setIsGenerating(false);
                                       }
@@ -1041,8 +1076,8 @@ function AdaptiveTestingPageContent() {
                       {/* Pagination Controls */}
                       {totalRecommendationPages > 1 && (
                         <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t">
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
                             disabled={recommendationsPage === 1}
                             onClick={() => setRecommendationsPage(p => Math.max(1, p - 1))}
@@ -1053,8 +1088,8 @@ function AdaptiveTestingPageContent() {
                             Page {recommendationsPage} of {totalRecommendationPages}
                             <span className="text-gray-400 ml-2">({recommendations.length} recommendations)</span>
                           </span>
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
                             disabled={recommendationsPage === totalRecommendationPages}
                             onClick={() => setRecommendationsPage(p => Math.min(totalRecommendationPages, p + 1))}
@@ -1090,4 +1125,11 @@ function AdaptiveTestingPageContent() {
     </div>
   );
 }
-export default function AdaptiveTestingPage() { return ( <Suspense fallback={<TestPageSkeleton />}> <AdaptiveTestingPageContent /> </Suspense> ); }
+export default function AdaptiveTestingPage() {
+  return (
+    <Suspense fallback={<TestPageSkeleton />}>
+      {' '}
+      <AdaptiveTestingPageContent />{' '}
+    </Suspense>
+  );
+}

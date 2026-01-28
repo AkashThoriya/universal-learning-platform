@@ -43,8 +43,6 @@ export default function AdaptiveTestCard({
   className,
   showDetailedMetrics = false,
 }: AdaptiveTestCardProps) {
-
-
   const getStatusIcon = (): LucideIcon => {
     switch (test.status) {
       case 'completed':
@@ -163,9 +161,7 @@ export default function AdaptiveTestCard({
             </div>
 
             {/* Animated background pattern */}
-            <motion.div
-              className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-white/10"
-            />
+            <motion.div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-white/10" />
           </div>
 
           <CardContent className="flex-1 flex flex-col p-6 space-y-6">
@@ -256,7 +252,9 @@ export default function AdaptiveTestCard({
                   <div className="bg-green-50 rounded-lg p-2">
                     <div className="text-xs text-green-600 font-medium">Ability</div>
                     <div className="text-sm font-bold text-green-800">
-                      {Number.isNaN(test.performance.finalAbilityEstimate) ? '0.00' : test.performance.finalAbilityEstimate.toFixed(2)}
+                      {Number.isNaN(test.performance.finalAbilityEstimate)
+                        ? '0.00'
+                        : test.performance.finalAbilityEstimate.toFixed(2)}
                     </div>
                   </div>
                   <div className="bg-orange-50 rounded-lg p-2">
@@ -278,13 +276,19 @@ export default function AdaptiveTestCard({
                       <div>
                         <span className="text-purple-600">Efficiency:</span>
                         <span className="ml-1 font-medium">
-                          {Number.isNaN(test.adaptiveMetrics.algorithmEfficiency) ? '0' : (test.adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
+                          {Number.isNaN(test.adaptiveMetrics.algorithmEfficiency)
+                            ? '0'
+                            : (test.adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}
+                          %
                         </span>
                       </div>
                       <div>
                         <span className="text-purple-600">Stability:</span>
                         <span className="ml-1 font-medium">
-                          {Number.isNaN(test.adaptiveMetrics.abilityEstimateStability) ? '0' : (test.adaptiveMetrics.abilityEstimateStability * 100).toFixed(0)}%
+                          {Number.isNaN(test.adaptiveMetrics.abilityEstimateStability)
+                            ? '0'
+                            : (test.adaptiveMetrics.abilityEstimateStability * 100).toFixed(0)}
+                          %
                         </span>
                       </div>
                     </div>

@@ -2,20 +2,13 @@
 
 /**
  * @fileoverview Test Configuration Modal
- * 
+ *
  * Modal dialog for configuring adaptive test generation with
  * subject/topic selection and difficulty settings.
  */
 
 import { useState, useEffect } from 'react';
-import {
-  Brain,
-  BookOpen,
-  Target,
-  Zap,
-  X,
-  Clock,
-} from 'lucide-react';
+import { Brain, BookOpen, Target, Zap, X, Clock } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -27,13 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
@@ -82,7 +69,7 @@ export function TestConfigModal({
   preSelectedQuestionCount,
 }: TestConfigModalProps) {
   const { user } = useAuth();
-  
+
   useEffect(() => {
     // Optional: Log when opened via props for tracking?
     // logInfo('[TestConfigModal] Opened', { preSelectedSubject, preSelectedTopic });
@@ -90,7 +77,7 @@ export function TestConfigModal({
 
   const [loading, setLoading] = useState(true);
   const [subjects, setSubjects] = useState<SyllabusSubject[]>([]);
-  
+
   // Form state
   const [selectedSubject, setSelectedSubject] = useState<string>(preSelectedSubject || '');
   const [selectedTopics, setSelectedTopics] = useState<string[]>(preSelectedTopic ? [preSelectedTopic] : []);
@@ -101,22 +88,23 @@ export function TestConfigModal({
   useEffect(() => {
     const loadSyllabus = async () => {
       if (!user?.uid || !open) return;
-      
+
       try {
         setLoading(true);
         const syllabusData = await getSyllabus(user.uid);
-        
+
         const mappedSubjects: SyllabusSubject[] = syllabusData.map((subject: any) => ({
           id: subject.id,
           name: subject.name,
-          topics: subject.topics?.map((topic: any) => ({
-            id: topic.id,
-            name: topic.name,
-          })) || [],
+          topics:
+            subject.topics?.map((topic: any) => ({
+              id: topic.id,
+              name: topic.name,
+            })) || [],
         }));
-        
+
         setSubjects(mappedSubjects);
-        
+
         // Set pre-selected values
         if (preSelectedSubject && !selectedSubject) {
           setSelectedSubject(preSelectedSubject);
@@ -139,11 +127,7 @@ export function TestConfigModal({
 
   // Handle topic toggle
   const handleTopicToggle = (topicId: string) => {
-    setSelectedTopics(prev => 
-      prev.includes(topicId)
-        ? prev.filter(t => t !== topicId)
-        : [...prev, topicId]
-    );
+    setSelectedTopics(prev => (prev.includes(topicId) ? prev.filter(t => t !== topicId) : [...prev, topicId]));
   };
 
   // Handle subject change
@@ -164,9 +148,7 @@ export function TestConfigModal({
       topics: topicNames.length > 0 ? topicNames : [],
       difficulty,
       questionCount,
-      syllabusContext: topicNames.length > 0 
-        ? `Focus on: ${topicNames.join(', ')} from ${subject?.name}`
-        : undefined,
+      syllabusContext: topicNames.length > 0 ? `Focus on: ${topicNames.join(', ')} from ${subject?.name}` : undefined,
     };
 
     logInfo('[TestConfigModal] Generating with config', { config });
@@ -183,9 +165,7 @@ export function TestConfigModal({
             <Brain className="h-5 w-5 text-purple-600" />
             Configure Smart Test
           </DialogTitle>
-          <DialogDescription>
-            Select subject, topics, and difficulty to generate a personalized test.
-          </DialogDescription>
+          <DialogDescription>Select subject, topics, and difficulty to generate a personalized test.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -195,16 +175,12 @@ export function TestConfigModal({
               <BookOpen className="h-4 w-4" />
               Subject
             </Label>
-            <Select
-              value={selectedSubject}
-              onValueChange={handleSubjectChange}
-              disabled={loading}
-            >
+            <Select value={selectedSubject} onValueChange={handleSubjectChange} disabled={loading}>
               <SelectTrigger>
                 <SelectValue placeholder={loading ? 'Loading subjects...' : 'Select a subject'} />
               </SelectTrigger>
               <SelectContent>
-                {subjects.map((subject) => (
+                {subjects.map(subject => (
                   <SelectItem key={subject.id} value={subject.id}>
                     {subject.name}
                   </SelectItem>
@@ -220,11 +196,9 @@ export function TestConfigModal({
                 <Target className="h-4 w-4" />
                 Topics (optional)
               </Label>
-              <p className="text-xs text-muted-foreground">
-                Select specific topics or leave empty for all topics
-              </p>
+              <p className="text-xs text-muted-foreground">Select specific topics or leave empty for all topics</p>
               <div className="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto p-2 border rounded-lg bg-muted/30">
-                {availableTopics.map((topic) => (
+                {availableTopics.map(topic => (
                   <Badge
                     key={topic.id}
                     variant={selectedTopics.includes(topic.id) ? 'default' : 'outline'}
@@ -232,9 +206,7 @@ export function TestConfigModal({
                     onClick={() => handleTopicToggle(topic.id)}
                   >
                     {topic.name}
-                    {selectedTopics.includes(topic.id) && (
-                      <X className="h-3 w-3 ml-1" />
-                    )}
+                    {selectedTopics.includes(topic.id) && <X className="h-3 w-3 ml-1" />}
                   </Badge>
                 ))}
               </div>
@@ -253,7 +225,7 @@ export function TestConfigModal({
               Difficulty
             </Label>
             <div className="grid grid-cols-2 gap-2">
-              {DIFFICULTY_OPTIONS.map((option) => (
+              {DIFFICULTY_OPTIONS.map(option => (
                 <button
                   key={option.value}
                   type="button"
@@ -299,9 +271,7 @@ export function TestConfigModal({
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-900">Estimated Duration</p>
-                <p className="text-lg font-bold text-blue-700">
-                  ~{Math.ceil(questionCount * 2)} minutes
-                </p>
+                <p className="text-lg font-bold text-blue-700">~{Math.ceil(questionCount * 2)} minutes</p>
               </div>
             </div>
           </div>

@@ -1,14 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  Clock, 
-  Calendar, 
-  RotateCw, 
-  TrendingUp 
-} from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, Calendar, RotateCw, TrendingUp } from 'lucide-react';
 import { TopicProgress } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
 import { format } from 'date-fns';
@@ -20,11 +13,7 @@ interface TopicStatsRailProps {
   onAddLog?: () => void;
 }
 
-export function TopicStatsRail({ 
-  progress, 
-  onMarkCompleted, 
-  onNeedsReview 
-}: TopicStatsRailProps) {
+export function TopicStatsRail({ progress, onMarkCompleted, onNeedsReview }: TopicStatsRailProps) {
   const isCompleted = progress?.status === 'completed';
   const needsReview = progress?.needsReview || false;
   const revisions = progress?.revisionCount || 0;
@@ -40,13 +29,11 @@ export function TopicStatsRail({
             <h3 className="font-semibold text-slate-900">Topic Status</h3>
             <p className="text-sm text-slate-500">Track your journey to mastery</p>
           </div>
-          
-          <Button 
+
+          <Button
             className={cn(
-              "w-full h-12 text-base font-medium transition-all shadow-sm group",
-              isCompleted 
-                ? "bg-green-600 hover:bg-green-700 text-white" 
-                : "bg-slate-900 hover:bg-slate-800 text-white"
+              'w-full h-12 text-base font-medium transition-all shadow-sm group',
+              isCompleted ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'
             )}
             onClick={onMarkCompleted}
           >
@@ -66,8 +53,8 @@ export function TopicStatsRail({
           <Button
             variant="outline"
             className={cn(
-              "w-full border-dashed",
-              needsReview ? "border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100" : "text-slate-600"
+              'w-full border-dashed',
+              needsReview ? 'border-amber-400 bg-amber-50 text-amber-700 hover:bg-amber-100' : 'text-slate-600'
             )}
             onClick={onNeedsReview}
           >
@@ -105,7 +92,7 @@ export function TopicStatsRail({
         </div>
 
         <div className="col-span-2 bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center justify-between">
-           <div>
+          <div>
             <div className="flex items-center gap-2 text-slate-500 mb-1">
               <Calendar className="h-3.5 w-3.5" />
               <span className="text-xs font-medium uppercase tracking-wider">Last Revised</span>
@@ -113,12 +100,12 @@ export function TopicStatsRail({
             <div className="text-sm font-semibold text-slate-900">
               {progress?.lastRevised ? format(progress.lastRevised.toDate(), 'MMM d, yyyy') : 'Never'}
             </div>
-           </div>
-           {progress?.lastRevised && (
-             <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-normal">
-               {/* Could add days ago logic here */}
-             </Badge>
-           )}
+          </div>
+          {progress?.lastRevised && (
+            <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-normal">
+              {/* Could add days ago logic here */}
+            </Badge>
+          )}
         </div>
       </div>
 

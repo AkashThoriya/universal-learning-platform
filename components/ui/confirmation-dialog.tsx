@@ -46,7 +46,9 @@ export function ConfirmationDialog({
               // Prevent default to allow async actions if needed, though for this simple wrapper we just call onConfirm
               onConfirm();
             }}
-            className={variant === 'destructive' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''}
+            className={
+              variant === 'destructive' ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90' : ''
+            }
           >
             {confirmText}
           </AlertDialogAction>

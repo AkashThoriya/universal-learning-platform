@@ -136,7 +136,7 @@ class GeminiProvider {
     const strategies = [
       // Strategy 1: Direct parse (best case - LLM returned pure JSON)
       () => JSON.parse(content.trim()),
-      
+
       // Strategy 2: Remove markdown code fences
       () => {
         const cleaned = content
@@ -145,14 +145,14 @@ class GeminiProvider {
           .trim();
         return JSON.parse(cleaned);
       },
-      
+
       // Strategy 3: Extract JSON array from surrounding text
       () => {
         const match = content.match(/\[\s*\{[\s\S]*\}\s*\]/);
         if (!match) throw new Error('No JSON array found in response');
         return JSON.parse(match[0]);
       },
-      
+
       // Strategy 4: Fix common JSON issues and retry
       () => {
         let fixed = content
@@ -166,22 +166,22 @@ class GeminiProvider {
           // Remove comments (// style)
           .replace(/\/\/[^\n]*/g, '')
           .trim();
-        
+
         const match = fixed.match(/\[\s*\{[\s\S]*\}\s*\]/);
         if (!match) throw new Error('No JSON array after cleanup');
         return JSON.parse(match[0]);
-      }
+      },
     ];
 
     let lastError: Error | null = null;
-    
+
     for (let i = 0; i < strategies.length; i++) {
       try {
         const strategy = strategies[i];
         if (!strategy) continue;
         const rawData = strategy();
         const validated = this.validateAndNormalizeQuestions(rawData, request);
-        
+
         if (validated.length > 0) {
           logInfo(`[LLM] Successfully parsed ${validated.length} questions using strategy ${i + 1}`);
           return validated;

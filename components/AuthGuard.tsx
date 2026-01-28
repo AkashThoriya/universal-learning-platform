@@ -61,21 +61,21 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       try {
         const { doc, getDoc } = await import('firebase/firestore');
         const { db } = await import('@/lib/firebase/firebase');
-        
+
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
-        
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          
+
           // Check explicit field first, then fall back to detecting completed onboarding from essential data
           // This handles legacy documents that don't have the explicit onboardingComplete field
           const hasExplicitFlag = userData?.onboardingComplete === true;
           const hasEssentialData = !!(userData?.primaryCourseId && userData?.currentExam && userData?.preferences);
           const isOnboardingComplete = hasExplicitFlag || hasEssentialData;
-          
+
           setOnboardingComplete(isOnboardingComplete);
-          
+
           // Redirect to onboarding if not complete
           if (!isOnboardingComplete) {
             logInfo('[AuthGuard] Onboarding incomplete, redirecting', { userId: user.uid });

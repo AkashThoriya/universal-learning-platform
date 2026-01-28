@@ -685,8 +685,6 @@ function CareerContextInput({ form }: PersonaDetectionStepProps) {
 function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<PersonaFormData>; persona: unknown }) {
   const recommendations = PersonaAwareGoalSetting.getStudyTimeRecommendations(persona as UserPersona);
 
-
-
   return (
     <Card className="border-orange-200 bg-orange-50/50">
       <CardHeader className="pb-4">
@@ -707,7 +705,7 @@ function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<Person
               {form.data.preferences?.dailyStudyGoalMinutes % 60}m
             </span>
           </div>
-          
+
           <div className="bg-white rounded-lg p-3 border space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Recommended:</span>
@@ -722,7 +720,7 @@ function StudyGoalRecommendation({ form, persona }: { form: UseFormReturn<Person
               </span>
             </div>
           </div>
-          
+
           <p className="text-xs text-muted-foreground">
             💡 This is set based on your profile. You'll fine-tune it in the next step.
           </p>

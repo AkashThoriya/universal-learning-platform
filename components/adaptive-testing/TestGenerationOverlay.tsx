@@ -29,23 +29,19 @@ interface TestGenerationOverlayProps {
 }
 
 const TIPS = [
-  "Adaptive tests recalibrate difficulty after every question.",
-  "Consistency is key to mastery.",
-  "Take your time to understand the explanations.",
-  "Focus on accuracy over speed for better adaptation.",
-  "You can review your performance analytics after the test."
+  'Adaptive tests recalibrate difficulty after every question.',
+  'Consistency is key to mastery.',
+  'Take your time to understand the explanations.',
+  'Focus on accuracy over speed for better adaptation.',
+  'You can review your performance analytics after the test.',
 ];
 
 export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps) {
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
-  const { 
-    currentStepIndex, 
-    start, 
-    reset 
-  } = useAiThinking({
+  const { currentStepIndex, start, reset } = useAiThinking({
     steps: STEPS,
-    autoStart: false
+    autoStart: false,
   });
 
   // Handle visibility changes
@@ -96,25 +92,22 @@ export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps)
               <CardContent className="p-6 space-y-6">
                 <div className="space-y-4">
                   {STEPS.map((step, index) => {
-                    // Logic: 
+                    // Logic:
                     // - Completed: index < currentStepIndex
                     // - Current: index === currentStepIndex
                     // - Pending: index > currentStepIndex
-                    
+
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
                     const isPending = index > currentStepIndex;
-                    
+
                     // Special case for last step: If it's current, keep it "active" (spinning/pulsing) forever
                     const isLastStep = index === STEPS.length - 1;
 
                     return (
                       <div
                         key={step.id}
-                        className={cn(
-                          'flex items-center gap-4 transition-all duration-300',
-                          isPending && 'opacity-40'
-                        )}
+                        className={cn('flex items-center gap-4 transition-all duration-300', isPending && 'opacity-40')}
                       >
                         <div className="relative">
                           <div
@@ -123,14 +116,16 @@ export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps)
                               isCompleted
                                 ? 'bg-green-100 text-green-600'
                                 : isCurrent
-                                ? 'bg-blue-100 text-blue-600'
-                                : 'bg-gray-100 text-gray-400'
+                                  ? 'bg-blue-100 text-blue-600'
+                                  : 'bg-gray-100 text-gray-400'
                             )}
                           >
                             {isCompleted ? (
                               <CheckCircle2 className="w-5 h-5" />
                             ) : (
-                              <step.icon className={cn('w-4 h-4', isCurrent && (isLastStep ? 'animate-spin' : 'animate-pulse'))} />
+                              <step.icon
+                                className={cn('w-4 h-4', isCurrent && (isLastStep ? 'animate-spin' : 'animate-pulse'))}
+                              />
                             )}
                           </div>
                           {index < STEPS.length - 1 && (
@@ -163,27 +158,28 @@ export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps)
                     );
                   })}
                 </div>
-                
+
                 {/* Rotating Tips Section */}
                 <div className="pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-bold text-purple-600 px-2 py-0.5 bg-purple-50 rounded-full">Pro Tip</span>
-                    </div>
-                    <div className="h-10 relative overflow-hidden">
-                        <AnimatePresence mode="wait">
-                            <motion.p 
-                                key={currentTipIndex}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                className="text-sm text-gray-600 leading-snug absolute w-full"
-                            >
-                                {TIPS[currentTipIndex]}
-                            </motion.p>
-                        </AnimatePresence>
-                    </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-bold text-purple-600 px-2 py-0.5 bg-purple-50 rounded-full">
+                      Pro Tip
+                    </span>
+                  </div>
+                  <div className="h-10 relative overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={currentTipIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-sm text-gray-600 leading-snug absolute w-full"
+                      >
+                        {TIPS[currentTipIndex]}
+                      </motion.p>
+                    </AnimatePresence>
+                  </div>
                 </div>
-
               </CardContent>
             </Card>
 

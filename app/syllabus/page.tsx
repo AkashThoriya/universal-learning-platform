@@ -85,9 +85,6 @@ export default function SyllabusPage() {
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
 
-
-
-  
   // Enhanced edit state management
   const [editMode, setEditMode] = useState(false);
   const [editingSubject, setEditingSubject] = useState<string | null>(null);
@@ -180,7 +177,6 @@ export default function SyllabusPage() {
   }, [user, syllabus, toast]);
 
   // Subject management functions
-
 
   const addCustomSubject = useCallback(() => {
     const newSubjectId = `custom-${Date.now()}`;
@@ -416,7 +412,6 @@ export default function SyllabusPage() {
       subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       subject.topics.some(topic => topic.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-
     // Mastery filter
     let matchesMastery = true;
     if (masteryFilter !== 'all') {
@@ -439,7 +434,6 @@ export default function SyllabusPage() {
 
   // Calculate completed topics count for Strategy Insights
   const completedTopicsCount = progress.filter(p => p.status === 'completed').length;
-
 
   const getMasteryColor = (score: number) => {
     if (score >= MASTERY_THRESHOLD) {
@@ -470,62 +464,62 @@ export default function SyllabusPage() {
         <BottomNav />
 
         <PageTransition>
-        <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-8">
-          {/* Enhanced Header */}
-          <FeaturePageHeader
-            title="Strategic Syllabus"
-            description="Manage your study priorities and track mastery progress"
-            icon={<BookOpen className="h-5 w-5 text-blue-600" />}
-            actions={
-              editMode ? (
-                <div className="flex flex-wrap items-center gap-2">
-                  <Button
-                    variant={bulkEditMode ? 'default' : 'outline'}
-                    onClick={() => {
-                      setBulkEditMode(!bulkEditMode);
-                      setSelectedTopics(new Set());
-                    }}
-                    className="flex items-center gap-2"
-                    size="sm"
-                  >
-                    <Layers className="h-4 w-4" />
-                    <span>{bulkEditMode ? 'Exit Bulk' : 'Bulk Edit'}</span>
-                  </Button>
+          <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-28 xl:pb-6 space-y-8">
+            {/* Enhanced Header */}
+            <FeaturePageHeader
+              title="Strategic Syllabus"
+              description="Manage your study priorities and track mastery progress"
+              icon={<BookOpen className="h-5 w-5 text-blue-600" />}
+              actions={
+                editMode ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      variant={bulkEditMode ? 'default' : 'outline'}
+                      onClick={() => {
+                        setBulkEditMode(!bulkEditMode);
+                        setSelectedTopics(new Set());
+                      }}
+                      className="flex items-center gap-2"
+                      size="sm"
+                    >
+                      <Layers className="h-4 w-4" />
+                      <span>{bulkEditMode ? 'Exit Bulk' : 'Bulk Edit'}</span>
+                    </Button>
 
-                  <Button
-                    onClick={saveSyllabusChanges}
-                    disabled={saving}
-                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-                    size="sm"
-                  >
-                    <Save className="h-4 w-4" />
-                    <span>{saving ? 'Saving...' : 'Save'}</span>
-                  </Button>
+                    <Button
+                      onClick={saveSyllabusChanges}
+                      disabled={saving}
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                      size="sm"
+                    >
+                      <Save className="h-4 w-4" />
+                      <span>{saving ? 'Saving...' : 'Save'}</span>
+                    </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setEditMode(false);
-                      cancelEditing();
-                      setBulkEditMode(false);
-                      setSelectedTopics(new Set());
-                    }}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Cancel
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setEditMode(false);
+                        cancelEditing();
+                        setBulkEditMode(false);
+                        setSelectedTopics(new Set());
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/notes-revision">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Revision Notes
+                    </Link>
                   </Button>
-                </div>
-              ) : (
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/notes-revision">
-                    <FileText className="h-4 w-4 mr-2" />
-                    Revision Notes
-                  </Link>
-                </Button>
-              )
-            }
-          />
+                )
+              }
+            />
 
             {/* Bulk Edit Actions */}
             {editMode && bulkEditMode && selectedTopics.size > 0 && (
@@ -550,152 +544,147 @@ export default function SyllabusPage() {
               </div>
             )}
 
-          {/* Strategy Insights Section */}
-          {!loading && userProfile && (
-            <div className="animate-in fade-in duration-200">
-              <StrategyInsights 
-                user={userProfile} 
-                syllabus={syllabus} 
-                completedTopicsCount={completedTopicsCount} 
-              />
-            </div>
-          )}
+            {/* Strategy Insights Section */}
+            {!loading && userProfile && (
+              <div className="animate-in fade-in duration-200">
+                <StrategyInsights user={userProfile} syllabus={syllabus} completedTopicsCount={completedTopicsCount} />
+              </div>
+            )}
 
+            {/* Filters */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Filter className="h-5 w-5" />
+                  <span>Filters & Search</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="search-topics" className="text-sm font-medium">
+                      Search Topics
+                    </label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="search-topics"
+                        placeholder="Search subjects or topics..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
 
+                  <div className="space-y-2">
+                    <label htmlFor="mastery-filter" className="text-sm font-medium">
+                      Filter by Mastery
+                    </label>
+                    <Select value={masteryFilter} onValueChange={setMasteryFilter}>
+                      <SelectTrigger id="mastery-filter">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Levels</SelectItem>
+                        <SelectItem value="low">Low (&lt; 50%)</SelectItem>
+                        <SelectItem value="medium">Medium (50-79%)</SelectItem>
+                        <SelectItem value="high">High (≥ {MASTERY_THRESHOLD}%)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-          {/* Filters */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Filter className="h-5 w-5" />
-                <span>Filters & Search</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="search-topics" className="text-sm font-medium">
-                    Search Topics
-                  </label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="search-topics"
-                      placeholder="Search subjects or topics..."
-                      value={searchQuery}
-                      onChange={e => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Quick Actions</label>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setMasteryFilter('all');
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="space-y-2">
-                  <label htmlFor="mastery-filter" className="text-sm font-medium">
-                    Filter by Mastery
-                  </label>
-                  <Select value={masteryFilter} onValueChange={setMasteryFilter}>
-                    <SelectTrigger id="mastery-filter">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Levels</SelectItem>
-                      <SelectItem value="low">Low (&lt; 50%)</SelectItem>
-                      <SelectItem value="medium">Medium (50-79%)</SelectItem>
-                      <SelectItem value="high">High (≥ {MASTERY_THRESHOLD}%)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Quick Actions</label>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setMasteryFilter('all');
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
+            {/* Overview Stats - Clean Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {/* Total Subjects */}
+              <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-slate-100">
+                    <BookOpen className="h-5 w-5 text-slate-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-slate-900">{syllabus.length}</p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Total Subjects</p>
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Overview Stats - Clean Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {/* Total Subjects */}
-            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-slate-100">
-                  <BookOpen className="h-5 w-5 text-slate-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900">{syllabus.length}</p>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Total Subjects</p>
+              {/* Total Topics */}
+              <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-slate-100">
+                    <Target className="h-5 w-5 text-slate-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-slate-900">
+                      {syllabus.reduce((sum, subject) => sum + subject.topics.length, 0)}
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Total Topics</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Total Topics */}
-            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-slate-100">
-                  <Target className="h-5 w-5 text-slate-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900">
-                    {syllabus.reduce((sum, subject) => sum + subject.topics.length, 0)}
-                  </p>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Total Topics</p>
+              {/* Average Mastery */}
+              <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-blue-50">
+                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-slate-900">
+                      {Math.round(
+                        syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
+                      )}
+                      %
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Avg Mastery</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Average Mastery */}
-            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-blue-50">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900">
-                    {Math.round(
-                      syllabus.reduce((sum, subject) => sum + getSubjectMastery(subject), 0) / (syllabus.length || 1)
-                    )}%
-                  </p>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Avg Mastery</p>
+              {/* Due for Revision */}
+              <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-amber-50">
+                    <Clock className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-slate-900">
+                      {
+                        progress.filter(p => {
+                          if (!p.nextRevision?.toMillis) return false;
+                          const daysSince = Math.floor(
+                            (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
+                          );
+                          return daysSince >= 0;
+                        }).length
+                      }
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Due for Revision</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Due for Revision */}
-            <div className="bg-white rounded-xl border border-slate-100 p-4 sm:p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-amber-50">
-                  <Clock className="h-5 w-5 text-amber-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xl sm:text-2xl font-bold text-slate-900">
-                    {
-                      progress.filter(p => {
-                        if (!p.nextRevision?.toMillis) return false;
-                        const daysSince = Math.floor(
-                          (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
-                        );
-                        return daysSince >= 0;
-                      }).length
-                    }
-                  </p>
-                  <p className="text-xs sm:text-sm text-slate-500 font-medium truncate">Due for Revision</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Subjects List */}
-          <>
+            {/* Subjects List */}
+            <>
               {/* Enhanced Edit Mode Controls */}
               {editMode && (
                 <div className="space-y-4">
@@ -993,7 +982,7 @@ export default function SyllabusPage() {
                                                       <Input
                                                         id={`topic-hours-${topic.id}`}
                                                         type="number"
-inputMode="numeric"
+                                                        inputMode="numeric"
                                                         min="1"
                                                         max="100"
                                                         value={tempTopicHours}
@@ -1022,7 +1011,9 @@ inputMode="numeric"
                                               ) : (
                                                 <div className="space-y-1">
                                                   <div className="flex items-center space-x-2">
-                                                    <h6 className="font-medium text-gray-900 line-clamp-2 break-words">{topic.name}</h6>
+                                                    <h6 className="font-medium text-gray-900 line-clamp-2 break-words">
+                                                      {topic.name}
+                                                    </h6>
                                                     {topic.estimatedHours && (
                                                       <Badge variant="secondary" className="text-xs">
                                                         {topic.estimatedHours}h
@@ -1099,7 +1090,7 @@ inputMode="numeric"
                                                     <AlertDialog>
                                                       <AlertDialogTrigger asChild>
                                                         <DropdownMenuItem
-                                                          onSelect={(e) => e.preventDefault()}
+                                                          onSelect={e => e.preventDefault()}
                                                           className="text-red-600 focus:text-red-600"
                                                         >
                                                           <Trash2 className="h-3 w-3 mr-2" />
@@ -1110,7 +1101,8 @@ inputMode="numeric"
                                                         <AlertDialogHeader>
                                                           <AlertDialogTitle>Delete Topic?</AlertDialogTitle>
                                                           <AlertDialogDescription>
-                                                            This will permanently delete &quot;{topic.name}&quot;. This action cannot be undone.
+                                                            This will permanently delete &quot;{topic.name}&quot;. This
+                                                            action cannot be undone.
                                                           </AlertDialogDescription>
                                                         </AlertDialogHeader>
                                                         <AlertDialogFooter>
@@ -1194,51 +1186,61 @@ inputMode="numeric"
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                               {subject.topics.length === 0 ? (
                                 <div className="col-span-full py-12 text-center bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-                                   <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-                                   <p className="text-sm text-slate-500 font-medium">No topics yet</p>
-                                   <p className="text-xs text-slate-400 mt-1 mb-4">Add topics to start tracking your progress</p>
-                                   <Button variant="outline" size="sm" onClick={() => setEditMode(true)} className="text-blue-600 border-blue-200 hover:bg-blue-50">
-                                     Switch to Edit Mode
-                                   </Button>
+                                  <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                                  <p className="text-sm text-slate-500 font-medium">No topics yet</p>
+                                  <p className="text-xs text-slate-400 mt-1 mb-4">
+                                    Add topics to start tracking your progress
+                                  </p>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setEditMode(true)}
+                                    className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                                  >
+                                    Switch to Edit Mode
+                                  </Button>
                                 </div>
                               ) : (
                                 subject.topics.map(topic => {
-                                const topicProgress = getTopicProgress(topic.id);
-                                const masteryScore = topicProgress?.masteryScore || 0;
+                                  const topicProgress = getTopicProgress(topic.id);
+                                  const masteryScore = topicProgress?.masteryScore || 0;
 
-                                return (
-                                  <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
-                                    <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                                      <CardContent className="p-4">
-                                        <div className="space-y-3">
-                                          <div>
-                                            <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
-                                            {topic.estimatedHours && (
-                                              <p className="text-xs text-gray-500 mt-1">{topic.estimatedHours} hours</p>
+                                  return (
+                                    <Link key={topic.id} href={`/syllabus/${topic.id}?subject=${subject.id}`}>
+                                      <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                                        <CardContent className="p-4">
+                                          <div className="space-y-3">
+                                            <div>
+                                              <h4 className="font-medium text-sm line-clamp-2">{topic.name}</h4>
+                                              {topic.estimatedHours && (
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                  {topic.estimatedHours} hours
+                                                </p>
+                                              )}
+                                            </div>
+
+                                            <div className="flex items-center justify-between">
+                                              <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
+                                                {masteryScore}% mastery
+                                              </span>
+                                              <ChevronRight className="h-4 w-4 text-gray-400" />
+                                            </div>
+
+                                            <Progress value={masteryScore} className="h-1" />
+
+                                            {topicProgress?.lastRevised && (
+                                              <p className="text-xs text-muted-foreground">
+                                                Last studied:{' '}
+                                                {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
+                                              </p>
                                             )}
                                           </div>
-
-                                          <div className="flex items-center justify-between">
-                                            <span className={`text-sm font-medium ${getMasteryColor(masteryScore)}`}>
-                                              {masteryScore}% mastery
-                                            </span>
-                                            <ChevronRight className="h-4 w-4 text-gray-400" />
-                                          </div>
-
-                                          <Progress value={masteryScore} className="h-1" />
-
-                                          {topicProgress?.lastRevised && (
-                                            <p className="text-xs text-muted-foreground">
-                                              Last studied:{' '}
-                                              {new Date(topicProgress.lastRevised.toDate()).toLocaleDateString()}
-                                            </p>
-                                          )}
-                                        </div>
-                                      </CardContent>
-                                    </Card>
-                                  </Link>
-                                );
-                              }))}
+                                        </CardContent>
+                                      </Card>
+                                    </Link>
+                                  );
+                                })
+                              )}
                             </div>
                           )}
                         </CardContent>
@@ -1259,8 +1261,8 @@ inputMode="numeric"
                   </CardContent>
                 </Card>
               )}
-          </>
-        </div>
+            </>
+          </div>
           {/* Edit Syllabus Toggle - At bottom, subtle but noticeable */}
           {!editMode && (
             <div className="flex justify-center py-8 mt-8">

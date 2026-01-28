@@ -48,7 +48,7 @@ interface PageHeaderProps {
 
 /**
  * Premium Page Header Component
- * 
+ *
  * Features:
  * - Glass-morphism background option
  * - Gradient icon backgrounds
@@ -73,9 +73,9 @@ export default function PageHeader({
       {backButton && (
         <div className="flex items-center">
           <Link href={backButton.href}>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -105,10 +105,7 @@ export default function PageHeader({
           <div className={cn('space-y-1', centered && 'text-center')}>
             {/* Badge */}
             {badge && (
-              <Badge 
-                variant={badge.variant || 'secondary'} 
-                className="mb-2 px-3 py-1 text-xs font-medium"
-              >
+              <Badge variant={badge.variant || 'secondary'} className="mb-2 px-3 py-1 text-xs font-medium">
                 {badge.text}
               </Badge>
             )}
@@ -126,11 +123,7 @@ export default function PageHeader({
             </h1>
 
             {/* Description */}
-            {description && (
-              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
-                {description}
-              </p>
-            )}
+            {description && <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">{description}</p>}
           </div>
         </div>
 
@@ -148,11 +141,7 @@ export default function PageHeader({
       </div>
 
       {/* Additional Content */}
-      {children && (
-        <div className={cn(centered && 'text-center')}>
-          {children}
-        </div>
-      )}
+      {children && <div className={cn(centered && 'text-center')}>{children}</div>}
     </div>
   );
 }
@@ -188,7 +177,7 @@ export function SimplePageHeader({
 /**
  * Feature page header with icon and optional actions
  * Best for: Main feature pages (Syllabus, Review, Test, etc.)
- * 
+ *
  * @example
  * ```tsx
  * <FeaturePageHeader

@@ -25,8 +25,8 @@ export const LEARNING_GOAL_TEMPLATES: LearningGoalTemplate[] = [
     difficulty: 'beginner',
     estimatedDuration: 30,
     requirements: ['Basic computer literacy'],
-    outcomes: ['Understanding of variables, loops, and functions']
-  }
+    outcomes: ['Understanding of variables, loops, and functions'],
+  },
 ];
 
 export const TEMPLATES_BY_CATEGORY: Record<string, LearningGoalTemplate[]> = {

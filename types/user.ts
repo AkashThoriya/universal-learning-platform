@@ -2,10 +2,10 @@ import { Timestamp } from 'firebase/firestore';
 
 /**
  * @fileoverview User Type Definitions
- * 
+ *
  * This file re-exports the canonical User type from exam.ts and provides
  * legacy type definitions for backward compatibility during migration.
- * 
+ *
  * @author Exam Strategy Engine Team
  * @version 2.0.0
  */

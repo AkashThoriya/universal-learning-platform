@@ -130,13 +130,17 @@ const onboardingSchema = z.object({
             description: z.string().optional(),
             learningTip: z.array(z.string()).optional(),
             mustNotMiss: z.array(z.string()).optional(),
-            practiceQuestions: z.array(z.object({
-              name: z.string(),
-              slug: z.string(),
-              number: z.number().optional(),
-              difficulty: z.enum(['Easy', 'Medium', 'Hard']),
-              link: z.string(),
-            })).optional(),
+            practiceQuestions: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  slug: z.string(),
+                  number: z.number().optional(),
+                  difficulty: z.enum(['Easy', 'Medium', 'Hard']),
+                  link: z.string(),
+                })
+              )
+              .optional(),
           })
         ),
         estimatedHours: z
@@ -360,7 +364,7 @@ export default function OnboardingSetupPage() {
       setTimeout(() => {
         // Focus the step content for accessibility
         stepContentRef.current?.focus({ preventScroll: true });
-        
+
         // Now scroll to top AFTER focus (with preventScroll, focus won't move viewport)
         // Use requestAnimationFrame to ensure DOM is ready after React re-render
         requestAnimationFrame(() => {
@@ -816,10 +820,10 @@ export default function OnboardingSetupPage() {
 
       // Prepare user data with new schema structure
       const selectedExam = form.data.selectedExamId ? getExamById(form.data.selectedExamId) : null;
-      const examName = form.data.isCustomExam 
-        ? (form.data.customExam?.name || 'Custom Course')
-        : (selectedExam?.name || 'Unknown Course');
-      
+      const examName = form.data.isCustomExam
+        ? form.data.customExam?.name || 'Custom Course'
+        : selectedExam?.name || 'Unknown Course';
+
       const profileData: Partial<UserType> = {
         displayName: form.data.displayName,
         // Use new currentExam structure instead of deprecated selectedExamId/examDate
@@ -832,20 +836,24 @@ export default function OnboardingSetupPage() {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         ...(form.data.userPersona ? { persona: form.data.userPersona } : {}),
-        ...(form.data.preferences ? { 
-          preferences: {
-            ...form.data.preferences,
-            theme: 'system' 
-          }
-        } : {}),
+        ...(form.data.preferences
+          ? {
+              preferences: {
+                ...form.data.preferences,
+                theme: 'system',
+              },
+            }
+          : {}),
         ...(form.data.isCustomExam !== undefined ? { isCustomExam: form.data.isCustomExam } : {}),
-        ...(form.data.isCustomExam && form.data.customExam ? {
-          customExam: {
-            name: form.data.customExam?.name || 'Custom Course',
-            ...(form.data.customExam?.description ? { description: form.data.customExam.description } : {}),
-            ...(form.data.customExam?.category ? { category: form.data.customExam.category } : {})
-          }
-        } : {}),
+        ...(form.data.isCustomExam && form.data.customExam
+          ? {
+              customExam: {
+                name: form.data.customExam?.name || 'Custom Course',
+                ...(form.data.customExam?.description ? { description: form.data.customExam.description } : {}),
+                ...(form.data.customExam?.category ? { category: form.data.customExam.category } : {}),
+              },
+            }
+          : {}),
       };
 
       // Save data with retry logic and better error handling
@@ -881,49 +889,58 @@ export default function OnboardingSetupPage() {
           // CRITICAL: Run operations sequentially to prevent partial data state
           // If createUser succeeds but saveSyllabus fails, we would have inconsistent data
           // Running sequentially ensures atomicity - if first fails, second is not attempted
-          
+
           // Construct proper SelectedCourse objects with correct dates
           const primaryExamId = form.data.selectedExamId;
-          const finalSelectedCourses = (form.data.selectedCourses && form.data.selectedCourses.length > 0)
-            ? form.data.selectedCourses.map(course => {
-                // strict destructure to avoid undefined values in spread
-                const { isCustom, customExam, ...courseRest } = course;
-                const safeCourse = {
+          const finalSelectedCourses =
+            form.data.selectedCourses && form.data.selectedCourses.length > 0
+              ? form.data.selectedCourses.map(course => {
+                  // strict destructure to avoid undefined values in spread
+                  const { isCustom, customExam, ...courseRest } = course;
+                  const safeCourse = {
                     ...courseRest,
                     ...(isCustom !== undefined ? { isCustom: !!isCustom } : {}),
-                    ...(customExam ? { customExam } : {})
-                };
+                    ...(customExam ? { customExam } : {}),
+                  };
 
-                // If this is the primary course, sync the date from step 2
-                if (course.examId === primaryExamId) {
+                  // If this is the primary course, sync the date from step 2
+                  if (course.examId === primaryExamId) {
+                    return {
+                      ...safeCourse,
+                      targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
+                      priority: 1,
+                    };
+                  }
+                  // Ensure course matches SelectedCourseStrict type
                   return {
                     ...safeCourse,
-                    targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
-                    priority: 1
+                    // Ensure targetDate is valid or fallback
+                    targetDate: course.targetDate || Timestamp.now(),
                   };
-                }
-                // Ensure course matches SelectedCourseStrict type
-                return {
-                  ...safeCourse,
-                  // Ensure targetDate is valid or fallback
-                  targetDate: course.targetDate || Timestamp.now()
-                };
-              })
-            : [{
-                // Fallback if no selectedCourses (shouldn't happen with validation)
-                examId: primaryExamId || '',
-                examName: form.data.isCustomExam ? (form.data.customExam?.name || 'Custom Exam') : (getExamById(primaryExamId || '')?.name || 'Unknown Exam'),
-                targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
-                priority: 1,
-                ...(form.data.isCustomExam !== undefined ? { isCustom: !!form.data.isCustomExam } : {}),
-                ...(form.data.customExam ? {
-                  customExam: {
-                    ...(form.data.customExam?.name ? { name: form.data.customExam.name } : {}),
-                    ...(form.data.customExam?.description ? { description: form.data.customExam.description } : {}),
-                    ...(form.data.customExam?.category ? { category: form.data.customExam.category } : {})
-                  }
-                } : {})
-              }];
+                })
+              : [
+                  {
+                    // Fallback if no selectedCourses (shouldn't happen with validation)
+                    examId: primaryExamId || '',
+                    examName: form.data.isCustomExam
+                      ? form.data.customExam?.name || 'Custom Exam'
+                      : getExamById(primaryExamId || '')?.name || 'Unknown Exam',
+                    targetDate: Timestamp.fromDate(new Date(form.data.examDate)),
+                    priority: 1,
+                    ...(form.data.isCustomExam !== undefined ? { isCustom: !!form.data.isCustomExam } : {}),
+                    ...(form.data.customExam
+                      ? {
+                          customExam: {
+                            ...(form.data.customExam?.name ? { name: form.data.customExam.name } : {}),
+                            ...(form.data.customExam?.description
+                              ? { description: form.data.customExam.description }
+                              : {}),
+                            ...(form.data.customExam?.category ? { category: form.data.customExam.category } : {}),
+                          },
+                        }
+                      : {}),
+                  },
+                ];
 
           const profileDataFinal: Partial<UserType> = {
             ...profileData,
@@ -940,30 +957,35 @@ export default function OnboardingSetupPage() {
           // 1. Save Primary Syllabus to legacy location (for backward compatibility)
           logInfo('Step 2: Saving syllabus data (Legacy)', { userId: user.uid });
           await saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]);
-          
+
           // 2. Save ALL syllabi to new course-specific locations (for multi-course support)
-          logInfo('Step 2b: Saving multi-course syllabus data', { userId: user.uid, courseCount: finalSelectedCourses.length });
-          
-          // Create import for saveSyllabusForCourse if not exists or use dynamic import/require 
-          // Note: Please ensure saveSyllabusForCourse is imported at top of file. 
+          logInfo('Step 2b: Saving multi-course syllabus data', {
+            userId: user.uid,
+            courseCount: finalSelectedCourses.length,
+          });
+
+          // Create import for saveSyllabusForCourse if not exists or use dynamic import/require
+          // Note: Please ensure saveSyllabusForCourse is imported at top of file.
           // Since I cannot change imports in this block, I assume it's imported or I'll use a clearer way.
           // Wait, I missed adding the import in previous step. I should assume it's NOT imported yet.
           // I will fix the import in a separate tool call if needed, or rely on 'firebase-utils' export.
-          
-          await Promise.all(finalSelectedCourses.map(async (course) => {
-            let syllabusToSave: SyllabusSubject[] = [];
 
-            if (course.examId === primaryExamId) {
-              // Use the customized syllabus from the form
-              syllabusToSave = form.data.syllabus as SyllabusSubject[];
-            } else {
-              // Fetch default syllabus for secondary course
-              const exam = getExamById(course.examId || '');
-              syllabusToSave = exam?.defaultSyllabus || [];
-            }
+          await Promise.all(
+            finalSelectedCourses.map(async course => {
+              let syllabusToSave: SyllabusSubject[] = [];
 
-            await saveSyllabusForCourse(user.uid, course.examId || '', syllabusToSave);
-          }));
+              if (course.examId === primaryExamId) {
+                // Use the customized syllabus from the form
+                syllabusToSave = form.data.syllabus as SyllabusSubject[];
+              } else {
+                // Fetch default syllabus for secondary course
+                const exam = getExamById(course.examId || '');
+                syllabusToSave = exam?.defaultSyllabus || [];
+              }
+
+              await saveSyllabusForCourse(user.uid, course.examId || '', syllabusToSave);
+            })
+          );
 
           logInfo('Step 2 completed: All syllabi saved successfully');
 
@@ -973,11 +995,7 @@ export default function OnboardingSetupPage() {
             try {
               // Ensure we have a valid Date object
               const journeyDate = new Date(form.data.examDate);
-              await journeyService.createJourneyFromOnboarding(
-                user.uid,
-                primaryExamId,
-                journeyDate
-              );
+              await journeyService.createJourneyFromOnboarding(user.uid, primaryExamId, journeyDate);
               logInfo('Step 3 completed: Initial journey created');
             } catch (error) {
               // Non-blocking error - don't fail onboarding if journey creation fails
@@ -989,7 +1007,7 @@ export default function OnboardingSetupPage() {
           if ((form.data as any).customLearningGoals && (form.data as any).customLearningGoals.length > 0) {
             logInfo('Step 3: Saving custom learning goals', {
               userId: user.uid,
-              goalCount: (form.data as any).customLearningGoals.length
+              goalCount: (form.data as any).customLearningGoals.length,
             });
 
             const goalOperations = await Promise.allSettled(
@@ -1238,7 +1256,7 @@ export default function OnboardingSetupPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         {/* Scroll anchor for reliable scroll-to-top */}
         <div ref={pageTopRef} aria-hidden="true" />
-        
+
         {/* Accessibility announcements */}
         <div ref={announceRef} className="sr-only" aria-live="polite" aria-atomic="true" />
 
@@ -1260,12 +1278,14 @@ export default function OnboardingSetupPage() {
               <div className="flex items-center space-x-3">
                 <div className="text-2xl">{STEP_INFO[multiStep.currentStep - 1]?.icon}</div>
                 <div>
-                  <h2 className="font-semibold text-gray-900 truncate max-w-[150px] sm:max-w-none">{STEP_INFO[multiStep.currentStep - 1]?.title}</h2>
+                  <h2 className="font-semibold text-gray-900 truncate max-w-[150px] sm:max-w-none">
+                    {STEP_INFO[multiStep.currentStep - 1]?.title}
+                  </h2>
                   <p className="text-sm text-gray-600">
                     Step {multiStep.currentStep} of {multiStep.totalSteps} •{' '}
                     {STEP_INFO[multiStep.currentStep - 1]?.estimatedTime}
                     {multiStep.currentStep > 1 && selectedExam && (
-                      <button 
+                      <button
                         onClick={() => multiStep.goToStep(1)}
                         className="ml-2 text-blue-600 hover:text-blue-700 hover:underline"
                       >

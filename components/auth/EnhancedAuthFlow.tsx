@@ -235,7 +235,7 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     try {
       await sendPasswordResetEmail(auth, email);
       setError('');
-      setCurrentStep('resetSent'); 
+      setCurrentStep('resetSent');
     } catch (err) {
       logError('Password reset error', err as Error);
       setError('Failed to send reset email. Please try again.');
@@ -299,9 +299,7 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
               setError('');
             }}
           >
-            {authMode === 'signup' 
-              ? 'Already have an account? Sign in' 
-              : "Don't have an account? Create one"}
+            {authMode === 'signup' ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
           </button>
         </div>
 
@@ -406,9 +404,7 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
               setError('');
             }}
           >
-            {isNewUser 
-              ? 'Already have an account? Sign in instead' 
-              : "Don't have an account? Create one"}
+            {isNewUser ? 'Already have an account? Sign in instead' : "Don't have an account? Create one"}
           </button>
         </div>
       </motion.div>
@@ -456,13 +452,13 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
         </div>
 
         {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
-            >
-              {error}
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"
+          >
+            {error}
+          </motion.div>
         )}
 
         <Button onClick={handleForgotPassword} disabled={!email || loading} className="w-full" size="lg">
@@ -487,30 +483,30 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
   const ResetSentStep = useMemo(
     () => (
       <motion.div
-         initial={{ opacity: 0, scale: 0.95 }}
-         animate={{ opacity: 1, scale: 1 }}
-         className="text-center space-y-6"
-       >
-         <motion.div
-           initial={{ scale: 0 }}
-           animate={{ scale: 1 }}
-           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-           className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto"
-         >
-           <Mail className="h-8 w-8 text-blue-600" />
-         </motion.div>
- 
-         <div>
-           <h3 className="text-lg font-semibold text-gray-900">Check your inbox</h3>
-           <p className="text-gray-600 mt-1">
-             We've sent a password reset link to <strong>{email}</strong>
-           </p>
-         </div>
- 
-         <Button onClick={() => setCurrentStep('password')} variant="outline" className="w-full">
-           Back to Sign In
-         </Button>
-       </motion.div>
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center space-y-6"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+          className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto"
+        >
+          <Mail className="h-8 w-8 text-blue-600" />
+        </motion.div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Check your inbox</h3>
+          <p className="text-gray-600 mt-1">
+            We've sent a password reset link to <strong>{email}</strong>
+          </p>
+        </div>
+
+        <Button onClick={() => setCurrentStep('password')} variant="outline" className="w-full">
+          Back to Sign In
+        </Button>
+      </motion.div>
     ),
     [email, setCurrentStep]
   );
@@ -586,7 +582,6 @@ export default function EnhancedAuthFlow({ onSuccess, className }: AuthFlowProps
     }),
     [EmailCaptureStep, PasswordStep, ForgotPasswordStep, ResetSentStep, SuccessStep, isNewUser]
   );
-
 
   const currentStepData = authSteps[currentStep];
 
