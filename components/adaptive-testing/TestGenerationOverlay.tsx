@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Sparkles, Target, CheckCircle2, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { useAiThinking } from '@/hooks/use-ai-thinking';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAiThinking } from '@/hooks/use-ai-thinking';
 import { cn } from '@/lib/utils/utils';
 
 type GenerationStep = {
@@ -56,7 +56,9 @@ export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps)
 
   // Rotate tips
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible) {
+      return;
+    }
     const interval = setInterval(() => {
       setCurrentTipIndex(prev => (prev + 1) % TIPS.length);
     }, 3000);

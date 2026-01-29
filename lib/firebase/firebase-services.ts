@@ -27,6 +27,9 @@ import {
   DocumentData,
 } from 'firebase/firestore';
 
+import { serviceContainer, PerformanceMonitor, ConsoleLogger } from '@/lib/services/service-layer';
+import { logInfo, logError } from '@/lib/utils/logger';
+import { Result, createSuccess, createError, LoadingState as _LoadingState } from '@/lib/utils/types-utils';
 import {
   AdaptiveTest,
   TestSession,
@@ -36,15 +39,11 @@ import {
   TestAnalyticsData,
   TestRecommendation,
 } from '@/types/adaptive-testing';
+import { User, UserStats, TopicProgress, MockTestLog } from '@/types/exam';
 import { UserJourney, UpdateJourneyProgressRequest, JourneyAnalytics, MilestoneAchievement } from '@/types/journey';
 import { MissionDifficulty } from '@/types/mission-system';
 
-import { User, UserStats, TopicProgress, MockTestLog } from '@/types/exam';
-
 import { db } from './firebase';
-import { serviceContainer, PerformanceMonitor, ConsoleLogger } from '@/lib/services/service-layer';
-import { Result, createSuccess, createError, LoadingState as _LoadingState } from '@/lib/utils/types-utils';
-import { logInfo, logError } from '@/lib/utils/logger';
 
 // ============================================================================
 // ADAPTIVE TESTING FIREBASE SERVICE
@@ -2093,7 +2092,9 @@ const adaptiveTestingFirebaseService = {
           limit(1)
         );
         const snapshot = await getDocs(q);
-        if (snapshot.empty) return createSuccess(null);
+        if (snapshot.empty) {
+          return createSuccess(null);
+        }
         const data = snapshot.docs[0]!.data();
         return createSuccess({
           ...data,

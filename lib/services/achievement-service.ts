@@ -8,6 +8,8 @@
  * @version 1.0.0
  */
 
+import { firebaseService } from '@/lib/firebase/firebase-services';
+import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 import { type UserPersonaType } from '@/types/exam';
 import {
   type Achievement,
@@ -15,9 +17,6 @@ import {
   type MissionResults,
   type UnifiedProgress,
 } from '@/types/mission-system';
-
-import { firebaseService } from '@/lib/firebase/firebase-services';
-import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 
 type AchievementCategory = Achievement['category'];
 

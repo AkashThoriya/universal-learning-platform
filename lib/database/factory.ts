@@ -31,7 +31,7 @@ class ConfigValidator {
   static validatePostgreSQLConfig(config: unknown): boolean {
     const required = ['host', 'port', 'database', 'username', 'password'];
     const typedConfig = config as { connection?: Record<string, unknown> };
-    return required.every(key => typedConfig.connection && typedConfig.connection[key] !== undefined);
+    return required.every(key => typedConfig.connection?.[key] !== undefined);
   }
 
   static validateMongoDBConfig(config: unknown): boolean {

@@ -18,25 +18,25 @@ import {
 import { useEffect, useState, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
-import { JourneyCard, GoalManagement, JourneyAnalytics } from '@/components/journey-planning';
+import { CreateJourneyDialog } from '@/components/journey/CreateJourneyDialog';
 import { JourneyArchitect } from '@/components/journey/JourneyArchitect';
+import { JourneyCard, GoalManagement, JourneyAnalytics } from '@/components/journey-planning';
 import { StandardLayout } from '@/components/layout/AppLayout';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
+import { JourneySkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import PageTransition from '@/components/layout/PageTransition';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { journeyService } from '@/lib/services/journey-service';
-import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { cn } from '@/lib/utils/utils';
 import { UserJourney } from '@/types/journey';
-import { CreateJourneyDialog } from '@/components/journey/CreateJourneyDialog';
-import { JourneySkeleton } from '@/components/skeletons';
 
 export default function JourneyPlanningPage() {
   const { user } = useAuth();
@@ -114,7 +114,9 @@ export default function JourneyPlanningPage() {
   };
 
   const confirmDeleteJourney = async () => {
-    if (!journeyToDelete || !user?.uid) return;
+    if (!journeyToDelete || !user?.uid) {
+      return;
+    }
 
     try {
       await journeyService.updateJourneyStatus(journeyToDelete.id, 'cancelled');

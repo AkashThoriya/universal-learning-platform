@@ -10,6 +10,7 @@
  * @version 1.0.0
  */
 
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LogOut,
   Home,
@@ -23,8 +24,8 @@ import {
   AlertTriangle,
   type LucideIcon,
   User,
+  Layout,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -157,6 +158,13 @@ export default function Navigation() {
       icon: Calendar,
       isActive: isActive('/log/daily'),
       description: 'Track daily progress',
+    },
+    {
+      href: '/workspace',
+      label: 'Workspace',
+      icon: Layout,
+      isActive: isActive('/workspace'),
+      description: 'Your personal study space',
     },
   ];
 

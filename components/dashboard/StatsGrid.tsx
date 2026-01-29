@@ -2,9 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { Clock, CheckCircle, Flame, Target } from 'lucide-react';
+
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { cn } from '@/lib/utils/utils';
 
 interface DashboardStats {

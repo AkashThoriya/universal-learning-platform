@@ -4,14 +4,15 @@ import { format } from 'date-fns';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import PageTransition from '@/components/layout/PageTransition';
-import { DetailPageHeader } from '@/components/layout/PageHeader';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import { DetailPageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
+import { TopicDetailSkeleton } from '@/components/skeletons/SyllabusSkeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,9 +20,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase/firebase';
+import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { logInfo, logError } from '@/lib/utils/logger';
-import { SUBJECTS_DATA } from '@/lib/data/subjects-data';
-import { TopicProgress } from '@/types/exam';
+import { TopicProgress, SyllabusSubject, SyllabusTopic } from '@/types/exam';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -44,8 +45,10 @@ export default function TopicPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const topicId = params.topicId as string;
-  const subjectId = searchParams.get('subject');
+  const initialSubjectId = searchParams.get('subject');
 
+  const [topic, setTopic] = useState<SyllabusTopic | null>(null);
+  const [subject, setSubject] = useState<SyllabusSubject | null>(null);
   const [userProgress, setUserProgress] = useState<TopicProgress | null>(null);
   const [userNotes, setUserNotes] = useState('');
   const [userBankingContext, setUserBankingContext] = useState('');
@@ -53,46 +56,62 @@ export default function TopicPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Find the topic and subject data
-  const subject = SUBJECTS_DATA.find(s => s.subjectId === subjectId);
-  const topic = subject?.topics.find(t => t.id === topicId);
+  const loadData = useCallback(async () => {
+    if (!user?.uid || !topicId) {
+      return;
+    }
+    let isMounted = true;
 
-  useEffect(() => {
-    const fetchProgress = async () => {
-      if (!user || !topicId) {
-        logInfo('Topic page: No user or topicId available, skipping fetch', {
-          hasUser: !!user,
-          topicId,
-        });
+    try {
+      setLoading(true);
+
+      // 1. Fetch Syllabus to find Topic details
+      const syllabus = await getSyllabus(user.uid);
+      let foundTopic: SyllabusTopic | undefined;
+      let foundSubject: SyllabusSubject | undefined;
+
+      // Optimized search if subjectId is known, otherwise linear search
+      if (initialSubjectId) {
+        foundSubject = syllabus.find(s => s.id === initialSubjectId);
+        foundTopic = foundSubject?.topics.find(t => t.id === topicId);
+      } else {
+        for (const s of syllabus) {
+          const t = s.topics.find(topic => topic.id === topicId);
+          if (t) {
+            foundSubject = s;
+            foundTopic = t;
+            break;
+          }
+        }
+      }
+
+      if (isMounted) {
+        setTopic(foundTopic || null);
+        setSubject(foundSubject || null);
+      }
+
+      if (!foundTopic) {
+        logError('Topic not found in syllabus', { topicId });
+        if (isMounted) {
+          setLoading(false);
+        }
         return;
       }
 
-      logInfo('Topic page: Starting progress fetch', {
-        userId: user.uid,
-        topicId,
-        subjectId,
-      });
-
-      try {
-        const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
+      // 2. Fetch User Progress
+      const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
+      if (isMounted) {
         if (progressDoc.exists()) {
           const data = progressDoc.data() as TopicProgress;
           setUserProgress(data);
           setUserNotes(data.userNotes ?? '');
           setUserBankingContext(data.userBankingContext ?? '');
-
-          logInfo('Topic page: Existing progress loaded', {
-            userId: user.uid,
-            topicId,
-            masteryScore: data.masteryScore,
-            revisionCount: data.revisionCount,
-          });
         } else {
-          // Create initial progress document
+          // Create initial progress state (not saving to DB yet to avoid clutter)
           const initialProgress: TopicProgress = {
             id: topicId,
             topicId,
-            subjectId: '', // Will be populated when syllabus data is available
+            subjectId: foundSubject?.id || '',
             masteryScore: 0,
             lastRevised: Timestamp.now(),
             nextRevision: Timestamp.now(),
@@ -108,44 +127,31 @@ export default function TopicPage() {
             currentAffairs: [],
           };
           setUserProgress(initialProgress);
-
-          logInfo('Topic page: Created initial progress document', {
-            userId: user.uid,
-            topicId,
-          });
         }
-      } catch (error) {
-        logError('Error fetching topic progress', {
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-          userId: user.uid,
-          topicId,
-          context: 'topic_page_fetch_progress',
-        });
-      } finally {
+      }
+    } catch (error) {
+      logError('Error loading topic data', error as Error);
+    } finally {
+      if (isMounted) {
         setLoading(false);
       }
+    }
+    return () => {
+      isMounted = false;
     };
+  }, [user?.uid, topicId, initialSubjectId]);
 
-    fetchProgress();
-  }, [user, topicId, subjectId]);
+  useEffect(() => {
+    const cleanup = loadData();
+    return () => {
+      cleanup.then(c => c?.());
+    };
+  }, [loadData]);
 
   const handleSave = async () => {
     if (!user || !userProgress) {
-      logInfo('Topic page: Cannot save - missing user or progress', {
-        hasUser: !!user,
-        hasProgress: !!userProgress,
-        topicId,
-      });
       return;
     }
-
-    logInfo('Topic page: Starting save operation', {
-      userId: user.uid,
-      topicId,
-      notesLength: userNotes.length,
-      contextLength: userBankingContext.length,
-    });
 
     setSaving(true);
     try {
@@ -159,19 +165,9 @@ export default function TopicPage() {
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
       setUserProgress(updatedProgress);
 
-      logInfo('Topic page: Progress saved successfully', {
-        userId: user.uid,
-        topicId,
-        dataSize: JSON.stringify(updatedProgress).length,
-      });
+      logInfo('Topic progress saved', { topicId });
     } catch (error) {
-      logError('Error saving topic progress', {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        userId: user.uid,
-        topicId,
-        context: 'topic_page_save_progress',
-      });
+      logError('Error saving topic progress', error as Error);
     } finally {
       setSaving(false);
     }
@@ -179,20 +175,8 @@ export default function TopicPage() {
 
   const handleAddCurrentAffair = async () => {
     if (!user || !userProgress || !newCurrentAffair.trim()) {
-      logInfo('Topic page: Cannot add current affair - missing requirements', {
-        hasUser: !!user,
-        hasProgress: !!userProgress,
-        hasContent: !!newCurrentAffair.trim(),
-        topicId,
-      });
       return;
     }
-
-    logInfo('Topic page: Adding current affair', {
-      userId: user.uid,
-      topicId,
-      contentLength: newCurrentAffair.trim().length,
-    });
 
     const newAffair = {
       date: Timestamp.now(),
@@ -208,20 +192,8 @@ export default function TopicPage() {
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
       setUserProgress(updatedProgress);
       setNewCurrentAffair('');
-
-      logInfo('Topic page: Current affair added successfully', {
-        userId: user.uid,
-        topicId,
-        totalAffairs: updatedProgress.currentAffairs.length,
-      });
     } catch (error) {
-      logError('Error adding current affair', {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
-        userId: user.uid,
-        topicId,
-        context: 'topic_page_add_current_affair',
-      });
+      logError('Error adding current affair', error as Error);
     }
   };
 
@@ -230,7 +202,6 @@ export default function TopicPage() {
       return;
     }
 
-    // Calculate next revision date (7 days)
     const nextRevisionDate = new Date();
     nextRevisionDate.setDate(nextRevisionDate.getDate() + 7);
 
@@ -246,15 +217,19 @@ export default function TopicPage() {
       await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
       setUserProgress(updatedProgress);
     } catch (error) {
-      console.error('Error marking as revised:', error);
+      logError('Error marking revised', error as Error);
     }
   };
 
   if (loading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+          <Navigation />
+          <BottomNav />
+          <PageTransition>
+            <TopicDetailSkeleton />
+          </PageTransition>
         </div>
       </AuthGuard>
     );
@@ -263,9 +238,10 @@ export default function TopicPage() {
   if (!topic || !subject) {
     return (
       <AuthGuard>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold">Topic not found</h1>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+          <div className="text-center space-y-4 p-6 bg-white rounded-xl shadow-lg">
+            <h1 className="text-2xl font-bold text-gray-800">Topic not found</h1>
+            <p className="text-gray-600">The topic you are looking for does not exist.</p>
             <Link href="/subjects">
               <Button>Back to Subjects</Button>
             </Link>
@@ -286,7 +262,7 @@ export default function TopicPage() {
             <DetailPageHeader
               title={topic.name}
               description={subject.name}
-              backHref={`/subjects/${subjectId}`}
+              backHref={`/subjects/${subject.id}`}
               backLabel={subject.name}
               actions={
                 <div className="flex items-center gap-2">
@@ -304,7 +280,7 @@ export default function TopicPage() {
               }
             />
 
-            {/* Banking Context */}
+            {/* Banking Context - Dynamic from Syllabus Data */}
             <Card className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -315,7 +291,9 @@ export default function TopicPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-white p-4 rounded-lg border border-yellow-200">
-                  <p className="text-gray-700 leading-relaxed">{topic.bankingContext}</p>
+                  <p className="text-gray-700 leading-relaxed">
+                    {topic.description || 'No specific context provided for this topic.'}
+                  </p>
                 </div>
 
                 <div className="space-y-2">

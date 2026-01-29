@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Sparkles, Target, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils/utils';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { journeyService } from '@/lib/services/journey-service';
+import { Input } from '@/components/ui/input';
+import { useAiThinking } from '@/hooks/use-ai-thinking';
 import { useToast } from '@/hooks/use-toast';
 import { llmService } from '@/lib/ai/llm-service';
+import { journeyService } from '@/lib/services/journey-service';
+import { cn } from '@/lib/utils/utils';
 
 // Thinking Steps
-import { useAiThinking } from '@/hooks/use-ai-thinking';
 
 // ... imports remain same ...
 
@@ -62,7 +63,9 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
   });
 
   const startArchitect = async () => {
-    if (!goal.trim()) return;
+    if (!goal.trim()) {
+      return;
+    }
     setStatus('thinking');
     startThinking();
 
@@ -89,7 +92,9 @@ export function JourneyArchitect({ userId, onJourneyCreated, trigger }: JourneyA
 
   const confirmJourney = async () => {
     // ... logic remains same ...
-    if (!generatedPlan) return;
+    if (!generatedPlan) {
+      return;
+    }
 
     try {
       const result = await journeyService.createJourney(userId, {

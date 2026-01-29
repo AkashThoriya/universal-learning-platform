@@ -42,7 +42,9 @@ export function ScrollableTabsList({ children, className, showGradients = true }
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     const { scrollLeft, scrollWidth, clientWidth } = el;
     const SCROLL_THRESHOLD = 5; // Small buffer for edge detection
@@ -53,7 +55,9 @@ export function ScrollableTabsList({ children, className, showGradients = true }
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     // Initial check
     checkScroll();

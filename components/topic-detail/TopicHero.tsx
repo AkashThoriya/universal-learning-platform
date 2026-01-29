@@ -1,6 +1,7 @@
-import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, Clock } from 'lucide-react';
 import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
 import { SyllabusSubject, SyllabusTopic, TopicProgress } from '@/types/exam';
 
 interface TopicHeroProps {
@@ -14,8 +15,12 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
 
   // Calculate color based on mastery
   const getMasteryColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 ring-green-600 bg-green-50';
-    if (score >= 50) return 'text-amber-600 ring-amber-600 bg-amber-50';
+    if (score >= 80) {
+      return 'text-green-600 ring-green-600 bg-green-50';
+    }
+    if (score >= 50) {
+      return 'text-amber-600 ring-amber-600 bg-amber-50';
+    }
     return 'text-blue-600 ring-blue-600 bg-blue-50';
   };
 

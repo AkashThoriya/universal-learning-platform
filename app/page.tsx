@@ -1,4 +1,3 @@
-import PageTransition from '@/components/layout/PageTransition';
 import {
   Target,
   Brain,
@@ -15,11 +14,12 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
+import CTAActions from '@/components/home/CTAActions';
+import HeroActions from '@/components/home/HeroActions';
+import HomeNavbar from '@/components/home/HomeNavbar';
+import PageTransition from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import HomeNavbar from '@/components/home/HomeNavbar';
-import HeroActions from '@/components/home/HeroActions';
-import CTAActions from '@/components/home/CTAActions';
 
 // Constants
 const STAR_RATING = 5;

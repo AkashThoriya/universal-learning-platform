@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   Upload,
   Image as ImageIcon,
@@ -14,8 +13,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils/utils';
+import { useToast } from '@/hooks/use-toast';
 import {
   uploadTopicNote,
   getTopicNotes,
@@ -24,7 +25,7 @@ import {
   UploadedNote,
   UploadProgress,
 } from '@/lib/firebase/storage-utils';
-import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils/utils';
 
 interface HandwrittenNotesTabProps {
   userId: string;
@@ -47,7 +48,9 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
   // Load notes on first render (lazy loading)
   const loadNotes = useCallback(async () => {
-    if (hasLoaded || loading) return;
+    if (hasLoaded || loading) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -73,7 +76,9 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
   // Handle file upload
   const handleUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0) {
+      return;
+    }
 
     setUploading(true);
     setUploadProgress(null);
@@ -154,16 +159,22 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
   // Preview navigation
   const navigatePreview = (direction: 'prev' | 'next') => {
-    if (!previewNote) return;
+    if (!previewNote) {
+      return;
+    }
     const imageNotes = notes.filter(n => n.fileType === 'image');
     const currentImageIndex = imageNotes.findIndex(n => n.id === previewNote.id);
 
     if (direction === 'prev' && currentImageIndex > 0) {
       const prevNote = imageNotes[currentImageIndex - 1];
-      if (prevNote) setPreviewNote(prevNote);
+      if (prevNote) {
+        setPreviewNote(prevNote);
+      }
     } else if (direction === 'next' && currentImageIndex < imageNotes.length - 1) {
       const nextNote = imageNotes[currentImageIndex + 1];
-      if (nextNote) setPreviewNote(nextNote);
+      if (nextNote) {
+        setPreviewNote(nextNote);
+      }
     }
   };
 

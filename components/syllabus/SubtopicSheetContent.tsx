@@ -18,12 +18,12 @@ import { useState, useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { EmptyState } from '@/components/ui/empty-state';
-import { Subtopic } from '@/types/exam';
+import { Input } from '@/components/ui/input';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils/utils';
+import { Subtopic } from '@/types/exam';
 
 interface SubtopicSheetContentProps {
   subtopic: Subtopic;
@@ -76,7 +76,9 @@ export function SubtopicSheetContent({ subtopic, onUpdate }: SubtopicSheetConten
 
   // Current Affairs handlers
   const handleAddCurrentAffair = () => {
-    if (!newAffair.trim()) return;
+    if (!newAffair.trim()) {
+      return;
+    }
     const newAffairs = [...localCurrentAffairs, { date: Timestamp.now(), note: newAffair.trim() }];
     setLocalCurrentAffairs(newAffairs);
     onUpdate({ currentAffairs: newAffairs });

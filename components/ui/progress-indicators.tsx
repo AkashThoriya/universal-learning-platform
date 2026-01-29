@@ -10,8 +10,8 @@
  */
 
 import { CheckCircle, Circle, Clock } from 'lucide-react';
-
 import { Fragment, FC } from 'react';
+
 import { cn } from '@/lib/utils/utils';
 
 /**

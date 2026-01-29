@@ -1,10 +1,10 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,12 +18,12 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { journeyService } from '@/lib/services/journey-service';
-import { CreateJourneyRequest } from '@/types/journey';
 import { SelectedCourse } from '@/types/exam';
+import { CreateJourneyRequest } from '@/types/journey';
 
 const createJourneySchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),

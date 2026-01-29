@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Sparkles,
   Code,
@@ -13,12 +12,15 @@ import {
   Microscope,
   PenLine,
 } from 'lucide-react';
+import { useState } from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
-import { SyllabusTopic, TopicProgress } from '@/types/exam';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils/utils';
+import { SyllabusTopic, TopicProgress } from '@/types/exam';
+
 import { HandwrittenNotesTab } from './HandwrittenNotesTab';
 
 // Helper to parse concept text into category and intent

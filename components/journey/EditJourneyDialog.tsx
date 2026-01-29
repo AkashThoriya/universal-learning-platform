@@ -1,10 +1,10 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, Edit } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Loader2, Edit } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,8 +18,8 @@ import {
 } from '@/components/ui/dialog';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { journeyService } from '@/lib/services/journey-service';
 import { UserJourney } from '@/types/journey';
@@ -51,7 +51,9 @@ export function EditJourneyDialog({ journey, onJourneyUpdated, trigger }: EditJo
 
   // Format date for input field
   const formatDateForInput = (date: Date | any): string => {
-    if (!date) return '';
+    if (!date) {
+      return '';
+    }
     const d = date.toDate ? date.toDate() : new Date(date);
     return d.toISOString().split('T')[0];
   };

@@ -12,8 +12,8 @@
 
 import { ReactNode } from 'react';
 
-import Navigation from '@/components/Navigation';
 import BottomNav from '@/components/BottomNav';
+import Navigation from '@/components/Navigation';
 import { cn } from '@/lib/utils/utils';
 
 interface AppLayoutProps {

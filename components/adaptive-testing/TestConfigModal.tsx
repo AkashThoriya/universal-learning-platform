@@ -7,9 +7,10 @@
  * subject/topic selection and difficulty settings.
  */
 
-import { useState, useEffect } from 'react';
 import { Brain, BookOpen, Target, Zap, X, Clock } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,11 +23,10 @@ import {
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
-import { MissionDifficulty } from '@/types/mission-system';
 import { logInfo, logError } from '@/lib/utils/logger';
+import { MissionDifficulty } from '@/types/mission-system';
 
 interface SyllabusSubject {
   id: string;
@@ -87,7 +87,9 @@ export function TestConfigModal({
   // Load syllabus data
   useEffect(() => {
     const loadSyllabus = async () => {
-      if (!user?.uid || !open) return;
+      if (!user?.uid || !open) {
+        return;
+      }
 
       try {
         setLoading(true);

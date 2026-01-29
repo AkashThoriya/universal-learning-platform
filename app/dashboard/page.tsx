@@ -3,12 +3,12 @@
 import { useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
-import AdaptiveDashboard from '@/components/dashboard/AdaptiveDashboard';
 import BottomNav from '@/components/BottomNav';
+import AdaptiveDashboard from '@/components/dashboard/AdaptiveDashboard';
+import PageContainer from '@/components/layout/PageContainer';
+import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
 import { logInfo } from '@/lib/utils/logger';
-import PageTransition from '@/components/layout/PageTransition';
-import PageContainer from '@/components/layout/PageContainer';
 
 export default function Dashboard() {
   useEffect(() => {

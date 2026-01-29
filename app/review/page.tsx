@@ -1,28 +1,28 @@
 'use client';
 
-import { FeaturePageHeader } from '@/components/layout/PageHeader';
-import PageTransition from '@/components/layout/PageTransition';
 import { format, isPast, isToday } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { AlertTriangle, ArrowRight, BookOpen, CheckCircle, Clock, Layers, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo } from 'react';
-import { ReviewPageSkeleton } from '@/components/skeletons';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
+import { ReviewPageSkeleton } from '@/components/skeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, updateTopicProgress, getAllProgress, getUser } from '@/lib/firebase/firebase-utils';
-import { SyllabusSubject, TopicProgress, User as UserProfile } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
+import { SyllabusSubject, TopicProgress, User as UserProfile } from '@/types/exam';
 
 interface ReviewItem {
   type: 'topic' | 'subtopic';
@@ -53,7 +53,9 @@ export default function ConceptReviewPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       try {
         // Use Promise.all for parallel fetching - OPTIMIZED: Single batch query instead of N+1
@@ -196,7 +198,9 @@ export default function ConceptReviewPage() {
   }, [reviewItems, searchQuery, filter]);
 
   const handleMarkReviewed = async (item: ReviewItem) => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       // Calculate next revision date based on spaced repetition

@@ -12,9 +12,9 @@
 
 'use client';
 
+import { Timestamp } from 'firebase/firestore';
 import { Search, BookOpen, User, Plus, AlertCircle, X, Star } from 'lucide-react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Timestamp } from 'firebase/firestore';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -129,7 +129,9 @@ export function BasicInfoStep({
   const handleExamClick = useCallback(
     (examId: string) => {
       const exam = filteredExams.find(e => e.id === examId);
-      if (!exam) return;
+      if (!exam) {
+        return;
+      }
 
       if (isMultiSelectMode) {
         toggleCourse(exam);

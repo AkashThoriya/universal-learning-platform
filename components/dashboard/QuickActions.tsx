@@ -2,10 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { Sparkles, LucideIcon } from 'lucide-react';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 interface QuickAction {
   title: string;

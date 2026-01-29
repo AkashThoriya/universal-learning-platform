@@ -14,9 +14,9 @@
 
 import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
 
+import { simpleLearningRecommendationsService } from '@/lib/algorithms/simple-learning-recommendations';
 import { db } from '@/lib/firebase/firebase';
 import { logError, logInfo } from '@/lib/utils/logger';
-import { simpleLearningRecommendationsService } from '@/lib/algorithms/simple-learning-recommendations';
 import { Result, createError, createSuccess } from '@/lib/utils/types-utils';
 
 /**

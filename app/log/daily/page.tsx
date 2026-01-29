@@ -26,11 +26,10 @@ import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import Navigation from '@/components/Navigation';
+import { DailyLogSkeleton } from '@/components/skeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DailyLogSkeleton } from '@/components/skeletons';
-import { EmptyState } from '@/components/ui/empty-state';
 import {
   Dialog,
   DialogContent,
@@ -40,14 +39,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase/firebase-utils';
-import { DailyLog, StudySession } from '@/types/exam';
-import { cn } from '@/lib/utils/utils';
 import { logError } from '@/lib/utils/logger';
+import { cn } from '@/lib/utils/utils';
+import { DailyLog, StudySession } from '@/types/exam';
 
 // Helper component for visual mood/productivity selector
 const VisualSelector = ({ value, onChange, options, label, colorClass = 'border-primary text-primary' }: any) => (
@@ -307,8 +307,8 @@ export default function DailyLogPage() {
         health: {
           energy: energyLevel,
           sleepHours,
-          sleepQuality: sleepQuality,
-          stressLevel: stressLevel,
+          sleepQuality,
+          stressLevel,
           physicalActivity,
           screenTime: 0,
         },

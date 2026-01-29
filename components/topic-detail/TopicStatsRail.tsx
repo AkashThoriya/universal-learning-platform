@@ -1,10 +1,11 @@
+import { format } from 'date-fns';
+import { CheckCircle, AlertCircle, Clock, Calendar, RotateCw, TrendingUp } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle, AlertCircle, Clock, Calendar, RotateCw, TrendingUp } from 'lucide-react';
-import { TopicProgress } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
-import { format } from 'date-fns';
+import { TopicProgress } from '@/types/exam';
 
 interface TopicStatsRailProps {
   progress: TopicProgress | null;

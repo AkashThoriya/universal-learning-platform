@@ -1,7 +1,5 @@
 'use client';
 
-import PageTransition from '@/components/layout/PageTransition';
-import { DetailPageHeader } from '@/components/layout/PageHeader';
 import { format } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { Save, CheckCircle, TrendingUp, FileText, Lightbulb, Plus, Trash2, Brain } from 'lucide-react';
@@ -10,7 +8,10 @@ import { useState, useEffect } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import { DetailPageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
+import { SubtopicDetailSkeleton } from '@/components/skeletons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,7 +21,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, updateSubtopic } from '@/lib/firebase/firebase-utils';
 import { Subtopic, SyllabusSubject } from '@/types/exam';
-import { SubtopicDetailSkeleton } from '@/components/skeletons';
 
 export default function SubtopicDetailPage() {
   const { user } = useAuth();
@@ -44,7 +44,9 @@ export default function SubtopicDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user || !topicId || !subjectId) return;
+      if (!user || !topicId || !subjectId) {
+        return;
+      }
 
       try {
         const syllabusData = await getSyllabus(user.uid);
@@ -54,7 +56,7 @@ export default function SubtopicDetailPage() {
           setSubject(foundSubject);
           const foundTopic = foundSubject.topics.find(t => t.id === topicId);
 
-          if (foundTopic && foundTopic.subtopics && foundTopic.subtopics[subtopicIndex]) {
+          if (foundTopic?.subtopics?.[subtopicIndex]) {
             const data = foundTopic.subtopics[subtopicIndex];
             setSubtopic(data);
             setLocalNotes(data.userNotes || '');
@@ -78,7 +80,9 @@ export default function SubtopicDetailPage() {
   }, [user, topicId, subjectId, subtopicIndex, toast]);
 
   const handleUpdate = async (updates: Partial<Subtopic>) => {
-    if (!user || !subjectId || !subtopic) return;
+    if (!user || !subjectId || !subtopic) {
+      return;
+    }
 
     // Optimistic update
     setSubtopic(prev => (prev ? { ...prev, ...updates } : null));
@@ -97,7 +101,9 @@ export default function SubtopicDetailPage() {
   };
 
   const handleSaveContent = async () => {
-    if (!subtopic) return;
+    if (!subtopic) {
+      return;
+    }
     setSaving(true);
     try {
       await handleUpdate({
@@ -115,7 +121,9 @@ export default function SubtopicDetailPage() {
   };
 
   const handleAddCurrentAffair = () => {
-    if (!newAffair.trim()) return;
+    if (!newAffair.trim()) {
+      return;
+    }
     const newAffairs = [...localCurrentAffairs, { date: Timestamp.now(), note: newAffair.trim() }];
     setLocalCurrentAffairs(newAffairs);
     setNewAffair('');

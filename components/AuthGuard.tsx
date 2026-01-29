@@ -80,13 +80,11 @@ export default function AuthGuard({ children }: AuthGuardProps) {
           if (!isOnboardingComplete) {
             logInfo('[AuthGuard] Onboarding incomplete, redirecting', { userId: user.uid });
             router.push('/onboarding');
-            return;
           }
         } else {
           // No user doc means new user, redirect to onboarding
           logInfo('[AuthGuard] No user document found, redirecting', { userId: user.uid });
           router.push('/onboarding');
-          return;
         }
       } catch (error) {
         logError('[AuthGuard] Error checking onboarding status', error as Error);

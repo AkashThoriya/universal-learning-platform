@@ -63,4 +63,3 @@ export type { LearningGoalTemplate } from './learning-templates';
 // ============================================================================
 
 export { EXAMS_DATA } from './exams-data';
-export { SUBJECTS_DATA } from './subjects-data';

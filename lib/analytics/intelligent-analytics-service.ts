@@ -32,11 +32,10 @@ import {
   increment as _increment,
 } from 'firebase/firestore';
 
-import { UserPersona } from '@/types/exam';
-
 import { db } from '@/lib/firebase/firebase';
 import { firebaseService } from '@/lib/firebase/firebase-services';
 import { logger } from '@/lib/utils/logger';
+import { UserPersona } from '@/types/exam';
 
 // ============================================================================
 // ANALYTICS DATA INTERFACES

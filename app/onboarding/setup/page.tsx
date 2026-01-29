@@ -638,7 +638,7 @@ export default function OnboardingSetupPage() {
 
       const updatedSyllabus = form.data.syllabus.map(subject =>
         subject.id === subjectId ? { ...subject, tier } : subject
-      ) as SyllabusSubject[];
+      );
       form.updateField('syllabus', updatedSyllabus);
     },
     [form]
@@ -662,7 +662,7 @@ export default function OnboardingSetupPage() {
     (subjectId: string) => {
       logInfo('Removing subject from syllabus', { subjectId });
 
-      const updatedSyllabus = form.data.syllabus.filter(subject => subject.id !== subjectId) as SyllabusSubject[];
+      const updatedSyllabus = form.data.syllabus.filter(subject => subject.id !== subjectId);
       form.updateField('syllabus', updatedSyllabus);
 
       logInfo('Subject removed', {
@@ -687,7 +687,7 @@ export default function OnboardingSetupPage() {
 
       const updatedSyllabus = form.data.syllabus.map(subject =>
         subject.id === subjectId ? { ...subject, topics: [...subject.topics, newTopic] } : subject
-      ) as SyllabusSubject[];
+      );
 
       form.updateField('syllabus', updatedSyllabus);
 
@@ -708,7 +708,7 @@ export default function OnboardingSetupPage() {
         subject.id === subjectId
           ? { ...subject, topics: subject.topics.filter(topic => topic.id !== topicId) }
           : subject
-      ) as SyllabusSubject[];
+      );
 
       form.updateField('syllabus', updatedSyllabus);
 
@@ -732,7 +732,7 @@ export default function OnboardingSetupPage() {
               topics: subject.topics.map(topic => (topic.id === topicId ? { ...topic, ...updates } : topic)),
             }
           : subject
-      ) as SyllabusSubject[];
+      );
 
       form.updateField('syllabus', updatedSyllabus);
 
@@ -754,7 +754,7 @@ export default function OnboardingSetupPage() {
           return { ...subject, topics: reorderedTopics };
         }
         return subject;
-      }) as SyllabusSubject[];
+      });
 
       form.updateField('syllabus', updatedSyllabus);
 
@@ -871,7 +871,7 @@ export default function OnboardingSetupPage() {
             userId: user.uid,
             userData: {
               displayName: profileData.displayName,
-              currentExamId: (profileData.currentExam?.id || 'none') as string,
+              currentExamId: profileData.currentExam?.id || 'none',
               isCustomExam: form.data.isCustomExam,
               onboardingComplete: true,
               hasPreferences: !!profileData.preferences,
@@ -956,7 +956,7 @@ export default function OnboardingSetupPage() {
           // Save Syllabus - Dual Write Strategy
           // 1. Save Primary Syllabus to legacy location (for backward compatibility)
           logInfo('Step 2: Saving syllabus data (Legacy)', { userId: user.uid });
-          await saveSyllabus(user.uid, form.data.syllabus as SyllabusSubject[]);
+          await saveSyllabus(user.uid, form.data.syllabus);
 
           // 2. Save ALL syllabi to new course-specific locations (for multi-course support)
           logInfo('Step 2b: Saving multi-course syllabus data', {
@@ -976,7 +976,7 @@ export default function OnboardingSetupPage() {
 
               if (course.examId === primaryExamId) {
                 // Use the customized syllabus from the form
-                syllabusToSave = form.data.syllabus as SyllabusSubject[];
+                syllabusToSave = form.data.syllabus;
               } else {
                 // Fetch default syllabus for secondary course
                 const exam = getExamById(course.examId || '');
@@ -1182,7 +1182,7 @@ export default function OnboardingSetupPage() {
         case 1:
           return (
             <BasicInfoStep
-              form={form as UseFormReturn<OnboardingFormData>}
+              form={form}
               filteredExams={filteredExams}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -1192,12 +1192,12 @@ export default function OnboardingSetupPage() {
           );
 
         case 2:
-          return <PersonaScheduleStep form={form as UseFormReturn<OnboardingFormData>} selectedExam={selectedExam} />;
+          return <PersonaScheduleStep form={form} selectedExam={selectedExam} />;
 
         case 3:
           return (
             <SyllabusManagementStep
-              form={form as UseFormReturn<OnboardingFormData>}
+              form={form}
               selectedExam={selectedExam}
               onUpdateSubjectTier={updateSubjectTier}
               onAddSubject={addCustomSubject}
@@ -1210,7 +1210,7 @@ export default function OnboardingSetupPage() {
           );
 
         case 4:
-          return <PreferencesStep form={form as UseFormReturn<OnboardingFormData>} />;
+          return <PreferencesStep form={form} />;
 
         default:
           return (

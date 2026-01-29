@@ -239,7 +239,7 @@ export class AdaptiveTestingService {
   > {
     try {
       const session = this.activeSessions.get(request.sessionId);
-      if (!session || session.userId !== userId) {
+      if (session?.userId !== userId) {
         return createError(new Error('Invalid session'));
       }
 
@@ -383,9 +383,8 @@ export class AdaptiveTestingService {
       const result = await adaptiveTestingRecommendationEngine.generateRecommendations(userId, maxRecommendations);
       if (result.success) {
         return result;
-      } else {
-        return createError(new Error(result.error));
       }
+      return createError(new Error(result.error));
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate test recommendations'));
     }
@@ -399,9 +398,8 @@ export class AdaptiveTestingService {
       const result = await adaptiveTestingRecommendationEngine.generateQuickAssessmentRecommendations(userId, 3);
       if (result.success) {
         return result;
-      } else {
-        return createError(new Error(result.error));
       }
+      return createError(new Error(result.error));
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate quick recommendations'));
     }
@@ -415,9 +413,8 @@ export class AdaptiveTestingService {
       const result = await adaptiveTestingRecommendationEngine.generateWeakAreaRecommendations(userId, 3);
       if (result.success) {
         return result;
-      } else {
-        return createError(new Error(result.error));
       }
+      return createError(new Error(result.error));
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to generate weak area recommendations'));
     }
@@ -431,9 +428,8 @@ export class AdaptiveTestingService {
       const result = await adaptiveTestingRecommendationEngine.generateJourneyAlignedRecommendations(userId, 3);
       if (result.success) {
         return result;
-      } else {
-        return createError(new Error(result.error));
       }
+      return createError(new Error(result.error));
     } catch (error) {
       return createError(
         error instanceof Error ? error : new Error('Failed to generate mission-aligned recommendations')

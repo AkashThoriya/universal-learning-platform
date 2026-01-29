@@ -8,6 +8,8 @@
  * @version 1.0.0
  */
 
+import { firebaseService } from '@/lib/firebase/firebase-services';
+import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 import {
   type UnifiedProgress,
   type TrackProgress,
@@ -16,9 +18,6 @@ import {
   type MissionResults,
   type MissionDifficulty,
 } from '@/types/mission-system';
-
-import { firebaseService } from '@/lib/firebase/firebase-services';
-import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
 
 /**
  * Progress service for tracking and aggregating user learning progress

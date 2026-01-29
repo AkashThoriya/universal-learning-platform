@@ -17,8 +17,8 @@ import {
   LLMResponse,
   LLMQuestionResponse,
 } from '@/lib/ai/types';
-import { createError, createSuccess, Result } from '@/lib/utils/types-utils';
 import { logInfo, logError, logWarning } from '@/lib/utils/logger';
+import { createError, createSuccess, Result } from '@/lib/utils/types-utils';
 import { AdaptiveQuestion } from '@/types/adaptive-testing';
 import { MissionDifficulty } from '@/types/mission-system';
 
@@ -149,13 +149,15 @@ class GeminiProvider {
       // Strategy 3: Extract JSON array from surrounding text
       () => {
         const match = content.match(/\[\s*\{[\s\S]*\}\s*\]/);
-        if (!match) throw new Error('No JSON array found in response');
+        if (!match) {
+          throw new Error('No JSON array found in response');
+        }
         return JSON.parse(match[0]);
       },
 
       // Strategy 4: Fix common JSON issues and retry
       () => {
-        let fixed = content
+        const fixed = content
           // Remove markdown
           .replace(/```(?:json)?\s*\n?/gi, '')
           .replace(/\n?\s*```/g, '')
@@ -168,7 +170,9 @@ class GeminiProvider {
           .trim();
 
         const match = fixed.match(/\[\s*\{[\s\S]*\}\s*\]/);
-        if (!match) throw new Error('No JSON array after cleanup');
+        if (!match) {
+          throw new Error('No JSON array after cleanup');
+        }
         return JSON.parse(match[0]);
       },
     ];
@@ -178,7 +182,9 @@ class GeminiProvider {
     for (let i = 0; i < strategies.length; i++) {
       try {
         const strategy = strategies[i];
-        if (!strategy) continue;
+        if (!strategy) {
+          continue;
+        }
         const rawData = strategy();
         const validated = this.validateAndNormalizeQuestions(rawData, request);
 
@@ -207,8 +213,12 @@ class GeminiProvider {
     return data
       .filter((q: any) => {
         // Required fields validation
-        if (!q.question || typeof q.question !== 'string') return false;
-        if (q.correctAnswer === undefined || q.correctAnswer === null) return false;
+        if (!q.question || typeof q.question !== 'string') {
+          return false;
+        }
+        if (q.correctAnswer === undefined || q.correctAnswer === null) {
+          return false;
+        }
         return true;
       })
       .map((q: any) => ({

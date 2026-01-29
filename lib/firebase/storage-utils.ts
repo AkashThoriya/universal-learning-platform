@@ -10,6 +10,7 @@
  * @version 1.0.0
  */
 
+import imageCompression from 'browser-image-compression';
 import {
   ref,
   uploadBytesResumable,
@@ -20,8 +21,8 @@ import {
   updateMetadata,
   UploadTaskSnapshot,
 } from 'firebase/storage';
+
 import { storage } from './firebase';
-import imageCompression from 'browser-image-compression';
 
 // ============================================================================
 // TYPES
@@ -113,7 +114,9 @@ const generateUniqueFileName = (originalName: string): string => {
  * Determine file type from content type
  */
 const getFileType = (contentType: string): 'image' | 'pdf' => {
-  if (contentType === 'application/pdf') return 'pdf';
+  if (contentType === 'application/pdf') {
+    return 'pdf';
+  }
   return 'image';
 };
 
@@ -254,7 +257,9 @@ const compressImage = async (file: File, onProgress?: (progress: UploadProgress)
  */
 const generateThumbnail = async (file: File): Promise<File> => {
   // If not an image, return original (shouldn't happen due to checks)
-  if (!isCompressibleImage(file.type)) return file;
+  if (!isCompressibleImage(file.type)) {
+    return file;
+  }
 
   console.log(`Generating thumbnail for ${file.name}...`);
 
@@ -358,7 +363,7 @@ export const uploadTopicNote = async (
         uploadedAt: new Date().toISOString(),
         wasCompressed: (fileToUpload !== file).toString(),
         originalSize: file.size.toString(),
-        thumbnailUrl: thumbnailUrl, // Store link to thumbnail
+        thumbnailUrl, // Store link to thumbnail
       },
     });
 
@@ -389,8 +394,8 @@ export const uploadTopicNote = async (
               uploadedAt: new Date().toISOString(),
               wasCompressed: (fileToUpload !== file).toString(),
               originalSize: file.size.toString(),
-              thumbnailUrl: thumbnailUrl,
-              downloadUrl: downloadUrl, // Store for fast retrieval
+              thumbnailUrl,
+              downloadUrl, // Store for fast retrieval
             },
           });
 
@@ -551,13 +556,15 @@ export const deleteTopicNote = async (storagePath: string, userId?: string, topi
  * @returns Formatted string (e.g., "1.5 MB")
  */
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
 
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 };
 
 /**

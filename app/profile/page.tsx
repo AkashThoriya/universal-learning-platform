@@ -12,11 +12,6 @@
 'use client';
 
 import { Timestamp } from 'firebase/firestore';
-import PageTransition from '@/components/layout/PageTransition';
-import { FeaturePageHeader } from '@/components/layout/PageHeader';
-import { ProfileSkeleton } from '@/components/skeletons';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
-import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import {
   User,
   BookOpen,
@@ -38,10 +33,15 @@ import {
   Moon,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
 import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react';
 import { z } from 'zod';
 
+import BottomNav from '@/components/BottomNav';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
+import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
+import { ProfileSkeleton } from '@/components/skeletons';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -59,14 +59,13 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import BottomNav from '@/components/BottomNav';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
 import { AGE_LIMITS } from '@/lib/config/constants';
 import { DEFAULT_PREFERENCES } from '@/lib/config/defaults';
-import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { getExamById } from '@/lib/data/exams-data';
+import { PROFILE_TABS } from '@/lib/data/ui-content';
 import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType, SelectedCourse } from '@/types/exam';
 
@@ -422,7 +421,9 @@ function ProfileContent() {
   // Multi-course handlers
   const handleSetPrimaryCourse = useCallback(
     async (courseId: string) => {
-      if (!form.data.selectedCourses) return;
+      if (!form.data.selectedCourses) {
+        return;
+      }
 
       // Update local state
       const updatedCourses = form.data.selectedCourses.map(c => ({
@@ -474,7 +475,9 @@ function ProfileContent() {
 
   const handleRemoveCourse = useCallback(
     (courseId: string) => {
-      if (!form.data.selectedCourses) return;
+      if (!form.data.selectedCourses) {
+        return;
+      }
 
       const courseToRemove = form.data.selectedCourses.find(c => c.examId === courseId);
       if (courseToRemove?.isPrimary) {

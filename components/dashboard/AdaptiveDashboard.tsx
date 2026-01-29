@@ -16,28 +16,25 @@ import {
   Map,
   LucideIcon,
 } from 'lucide-react';
-
 import { useEffect, useState } from 'react';
 
-import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
-import { DashboardSkeleton } from '@/components/skeletons';
+import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import { DashboardSkeleton } from '@/components/skeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
 import { getUser, getSyllabus, updateUser } from '@/lib/firebase/firebase-utils';
-import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
-import { progressService } from '@/lib/services/progress-service';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
+import { progressService } from '@/lib/services/progress-service';
+import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 import { cn } from '@/lib/utils/utils';
-import { useToast } from '@/hooks/use-toast';
 import { Exam, SyllabusSubject, SelectedCourse } from '@/types/exam';
 
 interface DashboardStats {
@@ -482,7 +479,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
   }, [timeOfDay, user?.uid]);
 
   const handleCourseSwitch = async (courseId: string) => {
-    if (!user || switchingCourse || courseId === activeCourseId) return;
+    if (!user || switchingCourse || courseId === activeCourseId) {
+      return;
+    }
 
     try {
       setSwitchingCourse(true);

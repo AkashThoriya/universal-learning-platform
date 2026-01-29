@@ -28,6 +28,7 @@ import {
   DocumentData as _DocumentData,
 } from 'firebase/firestore';
 
+import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 import {
   User,
   SyllabusSubject,
@@ -40,7 +41,6 @@ import {
 } from '@/types/exam';
 
 import { db } from './firebase';
-import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 
 // User Management
 
@@ -418,24 +418,34 @@ export const updateSubtopic = async (
       const subjectsTopics = [...subjectData.topics];
 
       const topicIndex = subjectsTopics.findIndex(t => t.id === topicId);
-      if (topicIndex === -1) throw new Error(`Topic ${topicId} not found`);
+      if (topicIndex === -1) {
+        throw new Error(`Topic ${topicId} not found`);
+      }
 
       const topic = subjectsTopics[topicIndex];
       // TypeScript safety
-      if (!topic) throw new Error(`Topic at index ${topicIndex} is undefined`);
+      if (!topic) {
+        throw new Error(`Topic at index ${topicIndex} is undefined`);
+      }
 
       const subtopics = topic.subtopics ? [...topic.subtopics] : [];
 
       const subtopicIndex = subtopics.findIndex(s => s.id === subtopicId);
-      if (subtopicIndex === -1) throw new Error(`Subtopic ${subtopicId} not found`);
+      if (subtopicIndex === -1) {
+        throw new Error(`Subtopic ${subtopicId} not found`);
+      }
 
       // Apply updates safely ensuring required fields are kept
       const currentSubtopic = subtopics[subtopicIndex];
-      if (!currentSubtopic) throw new Error(`Subtopic at index ${subtopicIndex} is undefined`);
+      if (!currentSubtopic) {
+        throw new Error(`Subtopic at index ${subtopicIndex} is undefined`);
+      }
 
       // Clean updates to remove undefined optional fields if strict
       const cleanUpdates = Object.entries(updates).reduce((acc: any, [k, v]) => {
-        if (v !== undefined) acc[k] = v;
+        if (v !== undefined) {
+          acc[k] = v;
+        }
         return acc;
       }, {}) as Partial<Subtopic>;
 
@@ -575,6 +585,10 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
       });
 
       await batch.commit();
+
+      // Invalidate cache
+      invalidateSyllabusCache(courseId);
+
       logInfo('Course syllabus saved successfully', { userId, courseId });
     } catch (error) {
       logError('Failed to save course syllabus', { userId, courseId, error });
@@ -583,11 +597,38 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
   });
 };
 
+// ============================================================================
+// SYLLABUS CACHE
+// ============================================================================
+
+interface SyllabusCacheEntry {
+  data: SyllabusSubject[];
+  timestamp: number;
+}
+
+const syllabusCache = new Map<string, SyllabusCacheEntry>();
+const SYLLABUS_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+/**
+ * Invalidate syllabus cache for a specific course
+ */
+export const invalidateSyllabusCache = (courseId: string): void => {
+  syllabusCache.delete(courseId);
+};
+
 /**
  * Retrieves the syllabus for a specific course
+ * Uses in-memory caching with 10-minute TTL
  */
 export const getSyllabusForCourse = async (userId: string, courseId: string): Promise<SyllabusSubject[]> => {
   return measurePerformance('getSyllabusForCourse', async () => {
+    // Check cache first
+    const cached = syllabusCache.get(courseId);
+    if (cached && Date.now() - cached.timestamp < SYLLABUS_CACHE_TTL) {
+      logInfo('Syllabus cache hit', { courseId, cacheAge: Date.now() - cached.timestamp });
+      return cached.data;
+    }
+
     try {
       const syllabusRef = collection(db, 'users', userId, 'courses', courseId, 'syllabus');
       const snapshot = await getDocs(syllabusRef);
@@ -597,12 +638,17 @@ export const getSyllabusForCourse = async (userId: string, courseId: string): Pr
         ...doc.data(),
       })) as SyllabusSubject[];
 
-      return subjects
+      const sortedSubjects = subjects
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
         .map(subject => ({
           ...subject,
           topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? [],
         }));
+
+      // Cache the result
+      syllabusCache.set(courseId, { data: sortedSubjects, timestamp: Date.now() });
+
+      return sortedSubjects;
     } catch (error) {
       logError('Failed to get course syllabus', { userId, courseId, error });
       throw error;
@@ -615,7 +661,9 @@ export const getSyllabusForCourse = async (userId: string, courseId: string): Pr
  */
 export const getAllSyllabi = async (userId: string): Promise<Record<string, SyllabusSubject[]>> => {
   const user = await getUser(userId);
-  if (!user?.currentExam?.id) return {};
+  if (!user?.currentExam?.id) {
+    return {};
+  }
 
   const results: Record<string, SyllabusSubject[]> = {};
 
@@ -836,16 +884,15 @@ export const toggleQuestionSolved = async (userId: string, topicId: string, ques
       });
       logInfo('Question unmarked as solved', { userId, topicId, questionSlug });
       return false;
-    } else {
-      // Add to solved list
-      await updateTopicProgress(userId, topicId, {
-        solvedQuestions: [...solvedQuestions, questionSlug],
-        practiceCount: (current?.practiceCount || 0) + 1,
-        lastPracticed: Timestamp.now(),
-      });
-      logInfo('Question marked as solved', { userId, topicId, questionSlug });
-      return true;
     }
+    // Add to solved list
+    await updateTopicProgress(userId, topicId, {
+      solvedQuestions: [...solvedQuestions, questionSlug],
+      practiceCount: (current?.practiceCount || 0) + 1,
+      lastPracticed: Timestamp.now(),
+    });
+    logInfo('Question marked as solved', { userId, topicId, questionSlug });
+    return true;
   } catch (error) {
     logError('Failed to toggle question solved status', { userId, topicId, questionSlug, error });
     throw error;
@@ -1186,7 +1233,6 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
 const updateUserStats = async (userId: string, _log: DailyLog) => {
   const user = await getUser(userId);
   if (!user) {
-    return;
   }
 
   // Stats logic disabled after schema refactor
@@ -1203,7 +1249,6 @@ const updateUserStats = async (userId: string, _log: DailyLog) => {
 
   // Logic commented out...
   */
-  return;
 };
 
 const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog) => {
@@ -1300,4 +1345,43 @@ export const subscribeToUserStats = (userId: string, callback: (user: User) => v
       });
     }
   );
+};
+
+// ============================================================================
+// DAILY LOGS & STREAK ANALYTICS
+// ============================================================================
+
+/**
+ * Retrieves daily logs history for a specific user
+ * Used for streak visualization and heatmaps
+ *
+ * @param {string} userId - The unique user ID
+ * @param {number} days - Number of days to look back (default: 365)
+ * @returns {Promise<DailyLog[]>} Promise that resolves to array of daily logs
+ */
+export const getDailyLogsHistory = async (userId: string, days = 365): Promise<DailyLog[]> => {
+  return measurePerformance('getDailyLogsHistory', async () => {
+    try {
+      const logsRef = collection(db, 'users', userId, 'dailyLogs');
+
+      // Calculate start date
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+
+      const q = query(logsRef, where('date', '>=', Timestamp.fromDate(startDate)), orderBy('date', 'desc'));
+
+      const snapshot = await getDocs(q);
+
+      return snapshot.docs.map(
+        doc =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as DailyLog
+      );
+    } catch (error) {
+      logError('Failed to get daily logs history', { userId, days, error });
+      return [];
+    }
+  });
 };

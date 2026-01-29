@@ -1,7 +1,5 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import {
   BookOpen,
   FileText,
@@ -14,23 +12,25 @@ import {
   Folder,
   FolderOpen,
 } from 'lucide-react';
+import Link from 'next/link';
+import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
-import Navigation from '@/components/Navigation';
-import PageTransition from '@/components/layout/PageTransition';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
+import Navigation from '@/components/Navigation';
 import { SyllabusDashboardSkeleton } from '@/components/skeletons';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { getTopicNotes, UploadedNote, formatFileSize } from '@/lib/firebase/storage-utils';
-import { SyllabusSubject, SyllabusTopic } from '@/types/exam';
 import { cn } from '@/lib/utils/utils';
+import { SyllabusSubject, SyllabusTopic } from '@/types/exam';
 
 // Interface for aggregated notes data
 interface TopicNotes {
@@ -57,7 +57,9 @@ export default function NotesRevisionPage() {
 
   // Fetch all syllabus data and notes
   const fetchData = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     setLoading(true);
     try {

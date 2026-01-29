@@ -12,10 +12,10 @@
  * @version 1.0.0
  */
 
-import { AdaptiveTest, TestRecommendation } from '@/types/adaptive-testing';
-import { UserJourney } from '@/types/journey';
 import { progressService } from '@/lib/services/progress-service';
 import { createSuccess, createError, Result } from '@/lib/utils/types-utils';
+import { AdaptiveTest, TestRecommendation } from '@/types/adaptive-testing';
+import { UserJourney } from '@/types/journey';
 
 // Define difficulty levels for recommendations
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
@@ -310,7 +310,9 @@ export class AdaptiveTestingRecommendationEngine {
     const recentTests = tests.slice(0, 10);
 
     for (const test of recentTests) {
-      if (!test.responses || !test.questions) continue;
+      if (!test.responses || !test.questions) {
+        continue;
+      }
 
       for (const response of test.responses) {
         if (!response.isCorrect) {
@@ -354,7 +356,9 @@ export class AdaptiveTestingRecommendationEngine {
     // Generate tests for weak areas (from actual failed topics)
     for (let i = 0; i < Math.min(context.weakAreas.length, 3); i++) {
       const subject = context.weakAreas[i];
-      if (!subject) continue;
+      if (!subject) {
+        continue;
+      }
 
       const isFromRecentFailure = i < 2; // First 2 are likely from actual failures
 

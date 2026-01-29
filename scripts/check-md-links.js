@@ -7,8 +7,7 @@ function walk(dir) {
   let files = [];
   for (const e of entries) {
     const full = path.join(dir, e.name);
-    if (e.isDirectory()) files = files.concat(walk(full));
-    else if (e.isFile() && full.endsWith('.md')) files.push(full);
+    if (e.isDirectory()) { files = files.concat(walk(full)); } else if (e.isFile() && full.endsWith('.md')) { files.push(full); }
   }
   return files;
 }
@@ -24,17 +23,17 @@ function normalizeAnchor(link) {
 
 function existsTarget(baseFile, link) {
   const cleaned = normalizeAnchor(link);
-  if (!cleaned) return true; // just an anchor
+  if (!cleaned) { return true; } // just an anchor
   // absolute paths starting with /: resolve from repo root
   if (cleaned.startsWith('/')) {
     return fs.existsSync(path.join(process.cwd(), cleaned));
   }
   // relative to base file
   const candidate = path.join(path.dirname(baseFile), cleaned);
-  if (fs.existsSync(candidate)) return true;
+  if (fs.existsSync(candidate)) { return true; }
   // relative to repo root
   const repoCandidate = path.join(process.cwd(), cleaned);
-  if (fs.existsSync(repoCandidate)) return true;
+  if (fs.existsSync(repoCandidate)) { return true; }
   return false;
 }
 
@@ -48,9 +47,9 @@ for (const file of mdFiles) {
   let m;
   while ((m = linkRegex.exec(txt)) !== null) {
     const link = m[2].trim();
-    if (isRemote(link)) continue;
-    if (link.startsWith('#')) continue;
-    if (link.startsWith('mailto:')) continue;
+    if (isRemote(link)) { continue; }
+    if (link.startsWith('#')) { continue; }
+    if (link.startsWith('mailto:')) { continue; }
     // skip image links that reference remote
     if (link.match(/\.(png|jpe?g|svg|gif)(\?|$)/i)) {
       // try to resolve local images too
@@ -67,5 +66,5 @@ if (broken.length === 0) {
 }
 
 console.log('Broken markdown links found:');
-for (const b of broken) console.log(`${b.file} -> ${b.link}`);
+for (const b of broken) { console.log(`${b.file} -> ${b.link}`); }
 process.exit(2);

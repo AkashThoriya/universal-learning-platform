@@ -1,6 +1,6 @@
 'use client';
 
-import { FileText, Eye, Heading, Bold, Italic, List, ListOrdered, Quote, Code } from 'lucide-react';
+import { FileText, Eye, Heading, Bold, Italic, List, ListOrdered, Quote, Code, Table } from 'lucide-react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,10 +12,12 @@ import { cn } from '@/lib/utils/utils';
 interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;
+  initialMode?: 'write' | 'preview';
   placeholder?: string;
   minHeight?: string;
   className?: string;
   previewClassName?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 export function MarkdownEditor({
@@ -25,10 +27,12 @@ export function MarkdownEditor({
   minHeight = 'min-h-[300px]',
   className,
   previewClassName,
+  onKeyDown,
+  initialMode = 'write',
 }: MarkdownEditorProps) {
-  const [activeTab, setActiveTab] = useState<'write' | 'preview'>('write');
+  const [activeTab, setActiveTab] = useState<'write' | 'preview'>(initialMode);
 
-  const insertSyntax = (syntax: string, suffix: string = '') => {
+  const insertSyntax = (syntax: string, suffix = '') => {
     // A more robust insertion could be added here (using ref to get cursor position),
     // but for now, appending or simple wrapping is a quick win.
     // Ideally, we'd want to wrap selection.
@@ -94,6 +98,14 @@ export function MarkdownEditor({
             onClick={() => insertSyntax('```\n', '\n```')}
             disabled={activeTab === 'preview'}
           />
+          <ToolbarButton
+            icon={Table}
+            label="Table"
+            onClick={() =>
+              insertSyntax('\n| Header 1 | Header 2 |\n| -------- | -------- |\n| Cell 1   | Cell 2   |\n')
+            }
+            disabled={activeTab === 'preview'}
+          />
         </div>
 
         {/* Mode Switcher (Segmented Control) */}
@@ -136,9 +148,13 @@ export function MarkdownEditor({
               'w-full h-full min-h-[inherit] p-4 resize-y border-0 focus-visible:ring-0 rounded-none bg-transparent font-mono text-sm leading-relaxed'
             )}
             spellCheck={false}
+            onKeyDown={onKeyDown}
           />
         ) : (
-          <div className="h-full w-full min-h-[inherit] p-4 md:p-6 overflow-auto bg-muted/5">
+          <div
+            className="h-full w-full min-h-[inherit] p-4 md:p-6 overflow-auto bg-muted/5 cursor-text"
+            onDoubleClick={() => setActiveTab('write')}
+          >
             {value ? (
               <div className={cn('prose prose-sm dark:prose-invert max-w-none break-words', previewClassName)}>
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>

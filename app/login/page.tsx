@@ -3,13 +3,13 @@
 import { Shield, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import PageTransition from '@/components/layout/PageTransition';
 import { useState } from 'react';
 
 import EnhancedAuthFlow from '@/components/auth/EnhancedAuthFlow';
+import PageTransition from '@/components/layout/PageTransition';
 import { Button } from '@/components/ui/button';
-import { LOGIN_FEATURES } from '@/lib/data/ui-content';
 import { signInWithGoogle } from '@/lib/auth/google-auth';
+import { LOGIN_FEATURES } from '@/lib/data/ui-content';
 import { logError, logInfo } from '@/lib/utils/logger';
 
 export default function LoginPage() {

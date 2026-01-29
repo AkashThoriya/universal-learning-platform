@@ -44,7 +44,7 @@ files.forEach(filename => {
     });
 
     // Write back to JSON file
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
+    fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2) }\n`);
 
     console.log(`${filename}: Converted ${convertedCount} subtopics`);
 });

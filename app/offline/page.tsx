@@ -10,8 +10,8 @@
 import { WifiOff, RefreshCw, BookOpen, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import PageTransition from '@/components/layout/PageTransition';
 
+import PageTransition from '@/components/layout/PageTransition';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

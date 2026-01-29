@@ -23,13 +23,13 @@ import {
   Settings,
   HelpCircle,
   AlertTriangle,
+  Layout,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -102,6 +102,12 @@ export default function BottomNav() {
       icon: <User className="h-5 w-5 text-purple-500" />,
       description: 'Manage settings & preferences',
     },
+    {
+      href: '/workspace',
+      label: 'Workspace',
+      icon: <Layout className="h-5 w-5 text-orange-500" />,
+      description: 'Personal study space',
+    },
   ];
 
   const handleLogout = async () => {
@@ -114,7 +120,9 @@ export default function BottomNav() {
   };
 
   const onNavClick = (href: string) => {
-    if (href === pathname) return;
+    if (href === pathname) {
+      return;
+    }
     // Drawer automatically closes when navigating if Link is used,
     // but explicit state management can ensure it behaves correctly
     setIsOpen(false);

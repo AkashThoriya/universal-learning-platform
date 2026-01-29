@@ -1,25 +1,24 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { BookOpen, Target, Zap, ChevronRight, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
 import { FeaturePageHeader } from '@/components/layout/PageHeader';
-import Navigation from '@/components/Navigation';
 import PageTransition from '@/components/layout/PageTransition';
+import Navigation from '@/components/Navigation';
+import { SubjectsSkeleton } from '@/components/skeletons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
-import { SubjectsSkeleton } from '@/components/skeletons';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
-import { SyllabusSubject } from '@/types/exam';
-
 import { logError } from '@/lib/utils/logger';
+import { SyllabusSubject } from '@/types/exam';
 
 // Skeleton component imported from @/components/skeletons
 
@@ -30,7 +29,9 @@ export default function SubjectsPage() {
   const [loading, setLoading] = useState(true);
 
   const loadSyllabus = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -151,7 +152,7 @@ export default function SubjectsPage() {
                             )}
                           </div>
 
-                          <Link href={`/syllabus`}>
+                          <Link href="/syllabus">
                             <Button className="w-full mt-3 group">
                               <span>Explore Topics</span>
                               <ChevronRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />

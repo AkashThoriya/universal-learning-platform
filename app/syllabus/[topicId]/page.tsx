@@ -1,14 +1,22 @@
 'use client';
 
-import PageTransition from '@/components/layout/PageTransition';
+import confetti from 'canvas-confetti';
+import { Timestamp } from 'firebase/firestore';
+import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
+import { TopicDetailSkeleton } from '@/components/skeletons';
+import { TopicContentTabs } from '@/components/topic-detail/TopicContentTabs';
+import { TopicDetailLayout } from '@/components/topic-detail/TopicDetailLayout';
+import { TopicHero } from '@/components/topic-detail/TopicHero';
+import { TopicStatsRail } from '@/components/topic-detail/TopicStatsRail';
+import { Button } from '@/components/ui/button';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -18,15 +26,8 @@ import {
   toggleQuestionSolved,
 } from '@/lib/firebase/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
-import { TopicDetailSkeleton } from '@/components/skeletons';
-import { Timestamp } from 'firebase/firestore';
 
 // Redesign Components
-import { TopicDetailLayout } from '@/components/topic-detail/TopicDetailLayout';
-import { TopicHero } from '@/components/topic-detail/TopicHero';
-import { TopicStatsRail } from '@/components/topic-detail/TopicStatsRail';
-import { TopicContentTabs } from '@/components/topic-detail/TopicContentTabs';
-import confetti from 'canvas-confetti';
 
 export default function TopicDetailPage() {
   const { user } = useAuth();
@@ -49,7 +50,9 @@ export default function TopicDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!user || !topicId) return;
+      if (!user || !topicId) {
+        return;
+      }
 
       try {
         const [progressData, syllabusData] = await Promise.all([
@@ -103,7 +106,9 @@ export default function TopicDetailPage() {
   // ============================================
 
   const handleSaveNotes = async () => {
-    if (!user || !topicProgress) return;
+    if (!user || !topicProgress) {
+      return;
+    }
     setSaving(true);
     try {
       const updates = {
@@ -130,14 +135,16 @@ export default function TopicDetailPage() {
   };
 
   const handleMarkCompleted = async () => {
-    if (!user || !topicProgress) return;
+    if (!user || !topicProgress) {
+      return;
+    }
     try {
       const isCompleted = topicProgress.status === 'completed';
       const newStatus = isCompleted ? 'in_progress' : 'completed';
       const scoreChange = isCompleted ? -10 : 10;
 
       const updates = {
-        status: newStatus as 'completed' | 'in_progress',
+        status: newStatus,
         masteryScore: Math.min(Math.max((topicProgress.masteryScore || 0) + scoreChange, 0), 100),
         // Use null to clear the timestamp in Firestore (requires casting as type expects Timestamp | undefined)
         completedAt: isCompleted ? (null as unknown as Timestamp) : Timestamp.now(),
@@ -166,7 +173,9 @@ export default function TopicDetailPage() {
   };
 
   const handleNeedsReview = async () => {
-    if (!user || !topicProgress) return;
+    if (!user || !topicProgress) {
+      return;
+    }
     try {
       const needsReview = !topicProgress.needsReview;
       const updates = {
@@ -188,7 +197,9 @@ export default function TopicDetailPage() {
 
   const handleToggleQuestion = useCallback(
     async (slug: string, _link?: string, name?: string) => {
-      if (!user || !topicProgress) return;
+      if (!user || !topicProgress) {
+        return;
+      }
 
       const isSolved = topicProgress.solvedQuestions?.includes(slug);
 

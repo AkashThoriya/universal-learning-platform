@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-
+import confetti from 'canvas-confetti';
 import { ArrowLeft, Clock, Target, Award, Brain, Play, CheckCircle2 } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
+import QuestionInterface from '@/components/adaptive-testing/QuestionInterface';
+import TestAnalyticsDashboard from '@/components/adaptive-testing/TestAnalyticsDashboard';
 import { TestDetailSkeleton } from '@/components/skeletons';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,15 +19,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
-import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
-import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
+import { useToast } from '@/hooks/use-toast';
 import { AdaptiveAlgorithm } from '@/lib/algorithms/adaptive-testing-algorithms';
-import QuestionInterface from '@/components/adaptive-testing/QuestionInterface';
-import TestAnalyticsDashboard from '@/components/adaptive-testing/TestAnalyticsDashboard';
-import confetti from 'canvas-confetti';
+import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { logInfo, logError } from '@/lib/utils/logger';
+import { AdaptiveTest, TestSession, AdaptiveQuestion } from '@/types/adaptive-testing';
 
 export default function TestDetailPage() {
   const { testId } = useParams();
@@ -90,7 +89,9 @@ export default function TestDetailPage() {
   // Load Test Data
   useEffect(() => {
     const loadTest = async () => {
-      if (!user?.uid || !testId) return;
+      if (!user?.uid || !testId) {
+        return;
+      }
 
       try {
         setLoading(true);
@@ -129,7 +130,9 @@ export default function TestDetailPage() {
   }, [user, testId, router, toast]);
 
   const handleStartTest = async () => {
-    if (!user?.uid || !test) return;
+    if (!user?.uid || !test) {
+      return;
+    }
 
     try {
       const result = await adaptiveTestingService.startTestSession(user.uid, {
@@ -151,7 +154,9 @@ export default function TestDetailPage() {
   };
 
   const handleResumeTest = async () => {
-    if (!activeSession) return;
+    if (!activeSession) {
+      return;
+    }
 
     try {
       // Case 1: Session has the next question preview cached (Ideal)
@@ -200,7 +205,9 @@ export default function TestDetailPage() {
   };
 
   const handleAnswerSubmit = async (qid: string, ans: string, conf: number, time: number) => {
-    if (!activeSession) return;
+    if (!activeSession) {
+      return;
+    }
 
     const result = await adaptiveTestingService.submitResponse(user!.uid, {
       sessionId: activeSession.id,
@@ -228,7 +235,9 @@ export default function TestDetailPage() {
   };
 
   const handleNextQuestion = async () => {
-    if (!pendingNext || !activeSession) return;
+    if (!pendingNext || !activeSession) {
+      return;
+    }
 
     if (pendingNext.testCompleted) {
       setMode('completed');
@@ -253,7 +262,9 @@ export default function TestDetailPage() {
     return <TestDetailSkeleton />;
   }
 
-  if (!test) return null;
+  if (!test) {
+    return null;
+  }
 
   // VIEW: COMPLETED
   if (mode === 'completed' || test.status === 'completed') {

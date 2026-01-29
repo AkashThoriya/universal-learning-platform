@@ -114,7 +114,7 @@ export class JourneyService {
         targetCompletionDate: targetDate,
         priority: 'high',
         track: 'exam',
-        examId: examId,
+        examId,
         customGoals: [],
       };
 
@@ -486,7 +486,7 @@ export class JourneyService {
    */
   private async calculateOverallCompletion(journey: UserJourney): Promise<void> {
     try {
-      const goalCompletions = Object.values(journey.progressTracking.goalCompletions) as number[];
+      const goalCompletions = Object.values(journey.progressTracking.goalCompletions);
       const overallCompletion =
         goalCompletions.length > 0
           ? goalCompletions.reduce((sum: number, completion: number) => sum + completion, 0) / goalCompletions.length

@@ -1,13 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
 import { TrendingUp, Calendar, Target, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import Link from 'next/link';
+import { useMemo } from 'react';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { User, SyllabusSubject } from '@/types/exam';
-import Link from 'next/link';
 
 interface StrategyInsightsProps {
   user: User;
@@ -34,7 +35,9 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
     const totalTopics = syllabus.reduce((acc, subject) => acc + (subject.topics?.length || 0), 0);
     const remainingTopics = totalTopics - completedTopicsCount;
 
-    if (!startDate || !examDate) return null;
+    if (!startDate || !examDate) {
+      return null;
+    }
 
     // Time calculations
     const daysElapsed = Math.max(1, Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
@@ -106,7 +109,9 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
     );
   }
 
-  if (!metrics) return null;
+  if (!metrics) {
+    return null;
+  }
 
   // Formatting helpers
   const formatDate = (date: Date) =>

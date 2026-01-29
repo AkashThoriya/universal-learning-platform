@@ -47,7 +47,9 @@ export function useAiThinking({
   }, []);
 
   useEffect(() => {
-    if (!isActive || isCompleted) return;
+    if (!isActive || isCompleted) {
+      return;
+    }
 
     // Check if we are done
     if (currentStepIndex >= steps.length) {
@@ -60,7 +62,9 @@ export function useAiThinking({
     }
 
     const currentStep = steps[currentStepIndex];
-    if (!currentStep) return;
+    if (!currentStep) {
+      return;
+    }
     const duration = currentStep.duration ?? defaultStepDuration;
 
     const timer = setTimeout(() => {

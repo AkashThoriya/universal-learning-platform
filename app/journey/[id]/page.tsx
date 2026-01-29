@@ -1,26 +1,26 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Target, CheckCircle2, TrendingUp, Trash2, Play, Pause, Trophy, Edit } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import PageTransition from '@/components/layout/PageTransition';
+import AuthGuard from '@/components/AuthGuard';
+import { EditJourneyDialog } from '@/components/journey/EditJourneyDialog';
 import PageContainer from '@/components/layout/PageContainer';
 import { DetailPageHeader } from '@/components/layout/PageHeader';
-import AuthGuard from '@/components/AuthGuard';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import PageTransition from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { EmptyState } from '@/components/ui/empty-state';
-import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { journeyService } from '@/lib/services/journey-service';
-import { EditJourneyDialog } from '@/components/journey/EditJourneyDialog';
 import { UserJourney } from '@/types/journey';
 
 export default function JourneyDetailPage() {
@@ -35,7 +35,9 @@ export default function JourneyDetailPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
-    if (!user || !journeyId) return;
+    if (!user || !journeyId) {
+      return;
+    }
 
     // Subscribe to real-time updates for this journey
     const unsubscribe = journeyService.subscribeToUserJourneys(user.uid, journeys => {
@@ -48,7 +50,9 @@ export default function JourneyDetailPage() {
   }, [user, journeyId]);
 
   const handleStatusChange = async (newStatus: UserJourney['status']) => {
-    if (!journey) return;
+    if (!journey) {
+      return;
+    }
 
     try {
       await journeyService.updateJourneyStatus(journey.id, newStatus);
@@ -66,7 +70,9 @@ export default function JourneyDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!journey) return;
+    if (!journey) {
+      return;
+    }
 
     try {
       await journeyService.updateJourneyStatus(journey.id, 'cancelled');
@@ -113,13 +119,17 @@ export default function JourneyDetailPage() {
   };
 
   const formatDate = (date: Date | string | any) => {
-    if (!date) return 'Not set';
+    if (!date) {
+      return 'Not set';
+    }
     const d = date.toDate ? date.toDate() : new Date(date);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const getDaysRemaining = () => {
-    if (!journey?.targetCompletionDate) return null;
+    if (!journey?.targetCompletionDate) {
+      return null;
+    }
     const targetDate = journey.targetCompletionDate as any;
     const target = targetDate.toDate ? targetDate.toDate() : new Date(targetDate);
     const days = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));

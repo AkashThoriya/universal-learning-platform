@@ -51,6 +51,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -66,7 +67,6 @@ import {
   AdaptiveRecommendation,
 } from '@/lib/analytics/intelligent-analytics-service';
 import { logger } from '@/lib/utils/logger';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
 
 // UI Components
 

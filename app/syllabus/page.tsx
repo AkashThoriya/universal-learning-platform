@@ -1,7 +1,5 @@
 'use client';
 
-import { FeaturePageHeader } from '@/components/layout/PageHeader';
-import PageTransition from '@/components/layout/PageTransition';
 import {
   BookOpen,
   ChevronRight,
@@ -32,18 +30,12 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
+import { SyllabusDashboardSkeleton } from '@/components/skeletons';
+import StrategyInsights from '@/components/syllabus/StrategyInsights';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,6 +47,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
@@ -63,12 +65,9 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-
 import { getSyllabus, getAllProgress, saveSyllabus, getUser } from '@/lib/firebase/firebase-utils';
 import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
-import StrategyInsights from '@/components/syllabus/StrategyInsights';
-import { SyllabusDashboardSkeleton } from '@/components/skeletons';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -123,7 +122,9 @@ export default function SyllabusPage() {
 
         setSyllabus(syllabusData);
         setProgress(progressData);
-        if (userProfile) setUserProfile(userProfile);
+        if (userProfile) {
+          setUserProfile(userProfile);
+        }
       } catch (error) {
         logError('Error fetching syllabus data', {
           error: error instanceof Error ? error.message : String(error),
@@ -669,7 +670,9 @@ export default function SyllabusPage() {
                     <p className="text-xl sm:text-2xl font-bold text-slate-900">
                       {
                         progress.filter(p => {
-                          if (!p.nextRevision?.toMillis) return false;
+                          if (!p.nextRevision?.toMillis) {
+                            return false;
+                          }
                           const daysSince = Math.floor(
                             (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
                           );

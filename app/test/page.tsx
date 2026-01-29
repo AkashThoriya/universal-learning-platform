@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FeaturePageHeader } from '@/components/layout/PageHeader';
 import {
   Brain,
   Target,
@@ -18,35 +17,36 @@ import {
   Play,
   Calendar,
 } from 'lucide-react';
-import { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
 
 import { AdaptiveTestCard, TestConfigModal, TestConfig } from '@/components/adaptive-testing';
 import { TestGenerationOverlay } from '@/components/adaptive-testing/TestGenerationOverlay';
 import BottomNav from '@/components/BottomNav';
+import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
+import { FeaturePageHeader } from '@/components/layout/PageHeader';
+import PageTransition from '@/components/layout/PageTransition';
+import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import Navigation from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import {
   StatCardSkeletonGrid,
   TestCardSkeletonGrid,
   RecommendationCardSkeletonGrid,
   TestPageSkeleton,
 } from '@/components/skeletons';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
-import { AdaptiveTest } from '@/types/adaptive-testing';
-import PageTransition from '@/components/layout/PageTransition';
-import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
-import { ScrollableTabsList } from '@/components/layout/ScrollableTabsList';
 import { logInfo, logError } from '@/lib/utils/logger';
 import { cn } from '@/lib/utils/utils';
+import { AdaptiveTest } from '@/types/adaptive-testing';
 
 interface TestOverviewStats {
   totalTests: number;
@@ -117,7 +117,9 @@ function AdaptiveTestingPageContent() {
 
   // Data Fetching Functions
   const loadTestsAndStats = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       const testsResult = await adaptiveTestingService.getUserTests(user.uid);
@@ -148,7 +150,9 @@ function AdaptiveTestingPageContent() {
   }, [user?.uid, toast]);
 
   const loadRecommendations = useCallback(async () => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setLoadingRecommendations(true);
@@ -169,7 +173,9 @@ function AdaptiveTestingPageContent() {
   // Load initial data
   useEffect(() => {
     const loadAllData = async () => {
-      if (!user?.uid) return;
+      if (!user?.uid) {
+        return;
+      }
       setLoading(true);
 
       // Parallel fetch
@@ -317,7 +323,9 @@ function AdaptiveTestingPageContent() {
     const matchesMonth =
       filterMonth === 'all' ||
       (() => {
-        if (!test.createdAt) return false;
+        if (!test.createdAt) {
+          return false;
+        }
         const testDate = test.createdAt instanceof Date ? test.createdAt : new Date(test.createdAt);
         const testMonth = `${testDate.getFullYear()}-${String(testDate.getMonth() + 1).padStart(2, '0')}`;
         return testMonth === filterMonth;
@@ -341,7 +349,9 @@ function AdaptiveTestingPageContent() {
     tests.forEach(test => {
       if (test.createdAt) {
         const testDate = test.createdAt instanceof Date ? test.createdAt : new Date(test.createdAt);
-        if (testDate < earliestDate) earliestDate = testDate;
+        if (testDate < earliestDate) {
+          earliestDate = testDate;
+        }
       }
     });
 
@@ -1041,7 +1051,9 @@ function AdaptiveTestingPageContent() {
                                   <Button
                                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                                     onClick={async () => {
-                                      if (!user?.uid) return;
+                                      if (!user?.uid) {
+                                        return;
+                                      }
                                       setIsGenerating(true);
                                       try {
                                         const result = await adaptiveTestingService.createTestFromRecommendation(
