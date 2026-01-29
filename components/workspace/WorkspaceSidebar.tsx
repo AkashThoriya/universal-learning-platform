@@ -1,5 +1,6 @@
 'use client';
-import { CheckSquare, Plus, FilePlus } from 'lucide-react';
+import { CheckSquare, Plus, FilePlus, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import {
@@ -112,7 +113,7 @@ export function WorkspaceSidebar({
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => handleCreateNote(null)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="transition-opacity"
                   >
                     <FilePlus className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
                   </button>
@@ -147,7 +148,14 @@ export function WorkspaceSidebar({
         </div>
 
         {/* User Profile / Settings (Optional) */}
-        <div className="p-3 border-t mt-auto">{/* Placeholder for settings */}</div>
+        <div className="p-3 border-t mt-auto">
+          <Link href="/dashboard">
+            <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Delete Confirmation Dialog */}
