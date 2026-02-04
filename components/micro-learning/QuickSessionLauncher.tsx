@@ -88,12 +88,12 @@ export function QuickSessionLauncher({
 
       // Convert recommendations to quick session format if successful
       if (recommendationsResult.success && recommendationsResult.data) {
-        const personalizedSessions = recommendationsResult.data.map((rec, index) => ({
+        const personalizedSessions: QuickSessionConfig[] = recommendationsResult.data.map((rec, index) => ({
           id: rec.id,
           title: rec.title,
           description: rec.description,
           duration: 15 + index * 5, // Default durations: 15, 20, 25 minutes
-          difficulty: rec.priority === 'high' ? 'beginner' : rec.priority === 'medium' ? 'intermediate' : 'advanced',
+          difficulty: (rec.priority === 'high' ? 'beginner' : rec.priority === 'medium' ? 'intermediate' : 'advanced') as 'beginner' | 'intermediate' | 'advanced',
           track: 'exam' as const,
           subjectId: 'general',
           topicId: rec.category,

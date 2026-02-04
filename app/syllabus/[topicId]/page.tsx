@@ -143,8 +143,8 @@ export default function TopicDetailPage() {
       const newStatus = isCompleted ? 'in_progress' : 'completed';
       const scoreChange = isCompleted ? -10 : 10;
 
-      const updates = {
-        status: newStatus,
+      const updates: Partial<TopicProgress> = {
+        status: newStatus as 'not_started' | 'in_progress' | 'completed' | 'mastered',
         masteryScore: Math.min(Math.max((topicProgress.masteryScore || 0) + scoreChange, 0), 100),
         // Use null to clear the timestamp in Firestore (requires casting as type expects Timestamp | undefined)
         completedAt: isCompleted ? (null as unknown as Timestamp) : Timestamp.now(),
