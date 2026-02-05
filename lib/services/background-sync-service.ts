@@ -209,7 +209,7 @@ class BackgroundSyncService {
       const { missionId, progress, completedAt, timeSpent } = data;
 
       // Check for conflicts
-      const remoteDoc = await getDoc(doc(db, `users/${item.userId}/journeys/${missionId}`));
+      const remoteDoc = await getDoc(doc(db, `users/${item.userId}/missions/${missionId}`));
 
       if (remoteDoc.exists()) {
         const remoteData = remoteDoc.data();
@@ -224,7 +224,7 @@ class BackgroundSyncService {
 
       // Sync to Firebase
       await setDoc(
-        doc(db, `users/${item.userId}/journeys/${missionId}`),
+        doc(db, `users/${item.userId}/missions/${missionId}`),
         {
           progress,
           completedAt: completedAt ? Timestamp.fromDate(new Date(completedAt)) : null,

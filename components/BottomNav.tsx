@@ -14,7 +14,7 @@
 import {
   Home,
   Brain,
-  Map,
+
   Menu,
   BookOpen,
   Calendar,
@@ -78,12 +78,7 @@ export default function BottomNav() {
 
   // Secondary items in the "More" drawer
   const secondaryItems = [
-    {
-      href: '/journey',
-      label: 'Journey Planning',
-      icon: <Map className="h-5 w-5 text-indigo-500" />,
-      description: 'Plan your learning path',
-    },
+
     {
       href: '/syllabus',
       label: 'Syllabus',

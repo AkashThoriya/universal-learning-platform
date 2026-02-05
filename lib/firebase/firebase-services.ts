@@ -23,7 +23,6 @@ import {
   Timestamp,
   writeBatch,
   onSnapshot as _onSnapshot,
-  arrayUnion,
   DocumentData,
 } from 'firebase/firestore';
 
@@ -40,7 +39,7 @@ import {
   TestRecommendation,
 } from '@/types/adaptive-testing';
 import { User, UserStats, TopicProgress, MockTestLog } from '@/types/exam';
-import { UserJourney, UpdateJourneyProgressRequest, JourneyAnalytics, MilestoneAchievement } from '@/types/journey';
+
 import { MissionDifficulty } from '@/types/mission-system';
 
 import { db } from './firebase';
@@ -1511,21 +1510,11 @@ const ADAPTIVE_TESTING_COLLECTIONS = {
   TEST_RESPONSES: 'testResponses',
   ADAPTIVE_ANALYTICS: 'adaptiveAnalytics',
   QUESTION_BANK_ITEMS: 'questionBankItems',
-  TEST_JOURNEY_LINKS: 'testJourneyLinks',
+
   USER_TEST_PREFERENCES: 'userTestPreferences',
 } as const;
 
-// Journey Planning collections
-const JOURNEY_COLLECTIONS = {
-  USER_JOURNEYS: 'userJourneys',
-  JOURNEY_TEMPLATES: 'journeyTemplates',
-  JOURNEY_ANALYTICS: 'journeyAnalytics',
-  JOURNEY_MILESTONES: 'journeyMilestones',
-  JOURNEY_COLLABORATORS: 'journeyCollaborators',
-  JOURNEY_COMMENTS: 'journeyComments',
-  JOURNEY_INVITATIONS: 'journeyInvitations',
-  WEEKLY_PROGRESS: 'weeklyProgress',
-} as const;
+
 
 /**
  * Enhanced Adaptive Testing Firebase Service
@@ -1546,9 +1535,7 @@ const adaptiveTestingFirebaseService = {
       });
 
       // Link to user's progress if applicable
-      if (test.linkedJourneyId) {
-        await this.linkTestToJourney(test.id, test.linkedJourneyId);
-      }
+
 
       return createSuccess(test);
     } catch (error) {
@@ -1820,25 +1807,6 @@ const adaptiveTestingFirebaseService = {
   },
 
   /**
-   * Link test to journey planning system
-   */
-  async linkTestToJourney(testId: string, journeyId: string): Promise<Result<void>> {
-    try {
-      const linkRef = doc(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_JOURNEY_LINKS, `${testId}_${journeyId}`);
-      await setDoc(linkRef, {
-        testId,
-        journeyId,
-        linkedAt: Timestamp.now(),
-        status: 'active',
-      });
-
-      return createSuccess(undefined);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to link test to journey'));
-    }
-  },
-
-  /**
    * Get test recommendations for a user
    */
   async getTestRecommendations(_userId: string): Promise<Result<TestRecommendation[]>> {
@@ -1871,16 +1839,12 @@ const adaptiveTestingFirebaseService = {
             },
           },
           expectedBenefit: 'Assess current learning progress and identify areas for improvement',
-          missionAlignment: 0.9,
+
           estimatedAccuracy: 0.85,
           aiGenerated: true,
           createdFrom: 'recommendation',
           linkedMissions: [],
-          estimatedBenefit_old: {
-            abilityImprovement: 0.15,
-            weaknessAddressing: ['Current affairs', 'Quantitative aptitude'],
-            journeyAlignment: 0.9,
-          },
+
           optimalTiming: {
             recommendedDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
             dependsOn: ['Complete pending missions'],
@@ -1967,16 +1931,12 @@ const adaptiveTestingFirebaseService = {
               },
             },
             expectedBenefit: 'Continue progress and maintain learning momentum',
-            missionAlignment: 0.8,
+
             estimatedAccuracy: 0.75,
             aiGenerated: true,
             createdFrom: 'recommendation',
             linkedMissions: [],
-            estimatedBenefit_old: {
-              abilityImprovement: 0.1,
-              weaknessAddressing: [],
-              journeyAlignment: 0.8,
-            },
+
             optimalTiming: {
               recommendedDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
               dependsOn: [],
@@ -2199,444 +2159,12 @@ const adaptiveTestingFirebaseService = {
  * Journey Planning Firebase Service
  * Integrates with existing Firebase infrastructure for journey management
  */
-const journeyFirebaseService = {
-  /**
-   * Create a new journey
-   */
-  async createJourney(userId: string, journey: UserJourney): Promise<Result<UserJourney>> {
-    try {
-      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journey.id);
-      await setDoc(journeyRef, {
-        ...journey,
-        createdAt: Timestamp.fromDate(journey.createdAt),
-        updatedAt: Timestamp.fromDate(journey.updatedAt),
-        targetCompletionDate: Timestamp.fromDate(journey.targetCompletionDate),
-        customGoals: journey.customGoals.map(goal => ({
-          ...goal,
-          deadline: Timestamp.fromDate(goal.deadline),
-        })),
-        progressTracking: {
-          ...journey.progressTracking,
-          lastSyncedAt: Timestamp.fromDate(journey.progressTracking.lastSyncedAt),
-          weeklyProgress: journey.progressTracking.weeklyProgress.map(week => ({
-            ...week,
-            weekStarting: Timestamp.fromDate(week.weekStarting),
-          })),
-          milestoneAchievements: journey.progressTracking.milestoneAchievements.map(milestone => ({
-            ...milestone,
-            achievedAt: Timestamp.fromDate(milestone.achievedAt),
-          })),
-        },
-      });
-
-      // Link journey to user's progress
-      await this.linkJourneyToProgress(userId, journey.id);
-
-      return createSuccess(journey);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to create journey'));
-    }
-  },
-
-  /**
-   * Get user's journeys with real-time updates
-   */
-  subscribeToUserJourneys(userId: string, callback: (journeys: UserJourney[]) => void): () => void {
-    const q = query(
-      collection(db, JOURNEY_COLLECTIONS.USER_JOURNEYS),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
-    );
-
-    return _onSnapshot(q, (snapshot: any) => {
-      const journeys = snapshot.docs.map((doc: any) => {
-        const data = doc.data();
-        return {
-          ...data,
-          id: doc.id,
-          createdAt: data.createdAt?.toDate() ?? new Date(),
-          updatedAt: data.updatedAt?.toDate() ?? new Date(),
-          targetCompletionDate: data.targetCompletionDate?.toDate() ?? new Date(),
-          customGoals:
-            data.customGoals?.map((goal: any) => ({
-              ...goal,
-              deadline: goal.deadline?.toDate() ?? new Date(),
-            })) ?? [],
-          progressTracking: {
-            ...data.progressTracking,
-            lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() ?? new Date(),
-            weeklyProgress:
-              data.progressTracking?.weeklyProgress?.map((week: any) => ({
-                ...week,
-                weekStarting: week.weekStarting?.toDate() ?? new Date(),
-              })) ?? [],
-            milestoneAchievements:
-              data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
-                ...milestone,
-                achievedAt: milestone.achievedAt?.toDate() ?? new Date(),
-              })) ?? [],
-          },
-        };
-      }) as UserJourney[];
-
-      callback(journeys);
-    });
-  },
-
-  /**
-   * Get user's journeys with one-time fetch (no real-time updates)
-   * OPTIMIZED: Use this instead of subscribeToUserJourneys when real-time isn't needed
-   * Reduces continuous Firebase billing from onSnapshot listeners
-   */
-  async getUserJourneys(userId: string): Promise<Result<UserJourney[]>> {
-    try {
-      const q = query(
-        collection(db, JOURNEY_COLLECTIONS.USER_JOURNEYS),
-        where('userId', '==', userId),
-        orderBy('createdAt', 'desc')
-      );
-
-      const snapshot = await getDocs(q);
-      const journeys = snapshot.docs.map(docSnapshot => {
-        const data = docSnapshot.data();
-        return {
-          ...data,
-          id: docSnapshot.id,
-          createdAt: data.createdAt?.toDate() ?? new Date(),
-          updatedAt: data.updatedAt?.toDate() ?? new Date(),
-          targetCompletionDate: data.targetCompletionDate?.toDate() ?? new Date(),
-          customGoals:
-            data.customGoals?.map((goal: any) => ({
-              ...goal,
-              deadline: goal.deadline?.toDate() ?? new Date(),
-            })) ?? [],
-          progressTracking: {
-            ...data.progressTracking,
-            lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() ?? new Date(),
-            weeklyProgress:
-              data.progressTracking?.weeklyProgress?.map((week: any) => ({
-                ...week,
-                weekStarting: week.weekStarting?.toDate() ?? new Date(),
-              })) ?? [],
-            milestoneAchievements:
-              data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
-                ...milestone,
-                achievedAt: milestone.achievedAt?.toDate() ?? new Date(),
-              })) ?? [],
-          },
-        };
-      }) as UserJourney[];
-
-      return createSuccess(journeys);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to get user journeys'));
-    }
-  },
-
-  /**
-   * Update journey progress
-   */
-  async updateJourneyProgress(journeyId: string, updates: UpdateJourneyProgressRequest): Promise<Result<void>> {
-    try {
-      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
-
-      // Build update object
-      const updateData: any = {
-        updatedAt: Timestamp.now(),
-        'progressTracking.lastSyncedAt': Timestamp.now(),
-      };
-
-      // Update individual goals
-      updates.goalUpdates.forEach(update => {
-        updateData[`progressTracking.goalCompletions.${update.goalId}`] = update.newValue;
-      });
-
-      // Add weekly update if provided
-      if (updates.weeklyUpdate) {
-        updateData['progressTracking.weeklyProgress'] = arrayUnion({
-          ...updates.weeklyUpdate,
-          weekStarting: Timestamp.fromDate(updates.weeklyUpdate.weekStarting ?? new Date()),
-        });
-      }
-
-      await updateDoc(journeyRef, updateData);
-      return createSuccess(undefined);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to update journey progress'));
-    }
-  },
-
-  /**
-   * Get a specific journey
-   */
-  async getJourney(journeyId: string): Promise<Result<UserJourney>> {
-    try {
-      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
-      const journeyDoc = await getDoc(journeyRef);
-
-      if (!journeyDoc.exists()) {
-        return createError(new Error('Journey not found'));
-      }
-
-      const data = journeyDoc.data();
-      const journey: UserJourney = {
-        ...data,
-        id: journeyDoc.id,
-        createdAt: data.createdAt?.toDate() ?? new Date(),
-        updatedAt: data.updatedAt?.toDate() ?? new Date(),
-        targetCompletionDate: data.targetCompletionDate?.toDate() ?? new Date(),
-        customGoals:
-          data.customGoals?.map((goal: any) => ({
-            ...goal,
-            deadline: goal.deadline?.toDate() ?? new Date(),
-          })) ?? [],
-        progressTracking: {
-          ...data.progressTracking,
-          lastSyncedAt: data.progressTracking?.lastSyncedAt?.toDate() ?? new Date(),
-          weeklyProgress:
-            data.progressTracking?.weeklyProgress?.map((week: any) => ({
-              ...week,
-              weekStarting: week.weekStarting?.toDate() ?? new Date(),
-            })) ?? [],
-          milestoneAchievements:
-            data.progressTracking?.milestoneAchievements?.map((milestone: any) => ({
-              ...milestone,
-              achievedAt: milestone.achievedAt?.toDate() ?? new Date(),
-            })) ?? [],
-        },
-      } as UserJourney;
-
-      return createSuccess(journey);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to get journey'));
-    }
-  },
-
-  /**
-   * Update journey
-   */
-  async updateJourney(journeyId: string, updates: Partial<UserJourney>): Promise<Result<void>> {
-    try {
-      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
-      const updateData: any = {
-        ...updates,
-        updatedAt: Timestamp.now(),
-      };
-
-      // Handle date fields
-      if (updates.targetCompletionDate) {
-        updateData.targetCompletionDate = Timestamp.fromDate(updates.targetCompletionDate);
-      }
-
-      if (updates.customGoals) {
-        updateData.customGoals = updates.customGoals.map(goal => ({
-          ...goal,
-          deadline: Timestamp.fromDate(goal.deadline),
-        }));
-      }
-
-      await updateDoc(journeyRef, updateData);
-      return createSuccess(undefined);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to update journey'));
-    }
-  },
-
-  /**
-   * Delete journey
-   */
-  async deleteJourney(journeyId: string): Promise<Result<void>> {
-    try {
-      // Delete the journey document
-      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
-      await deleteDoc(journeyRef);
-
-      // Clean up related data
-      await this.cleanupJourneyData(journeyId);
-
-      return createSuccess(undefined);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to delete journey'));
-    }
-  },
-
-  /**
-   * Add milestone achievement
-   */
-  async addMilestoneAchievement(journeyId: string, milestone: MilestoneAchievement): Promise<Result<void>> {
-    try {
-      const journeyRef = doc(db, JOURNEY_COLLECTIONS.USER_JOURNEYS, journeyId);
-      const milestoneWithTimestamp = {
-        ...milestone,
-        achievedAt: Timestamp.fromDate(milestone.achievedAt),
-      };
-
-      await updateDoc(journeyRef, {
-        'progressTracking.milestoneAchievements': arrayUnion(milestoneWithTimestamp),
-        updatedAt: Timestamp.now(),
-      });
-
-      return createSuccess(undefined);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to add milestone achievement'));
-    }
-  },
-
-  /**
-   * Link journey to existing progress system
-   */
-  async linkJourneyToProgress(userId: string, journeyId: string): Promise<Result<void>> {
-    try {
-      const progressRef = doc(db, 'users', userId, 'progress', 'unified');
-      await updateDoc(progressRef, {
-        linkedJourneys: arrayUnion(journeyId),
-        updatedAt: Timestamp.now(),
-      });
-      return createSuccess(undefined);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to link journey to progress'));
-    }
-  },
-
-  /**
-   * Get journey analytics
-   */
-  async getJourneyAnalytics(journeyId: string): Promise<Result<JourneyAnalytics>> {
-    try {
-      const analyticsRef = doc(db, JOURNEY_COLLECTIONS.JOURNEY_ANALYTICS, journeyId);
-      const analyticsDoc = await getDoc(analyticsRef);
-
-      if (!analyticsDoc.exists()) {
-        // Generate analytics if not exists
-        return this.generateJourneyAnalytics(journeyId);
-      }
-
-      const data = analyticsDoc.data();
-      const analytics: JourneyAnalytics = {
-        ...data,
-        predictedCompletionDate: data.predictedCompletionDate?.toDate() ?? new Date(),
-      } as JourneyAnalytics;
-
-      return createSuccess(analytics);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to get journey analytics'));
-    }
-  },
-
-  /**
-   * Generate journey analytics
-   */
-  async generateJourneyAnalytics(journeyId: string): Promise<Result<JourneyAnalytics>> {
-    try {
-      const journeyResult = await this.getJourney(journeyId);
-      if (!journeyResult.success) {
-        return journeyResult;
-      }
-
-      const journey = journeyResult.data;
-      const now = new Date();
-      const startDate = journey.createdAt;
-      const targetDate = journey.targetCompletionDate;
-
-      const totalDays = Math.ceil((targetDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-      const elapsedDays = Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-
-      const completedGoals = journey.customGoals.filter(g => g.currentValue >= g.targetValue).length;
-
-      const expectedProgress = (elapsedDays / totalDays) * 100;
-      const actualProgress = journey.progressTracking.overallCompletion;
-
-      const weeklyHours =
-        journey.progressTracking.weeklyProgress.reduce((acc, week) => acc + week.hoursStudied, 0) /
-        Math.max(journey.progressTracking.weeklyProgress.length, 1);
-
-      const riskFactors = [];
-      if (actualProgress < expectedProgress - 10) {
-        riskFactors.push('Behind schedule');
-      }
-      if (weeklyHours < 10) {
-        riskFactors.push('Low study hours');
-      }
-
-      const recommendations = [];
-      if (riskFactors.includes('Behind schedule')) {
-        recommendations.push('Increase daily study time');
-        recommendations.push('Focus on high-priority goals');
-      }
-
-      const analytics: JourneyAnalytics = {
-        journeyId,
-        completionRate: actualProgress,
-        averageWeeklyHours: weeklyHours,
-        goalCompletionVelocity: completedGoals / Math.max(elapsedDays / 7, 1),
-        predictedCompletionDate: new Date(
-          startDate.getTime() + totalDays * (100 / Math.max(actualProgress, 1)) * 24 * 60 * 60 * 1000
-        ),
-        riskFactors,
-        recommendations,
-        // comparisonWithSimilarUsers removed to ensure integrity (no simulated data)
-      };
-
-      // Save analytics
-      const analyticsRef = doc(db, JOURNEY_COLLECTIONS.JOURNEY_ANALYTICS, journeyId);
-      await setDoc(analyticsRef, {
-        ...analytics,
-        predictedCompletionDate: Timestamp.fromDate(analytics.predictedCompletionDate),
-        updatedAt: Timestamp.now(),
-      });
-
-      return createSuccess(analytics);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to generate journey analytics'));
-    }
-  },
-
-  /**
-   * Clean up journey related data when journey is deleted
-   */
-  async cleanupJourneyData(journeyId: string): Promise<void> {
-    try {
-      // Clean up analytics
-      const analyticsRef = doc(db, JOURNEY_COLLECTIONS.JOURNEY_ANALYTICS, journeyId);
-      await deleteDoc(analyticsRef);
-
-      // Clean up collaborators
-      const collaboratorsQuery = query(
-        collection(db, JOURNEY_COLLECTIONS.JOURNEY_COLLABORATORS),
-        where('journeyId', '==', journeyId)
-      );
-      const collaboratorsSnapshot = await getDocs(collaboratorsQuery);
-      const collaboratorDeletions = collaboratorsSnapshot.docs.map(doc => deleteDoc(doc.ref));
-      await Promise.all(collaboratorDeletions);
-
-      // Clean up comments
-      const commentsQuery = query(
-        collection(db, JOURNEY_COLLECTIONS.JOURNEY_COMMENTS),
-        where('journeyId', '==', journeyId)
-      );
-      const commentsSnapshot = await getDocs(commentsQuery);
-      const commentDeletions = commentsSnapshot.docs.map(doc => deleteDoc(doc.ref));
-      await Promise.all(commentDeletions);
-
-      // Clean up invitations
-      const invitationsQuery = query(
-        collection(db, JOURNEY_COLLECTIONS.JOURNEY_INVITATIONS),
-        where('journeyId', '==', journeyId)
-      );
-      const invitationsSnapshot = await getDocs(invitationsQuery);
-      const invitationDeletions = invitationsSnapshot.docs.map(doc => deleteDoc(doc.ref));
-      await Promise.all(invitationDeletions);
-    } catch (error) {
-      console.error('Error cleaning up journey data:', error);
-    }
-  },
-};
-
 // ============================================================================
 // EXPORTS
 // ============================================================================
 
-export { FirebaseService, CacheService, firebaseService, adaptiveTestingFirebaseService, journeyFirebaseService };
+export { FirebaseService, CacheService, firebaseService, adaptiveTestingFirebaseService };
 
 // Export the enhanced firebase service as default
 export default firebaseService;
+

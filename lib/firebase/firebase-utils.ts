@@ -1230,25 +1230,127 @@ export const generateStudyInsights = async (userId: string): Promise<StudyInsigh
 };
 
 // Helper Functions
-const updateUserStats = async (userId: string, _log: DailyLog) => {
-  const user = await getUser(userId);
-  if (!user) {
+const updateUserStats = async (userId: string, log: DailyLog) => {
+  try {
+    // Get current unified progress
+    const progressRef = doc(db, 'users', userId, 'progress', 'unified');
+    const progressSnap = await getDoc(progressRef);
+    
+    // Define default progress structure if it doesn't exist
+    const defaultProgress = {
+      userId,
+      overallProgress: {
+        totalMissionsCompleted: 0,
+        totalTimeInvested: 0,
+        averageScore: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        consistencyRating: 0,
+      },
+      trackProgress: {
+        exam: {
+          track: 'exam' as const,
+          missionsCompleted: 0,
+          averageScore: 0,
+          timeInvested: 0,
+          proficiencyLevel: 'beginner' as const,
+          masteredSkills: [],
+          skillsInProgress: [],
+          performanceTrend: 'stable' as const,
+          difficultyProgression: {
+            current: 'medium' as const,
+            recommended: 'medium' as const,
+            readyForAdvancement: false,
+          },
+          topicBreakdown: [],
+        },
+        course_tech: {
+          track: 'course_tech' as const,
+          missionsCompleted: 0,
+          averageScore: 0,
+          timeInvested: 0,
+          proficiencyLevel: 'beginner' as const,
+          masteredSkills: [],
+          skillsInProgress: [],
+          performanceTrend: 'stable' as const,
+          difficultyProgression: {
+            current: 'medium' as const,
+            recommended: 'medium' as const,
+            readyForAdvancement: false,
+          },
+          topicBreakdown: [],
+        },
+      },
+      crossTrackInsights: {
+        transferableSkills: [],
+        effectivePatterns: [],
+        recommendedBalance: { exam: 70, course_tech: 30 },
+      },
+      periodSummaries: {
+        weekly: [],
+        monthly: [],
+      },
+      updatedAt: new Date(),
+    };
+
+    const currentProgress = progressSnap.exists() 
+      ? progressSnap.data()
+      : defaultProgress;
+
+    // Calculate study time from log
+    const studyMinutes = log.studiedTopics?.reduce((sum, session) => sum + session.minutes, 0) ?? 0;
+    
+    // Update overall stats
+    currentProgress.overallProgress.totalTimeInvested = 
+      (currentProgress.overallProgress.totalTimeInvested ?? 0) + studyMinutes;
+    currentProgress.overallProgress.totalMissionsCompleted = 
+      (currentProgress.overallProgress.totalMissionsCompleted ?? 0) + 1;
+    
+    // Update streak (check if this is a consecutive day)
+    const lastUpdate = currentProgress.updatedAt;
+    const lastActivityDate = lastUpdate 
+      ? (lastUpdate.toDate ? lastUpdate.toDate() : new Date(lastUpdate)).toDateString()
+      : null;
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    
+    if (lastActivityDate === yesterday) {
+      // Consecutive day - increment streak
+      currentProgress.overallProgress.currentStreak = 
+        (currentProgress.overallProgress.currentStreak ?? 0) + 1;
+    } else if (lastActivityDate !== today) {
+      // Not consecutive and not same day - reset to 1
+      currentProgress.overallProgress.currentStreak = 1;
+    }
+    // If same day, don't change streak
+    
+    // Update longest streak
+    if ((currentProgress.overallProgress.currentStreak ?? 0) > (currentProgress.overallProgress.longestStreak ?? 0)) {
+      currentProgress.overallProgress.longestStreak = currentProgress.overallProgress.currentStreak;
+    }
+    
+    // Update consistency rating (0-100 scale for weeklyGoalProgress)
+    const streakScore = Math.min((currentProgress.overallProgress.currentStreak ?? 0) / 30, 1);
+    const volumeScore = Math.min((currentProgress.overallProgress.totalMissionsCompleted ?? 0) / 100, 1);
+    currentProgress.overallProgress.consistencyRating = Math.round((streakScore * 0.6 + volumeScore * 0.4) * 100);
+    
+    // Update timestamp
+    currentProgress.updatedAt = Timestamp.now();
+    
+    await setDoc(progressRef, currentProgress, { merge: true });
+    
+    logInfo('User stats updated from daily log', { 
+      userId, 
+      studyMinutes,
+      currentStreak: currentProgress.overallProgress.currentStreak,
+      totalTimeInvested: currentProgress.overallProgress.totalTimeInvested,
+    });
+  } catch (error) {
+    logError('Failed to update user stats', { 
+      userId, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
   }
-
-  // Stats logic disabled after schema refactor
-  /*
-  const defaultStats = {
-    totalStudyHours: 0,
-    currentStreak: 0,
-    longestStreak: 0,
-    totalMockTests: 0,
-    averageScore: 0,
-    topicsCompleted: 0,
-    totalTopics: 0,
-  };
-
-  // Logic commented out...
-  */
 };
 
 const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog) => {

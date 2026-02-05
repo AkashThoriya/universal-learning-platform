@@ -25,8 +25,8 @@ export default function FloatingActionButton({ className }: FloatingActionButton
   const actions: FloatingAction[] = [
     {
       icon: Zap,
-      label: 'Plan Journey',
-      href: '/journey',
+      label: 'Strategy',
+      href: '/strategy',
       color: 'bg-yellow-500 hover:bg-yellow-600',
       priority: 'high',
     },

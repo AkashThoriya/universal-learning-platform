@@ -238,8 +238,8 @@ export function QuickSessionLauncher({
             variant="outline"
             className="w-full text-blue-700 border-blue-300 hover:bg-blue-100 transition-colors duration-200"
             onClick={() => {
-              // Navigate to journey planning
-              window.location.href = '/journey';
+              // Navigate to test page
+              window.location.href = '/test';
             }}
           >
             <Target className="h-4 w-4 mr-2" />

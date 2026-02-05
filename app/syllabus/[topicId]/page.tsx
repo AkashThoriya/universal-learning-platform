@@ -24,6 +24,7 @@ import {
   getTopicProgress,
   updateTopicProgress,
   toggleQuestionSolved,
+  getUser,
 } from '@/lib/firebase/firebase-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
@@ -40,6 +41,7 @@ export default function TopicDetailPage() {
 
   const [topicProgress, setTopicProgress] = useState<TopicProgress | null>(null);
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
+  const [userProfile, setUserProfile] = useState<any | null>(null);
   const [userNotes, setUserNotes] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -55,12 +57,14 @@ export default function TopicDetailPage() {
       }
 
       try {
-        const [progressData, syllabusData] = await Promise.all([
+        const [progressData, syllabusData, userData] = await Promise.all([
           getTopicProgress(user.uid, topicId),
           getSyllabus(user.uid),
+          getUser(user.uid),
         ]);
 
         setSyllabus(syllabusData);
+        if (userData) setUserProfile(userData);
 
         if (progressData) {
           setTopicProgress(progressData);
@@ -134,6 +138,15 @@ export default function TopicDetailPage() {
     }
   };
 
+  const getNextRevisionDate = (currentCount: number) => {
+    const revisionIntervals = userProfile?.preferences?.revisionIntervals || [7, 14, 30];
+    const intervalIndex = Math.min(currentCount, revisionIntervals.length - 1);
+    const daysUntilNext = revisionIntervals[intervalIndex] || 7;
+    const nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + daysUntilNext);
+    return { date: nextDate, days: daysUntilNext };
+  };
+
   const handleMarkCompleted = async () => {
     if (!user || !topicProgress) {
       return;
@@ -149,6 +162,15 @@ export default function TopicDetailPage() {
         // Use null to clear the timestamp in Firestore (requires casting as type expects Timestamp | undefined)
         completedAt: isCompleted ? (null as unknown as Timestamp) : Timestamp.now(),
       };
+
+      // Spaced Repetition Logic for Completion
+      if (!isCompleted) {
+         // If marking as completed for the first time (or re-completing), schedule next revision
+         const { date: nextDate } = getNextRevisionDate(topicProgress.revisionCount || 0);
+         updates.nextRevision = Timestamp.fromDate(nextDate);
+         updates.lastRevised = Timestamp.now();
+         updates.revisionCount = (topicProgress.revisionCount || 0) + 1;
+      }
 
       await updateTopicProgress(user.uid, topicId, updates);
       setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
@@ -169,6 +191,43 @@ export default function TopicDetailPage() {
     } catch (error) {
       console.error('Error toggling completion:', error);
       toast({ title: 'Error', variant: 'destructive', description: 'Failed to update status.' });
+    }
+  };
+
+  const handleMarkMastered = async () => {
+    if (!user || !topicProgress) return;
+    try {
+      // Logic for "I know this" - set mastery to 100% and schedule next revision
+      const { date: nextDate, days } = getNextRevisionDate(topicProgress.revisionCount || 0);
+      
+      const updates = {
+        status: 'mastered' as const,
+        masteryScore: 100,
+        completedAt: Timestamp.now(),
+        lastRevised: Timestamp.now(),
+        nextRevision: Timestamp.fromDate(nextDate),
+        revisionCount: (topicProgress.revisionCount || 0) + 1,
+        needsReview: false,
+      };
+
+      await updateTopicProgress(user.uid, topicId, updates);
+      setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
+
+      toast({
+        title: 'Mastered! 🎓',
+        description: `Marked as mastered! Next review in ${days} days.`,
+      });
+
+      confetti({
+        particleCount: 200,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#10b981', '#34d399', '#f59e0b']
+      });
+
+    } catch (error) {
+      console.error('Error marking mastered:', error);
+      toast({ title: 'Error', variant: 'destructive', description: 'Failed to update mastery.' });
     }
   };
 
@@ -303,6 +362,7 @@ export default function TopicDetailPage() {
               <TopicStatsRail
                 progress={topicProgress}
                 onMarkCompleted={handleMarkCompleted}
+                onMarkMastered={handleMarkMastered}
                 onNeedsReview={handleNeedsReview}
               />
             }

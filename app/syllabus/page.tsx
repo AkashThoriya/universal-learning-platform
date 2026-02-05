@@ -24,6 +24,7 @@ import {
   Timer,
   Info,
   FileText,
+  Check,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -60,8 +61,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Separator } from '@/components/ui/separator';
+
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -82,6 +84,7 @@ export default function SyllabusPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
+  const [hideMastered, setHideMastered] = useState(true);
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
 
   // Enhanced edit state management
@@ -430,11 +433,20 @@ export default function SyllabusPage() {
       }
     }
 
-    return matchesSearch && matchesMastery;
+
+
+    // Hide Mastered filter
+    let matchesHideMastered = true;
+    if (hideMastered) {
+      const subjectMastery = getSubjectMastery(subject);
+      matchesHideMastered = subjectMastery < 100;
+    }
+
+    return matchesSearch && matchesMastery && matchesHideMastered;
   }); // Keep natural order - first subjects appear at the top
 
   // Calculate completed topics count for Strategy Insights
-  const completedTopicsCount = progress.filter(p => p.status === 'completed').length;
+  const completedTopicsCount = progress.filter(p => p.status === 'completed' || p.status === 'mastered').length;
 
   const getMasteryColor = (score: number) => {
     if (score >= MASTERY_THRESHOLD) {
@@ -552,65 +564,101 @@ export default function SyllabusPage() {
               </div>
             )}
 
-            {/* Filters */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Filter className="h-5 w-5" />
-                  <span>Filters & Search</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="search-topics" className="text-sm font-medium">
-                      Search Topics
-                    </label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        id="search-topics"
-                        placeholder="Search subjects or topics..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
+            {/* Compact Smart Filters Toolbar */}
+            <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center gap-2">
+              {/* Search Field - Flexible Width */}
+              <div className="relative flex-1 w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input
+                  className="pl-9 border-0 bg-slate-50 focus-visible:ring-0 focus-visible:bg-white transition-all"
+                  placeholder="Search subjects or topics..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                />
+              </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="mastery-filter" className="text-sm font-medium">
-                      Filter by Mastery
-                    </label>
-                    <Select value={masteryFilter} onValueChange={setMasteryFilter}>
-                      <SelectTrigger id="mastery-filter">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Levels</SelectItem>
-                        <SelectItem value="low">Low (&lt; 50%)</SelectItem>
-                        <SelectItem value="medium">Medium (50-79%)</SelectItem>
-                        <SelectItem value="high">High (≥ {MASTERY_THRESHOLD}%)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              {/* Separator for desktop */}
+              <div className="hidden sm:block w-px h-8 bg-slate-100 mx-1" />
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Quick Actions</label>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setMasteryFilter('all');
-                      }}
+              {/* Action Group */}
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                {/* Mastery Filter Dropdown */}
+                 <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className={`gap-2 ${masteryFilter !== 'all' ? 'bg-blue-50 text-blue-700' : 'text-slate-600'}`}
                     >
-                      Clear Filters
+                      <Filter className="h-4 w-4" />
+                      <span className="hidden sm:inline">
+                        {masteryFilter === 'all' ? 'Mastery' : 
+                         masteryFilter === 'low' ? 'Low' : 
+                         masteryFilter === 'medium' ? 'Medium' : 'High'}
+                      </span>
+                      {masteryFilter !== 'all' && (
+                        <Badge variant="secondary" className="px-1.5 h-5 text-[10px] bg-blue-100 text-blue-700">
+                          1
+                        </Badge>
+                      )}
+                      <ChevronDown className="h-3 w-3 opacity-50" />
                     </Button>
-                  </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onSelect={() => setMasteryFilter('all')}>
+                      {masteryFilter === 'all' && <Check className="mr-2 h-4 w-4" />}
+                      <span className={masteryFilter === 'all' ? '' : 'pl-6'}>All Levels</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setMasteryFilter('low')}>
+                      {masteryFilter === 'low' && <Check className="mr-2 h-4 w-4" />}
+                      <span className={masteryFilter === 'low' ? '' : 'pl-6'}>Low (&lt; 50%)</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setMasteryFilter('medium')}>
+                      {masteryFilter === 'medium' && <Check className="mr-2 h-4 w-4" />}
+                      <span className={masteryFilter === 'medium' ? '' : 'pl-6'}>Medium (50-79%)</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setMasteryFilter('high')}>
+                      {masteryFilter === 'high' && <Check className="mr-2 h-4 w-4" />}
+                      <span className={masteryFilter === 'high' ? '' : 'pl-6'}>High (≥ {MASTERY_THRESHOLD}%)</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* Hide Mastered Toggle */}
+                <div 
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer select-none ${
+                    hideMastered 
+                    ? 'bg-slate-900 border-slate-900 text-white' 
+                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                  onClick={() => setHideMastered(!hideMastered)}
+                >
+                  <span className="text-xs font-medium">Hide Mastered</span>
+                  {hideMastered ? (
+                    <EyeOff className="h-3.5 w-3.5" />
+                  ) : (
+                    <Eye className="h-3.5 w-3.5" />
+                  )}
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Clear Filters (Only show if filters active) */}
+                {(searchQuery || masteryFilter !== 'all' || !hideMastered) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 text-slate-400 hover:text-rose-600 transition-colors"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setMasteryFilter('all');
+                      setHideMastered(true);
+                    }}
+                    title="Reset Filters"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
 
             {/* Overview Stats - Clean Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -883,7 +931,7 @@ export default function SyllabusPage() {
                                     <span>Add Topic</span>
                                   </Button>
 
-                                  <DropdownMenu>
+                                  <DropdownMenu modal={false}>
                                     <DropdownMenuTrigger asChild>
                                       <Button size="sm" variant="ghost">
                                         <MoreHorizontal className="h-4 w-4" />
@@ -1070,7 +1118,7 @@ export default function SyllabusPage() {
                                                   )}
                                                 </Button>
 
-                                                <DropdownMenu>
+                                                <DropdownMenu modal={false}>
                                                   <DropdownMenuTrigger asChild>
                                                     <Button size="sm" variant="ghost" className="p-1">
                                                       <MoreHorizontal className="h-3 w-3" />

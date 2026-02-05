@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp, Calendar, Target, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import { TrendingUp, Calendar, Target, AlertTriangle, CheckCircle2, Clock, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { calculateStrategyMetrics, formatVelocity } from '@/lib/strategy-utils';
 import { User, SyllabusSubject } from '@/types/exam';
 
 interface StrategyInsightsProps {
@@ -19,65 +20,7 @@ interface StrategyInsightsProps {
 export default function StrategyInsights({ user, syllabus, completedTopicsCount }: StrategyInsightsProps) {
   // Calculate Date Metrics
   const metrics = useMemo(() => {
-    const today = new Date();
-
-    const startDate = user.preparationStartDate?.toDate();
-
-    // Robustly resolve exam date from various possible locations in the User object
-    let targetDate: Date | undefined;
-    if (user.currentExam?.targetDate) {
-      targetDate = user.currentExam.targetDate.toDate();
-    }
-
-    const examDate = targetDate;
-
-    // Safely handle total topics calculation
-    const totalTopics = syllabus.reduce((acc, subject) => acc + (subject.topics?.length || 0), 0);
-    const remainingTopics = totalTopics - completedTopicsCount;
-
-    if (!startDate || !examDate) {
-      return null;
-    }
-
-    // Time calculations
-    const daysElapsed = Math.max(1, Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
-    const daysRemaining = Math.max(0, Math.ceil((examDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
-    const totalDays = daysElapsed + daysRemaining;
-
-    // Velocity (Topics per Day)
-    const currentVelocity = completedTopicsCount / daysElapsed; // Topics/Day
-    const requiredVelocity = remainingTopics / Math.max(1, daysRemaining); // Topics/Day
-
-    // Projected Finish
-    const daysToFinishAtCurrentPace = currentVelocity > 0 ? Math.ceil(remainingTopics / currentVelocity) : 999;
-    const projectedFinishDate = new Date(today.getTime() + daysToFinishAtCurrentPace * 24 * 60 * 60 * 1000);
-
-    // Status Logic
-    let status: 'on_track' | 'at_risk' | 'critical' | 'ahead' = 'on_track';
-
-    if (daysRemaining <= 0 && remainingTopics > 0) {
-      status = 'critical';
-    } else if (projectedFinishDate > examDate) {
-      // If projection is way past exam date
-      const delayDays = Math.ceil((projectedFinishDate.getTime() - examDate.getTime()) / (1000 * 60 * 60 * 24));
-      status = delayDays > 14 ? 'critical' : 'at_risk';
-    } else if (projectedFinishDate < new Date(examDate.getTime() - 14 * 24 * 60 * 60 * 1000)) {
-      status = 'ahead'; // Finishing 2 weeks early
-    }
-
-    return {
-      startDate,
-      examDate,
-      totalTopics,
-      daysElapsed,
-      daysRemaining,
-      currentVelocity,
-      requiredVelocity,
-      projectedFinishDate,
-      status,
-      percentageTimeElapsed: Math.min(100, (daysElapsed / totalDays) * 100),
-      percentageContentCompleted: Math.min(100, (completedTopicsCount / totalTopics) * 100),
-    };
+    return calculateStrategyMetrics(user, syllabus, completedTopicsCount);
   }, [user, syllabus, completedTopicsCount]);
 
   if (!user.preparationStartDate) {
@@ -116,7 +59,6 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
   // Formatting helpers
   const formatDate = (date: Date) =>
     date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const formatVelocity = (v: number) => (v * 7).toFixed(1); // Convert to Weekly Velocity for readability
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -131,7 +73,14 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
               </CardTitle>
               <CardDescription>Real-time analysis of your preparation pace</CardDescription>
             </div>
-            <StatusBadge status={metrics.status} />
+            <div className="flex flex-col items-end gap-2">
+              <StatusBadge status={metrics.status} />
+              <Button variant="link" size="sm" asChild className="h-auto p-0 text-blue-600">
+                <Link href="/strategy" className="flex items-center gap-1">
+                  View Full Report <ChevronRight className="h-3 w-3" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">

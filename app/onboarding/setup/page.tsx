@@ -51,7 +51,7 @@ import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
 import { createUser, saveSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
-import { journeyService } from '@/lib/services/journey-service';
+
 import { logError, logInfo, logger } from '@/lib/utils/logger';
 import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, OnboardingFormData } from '@/types/exam';
 
@@ -989,19 +989,7 @@ export default function OnboardingSetupPage() {
 
           logInfo('Step 2 completed: All syllabi saved successfully');
 
-          // Step 3: Create initial Journey for the Primary Course
-          if (primaryExamId && form.data.examDate) {
-            logInfo('Step 3: Creating initial journey', { userId: user.uid, examId: primaryExamId });
-            try {
-              // Ensure we have a valid Date object
-              const journeyDate = new Date(form.data.examDate);
-              await journeyService.createJourneyFromOnboarding(user.uid, primaryExamId, journeyDate);
-              logInfo('Step 3 completed: Initial journey created');
-            } catch (error) {
-              // Non-blocking error - don't fail onboarding if journey creation fails
-              logError('Failed to create initial journey', { error });
-            }
-          }
+
 
           // Save custom learning goals separately if any exist (optional - doesn't affect core data)
           if ((form.data as any).customLearningGoals && (form.data as any).customLearningGoals.length > 0) {

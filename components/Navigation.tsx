@@ -19,7 +19,7 @@ import {
   Calendar,
   Menu,
   Brain,
-  Map,
+
   Sparkles,
   AlertTriangle,
   type LucideIcon,
@@ -144,14 +144,7 @@ export default function Navigation() {
       isActive: isActive('/syllabus'),
       description: 'Study material and topics',
     },
-    // Secondary nav (in menu/more)
-    {
-      href: '/journey',
-      label: 'Journey Planning',
-      icon: Map,
-      isActive: isActiveGroup(['/journey']),
-      description: 'Plan your learning path and track progress',
-    },
+
     {
       href: '/log/daily',
       label: 'Daily Log',

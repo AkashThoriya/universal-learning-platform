@@ -12,7 +12,7 @@ export interface AdaptiveTest {
   description: string;
 
   // Integration with existing systems
-  linkedJourneyId?: string; // Links to Journey Planning system
+
   linkedSubjects: string[]; // Subject IDs from exam data
   linkedTopics?: string[]; // Topic IDs for more granular targeting
   track: LearningTrack; // Consistent with mission system
@@ -48,7 +48,7 @@ export interface AdaptiveTest {
   createdAt: Date;
   updatedAt: Date;
   completedAt?: Date;
-  createdFrom: 'manual' | 'journey' | 'mission' | 'recommendation';
+  createdFrom: 'manual' | 'mission' | 'recommendation';
 }
 
 export interface AdaptiveQuestion {
@@ -230,15 +230,7 @@ export interface TestMissionLink {
   };
 }
 
-export interface TestJourneyIntegration {
-  testId: string;
-  journeyId: string;
-  goalAlignments: Array<{
-    goalId: string;
-    contributionWeight: number;
-    impactMetrics: string[];
-  }>;
-}
+
 
 // API Request/Response types
 export interface CreateAdaptiveTestRequest {
@@ -251,7 +243,7 @@ export interface CreateAdaptiveTestRequest {
   targetQuestions?: number;
   questionCount?: number;
   questionType?: 'multiple_choice' | 'true_false' | 'short_answer' | 'essay';
-  linkedJourneyId?: string;
+
   algorithmType?: AdaptiveTest['algorithmType'];
   difficultyRange?: {
     min: MissionDifficulty;
@@ -315,17 +307,11 @@ export interface TestRecommendation {
 
   // Integration properties
   expectedBenefit: string;
-  missionAlignment: number;
   estimatedAccuracy: number;
   aiGenerated: boolean;
-  createdFrom: 'recommendation' | 'manual' | 'journey';
+  createdFrom: 'recommendation' | 'manual';
   linkedMissions: string[];
 
-  estimatedBenefit_old?: {
-    abilityImprovement: number;
-    weaknessAddressing: string[];
-    journeyAlignment: number;
-  };
   optimalTiming?: {
     recommendedDate: Date;
     dependsOn: string[]; // Prerequisites

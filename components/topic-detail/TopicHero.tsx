@@ -50,9 +50,6 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
               >
                 {subject.name}
               </Badge>
-              <Badge variant="outline" className="px-3 py-1 bg-white/40 border-slate-200 text-slate-600">
-                Tier {subject.tier}
-              </Badge>
               {topic.estimatedHours && (
                 <Badge
                   variant="outline"

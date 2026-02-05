@@ -359,20 +359,14 @@ export default function AdaptiveTestCard({
                 </Button>
               )}
 
-              {/* Secondary Actions */}
-              {test.status === 'completed' && test.createdFrom === 'journey' && (
-                <Button variant="ghost" className="w-full text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-                  <Target className="h-4 w-4 mr-2" />
-                  View Journey Impact
-                </Button>
-              )}
+
             </div>
 
             {/* Metadata */}
             <div className="flex justify-between items-center text-xs text-gray-500 pt-2 border-t">
               <span>Created {test.createdAt.toLocaleDateString()}</span>
               <span>
-                {test.createdFrom === 'journey' && '🎯 Journey'}
+
                 {test.createdFrom === 'mission' && '🚀 Mission'}
                 {test.createdFrom === 'recommendation' && '💡 Recommended'}
                 {test.createdFrom === 'manual' && '✋ Manual'}

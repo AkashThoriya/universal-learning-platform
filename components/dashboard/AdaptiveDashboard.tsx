@@ -13,7 +13,7 @@ import {
   Calendar,
   Award,
   Brain,
-  Map,
+
   LucideIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -30,12 +30,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
-import { getUser, getSyllabus, updateUser } from '@/lib/firebase/firebase-utils';
+import { getUser, getSyllabus, updateUser, getAllProgress } from '@/lib/firebase/firebase-utils';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { progressService } from '@/lib/services/progress-service';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 import { cn } from '@/lib/utils/utils';
-import { Exam, SyllabusSubject, SelectedCourse } from '@/types/exam';
+import { Exam, SyllabusSubject, SelectedCourse, TopicProgress } from '@/types/exam';
 
 interface DashboardStats {
   totalStudyTime: number;
@@ -51,10 +51,7 @@ interface DashboardStats {
   adaptiveTestsCompleted: number;
   adaptiveTestsAverage: number;
   adaptiveTestsTotal: number;
-  // Journey planning stats
-  activeJourneys: number;
-  journeyCompletion: number;
-  journeyMilestones: number;
+
 }
 
 interface Achievement {
@@ -72,8 +69,9 @@ interface AdaptiveDashboardProps {
 
 // Helper function to generate today's study recommendations
 const generateTodayRecommendations = (
-  exam: Exam,
+  _exam: Exam,
   syllabus: SyllabusSubject[],
+  topicProgress: TopicProgress[],
   examDaysLeft?: number
 ): {
   currentTopic?: string;
@@ -84,6 +82,7 @@ const generateTodayRecommendations = (
   examDaysLeft?: number;
   subjectRecommendation?: string;
   todaysPlan?: string[];
+  allTopicsComplete?: boolean;
 } => {
   // Find the next topic to study (first incomplete topic)
   let currentTopic = '';
@@ -92,14 +91,18 @@ const generateTodayRecommendations = (
   let nextAction = '';
   let subjectRecommendation = '';
   const todaysPlan: string[] = [];
+  let foundIncompleteTopic = false;
 
   if (syllabus.length > 0) {
     // Find first subject with incomplete topics
     for (const subject of syllabus) {
       if (subject.topics && subject.topics.length > 0) {
-        const incompleteTopic = subject.topics.find(_topic => {
-          // Check if topic is not completed (this would depend on your progress tracking)
-          return true; // For now, assume all topics need work
+        const incompleteTopic = subject.topics.find(topic => {
+          // Check topic progress status from Firebase data
+          const progress = topicProgress.find(p => p.topicId === topic.id);
+          // Only recommend topics that are NOT completed or mastered
+          const status = progress?.status;
+          return !status || !['completed', 'mastered'].includes(status);
         });
 
         if (incompleteTopic) {
@@ -109,6 +112,7 @@ const generateTodayRecommendations = (
           subjectRecommendation = subject.name;
           todaysPlan.push(`📚 Study ${incompleteTopic.name}`);
           todaysPlan.push(`⏱️ Target: ${incompleteTopic.estimatedHours ?? 2} hours`);
+          foundIncompleteTopic = true;
           break;
         }
       }
@@ -151,7 +155,7 @@ const generateTodayRecommendations = (
   todaysPlan.push('📝 Review weak areas');
 
   return {
-    currentTopic: currentTopic || `Start with ${exam.name} basics`,
+    ...(foundIncompleteTopic ? { currentTopic } : {}),
     ...(currentTopicId ? { currentTopicId } : {}),
     ...(currentSubjectId ? { currentSubjectId } : {}),
     nextAction,
@@ -159,6 +163,7 @@ const generateTodayRecommendations = (
     subjectRecommendation: subjectRecommendation || 'Choose a subject to begin',
     todaysPlan,
     ...(examDaysLeft !== undefined ? { examDaysLeft } : {}),
+    allTopicsComplete: !foundIncompleteTopic && syllabus.length > 0,
   };
 };
 
@@ -183,9 +188,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     adaptiveTestsCompleted: 0,
     adaptiveTestsAverage: 0,
     adaptiveTestsTotal: 0,
-    activeJourneys: 0,
-    journeyCompletion: 0,
-    journeyMilestones: 0,
+
   });
   const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -201,6 +204,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     examDaysLeft?: number;
     subjectRecommendation?: string;
     todaysPlan?: string[];
+    allTopicsComplete?: boolean;
   }>({});
 
   const [availableCourses, setAvailableCourses] = useState<SelectedCourse[]>([]);
@@ -247,9 +251,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               adaptiveTestsCompleted: 0,
               adaptiveTestsAverage: 0,
               adaptiveTestsTotal: 0,
-              activeJourneys: 0,
-              journeyCompletion: 0,
-              journeyMilestones: 0,
+
             });
             setRecentAchievements([]);
 
@@ -259,15 +261,14 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           // Fetch real user data including profile and exam info
           // OPTIMIZED: Fetch all independent data in parallel to reduce latency
-          const [progressResult, activeJourneysResult, userProfile, userTests, syllabus, customGoalsResult] =
+          const [progressResult, userProfile, userTests, syllabus, customGoalsResult, topicProgress] =
             await Promise.all([
               progressService.getUserProgress(user.uid),
-              // journeyService.getActiveJourneys(user.uid), // Using placeholder for now
-              Promise.resolve({ success: true, data: [] }), // Placeholder for journeys
               getUser(user.uid),
               adaptiveTestingService.getUserTests(user.uid),
               getSyllabus(user.uid).catch(() => []), // Fetch syllabus in parallel (auto-resolves courseId)
               customLearningService.getUserCustomGoals(user.uid), // Fetch custom goals in parallel
+              getAllProgress(user.uid).catch(() => []), // Fetch topic progress for recommendations
             ]);
 
           // Load selected exam information
@@ -306,8 +307,8 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                   )
                 : undefined;
 
-              // Use pre-fetched syllabus from Promise.all (faster load)
-              const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
+              // Use pre-fetched syllabus and topic progress from Promise.all (faster load)
+              const todayRecs = generateTodayRecommendations(exam, syllabus, topicProgress, examDaysLeft);
               setTodayRecommendations(todayRecs);
             }
           }
@@ -325,9 +326,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             adaptiveTestsCompleted: 0,
             adaptiveTestsAverage: 0,
             adaptiveTestsTotal: 0,
-            activeJourneys: 0,
-            journeyCompletion: 0,
-            journeyMilestones: 0,
+
           };
 
           if (progressResult.success && progressResult.data) {
@@ -354,28 +353,11 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                     userTests.filter(t => t.status === 'completed').length
                   : 0,
               adaptiveTestsTotal: userTests.length,
-              activeJourneys: (progress as any).linkedJourneys?.length ?? 0,
-              journeyCompletion: Math.round(
-                (progress as any).journeyProgress
-                  ? Object.values((progress as any).journeyProgress).reduce(
-                      (acc: number, jp: any) => acc + (jp.overallCompletion || 0),
-                      0
-                    ) / Object.keys((progress as any).journeyProgress).length
-                  : 0
-              ),
-              journeyMilestones: (progress as any).journeyProgress
-                ? Object.values((progress as any).journeyProgress).reduce(
-                    (acc: number, jp: any) => acc + (jp.milestoneCount || 0),
-                    0
-                  )
-                : 0,
+
             };
           }
 
-          // Add active journeys count
-          if (activeJourneysResult.success && activeJourneysResult.data) {
-            realStats.activeJourneys = activeJourneysResult.data.length;
-          }
+
 
           // Setup achievements based on real data
           const recentAchievements: Achievement[] = [];
@@ -463,9 +445,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             adaptiveTestsCompleted: 0,
             adaptiveTestsAverage: 0,
             adaptiveTestsTotal: 0,
-            activeJourneys: 0,
-            journeyCompletion: 0,
-            journeyMilestones: 0,
+
           };
           setStats(fallbackStats);
           setRecentAchievements([]);
@@ -497,8 +477,11 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       if (exam) {
         setSelectedExam(exam);
 
-        // Load syllabus for new course (explicitly passing courseId)
-        const syllabus = await getSyllabus(user.uid, courseId);
+        // Load syllabus and topic progress for new course
+        const [syllabus, topicProgress] = await Promise.all([
+          getSyllabus(user.uid, courseId),
+          getAllProgress(user.uid).catch(() => []),
+        ]);
 
         // Find target date for the course
         const courseData = availableCourses.find(c => c.examId === courseId);
@@ -517,7 +500,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           : undefined;
 
         // Generate new recommendations
-        const todayRecs = generateTodayRecommendations(exam, syllabus, examDaysLeft);
+        const todayRecs = generateTodayRecommendations(exam, syllabus, topicProgress, examDaysLeft);
         setTodayRecommendations(todayRecs);
 
         toast({
@@ -734,7 +717,12 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                     </Button>
                   )}
                 </div>
-                <p className="text-sm text-gray-900">{todayRecommendations.currentTopic}</p>
+                <p className="text-sm text-gray-900">
+                  {todayRecommendations.currentTopic || 
+                    (todayRecommendations.allTopicsComplete 
+                      ? '🎉 All topics mastered! Take a mock test.' 
+                      : 'Choose a topic from syllabus')}
+                </p>
               </CardContent>
             </Card>
 
@@ -778,15 +766,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               <Brain className="h-4 w-4 mr-2" />
               Take Test
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => (window.location.href = '/journey')}
-              className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px] h-10"
-            >
-              <Map className="h-4 w-4 mr-2" />
-              Plan Journey
-            </Button>
+
           </div>
         </motion.div>
       )}
@@ -810,46 +790,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Dynamic content based on user's actual progress */}
-                {stats.activeJourneys > 0 ? (
-                  <div className="p-3 sm:p-4 rounded-lg bg-purple-50 border border-purple-200">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                      <div>
-                        <h4 className="font-medium text-purple-900">Active Journeys</h4>
-                        <p className="text-sm text-purple-700 mt-1">
-                          You have {stats.activeJourneys} active journey{stats.activeJourneys > 1 ? 's' : ''} in
-                          progress
-                        </p>
-                        <p className="text-xs text-purple-600 mt-2">Continue your personalized learning path</p>
-                      </div>
-                      <Button
-                        size="sm"
-                        className="bg-purple-600 hover:bg-purple-700"
-                        onClick={() => (window.location.href = '/journey')}
-                      >
-                        View Journeys
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="p-3 sm:p-4 rounded-lg bg-blue-50 border border-blue-200">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                      <div>
-                        <h4 className="font-medium text-blue-900">Plan Your Journey</h4>
-                        <p className="text-sm text-blue-700 mt-1">Create a personalized learning path</p>
-                        <p className="text-xs text-blue-600 mt-2">
-                          Design journeys tailored to your learning goals and schedule
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                        onClick={() => (window.location.href = '/journey')}
-                      >
-                        Create Journey
-                      </Button>
-                    </div>
-                  </div>
-                )}
+
 
                 {/* Study recommendations based on actual data */}
                 {stats.completedTopics > 0 ? (
@@ -1013,12 +954,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Active Missions</span>
-                  <Badge variant="outline" className="bg-blue-50">
-                    {stats.activeJourneys}
-                  </Badge>
-                </div>
+
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Topics Mastered</span>
                   <Badge variant="outline" className="bg-green-50">
@@ -1037,18 +973,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                     {stats.adaptiveTestsCompleted}
                   </Badge>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Active Journeys</span>
-                  <Badge variant="outline" className="bg-emerald-50">
-                    {stats.activeJourneys}
-                  </Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Journey Progress</span>
-                  <Badge variant="outline" className="bg-teal-50">
-                    {stats.journeyCompletion}%
-                  </Badge>
-                </div>
+
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">This Week</span>
                   <Badge variant="outline" className="bg-orange-50">

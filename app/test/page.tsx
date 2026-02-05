@@ -918,17 +918,17 @@ function AdaptiveTestingPageContent() {
                         <Target className="h-4 w-4 text-red-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">40% Weak Area Focus</p>
+                        <p className="font-semibold text-gray-900">60% Weak Area Focus</p>
                         <p className="text-gray-600 text-xs">Prioritizes topics where you need improvement</p>
                       </div>
                     </div>
-                    <div className="flex gap-3">
+                  <div className="flex gap-3">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <TrendingUp className="h-4 w-4 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">25% Journey Alignment</p>
-                        <p className="text-gray-600 text-xs">Aligns with your active learning journeys</p>
+                        <p className="font-semibold text-gray-900">20% Difficulty Match</p>
+                        <p className="text-gray-600 text-xs">Matches your current skill level</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
@@ -936,26 +936,17 @@ function AdaptiveTestingPageContent() {
                         <BarChart3 className="h-4 w-4 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">15% Progression</p>
-                        <p className="text-gray-600 text-xs">Supports your journey milestones</p>
+                        <p className="font-semibold text-gray-900">10% Variety</p>
+                        <p className="text-gray-600 text-xs">Encourages diverse topic coverage</p>
                       </div>
                     </div>
-                    <div className="flex gap-3">
+                  <div className="flex gap-3">
                       <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
                         <Zap className="h-4 w-4 text-orange-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">10% Difficulty Match</p>
-                        <p className="text-gray-600 text-xs">Matches your current skill level</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                        <Star className="h-4 w-4 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">10% Variety & Freshness</p>
-                        <p className="text-gray-600 text-xs">Encourages diverse topic coverage</p>
+                        <p className="font-semibold text-gray-900">10% Freshness</p>
+                        <p className="text-gray-600 text-xs">Revisits topics you haven't seen lately</p>
                       </div>
                     </div>
                   </div>
@@ -1115,7 +1106,7 @@ function AdaptiveTestingPageContent() {
                     <EmptyState
                       icon={Zap}
                       title="No recommendations yet"
-                      description="Complete some tests or set up learning journeys to get personalized recommendations"
+                      description="Complete some tests to get personalized recommendations tailored to your weak areas"
                       className="border-0 bg-transparent"
                       action={
                         <Button

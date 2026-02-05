@@ -15,7 +15,18 @@
 import { progressService } from '@/lib/services/progress-service';
 import { createSuccess, createError, Result } from '@/lib/utils/types-utils';
 import { AdaptiveTest, TestRecommendation } from '@/types/adaptive-testing';
-import { UserJourney } from '@/types/journey';
+
+// Local simplified UserJourney interface (Journey feature removed)
+interface UserJourney {
+  id: string;
+  title: string;
+  track?: string;
+  priority: 'high' | 'medium' | 'low';
+  targetCompletionDate: Date;
+  customGoals: Array<{
+    linkedSubjects?: string[];
+  }>;
+}
 
 // Define difficulty levels for recommendations
 type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
@@ -57,8 +68,6 @@ interface RecommendationContext {
 
 interface RecommendationWeights {
   weakAreaFocus: number;
-  journeyAlignment: number;
-  journeyProgression: number;
   difficultyProgression: number;
   varietyBonus: number;
   freshnessBonus: number;
@@ -66,12 +75,10 @@ interface RecommendationWeights {
 
 export class AdaptiveTestingRecommendationEngine {
   private readonly DEFAULT_WEIGHTS: RecommendationWeights = {
-    weakAreaFocus: 0.4, // 40% - Focus on weak areas
-    journeyAlignment: 0.25, // 25% - Align with active journeys
-    journeyProgression: 0.15, // 15% - Support journey progression
-    difficultyProgression: 0.1, // 10% - Appropriate difficulty
-    varietyBonus: 0.05, // 5% - Encourage subject variety
-    freshnessBonus: 0.05, // 5% - Prefer less recently tested areas
+    weakAreaFocus: 0.6, // 60% - Focus on weak areas (Increased from 40%)
+    difficultyProgression: 0.2, // 20% - Appropriate difficulty (Increased from 10%)
+    varietyBonus: 0.1, // 10% - Encourage subject variety (Increased from 5%)
+    freshnessBonus: 0.1, // 10% - Prefer less recently tested areas (Increased from 5%)
   };
 
   /**
@@ -116,7 +123,6 @@ export class AdaptiveTestingRecommendationEngine {
             estimatedDuration: 20,
             priority: rec.priority ?? 'medium',
             tags: ['ai-recommended', 'personalized'],
-            missionAlignment: 1,
             estimatedAccuracy: 0.7, // Estimate
             aiGenerated: true, // Truly AI generated now
             createdFrom: 'recommendation',
@@ -164,10 +170,8 @@ export class AdaptiveTestingRecommendationEngine {
     maxRecommendations = 3
   ): Promise<Result<TestRecommendation[], string>> {
     const customWeights: Partial<RecommendationWeights> = {
-      weakAreaFocus: 0.7,
-      journeyAlignment: 0.15,
-      journeyProgression: 0.1,
-      difficultyProgression: 0.05,
+      weakAreaFocus: 0.85,
+      difficultyProgression: 0.15,
     };
 
     return this.generateRecommendations(userId, maxRecommendations, customWeights);
@@ -181,10 +185,8 @@ export class AdaptiveTestingRecommendationEngine {
     maxRecommendations = 3
   ): Promise<Result<TestRecommendation[], string>> {
     const customWeights: Partial<RecommendationWeights> = {
-      weakAreaFocus: 0.2,
-      journeyAlignment: 0.5,
-      journeyProgression: 0.2,
-      difficultyProgression: 0.1,
+      weakAreaFocus: 0.7,
+      difficultyProgression: 0.3,
     };
 
     return this.generateRecommendations(userId, maxRecommendations, customWeights);
@@ -211,10 +213,8 @@ export class AdaptiveTestingRecommendationEngine {
       });
 
       const weights: RecommendationWeights = {
-        weakAreaFocus: 0.5,
-        journeyAlignment: 0.2,
-        journeyProgression: 0.1,
-        difficultyProgression: 0.1,
+        weakAreaFocus: 0.7,
+        difficultyProgression: 0.2,
         varietyBonus: 0.05,
         freshnessBonus: 0.05,
       };
@@ -378,7 +378,6 @@ export class AdaptiveTestingRecommendationEngine {
         expectedBenefit: 'Strengthen weak areas',
         priority: isFromRecentFailure ? 'high' : 'medium',
         tags: ['weakness-focus', 'skill-building', isFromRecentFailure ? 'recent-failure' : 'improvement'],
-        missionAlignment: this.calculateJourneyAlignment([subject], context.activeJourneys),
         estimatedAccuracy: this.estimateAccuracy(subject, context),
         aiGenerated: false, // These are heuristic-based
         createdFrom: 'recommendation',
@@ -392,36 +391,7 @@ export class AdaptiveTestingRecommendationEngine {
       });
     }
 
-    // Generate journey-aligned tests
-    for (const journey of context.activeJourneys.slice(0, 2)) {
-      const journeySubjects = this.extractJourneySubjects(journey);
-      if (journeySubjects.length > 0) {
-        candidates.push({
-          testId: `journey-${journey.id}-${Date.now()}`,
-          title: `${journey.title} Assessment`,
-          description: `Test your progress on journey: ${journey.title}`,
-          estimatedDuration: Math.min(maxDuration, 35),
-          difficulty: this.inferJourneyDifficulty(journey) ?? context.preferredDifficulty,
-          subjects: journeySubjects,
-          questionCount: Math.min(maxQuestions, 18),
-          reasons: [`Supports active journey: ${journey.title}`, 'Journey progress assessment'],
-          expectedBenefit: 'Journey progress verification',
-          priority: 'medium',
-          tags: ['journey-prep', 'goal-aligned'],
-          missionAlignment: 1.0,
-          estimatedAccuracy: this.estimateAccuracy(journeySubjects[0] ?? '', context),
-          aiGenerated: false,
-          createdFrom: 'journey',
-          linkedMissions: [journey.id],
-          confidence: 0.9, // Very high confidence for journey-aligned tests
-          adaptiveConfig: {
-            algorithmType: 'HYBRID',
-            convergenceCriteria: { standardError: 0.25, minQuestions: 10, maxQuestions },
-            difficultyRange: { min: 'beginner', max: this.inferJourneyDifficulty(journey) ?? 'intermediate' },
-          },
-        });
-      }
-    }
+
 
     // Generate comprehensive review test
     if (context.weakAreas.length >= 2) {
@@ -437,7 +407,6 @@ export class AdaptiveTestingRecommendationEngine {
         expectedBenefit: 'Overall progress assessment',
         priority: 'medium',
         tags: ['comprehensive', 'multi-subject'],
-        missionAlignment: this.calculateJourneyAlignment(context.weakAreas, context.activeJourneys),
         estimatedAccuracy: this.estimateAccuracy('overall', context),
         aiGenerated: true,
         createdFrom: 'recommendation',
@@ -465,7 +434,6 @@ export class AdaptiveTestingRecommendationEngine {
         expectedBenefit: 'Strength reinforcement',
         priority: 'low',
         tags: ['strength-building', 'advanced'],
-        missionAlignment: this.calculateJourneyAlignment([context.strongAreas[0] ?? ''], context.activeJourneys),
         estimatedAccuracy: this.estimateAccuracy(context.strongAreas[0] ?? '', context) + 10,
         aiGenerated: true,
         createdFrom: 'recommendation',
@@ -497,13 +465,6 @@ export class AdaptiveTestingRecommendationEngine {
       const weakAreaScore = this.calculateWeakAreaScore(candidate, context);
       score += weakAreaScore * weights.weakAreaFocus;
 
-      // Journey alignment score
-      score += candidate.missionAlignment * weights.journeyAlignment;
-
-      // Journey progression score
-      const journeyScore = this.calculateJourneyScore(candidate, context);
-      score += journeyScore * weights.journeyProgression;
-
       // Difficulty progression score
       const difficultyScore = this.calculateDifficultyScore(candidate, context);
       score += difficultyScore * weights.difficultyProgression;
@@ -530,22 +491,7 @@ export class AdaptiveTestingRecommendationEngine {
     return weakAreaOverlap / Math.max(candidate.subjects.length, 1);
   }
 
-  private calculateJourneyScore(candidate: TestRecommendation, context: RecommendationContext): number {
-    if (context.activeJourneys.length === 0) {
-      return 0.5; // Default score when no journeys
-    }
 
-    // Calculate how well the test aligns with journey goals
-    let totalScore = 0;
-    for (const journey of context.activeJourneys) {
-      const journeySubjects = this.extractJourneySubjects(journey);
-      const overlap = candidate.subjects.filter(subject => journeySubjects.includes(subject)).length;
-      const alignmentScore = overlap / Math.max(candidate.subjects.length, 1);
-      totalScore += alignmentScore;
-    }
-
-    return Math.min(totalScore / context.activeJourneys.length, 1.0);
-  }
 
   private calculateDifficultyScore(candidate: TestRecommendation, context: RecommendationContext): number {
     const difficultyMap = { beginner: 1, intermediate: 2, advanced: 3, expert: 4 };
@@ -581,10 +527,9 @@ export class AdaptiveTestingRecommendationEngine {
     if (context.completedTests.length >= 3) {
       confidence += 0.1;
     }
-    if (context.activeJourneys.length > 0) {
-      confidence += 0.1;
-    }
-    if (candidate.missionAlignment > 0.5) {
+
+    // Boost confidence for high priority items
+    if (candidate.priority === 'high') {
       confidence += 0.1;
     }
 
@@ -648,48 +593,16 @@ export class AdaptiveTestingRecommendationEngine {
     return 'beginner';
   }
 
-  private extractLearningGoals(journeys: UserJourney[]): string[] {
-    return journeys.flatMap(journey => this.extractJourneySubjects(journey)).slice(0, 5);
+  private extractLearningGoals(_journeys: UserJourney[]): string[] {
+    return [];
   }
 
-  private extractJourneySubjects(journey: UserJourney): string[] {
-    // Extract subjects from journey goals and linked subjects
-    const subjects: string[] = [];
 
-    // Extract from custom goals
-    journey.customGoals.forEach(goal => {
-      if (goal.linkedSubjects) {
-        subjects.push(...goal.linkedSubjects);
-      }
-    });
 
-    // If no subjects found, use journey track as default
-    if (subjects.length === 0) {
-      subjects.push(journey.track ?? 'General');
-    }
 
-    return [...new Set(subjects)]; // Remove duplicates
-  }
 
-  private calculateJourneyAlignment(subjects: string[], journeys: UserJourney[]): number {
-    if (journeys.length === 0) {
-      return 0;
-    }
-
-    const journeySubjects = journeys.flatMap(journey => this.extractJourneySubjects(journey));
-    const overlap = subjects.filter(subject => journeySubjects.includes(subject)).length;
-
-    return overlap / Math.max(subjects.length, 1);
-  }
-
-  private findRelatedJourneys(subjects: string[], journeys: UserJourney[]): string[] {
-    return journeys
-      .filter(journey => {
-        const journeySubjects = this.extractJourneySubjects(journey);
-        return subjects.some(subject => journeySubjects.includes(subject));
-      })
-      .map(journey => journey.id)
-      .slice(0, 3);
+  private findRelatedJourneys(_subjects: string[], _journeys: UserJourney[]): string[] {
+    return [];
   }
 
   private estimateAccuracy(subject: string, context: RecommendationContext): number {
@@ -736,26 +649,7 @@ export class AdaptiveTestingRecommendationEngine {
   /**
    * Infer journey difficulty based on goals and completion requirements
    */
-  private inferJourneyDifficulty(journey: UserJourney): DifficultyLevel {
-    // Base difficulty on journey priority and target completion date
-    const daysToComplete = journey.targetCompletionDate
-      ? Math.ceil((journey.targetCompletionDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-      : 90;
 
-    const goalsCount = journey.customGoals.length;
-
-    if (journey.priority === 'high' && daysToComplete < 30) {
-      return 'expert';
-    }
-    if (journey.priority === 'high' || (goalsCount > 5 && daysToComplete < 60)) {
-      return 'advanced';
-    }
-    if (goalsCount > 3 || daysToComplete < 90) {
-      return 'intermediate';
-    }
-
-    return 'beginner';
-  }
 }
 
 // Export singleton instance

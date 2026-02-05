@@ -3,7 +3,7 @@
  * Integrates with existing Mission System, Progress Service, and Journey Planning
  */
 
-import { AdaptiveAlgorithm, SpecializedAdaptiveAlgorithms } from '@/lib/algorithms/adaptive-testing-algorithms';
+import { AdaptiveAlgorithm } from '@/lib/algorithms/adaptive-testing-algorithms';
 import { adaptiveTestingRecommendationEngine } from '@/lib/algorithms/adaptive-testing-recommendation-engine';
 import { adaptiveTestingFirebaseService } from '@/lib/firebase/firebase-services';
 import { Result, createSuccess, createError } from '@/lib/utils/types-utils';
@@ -20,7 +20,7 @@ import {
   TestRecommendation,
   TestAnalyticsData,
 } from '@/types/adaptive-testing';
-import { LearningTrack, MissionDifficulty } from '@/types/mission-system';
+import { MissionDifficulty } from '@/types/mission-system';
 
 export class AdaptiveTestingService {
   private static instance: AdaptiveTestingService;
@@ -33,67 +33,6 @@ export class AdaptiveTestingService {
     return AdaptiveTestingService.instance;
   }
 
-  /**
-   * Create adaptive test from journey alignment
-   */
-  async createTestFromJourney(
-    userId: string,
-    journeyId: string,
-    testConfig: Partial<CreateAdaptiveTestRequest>
-  ): Promise<Result<AdaptiveTest>> {
-    try {
-      // Get journey details to align test
-      const journeyResult = await this.getJourneyDetails(journeyId);
-      if (!journeyResult.success) {
-        return createError(new Error('Journey not found'));
-      }
-
-      const journey = journeyResult.data;
-
-      // Generate test aligned with journey goals
-      const test: AdaptiveTest = {
-        id: `test_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        userId,
-        title: testConfig.title ?? `${journey.title} - Adaptive Assessment`,
-        description: testConfig.description ?? `Adaptive test for ${journey.title} journey`,
-        ...(journeyId && { linkedJourneyId: journeyId }),
-        linkedSubjects: journey.customGoals?.flatMap((goal: any) => goal.linkedSubjects) ?? [],
-        track: journey.track ?? 'exam',
-        totalQuestions: testConfig.targetQuestions ?? 20,
-        estimatedDuration: (testConfig.targetQuestions ?? 20) * 2, // 2 minutes per question
-        difficultyRange: {
-          min: 'beginner',
-          max: 'expert',
-        },
-        algorithmType: testConfig.algorithmType ?? 'CAT',
-        convergenceThreshold: 0.3,
-        initialDifficulty: 'intermediate',
-        status: 'draft',
-        currentQuestion: 0,
-        questions: [],
-        responses: [],
-        performance: this.initializePerformance(),
-        adaptiveMetrics: this.initializeMetrics(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdFrom: 'journey',
-      };
-
-      // Generate question bank for this test
-      const questionsResult = await this.generateQuestionBank(test);
-      if (!questionsResult.success) {
-        return questionsResult;
-      }
-
-      test.questions = questionsResult.data;
-      test.status = 'active';
-
-      // Save to Firebase
-      return await adaptiveTestingFirebaseService.createAdaptiveTest(userId, test);
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to create test from journey'));
-    }
-  }
 
   /**
    * Create adaptive test from manual configuration
@@ -106,7 +45,6 @@ export class AdaptiveTestingService {
         userId,
         title: request.title,
         description: request.description,
-        linkedJourneyId: request.linkedJourneyId ?? `journey_${Date.now()}`,
         linkedSubjects: request.subjects,
         ...(request.topics && { linkedTopics: request.topics }),
         track: request.track ?? ('exam' as const),
@@ -308,19 +246,6 @@ export class AdaptiveTestingService {
         // Select next question using adaptive algorithm
         const availableQuestions = test.questions.filter(q => !test.responses.some(r => r.questionId === q.id));
 
-        if (test.linkedJourneyId) {
-          // Use journey-focused selection if linked to journey
-          const journeyResult = await this.getJourneyDetails(test.linkedJourneyId);
-          if (journeyResult.success) {
-            nextQuestion =
-              SpecializedAdaptiveAlgorithms.journeyFocusedSelection(
-                availableQuestions,
-                newAbility,
-                journeyResult.data.customGoals ?? [],
-                test.responses
-              ) ?? null;
-          }
-        }
 
         // Fallback to standard adaptive selection
         nextQuestion ??= AdaptiveAlgorithm.selectNextQuestion(availableQuestions, newAbility, test.responses) ?? null;
@@ -595,27 +520,6 @@ export class AdaptiveTestingService {
 
   // Private helper methods
 
-  private async getJourneyDetails(journeyId: string): Promise<Result<any>> {
-    // Integration with journey service
-    try {
-      // This would call the journey service to get journey details
-      // For now, return a mock implementation
-      return createSuccess({
-        id: journeyId,
-        title: 'Sample Journey',
-        track: 'exam' as LearningTrack,
-        customGoals: [
-          {
-            linkedSubjects: ['Mathematics', 'Physics', 'Chemistry'],
-            title: 'Science Mastery',
-          },
-        ],
-      });
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to get journey details'));
-    }
-  }
-
   private async generateQuestionBank(test: AdaptiveTest): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
@@ -872,21 +776,9 @@ export class AdaptiveTestingService {
       //   }
       // }
 
-      // Update journey progress if linked
-      if (test.linkedJourneyId) {
-        await this.updateJourneyProgress(test);
-      }
+
     } catch (error) {
       console.error('Failed to update integrated systems:', error);
-    }
-  }
-
-  private async updateJourneyProgress(test: AdaptiveTest): Promise<void> {
-    // Integration with journey service to update progress based on test results
-    if (test.linkedJourneyId && test.performance && test.adaptiveMetrics) {
-      const goalUpdate = test.adaptiveMetrics.progressImpact.journeyGoalUpdate;
-      // This would call journey service to update goal progress
-      console.info(`Journey ${test.linkedJourneyId} progress updated by ${goalUpdate}`);
     }
   }
 

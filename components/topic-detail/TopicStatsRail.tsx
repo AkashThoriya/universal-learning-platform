@@ -10,12 +10,14 @@ import { TopicProgress } from '@/types/exam';
 interface TopicStatsRailProps {
   progress: TopicProgress | null;
   onMarkCompleted: () => void;
+  onMarkMastered: () => void;
   onNeedsReview: () => void;
   onAddLog?: () => void;
 }
 
-export function TopicStatsRail({ progress, onMarkCompleted, onNeedsReview }: TopicStatsRailProps) {
+export function TopicStatsRail({ progress, onMarkCompleted, onMarkMastered, onNeedsReview }: TopicStatsRailProps) {
   const isCompleted = progress?.status === 'completed';
+  const isMastered = progress?.status === 'mastered' || (progress?.masteryScore || 0) >= 100;
   const needsReview = progress?.needsReview || false;
   const revisions = progress?.revisionCount || 0;
   const studyTimeHours = Math.round((progress?.totalStudyTime || 0) / 60);
@@ -34,14 +36,15 @@ export function TopicStatsRail({ progress, onMarkCompleted, onNeedsReview }: Top
           <Button
             className={cn(
               'w-full h-12 text-base font-medium transition-all shadow-sm group',
-              isCompleted ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'
+              isCompleted || isMastered ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-slate-900 hover:bg-slate-800 text-white'
             )}
             onClick={onMarkCompleted}
+            disabled={isMastered}
           >
-            {isCompleted ? (
+            {isCompleted || isMastered ? (
               <>
                 <CheckCircle className="mr-2 h-5 w-5" />
-                Completed
+                {isMastered ? 'Mastered' : 'Completed'}
               </>
             ) : (
               <>
@@ -50,6 +53,17 @@ export function TopicStatsRail({ progress, onMarkCompleted, onNeedsReview }: Top
               </>
             )}
           </Button>
+
+          {!isMastered && (
+             <Button
+              variant="outline"
+              className="w-full h-10 border-blue-200 text-blue-700 hover:bg-blue-50"
+              onClick={onMarkMastered}
+            >
+              <CheckCircle className="mr-2 h-4 w-4" />
+              I know this (100% Mastery)
+            </Button>
+          )}
 
           <Button
             variant="outline"
@@ -113,13 +127,18 @@ export function TopicStatsRail({ progress, onMarkCompleted, onNeedsReview }: Top
       {/* Motivation / Tip */}
       <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
         <div className="flex gap-3">
-          <div className="p-2 bg-white rounded-lg shadow-sm h-fit border border-slate-100">
-            <TrendingUp className="h-4 w-4 text-slate-600" />
+          <div className="flex items-center gap-2 mb-1">
+             <div className="p-2 bg-white rounded-lg shadow-sm h-fit border border-slate-100">
+               <TrendingUp className="h-4 w-4 text-slate-600" />
+             </div>
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Pro Tip</p>
-            <p className="text-sm text-slate-700 leading-relaxed">
-              Consistent small revisions beat marathon cramming. Try to review this topic again in 3 days.
+             <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">Mastery Level</p>
+             <p className="text-sm text-slate-700 leading-relaxed mt-2">
+              Mastery reflects your confidence and retention. It increases with practice and spaced repetition. 
+              <span className="block mt-1 text-xs text-slate-500">
+                 Linked to your review schedule.
+              </span>
             </p>
           </div>
         </div>

@@ -461,7 +461,7 @@ export class ProgressService {
             },
           },
           expectedBenefit: 'Improve weak areas in exam track',
-          missionAlignment: 0.7,
+
           estimatedAccuracy: 0.75,
           aiGenerated: true,
           createdFrom: 'recommendation' as const,
@@ -500,7 +500,7 @@ export class ProgressService {
             },
           },
           expectedBenefit: 'Improve weak areas in tech track',
-          missionAlignment: 0.7,
+
           estimatedAccuracy: 0.75,
           aiGenerated: true,
           createdFrom: 'recommendation' as const,
@@ -542,7 +542,7 @@ export class ProgressService {
             },
           },
           expectedBenefit: 'Comprehensive evaluation of knowledge',
-          missionAlignment: 0.5,
+
           estimatedAccuracy: 0.7,
           aiGenerated: true,
           createdFrom: 'recommendation' as const,
@@ -655,112 +655,7 @@ export class ProgressService {
     return 5; // Every 5 days
   }
 
-  /**
-   * Link a journey to user progress
-   */
-  async linkJourney(userId: string, journeyId: string): Promise<Result<{ progressId: string }>> {
-    try {
-      const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) {
-        return progressResult;
-      }
 
-      const progress = progressResult.data;
-
-      // Initialize journey tracking if not exists
-      if (!(progress as any).linkedJourneys) {
-        (progress as any).linkedJourneys = [];
-      }
-
-      // Add journey ID if not already linked
-      const linkedJourneys = (progress as any).linkedJourneys as string[];
-      if (!linkedJourneys.includes(journeyId)) {
-        linkedJourneys.push(journeyId);
-      }
-
-      // Initialize journey-specific progress tracking
-      if (!(progress as any).journeyProgress) {
-        (progress as any).journeyProgress = {};
-      }
-
-      (progress as any).journeyProgress[journeyId] = {
-        linkedAt: new Date(),
-        lastSync: new Date(),
-        contributedHours: 0,
-        contributedMissions: 0,
-        goalContributions: {},
-      };
-
-      progress.updatedAt = new Date();
-
-      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
-      if (!saveResult.success) {
-        return saveResult;
-      }
-
-      return createSuccess({ progressId: userId });
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to link journey'));
-    }
-  }
-
-  /**
-   * Update journey progress from progress service
-   */
-  async updateJourneyProgress(
-    userId: string,
-    update: {
-      journeyId: string;
-      overallCompletion: number;
-      goalCompletions: Record<string, number>;
-      lastActivity: Date;
-    }
-  ): Promise<Result<void>> {
-    try {
-      const progressResult = await this.getUserProgress(userId);
-      if (!progressResult.success) {
-        return progressResult;
-      }
-
-      const progress = progressResult.data;
-
-      // Ensure journey progress tracking exists
-      if (!(progress as any).journeyProgress) {
-        (progress as any).journeyProgress = {};
-      }
-
-      if (!(progress as any).journeyProgress[update.journeyId]) {
-        (progress as any).journeyProgress[update.journeyId] = {
-          linkedAt: new Date(),
-          lastSync: new Date(),
-          contributedHours: 0,
-          contributedMissions: 0,
-          goalContributions: {},
-        };
-      }
-
-      const journeyProgress = (progress as any).journeyProgress[update.journeyId];
-
-      // Update journey-specific tracking
-      journeyProgress.lastSync = update.lastActivity;
-      journeyProgress.overallCompletion = update.overallCompletion;
-      journeyProgress.goalCompletions = update.goalCompletions;
-
-      // Update consistency rating based on journey progress
-      const consistencyBoost = Math.min(0.1, update.overallCompletion / 1000); // Small boost from journey completion
-      progress.overallProgress.consistencyRating = Math.min(
-        1,
-        progress.overallProgress.consistencyRating + consistencyBoost
-      );
-
-      progress.updatedAt = new Date();
-
-      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', progress);
-      return saveResult;
-    } catch (error) {
-      return createError(error instanceof Error ? error : new Error('Failed to update journey progress'));
-    }
-  }
 }
 
 // Export singleton instance

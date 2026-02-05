@@ -359,8 +359,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
               a few study sessions to generate meaningful insights.
             </p>
             <div className="flex gap-3">
-              <Button onClick={() => (window.location.href = '/journey')} className="bg-blue-600 hover:bg-blue-700">
-                View Journey
+              <Button onClick={() => (window.location.href = '/strategy')} className="bg-blue-600 hover:bg-blue-700">
+                View Strategy
               </Button>
               <Button onClick={() => (window.location.href = '/dashboard')} variant="outline">
                 Go to Dashboard
