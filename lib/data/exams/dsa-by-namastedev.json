@@ -80,14 +80,14 @@
         {
           "id": "course_introduction",
           "name": "Introduction",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Learn how to navigate the course and what you'll cover",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -102,7 +102,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -136,7 +136,7 @@
         {
           "id": "programming_101",
           "name": "Programming 101",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Learn the basics of programming with simple concepts explained clearly",
           "learningTip": [
             "JS basics review - move through quickly",
@@ -172,7 +172,7 @@
         {
           "id": "loops_01",
           "name": "Loops 01",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Learn looping constructs to repeat code effectively",
           "learningTip": [
             "for loops for index-based iteration",
@@ -193,7 +193,7 @@
           "estimatedHours": 1.5,
           "description": "Deep dive into advanced loop techniques and nested loops",
           "learningTip": [
-            "Nested loops = O(n\u00b2) - look for ways to avoid",
+            "Nested loops = O(n²) - look for ways to avoid",
             "Two pointers or hashmaps often replace nested loops",
             "Matrix problems genuinely need nested loops",
             "Visualize as traversing a 2D grid"
@@ -208,7 +208,7 @@
         {
           "id": "second_largest",
           "name": "Second Largest",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find the second largest number in an array efficiently",
           "practiceQuestions": [
             {
@@ -228,13 +228,13 @@
             "let largest = -Infinity, second = -Infinity",
             "If num > largest: second = largest, largest = num",
             "Else if num > second && num !== largest: second = num",
-            "Handle edge case: all same values \u2192 no valid second"
+            "Handle edge case: all same values → no valid second"
           ]
         },
         {
           "id": "loop_in_loop",
           "name": "Loop in Loop",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Learn how to implement nested loops for complex patterns",
           "learningTip": [
             "Visualize nested loops as traversing a 2D grid",
@@ -243,10 +243,10 @@
             "Index relationship between loops defines the pattern"
           ],
           "mustNotMiss": [
-            "Inner 0 to n: full matrix (n \u00d7 n iterations)",
+            "Inner 0 to n: full matrix (n × n iterations)",
             "Inner i to n: upper triangle (avoid duplicates in pair enumeration)",
             "Inner 0 to i: lower triangle",
-            "Draw small examples (3\u00d73) and trace through manually before coding"
+            "Draw small examples (3×3) and trace through manually before coding"
           ]
         },
         {
@@ -279,8 +279,8 @@
             "The modulo and division operations are your core tools"
           ],
           "mustNotMiss": [
-            "n % 10 \u2192 extracts the last digit",
-            "n // 10 (or n / 10 in int context) \u2192 removes the last digit",
+            "n % 10 → extracts the last digit",
+            "n // 10 (or n / 10 in int context) → removes the last digit",
             "Build number digit by digit: result = result * 10 + digit",
             "These three operations solve 90% of digit problems"
           ]
@@ -343,12 +343,12 @@
       "id": "time_space_complexity",
       "name": "Time/Space Complexity",
       "tier": 1,
-      "estimatedHours": 2.0,
+      "estimatedHours": 2,
       "topics": [
         {
           "id": "time_space_complexity_analysis",
           "name": "Time & Space Complexity",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Understand how to analyze code performance using time complexity",
           "learningTip": [
             "Every interview solution discussion ends with 'What's the complexity?'",
@@ -361,8 +361,8 @@
             "O(log n): logarithmic - binary search, balanced BST operations",
             "O(n): linear - single loop, hashmap construction",
             "O(n log n): efficient sorting (merge, quick, heap)",
-            "O(n\u00b2): nested loops, comparing all pairs",
-            "O(2\u207f): subsets, backtracking without pruning"
+            "O(n²): nested loops, comparing all pairs",
+            "O(2ⁿ): subsets, backtracking without pruning"
           ]
         }
       ]
@@ -371,12 +371,12 @@
       "id": "arrays_easy_medium",
       "name": "Arrays - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 8.0,
+      "estimatedHours": 8,
       "topics": [
         {
           "id": "remove_duplicates",
           "name": "Remove Duplicates",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Remove duplicate elements from a sorted array",
           "practiceQuestions": [
             {
@@ -434,7 +434,7 @@
         {
           "id": "reverse_string",
           "name": "Reverse String",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Reverse the characters of a string",
           "learningTip": [
             "Two pointers from ends, swap until they meet",
@@ -452,7 +452,7 @@
         {
           "id": "best_time_buy_sell_stocks",
           "name": "Best Time to Buy and Sell Stocks",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Maximize profit from stock prices using smart strategy",
           "practiceQuestions": [
             {
@@ -478,7 +478,7 @@
         {
           "id": "merge_sorted_arrays",
           "name": "Merge Sorted Arrays",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Merge two sorted arrays into one sorted array",
           "practiceQuestions": [
             {
@@ -504,7 +504,7 @@
         {
           "id": "move_zeros",
           "name": "Move Zeros",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Move all zeros to the end of the array without changing order",
           "practiceQuestions": [
             {
@@ -642,14 +642,14 @@
         {
           "id": "sum_first_n_numbers",
           "name": "Sum of first n numbers",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Calculate the sum of the first n natural numbers using recursion",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -657,14 +657,14 @@
         {
           "id": "sum_array_numbers",
           "name": "Sum of all numbers in Array",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find the sum of all elements in an array using simple logic",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -679,7 +679,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -713,7 +713,7 @@
         {
           "id": "recursion_masterclass",
           "name": "Recursion Masterclass",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Master recursion with deep insights, patterns, and examples",
           "learningTip": [
             "Recursion is a method where the solution depends on solutions to smaller instances of the same problem. It requires visualizing the 'Call Stack'. Every recursive function has two parts:",
@@ -733,7 +733,7 @@
       "id": "searching_sorting_easy_medium",
       "name": "Searching & Sorting - Easy/Medium",
       "tier": 2,
-      "estimatedHours": 8.0,
+      "estimatedHours": 8,
       "topics": [
         {
           "id": "linear_search",
@@ -741,7 +741,7 @@
           "estimatedHours": 0.5,
           "description": "Find an element in an array using linear search",
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -753,7 +753,7 @@
         {
           "id": "binary_search",
           "name": "Binary Search",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find an element in a sorted array using binary search",
           "practiceQuestions": [
             {
@@ -785,7 +785,7 @@
         {
           "id": "bubble_sort",
           "name": "Bubble Sort",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Sort an array using the bubble sort algorithm",
           "learningTip": [
             "Repeatedly swap adjacent elements if in wrong order",
@@ -794,7 +794,7 @@
             "Best case O(n) with early termination optimization"
           ],
           "mustNotMiss": [
-            "Time: O(n\u00b2) worst/average, O(n) best with optimization",
+            "Time: O(n²) worst/average, O(n) best with optimization",
             "Optimization: if no swaps in a pass, array is sorted - break early",
             "Stable sort (maintains relative order of equal elements)",
             "Space: O(1) in-place"
@@ -809,10 +809,10 @@
             "Find minimum in unsorted portion, swap to front",
             "Simple mental model: 'select the smallest, put it next'",
             "Does exactly n swaps - good if swaps are expensive",
-            "Not adaptive - always O(n\u00b2)"
+            "Not adaptive - always O(n²)"
           ],
           "mustNotMiss": [
-            "Time: O(n\u00b2) always - no best case improvement",
+            "Time: O(n²) always - no best case improvement",
             "Space: O(1) in-place",
             "NOT stable (swapping can change relative order)",
             "Does fewer swaps than bubble sort"
@@ -821,7 +821,7 @@
         {
           "id": "insertion_sort",
           "name": "Insertion Sort",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Sort an array using the insertion sort algorithm",
           "learningTip": [
             "Build sorted array one element at a time",
@@ -830,7 +830,7 @@
             "Used as base case in hybrid sorts like TimSort"
           ],
           "mustNotMiss": [
-            "Time: O(n\u00b2) worst, O(n) best (nearly sorted)",
+            "Time: O(n²) worst, O(n) best (nearly sorted)",
             "Online algorithm: can sort as elements arrive",
             "Stable sort",
             "Python and Java use TimSort (hybrid with insertion sort)"
@@ -839,7 +839,7 @@
         {
           "id": "merge_sort",
           "name": "Merge Sort",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Learn how Merge Sort works using recursion and divide & conquer",
           "learningTip": [
             "Divide and conquer: split, sort halves, merge",
@@ -865,7 +865,7 @@
         {
           "id": "introduction_linked_list",
           "name": "Introduction to Linked List",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Get started with the basics of Linked Lists",
           "learningTip": [
             "Linked Lists test your ability to manage pointers and manual memory references. The logic is usually simple, but the implementation is prone to infinite loops and null pointer exceptions. Always visualize or draw the pointers."
@@ -897,7 +897,7 @@
         {
           "id": "adding_nodes_linked_list",
           "name": "Adding Nodes to Linked List",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Learn to insert nodes into a Linked List at various positions",
           "learningTip": [
             "Linked Lists test your ability to manage pointers and manual memory references. The logic is usually simple, but the implementation is prone to infinite loops and null pointer exceptions. Always visualize or draw the pointers."
@@ -987,7 +987,7 @@
         {
           "id": "linked_list_cycle_hash_table",
           "name": "Linked List Cycle - Hash Table",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Detect cycles in a Linked List using extra space",
           "practiceQuestions": [
             {
@@ -1007,7 +1007,7 @@
         {
           "id": "linked_list_cycle_floyd",
           "name": "Linked List Cycle - Floyd's Algorithm",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Detect cycles with Floyd's Tortoise & Hare algorithm",
           "practiceQuestions": [
             {
@@ -1033,7 +1033,7 @@
         {
           "id": "palindrome_linked_list",
           "name": "Palindrome Linked List",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Check if a Linked List is a palindrome",
           "practiceQuestions": [
             {
@@ -1045,7 +1045,7 @@
           ],
           "learningTip": [
             "Combines three techniques in one problem",
-            "Find middle \u2192 reverse second half \u2192 compare",
+            "Find middle → reverse second half → compare",
             "O(n) time, O(1) space solution",
             "Tests your mastery of previous linked list patterns"
           ],
@@ -1089,7 +1089,9 @@
               "link": "https://leetcode.com/problems/remove-linked-list-elements/"
             }
           ],
-          "learningTip": ["Remove all nodes with a given value. The DUMMY HEAD technique handles edge cases cleanly."],
+          "learningTip": [
+            "Remove all nodes with a given value. The DUMMY HEAD technique handles edge cases cleanly."
+          ],
           "mustNotMiss": [
             "Create dummy with dummy.next = head. Use prev = dummy, curr = head. If curr.val == val, prev.next = curr.next (skip curr). Else, prev = curr. Always advance curr. Return dummy.next. Why dummy? If head itself needs removal, dummy handles it - no special case needed. This is cleaner than checking 'if head needs removal' separately."
           ]
@@ -1109,7 +1111,7 @@
         {
           "id": "remove_nth_node_end_one_pass",
           "name": "Remove nth Node from end - One Pass",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Remove the nth node from the end in one pass using two pointers",
           "practiceQuestions": [
             {
@@ -1169,7 +1171,7 @@
         {
           "id": "add_two_numbers",
           "name": "Add Two Numbers",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Add two numbers represented as Linked Lists",
           "practiceQuestions": [
             {
@@ -1195,7 +1197,7 @@
         {
           "id": "merge_two_sorted_lists",
           "name": "Merge Two Sorted Lists",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Merge two sorted Linked Lists into one",
           "practiceQuestions": [
             {
@@ -1221,7 +1223,7 @@
         {
           "id": "rotate_list",
           "name": "Rotate List",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Rotate a Linked List to the right by k places",
           "practiceQuestions": [
             {
@@ -1247,7 +1249,7 @@
         {
           "id": "swap_nodes_pairs_iterative",
           "name": "Swap Nodes in Pairs - Iterative Approach",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Swap every two adjacent nodes in a Linked List iteratively",
           "practiceQuestions": [
             {
@@ -1273,7 +1275,7 @@
         {
           "id": "swap_nodes_pairs_recursive",
           "name": "Swap Nodes in Pair - Recursive Approach",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Recursively swap every two adjacent nodes in a Linked List",
           "learningTip": [
             "Recursive approach: swap first pair, recurse on rest",
@@ -1299,7 +1301,7 @@
         {
           "id": "length_last_word_two_loops",
           "name": "Length of Last Word - Approach 1 - Two Loops",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find the length of the last word using a basic loop approach",
           "learningTip": [
             "Classic string traversal problem",
@@ -1317,7 +1319,7 @@
         {
           "id": "length_last_word_one_loop",
           "name": "Length of Last Word - Approach 2 - One Loop",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Optimized one-pass solution to find the last word's length",
           "practiceQuestions": [
             {
@@ -1369,7 +1371,7 @@
         {
           "id": "jewels_stones",
           "name": "Jewels and Stones",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Count how many stones are also jewels",
           "practiceQuestions": [
             {
@@ -1395,14 +1397,14 @@
         {
           "id": "find_most_frequent_vowel_consonant",
           "name": "Find Most Frequent Vowel and Consonant",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Identify the most frequent vowel and consonant in a string",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1436,7 +1438,7 @@
         {
           "id": "reverse_string_ii",
           "name": "Reverse String II",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Reverse parts of a string based on a pattern",
           "practiceQuestions": [
             {
@@ -1484,7 +1486,9 @@
               "link": "https://leetcode.com/problems/valid-palindrome/"
             }
           ],
-          "learningTip": ["Skip non-alphanumeric from both ends, compare lowercase characters. O(1) space solution."],
+          "learningTip": [
+            "Skip non-alphanumeric from both ends, compare lowercase characters. O(1) space solution."
+          ],
           "mustNotMiss": [
             "Algorithm: left = 0, right = len-",
             "While left < right: skip non-alnum characters from left and right; if left >= right, break (all processed); if lower(s[left]) != lower(s[right]), return false; left++; right--. Return true. Use Character.isLetterOrDigit() in Java, c.isalnum() in Python. Time O(n), Space O",
@@ -1536,7 +1540,7 @@
         {
           "id": "valid_anagram",
           "name": "Valid Anagram",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if two strings are anagrams of each other",
           "practiceQuestions": [
             {
@@ -1562,7 +1566,7 @@
         {
           "id": "isomorphic_strings",
           "name": "Isomorphic Strings",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if two strings have a one-to-one character mapping",
           "practiceQuestions": [
             {
@@ -1584,7 +1588,9 @@
           "name": "Group Anagrams - Approach 1 - Sorted Key",
           "estimatedHours": 0.5,
           "description": "Group words that are anagrams using sorted string keys",
-          "learningTip": ["Sort each string to use as a dictionary key. All anagrams produce the same sorted key."],
+          "learningTip": [
+            "Sort each string to use as a dictionary key. All anagrams produce the same sorted key."
+          ],
           "mustNotMiss": [
             "Algorithm: Create HashMap<String, List<String>>. For each word, key = sorted word. Append word to map[key]. Return map.values(). Time O(n * k log k) where k is max word length (sorting each word). Space O(n * k). This is the simple, intuitive approach. Sorting is the bottleneck."
           ]
@@ -1592,7 +1598,7 @@
         {
           "id": "group_anagrams_hashed_key",
           "name": "Group Anagrams - Approach 2 - Hashed Key",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Group anagrams using character frequency hash as key",
           "practiceQuestions": [
             {
@@ -1602,7 +1608,9 @@
               "link": "https://leetcode.com/problems/group-anagrams/"
             }
           ],
-          "learningTip": ["Use character counts as key instead of sorted string. Avoids sorting cost."],
+          "learningTip": [
+            "Use character counts as key instead of sorted string. Avoids sorting cost."
+          ],
           "mustNotMiss": [
             "Algorithm: For each word, create count array of 26 zeros. Count characters. Convert to tuple or string as key. This is O(n * k) - no sorting. Key format example: '#1#0#0#...' (count of each letter). Or in Python, use tuple(counts). This is faster for longer strings where k log k > 26. Space is same. Know both approaches and when each is better."
           ]
@@ -1618,14 +1626,14 @@
         {
           "id": "introduction_stacks_queues",
           "name": "Introduction to Stacks & Queues",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Get introduced to the fundamentals of Stacks and Queues",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1640,7 +1648,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1648,7 +1656,7 @@
         {
           "id": "implement_stack_two_queues",
           "name": "Implement Stack using Two Queues",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Build a stack using two queues",
           "practiceQuestions": [
             {
@@ -1658,7 +1666,9 @@
               "link": "https://leetcode.com/problems/implement-stack-using-queues/"
             }
           ],
-          "learningTip": ["One queue is main, other is helper. Make either push O(n) or pop O(n), not both."],
+          "learningTip": [
+            "One queue is main, other is helper. Make either push O(n) or pop O(n), not both."
+          ],
           "mustNotMiss": [
             "Approach 1 (Push O(n)): To push, enqueue to q",
             "Dequeue all from q1 to q",
@@ -1680,7 +1690,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1688,7 +1698,7 @@
         {
           "id": "implement_queue_stacks",
           "name": "Implement Queue using Stacks",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Simulate a queue using two stacks",
           "practiceQuestions": [
             {
@@ -1714,7 +1724,7 @@
         {
           "id": "valid_parentheses",
           "name": "Valid Parentheses",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if a string of parentheses is valid",
           "practiceQuestions": [
             {
@@ -1740,7 +1750,7 @@
         {
           "id": "min_stack",
           "name": "Min Stack",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Design a stack that supports retrieving the minimum in O(1)",
           "practiceQuestions": [
             {
@@ -1758,7 +1768,7 @@
           ],
           "mustNotMiss": [
             "Approach 1: Store [value, currentMin] pairs - stack.push([val, Math.min(val, this.getMin())])",
-            "Approach 2: Separate minStack, push when new value \u2264 current min",
+            "Approach 2: Separate minStack, push when new value ≤ current min",
             "getMin: return stack[stack.length-1][1] or minStack[minStack.length-1]",
             "All operations O(1) time, O(n) space"
           ]
@@ -1766,7 +1776,7 @@
         {
           "id": "remove_outermost_parentheses_stack",
           "name": "Remove Outermost Parentheses - Using Stack",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Remove outermost parentheses using a stack-based approach",
           "practiceQuestions": [
             {
@@ -1793,7 +1803,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1801,7 +1811,7 @@
         {
           "id": "evaluate_reverse_polish_notation",
           "name": "Evaluate Reverse Polish Notation",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Evaluate mathematical expressions in postfix notation",
           "practiceQuestions": [
             {
@@ -1821,7 +1831,7 @@
         {
           "id": "next_greater_element",
           "name": "Next Greater Element",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Find the next greater element for each number in an array",
           "practiceQuestions": [
             {
@@ -1835,7 +1845,7 @@
             "Monotonic stack pattern",
             "Stack stores elements awaiting their next greater",
             "Pop smaller elements when larger found",
-            "Each element pushed/popped at most once \u2192 O(n)"
+            "Each element pushed/popped at most once → O(n)"
           ],
           "mustNotMiss": [
             "const stack = [], result = new Array(n).fill(-1)",
@@ -1847,7 +1857,7 @@
         {
           "id": "daily_temperatures",
           "name": "Daily Temperatures",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find how many days until a warmer temperature",
           "practiceQuestions": [
             {
@@ -1873,7 +1883,7 @@
         {
           "id": "next_greater_element_ii",
           "name": "Next Greater Element - II",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Solve the circular version of Next Greater Element",
           "practiceQuestions": [
             {
@@ -1899,7 +1909,7 @@
         {
           "id": "rotting_oranges",
           "name": "Rotting Oranges",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "BFS algorithm to find time for all oranges to rot",
           "practiceQuestions": [
             {
@@ -1928,7 +1938,7 @@
       "id": "binary_search_algorithm",
       "name": "Binary Search Algorithm",
       "tier": 3,
-      "estimatedHours": 29.0,
+      "estimatedHours": 29,
       "topics": [
         {
           "id": "square_root_x",
@@ -1940,7 +1950,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1948,14 +1958,14 @@
         {
           "id": "best_practice_finding_middle",
           "name": "Best Practice - Finding Middle Element",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Learn the safe and optimal way to find the middle index",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1963,14 +1973,14 @@
         {
           "id": "guess_higher_lower",
           "name": "Guess Higher or Lower",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Use binary search to guess a hidden number",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -1978,7 +1988,7 @@
         {
           "id": "search_rotated_sorted_array",
           "name": "Search in Rotated Sorted Array",
-          "estimatedHours": 4.0,
+          "estimatedHours": 4,
           "description": "Search an element in a rotated sorted array",
           "practiceQuestions": [
             {
@@ -1995,7 +2005,7 @@
             "This is a favorite interview question"
           ],
           "mustNotMiss": [
-            "If nums[left] <= nums[mid] \u2192 left half is sorted",
+            "If nums[left] <= nums[mid] → left half is sorted",
             "If target in [nums[left], nums[mid]], search left; else right",
             "If right half sorted: check if target in range",
             "Handle duplicates: skip with left++ or right--"
@@ -2024,7 +2034,7 @@
         {
           "id": "find_peak_element",
           "name": "Find Peak Element",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Locate a peak element using binary search",
           "practiceQuestions": [
             {
@@ -2038,13 +2048,13 @@
             "A peak is greater than neighbors. Key insight: If mid < mid+1, there MUST be a peak on the right (values go up). If mid >= mid+1, there MUST be a peak on left or at mid (values go down or peak)."
           ],
           "mustNotMiss": [
-            "You're guaranteed to find A peak (any peak, not necessarily global max). Binary search works because you're always moving toward higher ground. Compare nums[mid] with nums[mid+1]: If nums[mid] < nums[mid+1], move right (left = mid + 1). Else move left (right = mid). Return left when done. Edge handling: Problem guarantees nums[-1] = nums[n] = -\u221e, so edges can be peaks. Time O(log n)."
+            "You're guaranteed to find A peak (any peak, not necessarily global max). Binary search works because you're always moving toward higher ground. Compare nums[mid] with nums[mid+1]: If nums[mid] < nums[mid+1], move right (left = mid + 1). Else move left (right = mid). Return left when done. Edge handling: Problem guarantees nums[-1] = nums[n] = -∞, so edges can be peaks. Time O(log n)."
           ]
         },
         {
           "id": "find_minimum_rotated_sorted_array",
           "name": "Find Minimum in Rotated Sorted Array",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the smallest element in a rotated sorted array",
           "practiceQuestions": [
             {
@@ -2088,14 +2098,14 @@
         {
           "id": "find_first_last_position_approach_2",
           "name": "Find First & Last Position in Sorted Array - Approach 2",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Optimized approach for finding first and last index of target",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2110,7 +2120,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2118,7 +2128,7 @@
         {
           "id": "single_element_sorted_array",
           "name": "Single Element in a Sorted Array",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the single non-duplicate element in a sorted array",
           "practiceQuestions": [
             {
@@ -2138,7 +2148,7 @@
         {
           "id": "find_k_closest_elements",
           "name": "Find k Closest Elements",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the k elements closest to a target in a sorted array",
           "practiceQuestions": [
             {
@@ -2224,7 +2234,7 @@
         {
           "id": "is_subsequence",
           "name": "Is Subsequence",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if one string is a subsequence of another",
           "practiceQuestions": [
             {
@@ -2271,7 +2281,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2314,7 +2324,7 @@
           "mustNotMiss": [
             "let l = 0, r = n-1, max = 0",
             "while(l < r) { max = Math.max(max, Math.min(height[l], height[r]) * (r - l)); height[l] < height[r] ? l++ : r--; }",
-            "Area = min(left, right) \u00d7 width",
+            "Area = min(left, right) × width",
             "Time O(n), single pass"
           ]
         },
@@ -2333,7 +2343,7 @@
           ],
           "learningTip": [
             "Sort first, fix one element, two-sum on rest",
-            "O(n\u00b2) total - n iterations with O(n) two-sum each",
+            "O(n²) total - n iterations with O(n) two-sum each",
             "Skipping duplicates is critical",
             "Very common interview question"
           ],
@@ -2347,7 +2357,7 @@
         {
           "id": "trapping_rain_water",
           "name": "Trapping Rain Water",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Calculate how much water can be trapped after rain",
           "practiceQuestions": [
             {
@@ -2373,7 +2383,7 @@
         {
           "id": "longest_substring_without_repeating",
           "name": "Longest Substring Without Repeating Characters",
-          "estimatedHours": 4.0,
+          "estimatedHours": 4,
           "description": "Find the longest substring with all unique characters",
           "practiceQuestions": [
             {
@@ -2386,7 +2396,7 @@
           "learningTip": [
             "Sliding window with character tracking",
             "Expand right, shrink left when duplicate found",
-            "Map stores char \u2192 last index",
+            "Map stores char → last index",
             "Classic variable-size window problem"
           ],
           "mustNotMiss": [
@@ -2399,7 +2409,7 @@
         {
           "id": "longest_repeating_character_replacement",
           "name": "Longest Repeating Character Replacement",
-          "estimatedHours": 4.0,
+          "estimatedHours": 4,
           "description": "Maximize the length of a repeating character substring",
           "practiceQuestions": [
             {
@@ -2422,7 +2432,7 @@
         {
           "id": "permutation_in_string",
           "name": "Permutation in String",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Check if one string contains a permutation of another",
           "practiceQuestions": [
             {
@@ -2448,7 +2458,7 @@
         {
           "id": "sliding_window_maximum",
           "name": "Sliding Window Maximum",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the max value in every window of size k",
           "practiceQuestions": [
             {
@@ -2515,7 +2525,7 @@
         {
           "id": "preorder_traversal_recursive",
           "name": "Preorder Traversal - Recursive Approach",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Perform preorder traversal using recursion",
           "practiceQuestions": [
             {
@@ -2538,7 +2548,7 @@
         {
           "id": "inorder_postorder_recursive",
           "name": "Inorder & PostOrder - Recursive Approach",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Implement inorder and postorder recursively",
           "practiceQuestions": [
             {
@@ -2583,7 +2593,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2598,7 +2608,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2606,14 +2616,14 @@
         {
           "id": "postorder_iterative_one_stack",
           "name": "Postorder - Iterative Approach - One Stack",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Efficient postorder traversal using just one stack",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2675,7 +2685,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2683,7 +2693,7 @@
         {
           "id": "maximum_depth_binary_tree",
           "name": "Maximum Depth of Binary Tree",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the max depth of a binary tree",
           "practiceQuestions": [
             {
@@ -2735,7 +2745,7 @@
         {
           "id": "symmetric_tree_recursive",
           "name": "Symmetric Tree - Recursive Approach",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if a binary tree is symmetric using recursion",
           "practiceQuestions": [
             {
@@ -2762,9 +2772,11 @@
         {
           "id": "symmetric_tree_iterative",
           "name": "Symmetric Tree - Iterative Approach",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check symmetry in a binary tree using BFS",
-          "learningTip": ["Use queue/stack to compare pairs of nodes that should be mirror images of each other."],
+          "learningTip": [
+            "Use queue/stack to compare pairs of nodes that should be mirror images of each other."
+          ],
           "mustNotMiss": [
             "Algorithm: queue = [(root.left, root.right)]. While queue: (t1, t",
             "= queue.popleft(). If both null: continue. If one null or vals differ: return False. Queue.append((t",
@@ -2777,7 +2789,7 @@
         {
           "id": "invert_binary_tree",
           "name": "Invert a Binary Tree",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Flip a binary tree by swapping left and right nodes",
           "practiceQuestions": [
             {
@@ -2803,7 +2815,7 @@
         {
           "id": "same_tree",
           "name": "Same Tree",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if two binary trees are exactly the same",
           "practiceQuestions": [
             {
@@ -2829,7 +2841,7 @@
         {
           "id": "balanced_binary_tree",
           "name": "Balanced Binary Tree",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Check if a binary tree is height-balanced",
           "practiceQuestions": [
             {
@@ -2843,7 +2855,7 @@
             "Balanced if left and right heights differ by at most 1, AND both subtrees are balanced. Check both conditions!"
           ],
           "mustNotMiss": [
-            "Naive O(n\u00b2): For each node, calculate height and check balance. Height calculation itself is O(n). Better O(n): Return -1 upward if unbalanced, else return actual height. def checkHeight(node): if not node: return",
+            "Naive O(n²): For each node, calculate height and check balance. Height calculation itself is O(n). Better O(n): Return -1 upward if unbalanced, else return actual height. def checkHeight(node): if not node: return",
             "left = checkHeight(node.left). If left == -1: return -",
             "right = checkHeight(node.right). if right == -1: return -",
             "if abs(left - right) > 1: return -",
@@ -2873,7 +2885,7 @@
         {
           "id": "zigzag_level_order_traversal",
           "name": "Zigzag Level Order Traversal",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Traverse a binary tree in zigzag order",
           "practiceQuestions": [
             {
@@ -2888,7 +2900,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -2896,7 +2908,7 @@
         {
           "id": "subtree_another_tree",
           "name": "Subtree of another Tree",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Check if one binary tree is a subtree of another",
           "practiceQuestions": [
             {
@@ -2946,7 +2958,7 @@
         {
           "id": "binary_tree_right_side_view",
           "name": "Binary Tree Right Side View",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Print the nodes visible from the right side",
           "practiceQuestions": [
             {
@@ -2994,7 +3006,7 @@
         {
           "id": "populating_next_right_pointers",
           "name": "Populating Next Right Pointers in Each Node",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Connect each node to its next right node in the same level",
           "practiceQuestions": [
             {
@@ -3009,7 +3021,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3049,7 +3061,7 @@
         {
           "id": "binary_search_tree_introduction",
           "name": "Binary Search Tree - Introduction",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Learn the basics of Binary Search Trees",
           "learningTip": [
             "For Tree problems, always think recursively first. Ask: 'If I knew the answer for the left child and right child, how would I calculate the answer for the current root?' This 'Leap of Faith' simplifies 90% of tree questions. DFS explores deep, BFS explores wide."
@@ -3089,7 +3101,7 @@
         {
           "id": "search_in_bst",
           "name": "Search in a BST",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Search for a value in a Binary Search Tree",
           "practiceQuestions": [
             {
@@ -3100,7 +3112,7 @@
             }
           ],
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3112,7 +3124,7 @@
         {
           "id": "insert_into_bst",
           "name": "Insert into a BST",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Insert a new node in a BST",
           "practiceQuestions": [
             {
@@ -3127,7 +3139,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3135,7 +3147,7 @@
         {
           "id": "kth_smallest_element",
           "name": "Kth Smallest Element",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find the kth smallest element in BST",
           "practiceQuestions": [
             {
@@ -3150,7 +3162,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3158,7 +3170,7 @@
         {
           "id": "lowest_common_ancestor_bst",
           "name": "Lowest Common Ancestor of a BST",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Find the lowest common ancestor in a Binary Search Tree",
           "practiceQuestions": [
             {
@@ -3173,7 +3185,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3184,7 +3196,7 @@
       "id": "heap_priority_queue",
       "name": "Heap / Priority Queue",
       "tier": 3,
-      "estimatedHours": 38.0,
+      "estimatedHours": 38,
       "topics": [
         {
           "id": "introduction_heaps",
@@ -3196,7 +3208,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3204,14 +3216,14 @@
         {
           "id": "creating_heap",
           "name": "Creating a Heap",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Learn how to build a heap from an array",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3219,14 +3231,14 @@
         {
           "id": "inserting_node_heap",
           "name": "Inserting a node in Heap",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Insert an element into a heap and maintain the heap property",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3234,14 +3246,14 @@
         {
           "id": "extracting_values_heap_heapify_down",
           "name": "Extracting Values in Heap & HeapifyDown",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Remove the root and restore heap order",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3249,7 +3261,7 @@
         {
           "id": "heap_sort_algorithm",
           "name": "Heap Sort Algorithm",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Understand the Heap Sort algorithm step-by-step",
           "practiceQuestions": [
             {
@@ -3260,7 +3272,7 @@
             }
           ],
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3275,7 +3287,7 @@
           "estimatedHours": 2.5,
           "description": "Implement Heap Sort in code",
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3290,7 +3302,7 @@
           "estimatedHours": 2.5,
           "description": "Explore advanced insights into Heap Sort",
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3302,14 +3314,14 @@
         {
           "id": "priority_queues_introduction",
           "name": "Priority Queues - Introduction",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Learn how priority queues work using heaps",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3324,7 +3336,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3351,7 +3363,7 @@
           "mustNotMiss": [
             "Simple: nums.sort((a,b) => b-a)[k-1] - O(n log n)",
             "Min-heap approach: maintain k elements, top is kth largest",
-            "QuickSelect: partition-based, O(n) average, O(n\u00b2) worst",
+            "QuickSelect: partition-based, O(n) average, O(n²) worst",
             "For interviews: mention heap approach, implement with sort if time-constrained"
           ]
         },
@@ -3395,7 +3407,7 @@
             "Good heap practice problem"
           ],
           "mustNotMiss": [
-            "Without heap: sort, process, re-sort - O(n\u00b2 log n)",
+            "Without heap: sort, process, re-sort - O(n² log n)",
             "With heap: O(n log n) total",
             "In JS: use reverse sort and pop, or implement max-heap",
             "Simple approach: while(stones.length > 1) { stones.sort((a,b)=>b-a); const diff = stones[0] - stones[1]; stones.splice(0, 2); if(diff) stones.push(diff); }"
@@ -3430,7 +3442,7 @@
         {
           "id": "kth_smallest_element_sorted_matrix",
           "name": "Kth Smallest Element in a Sorted Matrix",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the kth smallest element in a sorted matrix",
           "practiceQuestions": [
             {
@@ -3441,7 +3453,7 @@
             }
           ],
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3456,7 +3468,7 @@
       "id": "hashing",
       "name": "Hashing",
       "tier": 3,
-      "estimatedHours": 54.0,
+      "estimatedHours": 54,
       "topics": [
         {
           "id": "linked_list_cycle_hash_table_hashing",
@@ -3485,7 +3497,7 @@
         {
           "id": "palindrome_linked_list_hashing",
           "name": "Palindrome Linked List",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Check if a Linked List is a palindrome",
           "practiceQuestions": [
             {
@@ -3525,7 +3537,7 @@
         {
           "id": "remove_duplicates_sorted_list_hashing",
           "name": "Remove Duplicates from Sorted List",
-          "estimatedHours": 1.0,
+          "estimatedHours": 1,
           "description": "Remove consecutive duplicates from a sorted Linked List",
           "practiceQuestions": [
             {
@@ -3564,7 +3576,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3587,7 +3599,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3595,14 +3607,14 @@
         {
           "id": "find_most_frequent_vowel_consonant_hashing",
           "name": "Find Most Frequent Vowel and Consonant",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Identify the most frequent vowel and consonant in a string",
           "learningTip": [
             "Focus on the underlying pattern. Most problems fall into buckets: Sliding Window, Two Pointers, DFS/BFS, or DP. Once you identify the pattern, the code follows a template. Don't memorize code; memorize the recognition signals."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3617,7 +3629,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3625,7 +3637,7 @@
         {
           "id": "valid_anagram_hashing",
           "name": "Valid Anagram",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Check if two strings are anagrams of each other",
           "practiceQuestions": [
             {
@@ -3640,7 +3652,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3648,7 +3660,7 @@
         {
           "id": "isomorphic_strings_hashing",
           "name": "Isomorphic Strings",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Check if two strings have a one-to-one character mapping",
           "practiceQuestions": [
             {
@@ -3663,7 +3675,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3674,7 +3686,7 @@
           "estimatedHours": 2.5,
           "description": "Group words that are anagrams using sorted string keys",
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3701,7 +3713,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3709,7 +3721,7 @@
         {
           "id": "next_greater_element_hashing",
           "name": "Next Greater Element",
-          "estimatedHours": 4.0,
+          "estimatedHours": 4,
           "description": "Find the next greater element for each number in an array",
           "practiceQuestions": [
             {
@@ -3724,7 +3736,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3743,7 +3755,7 @@
             }
           ],
           "learningTip": [
-            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n\u00b2), and you are expected to optimize it using Sorting or Hashing."
+            "Sorting and Searching are fundamental. Sorting is generally O(n log n). Searching is O(log n) if sorted, O(n) if not. In interviews, often the 'Brute Force' is O(n²), and you are expected to optimize it using Sorting or Hashing."
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
@@ -3770,7 +3782,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3785,7 +3797,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3793,7 +3805,7 @@
         {
           "id": "permutation_in_string_hashing",
           "name": "Permutation in String",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Check if one string contains a permutation of another",
           "practiceQuestions": [
             {
@@ -3808,7 +3820,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3816,7 +3828,7 @@
         {
           "id": "longest_substring_without_repeating_hashing",
           "name": "Longest Substring Without Repeating Characters",
-          "estimatedHours": 4.0,
+          "estimatedHours": 4,
           "description": "Find the longest substring with all unique characters",
           "practiceQuestions": [
             {
@@ -3831,7 +3843,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3839,7 +3851,7 @@
         {
           "id": "sliding_window_maximum_hashing",
           "name": "Sliding Window Maximum",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the max value in every window of size k",
           "practiceQuestions": [
             {
@@ -3854,7 +3866,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3865,7 +3877,7 @@
       "id": "backtracking",
       "name": "Backtracking",
       "tier": 4,
-      "estimatedHours": 49.0,
+      "estimatedHours": 49,
       "topics": [
         {
           "id": "introduction_backtracking",
@@ -3877,7 +3889,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -3905,7 +3917,7 @@
             "const result = []; const backtrack = (start, path) => { result.push([...path]); for(let i = start; i < nums.length; i++) { path.push(nums[i]); backtrack(i + 1, path); path.pop(); } }",
             "backtrack(0, []); return result;",
             "Start from index to avoid duplicates (each element considered once)",
-            "Time O(2^n \u00d7 n) for generating and copying subsets"
+            "Time O(2^n × n) for generating and copying subsets"
           ]
         },
         {
@@ -3951,7 +3963,7 @@
             "const used = new Array(n).fill(false); const result = [];",
             "const backtrack = (path) => { if(path.length === n) { result.push([...path]); return; } for(let i = 0; i < n; i++) { if(used[i]) continue; used[i] = true; path.push(nums[i]); backtrack(path); path.pop(); used[i] = false; } }",
             "Mark used before recursing, unmark after (backtrack)",
-            "Time O(n! \u00d7 n)"
+            "Time O(n! × n)"
           ]
         },
         {
@@ -3972,7 +3984,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4047,7 +4059,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4070,7 +4082,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4093,7 +4105,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4116,7 +4128,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4150,7 +4162,7 @@
         {
           "id": "n_queens",
           "name": "N Queens",
-          "estimatedHours": 8.0,
+          "estimatedHours": 8,
           "description": "Place queens safely on a chessboard",
           "practiceQuestions": [
             {
@@ -4161,7 +4173,7 @@
             }
           ],
           "learningTip": [
-            "Place n queens on n\u00d7n board, none attacking each other",
+            "Place n queens on n×n board, none attacking each other",
             "Place row by row, try each column",
             "Track attacked columns and diagonals",
             "Classic constraint satisfaction problem"
@@ -4179,7 +4191,7 @@
       "id": "greedy_algorithm",
       "name": "Greedy Algorithm",
       "tier": 4,
-      "estimatedHours": 12.5,
+      "estimatedHours": 35.5,
       "topics": [
         {
           "id": "introduction_greedy_algorithm",
@@ -4191,7 +4203,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4224,7 +4236,7 @@
         {
           "id": "assign_cookies",
           "name": "Assign Cookies",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Understand how to maximize content children by assigning cookies efficiently",
           "practiceQuestions": [
             {
@@ -4259,7 +4271,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4267,7 +4279,7 @@
         {
           "id": "best_time_buy_sell_stock_ii",
           "name": "Best Time to Buy and Sell Stock - II",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Master stock trading with multiple transactions using greedy techniques",
           "practiceQuestions": [
             {
@@ -4282,7 +4294,7 @@
           ],
           "mustNotMiss": [
             "DO NOT MISS:",
-            "Constraints: Always look at input size (N). If N=100, O(n\u00b3) is fine. If N=10^5, you need O(n) or O(n log n).",
+            "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
           ]
@@ -4392,7 +4404,7 @@
         {
           "id": "task_scheduler",
           "name": "Task Scheduler",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Schedule tasks with cooling periods using formula or simulation.",
           "practiceQuestions": [
             {
@@ -4442,7 +4454,7 @@
         {
           "id": "car_pooling",
           "name": "Car Pooling",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Verify if a vehicle with fixed capacity can service all trips (timestamps) efficiently.",
           "practiceQuestions": [
             {
@@ -4492,7 +4504,7 @@
         {
           "id": "candy_one_pass",
           "name": "Candy - One Pass - O(1) Space",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Optimize Candy distribution to O(1) space by analyzing slope transitions (peaks and valleys).",
           "practiceQuestions": [
             {
@@ -4522,12 +4534,12 @@
       "id": "dynamic_programming",
       "name": "Dynamic Programming",
       "tier": 1,
-      "estimatedHours": 45.0,
+      "estimatedHours": 45.5,
       "topics": [
         {
           "id": "dp_introduction",
           "name": "Introduction to Dynamic Programming",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Master the art of solving complex optimization problems by breaking them down into simpler, overlapping subproblems.",
           "learningTip": [
             "Core Pattern: Identify if the problem asks for a maximum, minimum, or count of ways (Optimization/Counting).",
@@ -4568,7 +4580,7 @@
         {
           "id": "top_down_bottom_up",
           "name": "Top Down & Bottom Up - DP approach",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Understand the trade-offs: Recursion depth vs Iterative control.",
           "learningTip": [
             "Top-Down (Memoization): 'Lazy' evaluation. Only computes states required to reach the answer. Good when many states are unreachable.",
@@ -4608,7 +4620,7 @@
         {
           "id": "min_cost_climbing_stairs",
           "name": "Minimum Cost Climbing Stairs",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Find the cheapest path to the top: Intro to minimization problems.",
           "practiceQuestions": [
             {
@@ -4734,15 +4746,6 @@
           "id": "palindromic_substrings",
           "name": "Palindromic Substrings",
           "estimatedHours": 2.5,
-          "description": "Count palindromic substrings using DP",
-          "practiceQuestions": [
-            {
-              "name": "Palindromic Substrings",
-              "slug": "palindromic-substrings",
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/palindromic-substrings/"
-            }
-          ],
           "description": "Count all palindromic substrings (contiguous) in a string.",
           "practiceQuestions": [
             {
@@ -4817,7 +4820,7 @@
         {
           "id": "max_subarray_kadane",
           "name": "Maximum Subarray - Kadane's Algorithm",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Find the contiguous subarray with the largest sum (O(N)).",
           "practiceQuestions": [
             {
@@ -4867,7 +4870,7 @@
         {
           "id": "max_product_subarray_2",
           "name": "Maximum Product Subarray - Approach 2",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Solve Maximum Product Subarray using Prefix/Suffix products.",
           "practiceQuestions": [
             {
@@ -4917,7 +4920,7 @@
         {
           "id": "longest_increasing_subsequence",
           "name": "Longest Increasing Subsequence",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find the length of the longest strictly increasing subsequence (O(N log N)).",
           "practiceQuestions": [
             {
@@ -4990,7 +4993,7 @@
         {
           "id": "unique_paths",
           "name": "Unique Paths",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Count paths from top-left to bottom-right in a grid (Standard 2D DP).",
           "practiceQuestions": [
             {
@@ -5018,12 +5021,12 @@
       "id": "graphs",
       "name": "Graphs",
       "tier": 1,
-      "estimatedHours": 65.0,
+      "estimatedHours": 74,
       "topics": [
         {
           "id": "graphs_introduction",
           "name": "Introduction to Graphs",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Understand the fundamental Graph data structure: Vertices (V) and Edges (E).",
           "learningTip": [
             "Representation: Adjacency List (Map<Node, List>) vs Adjacency Matrix (V*V array).",
@@ -5075,7 +5078,7 @@
         {
           "id": "find_path_exists_bfs",
           "name": "Find if Path Exists - BFS",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Check connectivity between `source` and `destination` nodes.",
           "practiceQuestions": [
             {
@@ -5099,7 +5102,7 @@
         {
           "id": "dfs_recursive",
           "name": "DFS Recursive",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Implement Depth First Search utilizing the system logic (Stack Frame).",
           "learningTip": [
             "Cleaner code than iterative usually.",
@@ -5137,7 +5140,7 @@
         {
           "id": "reconstruct_itinerary",
           "name": "Reconstruct Itinerary",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find an Eulerian Path (visit every edge exactly once) using Hierholzer's Algorithm.",
           "practiceQuestions": [
             {
@@ -5187,7 +5190,7 @@
         {
           "id": "topological_sort_dfs",
           "name": "Topological Sort - DFS",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Linear ordering of vertices where `u` comes before `v` for every edge `u->v`.",
           "practiceQuestions": [
             {
@@ -5211,7 +5214,7 @@
         {
           "id": "kahns_algorithm_bfs",
           "name": "Kahn's Algorithm - Topological Sort - BFS",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Implement Topological Sort using BFS and Indegrees (Dependencies).",
           "practiceQuestions": [
             {
@@ -5236,7 +5239,7 @@
         {
           "id": "shortest_path_overview",
           "name": "Shortest Path Algorithms in Graphs",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Survey the landscape of Shortest Path algorithms.",
           "learningTip": [
             "Unweighted: BFS (O(V+E)).",
@@ -5253,7 +5256,7 @@
         {
           "id": "shortest_path_bfs",
           "name": "Shortest Path in Unweighted Graph - BFS",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Find shortest distance in an Unweighted Graph using Level Order Traversal.",
           "practiceQuestions": [
             {
@@ -5277,7 +5280,7 @@
         {
           "id": "dijkstra_explanation",
           "name": "Dijkstra's Algorithm - Shortest Path Weighted Graph",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Find shortest paths from a source to all other vertices in a Weighted Graph (Non-Negative).",
           "learningTip": [
             "Greedy Strategy: Always process the closest unvisited node.",
@@ -5317,7 +5320,7 @@
         {
           "id": "bellman_ford_explanation",
           "name": "Bellman Ford Algorithm - Shortest Path with Negative Weights",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Shortest Path algorithm capable of handling Negative Weights (Single Source).",
           "learningTip": [
             "Principle: Relaxation. 'Relax' every edge `V-1` times.",
@@ -5356,7 +5359,7 @@
         {
           "id": "floyd_warshall_explanation",
           "name": "Floyd Warshall Algorithm - All Pairs Shortest Path",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Compute All-Pairs Shortest Paths (APSP) for dense graphs (O(V^3)).",
           "learningTip": [
             "Dynamic Programming: `dist[i][j]` using optimal path through intermediates `0..k`.",
@@ -5414,7 +5417,7 @@
         {
           "id": "mst_introduction",
           "name": "Minimum Spanning Tree",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Understand the concept of a Minimum Spanning Tree (MST)",
           "learningTip": [
             "Spanning Tree: connects all vertices with V-1 edges, no cycles",
@@ -5473,7 +5476,7 @@
         {
           "id": "disjoint_set_union_find",
           "name": "Disjoint Set - Union Find",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "practiceQuestions": [
             {
               "name": "Number of Provinces",
@@ -5516,7 +5519,9 @@
           "name": "Kruskal + Union Find - Code",
           "estimatedHours": 2.5,
           "description": "Implement Kruskal's Algorithm using Union-Find",
-          "learningTip": ["Sort edges, iterate through, use union-find for cycle detection"],
+          "learningTip": [
+            "Sort edges, iterate through, use union-find for cycle detection"
+          ],
           "mustNotMiss": [
             "edges.sort((a, b) => a[2] - b[2]); // sort by weight",
             "for (const [u, v, w] of edges) { if (find(u) !== find(v)) { mst.push([u, v, w]); union(u, v); } }",
@@ -5568,7 +5573,7 @@
         {
           "id": "cheapest_flights_k_stops",
           "name": "Cheapest Flight with K Stops",
-          "estimatedHours": 3.0,
+          "estimatedHours": 3,
           "description": "Shortest Path with a constraint on number of edges (hops) used.",
           "practiceQuestions": [
             {
@@ -5645,12 +5650,12 @@
       "id": "tries",
       "name": "Tries",
       "tier": 1,
-      "estimatedHours": 8.0,
+      "estimatedHours": 8,
       "topics": [
         {
           "id": "tries_introduction",
           "name": "Introduction to Tries",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Concept of Prefix Tree (Trie) optimized for String Operations.",
           "learningTip": [
             "Structure: Root node is empty. Edges are characters.",
@@ -5666,7 +5671,7 @@
         {
           "id": "trie_structure",
           "name": "Trie and TrieNode Structure",
-          "estimatedHours": 2.0,
+          "estimatedHours": 2,
           "description": "Design the TrieNode class and the overall Trie structure",
           "practiceQuestions": [
             {
@@ -5737,7 +5742,201 @@
           ]
         }
       ]
+    },
+    {
+      "id": "searching_sorting_advanced",
+      "name": "Searching & Sorting - Advanced",
+      "tier": 2,
+      "estimatedHours": 11.5,
+      "topics": [
+        {
+          "id": "quick_sort",
+          "name": "Quick Sort",
+          "estimatedHours": 2.5,
+          "description": "Master Quick Sort, the industry-standard sorting algorithm.",
+          "practiceQuestions": [
+            {
+              "name": "Sort an Array",
+              "slug": "sort-an-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sort-an-array/"
+            },
+            {
+              "name": "Kth Largest Element in an Array",
+              "slug": "kth-largest-element-in-an-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+            }
+          ],
+          "learningTip": [
+            "Why is it faster? Better Cache Locality than Merge Sort. It sorts in-place, accessing contiguous memory.",
+            "Divide & Conquer: 1. Partition (place pivot). 2. Recursively sort Left. 3. Recursively sort Right.",
+            "Tail Call Optimization hints: ALWAYS recurse on the smaller partition first to limit stack depth to O(log n)."
+          ],
+          "mustNotMiss": [
+            "Lomuto Partition: Easier to implement, but does more swaps.",
+            "Hoare Partition: Two pointers from ends, fewer swaps, harder to get right.",
+            "Worst Case O(n²): Happens on sorted arrays if pivot is first/last element. FIX: Randomized Pivot.",
+            "Quick Select Algorithm: Finds Kth largest in O(n) using the same partition logic."
+          ]
+        },
+        {
+          "id": "counting_sort",
+          "name": "Counting Sort",
+          "estimatedHours": 1.5,
+          "description": "Learn Counting Sort for sorting integers with small ranges.",
+          "practiceQuestions": [
+            {
+              "name": "Relative Sort Array",
+              "slug": "relative-sort-array",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/relative-sort-array/"
+            }
+          ],
+          "learningTip": [
+            "It's an Integer Sorting algorithm. You CANNOT use it for floating point numbers or strings directly.",
+            "Think of it as 'Binning': specific bin for each number value.",
+            "Key constraint: Range (K) must not be huge (e.g., K=10^9 is bad, K=1000 is good)."
+          ],
+          "mustNotMiss": [
+            "Time Complexity: O(N + K). If K is O(N), it's Linear Time O(N).",
+            "Space Complexity: O(K) for the count array.",
+            "Handling Negatives: Shift the range by adding abs(min_val) to indices."
+          ]
+        },
+        {
+          "id": "counting_sort_stable_logic",
+          "name": "Counting Sort - Stable - Logic",
+          "estimatedHours": 1,
+          "description": "How to make Counting Sort stable (preserve order).",
+          "practiceQuestions": [
+            {
+              "name": "Rank Transform of an Array",
+              "slug": "rank-transform-of-an-array",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rank-transform-of-an-array/"
+            }
+          ],
+          "learningTip": [
+            "Stability is crucial when this is used as a step in Radix Sort.",
+            "The magic happens by converting 'Counts' into 'Positions'.",
+            "Prefix Sum Array: `count[i] += count[i-1]` tells you exactly where the LAST occurrence of `i` belongs."
+          ],
+          "mustNotMiss": [
+            "Why iterate BACKWARDS? To place the 'last' appearing duplicate in the 'last' available spot for that value.",
+            "Iterating forwards reverses the order of duplicates, breaking stability.",
+            "Requires an extra Output Array (not fully in-place)."
+          ]
+        },
+        {
+          "id": "counting_sort_stable_code",
+          "name": "Counting Sort - Stable - Code",
+          "estimatedHours": 1.5,
+          "description": "Implement the Stable Counting Sort algorithm.",
+          "practiceQuestions": [
+            {
+              "name": "Sort Colors",
+              "slug": "sort-colors",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sort-colors/"
+            },
+            {
+              "name": "Height Checker",
+              "slug": "height-checker",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/height-checker/"
+            }
+          ],
+          "learningTip": [
+            "Standard Template: 1. Find Max. 2. Fill Freq Array. 3. Prefix Sum. 4. Build Output Backwards.",
+            "Sort Colors (0, 1, 2) is a specialized version called Dutch National Flag, but Counting Sort works too!",
+            "Offset Indexing: Don't forget `output[count[val]-1] = val; count[val]--;`"
+          ],
+          "mustNotMiss": [
+            "Handling 0-based index: Prefix sums usually give 1-based ranks, so subtract 1.",
+            "Copy back: Don't forget to copy the Output array back to the Original array at the end."
+          ]
+        },
+        {
+          "id": "radix_sort",
+          "name": "Radix Sort",
+          "estimatedHours": 2.5,
+          "description": "Sorting large numbers or strings digit-by-digit.",
+          "practiceQuestions": [
+            {
+              "name": "Maximum Gap",
+              "slug": "maximum-gap",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/maximum-gap/"
+            },
+            {
+              "name": "Minimize Deviation in Array",
+              "slug": "minimize-deviation-in-array",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/minimize-deviation-in-array/"
+            }
+          ],
+          "learningTip": [
+            "LSD (Least Significant Digit): Process Unit column -> Tens -> Hundreds...",
+            "Why LSD? If you sort by units, then by tens STABLY, the order inside 'tens' buckets respects the 'units' order.",
+            "It defeats the O(N log N) barrier because it doesn't compare elements directly."
+          ],
+          "mustNotMiss": [
+            "Complexity: O(d * (N+b)) where d=digits, b=base (usually 10).",
+            "If d is large (e.g. very long strings), it can be slower than QuickSort.",
+            "Bitwise Radix Sort: Using base 2 or 16 is faster for computers (shifting instead of modulo)."
+          ]
+        },
+        {
+          "id": "bucket_sort",
+          "name": "Bucket Sort",
+          "estimatedHours": 1.5,
+          "description": "Efficient sorting for uniformly distributed data.",
+          "practiceQuestions": [
+            {
+              "name": "Top K Frequent Elements",
+              "slug": "top-k-frequent-elements",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/top-k-frequent-elements/"
+            },
+            {
+              "name": "Sort Characters By Frequency",
+              "slug": "sort-characters-by-frequency",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sort-characters-by-frequency/"
+            }
+          ],
+          "learningTip": [
+            "Scatter: Distribute N elements into M buckets based on value range.",
+            "Sort: Sort each bucket individually (often using Insertion Sort).",
+            "Gather: Concatenate sorted buckets.",
+            "Crucial assumption: Data is Uniformly Distributed. If all go to 1 bucket -> O(N²)."
+          ],
+          "mustNotMiss": [
+            "Bucket Index = floor(value * number_of_buckets).",
+            "For Top K Elements: Use 'Frequency' as the bucket index. Bucket[5] = list of elements appearing 5 times.",
+            "This 'Bucket Sort by Frequency' is O(N) and very common in interviews."
+          ]
+        },
+        {
+          "id": "interview_cheatsheet_sorting",
+          "name": "Interview Cheatsheet",
+          "estimatedHours": 1,
+          "description": "Comparison and cheat codes for sorting in interviews.",
+          "learningTip": [
+            "Mention 'Stability' when sorting Objects (e.g. sorting Users by Age, then Name). Unstable sort ruins the Name order.",
+            "Language Internals: Python/Java use TimSort (Merge + Insertion). C++ std::sort is Introsort (Quick + Heap + Insertion).",
+            "Small Arrays (< 64 elements): Insertion Sort is faster than Quick Sort (less overhead)."
+          ],
+          "mustNotMiss": [
+            "Most Robust: Merge Sort (Stable, guaranteed O(N log N)).",
+            "Most Efficient: Quick Sort (Fastest in practice, cache friendly).",
+            "Specific Constraints: Counting/Radix (Integers), Bucket (Uniform floats).",
+            "Memory Constrained: Heap Sort (O(1) space, but unstable and slower than Quick)."
+          ]
+        }
+      ]
     }
   ],
-  "totalEstimatedHours": 515.5
+  "totalEstimatedHours": 527
 }
