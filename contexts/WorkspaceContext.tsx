@@ -18,6 +18,7 @@ interface WorkspaceContextType {
   updateTask: (id: string, updates: Partial<WorkspaceTask>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   updateNote: (id: string, updates: Partial<WorkspaceNote>) => Promise<void>;
+  togglePinNote: (id: string, isPinned: boolean) => Promise<void>;
   loadMoreTasks: () => void;
   hasMoreTasks: boolean;
   performSearch: (query: string) => Promise<void>;
@@ -130,9 +131,31 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     if (!user?.uid) {
       return;
     }
+    // Get note title before deletion for toast
+    const noteToDelete = notes.find(n => n.id === id);
+    const noteTitle = noteToDelete?.title || 'Untitled Note';
+    
     try {
       await workspaceService.deleteNote(user.uid, id);
-      toast({ title: 'Note deleted' });
+      toast({
+        title: 'Note moved to trash',
+        description: noteTitle,
+        action: (
+          <button
+            onClick={async () => {
+              try {
+                await workspaceService.restoreNote(user.uid, id);
+                toast({ title: 'Note restored' });
+              } catch {
+                toast({ title: 'Failed to restore', variant: 'destructive' });
+              }
+            }}
+            className="text-xs font-medium bg-primary text-primary-foreground px-2 py-1 rounded hover:bg-primary/90"
+          >
+            Undo
+          </button>
+        ),
+      });
     } catch (error) {
       toast({ title: 'Failed to delete note', variant: 'destructive' });
     }
@@ -185,6 +208,19 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const togglePinNote = async (id: string, isPinned: boolean) => {
+    if (!user?.uid) {
+      return;
+    }
+    try {
+      await workspaceService.togglePinNote(user.uid, id, isPinned);
+      const note = notes.find(n => n.id === id);
+      toast({ title: isPinned ? 'Note unpinned' : 'Note pinned', description: note?.title || 'Untitled Note' });
+    } catch (error) {
+      toast({ title: 'Failed to update pin status', variant: 'destructive' });
+    }
+  };
+
   return (
     <WorkspaceContext.Provider
       value={{
@@ -198,6 +234,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         updateTask,
         deleteTask,
         updateNote,
+        togglePinNote,
         loadMoreTasks,
         hasMoreTasks: tasks.length >= taskLimit && !searchResults, // Heuristic: If we got full limit, likely more exist
         performSearch,

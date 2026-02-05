@@ -332,14 +332,26 @@ export function WorkspaceList({ view, onSelectTask, selectedTaskId }: WorkspaceL
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <p
-                    className={cn(
-                      'text-sm font-medium truncate',
-                      task.status === 'done' && 'line-through text-muted-foreground'
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={cn(
+                        'text-sm font-medium truncate',
+                        task.status === 'done' && 'line-through text-muted-foreground'
+                      )}
+                    >
+                      {task.title}
+                    </p>
+                    {task.priority && task.priority !== 'medium' && (
+                      <span
+                        className={cn(
+                          'shrink-0 w-2 h-2 rounded-full',
+                          task.priority === 'high' && 'bg-red-500',
+                          task.priority === 'low' && 'bg-green-500'
+                        )}
+                        title={`${task.priority} priority`}
+                      />
                     )}
-                  >
-                    {task.title}
-                  </p>
+                  </div>
                   {task.dueDate && (
                     <div
                       className={cn(

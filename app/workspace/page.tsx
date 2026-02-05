@@ -84,6 +84,12 @@ function WorkspaceApp() {
           }
         }
       }
+
+      // Escape: Deselect current item
+      if (e.key === 'Escape') {
+        setSelectedNoteId(null);
+        setSelectedTaskId(null);
+      }
     };
 
     document.addEventListener('keydown', down);

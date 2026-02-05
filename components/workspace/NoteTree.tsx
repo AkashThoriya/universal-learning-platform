@@ -16,7 +16,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { FileText, ChevronRight, ChevronDown, MoreHorizontal, Plus, GripVertical } from 'lucide-react';
+import { FileText, ChevronRight, ChevronDown, MoreHorizontal, Plus, GripVertical, Pin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -28,6 +28,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWorkspace } from '@/contexts/WorkspaceContext';
 import { WorkspaceNote, workspaceService } from '@/lib/services/workspace-service';
 import { cn } from '@/lib/utils/utils';
 
@@ -100,6 +101,7 @@ function SortableNoteItem({
   toggleExpand,
   isOver,
 }: any) {
+  const { togglePinNote } = useWorkspace();
   // ... (useSortable hooks remain same)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: note.id });
 
@@ -160,6 +162,10 @@ function SortableNoteItem({
           )}
         />
 
+        {note.isPinned && (
+          <Pin className="h-3 w-3 text-orange-500 -rotate-45" />
+        )}
+
         <span className="flex-1 truncate">{note.title || 'Untitled Note'}</span>
 
         {/* Actions Dropdown (Same) */}
@@ -177,6 +183,14 @@ function SortableNoteItem({
               }}
             >
               <Plus className="mr-2 h-4 w-4" /> Add Child Page
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={e => {
+                e.stopPropagation();
+                togglePinNote(note.id, note.isPinned || false);
+              }}
+            >
+              <Pin className="mr-2 h-4 w-4" /> {note.isPinned ? 'Unpin' : 'Pin to Top'}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

@@ -30,6 +30,9 @@ export interface WorkspaceNote {
   updatedAt: any; // Timestamp
   tags: string[];
   isExpanded?: boolean; // For UI state
+  isDeleted?: boolean; // Soft delete flag
+  deletedAt?: any; // Timestamp of deletion
+  isPinned?: boolean; // Pin to top
 }
 
 export interface WorkspaceTask {
@@ -96,13 +99,22 @@ class WorkspaceService {
     return onSnapshot(
       q,
       snapshot => {
-        const notes = snapshot.docs.map(
-          doc =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            }) as WorkspaceNote
-        );
+        const notes = snapshot.docs
+          .map(
+            doc =>
+              ({
+                id: doc.id,
+                ...doc.data(),
+              }) as WorkspaceNote
+          )
+          // Filter out soft-deleted notes
+          .filter(note => !note.isDeleted)
+          // Sort: pinned first, then by updatedAt
+          .sort((a, b) => {
+            if (a.isPinned && !b.isPinned) return -1;
+            if (!a.isPinned && b.isPinned) return 1;
+            return 0; // Keep existing order for same pin status
+          });
         callback(notes);
       },
       error => {
@@ -172,14 +184,46 @@ class WorkspaceService {
   }
 
   /**
-   * Delete a note and recursively create a visual indication for children?
-   * For now, just delete the note. Ideally we should handle orphans.
+   * Soft delete a note (sets isDeleted flag instead of hard delete)
+   * This allows for recovery and undo functionality
    */
   async deleteNote(userId: string, noteId: string): Promise<void> {
     try {
-      await deleteDoc(doc(db, 'users', userId, 'workspace_notes', noteId));
+      await updateDoc(doc(db, 'users', userId, 'workspace_notes', noteId), {
+        isDeleted: true,
+        deletedAt: serverTimestamp(),
+      });
     } catch (error) {
-      logError('Error deleting note', error as Error);
+      logError('Error soft-deleting note', error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Restore a soft-deleted note
+   */
+  async restoreNote(userId: string, noteId: string): Promise<void> {
+    try {
+      await updateDoc(doc(db, 'users', userId, 'workspace_notes', noteId), {
+        isDeleted: false,
+        deletedAt: null,
+      });
+    } catch (error) {
+      logError('Error restoring note', error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Toggle pin status of a note
+   */
+  async togglePinNote(userId: string, noteId: string, isPinned: boolean): Promise<void> {
+    try {
+      await updateDoc(doc(db, 'users', userId, 'workspace_notes', noteId), {
+        isPinned: !isPinned,
+      });
+    } catch (error) {
+      logError('Error toggling pin status', error as Error);
       throw error;
     }
   }

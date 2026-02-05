@@ -21,7 +21,7 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils/utils';
 
 import { EditableTitle } from './EditableTitle';
-import { SlashCommandMenu } from './SlashCommandMenu';
+
 
 interface WorkspaceEditorProps {
   view: 'tasks' | 'notes';
@@ -245,27 +245,7 @@ export function WorkspaceEditor({
     };
   }, [isFullscreen]);
 
-  // --- SLASH COMMAND LOGIC ---
-  const [showSlashMenu, setShowSlashMenu] = useState(false);
-  const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Detect '/'
-    if (e.key === '/') {
-      // Simple positioning for now (bottom left of cursor or just near bottom).
-      // Real rich text editors calculate caret position coordinates.
-      // We'll just mock it to appear nearby or fixed for this iteration.
-      setShowSlashMenu(true);
-      // In a real implementation, we'd use getBoundingClientRect of a dummy element at cursor
-      setSlashPosition({ top: e.currentTarget.scrollTop + 50, left: 20 });
-    } else {
-      setShowSlashMenu(false);
-    }
-  };
-
-  // This needs to be passed to the MarkdownEditor if it accepts custom key handlers.
-  // Since we are using a simple wrapper, let's just assume we can overlay it for now
-  // or add it to the wrapper.
+  // Note: Slash command feature removed to fix textarea selection issues (Select All + Delete)
 
   // 0. Dashboard View (Empty State)
   const { user } = useAuth();
@@ -439,7 +419,7 @@ export function WorkspaceEditor({
                 onChange={setContent}
                 className="h-full border-0 rounded-none shadow-none"
                 minHeight="h-full"
-                onKeyDown={handleKeyDown}
+
               />
             </div>
           </div>
@@ -532,7 +512,7 @@ export function WorkspaceEditor({
             onChange={setContent}
             className="h-full border-0 rounded-none shadow-none"
             minHeight="h-full"
-            onKeyDown={handleKeyDown}
+
             initialMode="preview"
           />
         </div>
@@ -558,29 +538,11 @@ export function WorkspaceEditor({
             className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
             {EditorContent}
-            {showSlashMenu && (
-              <SlashCommandMenu
-                position={slashPosition}
-                onSelect={cmd => {
-                  setContent(prev => prev + cmd);
-                  setShowSlashMenu(false);
-                }}
-              />
-            )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Slash Menu for non-fullscreen (naive positioning) */}
-      {!isFullscreen && showSlashMenu && (
-        <SlashCommandMenu
-          position={slashPosition}
-          onSelect={cmd => {
-            setContent(prev => prev + cmd);
-            setShowSlashMenu(false);
-          }}
-        />
-      )}
+
     </>
   );
 }
