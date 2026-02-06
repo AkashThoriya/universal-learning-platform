@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { CourseSwitcher } from '@/components/courses';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -170,7 +171,7 @@ export default function BottomNav() {
 
                 <ScrollArea className="p-4 h-full overflow-y-auto">
                   {/* User Profile Snippet */}
-                  <div className="mb-6 bg-secondary/30 rounded-xl p-4 flex items-center gap-4">
+                  <div className="mb-4 bg-secondary/30 rounded-xl p-4 flex items-center gap-4">
                     <Avatar className="h-12 w-12 border-2 border-primary/20">
                       <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || 'User'} />
                       <AvatarFallback className="bg-primary/10 text-primary">
@@ -186,6 +187,14 @@ export default function BottomNav() {
                         <Settings className="h-5 w-5 text-muted-foreground" />
                       </Link>
                     </Button>
+                  </div>
+
+                  {/* Course Switcher - Compact variant for mobile */}
+                  <div className="mb-6">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 mb-2">
+                      Active Course
+                    </h4>
+                    <CourseSwitcher variant="compact" showAddCourse={false} className="w-full justify-start" />
                   </div>
 
                   <div className="space-y-6">

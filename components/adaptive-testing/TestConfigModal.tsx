@@ -24,6 +24,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { logInfo, logError } from '@/lib/utils/logger';
 import { MissionDifficulty } from '@/types/mission-system';
@@ -47,6 +48,7 @@ interface TestConfigModalProps {
 export interface TestConfig {
   subjects: string[];
   topics: string[];
+  courseId?: string; // Add courseId context
   difficulty: MissionDifficulty;
   questionCount: number;
   syllabusContext?: string | undefined;
@@ -69,6 +71,7 @@ export function TestConfigModal({
   preSelectedQuestionCount,
 }: TestConfigModalProps) {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
 
   useEffect(() => {
     // Optional: Log when opened via props for tracking?
@@ -93,7 +96,7 @@ export function TestConfigModal({
 
       try {
         setLoading(true);
-        const syllabusData = await getSyllabus(user.uid);
+        const syllabusData = await getSyllabus(user.uid, activeCourseId ?? undefined);
 
         const mappedSubjects: SyllabusSubject[] = syllabusData.map((subject: any) => ({
           id: subject.id,
@@ -122,7 +125,7 @@ export function TestConfigModal({
     };
 
     loadSyllabus();
-  }, [user?.uid, open, preSelectedSubject, preSelectedTopic]);
+  }, [user?.uid, open, activeCourseId, preSelectedSubject, preSelectedTopic]);
 
   // Get topics for selected subject
   const availableTopics = subjects.find(s => s.id === selectedSubject)?.topics || [];
@@ -148,6 +151,7 @@ export function TestConfigModal({
     const config: TestConfig = {
       subjects: [subject?.name || selectedSubject],
       topics: topicNames.length > 0 ? topicNames : [],
+      ...(activeCourseId && { courseId: activeCourseId }), // Only include if defined
       difficulty,
       questionCount,
       syllabusContext: topicNames.length > 0 ? `Focus on: ${topicNames.join(', ')} from ${subject?.name}` : undefined,

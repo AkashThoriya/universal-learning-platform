@@ -136,10 +136,10 @@ export class UniversalLearningAnalytics {
   /**
    * Get comprehensive learning progress across all tracks
    */
-  async getUnifiedProgress(userId: string): Promise<Result<UnifiedLearningProgress>> {
+  async getUnifiedProgress(userId: string, courseId?: string): Promise<Result<UnifiedLearningProgress>> {
     try {
       // Get exam preparation progress
-      const examProgress = await this.getExamProgress(userId);
+      const examProgress = await this.getExamProgress(userId, courseId);
 
       // Get custom learning progress
       const customProgress = await this.getCustomLearningProgress(userId);
@@ -229,17 +229,22 @@ export class UniversalLearningAnalytics {
   /**
    * Get exam preparation progress
    */
-  private async getExamProgress(userId: string) {
+  private async getExamProgress(userId: string, courseId?: string) {
     try {
-      // Simplified query to avoid index requirements
-      // Get recent missions and filter in memory
+      // Build query constraints
       const missionsCollection = collection(db, 'users', userId, 'missions');
-      const recentMissionsQuery = query(
-        missionsCollection,
+      const queryConstraints: any[] = [
         where('status', '==', 'completed'),
         orderBy('completedAt', 'desc'),
         limit(100)
-      );
+      ];
+
+      // Add courseId filter if provided (multi-course support)
+      if (courseId) {
+        queryConstraints.unshift(where('courseId', '==', courseId));
+      }
+
+      const recentMissionsQuery = query(missionsCollection, ...queryConstraints);
 
       const snapshot = await getDocs(recentMissionsQuery);
       const allCompletedMissions = snapshot.docs.map(doc => doc.data());

@@ -18,12 +18,14 @@ import { Input } from '@/components/ui/input';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext'; // Import Course Context
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, updateSubtopic } from '@/lib/firebase/firebase-utils';
 import { Subtopic, SyllabusSubject } from '@/types/exam';
 
 export default function SubtopicDetailPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse(); // Use active course ID
   const params = useParams();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -49,7 +51,8 @@ export default function SubtopicDetailPage() {
       }
 
       try {
-        const syllabusData = await getSyllabus(user.uid);
+        // Fetch syllabus for active course
+        const syllabusData = await getSyllabus(user.uid, activeCourseId || undefined);
         const foundSubject = syllabusData.find(s => s.id === subjectId);
 
         if (foundSubject) {
@@ -88,7 +91,8 @@ export default function SubtopicDetailPage() {
     setSubtopic(prev => (prev ? { ...prev, ...updates } : null));
 
     try {
-      await updateSubtopic(user.uid, subjectId, topicId, subtopic.id, updates);
+      // Pass activeCourseId to updateSubtopic
+      await updateSubtopic(user.uid, subjectId, topicId, subtopic.id, updates, activeCourseId || undefined);
     } catch (error) {
       console.error('Error updating subtopic:', error);
       toast({

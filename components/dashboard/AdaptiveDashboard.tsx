@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { CourseOverviewCard } from '@/components/dashboard/CourseOverviewCard';
 import { StatsGrid } from '@/components/dashboard/StatsGrid';
 import { WelcomeHeader } from '@/components/dashboard/WelcomeHeader';
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
@@ -27,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import { getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
@@ -169,6 +171,7 @@ const generateTodayRecommendations = (
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
+  const { activeCourseId: contextCourseId } = useCourse();
   const { toast } = useToast();
 
   logInfo('AdaptiveDashboard component initialized', {
@@ -263,12 +266,12 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           // OPTIMIZED: Fetch all independent data in parallel to reduce latency
           const [progressResult, userProfile, userTests, syllabus, customGoalsResult, topicProgress] =
             await Promise.all([
-              progressService.getUserProgress(user.uid),
+              progressService.getUserProgress(user.uid, contextCourseId ?? undefined),
               getUser(user.uid),
-              adaptiveTestingService.getUserTests(user.uid),
-              getSyllabus(user.uid).catch(() => []), // Fetch syllabus in parallel (auto-resolves courseId)
+              adaptiveTestingService.getUserTests(user.uid, contextCourseId ?? undefined),
+              getSyllabus(user.uid, contextCourseId ?? undefined).catch(() => []), // Fetch syllabus with courseId
               customLearningService.getUserCustomGoals(user.uid), // Fetch custom goals in parallel
-              getAllProgress(user.uid).catch(() => []), // Fetch topic progress for recommendations
+              getAllProgress(user.uid, contextCourseId ?? undefined).catch(() => []), // Fetch topic progress for recommendations
             ]);
 
           // Load selected exam information
@@ -298,13 +301,13 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               const examDate = userProfile?.currentExam?.targetDate;
               const examDaysLeft = examDate
                 ? Math.max(
-                    0,
-                    Math.ceil(
-                      (((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() -
-                        Date.now()) /
-                        (1000 * 60 * 60 * 24)
-                    )
+                  0,
+                  Math.ceil(
+                    (((examDate as any).toDate ? (examDate as any).toDate() : new Date(examDate as any)).getTime() -
+                      Date.now()) /
+                    (1000 * 60 * 60 * 24)
                   )
+                )
                 : undefined;
 
               // Use pre-fetched syllabus and topic progress from Promise.all (faster load)
@@ -348,9 +351,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               adaptiveTestsAverage:
                 userTests.filter(t => t.status === 'completed').length > 0
                   ? userTests
-                      .filter(t => t.status === 'completed')
-                      .reduce((sum, t) => sum + (t.performance?.accuracy || 0), 0) /
-                    userTests.filter(t => t.status === 'completed').length
+                    .filter(t => t.status === 'completed')
+                    .reduce((sum, t) => sum + (t.performance?.accuracy || 0), 0) /
+                  userTests.filter(t => t.status === 'completed').length
                   : 0,
               adaptiveTestsTotal: userTests.length,
 
@@ -480,23 +483,23 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         // Load syllabus and topic progress for new course
         const [syllabus, topicProgress] = await Promise.all([
           getSyllabus(user.uid, courseId),
-          getAllProgress(user.uid).catch(() => []),
+          getAllProgress(user.uid, courseId).catch(() => []),
         ]);
 
         // Find target date for the course
         const courseData = availableCourses.find(c => c.examId === courseId);
         const examDaysLeft = courseData?.targetDate
           ? Math.max(
-              0,
-              Math.ceil(
-                (((courseData.targetDate as any).toDate
-                  ? (courseData.targetDate as any).toDate()
-                  : new Date(courseData.targetDate as any)
-                ).getTime() -
-                  Date.now()) /
-                  (1000 * 60 * 60 * 24)
-              )
+            0,
+            Math.ceil(
+              (((courseData.targetDate as any).toDate
+                ? (courseData.targetDate as any).toDate()
+                : new Date(courseData.targetDate as any)
+              ).getTime() -
+                Date.now()) /
+              (1000 * 60 * 60 * 24)
             )
+          )
           : undefined;
 
         // Generate new recommendations
@@ -718,9 +721,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                   )}
                 </div>
                 <p className="text-sm text-gray-900">
-                  {todayRecommendations.currentTopic || 
-                    (todayRecommendations.allTopicsComplete 
-                      ? '🎉 All topics mastered! Take a mock test.' 
+                  {todayRecommendations.currentTopic ||
+                    (todayRecommendations.allTopicsComplete
+                      ? '🎉 All topics mastered! Take a mock test.'
                       : 'Choose a topic from syllabus')}
                 </p>
               </CardContent>
@@ -1034,6 +1037,19 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             </Card>
           </div>
         </div>
+
+        <div className="mt-8">
+          <CourseOverviewCard
+            onContinue={() => {
+              if (todayRecommendations?.currentTopicId && todayRecommendations?.currentSubjectId) {
+                window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`;
+              } else {
+                window.location.href = '/syllabus';
+              }
+            }}
+          />
+        </div>
+
       </div>
     </div>
   );

@@ -36,12 +36,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { getAllProgress, getSyllabus, getUser } from '@/lib/firebase/firebase-utils';
 import { calculateStrategyMetrics, formatVelocity, getStatusColor, getStatusLabel } from '@/lib/strategy-utils';
 import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 export default function StrategyPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [progress, setProgress] = useState<TopicProgress[]>([]);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -54,8 +56,8 @@ export default function StrategyPage() {
       try {
         const [profileData, syllabusData, progressData] = await Promise.all([
           getUser(user.uid),
-          getSyllabus(user.uid),
-          getAllProgress(user.uid),
+          getSyllabus(user.uid, activeCourseId ?? undefined),
+          getAllProgress(user.uid, activeCourseId ?? undefined),
         ]);
 
         if (syllabusData) setSyllabus(syllabusData);
@@ -69,7 +71,7 @@ export default function StrategyPage() {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, activeCourseId]);
 
   const completedTopicsCount = progress.filter(p => p.status === 'completed' || p.status === 'mastered').length;
 

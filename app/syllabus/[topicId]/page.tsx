@@ -18,6 +18,7 @@ import { TopicStatsRail } from '@/components/topic-detail/TopicStatsRail';
 import { Button } from '@/components/ui/button';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import {
   getSyllabus,
@@ -32,6 +33,7 @@ import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 export default function TopicDetailPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const params = useParams();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -58,8 +60,8 @@ export default function TopicDetailPage() {
 
       try {
         const [progressData, syllabusData, userData] = await Promise.all([
-          getTopicProgress(user.uid, topicId),
-          getSyllabus(user.uid),
+          getTopicProgress(user.uid, topicId, activeCourseId ?? undefined),
+          getSyllabus(user.uid, activeCourseId ?? undefined),
           getUser(user.uid),
         ]);
 
@@ -87,7 +89,7 @@ export default function TopicDetailPage() {
             lastScoreImprovement: 0,
           };
 
-          await updateTopicProgress(user.uid, topicId, initialProgress);
+          await updateTopicProgress(user.uid, topicId, initialProgress, activeCourseId ?? undefined);
           setTopicProgress(initialProgress as TopicProgress);
         }
       } catch (error) {
@@ -103,7 +105,7 @@ export default function TopicDetailPage() {
     };
 
     fetchData();
-  }, [user, topicId, subjectId, toast]);
+  }, [user, topicId, subjectId, activeCourseId, toast]);
 
   // ============================================
   // Action Handlers
@@ -119,7 +121,7 @@ export default function TopicDetailPage() {
         userNotes,
         lastRevised: Timestamp.now(),
       };
-      await updateTopicProgress(user.uid, topicId, updates);
+      await updateTopicProgress(user.uid, topicId, updates, activeCourseId ?? undefined);
       setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
 
       toast({
@@ -172,7 +174,7 @@ export default function TopicDetailPage() {
          updates.revisionCount = (topicProgress.revisionCount || 0) + 1;
       }
 
-      await updateTopicProgress(user.uid, topicId, updates);
+      await updateTopicProgress(user.uid, topicId, updates, activeCourseId ?? undefined);
       setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
 
       toast({
@@ -210,7 +212,7 @@ export default function TopicDetailPage() {
         needsReview: false,
       };
 
-      await updateTopicProgress(user.uid, topicId, updates);
+      await updateTopicProgress(user.uid, topicId, updates, activeCourseId ?? undefined);
       setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
 
       toast({
@@ -242,7 +244,7 @@ export default function TopicDetailPage() {
         reviewRequestedAt: needsReview ? Timestamp.now() : (null as unknown as Timestamp),
       };
 
-      await updateTopicProgress(user.uid, topicId, updates);
+      await updateTopicProgress(user.uid, topicId, updates, activeCourseId ?? undefined);
       setTopicProgress(prev => (prev ? { ...prev, ...updates } : null));
 
       toast({
@@ -280,7 +282,7 @@ export default function TopicDetailPage() {
       );
 
       try {
-        await toggleQuestionSolved(user.uid, topicId, slug);
+        await toggleQuestionSolved(user.uid, topicId, slug, activeCourseId ?? undefined);
         if (!isSolved) {
           toast({ title: 'Problem Solved! 🚀', description: `Marked "${name || 'Problem'}" as solved.` });
           // Trigger confetti if marking as solved

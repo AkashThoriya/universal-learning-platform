@@ -26,6 +26,7 @@ import {
   onSnapshot,
   QuerySnapshot as _QuerySnapshot,
   DocumentData as _DocumentData,
+  QueryConstraint,
 } from 'firebase/firestore';
 
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
@@ -303,7 +304,9 @@ export const updateTopicStatus = async (
     masteryLevel?: number;
     averageScore?: number;
     notes?: string;
-  }
+    userBankingContext?: string;
+  },
+  courseId?: string
 ) => {
   return measurePerformance('updateTopicStatus', async () => {
     logInfo('Updating topic status', {
@@ -311,10 +314,18 @@ export const updateTopicStatus = async (
       subjectId,
       topicId,
       statusUpdate,
+      courseId,
     });
 
     try {
-      const subjectRef = doc(db, 'users', userId, 'syllabus', subjectId);
+      let subjectRef;
+      if (courseId) {
+        subjectRef = doc(db, 'users', userId, 'courses', courseId, 'syllabus', subjectId);
+      } else {
+        // Legacy/Global fallback
+        subjectRef = doc(db, 'users', userId, 'syllabus', subjectId);
+      }
+      
       const subjectDoc = await getDoc(subjectRef);
 
       if (!subjectDoc.exists()) {
@@ -401,13 +412,18 @@ export const updateSubtopic = async (
   subjectId: string,
   topicId: string,
   subtopicId: string,
-  updates: Partial<Subtopic>
+  updates: Partial<Subtopic>,
+  courseId?: string
 ) => {
   return measurePerformance('updateSubtopic', async () => {
-    logInfo('Updating subtopic', { userId, subjectId, topicId, subtopicId });
+    logInfo('Updating subtopic', { userId, subjectId, topicId, subtopicId, courseId });
 
     try {
-      const subjectRef = doc(db, 'users', userId, 'syllabus', subjectId);
+      // Determine path based on courseId presence
+      const subjectRef = courseId
+        ? doc(db, 'users', userId, 'courses', courseId, 'syllabus', subjectId)
+        : doc(db, 'users', userId, 'syllabus', subjectId);
+
       const subjectDoc = await getDoc(subjectRef);
 
       if (!subjectDoc.exists()) {
@@ -713,9 +729,37 @@ export const invalidateProgressCache = (userId: string): void => {
  * });
  * ```
  */
-export const updateTopicProgress = async (userId: string, topicId: string, updates: Partial<TopicProgress>) => {
+/**
+ * Updates or creates progress tracking for a specific topic
+ * Automatically creates new progress entry if one doesn't exist
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} topicId - The unique topic ID
+ * @param {Partial<TopicProgress>} updates - Progress data to update
+ * @param {string} [courseId] - Optional course ID (if provided, writes to course-scoped path)
+ * @returns {Promise<void>} Promise that resolves when progress is updated
+ *
+ * @example
+ * ```typescript
+ * await updateTopicProgress('user123', 'british_rule', {
+ *   masteryScore: 85,
+ *   userNotes: 'Key concepts mastered',
+ *   personalContext: 'Important for understanding colonial impact'
+ * }, 'upsc_2026');
+ * ```
+ */
+export const updateTopicProgress = async (
+  userId: string,
+  topicId: string,
+  updates: Partial<TopicProgress>,
+  courseId?: string
+) => {
   try {
-    const progressRef = doc(db, 'users', userId, 'progress', topicId);
+    // Determine path based on courseId presence
+    const progressRef = courseId
+      ? doc(db, 'users', userId, 'courses', courseId, 'progress', topicId)
+      : doc(db, 'users', userId, 'progress', topicId);
+
     const progressSnap = await getDoc(progressRef);
 
     if (progressSnap.exists()) {
@@ -725,6 +769,7 @@ export const updateTopicProgress = async (userId: string, topicId: string, updat
       await setDoc(progressRef, {
         id: topicId,
         topicId,
+        courseId: courseId || null, // Track which course this belongs to
         masteryScore: 0,
         lastRevised: Timestamp.now(),
         nextRevision: Timestamp.now(),
@@ -740,18 +785,22 @@ export const updateTopicProgress = async (userId: string, topicId: string, updat
       });
     }
 
-    // Invalidate cache after update to ensure fresh data
+    // Invalidate cache after update
+    // We invalidate both global and course-specific caches to be safe, 
+    // or we could be more granular. For now, simple invalidation.
     invalidateProgressCache(userId);
 
     logInfo('Topic progress updated', {
       userId,
       topicId,
+      courseId: courseId || 'global',
       updateFields: Object.keys(updates),
     });
   } catch (error) {
     logError('Failed to update topic progress', {
       userId,
       topicId,
+      courseId,
       error: error instanceof Error ? error.message : 'Unknown error',
     });
     throw error;
@@ -763,18 +812,15 @@ export const updateTopicProgress = async (userId: string, topicId: string, updat
  *
  * @param {string} userId - The unique user ID
  * @param {string} topicId - The unique topic ID
+ * @param {string} [courseId] - Optional course ID (if provided, reads from course-scoped path)
  * @returns {Promise<TopicProgress | null>} Promise that resolves to progress data or null if not found
- *
- * @example
- * ```typescript
- * const progress = await getTopicProgress('user123', 'british_rule');
- * if (progress) {
- *   // console.log(`Mastery score: ${progress.masteryScore}%`);
- * }
- * ```
  */
-export const getTopicProgress = async (userId: string, topicId: string): Promise<TopicProgress | null> => {
-  const progressRef = doc(db, 'users', userId, 'progress', topicId);
+export const getTopicProgress = async (userId: string, topicId: string, courseId?: string): Promise<TopicProgress | null> => {
+  // Determine path based on courseId presence
+  const progressRef = courseId
+    ? doc(db, 'users', userId, 'courses', courseId, 'progress', topicId)
+    : doc(db, 'users', userId, 'progress', topicId);
+
   const progressSnap = await getDoc(progressRef);
 
   if (progressSnap.exists()) {
@@ -796,17 +842,37 @@ export const getTopicProgress = async (userId: string, topicId: string): Promise
  * const averageMastery = allProgress.reduce((sum, p) => sum + p.masteryScore, 0) / allProgress.length;
  * ```
  */
-export const getAllProgress = async (userId: string): Promise<TopicProgress[]> => {
+/**
+ * Retrieves all progress data for a user across all topics
+ * Uses in-memory caching with 2-minute TTL to reduce redundant API calls
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} [courseId] - Optional course ID (if provided, reads from course-scoped path)
+ * @returns {Promise<TopicProgress[]>} Promise that resolves to array of all topic progress
+ *
+ * @example
+ * ```typescript
+ * const allProgress = await getAllProgress('user123', 'upsc_2026');
+ * ```
+ */
+export const getAllProgress = async (userId: string, courseId?: string): Promise<TopicProgress[]> => {
+  // Create a composite cache key if courseId is present
+  const cacheKey = courseId ? `${userId}_${courseId}` : userId;
+  
   // Check cache first
-  const cached = progressCache.get(userId);
+  const cached = progressCache.get(cacheKey);
 
   if (cached && Date.now() - cached.timestamp < PROGRESS_CACHE_TTL) {
-    logInfo('Progress cache hit', { userId, cacheAge: Date.now() - cached.timestamp });
+    logInfo('Progress cache hit', { userId, courseId, cacheAge: Date.now() - cached.timestamp });
     return cached.data;
   }
 
   // Fetch from Firestore
-  const progressRef = collection(db, 'users', userId, 'progress');
+  // Determine path based on courseId presence
+  const progressRef = courseId 
+    ? collection(db, 'users', userId, 'courses', courseId, 'progress')
+    : collection(db, 'users', userId, 'progress');
+
   const progressSnap = await getDocs(progressRef);
 
   const progressData = progressSnap.docs.map(doc => ({
@@ -815,9 +881,9 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
   })) as TopicProgress[];
 
   // Cache the result
-  progressCache.set(userId, { data: progressData, timestamp: Date.now() });
+  progressCache.set(cacheKey, { data: progressData, timestamp: Date.now() });
 
-  logInfo('Progress fetched and cached', { userId, count: progressData.length });
+  logInfo('Progress fetched and cached', { userId, courseId, count: progressData.length });
   return progressData;
 };
 
@@ -835,23 +901,43 @@ export const getAllProgress = async (userId: string): Promise<TopicProgress[]> =
  * await markQuestionSolved('user123', 'arrays', 'two-sum');
  * ```
  */
-export const markQuestionSolved = async (userId: string, topicId: string, questionSlug: string): Promise<void> => {
+/**
+ * Marks a practice question as solved for a topic
+ * Adds the question slug to solvedQuestions array and increments practiceCount
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} topicId - The unique topic ID
+ * @param {string} questionSlug - The unique slug of the question being marked as solved
+ * @param {string} [courseId] - Optional course ID
+ * @returns {Promise<void>} Promise that resolves when question is marked as solved
+ */
+export const markQuestionSolved = async (
+  userId: string,
+  topicId: string,
+  questionSlug: string,
+  courseId?: string
+): Promise<void> => {
   try {
-    const current = await getTopicProgress(userId, topicId);
+    const current = await getTopicProgress(userId, topicId, courseId);
     const solvedQuestions = current?.solvedQuestions || [];
 
     // Only add if not already solved
     if (!solvedQuestions.includes(questionSlug)) {
-      await updateTopicProgress(userId, topicId, {
-        solvedQuestions: [...solvedQuestions, questionSlug],
-        practiceCount: (current?.practiceCount || 0) + 1,
-        lastPracticed: Timestamp.now(),
-      });
+      await updateTopicProgress(
+        userId,
+        topicId,
+        {
+          solvedQuestions: [...solvedQuestions, questionSlug],
+          practiceCount: (current?.practiceCount || 0) + 1,
+          lastPracticed: Timestamp.now(),
+        },
+        courseId
+      );
 
-      logInfo('Question marked as solved', { userId, topicId, questionSlug });
+      logInfo('Question marked as solved', { userId, topicId, questionSlug, courseId });
     }
   } catch (error) {
-    logError('Failed to mark question as solved', { userId, topicId, questionSlug, error });
+    logError('Failed to mark question as solved', { userId, topicId, questionSlug, courseId, error });
     throw error;
   }
 };
@@ -871,30 +957,55 @@ export const markQuestionSolved = async (userId: string, topicId: string, questi
  * console.log(isSolved ? 'Now solved!' : 'Marked as unsolved');
  * ```
  */
-export const toggleQuestionSolved = async (userId: string, topicId: string, questionSlug: string): Promise<boolean> => {
+/**
+ * Toggles a practice question's solved status for a topic
+ * Adds or removes the question slug from solvedQuestions array
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} topicId - The unique topic ID
+ * @param {string} questionSlug - The unique slug of the question to toggle
+ * @param {string} [courseId] - Optional course ID
+ * @returns {Promise<boolean>} Promise that resolves to true if now solved, false if unsolved
+ */
+export const toggleQuestionSolved = async (
+  userId: string,
+  topicId: string,
+  questionSlug: string,
+  courseId?: string
+): Promise<boolean> => {
   try {
-    const current = await getTopicProgress(userId, topicId);
+    const current = await getTopicProgress(userId, topicId, courseId);
     const solvedQuestions = current?.solvedQuestions || [];
     const isSolved = solvedQuestions.includes(questionSlug);
 
     if (isSolved) {
       // Remove from solved list
-      await updateTopicProgress(userId, topicId, {
-        solvedQuestions: solvedQuestions.filter(slug => slug !== questionSlug),
-      });
-      logInfo('Question unmarked as solved', { userId, topicId, questionSlug });
+      await updateTopicProgress(
+        userId,
+        topicId,
+        {
+          solvedQuestions: solvedQuestions.filter(slug => slug !== questionSlug),
+        },
+        courseId
+      );
+      logInfo('Question unmarked as solved', { userId, topicId, questionSlug, courseId });
       return false;
     }
     // Add to solved list
-    await updateTopicProgress(userId, topicId, {
-      solvedQuestions: [...solvedQuestions, questionSlug],
-      practiceCount: (current?.practiceCount || 0) + 1,
-      lastPracticed: Timestamp.now(),
-    });
-    logInfo('Question marked as solved', { userId, topicId, questionSlug });
+    await updateTopicProgress(
+      userId,
+      topicId,
+      {
+        solvedQuestions: [...solvedQuestions, questionSlug],
+        practiceCount: (current?.practiceCount || 0) + 1,
+        lastPracticed: Timestamp.now(),
+      },
+      courseId
+    );
+    logInfo('Question marked as solved', { userId, topicId, questionSlug, courseId });
     return true;
   } catch (error) {
-    logError('Failed to toggle question solved status', { userId, topicId, questionSlug, error });
+    logError('Failed to toggle question solved status', { userId, topicId, questionSlug, courseId, error });
     throw error;
   }
 };
@@ -917,8 +1028,11 @@ export const toggleQuestionSolved = async (userId: string, topicId: string, ques
  * });
  * ```
  */
-export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> => {
-  const progressRef = collection(db, 'users', userId, 'progress');
+export const getRevisionQueue = async (userId: string, courseId?: string): Promise<RevisionItem[]> => {
+  // Use course-scoped path if courseId provided, else legacy global path
+  const progressRef = courseId
+    ? collection(db, 'users', userId, 'courses', courseId, 'progress')
+    : collection(db, 'users', userId, 'progress');
   const today = Timestamp.now();
 
   const revisionQuery = query(
@@ -929,7 +1043,7 @@ export const getRevisionQueue = async (userId: string): Promise<RevisionItem[]> 
   );
 
   const revisionSnap = await getDocs(revisionQuery);
-  const syllabus = await getSyllabus(userId);
+  const syllabus = await getSyllabus(userId, courseId);
 
   return revisionSnap.docs.map(doc => {
     const progress = doc.data() as TopicProgress;
@@ -1089,13 +1203,13 @@ export const getRecentDailyLogs = async (userId: string, days = 30): Promise<Dai
  * await saveMockTest('user123', mockTest);
  * ```
  */
-export const saveMockTest = async (userId: string, test: MockTestLog) => {
+export const saveMockTest = async (userId: string, test: MockTestLog, courseId?: string) => {
   try {
     const testRef = doc(db, 'users', userId, 'logs_mocks', test.id);
     await setDoc(testRef, test);
 
-    // Update mastery scores based on test performance
-    await updateMasteryScoresFromTest(userId, test);
+    // Update mastery scores based on test performance (pass courseId for course-scoped updates)
+    await updateMasteryScoresFromTest(userId, test, courseId);
 
     logInfo('Mock test saved', {
       userId,
@@ -1119,11 +1233,12 @@ export const saveMockTest = async (userId: string, test: MockTestLog) => {
  *
  * @param {string} userId - The unique user ID
  * @param {number} limitCount - Maximum number of tests to retrieve (default: 10)
+ * @param {string} courseId - Optional course ID to filter tests by course
  * @returns {Promise<MockTestLog[]>} Promise that resolves to array of mock test logs
  *
  * @example
  * ```typescript
- * const recentTests = await getMockTests('user123', 5);
+ * const recentTests = await getMockTests('user123', 5, 'course-id');
  * const averageScore = recentTests.reduce((sum, test) => {
  *   const totalScore = Object.values(test.scores).reduce((s, score) => s + score, 0);
  *   const maxScore = Object.values(test.maxScores).reduce((s, score) => s + score, 0);
@@ -1131,9 +1246,18 @@ export const saveMockTest = async (userId: string, test: MockTestLog) => {
  * }, 0) / recentTests.length;
  * ```
  */
-export const getMockTests = async (userId: string, limitCount = 10): Promise<MockTestLog[]> => {
+export const getMockTests = async (userId: string, limitCount = 10, courseId?: string): Promise<MockTestLog[]> => {
   const testsRef = collection(db, 'users', userId, 'logs_mocks');
-  const testsQuery = query(testsRef, orderBy('date', 'desc'), limit(limitCount));
+  
+  // Build query constraints - filter by courseId if provided
+  const constraints: QueryConstraint[] = [];
+  if (courseId) {
+    constraints.push(where('courseId', '==', courseId));
+  }
+  constraints.push(orderBy('date', 'desc'));
+  constraints.push(limit(limitCount));
+  
+  const testsQuery = query(testsRef, ...constraints);
 
   const testsSnap = await getDocs(testsQuery);
   return testsSnap.docs.map(doc => ({
@@ -1161,13 +1285,13 @@ export const getMockTests = async (userId: string, limitCount = 10): Promise<Moc
  * });
  * ```
  */
-export const generateStudyInsights = async (userId: string): Promise<StudyInsight[]> => {
+export const generateStudyInsights = async (userId: string, courseId?: string): Promise<StudyInsight[]> => {
   const insights: StudyInsight[] = [];
 
   // Get recent data
   const recentLogs = await getRecentDailyLogs(userId, 14);
   const recentTests = await getMockTests(userId, 5);
-  const progress = await getAllProgress(userId);
+  const progress = await getAllProgress(userId, courseId);
 
   // Health-Performance Correlation Analysis
   if (recentLogs.length >= 7 && recentTests.length >= 2) {
@@ -1353,10 +1477,10 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
   }
 };
 
-const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog) => {
+const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog, courseId?: string) => {
   // Update mastery scores based on topic-wise performance
   for (const topicPerf of test.topicWisePerformance) {
-    const currentProgress = await getTopicProgress(userId, topicPerf.topicId);
+    const currentProgress = await getTopicProgress(userId, topicPerf.topicId, courseId);
 
     if (currentProgress) {
       // Calculate new mastery score based on accuracy
@@ -1366,14 +1490,17 @@ const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog) =>
       await updateTopicProgress(userId, topicPerf.topicId, {
         masteryScore: newMasteryScore,
         lastScoreImprovement: improvementFactor,
-      });
+      }, courseId);
     }
   }
 };
 
 // Real-time subscriptions
-export const subscribeToRevisionQueue = (userId: string, callback: (items: RevisionItem[]) => void) => {
-  const progressRef = collection(db, 'users', userId, 'progress');
+export const subscribeToRevisionQueue = (userId: string, callback: (items: RevisionItem[]) => void, courseId?: string) => {
+  // Use course-scoped path if courseId provided, else legacy global path
+  const progressRef = courseId 
+    ? collection(db, 'users', userId, 'courses', courseId, 'progress')
+    : collection(db, 'users', userId, 'progress');
   const today = Timestamp.now();
 
   const revisionQuery = query(
@@ -1386,7 +1513,7 @@ export const subscribeToRevisionQueue = (userId: string, callback: (items: Revis
   return onSnapshot(
     revisionQuery,
     async snapshot => {
-      const syllabus = await getSyllabus(userId);
+      const syllabus = await getSyllabus(userId, courseId);
       const items = snapshot.docs.map(doc => {
         const progress = doc.data() as TopicProgress;
         const subject = syllabus.find(s => s.topics.some(t => t.id === progress.topicId));

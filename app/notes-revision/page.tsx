@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { getTopicNotes, UploadedNote, formatFileSize } from '@/lib/firebase/storage-utils';
@@ -46,6 +47,7 @@ interface SubjectNotes {
 
 export default function NotesRevisionPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const { toast } = useToast();
 
   // State
@@ -64,7 +66,7 @@ export default function NotesRevisionPage() {
     setLoading(true);
     try {
       // Step 1: Fetch syllabus
-      const syllabus = await getSyllabus(user.uid);
+      const syllabus = await getSyllabus(user.uid, activeCourseId ?? undefined);
 
       if (!syllabus || syllabus.length === 0) {
         setSubjectNotes([]);
@@ -84,7 +86,7 @@ export default function NotesRevisionPage() {
       const notesResults = await Promise.all(
         topicFetches.map(async ({ topic }) => {
           try {
-            const notes = await getTopicNotes(user.uid, topic.id);
+            const notes = await getTopicNotes(user.uid, topic.id, activeCourseId ?? undefined);
             return { topicId: topic.id, notes };
           } catch (error) {
             console.error(`Error fetching notes for topic ${topic.id}:`, error);
@@ -138,7 +140,7 @@ export default function NotesRevisionPage() {
     } finally {
       setLoading(false);
     }
-  }, [user?.uid, toast]);
+  }, [user?.uid, activeCourseId, toast]);
 
   useEffect(() => {
     fetchData();

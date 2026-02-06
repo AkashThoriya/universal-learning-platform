@@ -47,6 +47,7 @@ export class AdaptiveTestingService {
         description: request.description,
         linkedSubjects: request.subjects,
         ...(request.topics && { linkedTopics: request.topics }),
+        ...(request.courseId && { courseId: request.courseId }), // Store course context only if defined
         track: request.track ?? ('exam' as const),
         totalQuestions: request.questionCount ?? request.targetQuestions ?? 5,
         estimatedDuration: (request.questionCount ?? request.targetQuestions ?? 5) * 2, // 2 minutes per question
@@ -303,8 +304,9 @@ export class AdaptiveTestingService {
   /**
    * Generate personalized test recommendations using AI engine
    */
-  async generateTestRecommendations(userId: string, maxRecommendations = 5): Promise<Result<TestRecommendation[]>> {
+  async generateTestRecommendations(userId: string, _courseId?: string, maxRecommendations = 5): Promise<Result<TestRecommendation[]>> {
     try {
+      // Note: _courseId can be passed to engine when needed for course-specific progress analysis
       const result = await adaptiveTestingRecommendationEngine.generateRecommendations(userId, maxRecommendations);
       if (result.success) {
         return result;
@@ -411,14 +413,16 @@ export class AdaptiveTestingService {
 
   /**
    * Get user's tests
+   * @param userId - User's ID
+   * @param courseId - Optional course ID for filtering tests by course
    */
-  async getUserTests(userId?: string): Promise<AdaptiveTest[]> {
+  async getUserTests(userId?: string, courseId?: string): Promise<AdaptiveTest[]> {
     try {
       if (!userId) {
         return [];
       }
 
-      const result = await adaptiveTestingFirebaseService.getUserTests(userId);
+      const result = await adaptiveTestingFirebaseService.getUserTests(userId, courseId);
       return result.success ? (result.data ?? []) : [];
     } catch (error) {
       console.error('Error getting user tests:', error);

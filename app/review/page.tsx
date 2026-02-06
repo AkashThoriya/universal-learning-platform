@@ -19,6 +19,7 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import { getSyllabus, updateTopicProgress, getAllProgress, getUser } from '@/lib/firebase/firebase-utils';
 import { cn } from '@/lib/utils/utils';
@@ -42,6 +43,7 @@ interface ReviewItem {
 
 export default function ConceptReviewPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const { toast } = useToast();
 
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
@@ -60,9 +62,9 @@ export default function ConceptReviewPage() {
       try {
         // Use Promise.all for parallel fetching - OPTIMIZED: Single batch query instead of N+1
         const [syllabusData, profileData, allProgress] = await Promise.all([
-          getSyllabus(user.uid),
+          getSyllabus(user.uid, activeCourseId ?? undefined),
           getUser(user.uid),
-          getAllProgress(user.uid), // Single collection query instead of N individual reads
+          getAllProgress(user.uid, activeCourseId ?? undefined), // Single collection query instead of N individual reads
         ]);
 
         setSyllabus(syllabusData);
@@ -89,7 +91,7 @@ export default function ConceptReviewPage() {
     };
 
     fetchData();
-  }, [user, toast]);
+  }, [user, activeCourseId, toast]);
 
   // Build review items from syllabus + progress
   const reviewItems = useMemo(() => {
@@ -221,7 +223,7 @@ export default function ConceptReviewPage() {
           lastRevised: Timestamp.now(),
           nextRevision: Timestamp.fromDate(nextRevisionDate),
           revisionCount: currentRevisionCount + 1,
-        });
+        }, activeCourseId ?? undefined);
 
         setTopicProgressMap(prev => {
           const newMap = new Map(prev);

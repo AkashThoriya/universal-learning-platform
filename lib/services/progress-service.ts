@@ -34,11 +34,17 @@ export class ProgressService {
 
   /**
    * Get unified progress for a user
+   * @param userId - User's ID
+   * @param courseId - Optional course ID for course-scoped progress
    */
-  async getUserProgress(userId: string): Promise<Result<UnifiedProgress>> {
+  async getUserProgress(userId: string, courseId?: string): Promise<Result<UnifiedProgress>> {
     try {
-      // Use subcollection path: /users/{userId}/progress/unified
-      const progressResult = await firebaseService.getDocument<UnifiedProgress>(`users/${userId}/progress`, 'unified');
+      // Use course-scoped path if courseId provided, otherwise legacy path
+      const progressPath = courseId 
+        ? `users/${userId}/courses/${courseId}/progress`
+        : `users/${userId}/progress`;
+      
+      const progressResult = await firebaseService.getDocument<UnifiedProgress>(progressPath, 'unified');
 
       if (progressResult.success && progressResult.data) {
         return createSuccess(progressResult.data);
@@ -46,7 +52,7 @@ export class ProgressService {
 
       // Create default progress if not exists
       const defaultProgress = this.createDefaultProgress(userId);
-      const saveResult = await firebaseService.setDocument(`users/${userId}/progress`, 'unified', defaultProgress);
+      const saveResult = await firebaseService.setDocument(progressPath, 'unified', defaultProgress);
 
       if (!saveResult.success) {
         return saveResult;

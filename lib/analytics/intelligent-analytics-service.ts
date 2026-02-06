@@ -47,6 +47,7 @@ import { UserPersona } from '@/types/exam';
 export interface AnalyticsEvent {
   id: string;
   userId: string;
+  courseId?: string; // Add course context
   timestamp: Timestamp;
   eventType: AnalyticsEventType;
   category: 'exam' | 'course_tech' | 'cross_track';
@@ -393,12 +394,14 @@ export class IntelligentAnalyticsService {
     eventType: AnalyticsEventType,
     category: 'exam' | 'course_tech' | 'cross_track',
     data: AnalyticsEventData,
+    courseId?: string,
     metadata?: Partial<AnalyticsMetadata>
   ): Promise<void> {
     try {
       const event: AnalyticsEvent = {
         id: this.generateEventId(),
         userId,
+        ...(courseId && { courseId }), // Only include if defined
         timestamp: Timestamp.now(),
         eventType,
         category,
@@ -414,7 +417,7 @@ export class IntelligentAnalyticsService {
         await this.flushEventBuffer();
       }
 
-      logger.debug('Analytics event tracked', { eventType, category, userId });
+      logger.debug('Analytics event tracked', { eventType, category, userId, courseId });
     } catch (error) {
       logger.error('Failed to track analytics event', error as Error);
     }
@@ -429,12 +432,13 @@ export class IntelligentAnalyticsService {
       AnalyticsEventType,
       'mock_test_started' | 'mock_test_completed' | 'question_answered' | 'revision_session_started'
     >,
-    data: AnalyticsEventData
+    data: AnalyticsEventData,
+    courseId?: string
   ): Promise<void> {
     await this.trackEvent(userId, eventType, 'exam', {
       ...data,
       track: 'exam',
-    });
+    }, courseId);
   }
 
   /**
@@ -446,12 +450,13 @@ export class IntelligentAnalyticsService {
       AnalyticsEventType,
       'assignment_started' | 'project_created' | 'skill_practice_session' | 'code_execution'
     >,
-    data: AnalyticsEventData
+    data: AnalyticsEventData,
+    courseId?: string
   ): Promise<void> {
     await this.trackEvent(userId, eventType, 'course_tech', {
       ...data,
       track: 'course_tech',
-    });
+    }, courseId);
   }
 
   /**
@@ -460,12 +465,13 @@ export class IntelligentAnalyticsService {
   async trackCrossTrackEvent(
     userId: string,
     eventType: Extract<AnalyticsEventType, 'track_switched' | 'cross_skill_applied' | 'learning_transfer_identified'>,
-    data: AnalyticsEventData
+    data: AnalyticsEventData,
+    courseId?: string
   ): Promise<void> {
     await this.trackEvent(userId, eventType, 'cross_track', {
       ...data,
       track: 'cross_track',
-    });
+    }, courseId);
   }
 
   // ============================================================================
@@ -478,7 +484,7 @@ export class IntelligentAnalyticsService {
 
   async getPerformanceAnalytics(
     userId: string,
-    options?: { timeRange?: '7d' | '30d' | '90d' | '1y' }
+    options?: { timeRange?: '7d' | '30d' | '90d' | '1y'; courseId?: string }
   ): Promise<PerformanceAnalytics> {
     try {
       logger.debug('Fetching performance analytics', { userId, options });
@@ -494,7 +500,9 @@ export class IntelligentAnalyticsService {
 
       // Check if user has sufficient data for real analytics
       // OPTIMIZED: Pass date range to reduce read volume
-      const userEvents = await this.getUserEvents(userId, undefined, startDate);
+      // Check if user has sufficient data for real analytics
+      // OPTIMIZED: Pass date range to reduce read volume
+      const userEvents = await this.getUserEvents(userId, undefined, startDate, options?.courseId);
       const hasMinimumData = userEvents.length >= 5; // Minimum events for meaningful analytics
 
       if (!hasMinimumData) {
@@ -507,11 +515,11 @@ export class IntelligentAnalyticsService {
       }
 
       const [examPerformance, coursePerformance, crossTrackInsights, trends, predictions] = await Promise.all([
-        this.getExamPerformance(userId),
-        this.getCoursePerformance(userId),
-        this.getCrossTrackInsights(userId),
-        this.getPerformanceTrends(userId),
-        this.generatePredictions(userId),
+        this.getExamPerformance(userId, options?.courseId),
+        this.getCoursePerformance(userId, options?.courseId),
+        this.getCrossTrackInsights(userId, options?.courseId),
+        this.getPerformanceTrends(userId, options?.courseId),
+        this.generatePredictions(userId, options?.courseId),
       ]);
 
       const analytics: PerformanceAnalytics = {
@@ -567,18 +575,21 @@ export class IntelligentAnalyticsService {
   /**
    * Identify and analyze weak areas across both tracks
    */
-  async identifyWeakAreas(userId: string): Promise<WeakArea[]> {
+  /**
+   * Identify and analyze weak areas across both tracks
+   */
+  async identifyWeakAreas(userId: string, courseId?: string): Promise<WeakArea[]> {
     try {
       // Check if user has sufficient data
-      const userEvents = await this.getUserEvents(userId);
+      const userEvents = await this.getUserEvents(userId, undefined, undefined, courseId);
       if (userEvents.length < 3) {
         logger.info('Insufficient user data for weak area analysis', { userId });
         return [];
       }
 
-      const examWeakAreas = await this.analyzeExamWeaknesses(userId);
-      const courseWeakAreas = await this.analyzeCourseWeaknesses(userId);
-      const crossTrackWeaknesses = await this.analyzeCrossTrackWeaknesses(userId);
+      const examWeakAreas = await this.analyzeExamWeaknesses(userId, courseId);
+      const courseWeakAreas = await this.analyzeCourseWeaknesses(userId, courseId);
+      const crossTrackWeaknesses = await this.analyzeCrossTrackWeaknesses(userId, courseId);
 
       const allWeakAreas = [...examWeakAreas, ...courseWeakAreas, ...crossTrackWeaknesses];
 
@@ -595,7 +606,10 @@ export class IntelligentAnalyticsService {
   /**
    * Get improvement recommendations for weak areas
    */
-  async getImprovementRecommendations(userId: string, weakAreas: WeakArea[]): Promise<AdaptiveRecommendation[]> {
+  /**
+   * Get improvement recommendations for weak areas
+   */
+  async getImprovementRecommendations(userId: string, weakAreas: WeakArea[], _courseId?: string): Promise<AdaptiveRecommendation[]> {
     try {
       if (weakAreas.length === 0) {
         logger.info('No weak areas identified, returning empty recommendations', { userId });
@@ -624,9 +638,12 @@ export class IntelligentAnalyticsService {
   /**
    * Analyze learning transfer between exam and course tracks
    */
-  async analyzeLearningTransfer(userId: string): Promise<LearningTransfer[]> {
+  /**
+   * Analyze learning transfer between exam and course tracks
+   */
+  async analyzeLearningTransfer(userId: string, courseId?: string): Promise<LearningTransfer[]> {
     try {
-      const events = await this.getUserEvents(userId, 'cross_track');
+      const events = await this.getUserEvents(userId, 'cross_track', undefined, courseId);
       // const _transfers: LearningTransfer[] = [];
 
       // Analyze transfer patterns from events
@@ -661,9 +678,15 @@ export class IntelligentAnalyticsService {
   /**
    * Identify skill synergies between exam and tech skills
    */
-  async identifySkillSynergies(userId: string): Promise<SkillSynergy[]> {
+  /**
+   * Identify skill synergies between exam and tech skills
+   */
+  async identifySkillSynergies(userId: string, courseId?: string): Promise<SkillSynergy[]> {
     try {
-      const [examSkills, techSkills] = await Promise.all([this.getExamSkills(userId), this.getTechSkills(userId)]);
+      const [examSkills, techSkills] = await Promise.all([
+        this.getExamSkills(userId, courseId), 
+        this.getTechSkills(userId, courseId)
+      ]);
 
       const synergies: SkillSynergy[] = [];
 
@@ -691,13 +714,16 @@ export class IntelligentAnalyticsService {
   /**
    * Generate predictive analytics and recommendations
    */
-  async generatePredictions(userId: string): Promise<PerformanceAnalytics['predictions']> {
+  /**
+   * Generate predictive analytics and recommendations
+   */
+  async generatePredictions(userId: string, courseId?: string): Promise<PerformanceAnalytics['predictions']> {
     try {
       const [examPrediction, skillTimeline, studyPlan, riskFactors] = await Promise.all([
-        this.predictExamSuccess(userId),
-        this.predictSkillMastery(userId),
-        this.generateOptimalStudyPlan(userId),
-        this.identifyRiskFactors(userId),
+        this.predictExamSuccess(userId, courseId),
+        this.predictSkillMastery(userId, courseId),
+        this.generateOptimalStudyPlan(userId, courseId),
+        this.identifyRiskFactors(userId, courseId),
       ]);
 
       return {
@@ -815,7 +841,12 @@ export class IntelligentAnalyticsService {
     }
   }
 
-  private async getUserEvents(userId: string, category?: string, startDate?: Date): Promise<AnalyticsEvent[]> {
+  private async getUserEvents(
+    userId: string, 
+    category?: string, 
+    startDate?: Date,
+    courseId?: string
+  ): Promise<AnalyticsEvent[]> {
     try {
       // Base constraints
       const constraints: any[] = [where('userId', '==', userId), orderBy('timestamp', 'desc')];
@@ -823,6 +854,11 @@ export class IntelligentAnalyticsService {
       // Add category filter
       if (category) {
         constraints.push(where('category', '==', category));
+      }
+
+      // Add courseId filter if provided
+      if (courseId) {
+        constraints.push(where('courseId', '==', courseId));
       }
 
       // Add date range filter
@@ -845,7 +881,7 @@ export class IntelligentAnalyticsService {
   }
 
   // Placeholder implementations for complex analytics methods
-  private async getExamPerformance(_userId: string): Promise<PerformanceAnalytics['examPerformance']> {
+  private async getExamPerformance(_userId: string, _courseId?: string): Promise<PerformanceAnalytics['examPerformance']> {
     // Implementation would analyze exam-related events and generate performance metrics
     return {
       totalMockTests: 0,
@@ -858,7 +894,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  private async getCoursePerformance(_userId: string): Promise<PerformanceAnalytics['coursePerformance']> {
+  private async getCoursePerformance(_userId: string, _courseId?: string): Promise<PerformanceAnalytics['coursePerformance']> {
     // Implementation would analyze course-related events and generate performance metrics
     return {
       totalAssignments: 0,
@@ -870,7 +906,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  private async getCrossTrackInsights(_userId: string): Promise<PerformanceAnalytics['crossTrackInsights']> {
+  private async getCrossTrackInsights(_userId: string, _courseId?: string): Promise<PerformanceAnalytics['crossTrackInsights']> {
     // Implementation would analyze cross-track patterns and generate insights
     return {
       learningTransfer: [],
@@ -880,7 +916,7 @@ export class IntelligentAnalyticsService {
     };
   }
 
-  private async getPerformanceTrends(_userId: string): Promise<PerformanceAnalytics['trends']> {
+  private async getPerformanceTrends(_userId: string, _courseId?: string): Promise<PerformanceAnalytics['trends']> {
     // Implementation would generate time-series performance data
     return {
       daily: [],
@@ -890,13 +926,13 @@ export class IntelligentAnalyticsService {
   }
 
   // Additional placeholder methods would be implemented here...
-  private async analyzeExamWeaknesses(_userId: string): Promise<WeakArea[]> {
+  private async analyzeExamWeaknesses(_userId: string, _courseId?: string): Promise<WeakArea[]> {
     return [];
   }
-  private async analyzeCourseWeaknesses(_userId: string): Promise<WeakArea[]> {
+  private async analyzeCourseWeaknesses(_userId: string, _courseId?: string): Promise<WeakArea[]> {
     return [];
   }
-  private async analyzeCrossTrackWeaknesses(_userId: string): Promise<WeakArea[]> {
+  private async analyzeCrossTrackWeaknesses(_userId: string, _courseId?: string): Promise<WeakArea[]> {
     return [];
   }
   private async generateImprovementRecommendation(
@@ -911,25 +947,25 @@ export class IntelligentAnalyticsService {
   private createLearningTransfer(_event: AnalyticsEvent): LearningTransfer {
     return {} as LearningTransfer;
   }
-  private async getExamSkills(_userId: string): Promise<string[]> {
+  private async getExamSkills(_userId: string, _courseId?: string): Promise<string[]> {
     return [];
   }
-  private async getTechSkills(_userId: string): Promise<string[]> {
+  private async getTechSkills(_userId: string, _courseId?: string): Promise<string[]> {
     return [];
   }
   private calculateSkillSynergy(_examSkill: string, _techSkill: string): SkillSynergy {
     return {} as SkillSynergy;
   }
-  private async predictExamSuccess(_userId: string): Promise<number> {
+  private async predictExamSuccess(_userId: string, _courseId?: string): Promise<number> {
     return 0;
   }
-  private async predictSkillMastery(_userId: string): Promise<SkillMasteryPrediction[]> {
+  private async predictSkillMastery(_userId: string, _courseId?: string): Promise<SkillMasteryPrediction[]> {
     return [];
   }
-  private async generateOptimalStudyPlan(_userId: string): Promise<StudyPlanRecommendation[]> {
+  private async generateOptimalStudyPlan(_userId: string, _courseId?: string): Promise<StudyPlanRecommendation[]> {
     return [];
   }
-  private async identifyRiskFactors(_userId: string): Promise<RiskFactor[]> {
+  private async identifyRiskFactors(_userId: string, _courseId?: string): Promise<RiskFactor[]> {
     return [];
   }
 

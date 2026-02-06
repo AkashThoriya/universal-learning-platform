@@ -299,57 +299,77 @@ We need composite indexes for querying Missions by Course.
 
 ---
 
-## 8. Detailed Gap Analysis & Remediation Matrix
+## 8. Final Critical Gap Analysis (Verified 2026-02-06)
 
-We have audited all features to ensuring "200% certainty" of compatibility.
+We have conducted a deep code audit and identified the following **Critical Gaps** that must be resolved to ensure a 100% robust multi-course architecture.
 
-### 8.1 Feature-by-Feature Gap Matrix
+### 8.1 Critical Architecture Violations
 
-| Feature / Component | Critical Dependency | Current Status | The Gap (What breaks?) | Remediation Strategy |
-| :--- | :--- | :--- | :--- | :--- |
-| **Strategy Command Center**<br>`app/strategy/page.tsx` | `getAllProgress(uid)` | ❌ **Incompatible** | Calculates velocity/mastery using *all* progress data. Will mix history stats with math stats. | **Refactor:** Inject `activeCourseId` into `getAllProgress`. implementing course-specific velocity metrics. |
-| **Adaptive Dashboard**<br>`SimpleAdaptiveDashboard.tsx` | `getSyllabus(uid)` | ❌ **Incompatible** | Displays "Next Topic" from *any* enrolled exam. User might see a Python topic while studying History. | **Refactor:** Subscribe to `CourseContext`. Pass `courseId` to all sub-components. |
-| **Concept Review**<br>`app/review/page.tsx` | `getSyllabus(uid)` | ❌ **Incompatible** | Fetches the default exam's syllabus. If user switches course, this page will still show the old syllabus or crash. | **Update:** Change data fetching to `getSyllabus(uid, activeCourseId)`. Filter flagged items by course. |
-| **Notes & Revision**<br>`app/notes-revision/page.tsx` | `getTopicNotes` | ⚠️ **Partial** | Notes are linked to `topicId`. If Topic IDs are unique (UUIDs), it works. If generic ("intro"), notes will leak across courses. | **Verify:** Ensure `topicId` is unique. **Update:** Fetch syllabus via context to group notes correctly under the active course. |
-| **Quick Session Launcher**<br>`QuickSessionLauncher.tsx` | `getRecs(uid)` | ⚠️ **Partial** | Recommendation engine (`simple-learning-rec`) scans global progress. May recommend irrelevant topics. | **Update Service:** Update `simple-learning-recommendations.ts` to accept `courseId` and filter candidates. |
-| **Adaptive Testing**<br>`adaptive-testing-service.ts` | `createTest` | ⚠️ **Partial** | Tests created without `courseId` will not contribute to the specific course's progress/analytics. | **Update:** Add `courseId` to `TestConfig`. Store it in Firestore `adaptive-tests` collection. |
-| **Profile Settings**<br>`app/profile/page.tsx` | `user.currentExam` | ⚠️ **Partial** | UI assumes 1 active exam. "Selected Courses" logic exists but needs to align with `activeCourses` array. | **UI Polish:** Add "Courses" tab to manage existing enrollments. Update save logic to write to `activeCourses` metadata. |
-| **Offline Sync**<br>`firebase-utils.ts` | `idb-keyval` | ⚠️ **Partial** | Currently might cache only the default syllabus. | **Update:** Cache key must be `syllabus_{courseId}` instead of just `syllabus`. |
+| Severity | Component | Issue Description | Impact |
+| :--- | :--- | :--- | :--- |
+| 🚨 **CRITICAL** | **Intelligent Analytics Service**<br>`intelligent-analytics-service.ts` | **Global Scope Only.** The entire service (Events, Performance, Predictions) ignores `courseId`. | All "Smart Analytics" will merge data from *all* courses. If a user studies Math and History, the AI will give nonsensical overlapping recommendations. |
+| 🚨 **CRITICAL** | **Test Generation**<br>`TestConfigModal.tsx` | **Missing Context.** Creates `TestConfig` objects without `courseId`. | Tests created will be "orphaned" or assigned to a default context, breaking the ability to track test performance per course. |
+| 🚨 **CRITICAL** | **Topic Progress Write**<br>`firebase-utils.ts` | **Legacy Writes.** `updateTopicProgress` writes to `users/{uid}/progress/{topicId}` (Global). | Progress is not isolated. Studying "Algebra" in Course A will mark it as done in Course B if topic IDs clash (or just pollute the data structure). |
+| 🔴 **HIGH** | **Profile Page**<br>`profile/page.tsx` | **Legacy Read.** Calls `getSyllabus(uid)` without `activeCourseId`. | Profile page will always show the *Default* course's syllabus stats, ignoring the currently active course switcher. |
+| 🔴 **HIGH** | **Subtopic Page**<br>`syllabus/[id]/[index]` | **Legacy Read.** Calls `getSyllabus(uid)` without `activeCourseId`. | Deep-linking to a subtopic might load the wrong course context or fail if the default course doesn't have that topic. |
+| 🟡 **MEDIUM** | **Global Progress Read**<br>`firebase-utils.ts` | **Legacy Read.** `getAllProgress(uid)` is used in 5+ files. | Fetches *all* global progress. Inefficient and potentially incorrect calculations for "Course Completion %". |
 
-### 8.2 Database Structure Gaps
-| Collection | Issue | Fix |
-| :--- | :--- | :--- |
-| `users/{uid}/progress` (Root) | Legacy location. Mixed data. | **Deprecate.** Move to `users/{uid}/progress/{courseId}`. |
-| `users/{uid}/syllabus` | Assumes single syllabus. | **Deprecate.** Move to `users/{uid}/courses/{courseId}/syllabus`. |
+### 8.2 Comprehensive Feature Map & Status
 
-### 8.3 Service Layer Gaps
-*   **`intelligent-analytics-service.ts`:** `getWeeklyStats` aggregates everything. Needs to filter `missions` by `courseId`.
-*   **`universal-learning-analytics.ts`:** `getExamProgress` manually filters missions by string comparison. **Critical:** It acts globally. Must be refactored to query `where('courseId', '==', activeCourseId)`.
+#### 1. Core Platform
+*   **Authentication**: ✅ Ready
+*   **Context System**: ✅ `CourseContext` implemented.
+*   **Navigation**: ✅ `CourseSwitcher` implemented.
 
-### 8.4 Hidden Dependencies & Data Fragmentation (Critical)
-*   **`TopicPage.tsx` Discrepancy:** The `TopicPage` (lines 102, 165) reads/writes directly to `users/{uid}/userProgress`. However, `firebase-utils` uses `users/{uid}/progress`.
-    *   **Implication:** We have fragmented data. The migration script must merge *both* `progress` and `userProgress` collections into the new `courses/{id}/progress` structure.
-    *   **Fix:** Refactor `TopicPage` to use `getCourseProgress()` utility instead of direct Firestore calls.
-*   **`TestConfigModal.tsx`:** Fetches global syllabus (`getSyllabus(uid)`).
-    *   **Fix:** Must receive `activeCourse` from props or context to pass to `getSyllabus`.
-*   **`LearningAnalyticsDashboard.tsx`:** Calls `getUnifiedProgress` which mixes all courses.
-    *   **Fix:** Rename to `getCourseAnalytics(uid, courseId)` and enforce strict filtering.
+#### 2. Dashboard Engine
+*   **Adaptive Dashboard**: ✅ Updated to pass `activeCourseId`.
+*   **Learning Analytics**: ⚠️ **Partial**. UI passes ID, but underlying service (`IntelligentAnalytics`) ignores it.
+    *   *Sub-feature: Weak Area Detection* -> ❌ Global Scope.
+    *   *Sub-feature: Study Trends* -> ❌ Global Scope.
+
+#### 3. Learning Engine
+*   **Syllabus Browser**: ✅ Updated.
+*   **Topic View**: ✅ Updated.
+*   **Subtopic/Content View**: ❌ **Broken** (Missing courseId).
+*   **Progress Tracking**: ❌ **Broken** (Writes to legacy global path).
+*   **Notes System**: ⚠️ **Partial** (Reads correctly, but storage might be ambiguous).
+
+#### 4. Testing Engine
+*   **Test Configuration**: ❌ **Broken** (Missing `courseId` in config).
+*   **Test Taking**: ✅ Service updated (`adaptive-testing-service`).
+*   **Results Processing**: ⚠️ **Risk** (Depends on `createTest` passing metadata).
+
+#### 5. User Profile
+*   **Stats View**: ❌ **Broken** (Legacy reads).
+*   **Settings**: ✅ Generic.
 
 ---
 
-## 10. Summary of Deliverables
+## 9. Immediate Remediation Plan (Phase 7)
 
-To complete this migration, we will generate:
-1.  `lib/contexts/CourseContext.tsx`
-2.  `types/course-progress.ts`
-3.  Refactored `ProgressService` class.
-4.  Updated `AdaptiveDashboard` component.
-5.  Updated `Navigation` component with Switcher.
-6.  `components/courses/CourseSwitcher.tsx`
-7.  `components/courses/AddCourseDialog.tsx`
-8.  `app/(routes)/profile/CoursesTab.tsx`
-9.  **Refactor `TopicPage.tsx`** (Standardize data access).
-10. **Refactor `TestConfigModal.tsx`** (Inject Course Context).
-11. Updated `firestore.rules` & `firestore.indexes.json`.
+To reach the "Top-Notch" goal, we must execute the following fixes immediately:
 
-This specification provides the exact blueprint for the implementation phase.
+1.  **Fix Writes (Data Layer)**:
+    *   Update `updateTopicProgress` to accept `courseId`.
+    *   Write to `users/{uid}/courses/{courseId}/progress/{topicId}`.
+
+2.  **Fix Reads (Data Layer)**:
+    *   Update `getAllProgress` to accept `courseId` and read from the new path.
+    *   *Migration:* We will strictly use the new path for active courses.
+
+3.  **Refactor Intelligent Analytics**:
+    *   Add `courseId` to `AnalyticsEvent` interface.
+    *   Update `trackEvent` to require `courseId` (or infer from context).
+    *   Update `getPerformanceAnalytics` to filter by `courseId`.
+
+4.  **Fix UI Gaps**:
+    *   `Profile/page.tsx`: Pass `activeCourseId`.
+    *   `Subtopic/page.tsx`: Pass `activeCourseId`.
+    *   `TestConfigModal.tsx`: Inject `activeCourseId` into `TestConfig`.
+
+---
+
+## 10. Conclusion
+
+The "Surface" (UI) is 80% complete, but the "Brain" (Analytics & Data Writes) is still 40% legacy. **Phase 7 is critical** to prevent data corruption when users actually start using multiple courses.
+

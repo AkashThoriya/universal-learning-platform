@@ -12,7 +12,7 @@ export interface AdaptiveTest {
   description: string;
 
   // Integration with existing systems
-
+  courseId?: string; // Optional course ID for multi-course support
   linkedSubjects: string[]; // Subject IDs from exam data
   linkedTopics?: string[]; // Topic IDs for more granular targeting
   track: LearningTrack; // Consistent with mission system
@@ -234,6 +234,7 @@ export interface TestMissionLink {
 
 // API Request/Response types
 export interface CreateAdaptiveTestRequest {
+  courseId?: string;
   title: string;
   description: string;
   subjects: string[];

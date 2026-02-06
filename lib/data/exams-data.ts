@@ -16,7 +16,6 @@ import dsaByNamastedev from './exams/dsa-by-namastedev.json';
 import dsaByStriver from './exams/dsa-by-striver.json';
 import nodejsByNamastedev from './exams/nodejs-by-namastedev.json';
 import reactByNamastedev from './exams/react-by-namastedev.json';
-import sqlMastery from './exams/sql-mastery.json';
 import systemsDsa from './exams/systems-dsa.json';
 
 /**
@@ -44,7 +43,6 @@ export const EXAMS_DATA: Exam[] = [
   dsaByNamastedev as Exam,
   nodejsByNamastedev as Exam,
   reactByNamastedev as Exam,
-  sqlMastery as Exam,
   systemsDsa as Exam,
 ];
 

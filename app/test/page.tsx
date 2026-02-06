@@ -42,6 +42,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { logInfo, logError } from '@/lib/utils/logger';
@@ -59,6 +60,7 @@ interface TestOverviewStats {
 
 function AdaptiveTestingPageContent() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const { toast } = useToast();
 
   const [loading, setLoading] = useState(true);
@@ -122,7 +124,7 @@ function AdaptiveTestingPageContent() {
     }
 
     try {
-      const testsResult = await adaptiveTestingService.getUserTests(user.uid);
+      const testsResult = await adaptiveTestingService.getUserTests(user.uid, activeCourseId ?? undefined);
       setTests(testsResult);
 
       // Calculate stats
@@ -156,7 +158,7 @@ function AdaptiveTestingPageContent() {
 
     try {
       setLoadingRecommendations(true);
-      const recsResult = await adaptiveTestingService.generateTestRecommendations(user.uid);
+      const recsResult = await adaptiveTestingService.generateTestRecommendations(user.uid, activeCourseId ?? undefined);
 
       if (recsResult.success && recsResult.data) {
         setRecommendations(recsResult.data);
@@ -276,7 +278,7 @@ function AdaptiveTestingPageContent() {
     try {
       // Run generation in parallel with animation
       const [recommendations] = await Promise.all([
-        adaptiveTestingService.generateTestRecommendations(user.uid),
+        adaptiveTestingService.generateTestRecommendations(user.uid, activeCourseId ?? undefined),
         minAnimationTime,
       ]);
 

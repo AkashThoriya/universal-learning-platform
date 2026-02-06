@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 // Use new database abstraction layer
 import { enhancedDatabaseService, RepositoryFactory } from '@/lib/database';
 
@@ -73,6 +74,7 @@ interface DailyLogModalProps {
 
 export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
 
   // Health metrics
   const [energyLevel, setEnergyLevel] = useState([7]);
@@ -146,10 +148,12 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
       }
 
       try {
-        // For now, we'll create a temporary repository for syllabus data
-        // This can be refactored to use a dedicated SyllabusRepository later
+        // Use course-scoped syllabus path if activeCourseId available
+        const syllabusPath = activeCourseId 
+          ? `users/${user.uid}/courses/${activeCourseId}/syllabus`
+          : `users/${user.uid}/syllabus`;
         const db = enhancedDatabaseService.getProvider();
-        const result = await db.query<SyllabusApiResponse>(`users/${user.uid}/syllabus`);
+        const result = await db.query<SyllabusApiResponse>(syllabusPath);
 
         if (result.success && result.data) {
           const topics: Topic[] = [];

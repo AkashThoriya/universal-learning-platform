@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { logError } from '@/lib/utils/logger';
 import { SyllabusSubject } from '@/types/exam';
@@ -24,6 +25,7 @@ export default function SubjectPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const subjectId = params.subjectId as string;
 
   const [subject, setSubject] = useState<SyllabusSubject | null>(null);
@@ -37,7 +39,7 @@ export default function SubjectPage() {
 
     try {
       setLoading(true);
-      const syllabus = await getSyllabus(user.uid);
+      const syllabus = await getSyllabus(user.uid, activeCourseId ?? undefined);
       const foundSubject = syllabus.find(s => s.id === subjectId);
       if (isMounted) {
         setSubject(foundSubject || null);
@@ -52,7 +54,7 @@ export default function SubjectPage() {
     return () => {
       isMounted = false;
     };
-  }, [user?.uid, subjectId]);
+  }, [user?.uid, subjectId, activeCourseId]);
 
   useEffect(() => {
     const cleanup = loadData();

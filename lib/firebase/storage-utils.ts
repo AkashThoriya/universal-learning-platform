@@ -75,17 +75,17 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 /**
  * Get cache key for notes
  */
-const getCacheKey = (userId: string, topicId: string): string => {
-  return `${userId}:${topicId}`;
+const getCacheKey = (userId: string, topicId: string, courseId?: string): string => {
+  return `${userId}:${courseId || 'global'}:${topicId}`;
 };
 
 /**
  * Invalidate notes cache for a specific topic
  * Call this after upload or delete operations
  */
-export const invalidateNotesCache = (userId: string, topicId: string): void => {
-  const key = getCacheKey(userId, topicId);
-  notesCache.delete(key);
+export const invalidateNotesCache = (_userId: string, _topicId: string, _courseId?: string) => {
+  // Simplified for now: just clear by key pattern or simpler invalidation.
+  notesCache.clear(); // Safest approach for now to avoid complexity
 };
 
 // ============================================================================
@@ -95,7 +95,10 @@ export const invalidateNotesCache = (userId: string, topicId: string): void => {
 /**
  * Generate storage path for a topic note
  */
-const getNotePath = (userId: string, topicId: string, fileName: string): string => {
+const getNotePath = (userId: string, topicId: string, fileName: string, courseId?: string): string => {
+  if (courseId) {
+    return `users/${userId}/courses/${courseId}/notes/${topicId}/${fileName}`;
+  }
   return `users/${userId}/notes/${topicId}/${fileName}`;
 };
 
@@ -294,11 +297,13 @@ const generateThumbnail = async (file: File): Promise<File> => {
  * @param onProgress - Optional progress callback
  * @returns Promise resolving to UploadedNote
  */
+
 export const uploadTopicNote = async (
   userId: string,
   topicId: string,
   file: File,
-  onProgress?: (progress: UploadProgress) => void
+  onProgress?: (progress: UploadProgress) => void,
+  courseId?: string
 ): Promise<UploadedNote> => {
   // Validate file type
   const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
@@ -326,7 +331,7 @@ export const uploadTopicNote = async (
   }
 
   const uniqueFileName = generateUniqueFileName(file.name);
-  const storagePath = getNotePath(userId, topicId, uniqueFileName);
+  const storagePath = getNotePath(userId, topicId, uniqueFileName, courseId);
   const storageRef = ref(storage, storagePath);
 
   // 1. Generate & Upload Thumbnail (if it's an image)
@@ -338,7 +343,9 @@ export const uploadTopicNote = async (
     try {
       // Use original file for thumbnail source to ensure quality
       const thumbFile = await generateThumbnail(file);
-      const thumbPath = `users/${userId}/notes/${topicId}/thumbnails/thumb_${uniqueFileName}`;
+      const thumbPath = courseId 
+        ? `users/${userId}/courses/${courseId}/notes/${topicId}/thumbnails/thumb_${uniqueFileName}`
+        : `users/${userId}/notes/${topicId}/thumbnails/thumb_${uniqueFileName}`;
       const thumbRef = ref(storage, thumbPath);
 
       // Simple upload for thumbnail (small file)
@@ -437,9 +444,9 @@ export const uploadTopicNote = async (
  * @param topicId - Topic ID
  * @returns Promise resolving to array of UploadedNote
  */
-export const getTopicNotes = async (userId: string, topicId: string): Promise<UploadedNote[]> => {
+export const getTopicNotes = async (userId: string, topicId: string, courseId?: string): Promise<UploadedNote[]> => {
   // Check cache first
-  const cacheKey = getCacheKey(userId, topicId);
+  const cacheKey = getCacheKey(userId, topicId, courseId);
   const cached = notesCache.get(cacheKey);
 
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -447,7 +454,9 @@ export const getTopicNotes = async (userId: string, topicId: string): Promise<Up
     return cached.data;
   }
 
-  const folderPath = `users/${userId}/notes/${topicId}`;
+  const folderPath = courseId 
+    ? `users/${userId}/courses/${courseId}/notes/${topicId}`
+    : `users/${userId}/notes/${topicId}`;
   const folderRef = ref(storage, folderPath);
 
   try {
@@ -526,7 +535,8 @@ export const deleteTopicNote = async (storagePath: string, userId?: string, topi
       const pathParts = storagePath.split('/');
       const fileName = pathParts.pop();
       if (fileName) {
-        const thumbPath = [...pathParts, 'thumbnails', `thumb_${fileName}`].join('/');
+        // Helper to reconstruct thumb path based on parent path structure
+        const thumbPath = `${pathParts.join('/')}/thumbnails/thumb_${fileName}`;
         const thumbRef = ref(storage, thumbPath);
         await deleteObject(thumbRef);
       }

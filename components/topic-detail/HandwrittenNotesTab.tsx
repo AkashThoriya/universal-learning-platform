@@ -27,6 +27,8 @@ import {
 } from '@/lib/firebase/storage-utils';
 import { cn } from '@/lib/utils/utils';
 
+import { useCourse } from '@/contexts/CourseContext';
+
 interface HandwrittenNotesTabProps {
   userId: string;
   topicId: string;
@@ -34,6 +36,7 @@ interface HandwrittenNotesTabProps {
 
 export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProps) {
   const { toast } = useToast();
+  const { activeCourseId } = useCourse();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // State
@@ -54,7 +57,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
     setLoading(true);
     try {
-      const fetchedNotes = await getTopicNotes(userId, topicId);
+      const fetchedNotes = await getTopicNotes(userId, topicId, activeCourseId ?? undefined);
       setNotes(fetchedNotes);
       setHasLoaded(true);
     } catch (error) {
@@ -85,7 +88,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
 
     const uploadPromises = Array.from(files).map(async file => {
       try {
-        const uploadedNote = await uploadTopicNote(userId, topicId, file, progress => setUploadProgress(progress));
+        const uploadedNote = await uploadTopicNote(userId, topicId, file, progress => setUploadProgress(progress), activeCourseId ?? undefined);
         return uploadedNote;
       } catch (error) {
         console.error('Upload error:', error);

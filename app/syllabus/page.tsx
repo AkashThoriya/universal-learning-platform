@@ -66,8 +66,9 @@ import { Separator } from '@/components/ui/separator';
 
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
-import { getSyllabus, getAllProgress, saveSyllabus, getUser } from '@/lib/firebase/firebase-utils';
+import { getSyllabus, getAllProgress, saveSyllabusForCourse, getUser } from '@/lib/firebase/firebase-utils';
 import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
 
@@ -77,6 +78,7 @@ const MEDIUM_MASTERY_THRESHOLD = 50;
 
 export default function SyllabusPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const { toast } = useToast();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [progress, setProgress] = useState<TopicProgress[]>([]);
@@ -113,8 +115,8 @@ export default function SyllabusPage() {
         // OPTIMIZED: Fetch all data in parallel to reduce latency (~300-500ms savings)
         const [userProfile, syllabusData, progressData] = await Promise.all([
           getUser(user.uid),
-          getSyllabus(user.uid),
-          getAllProgress(user.uid),
+          getSyllabus(user.uid, activeCourseId ?? undefined),
+          getAllProgress(user.uid, activeCourseId ?? undefined),
         ]);
 
         logInfo('Syllabus page: Data fetched successfully', {
@@ -142,7 +144,7 @@ export default function SyllabusPage() {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, activeCourseId]);
 
   // Save syllabus changes to Firebase
   const saveSyllabusChanges = useCallback(async () => {
@@ -153,8 +155,13 @@ export default function SyllabusPage() {
     setSaving(true);
 
     try {
-      // saveSyllabus now auto-resolves courseId from user's current exam
-      await saveSyllabus(user.uid, syllabus);
+      if (activeCourseId) {
+        await saveSyllabusForCourse(user.uid, activeCourseId, syllabus);
+      } else {
+        // Fallback or error if no course selected, but UI should prevent this
+        logError('Cannot save syllabus, no active course', { userId: user.uid });
+        return;
+      }
       logInfo('Syllabus updated successfully', {
         userId: user.uid,
         subjectCount: syllabus.length,

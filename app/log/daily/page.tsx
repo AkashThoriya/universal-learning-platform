@@ -44,6 +44,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { saveDailyLog, getSyllabus, getDailyLog } from '@/lib/firebase/firebase-utils';
 import { logError } from '@/lib/utils/logger';
 import { cn } from '@/lib/utils/utils';
@@ -172,6 +173,7 @@ const StepperInput = ({ value, onChange, min, max, step = 1, suffix = '' }: any)
 
 export default function DailyLogPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const router = useRouter();
 
   // Health metrics
@@ -211,7 +213,7 @@ export default function DailyLogPage() {
       setLoading(true);
       try {
         // Fetch topics
-        const syllabus = await getSyllabus(user.uid);
+        const syllabus = await getSyllabus(user.uid, activeCourseId ?? undefined);
         const topics = syllabus.flatMap(subject =>
           subject.topics.map(topic => ({
             id: topic.id,
@@ -248,7 +250,7 @@ export default function DailyLogPage() {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, activeCourseId]);
 
   const addStudySession = () => {
     setStudySessions(prev => [

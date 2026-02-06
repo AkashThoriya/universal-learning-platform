@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import { getExamById } from '@/lib/data/exams-data';
 import { saveMockTest, getUser } from '@/lib/firebase/firebase-utils';
@@ -35,6 +36,7 @@ import { MockTestLog, User, Exam } from '@/types/exam';
 
 export default function MockTestLogPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse(); // Get active course context
   const router = useRouter();
   const { toast } = useToast();
   const [step, setStep] = useState(1);
@@ -214,11 +216,12 @@ export default function MockTestLogPage() {
           distractions,
           timeOfDay,
         },
+        ...(activeCourseId && { courseId: activeCourseId }), // Include if defined
         feedback,
         actionItems,
       };
 
-      await saveMockTest(user.uid, testData);
+      await saveMockTest(user.uid, testData, activeCourseId ?? undefined);
       router.push('/dashboard');
     } catch (error) {
       logError('Error saving mock test', error as Error);

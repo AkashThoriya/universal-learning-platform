@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { getSyllabus } from '@/lib/firebase/firebase-utils';
 import { logError } from '@/lib/utils/logger';
 import { SyllabusSubject } from '@/types/exam';
@@ -25,6 +26,7 @@ import { SyllabusSubject } from '@/types/exam';
 export default function SubjectsPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,14 +37,14 @@ export default function SubjectsPage() {
 
     try {
       setLoading(true);
-      const data = await getSyllabus(user.uid);
+      const data = await getSyllabus(user.uid, activeCourseId ?? undefined);
       setSyllabus(data);
     } catch (error) {
       logError('Error loading syllabus', error as Error);
     } finally {
       setLoading(false);
     }
-  }, [user?.uid]);
+  }, [user?.uid, activeCourseId]);
 
   useEffect(() => {
     loadSyllabus();

@@ -39,6 +39,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { intelligentAnalyticsService, PerformanceAnalytics } from '@/lib/analytics/intelligent-analytics-service';
 import { logger } from '@/lib/utils/logger';
 
@@ -58,6 +59,7 @@ interface AnalyticsWidgetProps {
 
 const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const [analytics, setAnalytics] = useState<PerformanceAnalytics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
         setIsLoading(true);
         setError(null);
 
-        const analyticsData = await intelligentAnalyticsService.getPerformanceAnalytics(user.uid);
+        const analyticsData = await intelligentAnalyticsService.getPerformanceAnalytics(user.uid, activeCourseId ? { courseId: activeCourseId } : undefined);
         setAnalytics(analyticsData);
 
         logger.debug('Analytics widget loaded successfully', { userId: user.uid });
@@ -89,7 +91,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
     };
 
     loadAnalyticsSummary();
-  }, [user?.uid]);
+  }, [user?.uid, activeCourseId]);
 
   // ============================================================================
   // COMPUTED VALUES

@@ -33,6 +33,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import {
   universalLearningAnalytics,
   type UnifiedLearningProgress,
@@ -49,6 +50,7 @@ interface LearningAnalyticsDashboardProps {
  */
 export default function LearningAnalyticsDashboard({ className }: LearningAnalyticsDashboardProps) {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const [loading, setLoading] = useState(true);
   const [unifiedProgress, setUnifiedProgress] = useState<UnifiedLearningProgress | null>(null);
   const [insights, setInsights] = useState<LearningInsights | null>(null);
@@ -65,9 +67,9 @@ export default function LearningAnalyticsDashboard({ className }: LearningAnalyt
         setLoading(true);
         setError(null);
 
-        // Load all analytics data in parallel
+        // Load all analytics data in parallel (scoped to active course where supported)
         const [progressResult, insightsResult, comparisonResult] = await Promise.all([
-          universalLearningAnalytics.getUnifiedProgress(user.uid),
+          universalLearningAnalytics.getUnifiedProgress(user.uid, activeCourseId ?? undefined),
           universalLearningAnalytics.getLearningInsights(user.uid),
           universalLearningAnalytics.getPerformanceComparison(user.uid),
         ]);

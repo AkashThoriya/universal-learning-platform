@@ -60,14 +60,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from '@/hooks/useForm';
 import { AGE_LIMITS } from '@/lib/config/constants';
 import { DEFAULT_PREFERENCES } from '@/lib/config/defaults';
 import { getExamById } from '@/lib/data/exams-data';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
-import { getUser, updateUser, getSyllabus, saveSyllabus } from '@/lib/firebase/firebase-utils';
+import { getUser, updateUser, getSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType, SelectedCourse } from '@/types/exam';
+import { CoursesTab } from '@/components/courses';
 
 /**
  * Profile form data structure with complete validation
@@ -233,6 +235,7 @@ const profileSchema = z.object({
  */
 function ProfileContent() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse(); // Use active course context
   const router = useRouter();
   const { toast } = useToast();
 
@@ -293,7 +296,11 @@ function ProfileContent() {
 
       try {
         setLoading(true);
-        const [fetchedUser, userSyllabus] = await Promise.all([getUser(user.uid), getSyllabus(user.uid)]);
+        // Pass activeCourseId to ensure we get course-specific syllabus
+        const [fetchedUser, userSyllabus] = await Promise.all([
+          getUser(user.uid), 
+          getSyllabus(user.uid, activeCourseId || undefined)
+        ]);
 
         if (fetchedUser) {
           setUserData(fetchedUser);
@@ -559,8 +566,10 @@ function ProfileContent() {
       // If updateUser succeeds but saveSyllabus fails (or vice versa), we'd have inconsistent data
       await updateUser(user.uid, updateData);
 
-      // saveSyllabus now auto-resolves courseId and saves to course-specific storage
-      await saveSyllabus(user.uid, form.data.syllabus);
+      // Save syllabus to course-specific storage
+      if (activeCourseId) {
+        await saveSyllabusForCourse(user.uid, activeCourseId, form.data.syllabus);
+      }
 
       setHasUnsavedChanges(false);
       setValidationErrors({});
@@ -737,7 +746,7 @@ function ProfileContent() {
               {/* Tab Navigation */}
               <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200">
                 <ScrollableTabsList>
-                  <TabsList className="flex w-full md:grid md:grid-cols-4 gap-1">
+                  <TabsList className="flex w-full md:grid md:grid-cols-5 gap-1">
                     {PROFILE_TABS.map(tab => {
                       const Icon = tab.icon;
                       return (
@@ -866,6 +875,11 @@ function ProfileContent() {
                       })}
                     </MobileScrollGrid>
                   </div>
+                </TabsContent>
+
+                {/* Courses Tab */}
+                <TabsContent value="courses" className="space-y-6">
+                  <CoursesTab />
                 </TabsContent>
 
                 {/* Exam Setup Tab */}

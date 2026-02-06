@@ -60,6 +60,7 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import {
   intelligentAnalyticsService,
   PerformanceAnalytics,
@@ -99,6 +100,7 @@ interface DashboardState {
 
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) => {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const [state, setState] = useState<DashboardState>({
     analytics: null,
     weakAreas: [],
@@ -129,9 +131,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
 
         // OPTIMIZED: Pass time range to reduce fetch volume
         const [analytics, weakAreas, recommendations] = await Promise.all([
-          intelligentAnalyticsService.getPerformanceAnalytics(user.uid, { timeRange: state.selectedTimeRange }),
-          intelligentAnalyticsService.identifyWeakAreas(user.uid),
-          intelligentAnalyticsService.getImprovementRecommendations(user.uid, []),
+          intelligentAnalyticsService.getPerformanceAnalytics(user.uid, { timeRange: state.selectedTimeRange, ...(activeCourseId ? { courseId: activeCourseId } : {}) }),
+          intelligentAnalyticsService.identifyWeakAreas(user.uid, activeCourseId || undefined),
+          intelligentAnalyticsService.getImprovementRecommendations(user.uid, [], activeCourseId || undefined),
         ]);
 
         setState(prev => ({
@@ -170,7 +172,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
         unsubscribe();
       }
     };
-  }, [user?.uid, state.selectedTimeRange]);
+  }, [user?.uid, state.selectedTimeRange, activeCourseId]);
 
   // ============================================================================
   // COMPUTED VALUES & CHART DATA
@@ -252,7 +254,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
     setState(prev => ({ ...prev, isLoading: true }));
 
     try {
-      const analytics = await intelligentAnalyticsService.getPerformanceAnalytics(user.uid);
+      const analytics = await intelligentAnalyticsService.getPerformanceAnalytics(user.uid, activeCourseId ? { courseId: activeCourseId } : undefined);
       setState(prev => ({
         ...prev,
         analytics,

@@ -19,6 +19,7 @@
 import { useEffect, useCallback, useRef } from 'react';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useCourse } from '@/contexts/CourseContext';
 import {
   intelligentAnalyticsService,
   AnalyticsEventType,
@@ -37,6 +38,7 @@ import { logger } from '@/lib/utils/logger';
  */
 export const useAnalytics = () => {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse(); // Inject course context
   const sessionStartTime = useRef<number>(Date.now());
   const pageStartTime = useRef<number>(Date.now());
 
@@ -63,13 +65,14 @@ export const useAnalytics = () => {
             sessionDuration: Date.now() - sessionStartTime.current,
             pageTime: Date.now() - pageStartTime.current,
           },
+          activeCourseId ?? undefined, // Pass courseId to analytics
           customMetadata as Partial<AnalyticsMetadata> | undefined
         );
       } catch (error) {
         logger.error('Failed to track analytics event', error as Error);
       }
     },
-    [user?.uid]
+    [user?.uid, activeCourseId]
   );
 
   // Track exam events

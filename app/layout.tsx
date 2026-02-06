@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import GlobalErrorBoundary from '@/components/error-handling/GlobalErrorBoundary';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CourseProvider } from '@/contexts/CourseContext';
 import { AccessibilityChecker, SkipToContent } from '@/lib/utils/accessibility-utils';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -153,10 +154,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AccessibilityChecker>
             <SkipToContent targetId="main-content" />
             <AuthProvider>
-              <main id="main-content" className="min-h-screen">
-                {children}
-              </main>
-              <Toaster />
+              <CourseProvider>
+                <main id="main-content" className="min-h-screen">
+                  {children}
+                </main>
+                <Toaster />
+              </CourseProvider>
             </AuthProvider>
           </AccessibilityChecker>
         </GlobalErrorBoundary>

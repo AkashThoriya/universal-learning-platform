@@ -32,6 +32,7 @@ import { useState, useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { CourseSwitcher, AddCourseDialog } from '@/components/courses';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils/utils';
 
@@ -196,7 +197,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo - Simplified */}
-          <div className="flex items-center flex-shrink-0">
+          <div className="flex items-center flex-shrink-0 gap-3">
             <Link
               href="/dashboard"
               className="flex items-center space-x-2 group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1"
@@ -208,6 +209,8 @@ export default function Navigation() {
               </div>
               <span className="text-lg font-bold text-gradient hidden sm:block">ESE</span>
             </Link>
+            {/* Course Switcher - Removed as moved to dashboard */}
+
           </div>
 
           {/* Primary Navigation - Only show most important items */}
@@ -309,6 +312,9 @@ export default function Navigation() {
           </div>
         )}
       </div>
+
+      {/* Add Course Dialog */}
+      <AddCourseDialog trigger={<span className="hidden" />} />
     </nav>
   );
 }

@@ -157,15 +157,21 @@ export const PROFILE_TABS: readonly ProfileTab[] = [
     description: 'Basic information and persona',
   },
   {
+    id: 'courses',
+    label: 'Courses',
+    icon: BookOpen,
+    description: 'Manage your exam preparations',
+  },
+  {
     id: 'exam',
     label: 'Exam Setup',
-    icon: BookOpen,
+    icon: Target,
     description: 'Learning path and timeline',
   },
   {
     id: 'syllabus',
     label: 'Syllabus',
-    icon: Target,
+    icon: BookOpen,
     description: 'Subject organization and priorities',
   },
   {

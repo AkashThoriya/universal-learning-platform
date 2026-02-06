@@ -24,6 +24,7 @@ import {
   writeBatch,
   onSnapshot as _onSnapshot,
   DocumentData,
+  QueryConstraint,
 } from 'firebase/firestore';
 
 import { serviceContainer, PerformanceMonitor, ConsoleLogger } from '@/lib/services/service-layer';
@@ -1607,17 +1608,22 @@ const adaptiveTestingFirebaseService = {
 
   /**
    * Get user's adaptive tests (one-time fetch)
+   * @param userId - User's ID
+   * @param courseId - Optional course ID for filtering tests by course
    */
-  async getUserTests(userId?: string): Promise<Result<AdaptiveTest[]>> {
+  async getUserTests(userId?: string, courseId?: string): Promise<Result<AdaptiveTest[]>> {
     try {
-      // First try with server-side sorting (requires index)
-      const q = userId
-        ? query(
-            collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
-            where('userId', '==', userId),
-            orderBy('createdAt', 'desc')
-          )
-        : query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), orderBy('createdAt', 'desc'));
+      // Build query constraints
+      const constraints: QueryConstraint[] = [];
+      if (userId) {
+        constraints.push(where('userId', '==', userId));
+      }
+      if (courseId) {
+        constraints.push(where('courseId', '==', courseId));
+      }
+      constraints.push(orderBy('createdAt', 'desc'));
+
+      const q = query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), ...constraints);
 
       const snapshot = await getDocs(q);
       const tests = snapshot.docs.map(doc => ({
@@ -1634,9 +1640,16 @@ const adaptiveTestingFirebaseService = {
       if (error.code === 'failed-precondition' || error.message?.includes('index')) {
         console.warn('Index missing for tests query, falling back to client-side sorting');
         try {
-          const qFallback = userId
-            ? query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), where('userId', '==', userId))
-            : query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS));
+          // Build fallback query without orderBy
+          const fallbackConstraints: QueryConstraint[] = [];
+          if (userId) {
+            fallbackConstraints.push(where('userId', '==', userId));
+          }
+          if (courseId) {
+            fallbackConstraints.push(where('courseId', '==', courseId));
+          }
+          
+          const qFallback = query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), ...fallbackConstraints);
 
           const snapshot = await getDocs(qFallback);
           const tests = snapshot.docs.map(doc => ({

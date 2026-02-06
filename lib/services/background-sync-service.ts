@@ -205,11 +205,17 @@ class BackgroundSyncService {
         progress: any;
         completedAt?: Date;
         timeSpent: number;
+        courseId?: string; // Optional course ID for course-scoped path
       };
-      const { missionId, progress, completedAt, timeSpent } = data;
+      const { missionId, progress, completedAt, timeSpent, courseId } = data;
+
+      // Use course-scoped path if courseId provided, else legacy global path
+      const missionPath = courseId
+        ? `users/${item.userId}/courses/${courseId}/missions/${missionId}`
+        : `users/${item.userId}/missions/${missionId}`;
 
       // Check for conflicts
-      const remoteDoc = await getDoc(doc(db, `users/${item.userId}/missions/${missionId}`));
+      const remoteDoc = await getDoc(doc(db, missionPath));
 
       if (remoteDoc.exists()) {
         const remoteData = remoteDoc.data();
@@ -224,7 +230,7 @@ class BackgroundSyncService {
 
       // Sync to Firebase
       await setDoc(
-        doc(db, `users/${item.userId}/missions/${missionId}`),
+        doc(db, missionPath),
         {
           progress,
           completedAt: completedAt ? Timestamp.fromDate(new Date(completedAt)) : null,
@@ -250,10 +256,16 @@ class BackgroundSyncService {
         timeSpent: number;
         questionsAnswered: number;
         accuracy: number;
+        courseId?: string; // Optional course ID for course-scoped path
       };
-      const { sessionId, subject, timeSpent, questionsAnswered, accuracy } = data;
+      const { sessionId, subject, timeSpent, questionsAnswered, accuracy, courseId } = data;
 
-      await addDoc(collection(db, `users/${item.userId}/study_sessions`), {
+      // Use course-scoped path if courseId provided, else legacy global path
+      const sessionsPath = courseId
+        ? `users/${item.userId}/courses/${courseId}/study_sessions`
+        : `users/${item.userId}/study_sessions`;
+
+      await addDoc(collection(db, sessionsPath), {
         sessionId,
         subject,
         timeSpent,

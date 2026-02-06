@@ -1,28 +1,40 @@
 'use client';
 
 import { format } from 'date-fns';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { Building2, BookOpen, Plus, Calendar, Save, CheckCircle } from 'lucide-react';
+import { Timestamp } from 'firebase/firestore';
+import {
+  BookOpen,
+  CheckCircle,
+  Plus,
+  Building2,
+  FileText,
+  Save,
+  Calendar,
+} from 'lucide-react';
 import Link from 'next/link';
-import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
-import { DetailPageHeader } from '@/components/layout/PageHeader';
-import PageTransition from '@/components/layout/PageTransition';
+import { HandwrittenNotesTab } from '@/components/topic-detail/HandwrittenNotesTab';
 import Navigation from '@/components/Navigation';
-import { TopicDetailSkeleton } from '@/components/skeletons/SyllabusSkeletons';
+import { TopicDetailSkeleton } from '@/components/skeletons';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
-import { db } from '@/lib/firebase/firebase';
-import { getSyllabus } from '@/lib/firebase/firebase-utils';
-import { logInfo, logError } from '@/lib/utils/logger';
+import { useCourse } from '@/contexts/CourseContext';
+import { getSyllabus, getTopicProgress, updateTopicProgress } from '@/lib/firebase/firebase-utils';
+import { logError } from '@/lib/utils/logger';
 import { TopicProgress, SyllabusSubject, SyllabusTopic } from '@/types/exam';
+import PageTransition from '@/components/layout/PageTransition';
+import { DetailPageHeader } from '@/components/layout/PageHeader';
 
 // Constants
 const MASTERY_THRESHOLD = 80;
@@ -41,6 +53,7 @@ const getMasteryBadgeClass = (score: number): string => {
 
 export default function TopicPage() {
   const { user } = useAuth();
+  const { activeCourseId } = useCourse();
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -66,7 +79,7 @@ export default function TopicPage() {
       setLoading(true);
 
       // 1. Fetch Syllabus to find Topic details
-      const syllabus = await getSyllabus(user.uid);
+      const syllabus = await getSyllabus(user.uid, activeCourseId ?? undefined);
       let foundTopic: SyllabusTopic | undefined;
       let foundSubject: SyllabusSubject | undefined;
 
@@ -99,10 +112,10 @@ export default function TopicPage() {
       }
 
       // 2. Fetch User Progress
-      const progressDoc = await getDoc(doc(db, 'users', user.uid, 'userProgress', topicId));
+      const data = await getTopicProgress(user.uid, topicId, activeCourseId ?? undefined);
+      
       if (isMounted) {
-        if (progressDoc.exists()) {
-          const data = progressDoc.data() as TopicProgress;
+        if (data) {
           setUserProgress(data);
           setUserNotes(data.userNotes ?? '');
           setUserBankingContext(data.userBankingContext ?? '');
@@ -139,7 +152,7 @@ export default function TopicPage() {
     return () => {
       isMounted = false;
     };
-  }, [user?.uid, topicId, initialSubjectId]);
+  }, [user?.uid, topicId, initialSubjectId, activeCourseId]);
 
   useEffect(() => {
     const cleanup = loadData();
@@ -155,17 +168,23 @@ export default function TopicPage() {
 
     setSaving(true);
     try {
-      const updatedProgress = {
+      await updateTopicProgress(
+        user.uid,
+        topicId,
+        {
+          userNotes: userNotes,
+          userBankingContext: userBankingContext
+        },
+        activeCourseId ?? undefined
+      );
+
+      // Optimistic update
+      setUserProgress({
         ...userProgress,
         userNotes,
         userBankingContext,
         lastRevised: Timestamp.now(),
-      };
-
-      await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
-      setUserProgress(updatedProgress);
-
-      logInfo('Topic progress saved', { topicId });
+      });
     } catch (error) {
       logError('Error saving topic progress', error as Error);
     } finally {
@@ -185,11 +204,21 @@ export default function TopicPage() {
 
     const updatedProgress = {
       ...userProgress,
-      currentAffairs: [...(userProgress.currentAffairs ?? []), newAffair],
+      currentAffairs: [...(userProgress.currentAffairs || []), newAffair],
+      lastRevised: Timestamp.now(),
     };
 
     try {
-      await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
+      await updateTopicProgress(
+        user.uid,
+        topicId,
+        {
+          currentAffairs: updatedProgress.currentAffairs,
+          lastRevised: updatedProgress.lastRevised,
+        },
+        activeCourseId ?? undefined
+      );
+      
       setUserProgress(updatedProgress);
       setNewCurrentAffair('');
     } catch (error) {
@@ -214,7 +243,18 @@ export default function TopicPage() {
     };
 
     try {
-      await setDoc(doc(db, 'users', user.uid, 'userProgress', topicId), updatedProgress);
+      await updateTopicProgress(
+        user.uid,
+        topicId,
+        {
+          lastRevised: updatedProgress.lastRevised,
+          masteryScore: updatedProgress.masteryScore,
+          nextRevision: updatedProgress.nextRevision,
+          revisionCount: updatedProgress.revisionCount,
+        },
+        activeCourseId ?? undefined
+      );
+
       setUserProgress(updatedProgress);
     } catch (error) {
       logError('Error marking revised', error as Error);
@@ -313,34 +353,56 @@ export default function TopicPage() {
             </Card>
 
             {/* Study Notes */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
-                  <span>Study Notes</span>
-                </CardTitle>
-                <CardDescription>Your personal notes and key points for this topic</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  value={userNotes}
-                  onChange={e => setUserNotes(e.target.value)}
-                  placeholder="Add your study notes, important formulas, key concepts, practice questions..."
-                  rows={8}
-                  className="mb-4"
+            <Tabs defaultValue="text-notes" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4">
+                <TabsTrigger value="text-notes" className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Text Notes
+                </TabsTrigger>
+                <TabsTrigger value="handwritten-notes" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Handwritten Notes
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="text-notes">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <BookOpen className="h-5 w-5 text-blue-600" />
+                      <span>Study Notes</span>
+                    </CardTitle>
+                    <CardDescription>Your personal notes and key points for this topic</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Textarea
+                      value={userNotes}
+                      onChange={e => setUserNotes(e.target.value)}
+                      placeholder="Add your study notes, important formulas, key concepts, practice questions..."
+                      rows={8}
+                      className="mb-4"
+                    />
+                    <div className="flex space-x-2">
+                      <Button onClick={handleSave} disabled={saving}>
+                        <Save className="h-4 w-4 mr-2" />
+                        {saving ? 'Saving...' : 'Save Notes'}
+                      </Button>
+                      <Button onClick={handleMarkRevised} variant="outline">
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Mark as Revised
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="handwritten-notes">
+                <HandwrittenNotesTab
+                  userId={user?.uid || ''}
+                  topicId={topicId}
                 />
-                <div className="flex space-x-2">
-                  <Button onClick={handleSave} disabled={saving}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {saving ? 'Saving...' : 'Save Notes'}
-                  </Button>
-                  <Button onClick={handleMarkRevised} variant="outline">
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Mark as Revised
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              </TabsContent>
+            </Tabs>
 
             {/* Current Affairs */}
             <Card>

@@ -305,7 +305,7 @@ export interface User {
   currentExam?: {
     id: string;
     name: string;
-    targetDate: Timestamp;
+    targetDate?: Timestamp;
   };
 
   /** Date when the user started their preparation */
@@ -875,6 +875,8 @@ export interface MockTestLog {
     /** Time of day when the test was taken */
     timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night';
   };
+  /** Optional course ID - tracks which course this test belongs to */
+  courseId?: string;
   /** User's reflection and feedback on the test */
   feedback: string;
   /** Specific action items to work on based on test results */
