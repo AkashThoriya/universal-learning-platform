@@ -1585,12 +1585,23 @@ const adaptiveTestingFirebaseService = {
 
   /**
    * Get user's adaptive tests with real-time updates
+   * @param userId - User's ID
+   * @param callback - Callback to receive test updates
+   * @param courseId - Optional course ID for filtering tests by course
    */
-  subscribeToUserTests(userId: string, callback: (tests: AdaptiveTest[]) => void): () => void {
+  subscribeToUserTests(userId: string, callback: (tests: AdaptiveTest[]) => void, courseId?: string): () => void {
+    // Build query constraints
+    const constraints: QueryConstraint[] = [
+      where('userId', '==', userId),
+    ];
+    if (courseId) {
+      constraints.push(where('courseId', '==', courseId));
+    }
+    constraints.push(orderBy('createdAt', 'desc'));
+
     const q = query(
       collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
+      ...constraints
     );
 
     return _onSnapshot(q, snapshot => {
@@ -1673,38 +1684,46 @@ const adaptiveTestingFirebaseService = {
 
   /**
    * Get question bank for test generation
+   * @param courseId - Optional course ID for filtering questions by course/exam context
    */
   async getQuestionBank(
     userId: string,
     subjects: string[],
     difficulties: MissionDifficulty[],
-    maxQuestions = 100
+    maxQuestions = 100,
+    courseId?: string
   ): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const questionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS);
 
+      // Build base constraints
+      const baseConstraints = [
+        where('subject', 'in', subjects.slice(0, 10)),
+        where('difficulty', 'in', difficulties),
+      ];
+
       // Query 1: System/Public Questions
       // We look for questions created by 'system' or 'llm' (public pool)
       // Note: We run separate queries because Firestore limits 'in' clauses
-      const systemQuery = query(
-        questionsRef,
-        where('subject', 'in', subjects.slice(0, 10)),
-        where('difficulty', 'in', difficulties),
+      const systemConstraints = [
+        ...baseConstraints,
         where('createdBy', 'in', ['system', 'llm']),
+        ...(courseId ? [where('courseId', '==', courseId)] : []),
         orderBy('discriminationIndex', 'desc'),
-        limit(maxQuestions)
-      );
+        limit(maxQuestions),
+      ];
+      const systemQuery = query(questionsRef, ...systemConstraints);
 
       // Query 2: User's Private Questions
       // We look for questions specific to this user
-      const userQuery = query(
-        questionsRef,
-        where('subject', 'in', subjects.slice(0, 10)),
-        where('difficulty', 'in', difficulties),
+      const userConstraints = [
+        ...baseConstraints,
         where('createdBy', '==', userId),
+        ...(courseId ? [where('courseId', '==', courseId)] : []),
         orderBy('discriminationIndex', 'desc'),
-        limit(maxQuestions)
-      );
+        limit(maxQuestions),
+      ];
+      const userQuery = query(questionsRef, ...userConstraints);
 
       // Execute in parallel
       const [systemSnap, userSnap] = await Promise.all([getDocs(systemQuery), getDocs(userQuery)]);

@@ -32,7 +32,7 @@ import { useState, useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CourseSwitcher, AddCourseDialog } from '@/components/courses';
+import { AddCourseDialog } from '@/components/courses';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils/utils';
 

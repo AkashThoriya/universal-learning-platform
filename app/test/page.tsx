@@ -229,6 +229,7 @@ function AdaptiveTestingPageContent() {
               : `Comprehensive ${config.subjects[0]} test`,
           subjects: config.subjects,
           ...(config.topics.length > 0 && { topics: config.topics }),
+          ...(activeCourseId && { courseId: activeCourseId }),
           difficulty: config.difficulty,
           questionCount: config.questionCount,
           questionType: 'multiple_choice',

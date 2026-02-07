@@ -1,7 +1,7 @@
 'use client';
 
-import { BookOpen, Calendar, Plus, Target, Settings, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { BookOpen, Calendar, Plus, Target } from 'lucide-react';
+
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +15,7 @@ interface CourseOverviewCardProps {
   onContinue?: () => void;
 }
 
-export function CourseOverviewCard({ className, onContinue }: CourseOverviewCardProps) {
+export function CourseOverviewCard({ onContinue }: CourseOverviewCardProps) {
   const { activeCourse, isLoading, activeProgress } = useCourse();
 
   if (isLoading) {

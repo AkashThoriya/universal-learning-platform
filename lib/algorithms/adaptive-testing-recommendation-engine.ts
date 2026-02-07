@@ -83,15 +83,17 @@ export class AdaptiveTestingRecommendationEngine {
 
   /**
    * Generate intelligent test recommendations for a user
+   * @param courseId - Optional course ID for course-scoped recommendations
    */
   async generateRecommendations(
     userId: string,
     maxRecommendations = 5,
-    customWeights?: Partial<RecommendationWeights>
+    customWeights?: Partial<RecommendationWeights>,
+    courseId?: string
   ): Promise<Result<TestRecommendation[], string>> {
     try {
       // Gather recommendation context
-      const context = await this.buildRecommendationContext(userId);
+      const context = await this.buildRecommendationContext(userId, courseId);
       if (!context.success) {
         return createError(`Failed to build recommendation context: ${context.error}`);
       }
@@ -167,14 +169,15 @@ export class AdaptiveTestingRecommendationEngine {
    */
   async generateWeakAreaRecommendations(
     userId: string,
-    maxRecommendations = 3
+    maxRecommendations = 3,
+    courseId?: string
   ): Promise<Result<TestRecommendation[], string>> {
     const customWeights: Partial<RecommendationWeights> = {
       weakAreaFocus: 0.85,
       difficultyProgression: 0.15,
     };
 
-    return this.generateRecommendations(userId, maxRecommendations, customWeights);
+    return this.generateRecommendations(userId, maxRecommendations, customWeights, courseId);
   }
 
   /**
@@ -232,11 +235,12 @@ export class AdaptiveTestingRecommendationEngine {
 
   /**
    * Build comprehensive context for recommendations
+   * @param courseId - Optional course ID for course-scoped data
    */
-  private async buildRecommendationContext(userId: string): Promise<Result<RecommendationContext, string>> {
+  private async buildRecommendationContext(userId: string, courseId?: string): Promise<Result<RecommendationContext, string>> {
     try {
-      // Gather user data
-      const progressResult = await progressService.getUserProgress(userId);
+      // Gather user data (pass courseId for course-scoped progress)
+      const progressResult = await progressService.getUserProgress(userId, courseId);
 
       if (!progressResult.success) {
         return createError(`Failed to get user progress: ${progressResult.error}`);
@@ -263,9 +267,9 @@ export class AdaptiveTestingRecommendationEngine {
         ),
       };
 
-      // Fetch actual completed tests
+      // Fetch actual completed tests (pass courseId for course-scoped tests)
       const { adaptiveTestingService } = await import('@/lib/services/adaptive-testing-service');
-      const completedTests = await adaptiveTestingService.getUserTests(userId);
+      const completedTests = await adaptiveTestingService.getUserTests(userId, courseId);
       const finishedTests = completedTests.filter(t => t.status === 'completed');
 
       // For now, use empty arrays for journeys
