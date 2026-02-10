@@ -192,22 +192,29 @@ export function CourseProvider({ children }: { children: ReactNode }) {
 
         // If user has currentExam but no course document, create one
         if (currentExamId && profile?.currentExam && !active) {
+          const currentExamDetails = profile!.currentExam!;
           const newCourse: UserCourse = {
             courseId: currentExamId,
-            courseName: profile.currentExam.name || currentExamId,
+            courseName: currentExamDetails.name || currentExamId,
             courseType: 'exam',
             status: 'active',
             isPrimary: true,
-            ...(profile.currentExam.targetDate && { targetDate: profile.currentExam.targetDate }),
+            ...(currentExamDetails.targetDate && { targetDate: currentExamDetails.targetDate }),
             startedAt: Timestamp.now(),
             lastAccessedAt: Timestamp.now(),
             settings: {
-              dailyGoalMinutes: profile.preferences?.dailyStudyGoalMinutes ?? 60,
-              weeklyGoalHours: 10,
+              dailyGoalMinutes: profile?.preferences?.dailyStudyGoalMinutes ?? 60,
+              // Calculate weekly goal based on preferences (weekend mode vs daily)
+              weeklyGoalHours: profile?.preferences?.useWeekendSchedule
+                ? Math.round(((profile?.preferences?.weekdayStudyMinutes || 60) * 5 + (profile?.preferences?.weekendStudyMinutes || 60) * 2) / 60)
+                : Math.round(((profile?.preferences?.dailyStudyGoalMinutes ?? 60) * 7) / 60),
               notificationsEnabled: true,
               preferredDifficulty: 'intermediate',
               reminderTime: '09:00',
-              activeDays: [1, 2, 3, 4, 5],
+              activeDays: [0, 1, 2, 3, 4, 5, 6], // Default to 7 days to match Onboarding logic
+              useWeekendSchedule: profile?.preferences?.useWeekendSchedule || false,
+              weekdayStudyMinutes: profile?.preferences?.weekdayStudyMinutes,
+              weekendStudyMinutes: profile?.preferences?.weekendStudyMinutes,
             },
           };
 

@@ -2,6 +2,7 @@
  * Application-wide constants
  * This file contains all magic numbers and reusable constants
  */
+// ... (keep existing imports if any, though none seen)
 
 // Time constants (in milliseconds)
 export const TIME_CONSTANTS = {
@@ -16,6 +17,8 @@ export const TIME_CONSTANTS = {
   MICRO_SESSION_DELAY: 600,
   PERFORMANCE_DELAY: 5000,
 } as const;
+
+// ... (keep existing constants)
 
 // Progress thresholds (percentages)
 export const PROGRESS_THRESHOLDS = {
@@ -94,3 +97,13 @@ export const PERFORMANCE_CONSTANTS = {
   PATTERN_WEIGHT: 1.2,
   SESSION_WEIGHT: 1.5,
 } as const;
+
+// Preferred Study Times
+export const PREFERRED_STUDY_TIMES = [
+  { value: 'early_morning', label: 'Early Morning (4 AM - 7 AM)', icon: '🌅' },
+  { value: 'morning', label: 'Morning (7 AM - 12 PM)', icon: '☀️' },
+  { value: 'afternoon', label: 'Afternoon (12 PM - 5 PM)', icon: '🌤️' },
+  { value: 'evening', label: 'Evening (5 PM - 9 PM)', icon: '🌇' },
+  { value: 'night', label: 'Night (9 PM - 12 AM)', icon: '🌙' },
+  { value: 'late_night', label: 'Late Night (12 AM - 4 AM)', icon: '🦉' },
+] as const;

@@ -50,7 +50,7 @@ import { useForm } from '@/hooks/useForm';
 import { useMultiStepForm } from '@/hooks/useMultiStepForm';
 import { EXAMS_DATA, getExamById } from '@/lib/data/exams-data';
 import { customLearningService } from '@/lib/firebase/firebase-services';
-import { createUser, saveSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
+import { createUser, saveSyllabus, saveSyllabusForCourse, saveCourseSettings } from '@/lib/firebase/firebase-utils';
 
 import { logError, logInfo, logger } from '@/lib/utils/logger';
 import { Exam, SyllabusSubject, SyllabusTopic, User as UserType, OnboardingFormData } from '@/types/exam';
@@ -160,7 +160,7 @@ const onboardingSchema = z.object({
       .number()
       .min(60, 'Minimum study goal is 1 hour (60 minutes)')
       .max(720, 'Maximum study goal is 12 hours (720 minutes)'),
-    preferredStudyTime: z.enum(['morning', 'afternoon', 'evening', 'night']),
+    preferredStudyTime: z.enum(['early_morning', 'morning', 'afternoon', 'evening', 'night', 'late_night']),
     useWeekendSchedule: z.boolean().optional(),
     weekdayStudyMinutes: z.number().min(30).max(720).optional(),
     weekendStudyMinutes: z.number().min(0).max(720).optional(),
@@ -987,7 +987,35 @@ export default function OnboardingSetupPage() {
             })
           );
 
-          logInfo('Step 2 completed: All syllabi saved successfully');
+
+          // Step 2c: Save Course Settings (Granular Schedule)
+          logInfo('Step 2c: Saving course settings', {
+            userId: user.uid,
+            courseCount: finalSelectedCourses.length,
+          });
+
+          await Promise.all(
+            finalSelectedCourses.map(async (course) => {
+              // Extract relevant preferences for this course
+              // Currently sharing global preferences, but architecture allows for per-course divergence later
+              const courseSettings = {
+                dailyGoalMinutes: form.data.preferences?.dailyStudyGoalMinutes || 60,
+                weeklyGoalHours: form.data.preferences?.useWeekendSchedule
+                  ? Math.round(((form.data.preferences?.weekdayStudyMinutes || 0) * 5 + (form.data.preferences?.weekendStudyMinutes || 0) * 2) / 60)
+                  : Math.round(((form.data.preferences?.dailyStudyGoalMinutes || 60) * 7) / 60),
+                activeDays: [1, 2, 3, 4, 5, 6, 0], // Default to all days active
+                useWeekendSchedule: form.data.preferences?.useWeekendSchedule || false,
+                weekdayStudyMinutes: form.data.preferences?.weekdayStudyMinutes,
+                weekendStudyMinutes: form.data.preferences?.weekendStudyMinutes,
+                notificationsEnabled: true,
+                preferredDifficulty: 'intermediate',
+              };
+
+              await saveCourseSettings(user.uid, course.examId || '', courseSettings);
+            })
+          );
+
+          logInfo('Step 2 completed: All syllabi and settings saved successfully');
 
 
 

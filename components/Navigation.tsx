@@ -32,7 +32,7 @@ import { useState, useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AddCourseDialog } from '@/components/courses';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils/utils';
 
@@ -313,8 +313,7 @@ export default function Navigation() {
         )}
       </div>
 
-      {/* Add Course Dialog */}
-      <AddCourseDialog trigger={<span className="hidden" />} />
+
     </nav>
   );
 }

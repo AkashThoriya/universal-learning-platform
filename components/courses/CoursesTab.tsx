@@ -1,10 +1,11 @@
 'use client';
 
 import { Timestamp } from 'firebase/firestore';
+import Link from 'next/link';
 import { BookOpen, Plus, Trash2, Crown, Clock, Target, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { AddCourseDialog } from '@/components/courses';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -122,14 +123,12 @@ export function CoursesTab() {
                 Manage your exam preparations. Switch between courses anytime.
               </CardDescription>
             </div>
-            <AddCourseDialog 
-              trigger={
-                <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all hover:shadow-md">
-                  <Plus className="h-4 w-4" />
-                  Add Course
-                </Button>
-              }
-            />
+            <Link href="/courses/add">
+              <Button size="sm" className="gap-2 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all hover:shadow-md">
+                <Plus className="h-4 w-4" />
+                Add Course
+              </Button>
+            </Link>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -142,14 +141,12 @@ export function CoursesTab() {
               <p className="text-gray-500 mb-6 max-w-sm">
                 Start your journey by adding your first exam or course to track progress and get personalized plans.
               </p>
-              <AddCourseDialog 
-                trigger={
-                  <Button size="default" className="gap-2 px-6">
-                    <Plus className="h-4 w-4" />
-                    Add Your First Course
-                  </Button>
-                }
-              />
+              <Link href="/courses/add">
+                <Button size="default" className="gap-2 px-6">
+                  <Plus className="h-4 w-4" />
+                  Add Your First Course
+                </Button>
+              </Link>
             </div>
           ) : (
               <div className="grid grid-cols-1 gap-4">

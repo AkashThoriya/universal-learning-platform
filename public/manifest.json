@@ -98,13 +98,6 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/desktop-wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Desktop view of Exam Strategy Engine dashboard"
-    },
-    {
       "src": "/screenshots/mobile-narrow.png",
       "sizes": "540x720",
       "type": "image/png",

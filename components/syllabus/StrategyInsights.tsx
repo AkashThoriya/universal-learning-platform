@@ -11,6 +11,8 @@ import { Progress } from '@/components/ui/progress';
 import { calculateStrategyMetrics, formatVelocity } from '@/lib/strategy-utils';
 import { User, SyllabusSubject } from '@/types/exam';
 
+import { useCourse } from '@/contexts/CourseContext';
+
 interface StrategyInsightsProps {
   user: User;
   syllabus: SyllabusSubject[];
@@ -18,12 +20,24 @@ interface StrategyInsightsProps {
 }
 
 export default function StrategyInsights({ user, syllabus, completedTopicsCount }: StrategyInsightsProps) {
+  const { activeCourse } = useCourse();
+
   // Calculate Date Metrics
   const metrics = useMemo(() => {
-    return calculateStrategyMetrics(user, syllabus, completedTopicsCount);
-  }, [user, syllabus, completedTopicsCount]);
+    return calculateStrategyMetrics(
+      user,
+      syllabus,
+      completedTopicsCount,
+      undefined,
+      activeCourse?.startedAt?.toDate(),
+      activeCourse?.targetDate?.toDate(),
+      activeCourse?.settings
+    );
+  }, [user, syllabus, completedTopicsCount, activeCourse]);
 
-  if (!user.preparationStartDate) {
+  const effectiveStartDate = activeCourse?.startedAt?.toDate() || user.preparationStartDate?.toDate();
+
+  if (!effectiveStartDate) {
     return (
       <Card className="mb-6 border-l-4 border-l-blue-500 bg-gradient-to-br from-blue-50 to-white shadow-md overflow-hidden">
         <CardContent className="p-6">
@@ -35,7 +49,7 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
               <div>
                 <h3 className="font-semibold text-gray-900 text-lg">Unlock Your Strategy Intelligence</h3>
                 <p className="text-muted-foreground mt-1">
-                  Set your <strong className="text-blue-600">Preparation Start Date</strong> to activate velocity
+                  Set your <strong className="text-blue-600">Start Date</strong> to activate velocity
                   tracking, pace analysis, and projected finish dates.
                 </p>
               </div>
@@ -127,8 +141,14 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Current Velocity</p>
               <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-2xl font-bold text-gray-900">{formatVelocity(metrics.currentVelocity)}</span>
-                <span className="text-xs text-gray-500">topics / week</span>
+                {metrics.currentVelocity > 0 ? (
+                  <>
+                    <span className="text-2xl font-bold text-gray-900">{formatVelocity(metrics.currentVelocity)}</span>
+                    <span className="text-xs text-gray-500">topics / week</span>
+                  </>
+                ) : (
+                  <span className="text-lg font-medium text-gray-500">Calibrating...</span>
+                )}
               </div>
             </div>
             <div>
@@ -156,9 +176,15 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
         <CardContent>
           <div className="mb-6">
             <div className="text-3xl font-bold text-gray-900 mb-1">{formatDate(metrics.projectedFinishDate)}</div>
-            <p className="text-sm text-muted-foreground">
-              at your current pace of {formatVelocity(metrics.currentVelocity)} topics/week
-            </p>
+            {metrics.currentVelocity > 0 ? (
+              <p className="text-sm text-muted-foreground">
+                at your current pace of {formatVelocity(metrics.currentVelocity)} topics/week
+              </p>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Complete your first topic to establish a baseline velocity.
+              </p>
+            )}
           </div>
 
           <div className="space-y-4">

@@ -57,6 +57,38 @@ service firebase.storage {
                    && isValidContentType();
       allow delete: if isOwner(userId);
     }
+
+    // ==========================================
+    // COURSE-SCOPED USER NOTES STORAGE
+    // Path: users/{userId}/courses/{courseId}/notes/{topicId}/{fileName}
+    // ==========================================
+    
+    match /users/{userId}/courses/{courseId}/notes/{topicId}/{fileName} {
+      // Users can only read their own files
+      allow read: if isOwner(userId);
+      
+      // Users can only write their own files with validation
+      allow write: if isOwner(userId) 
+                   && isValidFileSize() 
+                   && isValidContentType();
+      
+      // Users can delete their own files
+      allow delete: if isOwner(userId);
+    }
+
+    // ==========================================
+    // COURSE-SCOPED THUMBNAILS STORAGE
+    // Path: users/{userId}/courses/{courseId}/notes/{topicId}/thumbnails/{fileName}
+    // ==========================================
+    
+    match /users/{userId}/courses/{courseId}/notes/{topicId}/thumbnails/{fileName} {
+      // Same rules apply to thumbnails
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) 
+                   && isValidFileSize() 
+                   && isValidContentType();
+      allow delete: if isOwner(userId);
+    }
     
     // ==========================================
     // DENY ALL OTHER ACCESS

@@ -7,6 +7,9 @@ export const DEFAULT_PREFERENCES = {
     dailyGoalReminders: true,
     healthCheckReminders: true,
   },
+  USE_WEEKEND_SCHEDULE: false,
+  WEEKDAY_STUDY_MINUTES: 240,
+  WEEKEND_STUDY_MINUTES: 240,
   TIER_DEFINITIONS: {
     1: 'High Priority - Core Topics',
     2: 'Medium Priority - Important Topics',

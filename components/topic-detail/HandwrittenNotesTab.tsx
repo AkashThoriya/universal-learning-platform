@@ -70,7 +70,7 @@ export function HandwrittenNotesTab({ userId, topicId }: HandwrittenNotesTabProp
     } finally {
       setLoading(false);
     }
-  }, [userId, topicId, hasLoaded, loading, toast]);
+  }, [userId, topicId, hasLoaded, loading, activeCourseId, toast]);
 
   // Trigger load when component mounts (lazy loading)
   useEffect(() => {

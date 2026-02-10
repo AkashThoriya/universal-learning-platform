@@ -123,6 +123,12 @@ export interface CourseSettings {
   reminderTime?: string;
   /** Active days for study (0=Sunday, 6=Saturday) */
   activeDays: number[];
+  /** Whether to use different schedule for weekends */
+  useWeekendSchedule?: boolean | undefined;
+  /** Study minutes for weekdays (Mon-Fri) */
+  weekdayStudyMinutes?: number | undefined;
+  /** Study minutes for weekends (Sat-Sun) */
+  weekendStudyMinutes?: number | undefined;
 }
 
 // =====================================================

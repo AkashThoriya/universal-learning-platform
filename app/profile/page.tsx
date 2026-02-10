@@ -31,6 +31,7 @@ import {
   Zap,
   Sun,
   Moon,
+  CheckCircle,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react';
@@ -67,8 +68,14 @@ import { AGE_LIMITS } from '@/lib/config/constants';
 import { DEFAULT_PREFERENCES } from '@/lib/config/defaults';
 import { getExamById } from '@/lib/data/exams-data';
 import { PROFILE_TABS } from '@/lib/data/ui-content';
-import { getUser, updateUser, getSyllabus, saveSyllabusForCourse } from '@/lib/firebase/firebase-utils';
+import {
+  getUser, updateUser, getSyllabus, saveSyllabusForCourse,
+  saveCourseSettings,
+  getCourse,
+} from '@/lib/firebase/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType, SelectedCourse } from '@/types/exam';
+import { PREFERRED_STUDY_TIMES } from '@/lib/config/constants';
+import { UserCourse } from '@/types/course-progress';
 import { CoursesTab } from '@/components/courses';
 
 /**
@@ -98,7 +105,7 @@ interface ProfileFormData {
   // Study Preferences
   preferences: {
     dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    preferredStudyTime: UserType['preferences']['preferredStudyTime'];
     tierDefinitions: {
       1: string;
       2: string;
@@ -110,6 +117,9 @@ interface ProfileFormData {
       dailyGoalReminders: boolean;
       healthCheckReminders: boolean;
     };
+    useWeekendSchedule?: boolean | undefined;
+    weekdayStudyMinutes?: number | undefined;
+    weekendStudyMinutes?: number | undefined;
   };
 
   // System Settings
@@ -173,28 +183,30 @@ const profileSchema = z.object({
         id: z.string(),
         name: z.string(),
         tier: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-        topics: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            subtopics: z
-              .array(
-                z.object({
-                  id: z.string(),
-                  name: z.string(),
-                  order: z.number().optional(),
-                  status: z.enum(['not_started', 'in_progress', 'completed', 'mastered']).optional(),
-                  needsReview: z.boolean().optional(),
-                  practiceCount: z.number().optional(),
-                  revisionCount: z.number().optional(),
-                  lastRevised: z.any().optional(),
-                })
-              )
-              .optional(),
-            estimatedHours: z.number().optional(),
-            description: z.string().optional(),
-          })
-        ),
+        topics: z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              subtopics: z
+                .array(
+                  z.object({
+                    id: z.string(),
+                    name: z.string(),
+                    order: z.number().optional(),
+                    status: z.enum(['not_started', 'in_progress', 'completed', 'mastered']).optional(),
+                    needsReview: z.boolean().optional(),
+                    practiceCount: z.number().optional(),
+                    revisionCount: z.number().optional(),
+                    lastRevised: z.any().optional(),
+                  })
+                )
+                .optional(),
+              estimatedHours: z.number().optional(),
+              description: z.string().optional(),
+            })
+        )
+          .optional(),
         estimatedHours: z.number().optional(),
         isCustom: z.boolean().optional(),
       })
@@ -222,6 +234,9 @@ const profileSchema = z.object({
       dailyGoalReminders: z.boolean(),
       healthCheckReminders: z.boolean(),
     }),
+    useWeekendSchedule: z.boolean().optional(),
+    weekdayStudyMinutes: z.number().optional(),
+    weekendStudyMinutes: z.number().optional(),
   }),
   settings: z.object({
     theme: z.enum(['light', 'dark', 'system']),
@@ -270,6 +285,9 @@ function ProfileContent() {
         tierDefinitions: { ...DEFAULT_PREFERENCES.TIER_DEFINITIONS } as any,
         revisionIntervals: [...DEFAULT_PREFERENCES.REVISION_INTERVALS],
         notifications: { ...DEFAULT_PREFERENCES.NOTIFICATIONS },
+        useWeekendSchedule: DEFAULT_PREFERENCES.USE_WEEKEND_SCHEDULE,
+        weekdayStudyMinutes: DEFAULT_PREFERENCES.WEEKDAY_STUDY_MINUTES,
+        weekendStudyMinutes: DEFAULT_PREFERENCES.WEEKDAY_STUDY_MINUTES, // Default to same as daily goal
       },
       settings: {
         theme: 'system' as const,
@@ -301,6 +319,13 @@ function ProfileContent() {
           getUser(user.uid), 
           getSyllabus(user.uid, activeCourseId || undefined)
         ]);
+
+        // Fetch active course settings if available
+        let activeCourseSettings = null;
+        if (activeCourseId) {
+          const course = await getCourse(user.uid, activeCourseId);
+          activeCourseSettings = course?.settings;
+        }
 
         if (fetchedUser) {
           setUserData(fetchedUser);
@@ -341,7 +366,9 @@ function ProfileContent() {
             syllabus: userSyllabus ?? [],
             preferences: {
               dailyStudyGoalMinutes:
-                fetchedUser.preferences?.dailyStudyGoalMinutes ?? DEFAULT_PREFERENCES.DAILY_STUDY_GOAL_MINUTES,
+                activeCourseSettings?.dailyGoalMinutes ??
+                fetchedUser.preferences?.dailyStudyGoalMinutes ??
+                DEFAULT_PREFERENCES.DAILY_STUDY_GOAL_MINUTES,
               preferredStudyTime:
                 fetchedUser.preferences?.preferredStudyTime ?? DEFAULT_PREFERENCES.PREFERRED_STUDY_TIME,
               tierDefinitions: { ...DEFAULT_PREFERENCES.TIER_DEFINITIONS } as any,
@@ -349,6 +376,9 @@ function ProfileContent() {
                 ...DEFAULT_PREFERENCES.REVISION_INTERVALS,
               ],
               notifications: fetchedUser.preferences?.notifications ?? { ...DEFAULT_PREFERENCES.NOTIFICATIONS },
+              useWeekendSchedule: activeCourseSettings?.useWeekendSchedule ?? fetchedUser.preferences?.useWeekendSchedule,
+              weekdayStudyMinutes: activeCourseSettings?.weekdayStudyMinutes ?? fetchedUser.preferences?.weekdayStudyMinutes,
+              weekendStudyMinutes: activeCourseSettings?.weekendStudyMinutes ?? fetchedUser.preferences?.weekendStudyMinutes,
             },
             settings: {
               theme: 'system',
@@ -372,7 +402,7 @@ function ProfileContent() {
     };
 
     loadUserData();
-  }, [user, form.setData, toast]);
+  }, [user, form.setData, toast, activeCourseId]);
 
   // Handle deep-link URL params (e.g., ?tab=exam&focus=prepDate)
   useEffect(() => {
@@ -569,6 +599,21 @@ function ProfileContent() {
       // Save syllabus to course-specific storage
       if (activeCourseId) {
         await saveSyllabusForCourse(user.uid, activeCourseId, form.data.syllabus);
+
+        // Also save settings to course-specific storage to ensure strategy engine uses updated prefs
+        // This is critical because courseSettings override global preferences
+        const courseSettings = {
+          dailyGoalMinutes: form.data.preferences.dailyStudyGoalMinutes,
+          weeklyGoalHours: Math.round((form.data.preferences.dailyStudyGoalMinutes * 7) / 60), // Recalculate based on prefs
+          useWeekendSchedule: form.data.preferences.useWeekendSchedule,
+          weekdayStudyMinutes: form.data.preferences.weekdayStudyMinutes,
+          weekendStudyMinutes: form.data.preferences.weekendStudyMinutes,
+          // Re-calculate weekly goal if granular
+          ...(form.data.preferences.useWeekendSchedule && {
+            weeklyGoalHours: Math.round(((form.data.preferences.weekdayStudyMinutes || 0) * 5 + (form.data.preferences.weekendStudyMinutes || 0) * 2) / 60)
+          })
+        };
+        await saveCourseSettings(user.uid, activeCourseId, courseSettings);
       }
 
       setHasUnsavedChanges(false);
@@ -1166,78 +1211,210 @@ function ProfileContent() {
                     <CardHeader>
                       <CardTitle className="flex items-center space-x-2">
                         <Target className="h-5 w-5 text-blue-600" />
-                        <span>Daily Goals</span>
+                        <span>Daily Goals & Schedule</span>
                       </CardTitle>
-                      <CardDescription>Set your commitment level</CardDescription>
+                      <CardDescription>Customize your study hours for weekdays and weekends</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <Label htmlFor="daily-goal">Daily Study Goal (Minutes) *</Label>
-                        <div className="flex items-center space-x-4">
-                          <Input
-                            id="daily-goal"
-                            type="number"
-                            inputMode="numeric"
-                            min="60"
-                            max="720"
-                            step="30"
-                            value={form.data.preferences.dailyStudyGoalMinutes}
-                            onChange={e =>
+                    <CardContent className="space-y-8">
+                      {/* Schedule Type Toggle */}
+                      <div className="space-y-3">
+                        <Label className="text-base font-medium">Schedule Flexibility</Label>
+                        <div className="flex gap-2 p-1 bg-muted rounded-lg w-full sm:w-fit">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const dailyMinutes = form.data.preferences.dailyStudyGoalMinutes;
                               form.updateField('preferences', {
                                 ...form.data.preferences,
-                                dailyStudyGoalMinutes: parseInt(e.target.value) ?? 240,
-                              })
-                            }
-                            className={validationErrors['preferences.dailyStudyGoalMinutes'] ? 'border-red-300' : ''}
-                          />
-                          <div className="text-sm text-gray-600">
-                            {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
-                            {form.data.preferences.dailyStudyGoalMinutes % 60}m
+                                useWeekendSchedule: false,
+                                // When switching to simple mode, sync all values
+                                weekdayStudyMinutes: dailyMinutes,
+                                weekendStudyMinutes: dailyMinutes
+                              });
+                            }}
+                            className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all ${!form.data.preferences.useWeekendSchedule
+                              ? 'bg-background shadow-sm text-foreground'
+                              : 'text-muted-foreground hover:text-foreground'
+                              }`}
+                          >
+                            Same hours every day
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // Initialize split with current daily average if not set
+                              const currentDaily = form.data.preferences.dailyStudyGoalMinutes;
+                              form.updateField('preferences', {
+                                ...form.data.preferences,
+                                useWeekendSchedule: true,
+                                weekdayStudyMinutes: form.data.preferences.weekdayStudyMinutes || currentDaily,
+                                weekendStudyMinutes: form.data.preferences.weekendStudyMinutes || currentDaily
+                              });
+                            }}
+                            className={`flex-1 sm:flex-none px-4 py-2 rounded-md text-sm font-medium transition-all ${form.data.preferences.useWeekendSchedule
+                              ? 'bg-background shadow-sm text-foreground'
+                              : 'text-muted-foreground hover:text-foreground'
+                              }`}
+                          >
+                            Different on weekends
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Daily Goal Input (Conditionally Rendered) */}
+                      {!form.data.preferences.useWeekendSchedule ? (
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <Label htmlFor="daily-goal">Daily Study Goal</Label>
+                            <span className="font-mono text-sm font-medium bg-primary/10 text-primary px-2 py-1 rounded">
+                              {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h {form.data.preferences.dailyStudyGoalMinutes % 60}m
+                            </span>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-4">
+                              <Input
+                                id="daily-goal-slider"
+                                type="range"
+                                min="60"
+                                max="720"
+                                step="15"
+                                value={form.data.preferences.dailyStudyGoalMinutes}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value);
+                                  form.updateField('preferences', {
+                                    ...form.data.preferences,
+                                    dailyStudyGoalMinutes: val,
+                                    weekdayStudyMinutes: val,
+                                    weekendStudyMinutes: val
+                                  });
+                                }}
+                                className="flex-1 cursor-pointer"
+                              />
+                            </div>
+                            <div className="flex justify-between text-xs text-muted-foreground px-1">
+                              <span>1h</span>
+                              <span>6h</span>
+                              <span>12h</span>
+                            </div>
+                          </div>
+
+                          {validationErrors['preferences.dailyStudyGoalMinutes'] && (
+                            <p className="text-sm text-red-600">
+                              {validationErrors['preferences.dailyStudyGoalMinutes']}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+                          {/* Weekday Slider */}
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                              <Label>Weekday (Mon-Fri)</Label>
+                              <span className="font-mono text-sm font-medium bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                                {Math.floor((form.data.preferences.weekdayStudyMinutes || 240) / 60)}h {(form.data.preferences.weekdayStudyMinutes || 240) % 60}m
+                              </span>
+                            </div>
+                            <Input
+                              type="range"
+                              min="30"
+                              max="720"
+                              step="15"
+                              value={form.data.preferences.weekdayStudyMinutes || 240}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                const weekendVal = form.data.preferences.weekendStudyMinutes || 240;
+                                // Update weighted average
+                                const newAverage = Math.round((val * 5 + weekendVal * 2) / 7);
+
+                                form.updateField('preferences', {
+                                  ...form.data.preferences,
+                                  weekdayStudyMinutes: val,
+                                  dailyStudyGoalMinutes: newAverage
+                                });
+                              }}
+                              className="cursor-pointer accent-blue-600"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Light (30m)</span>
+                              <span>Intense (12h)</span>
+                            </div>
+                          </div>
+
+                          {/* Weekend Slider */}
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                              <Label>Weekend (Sat-Sun)</Label>
+                              <span className="font-mono text-sm font-medium bg-purple-50 text-purple-700 px-2 py-1 rounded">
+                                {Math.floor((form.data.preferences.weekendStudyMinutes || 240) / 60)}h {(form.data.preferences.weekendStudyMinutes || 240) % 60}m
+                              </span>
+                            </div>
+                            <Input
+                              type="range"
+                              min="30"
+                              max="720"
+                              step="15"
+                              value={form.data.preferences.weekendStudyMinutes || 240}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                const weekdayVal = form.data.preferences.weekdayStudyMinutes || 240;
+                                // Update weighted average
+                                const newAverage = Math.round((weekdayVal * 5 + val * 2) / 7);
+
+                                form.updateField('preferences', {
+                                  ...form.data.preferences,
+                                  weekendStudyMinutes: val,
+                                  dailyStudyGoalMinutes: newAverage
+                                });
+                              }}
+                              className="cursor-pointer accent-purple-600"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Light (30m)</span>
+                              <span>Intense (12h)</span>
+                            </div>
+                          </div>
+
+                          <div className="md:col-span-2 pt-2">
+                            <p className="text-sm text-muted-foreground bg-muted/30 p-3 rounded border">
+                              <span className="font-semibold text-foreground">Weekly Average: </span>
+                              {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h {form.data.preferences.dailyStudyGoalMinutes % 60}m / day
+                            </p>
                           </div>
                         </div>
-                        {validationErrors['preferences.dailyStudyGoalMinutes'] && (
-                          <p className="text-sm text-red-600">
-                            {validationErrors['preferences.dailyStudyGoalMinutes']}
-                          </p>
-                        )}
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
 
                   {/* Preferred Study Time - Grid Section */}
                   <div className="space-y-4">
                     <Label className="text-base font-semibold">Preferred Study Time</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {(['morning', 'afternoon', 'evening', 'night'] as const).map(time => (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {PREFERRED_STUDY_TIMES.map((option) => (
                         <Card
-                          key={time}
+                          key={option.value}
                           className={`cursor-pointer transition-all duration-200 border relative overflow-hidden ${
-                            form.data.preferences.preferredStudyTime === time
+                            form.data.preferences.preferredStudyTime === option.value
                               ? 'border-primary ring-2 ring-primary bg-primary/5 shadow-md'
                               : 'border-muted hover:border-primary/50 hover:shadow-sm'
                           }`}
                           onClick={() =>
                             form.updateField('preferences', {
                               ...form.data.preferences,
-                              preferredStudyTime: time,
+                              preferredStudyTime: option.value as any,
                             })
                           }
                         >
-                          <CardContent className="p-4 text-center">
-                            <div className="mb-3">
-                              {time === 'morning' && <Sun className="h-7 w-7 mx-auto text-yellow-500" />}
-                              {time === 'afternoon' && <Sun className="h-7 w-7 mx-auto text-orange-500" />}
-                              {time === 'evening' && <Moon className="h-7 w-7 mx-auto text-purple-500" />}
-                              {time === 'night' && <Moon className="h-7 w-7 mx-auto text-blue-500" />}
-                            </div>
-                            <h4 className="font-semibold text-sm capitalize">{time}</h4>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {time === 'morning' && '6:00 - 12:00'}
-                              {time === 'afternoon' && '12:00 - 18:00'}
-                              {time === 'evening' && '18:00 - 22:00'}
-                              {time === 'night' && '22:00 - 6:00'}
-                            </p>
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center space-y-2">
+                            <span className="text-2xl">{option.icon}</span>
+                            <span className="font-medium text-sm">{option.label}</span>
                           </CardContent>
+
+                          {form.data.preferences.preferredStudyTime === option.value && (
+                            <div className="absolute top-2 right-2 text-primary">
+                              <CheckCircle className="h-4 w-4" />
+                            </div>
+                          )}
                         </Card>
                       ))}
                     </div>
@@ -1345,6 +1522,11 @@ function ProfileContent() {
                     <p>
                       <strong>Daily Goal:</strong> {Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60)}h{' '}
                       {form.data.preferences.dailyStudyGoalMinutes % 60}m
+                    </p>
+                    <p>
+                      <strong>Schedule Config:</strong> {form.data.preferences.useWeekendSchedule ?
+                        `Weekdays: ${Math.floor((form.data.preferences.weekdayStudyMinutes || 0) / 60)}h, Weekends: ${Math.floor((form.data.preferences.weekendStudyMinutes || 0) / 60)}h` :
+                        "Same every day"}
                     </p>
                     <p>
                       <strong>Preferred Time:</strong> {form.data.preferences.preferredStudyTime}

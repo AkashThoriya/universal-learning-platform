@@ -43,7 +43,7 @@ import { TopicProgress, SyllabusSubject } from '@/types/exam';
 
 export default function StrategyPage() {
   const { user } = useAuth();
-  const { activeCourseId } = useCourse();
+   const { activeCourse, activeCourseId } = useCourse();
   const [syllabus, setSyllabus] = useState<SyllabusSubject[]>([]);
   const [progress, setProgress] = useState<TopicProgress[]>([]);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -82,8 +82,16 @@ export default function StrategyPage() {
     const progressMap = new Map<string, TopicProgress>();
     progress.forEach(p => progressMap.set(p.topicId, p));
 
-    return calculateStrategyMetrics(userProfile, syllabus, completedTopicsCount, progressMap);
-  }, [userProfile, syllabus, completedTopicsCount, progress]);
+     return calculateStrategyMetrics(
+        userProfile,
+        syllabus,
+        completedTopicsCount,
+        progressMap,
+        activeCourse?.startedAt?.toDate(),
+        activeCourse?.targetDate?.toDate(),
+        activeCourse?.settings
+     );
+  }, [userProfile, syllabus, completedTopicsCount, progress, activeCourse]);
 
   if (loading) {
     return (
@@ -100,7 +108,7 @@ export default function StrategyPage() {
           <Navigation />
           <div className="max-w-4xl mx-auto p-6 pt-24 text-center">
             <h2 className="text-xl font-semibold mb-4">Configuration Required</h2>
-            <p className="text-muted-foreground mb-6">Please set your preparation start date to view strategy insights.</p>
+                <p className="text-muted-foreground mb-6">Please set your course start date to view strategy insights.</p>
             <Button asChild>
               <Link href="/profile">Go to Settings</Link>
             </Button>
@@ -158,6 +166,8 @@ export default function StrategyPage() {
       <div className="min-h-screen bg-slate-50 pb-20">
         <Navigation />
         <BottomNav />
+
+
 
         <PageTransition>
           <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-8">

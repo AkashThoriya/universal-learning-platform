@@ -80,7 +80,7 @@ export default function SubtopicDetailPage() {
     };
 
     fetchData();
-  }, [user, topicId, subjectId, subtopicIndex, toast]);
+  }, [user, topicId, subjectId, subtopicIndex, activeCourseId, toast]);
 
   const handleUpdate = async (updates: Partial<Subtopic>) => {
     if (!user || !subjectId || !subtopic) {

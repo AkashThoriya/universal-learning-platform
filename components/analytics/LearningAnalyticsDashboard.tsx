@@ -104,7 +104,7 @@ export default function LearningAnalyticsDashboard({ className }: LearningAnalyt
     };
 
     loadAnalyticsData();
-  }, [user]);
+  }, [user, activeCourseId]);
 
   if (!user) {
     return (

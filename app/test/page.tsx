@@ -149,7 +149,7 @@ function AdaptiveTestingPageContent() {
         variant: 'destructive',
       });
     }
-  }, [user?.uid, toast]);
+  }, [user?.uid, toast, activeCourseId]);
 
   const loadRecommendations = useCallback(async () => {
     if (!user?.uid) {
@@ -170,7 +170,7 @@ function AdaptiveTestingPageContent() {
     } finally {
       setLoadingRecommendations(false);
     }
-  }, [user?.uid]);
+  }, [user?.uid, activeCourseId]);
 
   // Load initial data
   useEffect(() => {

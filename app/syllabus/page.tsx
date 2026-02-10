@@ -25,6 +25,7 @@ import {
   Info,
   FileText,
   Check,
+  MessageSquareText,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -531,12 +532,20 @@ export default function SyllabusPage() {
                     </Button>
                   </div>
                 ) : (
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/notes-revision">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Revision Notes
-                    </Link>
-                  </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href="/interview-questions">
+                          <MessageSquareText className="h-4 w-4 mr-2" />
+                          Interview Questions
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href="/notes-revision">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Revision Notes
+                        </Link>
+                      </Button>
+                    </div>
                 )
               }
             />

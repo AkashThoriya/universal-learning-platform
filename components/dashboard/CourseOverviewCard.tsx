@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { CourseSwitcher } from '@/components/courses/CourseSwitcher';
 import { useCourse } from '@/contexts/CourseContext';
-import { AddCourseDialog } from '@/components/courses/AddCourseDialog';
+import Link from 'next/link';
 
 interface CourseOverviewCardProps {
   className?: string;
@@ -90,14 +90,12 @@ export function CourseOverviewCard({ onContinue }: CourseOverviewCardProps) {
             <Progress value={progressValue} className="h-2 mb-4" />
 
             <div className="flex gap-2">
-              <AddCourseDialog
-                trigger={
+              <Link href="/courses/add" className="w-full">
                   <Button variant="outline" size="sm" className="w-full text-xs font-medium">
                     <Plus className="h-3.5 w-3.5 mr-1.5" />
                     Add Course
                   </Button>
-                }
-              />
+              </Link>
               <Button
                 variant="default"
                 size="sm"

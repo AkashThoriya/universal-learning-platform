@@ -12,6 +12,7 @@ import PageTransition from '@/components/layout/PageTransition';
 import Navigation from '@/components/Navigation';
 import { TopicDetailSkeleton } from '@/components/skeletons';
 import { TopicContentTabs } from '@/components/topic-detail/TopicContentTabs';
+import { InterviewQuestionsSection } from '@/components/topic-detail/InterviewQuestionsSection';
 import { TopicDetailLayout } from '@/components/topic-detail/TopicDetailLayout';
 import { TopicHero } from '@/components/topic-detail/TopicHero';
 import { TopicStatsRail } from '@/components/topic-detail/TopicStatsRail';
@@ -349,16 +350,20 @@ export default function TopicDetailPage() {
           <TopicDetailLayout
             hero={<TopicHero topic={topic} subject={subject} progress={topicProgress} />}
             content={
-              <TopicContentTabs
-                topic={topic}
-                progress={topicProgress}
-                userNotes={userNotes}
-                saving={saving}
-                userId={user?.uid ?? ''}
-                onNotesChange={setUserNotes}
-                onSaveNotes={handleSaveNotes}
-                onToggleQuestion={handleToggleQuestion}
-              />
+              <div className="space-y-8">
+                <TopicContentTabs
+                  topic={topic}
+                  progress={topicProgress}
+                  userNotes={userNotes}
+                  saving={saving}
+                  userId={user?.uid ?? ''}
+                  onNotesChange={setUserNotes}
+                  onSaveNotes={handleSaveNotes}
+                  onToggleQuestion={handleToggleQuestion}
+                />
+
+                <InterviewQuestionsSection questions={topic.interviewQuestions || []} />
+              </div>
             }
             rail={
               <TopicStatsRail

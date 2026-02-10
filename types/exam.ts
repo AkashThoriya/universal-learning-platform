@@ -43,6 +43,8 @@ export interface Exam {
   totalEstimatedHours?: number;
   /** Recommended weekly study hours for optimal learning pace, optional */
   recommendedHoursPerWeek?: number;
+  /** Icon identifier (e.g., emoji or lucide icon name) */
+  icon?: string;
 }
 
 /**
@@ -254,6 +256,8 @@ export interface SyllabusTopic {
   mustNotMiss?: string[];
   /** Practice problems/questions for hands-on learning */
   practiceQuestions?: PracticeQuestion[];
+  /** Common interview questions for this topic */
+  interviewQuestions?: string[] | { question: string; answer: string }[];
 }
 
 /**
@@ -329,7 +333,10 @@ export interface User {
   /** All user preferences in one place */
   preferences: {
     dailyStudyGoalMinutes: number;
-    preferredStudyTime: 'morning' | 'afternoon' | 'evening' | 'night';
+    preferredStudyTime: 'early_morning' | 'morning' | 'afternoon' | 'evening' | 'night' | 'late_night';
+    useWeekendSchedule?: boolean | undefined;
+    weekdayStudyMinutes?: number | undefined;
+    weekendStudyMinutes?: number | undefined;
     theme: 'light' | 'dark' | 'system';
     revisionIntervals: number[];
     notifications: {

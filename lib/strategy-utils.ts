@@ -51,15 +51,43 @@ export function calculateStrategyMetrics(
   user: User,
   syllabus: SyllabusSubject[],
   completedTopicsCount: number,
-  topicProgressMap?: Map<string, TopicProgress>
+  topicProgressMap?: Map<string, TopicProgress>,
+  courseStartDate?: Date,
+  courseTargetDate?: Date,
+  courseSettings?: {
+    dailyGoalMinutes?: number;
+    useWeekendSchedule?: boolean;
+    weekdayStudyMinutes?: number;
+    weekendStudyMinutes?: number;
+    activeDays?: number[];
+  }
 ): StrategyMetrics | null {
   const today = new Date();
-  const startDate = user.preparationStartDate?.toDate();
+  const startDate = courseStartDate || user.preparationStartDate?.toDate();
 
   // Robustly resolve exam date
-  let targetDate: Date | undefined;
-  if (user.currentExam?.targetDate) {
+  let targetDate: Date | undefined = courseTargetDate;
+
+  // Only fallback to global user.currentExam if we are NOT in a specific course context
+  // (i.e., if no course-specific start date was passed)
+  if (!targetDate && !courseStartDate && user.currentExam?.targetDate) {
     targetDate = user.currentExam.targetDate.toDate();
+  }
+
+  // Sanity Check: If target date provides less than 2 days of prep time, assume it's an initialization error
+  // (e.g. inherited "Today" from default profile) and force the smart fallback.
+  if (targetDate && startDate) {
+    const diffTime = targetDate.getTime() - startDate.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    if (diffDays < 2) {
+       targetDate = undefined;
+    }
+  }
+
+  // Fallback: If no target date is set (or was invalid), assume 6 months from now
+  if (!targetDate) {
+    targetDate = new Date();
+    targetDate.setMonth(targetDate.getMonth() + 6);
   }
 
   const examDate = targetDate;
@@ -81,7 +109,17 @@ export function calculateStrategyMetrics(
   const requiredVelocity = remainingTopics / Math.max(1, daysRemaining); // Topics/Day
 
   // Projected Finish
-  const daysToFinishAtCurrentPace = currentVelocity > 0 ? Math.ceil(remainingTopics / currentVelocity) : 999;
+  let daysToFinishAtCurrentPace = 9999; // Default to "never" if velocity is 0
+  
+  if (currentVelocity > 0) {
+    daysToFinishAtCurrentPace = Math.ceil(remainingTopics / currentVelocity);
+  } else if (daysElapsed <= 7 && completedTopicsCount === 0) {
+    // New User Grace Period:
+    // If user is within first week and hasn't finished anything, avoid "Critical Delay" panic.
+    // Optimistically assume they will match the required pace to finish on time.
+    daysToFinishAtCurrentPace = daysRemaining;
+  }
+
   const projectedFinishDate = new Date(today.getTime() + daysToFinishAtCurrentPace * 24 * 60 * 60 * 1000);
 
   // Status Logic
@@ -158,12 +196,63 @@ export function calculateStrategyMetrics(
   // 3. Study Efficiency
   const totalStudyMinutes = Array.from(topicProgressMap?.values() || []).reduce((acc, p) => acc + (p.totalStudyTime || 0), 0);
   const totalStudyHours = totalStudyMinutes / 60;
-  const goalDailyMinutes = user.preferences?.dailyStudyGoalMinutes || 60;
-  const goalStudyHours = (goalDailyMinutes / 60) * daysElapsed;
+
+  // Granular Schedule Logic
+  let goalStudyMinutes = 0;
+  
+  // Use course-specific settings if available, otherwise fall back to user global preferences
+  const settings = {
+    dailyGoalMinutes: user.preferences?.dailyStudyGoalMinutes || 60,
+    useWeekendSchedule: user.preferences?.useWeekendSchedule || false,
+    weekdayStudyMinutes: user.preferences?.weekdayStudyMinutes,
+    weekendStudyMinutes: user.preferences?.weekendStudyMinutes,
+    activeDays: [0, 1, 2, 3, 4, 5, 6], // Default to all days
+    ...courseSettings // Override with course settings if provided
+  };
+
+  // Advanced Calculation: Iterate days to sum exact capacity
+  // We do this if we have granular weekend settings OR restricted active days
+  const hasGranularSchedule = settings.useWeekendSchedule && settings.weekdayStudyMinutes && settings.weekendStudyMinutes;
+  // If activeDays is explicitly a subset of the week (length < 7), we should use the loop
+  // Note: courseSettings.activeDays might be passed from Wizard
+  const hasRestrictedDays = settings.activeDays && settings.activeDays.length < 7;
+
+  if (hasGranularSchedule || hasRestrictedDays) {
+    const tempDate = new Date(startDate);
+    const endDate = new Date(today);
+    
+    // Safety check to prevent infinite loops if dates are messy
+    let loopCount = 0;
+    while (tempDate <= endDate && loopCount < 3650) { // Max 10 years
+       const day = tempDate.getDay();
+       const isActive = settings.activeDays.includes(day);
+
+       if (isActive) {
+         if (hasGranularSchedule) {
+            if (day === 0 || day === 6) {
+              goalStudyMinutes += settings.weekendStudyMinutes!;
+            } else {
+              goalStudyMinutes += settings.weekdayStudyMinutes!;
+            }
+         } else {
+            // Standard daily minutes, but only on active days
+            goalStudyMinutes += settings.dailyGoalMinutes;
+         }
+       }
+       
+       tempDate.setDate(tempDate.getDate() + 1);
+       loopCount++;
+    }
+  } else {
+    // Standard Calculation (Simple Average for full weeks)
+    goalStudyMinutes = settings.dailyGoalMinutes * daysElapsed;
+  }
+
+  const goalStudyHours = goalStudyMinutes / 60;
 
   const studyEfficiency: StudyEfficiency = {
-    actualHourlyPace: totalStudyHours / daysElapsed,
-    requiredHourlyPace: goalDailyMinutes / 60,
+    actualHourlyPace: totalStudyHours / Math.max(1, daysElapsed),
+    requiredHourlyPace: goalStudyMinutes / 60 / Math.max(1, daysElapsed),
     efficiencyRatio: goalStudyHours > 0 ? totalStudyHours / goalStudyHours : 0,
     totalStudyHours,
     goalStudyHours,

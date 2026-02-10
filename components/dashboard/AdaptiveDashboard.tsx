@@ -459,7 +459,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
     };
 
     loadDashboardData();
-  }, [timeOfDay, user?.uid]);
+  }, [timeOfDay, user?.uid, contextCourseId]);
 
   const handleCourseSwitch = async (courseId: string) => {
     if (!user || switchingCourse || courseId === activeCourseId) {

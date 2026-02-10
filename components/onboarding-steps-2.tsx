@@ -451,13 +451,26 @@ interface PreferencesStepProps {
   form: UseFormReturn<OnboardingFormData>;
 }
 
+import { PREFERRED_STUDY_TIMES } from '@/lib/config/constants';
+// ... (imports)
+
+// ... (keep PreferencesStepProps)
+
 export function PreferencesStep({ form }: PreferencesStepProps) {
   const [customInterval, setCustomInterval] = useState('');
+  const {
+    dailyStudyGoalMinutes,
+    useWeekendSchedule,
+    weekdayStudyMinutes,
+    weekendStudyMinutes,
+    preferredStudyTime,
+    revisionIntervals,
+  } = form.data.preferences;
 
   const addRevisionInterval = () => {
     const days = parseInt(customInterval);
-    if (days > 0 && !form.data.preferences.revisionIntervals.includes(days)) {
-      const newIntervals = [...form.data.preferences.revisionIntervals, days].sort((a, b) => a - b);
+    if (days > 0 && !revisionIntervals.includes(days)) {
+      const newIntervals = [...revisionIntervals, days].sort((a, b) => a - b);
       form.updateField('preferences', {
         ...form.data.preferences,
         revisionIntervals: newIntervals,
@@ -467,15 +480,21 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
   };
 
   const removeRevisionInterval = (days: number) => {
-    const newIntervals = form.data.preferences.revisionIntervals.filter((d: number) => d !== days);
+    const newIntervals = revisionIntervals.filter((d: number) => d !== days);
     form.updateField('preferences', {
       ...form.data.preferences,
       revisionIntervals: newIntervals,
     });
   };
 
-  const studyGoalHours = Math.floor(form.data.preferences.dailyStudyGoalMinutes / 60);
-  const studyGoalMinutes = form.data.preferences.dailyStudyGoalMinutes % 60;
+  const formatHours = (minutes: number) => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h${m > 0 ? ` ${m}m` : ''}`;
+  };
+
+  const studyGoalHours = Math.floor(dailyStudyGoalMinutes / 60);
+  const studyGoalMinutes = dailyStudyGoalMinutes % 60;
 
   return (
     <CardContent className="space-y-6">
@@ -489,27 +508,47 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
 
       {/* Daily Study Goal */}
       <div className="space-y-4">
-        <Label className="text-sm font-medium">Daily Study Goal</Label>
-        <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg flex items-center justify-between">
-          <div>
-            <div className="text-2xl font-bold text-indigo-700">
-              {studyGoalHours}h {studyGoalMinutes > 0 ? `${studyGoalMinutes}m` : ''}
-              <span className="text-base font-normal text-indigo-600 ml-1">per day</span>
+        <Label className="text-sm font-medium">Study Schedule</Label>
+
+        {useWeekendSchedule && weekdayStudyMinutes && weekendStudyMinutes ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+              <div className="text-sm text-indigo-600 font-medium mb-1">Weekdays (Mon-Fri)</div>
+              <div className="text-2xl font-bold text-indigo-700">
+                {formatHours(weekdayStudyMinutes)}
+                <span className="text-base font-normal text-indigo-600 ml-1">/day</span>
+              </div>
             </div>
-            <p className="text-xs text-indigo-600 mt-1">
-              Set based on your schedule in Step 2. You can adjust this later in settings.
-            </p>
+            <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
+              <div className="text-sm text-purple-600 font-medium mb-1">Weekends (Sat-Sun)</div>
+              <div className="text-2xl font-bold text-purple-700">
+                {formatHours(weekendStudyMinutes)}
+                <span className="text-base font-normal text-purple-600 ml-1">/day</span>
+              </div>
+            </div>
           </div>
-          <Target className="h-8 w-8 text-indigo-300" />
-        </div>
+        ) : (
+          <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg flex items-center justify-between">
+            <div>
+              <div className="text-2xl font-bold text-indigo-700">
+                {studyGoalHours}h {studyGoalMinutes > 0 ? `${studyGoalMinutes}m` : ''}
+                <span className="text-base font-normal text-indigo-600 ml-1">per day</span>
+              </div>
+              <p className="text-xs text-indigo-600 mt-1">
+                Set based on your schedule in Step 2. You can adjust this later in settings.
+              </p>
+            </div>
+            <Target className="h-8 w-8 text-indigo-300" />
+          </div>
+        )}
       </div>
 
       {/* Preferred Study Time */}
       <div className="space-y-2">
         <Label className="text-sm font-medium">Preferred Study Time</Label>
         <Select
-          value={form.data.preferences.preferredStudyTime}
-          onValueChange={(value: 'morning' | 'afternoon' | 'evening' | 'night') =>
+          value={preferredStudyTime}
+          onValueChange={(value: any) =>
             form.updateField('preferences', {
               ...form.data.preferences,
               preferredStudyTime: value,
@@ -520,30 +559,14 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="morning">
-              <div className="flex items-center space-x-2">
-                <span>🌅</span>
-                <span>Morning (6 AM - 12 PM)</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="afternoon">
-              <div className="flex items-center space-x-2">
-                <span>☀️</span>
-                <span>Afternoon (12 PM - 6 PM)</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="evening">
-              <div className="flex items-center space-x-2">
-                <span>🌇</span>
-                <span>Evening (6 PM - 10 PM)</span>
-              </div>
-            </SelectItem>
-            <SelectItem value="night">
-              <div className="flex items-center space-x-2">
-                <span>🌙</span>
-                <span>Night (10 PM - 2 AM)</span>
-              </div>
-            </SelectItem>
+            {PREFERRED_STUDY_TIMES.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                <div className="flex items-center space-x-2">
+                  <span>{option.icon}</span>
+                  <span>{option.label}</span>
+                </div>
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -553,7 +576,7 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
         <Label className="text-sm font-medium">Spaced Repetition Intervals (days)</Label>
 
         <div className="flex flex-wrap gap-2">
-          {form.data.preferences.revisionIntervals.map((days: number) => (
+          {revisionIntervals.map((days: number) => (
             <Badge key={days} variant="secondary" className="flex items-center space-x-1 px-2 py-1">
               <span>{days}d</span>
               <button onClick={() => removeRevisionInterval(days)} className="ml-1 text-gray-500 hover:text-red-600">
@@ -591,8 +614,6 @@ export function PreferencesStep({ form }: PreferencesStepProps) {
           </AlertDescription>
         </Alert>
       </div>
-
-      {/* Note: Notification Preferences removed - not currently implemented */}
 
       {/* Summary */}
       <Alert className="border-green-200 bg-green-50">

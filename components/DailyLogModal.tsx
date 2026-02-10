@@ -181,7 +181,7 @@ export default function DailyLogModal({ isOpen, onClose }: DailyLogModalProps) {
       // Check if today's log already exists
       loadExistingLog();
     }
-  }, [user, isOpen, loadExistingLog]);
+  }, [user, isOpen, loadExistingLog, activeCourseId]);
 
   const addStudySession = () => {
     setStudySessions(prev => [

@@ -1,0 +1,1255 @@
+{
+  "id": "databases_sql_by_rahul_grover",
+  "name": "Databases & SQL by Rahul Grover",
+  "description": "Comprehensive Databases and SQL course covering DBMS fundamentals, SQL commands, joins, subqueries, indexing, transactions, and schema design. Includes advanced analytics with window functions, CTEs, and database programmability - critical for backend engineering and interview preparation.",
+  "category": "Computer Science",
+  "totalEstimatedHours": 32,
+  "stages": [
+    {
+      "id": "foundation",
+      "name": "SQL Foundation Assessment",
+      "totalMarks": 100,
+      "duration": 180,
+      "sections": [
+        {
+          "id": "sql_basics",
+          "name": "SQL Basics & CRUD",
+          "maxMarks": 25,
+          "maxTime": 45,
+          "negativeMarking": 0
+        },
+        {
+          "id": "joins_subqueries",
+          "name": "Joins & Subqueries",
+          "maxMarks": 25,
+          "maxTime": 45,
+          "negativeMarking": 0
+        },
+        {
+          "id": "transactions_indexing",
+          "name": "Transactions & Indexing",
+          "maxMarks": 25,
+          "maxTime": 45,
+          "negativeMarking": 0
+        },
+        {
+          "id": "schema_design",
+          "name": "Schema Design & Normalization",
+          "maxMarks": 25,
+          "maxTime": 45,
+          "negativeMarking": 0
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced SQL Assessment",
+      "totalMarks": 150,
+      "duration": 270,
+      "sections": [
+        {
+          "id": "window_functions",
+          "name": "Window Functions & Analytics",
+          "maxMarks": 50,
+          "maxTime": 90,
+          "negativeMarking": 0
+        },
+        {
+          "id": "ctes_optimization",
+          "name": "CTEs & Query Optimization",
+          "maxMarks": 50,
+          "maxTime": 90,
+          "negativeMarking": 0
+        },
+        {
+          "id": "programmability",
+          "name": "Stored Procedures & Triggers",
+          "maxMarks": 50,
+          "maxTime": 90,
+          "negativeMarking": 0
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "introduction_dbms",
+      "name": "Introduction to DBMS",
+      "tier": 1,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "intro_to_dbms",
+          "name": "SQL 1: Intro to DBMS",
+          "estimatedHours": 2,
+          "description": "Understand the fundamentals of Database Management Systems - what they are, why we need them over simple file storage, and how relational databases organize data into tables with relationships. This lecture covers the foundation that everything else builds upon.",
+          "practiceQuestions": [
+            {
+              "name": "Combine Two Tables",
+              "slug": "combine-two-tables",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/combine-two-tables/"
+            }
+          ],
+          "learningTip": [
+            "Understand the WHY before the HOW - databases solve real problems that file systems cannot: concurrent access, data integrity, structured querying, and relationships between data",
+            "Think of a database as an organized filing cabinet with strict rules, while a file system is like throwing papers in a drawer",
+            "SQL is declarative - you describe WHAT you want (show me all users from Delhi), not HOW to get it (scan each row, check city field...)",
+            "RDBMS adds the 'R' for Relational - tables can reference each other using keys, creating a web of connected data"
+          ],
+          "mustNotMiss": [
+            "DBMS vs RDBMS: DBMS manages data, RDBMS specifically manages data in tables with relationships via foreign keys. All RDBMS are DBMS, but not vice versa.",
+            "DDL (Data Definition Language): CREATE, ALTER, DROP, TRUNCATE - these define the STRUCTURE of your database (tables, columns, schemas)",
+            "DML (Data Manipulation Language): SELECT, INSERT, UPDATE, DELETE - these work with the actual DATA inside tables",
+            "DCL (Data Control Language): GRANT, REVOKE - controls WHO can access WHAT data",
+            "TCL (Transaction Control Language): COMMIT, ROLLBACK, SAVEPOINT - controls HOW transactions are handled"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the difference between DBMS and RDBMS? Give examples of each.",
+              "answer": "**DBMS** stores data as files, suitable for single-user/small apps. \n\n**RDBMS** stores data in tables with enforced relationships (FKs). \n\n**Key Senior Difference:** RDBMS supports **Horizontal vs Vertical Scalability**, **ACID properties** for transaction safety, and handles complex **multi-user concurrency** which file systems cannot."
+            },
+            {
+              "question": "Explain DDL, DML, DCL, and TCL commands with examples of each.",
+              "answer": "**DDL (Data Definition Language):** Defines structure. `CREATE` (tables), `ALTER` (modify columns), `DROP` (delete structure), `TRUNCATE` (wipe data). \n\n**DML (Data Manipulation Language):** Manipulates data. `SELECT` (read), `INSERT` (add), `UPDATE` (modify), `DELETE` (remove rows). \n\n**DCL (Data Control Language):** Controls access/permissions. `GRANT` (give access), `REVOKE` (remove access). \n\n**TCL (Transaction Control Language):** Manages transaction integrity. `COMMIT` (save), `ROLLBACK` (undo), `SAVEPOINT` (checkpoint)."
+            },
+            {
+              "question": "Why is RDBMS preferred over file systems for large-scale applications?",
+              "answer": "RDBMS provides **ACID compliance** (Atomicity, Consistency, Isolation, Durability) ensuring data integrity. It offers structured **Querying (SQL)** which is faster and more powerful than file parsing. It supports **Concurrency** (multiple users), **Security** (access controls), **Backup/Recovery**, and **Constraints** to prevent bad data. File systems lack these robust features."
+            },
+            {
+              "question": "What is the difference between DELETE, TRUNCATE, and DROP?",
+              "answer": "**DELETE** is DML. Deletes specific rows (`WHERE` clause). Logs every row deletion (slower). Can be rolled back. Triggers fire. \n\n**TRUNCATE** is DDL. Removes ALL rows from a table. Resets identity counters. Minimal logging (faster). Cannot be rolled back (in some DBs). Triggers do NOT fire. \n\n**DROP** is DDL. Removes the entire table structure and data from existence."
+            },
+            {
+              "question": "Explain the role of a Query Optimizer in a database.",
+              "answer": "The Optimizer converts declarative SQL into an efficient **execution plan**. \n\nIt uses **Cost-Based Optimization (CBO)**: estimating the cost of different paths (Full Table Scan vs Index Scan, Nested Loop vs Hash Join) based on table **statistics** (cardinality, histogram distribution) to pick the cheapest route."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "keys_constraints",
+      "name": "Keys & Constraints",
+      "tier": 1,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "lab_session_keys",
+          "name": "SQL 2: Lab Session on Keys",
+          "estimatedHours": 2,
+          "description": "Hands-on practice with database keys - the building blocks that ensure data integrity and establish relationships between tables. Master Primary Keys, Foreign Keys, Unique Keys, Candidate Keys, and Composite Keys through practical exercises.",
+          "practiceQuestions": [
+            {
+              "name": "Delete Duplicate Emails",
+              "slug": "delete-duplicate-emails",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/delete-duplicate-emails/"
+            },
+            {
+              "name": "Duplicate Emails",
+              "slug": "duplicate-emails",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/duplicate-emails/"
+            },
+            {
+              "name": "Primary Department for Each Employee",
+              "slug": "primary-department-for-each-employee",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/primary-department-for-each-employee/"
+            },
+            {
+              "name": "Recyclable and Low Fat Products",
+              "slug": "recyclable-and-low-fat-products",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/recyclable-and-low-fat-products/"
+            },
+            {
+              "name": "Invalid Tweets",
+              "slug": "invalid-tweets",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/invalid-tweets/"
+            }
+          ],
+          "learningTip": [
+            "Think of Primary Key as your Aadhar Card - unique, never null, one per person (table). It's the 'official ID' of each row.",
+            "Foreign Key is like saying 'refer to that person's Aadhar' - it creates a link between two tables. If you delete the referenced row, the foreign key becomes orphaned.",
+            "Unique Key is like PAN card - unique values, but you can have multiple unique keys in a table, and they CAN be null (unlike PK).",
+            "Constraints are your first line of defense against bad data - they enforce rules at the database level, so your application doesn't have to."
+          ],
+          "mustNotMiss": [
+            "Primary Key = UNIQUE + NOT NULL + Only ONE per table. The unique identifier for every row. Example: user_id, order_id",
+            "Unique Key = UNIQUE values, but CAN contain ONE NULL, and you can have MULTIPLE unique keys per table. Example: email, phone number",
+            "Candidate Key = Any column/combination that COULD be a primary key (meets uniqueness requirement). You pick ONE to be PK, rest are candidates.",
+            "Composite Key = A primary key made from MULTIPLE columns together. Example: (student_id, course_id) for enrollment table",
+            "Foreign Key = References the primary key of ANOTHER table. This creates the 'relationship' in relational database. Enforces referential integrity."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Difference between Primary Key, Unique Key, and Candidate Key?",
+              "answer": "**Primary Key (PK):** Unique identifier for a row. Cannot be NULL. Only ONE per table. \n\n**Unique Key (UK):** Ensures uniqueness of values. Can accept one NULL (DB dependent). Multiple UKs allowed per table. \n\n**Candidate Key:** Any column(s) that *could* uniquely identify a row. The PK is chosen *from* these candidates. The others become 'Alternate Keys'."
+            },
+            {
+              "question": "Can a Primary Key contain NULL values? Can a Unique Key contain NULL values?",
+              "answer": "**Primary Key:** NO. It must be unique and NOT NULL. \n\n**Unique Key:** YES. Standard SQL allows NULLs in a Unique constraint (since NULL != NULL). However, SQL Server allows only one NULL; Postgres/Oracle allow multiple."
+            },
+            {
+              "question": "What is a Composite Key? When should you use it?",
+              "answer": "A **Composite Key** is a Primary Key composed of two or more columns. It is used when a single column cannot uniquely identify a record. \n\nExample: In an `Enrollments` table, `Student_ID` repeats and `Course_ID` repeats. But the pair `(Student_ID, Course_ID)` is unique."
+            },
+            {
+              "question": "What happens when you delete a row that is referenced by a Foreign Key?",
+              "answer": "It depends on the constraint: \n1. **RESTRICT / NO ACTION (Default):** Error is thrown; deletion is blocked. \n2. **CASCADE:** Child rows referencing the deleted parent are *also* deleted. \n3. **SET NULL:** Child FK columns are set to NULL. \n4. **SET DEFAULT:** Child FK columns are set to a default value."
+            },
+            {
+              "question": "Explain ON DELETE CASCADE vs ON DELETE SET NULL.",
+              "answer": "**ON DELETE CASCADE** deletes dependent child records automatically (e.g., deleting an Order also deletes OrderItems). \n\n**ON DELETE SET NULL** keeps the child records but removes the link (e.g., deleting a Project Manager sets the 'Manager_ID' of employees to NULL)."
+            },
+            {
+              "question": "Can a table have multiple Primary Keys? Multiple Foreign Keys?",
+              "answer": "**Primary Key:** NO. A table can have only ONE Primary Key (though it can be composite). \n\n**Foreign Keys:** YES. A table can have multiple Foreign Keys referencing different tables (e.g., an Order references both `User_ID` and `Product_ID`)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "crud_operations",
+      "name": "CRUD Operations",
+      "tier": 1,
+      "estimatedHours": 4,
+      "topics": [
+        {
+          "id": "crud_part_1",
+          "name": "SQL 3: CRUD - Part 1",
+          "estimatedHours": 2,
+          "description": "Master the four fundamental database operations: Create (INSERT), Read (SELECT), Update (UPDATE), Delete (DELETE). Learn SELECT with DISTINCT, WHERE clauses with various operators, pattern matching with LIKE, and understand why SQL query execution order is different from how you write it.",
+          "practiceQuestions": [
+            {
+              "name": "Big Countries",
+              "slug": "big-countries",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/big-countries/"
+            },
+            {
+              "name": "Find Customer Referee",
+              "slug": "find-customer-referee",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-customer-referee/"
+            },
+            {
+              "name": "Article Views I",
+              "slug": "article-views-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/article-views-i/"
+            },
+            {
+              "name": "Not Boring Movies",
+              "slug": "not-boring-movies",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/not-boring-movies/"
+            }
+          ],
+          "learningTip": [
+            "SQL does NOT execute left-to-right! Write: SELECT → FROM → WHERE. Executes: FROM (which table?) → WHERE (filter rows) → SELECT (which columns?)",
+            "DISTINCT is expensive because database must compare every row - use only when you genuinely need unique values",
+            "NULL is special - it's not zero, not empty string, it's 'unknown'. You can't use = with NULL, you must use IS NULL or IS NOT NULL",
+            "LIKE patterns: % matches any number of characters (including zero), _ matches exactly one character"
+          ],
+          "mustNotMiss": [
+            "SELECT DISTINCT column FROM table - removes duplicate VALUES in that column. Be careful: DISTINCT applies to the entire row if you select multiple columns.",
+            "WHERE column LIKE 'A%' - starts with A (any characters after). 'A%' matches 'A', 'Apple', 'Astronomy'",
+            "WHERE column LIKE '%son' - ends with 'son'. Matches 'Jason', 'son', 'Personson'",
+            "WHERE column LIKE '_a%' - second character is 'a'. The underscore _ is exactly ONE character. Matches 'Bangalore', 'ca', 'Zaheer'",
+            "Logical Execution Order: FROM → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT. This is why you can't use alias in WHERE!"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Write a query to select unique records from a table using DISTINCT.",
+              "answer": "`SELECT DISTINCT column1, column2 FROM TableName;` \n\nNote: DISTINCT applies to the combination of ALL selected columns. It removes rows where the values of *all* listed columns are identical."
+            },
+            {
+              "question": "How does the LIKE operator work with wildcards (%) and (_)?",
+              "answer": "`LIKE` performs pattern matching. \n\n1. **% (Percent):** Matches zero, one, or multiple characters. Example: `'A%'` matches 'A', 'Apple', 'Ant'. \n2. **_ (Underscore):** Matches exactly ONE character. Example: `'_a'` matches 'ta', 'pa' but NOT 'tea'."
+            },
+            {
+              "question": "What is the order of execution for an SQL query?",
+              "answer": "Logical processing order: \n1. **FROM / JOIN** (Identify data source) \n2. **WHERE** (Filter rows) \n3. **GROUP BY** (Aggregate) \n4. **HAVING** (Filter groups) \n5. **SELECT** (Choose columns) \n6. **DISTINCT** (Remove duplicates) \n7. **ORDER BY** (Sort) \n8. **LIMIT / OFFSET** (Pagination)"
+            },
+            {
+              "question": "Why can't you use a column alias in the WHERE clause?",
+              "answer": "Because `WHERE` runs **before** `SELECT` (where the alias is created). The database doesn't know the alias exists yet. \n\nYou *can* use aliases in `GROUP BY`, `ORDER BY`, or `HAVING` (in MySQL) because they run after aliases are defined."
+            },
+            {
+              "question": "What is the difference between WHERE column = NULL and WHERE column IS NULL?",
+              "answer": "`WHERE column = NULL` always returns FALSE/Unknown processing because NULL represents an 'unknown' value, and 'unknown' cannot be equal to 'unknown'. \n\n`WHERE column IS NULL` is the only correct way to check for missing values."
+            }
+          ]
+        },
+        {
+          "id": "lab_session_2",
+          "name": "SQL 4: Lab Session 2 - Aggregations & Grouping",
+          "estimatedHours": 2,
+          "description": "Intensive hands-on practice with GROUP BY for categorizing data, aggregate functions (COUNT, SUM, AVG, MIN, MAX) for calculations, HAVING for filtering groups, and ORDER BY for sorting. These are the bread-and-butter of data analysis queries.",
+          "practiceQuestions": [
+            {
+              "name": "Classes More Than 5 Students",
+              "slug": "classes-more-than-5-students",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/classes-more-than-5-students/"
+            },
+            {
+              "name": "Customer Placing the Largest Number of Orders",
+              "slug": "customer-placing-the-largest-number-of-orders",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/customer-placing-the-largest-number-of-orders/"
+            },
+            {
+              "name": "Game Play Analysis I",
+              "slug": "game-play-analysis-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/game-play-analysis-i/"
+            },
+            {
+              "name": "Daily Leads and Partners",
+              "slug": "daily-leads-and-partners",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/daily-leads-and-partners/"
+            },
+            {
+              "name": "Find Followers Count",
+              "slug": "find-followers-count",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-followers-count/"
+            },
+            {
+              "name": "Actors and Directors Who Cooperated At Least Three Times",
+              "slug": "actors-and-directors-who-cooperated-at-least-three-times",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/actors-and-directors-who-cooperated-at-least-three-times/"
+            },
+            {
+              "name": "Top Travellers",
+              "slug": "top-travellers",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/top-travellers/"
+            },
+            {
+              "name": "Group Sold Products By The Date",
+              "slug": "group-sold-products-by-the-date",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/group-sold-products-by-the-date/"
+            }
+          ],
+          "learningTip": [
+            "GROUP BY creates 'buckets' - imagine putting all employees in different buckets by department. Each bucket is processed separately.",
+            "Aggregate functions calculate ONE value per bucket: COUNT counts rows, SUM adds values, AVG averages, MIN/MAX find extremes",
+            "WHERE happens BEFORE grouping (filters individual rows), HAVING happens AFTER grouping (filters entire groups). This is the #1 interview question about aggregations!",
+            "ORDER BY at the end lets you sort the final result. ASC is default (smallest first), DESC for largest first."
+          ],
+          "mustNotMiss": [
+            "COUNT(*) counts ALL rows including NULLs. COUNT(column) counts only NON-NULL values in that column. Important distinction!",
+            "GROUP BY rule: Every column in SELECT must either be in GROUP BY or inside an aggregate function. You can't SELECT employee_name if you GROUP BY department.",
+            "WHERE filters BEFORE aggregation (WHERE salary > 50000). HAVING filters AFTER aggregation (HAVING COUNT(*) > 5). Different purposes!",
+            "ORDER BY column1 ASC, column2 DESC - sort by first column ascending, then within ties, sort by second column descending",
+            "LIMIT n OFFSET m - skip first m rows, return next n rows. Essential for pagination: page 2 of 10 results = LIMIT 10 OFFSET 10"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Write a query using GROUP BY to count employees in each department.",
+              "answer": "`SELECT Department, COUNT(*) FROM Employees GROUP BY Department;`"
+            },
+            {
+              "question": "What is the difference between WHERE and HAVING clauses?",
+              "answer": "**WHERE** filters individual **rows** *before* grouping. It cannot check aggregate values (e.g., `WHERE COUNT(*) > 5` is illegal). \n\n**HAVING** filters **groups** *after* grouping. It acts on the results of aggregates (e.g., `HAVING COUNT(*) > 5` is valid)."
+            },
+            {
+              "question": "How do you sort results by multiple columns (e.g., Department ASC, Salary DESC)?",
+              "answer": "`SELECT * FROM Employees ORDER BY Department ASC, Salary DESC;` \n\nThis first sorts everything by Department A-Z. Then, *within* each department, it sorts employees by Salary High-to-Low."
+            },
+            {
+              "question": "What is the difference between COUNT(*) and COUNT(column_name)?",
+              "answer": "**COUNT(*)** counts ALL rows, including those with NULLs. \n\n**COUNT(column)** counts only rows where that specific column is NOT NULL."
+            },
+            {
+              "question": "Can you use an aggregate function in the WHERE clause? Why or why not?",
+              "answer": "**NO.** The `WHERE` clause is processed before aggregation occurs. The database hasn't calculated the SUM or COUNT yet, so it can't filter by it. You must use `HAVING`."
+            },
+            {
+              "question": "Write a query to find the department with the highest average salary.",
+              "answer": "```sql\nSELECT Department, AVG(Salary) as AvgSal \nFROM Employees \nGROUP BY Department \nORDER BY AvgSal DESC \nLIMIT 1;\n```"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "joins",
+      "name": "SQL Joins",
+      "tier": 2,
+      "estimatedHours": 4,
+      "topics": [
+        {
+          "id": "joins_fundamentals",
+          "name": "SQL 5: Joins",
+          "estimatedHours": 2,
+          "description": "Master all types of SQL joins - the mechanism for combining data from multiple tables. Understand INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, and SELF JOIN. This is one of the most tested topics in SQL interviews.",
+          "practiceQuestions": [
+            {
+              "name": "Employees Earning More Than Their Managers",
+              "slug": "employees-earning-more-than-their-managers",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/employees-earning-more-than-their-managers/"
+            },
+            {
+              "name": "Rising Temperature",
+              "slug": "rising-temperature",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rising-temperature/"
+            },
+            {
+              "name": "Product Sales Analysis I",
+              "slug": "product-sales-analysis-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/product-sales-analysis-i/"
+            }
+          ],
+          "learningTip": [
+            "Visualize joins with Venn diagrams - INNER is the overlapping center, LEFT is left circle entirely, RIGHT is right circle entirely, FULL is both circles",
+            "INNER JOIN = 'Give me only rows that have a match in BOTH tables'. If an order has no customer, it's excluded. If a customer has no orders, excluded.",
+            "LEFT JOIN = 'Give me ALL rows from left table, and matching rows from right. If no match, fill right columns with NULL.'",
+            "SELF JOIN is joining a table to itself using aliases. Classic use: comparing employee salary to their manager's salary."
+          ],
+          "mustNotMiss": [
+            "INNER JOIN: Returns ONLY rows where there's a match in BOTH tables. Most restrictive - if either side is missing, row is excluded.",
+            "LEFT JOIN (LEFT OUTER JOIN): ALL rows from left table + matching from right. If no match, right side columns are NULL.",
+            "RIGHT JOIN (RIGHT OUTER JOIN): ALL rows from right table + matching from left. If no match, left side columns are NULL. (You can always rewrite as LEFT JOIN)",
+            "FULL OUTER JOIN: ALL rows from BOTH tables. If no match, NULLs on the side that's missing. (Not supported in MySQL, use UNION of LEFT and RIGHT)",
+            "SELF JOIN pattern: FROM employees e1 JOIN employees e2 ON e1.manager_id = e2.employee_id - comparing rows within the same table"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Explain Inner Join vs. Left Join vs. Right Join vs. Full Outer Join with examples.",
+              "answer": "**INNER JOIN:** Matching rows in BOTH tables only. \n\n**LEFT JOIN:** All rows from Left table + matching Right rows (or NULL). \n\n**RIGHT JOIN:** All rows from Right table + matching Left rows (or NULL). \n\n**FULL JOIN:** All rows from BOTH tables (Union of Left & Right)."
+            },
+            {
+              "question": "Write a Self-Join query to find employees who earn more than their managers.",
+              "answer": "```sql\nSELECT e.Name \nFROM Employees e \nJOIN Employees m ON e.ManagerID = m.ID \nWHERE e.Salary > m.Salary;\n```"
+            },
+            {
+              "question": "What is a Cartesian Product (Cross Join) and when does it happen implicitly?",
+              "answer": "It combines EVERY row of Table A with EVERY row of Table B. Result Size = (Rows in A) * (Rows in B). \n\nHappens implicitly if you list tables in `FROM` without a `WHERE` or `ON` clause: \n`SELECT * FROM TableA, TableB;`"
+            },
+            {
+              "question": "How would you implement FULL OUTER JOIN in MySQL which doesn't support it natively?",
+              "answer": "By taking the **UNION** of a LEFT JOIN and a RIGHT JOIN: \n```sql\nSELECT * FROM A LEFT JOIN B ON A.id = B.id \nUNION \nSELECT * FROM A RIGHT JOIN B ON A.id = B.id;\n```"
+            },
+            {
+              "question": "What's the difference between JOIN ON and JOIN USING?",
+              "answer": "**ON:** General purpose. Can compare different column names (`t1.id = t2.student_id`). \n\n**USING:** Shorthand when both tables have the **same column name** (`USING(id)`). Also simplifies the result set by merging the two id columns."
+            },
+            {
+              "question": "Can you join more than two tables? How?",
+              "answer": "**YES.** Chained joins: \n`FROM A JOIN B ON A.id = B.a_id JOIN C ON B.id = C.b_id` \n\nThe result of (A+B) is treated as a temporary source to join with C."
+            }
+          ]
+        },
+        {
+          "id": "lab_session_3",
+          "name": "SQL 6: Lab Session 3 - Advanced Joins Practice",
+          "estimatedHours": 2,
+          "description": "Intensive practice with complex join scenarios - finding records that don't have matches (orphans), identifying duplicates, combining data from 3+ tables, and solving real-world data relationship problems. Heavy practice session!",
+          "practiceQuestions": [
+            {
+              "name": "Customers Who Never Order",
+              "slug": "customers-who-never-order",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/customers-who-never-order/"
+            },
+            {
+              "name": "Employee Bonus",
+              "slug": "employee-bonus",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/employee-bonus/"
+            },
+            {
+              "name": "Students and Examinations",
+              "slug": "students-and-examinations",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/students-and-examinations/"
+            },
+            {
+              "name": "Sales Person",
+              "slug": "sales-person",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/sales-person/"
+            },
+            {
+              "name": "Replace Employee ID With The Unique Identifier",
+              "slug": "replace-employee-id-with-the-unique-identifier",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/replace-employee-id-with-the-unique-identifier/"
+            },
+            {
+              "name": "Managers with at Least 5 Direct Reports",
+              "slug": "managers-with-at-least-5-direct-reports",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/managers-with-at-least-5-direct-reports/"
+            },
+            {
+              "name": "Confirmation Rate",
+              "slug": "confirmation-rate",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/confirmation-rate/"
+            },
+            {
+              "name": "Average Time of Process per Machine",
+              "slug": "average-time-of-process-per-machine",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/average-time-of-process-per-machine/"
+            },
+            {
+              "name": "Product Sales Analysis III",
+              "slug": "product-sales-analysis-iii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/product-sales-analysis-iii/"
+            },
+            {
+              "name": "Customer Who Visited but Did Not Make Any Transactions",
+              "slug": "customer-who-visited-but-did-not-make-any-transactions",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/customer-who-visited-but-did-not-make-any-transactions/"
+            }
+          ],
+          "learningTip": [
+            "Anti-join pattern (finding orphans): LEFT JOIN + WHERE right_table.id IS NULL. This finds all customers with NO orders.",
+            "Duplicate detection: GROUP BY the column, HAVING COUNT(*) > 1. This groups identical values and filters groups with more than one row.",
+            "Multiple table joins: You can chain joins. FROM A JOIN B ON ... JOIN C ON ... Each join adds another table to the result.",
+            "Always draw the relationship diagram before writing complex joins - it helps visualize which key links to which."
+          ],
+          "mustNotMiss": [
+            "Find orphans (anti-join): SELECT c.* FROM customers c LEFT JOIN orders o ON c.id = o.customer_id WHERE o.id IS NULL",
+            "Find duplicates: SELECT email, COUNT(*) FROM users GROUP BY email HAVING COUNT(*) > 1",
+            "Table aliasing for readability: FROM employees e JOIN departments d ON e.dept_id = d.id - short names make complex queries readable",
+            "Chaining multiple joins: FROM orders o JOIN customers c ON o.cust_id = c.id JOIN products p ON o.prod_id = p.id",
+            "LEFT JOIN + IS NULL is the anti-join pattern - 'give me A rows that have NO match in B'"
+          ],
+          "interviewQuestions": [
+            "Find all customers who have never placed an order (using LEFT JOIN).",
+            "Write a query to find duplicate email addresses in a Users table.",
+            "How do you find records in table A that have no match in table B?",
+            "Write a query to list products that have never been ordered.",
+            "Find employees who belong to departments that have more than 5 employees.",
+            "How would you optimize a query that joins 5+ tables?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "subqueries_views",
+      "name": "Subqueries & Views",
+      "tier": 2,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "subqueries_and_views",
+          "name": "SQL 7: Subqueries and Views",
+          "estimatedHours": 2,
+          "description": "Master the art of nested queries - queries within queries that allow you to compute intermediate results and use them in your main query. Also learn Views as a way to save complex queries as virtual tables for reuse and security.",
+          "practiceQuestions": [
+            {
+              "name": "Second Highest Salary",
+              "slug": "second-highest-salary",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/second-highest-salary/"
+            },
+            {
+              "name": "Nth Highest Salary",
+              "slug": "nth-highest-salary",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/nth-highest-salary/"
+            },
+            {
+              "name": "Department Highest Salary",
+              "slug": "department-highest-salary",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/department-highest-salary/"
+            },
+            {
+              "name": "Immediate Food Delivery II",
+              "slug": "immediate-food-delivery-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/immediate-food-delivery-ii/"
+            }
+          ],
+          "learningTip": [
+            "Non-correlated subquery runs ONCE, returns a value, outer query uses it. Like computing MAX salary once, then finding all employees with that salary.",
+            "Correlated subquery runs ONCE PER ROW of outer query - it references outer query's columns. Much slower but sometimes necessary.",
+            "Views are 'saved queries' that act like tables. CREATE VIEW high_earners AS SELECT * FROM emp WHERE salary > 100000. Then: SELECT * FROM high_earners",
+            "Use subqueries when you need to compute something (max, avg) then use the result in a comparison."
+          ],
+          "mustNotMiss": [
+            "Non-correlated: SELECT * FROM employees WHERE salary = (SELECT MAX(salary) FROM employees) - inner query runs once, doesn't reference outer",
+            "Correlated: SELECT e.* FROM employees e WHERE e.salary > (SELECT AVG(salary) FROM employees WHERE dept = e.dept) - inner query uses e.dept from outer",
+            "Second highest salary: SELECT MAX(salary) FROM emp WHERE salary < (SELECT MAX(salary) FROM emp) - neat pattern for Nth highest",
+            "CREATE VIEW view_name AS SELECT ... - creates a virtual table. SELECT * FROM view_name works like selecting from a table",
+            "Simple views (single table, no aggregates) are updatable. Complex views (joins, aggregates, DISTINCT) are read-only."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Difference between a Correlated Subquery and a Non-Correlated Subquery?",
+              "answer": "**Non-Correlated:** Independent of outer query. Runs once total. Efficient. \n\n**Correlated:** References columns from the outer query. Runs *once for every row* of the outer query. Can be very slow."
+            },
+            {
+              "question": "Find the second highest salary using a subquery.",
+              "answer": "`SELECT MAX(Salary) FROM Employee WHERE Salary < (SELECT MAX(Salary) FROM Employee);`"
+            },
+            {
+              "question": "What is a View? Can you update data through a View?",
+              "answer": "A View is a virtual table (saved query). \n\n**Updateable:** YES, if it maps 1:1 to a table (Simple View). \n**Read-Only:** NO, if it contains joins, aggregates, DISTINCT, or GROUP BY (Complex View)."
+            },
+            {
+              "question": "When would you use a subquery vs a JOIN?",
+              "answer": "Use **JOIN** to select columns from multiple tables (generally faster). \nUse **Subquery** to filter data based on a calculation (e.g., 'where salary > average') or for existence checks (`EXISTS`)."
+            },
+            {
+              "question": "Write a subquery to find employees earning above their department average.",
+              "answer": "```sql\nSELECT Name, Salary \nFROM Employees e \nWHERE Salary > (\n    SELECT AVG(Salary) \n    FROM Employees \n    WHERE DeptID = e.DeptID\n);\n```"
+            },
+            {
+              "question": "What are the advantages of using Views for security?",
+              "answer": "Views allow **row/column level security**. You can give a user access to a View that shows only 'public' columns (Name, Email) while restricting access to the underlying table that contains sensitive data (Salary, Password)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "indexing",
+      "name": "Indexing",
+      "tier": 2,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "indexing_fundamentals",
+          "name": "SQL 8: Indexing",
+          "estimatedHours": 2,
+          "description": "Deep dive into database indexing - the secret sauce that makes databases fast. Understand how indexes work internally (B-Tree structure), when to use them, when NOT to use them, and how they trade write performance for read performance.",
+          "practiceQuestions": [
+            {
+              "name": "Biggest Single Number",
+              "slug": "biggest-single-number",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/biggest-single-number/"
+            }
+          ],
+          "learningTip": [
+            "Index is like a book's index at the back - instead of scanning every page for 'recursion', you check the index: 'Recursion: pages 45, 67, 123'",
+            "Without index: Full table scan = check EVERY row. O(n). With index: B-Tree lookup = O(log n). Massive difference at scale!",
+            "Trade-off: Indexes speed up SELECT but slow down INSERT/UPDATE/DELETE because the index must also be updated.",
+            "Index columns that are frequently in WHERE, JOIN ON, and ORDER BY clauses. Don't index columns you write to often but rarely query."
+          ],
+          "mustNotMiss": [
+            "Clustered Index: The table data itself is stored in index order. Only ONE per table. In MySQL with InnoDB, primary key IS the clustered index.",
+            "Non-Clustered Index: Separate structure that points to actual data rows. You can have MANY non-clustered indexes. More storage overhead.",
+            "B-Tree Index: Default type. Great for range queries (BETWEEN, <, >), equality, and sorted data. Tree structure allows O(log n) search.",
+            "Hash Index: O(1) for exact match equality ONLY. Useless for range queries, sorting. Used in memory tables/caching.",
+            "Composite Index follows 'leftmost prefix' rule: Index on (A, B, C) can speed up: WHERE A=x, WHERE A=x AND B=y, but NOT WHERE B=x alone."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Difference between Clustered and Non-Clustered Indexes?",
+              "answer": "**Clustered Index:** The physical order of rows on disk. **Leaf nodes ARE the data pages**. Only ONE per table (usually PK). Fastest for range queries. \n\n**Non-Clustered:** Logical order. **Leaf nodes contain pointers** (Row ID or Clustered Key) to the actual data. Requires an extra lookup step (Key Lookup)."
+            },
+            {
+              "question": "Why does indexing improve Read speed but slow down Write speed?",
+              "answer": "**Reads:** Faster because the B-Tree structure allows O(log n) lookup instead of scanning the whole table. \n\n**Writes:** Slower because every INSERT/UPDATE/DELETE requires updating the table AND updating all associated indexes to keep them in sync."
+            },
+            {
+              "question": "What is the drawback of having too many indexes on a table?",
+              "answer": "1. **Slow Writes:** Insert performance degrades significantly. \n2. **Storage:** Indexes consume disk/memory space. \n3. **Maintenance:** Database works harder to maintain index statistics."
+            },
+            {
+              "question": "How does a B-Tree index work internally?",
+              "answer": "It is a balanced tree. Root -> Intermediate Nodes -> Leaf Nodes. It eliminates half the remaining data at every branch (roughly), guaranteeing predictable O(log n) search performance."
+            },
+            {
+              "question": "What is index selectivity and why does it matter?",
+              "answer": "**Selectivity = Unique Values / Total Rows.** \nHigh selectivity (unique ID) = Good candidate for index. \nLow selectivity (Gender M/F) = Bad candidate (DB might ignore index and full-scan anyway)."
+            },
+            {
+              "question": "Explain the leftmost prefix rule for composite indexes.",
+              "answer": "For an index on `(A, B, C)`, the index is useful for queries on `A`, `(A,B)`, or `(A,B,C)`. \nIt is NOT useful for searching by `B` alone or `C` alone, because the tree is sorted primarily by A."
+            },
+            {
+              "question": "When would you NOT want to create an index?",
+              "answer": "1. Small tables. \n2. Columns with low selectivity (boolean/enum). \n3. Tables with very heavy write/update volume (logging). \n4. Columns rarely queried."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transactions",
+      "name": "Transactions",
+      "tier": 2,
+      "estimatedHours": 4,
+      "topics": [
+        {
+          "id": "transactions_acid",
+          "name": "SQL 9: Transactions & ACID",
+          "estimatedHours": 2,
+          "description": "Understand database transactions - the mechanism that ensures your data stays consistent even when things go wrong. Learn ACID properties that guarantee reliability: Atomicity, Consistency, Isolation, Durability. This is critical for system design interviews.",
+          "practiceQuestions": [
+            {
+              "name": "Consecutive Numbers",
+              "slug": "consecutive-numbers",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/consecutive-numbers/"
+            }
+          ],
+          "learningTip": [
+            "Imagine transferring ₹1000 from Account A to Account B. Two operations: Debit A, Credit B. If system crashes between them, money is LOST. Transactions prevent this.",
+            "ATOMICITY: All or nothing. Either BOTH debit and credit happen, or NEITHER happens. No partial state.",
+            "CONSISTENCY: Database moves from one valid state to another. If a rule says balance >= 0, transaction that violates this is rejected.",
+            "DURABILITY: Once you see 'success', the data is safe even if server catches fire 1 second later. Written to disk, not just memory."
+          ],
+          "mustNotMiss": [
+            "BEGIN TRANSACTION or START TRANSACTION - marks the start. All subsequent statements are part of this transaction.",
+            "COMMIT - makes all changes permanent. Once committed, changes survive crashes, are visible to others.",
+            "ROLLBACK - undoes ALL changes since BEGIN. As if nothing happened. Database returns to previous consistent state.",
+            "SAVEPOINT name - creates a checkpoint. ROLLBACK TO SAVEPOINT name - undo to that checkpoint, but keep earlier changes.",
+            "ACID is the interview acronym: Atomicity (all or nothing), Consistency (rules enforced), Isolation (transactions don't see each other's partial work), Durability (committed = permanent)"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Explain the ACID properties in detail with examples.",
+              "answer": "**Atomicity:** All or nothing. (Transfer $100: debit & credit both success, or neither). \n**Consistency:** Data validity rules preserved. (Balance cannot be negative). \n**Isolation:** Transactions don't interfere. \n**Durability:** Committed data is permanent even if power fails."
+            },
+            {
+              "question": "What happens during a ROLLBACK command?",
+              "answer": "The database undoes all modifications made by the current uncommitted transaction, returning data to its state before `BEGIN`."
+            },
+            {
+              "question": "How does the Atomicity property ensure data integrity?",
+              "answer": "It treats a sequence of SQL operations as a single unit. If any part fails, the whole unit is aborted, preventing 'partial updates' (corruption)."
+            },
+            {
+              "question": "What is a SAVEPOINT and when would you use it?",
+              "answer": "A partial checkpoint within a transaction. Allows `ROLLBACK TO SAVEPOINT name` to retry a specific step without aborting the entire massive transaction."
+            },
+            {
+              "question": "Describe a real-world scenario where transactions are critical (e.g., bank transfer).",
+              "answer": "**E-commerce Checkout:** 1. Update Inventory (-1). 2. Insert Order. 3. Process Payment. \nIf payment fails, you MUST rollback inventory and order creation. Partial success is not option."
+            },
+            {
+              "question": "What is the difference between implicit and explicit transactions?",
+              "answer": "**Implicit:** Auto-commit mode (every statement is a transaction). \n**Explicit:** User manually defines `BEGIN` ... `COMMIT/ROLLBACK` blocks."
+            }
+          ]
+        },
+        {
+          "id": "transactions_isolation",
+          "name": "SQL 10: Transaction Isolation Levels",
+          "estimatedHours": 2,
+          "description": "Deep dive into the 'I' in ACID - Isolation. What happens when multiple transactions run simultaneously? Learn about isolation levels (Read Uncommitted to Serializable), concurrency problems (Dirty Reads, Phantom Reads), and locking strategies.",
+          "practiceQuestions": [
+            {
+              "name": "Last Person to Fit in the Bus",
+              "slug": "last-person-to-fit-in-the-bus",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/last-person-to-fit-in-the-bus/"
+            }
+          ],
+          "learningTip": [
+            "Isolation level is a trade-off: Higher isolation = safer but slower (more locking). Lower isolation = faster but risk of reading incorrect data.",
+            "Interview question: 'User sees their balance is ₹1000, starts a transfer of ₹800. Another transaction deducts ₹500 in between. What happens?' Answer depends on isolation level!",
+            "Optimistic locking: Assume no conflict, check at commit time. Good when conflicts are rare. Uses version numbers.",
+            "Pessimistic locking: Lock data when you read it, prevent others from modifying. Good when conflicts are common but reduces concurrency."
+          ],
+          "mustNotMiss": [
+            "READ UNCOMMITTED: Can read data that other transactions haven't committed yet. Risk: Dirty Read - reading data that might be rolled back!",
+            "READ COMMITTED: Only see committed data. Solves dirty reads. But same query in transaction might return different results (Non-Repeatable Read).",
+            "REPEATABLE READ: Same query always returns same result within transaction. But new rows might appear (Phantom Read). MySQL default.",
+            "SERIALIZABLE: Transactions execute as if one-by-one. No anomalies. But slowest because of heavy locking.",
+            "Three anomalies: Dirty Read (reading uncommitted), Non-Repeatable Read (row changed between reads), Phantom Read (new matching rows appear)"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Explain the Transaction Isolation Levels with examples.",
+              "answer": "1. **Read Uncommitted:** Dirty reads allowed. Fastest, no locking, but unsafe. \n2. **Read Committed:** No dirty reads. Writers temporarily block readers (or use snapshots). Standard default. \n3. **Repeatable Read:** Consistent reads within same transaction. Prevents 'non-repeatable reads'. \n4. **Serializable:** Strict serial execution. Uses Range Locks. Slowest, zero concurrency errors."
+            },
+            {
+              "question": "What are Dirty Reads, Non-Repeatable Reads, and Phantom Reads?",
+              "answer": "**Dirty Read:** Reading uncommitted data. \n**Non-Repeatable Read:** Reading same row twice gets different values (someone updated it). \n**Phantom Read:** Running same range query twice finds different number of rows (someone inserted new row)."
+            },
+            {
+              "question": "Difference between Optimistic and Pessimistic Locking?",
+              "answer": "**Pessimistic:** Lock row immediately upon read. Safest, lowers concurrency. \n**Optimistic:** No locks. Check version/timestamp at save time. High concurrency, risk of retry."
+            },
+            {
+              "question": "Which isolation level would you choose for a banking application and why?",
+              "answer": "**Serializable** or **Repeatable Read**. Financial data requires strict consistency; you cannot tolerate phantom withdrawals or balance changes during a calculation."
+            },
+            {
+              "question": "How does MVCC (Multi-Version Concurrency Control) work?",
+              "answer": "**MVCC (Multi-Version Concurrency Control)** keeps multiple versions of a row instead of overwriting immediately. \n\n**Key Benefit:** Readers read the 'snapshot' version from when they started, while Writers create a new version. **Readers do NOT block Writers**, and **Writers do NOT block Readers**, significantly boosting concurrency."
+            },
+            {
+              "question": "What is a deadlock and how can you prevent it?",
+              "answer": "Two transactions waiting for each other's locks forever. \n\n**Prevent:** Access resources in same order. Keep transactions short. Use timeouts."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "schema_design",
+      "name": "Schema Design",
+      "tier": 2,
+      "estimatedHours": 4,
+      "topics": [
+        {
+          "id": "schema_design_normalization",
+          "name": "SQL 11: Schema Design - Normalization",
+          "estimatedHours": 2,
+          "description": "Learn how to design good database schemas using normalization - a systematic way to eliminate data redundancy and prevent update anomalies. Master 1NF, 2NF, 3NF rules that most databases should follow.",
+          "practiceQuestions": [
+            {
+              "name": "Reformat Department Table",
+              "slug": "reformat-department-table",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reformat-department-table/"
+            },
+            {
+              "name": "Rearrange Products Table",
+              "slug": "rearrange-products-table",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/rearrange-products-table/"
+            }
+          ],
+          "learningTip": [
+            "Why normalize? Imagine storing {StudentName, CourseName, InstructorName, InstructorEmail} in one table. If instructor changes email, you must update EVERY row for their courses!",
+            "1NF: 'Atomic values' - no lists in cells. Bad: 'Math, Physics, Chemistry'. Good: Three separate rows.",
+            "2NF: 'No partial dependencies' - every non-key column must depend on the ENTIRE primary key, not just part of it.",
+            "3NF: 'No transitive dependencies' - non-key columns must depend on the KEY, not on OTHER non-key columns."
+          ],
+          "mustNotMiss": [
+            "1NF Rules: Each cell has single value (no arrays). Each row is unique (has primary key). No repeating groups of columns.",
+            "2NF: Must be in 1NF + no partial dependencies. If PK is (StudentID, CourseID), then InstructorName shouldn't depend only on CourseID.",
+            "3NF: Must be in 2NF + no transitive dependencies. If EmployeeID → DepartmentID → DepartmentName, remove DepartmentName from employee table.",
+            "BCNF (Boyce-Codd): Stricter than 3NF. Every determinant must be a candidate key. Rarely needed in practice.",
+            "3NF is sufficient for 90% of applications. It eliminates most redundancy while keeping the design practical."
+          ],
+          "interviewQuestions": [
+            "Explain 1NF, 2NF, and 3NF with examples.",
+            "Why is 3NF (Third Normal Form) usually sufficient for most applications?",
+            "Convert a flat spreadsheet of Student-Course data into a normalized schema.",
+            "What are update anomalies and how does normalization prevent them?",
+            "When is BCNF required over 3NF?",
+            "What are insertion, deletion, and update anomalies?"
+          ]
+        },
+        {
+          "id": "schema_design_er_diagrams",
+          "name": "SQL 12: ER Diagrams & Denormalization",
+          "estimatedHours": 2,
+          "description": "Master Entity-Relationship diagrams for visualizing database designs before writing SQL. Also learn when to intentionally BREAK normalization rules (denormalization) for performance in read-heavy systems.",
+          "practiceQuestions": [
+            {
+              "name": "Fix Names in a Table",
+              "slug": "fix-names-in-a-table",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/fix-names-in-a-table/"
+            },
+            {
+              "name": "Patients With a Condition",
+              "slug": "patients-with-a-condition",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/patients-with-a-condition/"
+            }
+          ],
+          "learningTip": [
+            "E-R diagrams are a THINKING tool, not just documentation. Draw boxes (entities), connect with lines (relationships), note cardinality (1-to-many, etc.).",
+            "Denormalization is purposely adding redundancy to speed up reads. Store customer name directly in Order table instead of joining every time.",
+            "Normalize for write-heavy (banking, transactions). Denormalize for read-heavy (analytics dashboards, reporting).",
+            "NoSQL databases often require denormalized designs because they don't support joins efficiently."
+          ],
+          "mustNotMiss": [
+            "One-to-One: User → UserProfile. Either share primary key, or one table has foreign key with UNIQUE constraint.",
+            "One-to-Many: Customer → Orders. Foreign key goes on the 'many' side (orders table has customer_id).",
+            "Many-to-Many: Students ↔ Courses. Requires a junction/bridge table: Enrollments(student_id, course_id).",
+            "Denormalization examples: Store total_order_amount in Order instead of computing SUM of items. Store product_name in OrderItem instead of joining.",
+            "When to denormalize: Read queries vastly outnumber writes, JOINs are becoming bottleneck, you can accept slightly stale data."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "When should you intentionally De-normalize a database?",
+              "answer": "For **Read Performance**. If complex JOINs excessively slow down critical queries (e.g., analytics dashboard), you might duplicate data (like customer name in Orders table) to avoid the overhead, accepting the risk of slower updates."
+            },
+            {
+              "question": "Design an E-R diagram for an E-commerce system (User, Order, Product).",
+              "answer": "Entities: User, Order, Product. \nRelationships: \n1. User 1:N Order (One user, many orders) \n2. Order M:N Product (Order has many products, Product in many orders). \n\n*Requires 'OrderItems' junction table to handle the M:N link.*"
+            },
+            {
+              "question": "What is the difference between a One-to-One and One-to-Many relationship?",
+              "answer": "**1:1 (One-to-One):** A row in Table A links to ONE row in Table B. (e.g., User -> Passport). \n**1:N (One-to-Many):** A row in Table A links to MULTIPLE rows in Table B. (e.g., Teacher -> Students)."
+            },
+            {
+              "question": "How would you design a schema for a social media 'followers' feature?",
+              "answer": "Self-referencing M:N relationship table `Follows`: \n- `follower_id` (FK to Users) \n- `followee_id` (FK to Users) \n- PK: Composite `(follower_id, followee_id)`"
+            },
+            {
+              "question": "When would you choose a star schema vs a snowflake schema?",
+              "answer": "**Star Schema:** Central fact table, denormalized dimensions. Faster queries. best for Data Marts. \n**Snowflake Schema:** Normalized dimensions (split into tables). Saves space, but complex joins. Good for huge dimensions."
+            },
+            {
+              "question": "How do you represent Many-to-Many relationships in a relational database?",
+              "answer": "You CANNOT link them directly. You must create a **Junction Table** (Associative Entity) that holds the foreign keys of both parents. e.g., `Student_Classes` table links `Students` and `Classes`."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advanced_analytics",
+      "name": "Advanced Analytics - Window Functions",
+      "tier": 3,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "window_functions",
+          "name": "Window Functions - CRITICAL FOR INTERVIEWS",
+          "estimatedHours": 2,
+          "description": "Master SQL window functions - RANK, DENSE_RANK, ROW_NUMBER, LAG, LEAD, running totals. These are THE most asked advanced SQL topics in technical interviews. They let you calculate across a 'window' of rows without collapsing results like GROUP BY does.",
+          "practiceQuestions": [
+            {
+              "name": "Rank Scores",
+              "slug": "rank-scores",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/rank-scores/"
+            },
+            {
+              "name": "Department Top Three Salaries",
+              "slug": "department-top-three-salaries",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/department-top-three-salaries/"
+            },
+            {
+              "name": "Consecutive Numbers",
+              "slug": "consecutive-numbers",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/consecutive-numbers/"
+            },
+            {
+              "name": "Human Traffic of Stadium",
+              "slug": "human-traffic-of-stadium",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/human-traffic-of-stadium/"
+            },
+            {
+              "name": "Game Play Analysis IV",
+              "slug": "game-play-analysis-iv",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/game-play-analysis-iv/"
+            },
+            {
+              "name": "Count Salary Categories",
+              "slug": "count-salary-categories",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/count-salary-categories/"
+            }
+          ],
+          "learningTip": [
+            "GROUP BY collapses rows into one per group. Window functions calculate ACROSS rows but keep EVERY row in the result. That's the key difference!",
+            "PARTITION BY in window functions is like GROUP BY - it defines the 'groups'. But you still see every individual row.",
+            "ORDER BY inside OVER() determines the order for ranking/running calculations. ROWS BETWEEN defines the window frame.",
+            "Interview tip: If asked for 'top N per group' or 'running total' or 'compare with previous row', think window functions immediately."
+          ],
+          "mustNotMiss": [
+            "ROW_NUMBER() OVER(ORDER BY col): Assigns 1, 2, 3... to each row. Ties get different numbers (arbitrary order for ties).",
+            "RANK() OVER(ORDER BY col): Assigns 1, 1, 3 for ties. Skips numbers after ties. (Two 1s means next is 3, not 2)",
+            "DENSE_RANK(): Assigns 1, 1, 2 for ties. No gaps. Next rank after tie is immediate next number.",
+            "LAG(col, n, default) OVER(...): Value from n rows BEFORE. Useful for comparing current row to previous.",
+            "LEAD(col, n, default) OVER(...): Value from n rows AFTER. Useful for time-series comparisons.",
+            "SUM(col) OVER(ORDER BY date): Running total - cumulative sum up to current row."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Difference between RANK(), DENSE_RANK(), and ROW_NUMBER()?",
+              "answer": "**ROW_NUMBER:** Unique seq (1,2,3,4). Ties get distinct numbers. \n**RANK:** Ties same rank, skips next (1,1,3,4). \n**DENSE_RANK:** Ties same rank, NO gap (1,1,2,3)."
+            },
+            {
+              "question": "Write a query to calculate a running total (cumulative sum) using OVER().",
+              "answer": "`SELECT Date, Val, SUM(Val) OVER (ORDER BY Date) as RunningTotal FROM Sales;`"
+            },
+            {
+              "question": "Use LAG() and LEAD() to compare a row with the previous row.",
+              "answer": "```sql\nSELECT Date, Income, \n(Income - LAG(Income) OVER(ORDER BY Date)) as Growth \nFROM Sales\n```"
+            },
+            {
+              "question": "Find the top 3 earners in each department using window functions.",
+              "answer": "```sql\nWITH Ranked AS (\n  SELECT *, DENSE_RANK() OVER(PARTITION BY Dept ORDER BY Sal DESC) as rnk \n  FROM Emp\n) \nSELECT * FROM Ranked WHERE rnk <= 3;\n```"
+            },
+            {
+              "question": "Calculate a 7-day moving average of daily sales.",
+              "answer": "`AVG(Sales) OVER (ORDER BY Date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`"
+            },
+            {
+              "question": "What is the difference between ROWS and RANGE in window frames?",
+              "answer": "**ROWS:** Counts physical rows (e.g., 'previous 2 rows'). \n**RANGE:** Logical value range (e.g., 'rows with date within last 2 days'). Handles ties differently."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "advanced_query_concepts",
+      "name": "CTEs & Advanced Queries",
+      "tier": 3,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "ctes_temp_tables",
+          "name": "CTEs (Common Table Expressions) & Recursive Queries",
+          "estimatedHours": 2,
+          "description": "Master CTEs (WITH clause) for breaking complex queries into readable, manageable pieces. Learn recursive CTEs for hierarchical data like org charts, category trees, and graph traversals. Understand when to use CTEs vs temporary tables.",
+          "practiceQuestions": [
+            {
+              "name": "Employees Whose Manager Left the Company",
+              "slug": "employees-whose-manager-left-the-company",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/employees-whose-manager-left-the-company/"
+            },
+            {
+              "name": "Tree Node",
+              "slug": "tree-node",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/tree-node/"
+            },
+            {
+              "name": "Investments in 2016",
+              "slug": "investments-in-2016",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/investments-in-2016/"
+            },
+            {
+              "name": "The Number of Employees Which Report to Each Employee",
+              "slug": "the-number-of-employees-which-report-to-each-employee",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/customers-who-never-order/"
+            }
+          ],
+          "learningTip": [
+            "CTE is like creating a temporary named result set that exists only for your query. Makes complex queries MUCH more readable.",
+            "Think of CTE as 'let me compute this first, give it a name, then use it below'. Similar to variables in programming.",
+            "Recursive CTEs have two parts: Anchor (starting point/base case) + Recursive part (how to get next level). UNION ALL combines them.",
+            "Use CTE for readability and when you reference the same subquery multiple times. Use temp tables when you need to index the intermediate result."
+          ],
+          "mustNotMiss": [
+            "Basic CTE: WITH cte_name AS (SELECT ...) SELECT * FROM cte_name - define once, use in main query",
+            "Multiple CTEs: WITH cte1 AS (...), cte2 AS (...) SELECT ... - chain multiple CTEs, each can reference previous ones",
+            "Recursive CTE structure: WITH RECURSIVE cte AS (base_case UNION ALL recursive_case) SELECT * FROM cte",
+            "Recursive CTE for org chart: Anchor = SELECT CEO. Recursive = SELECT employees WHERE manager_id = previous_level.employee_id",
+            "Include recursion termination condition to prevent infinite loops: WHERE level < 10 or similar"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is a Common Table Expression (CTE) and how does it differ from a Subquery?",
+              "answer": "A CTE (`WITH name AS...`) is a named temporary result set. \n\n**vs Subquery:** Better readability (linear vs nested). \n**Optimization:** Some DBs (Postgres) can 'materialize' CTEs (calculate once, reuse results), whereas subqueries might be re-executed multiple times if correlated."
+            },
+            {
+              "question": "Write a Recursive CTE to generate an organization chart hierarchy.",
+              "answer": "```sql\nWITH RECURSIVE Org AS (\n  SELECT Id, Name, 1 as Lvl FROM Emp WHERE ManagerID IS NULL -- Anchor\n  UNION ALL\n  SELECT e.Id, e.Name, o.Lvl+1 FROM Emp e JOIN Org o ON e.ManagerID = o.Id\n) SELECT * FROM Org;\n```"
+            },
+            {
+              "question": "When should you use a Temporary Table vs a CTE?",
+              "answer": "**CTE:** Single query, recursion, readability. \n**Temp Table:** Multiple steps, need indexing, complex processing across stored procedure calls."
+            },
+            {
+              "question": "How would you find all children of a node in a tree structure?",
+              "answer": "Use a **Recursive CTE** starting with the Parent ID as the anchor, and recursively joining the table to finding children."
+            },
+            {
+              "question": "What is the difference between CTE and derived table (inline view)?",
+              "answer": "Derived Table is a subquery in FROM (`SELECT * FROM (SELECT...) t`). \nCTE is defined *before* the query. CTEs are reusable and cleaner; functionality is overlapping."
+            },
+            {
+              "question": "Can a CTE reference itself? How does recursive CTE work?",
+              "answer": "**Yes.** It has an Anchor member (base case) and a Recursive member (that joins to the CTE itself). They are combined with UNION ALL."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "database_programmability",
+      "name": "Database Programmability",
+      "tier": 3,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "triggers_procedures",
+          "name": "Stored Procedures, Functions & Triggers",
+          "estimatedHours": 2,
+          "description": "Learn database programming - encapsulating logic inside the database itself. Stored Procedures for reusable parameterized logic, Functions for computed values, and Triggers for automatic actions when data changes.",
+          "practiceQuestions": [
+            {
+              "name": "Exchange Seats",
+              "slug": "exchange-seats",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/exchange-seats/"
+            },
+            {
+              "name": "Movie Rating",
+              "slug": "movie-rating",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/movie-rating/"
+            },
+            {
+              "name": "Average Selling Price",
+              "slug": "average-selling-price",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/average-selling-price/"
+            }
+          ],
+          "learningTip": [
+            "Stored Procedure = saved set of SQL statements you can call with parameters. Like a function in programming that lives in the database.",
+            "Database Function = similar to procedure but RETURNS a value you can use in SELECT. Procedure just DOES things, function GIVES you something.",
+            "Trigger = automatic code that runs when INSERT/UPDATE/DELETE happens. Great for audit logs, validation, cascading updates.",
+            "Putting logic in database is controversial. Pros: performance, security. Cons: harder to test, version control, deploy."
+          ],
+          "mustNotMiss": [
+            "Stored Procedure: CREATE PROCEDURE name(params) BEGIN ... END. Called with CALL procedure_name(args).",
+            "Function: CREATE FUNCTION name(params) RETURNS type BEGIN ... RETURN value; END. Used in SELECT: SELECT my_function(column) FROM table",
+            "Trigger timing: BEFORE INSERT/UPDATE/DELETE (can modify or reject), AFTER (for logging, cascading)",
+            "Trigger access: NEW.column for new values being inserted/updated, OLD.column for previous values in update/delete",
+            "Stored procedures prevent SQL injection because parameters are type-checked and escaped by the database engine"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is a Stored Procedure? How is it different from a Function?",
+              "answer": "**Procedure:** Can modify data, handle transactions, return multiple sets. Called via `CALL`. \n**Function:** Must return a value. Used in expressions/SELECT. Cannot change DB state usually."
+            },
+            {
+              "question": "What is a Database Trigger? Give a use case (e.g., Audit Logging).",
+              "answer": "Code that runs automatically on INSERT/UPDATE/DELETE. \n**Use Case:** Audit Log (When salary changes, insert old/new value into History table)."
+            },
+            {
+              "question": "How do Stored Procedures help prevent SQL Injection?",
+              "answer": "By using **parameters**. The DB engine treats input as data, not executable code, preventing malicious SQL injection."
+            },
+            {
+              "question": "What are the pros and cons of putting business logic in the database?",
+              "answer": "**Pros:** Performance (less network), consistency, security. \n**Cons:** Hard to debug, version control issues, difficult to scale database tier."
+            },
+            {
+              "question": "When would you use a BEFORE trigger vs an AFTER trigger?",
+              "answer": "**BEFORE:** To validate or modify data *before* insertion (e.g., format email). \n**AFTER:** To propagate changes/log actions *after* success (e.g., update stats table)."
+            },
+            {
+              "question": "Can a trigger call another trigger? What are mutating table errors?",
+              "answer": "**Recursion:** Yes, triggers can cascade. \n**Mutating Table:** Error when a row-trigger tries to query/modify the *same table* it triggered on. (Blocked to prevent inconsistency)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "practical_scenarios",
+      "name": "Interview Practice Scenarios",
+      "tier": 3,
+      "estimatedHours": 2,
+      "topics": [
+        {
+          "id": "real_world_scenarios",
+          "name": "Real-World SQL Interview Patterns",
+          "estimatedHours": 2,
+          "description": "Practice the most common SQL interview patterns - Top-N per group, finding gaps and islands (consecutive sequences), calculating running totals and moving averages, handling hierarchical data, and solving complex business logic problems.",
+          "practiceQuestions": [
+            {
+              "name": "Trips and Users",
+              "slug": "trips-and-users",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/trips-and-users/"
+            },
+            {
+              "name": "Department Top Three Salaries",
+              "slug": "department-top-three-salaries",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/department-top-three-salaries/"
+            },
+            {
+              "name": "Human Traffic of Stadium",
+              "slug": "human-traffic-of-stadium",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/human-traffic-of-stadium/"
+            },
+            {
+              "name": "Market Analysis II",
+              "slug": "market-analysis-ii",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/rank-scores/"
+            },
+            {
+              "name": "Product Price at a Given Date",
+              "slug": "product-price-at-a-given-date",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/product-price-at-a-given-date/"
+            },
+            {
+              "name": "Game Play Analysis V",
+              "slug": "game-play-analysis-v",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/game-play-analysis-iv/"
+            }
+          ],
+          "learningTip": [
+            "Top N per group: ROW_NUMBER() OVER(PARTITION BY group ORDER BY value DESC), then WHERE rn <= N",
+            "Gaps and islands: Subtract row_number from the date/sequence. Consecutive items will have the same difference (the 'island' identifier).",
+            "Month-over-month: Use LAG(value) OVER(ORDER BY month) to get previous month, then compute percentage change.",
+            "Always test edge cases mentally: What if there's only one row? What if there are ties? What if the column has NULLs?"
+          ],
+          "mustNotMiss": [
+            "Top N per group: WITH ranked AS (SELECT *, ROW_NUMBER() OVER(PARTITION BY dept ORDER BY sal DESC) rn FROM emp) SELECT * FROM ranked WHERE rn <= 3",
+            "Consecutive sequences (islands): SELECT *, date - ROW_NUMBER() as grp gives same value for consecutive dates. GROUP BY grp to find sequences.",
+            "Running total: SUM(amount) OVER(ORDER BY date ROWS UNBOUNDED PRECEDING)",
+            "Median: Two approaches - (1) Use PERCENTILE_CONT(0.5) if available, or (2) ROW_NUMBER from both ends and find middle",
+            "Handle NULLs explicitly: COALESCE(column, 0), or filter with WHERE column IS NOT NULL, depending on requirements"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find the Nth highest salary without using LIMIT.",
+              "answer": "Determine N-1 salaries greater than itself. (Inefficient). \nBetter: `SELECT Salary FROM (SELECT Salary, DENSE_RANK() OVER(ORDER BY Salary DESC) rnk FROM Emp) WHERE rnk = N`"
+            },
+            {
+              "question": "Get top 3 products by sales in each category.",
+              "answer": "Use Window Function: \n`RANK() OVER (PARTITION BY Category ORDER BY Sales DESC)` then filter `WHERE rank <= 3`."
+            },
+            {
+              "question": "Find employees who have been promoted consecutively for 3 years.",
+              "answer": "Use `LEAD()` or Self Joins to check: \n`Year(PromoteDate) == Year(Prev) + 1 == Year(PrevPrev) + 2`."
+            },
+            {
+              "question": "Calculate month-over-month growth percentage.",
+              "answer": "`((CurrentMonthRev - LAG(CurrentMonthRev)) / LAG(CurrentMonthRev)) * 100`"
+            },
+            {
+              "question": "Find users who logged in on consecutive days.",
+              "answer": "Calculate `gap = Date - ROW_NUMBER()`. If `gap` is constant for multiple rows, they are consecutive."
+            },
+            {
+              "question": "Design a query to detect fraud patterns in transactions.",
+              "answer": "Look for high velocity (many txns in 1 min), geographic impossible travel (US txn then China txn in 1 hr), or amount outliers (> 5x avg)."
+            },
+            {
+              "question": "How would you find gaps in a sequence of IDs?",
+              "answer": "Find where `ID + 1` does NOT exist in the table. \n`SELECT ID + 1 FROM Tbl t1 WHERE NOT EXISTS (SELECT 1 FROM Tbl t2 WHERE t2.ID = t1.ID + 1)`"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

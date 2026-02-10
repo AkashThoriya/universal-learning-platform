@@ -40,6 +40,7 @@ import {
   RevisionItem,
   StudyInsight,
 } from '@/types/exam';
+import { CourseSettings, UserCourse } from '@/types/course-progress';
 
 import { db } from './firebase';
 
@@ -613,6 +614,65 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
   });
 };
 
+/**
+ * Saves or updates settings for a specific course
+ * Stores in: users/{userId}/courses/{courseId} (merges with existing data)
+ */
+export const saveCourseSettings = async (
+  userId: string, 
+  courseId: string, 
+  settings: Partial<CourseSettings> | any, // Use any to allow flexible updates during migration
+  additionalData?: any
+) => {
+  return measurePerformance('saveCourseSettings', async () => {
+    logInfo('Saving course settings', { userId, courseId, settingsKeys: Object.keys(settings) });
+
+    try {
+      const courseRef = doc(db, 'users', userId, 'courses', courseId);
+      
+      // Prepare update data
+      const updateData: any = {
+        updatedAt: Timestamp.now(),
+        settings: settings,
+        ...additionalData
+      };
+
+      // Use setDoc with merge: true to ensure we don't overwrite entire document
+      // and create it if it doesn't exist
+      await setDoc(courseRef, updateData, { merge: true });
+
+      logInfo('Course settings saved successfully', { userId, courseId });
+    } catch (error) {
+      logError('Failed to save course settings', { userId, courseId, error });
+      throw error;
+    }
+  });
+};
+
+/**
+ * Retrieves a specific course for a user
+ *
+ * @param {string} userId - The unique user ID
+ * @param {string} courseId - The course ID to retrieve
+ * @returns {Promise<UserCourse | null>} Promise that resolves to UserCourse or null
+ */
+export const getCourse = async (userId: string, courseId: string): Promise<UserCourse | null> => {
+  return measurePerformance('getCourse', async () => {
+    try {
+      const courseRef = doc(db, 'users', userId, 'courses', courseId);
+      const courseSnap = await getDoc(courseRef);
+
+      if (courseSnap.exists()) {
+        return courseSnap.data() as UserCourse;
+      }
+      return null;
+    } catch (error) {
+      logError('Failed to get course', { userId, courseId, error });
+      throw error;
+    }
+  });
+};
+
 // ============================================================================
 // SYLLABUS CACHE
 // ============================================================================
@@ -636,6 +696,8 @@ export const invalidateSyllabusCache = (courseId: string): void => {
  * Retrieves the syllabus for a specific course
  * Uses in-memory caching with 10-minute TTL
  */
+import { getExamById } from '@/lib/data/exams-data';
+
 export const getSyllabusForCourse = async (userId: string, courseId: string): Promise<SyllabusSubject[]> => {
   return measurePerformance('getSyllabusForCourse', async () => {
     // Check cache first
@@ -654,12 +716,22 @@ export const getSyllabusForCourse = async (userId: string, courseId: string): Pr
         ...doc.data(),
       })) as SyllabusSubject[];
 
-      const sortedSubjects = subjects
+      let sortedSubjects = subjects
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
         .map(subject => ({
           ...subject,
           topics: subject.topics?.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) ?? [],
         }));
+
+      // If no syllabus found in Firestore, try to get default from static data
+      if (sortedSubjects.length === 0) {
+        logInfo('No syllabus in Firestore, checking default data', { courseId });
+        const exam = getExamById(courseId);
+        if (exam && exam.defaultSyllabus) {
+          logInfo('Found default syllabus', { courseId, subjectCount: exam.defaultSyllabus.length });
+          sortedSubjects = [...exam.defaultSyllabus];
+        }
+      }
 
       // Cache the result
       syllabusCache.set(courseId, { data: sortedSubjects, timestamp: Date.now() });

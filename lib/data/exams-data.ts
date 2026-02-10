@@ -17,6 +17,9 @@ import dsaByStriver from './exams/dsa-by-striver.json';
 import nodejsByNamastedev from './exams/nodejs-by-namastedev.json';
 import reactByNamastedev from './exams/react-by-namastedev.json';
 import systemsDsa from './exams/systems-dsa.json';
+import hldSystemDesign from './exams/hld-system-design.json';
+import lldLowLevelDesign from './exams/lld-low-level-design.json';
+import databaseSql from './exams/databases-sql-by-rahul-grover.json';
 
 /**
  * Array of predefined exams with complete syllabus data
@@ -44,6 +47,9 @@ export const EXAMS_DATA: Exam[] = [
   nodejsByNamastedev as Exam,
   reactByNamastedev as Exam,
   systemsDsa as Exam,
+  hldSystemDesign as Exam,
+  lldLowLevelDesign as Exam,
+  databaseSql as Exam,
 ];
 
 /**
