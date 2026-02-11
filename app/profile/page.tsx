@@ -29,8 +29,6 @@ import {
   Briefcase,
   Loader2,
   Zap,
-  Sun,
-  Moon,
   CheckCircle,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -75,7 +73,6 @@ import {
 } from '@/lib/firebase/firebase-utils';
 import { Exam, SyllabusSubject, User as UserType, UserPersona, UserPersonaType, SelectedCourse } from '@/types/exam';
 import { PREFERRED_STUDY_TIMES } from '@/lib/config/constants';
-import { UserCourse } from '@/types/course-progress';
 import { CoursesTab } from '@/components/courses';
 
 /**

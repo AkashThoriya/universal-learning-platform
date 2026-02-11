@@ -31,7 +31,14 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
       undefined,
       activeCourse?.startedAt?.toDate(),
       activeCourse?.targetDate?.toDate(),
-      activeCourse?.settings
+      activeCourse?.settings ? {
+        ...activeCourse.settings,
+        useWeekendSchedule: activeCourse.settings.useWeekendSchedule ?? false,
+        weekdayStudyMinutes: activeCourse.settings.weekdayStudyMinutes ?? 0,
+        weekendStudyMinutes: activeCourse.settings.weekendStudyMinutes ?? 0,
+        dailyGoalMinutes: activeCourse.settings.dailyGoalMinutes ?? 0,
+        activeDays: activeCourse.settings.activeDays ?? []
+      } : undefined
     );
   }, [user, syllabus, completedTopicsCount, activeCourse]);
 
