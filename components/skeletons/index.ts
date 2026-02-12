@@ -27,5 +27,5 @@ export * from './DashboardSkeleton';
 
 export * from './TestPageSkeleton';
 export * from './SubjectsSkeleton';
-export * from './DailyLogSkeleton';
+
 export * from './MockLogSkeleton';

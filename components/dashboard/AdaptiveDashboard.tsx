@@ -639,33 +639,33 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
         </motion.div>
       )}
 
-      {/* Daily Log Quick Action */}
+      {/* Habits Quick Action */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
         className="mb-4"
       >
-        <Card className="border-0 shadow-lg bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-l-4 border-l-amber-500">
+        <Card className="border-0 shadow-lg bg-gradient-to-r from-orange-50 via-amber-50 to-yellow-50 border-l-4 border-l-orange-500">
           <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <div className="p-1.5 bg-amber-100 rounded-full">
-                  <Calendar className="h-4 w-4 text-amber-600" />
+                <div className="p-1.5 bg-orange-100 rounded-full">
+                  <Flame className="h-4 w-4 text-orange-600" />
                 </div>
-                <span className="text-sm font-semibold text-amber-700">Track Your Progress</span>
+                <span className="text-sm font-semibold text-orange-700">Build Consistency</span>
               </div>
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Log Today&apos;s Study Session</h3>
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Track Your Habits</h3>
               <p className="text-sm text-gray-600 mt-0.5">
-                Record topics covered, time spent, and notes for better tracking
+                Auto-tracked study habits and custom goals — keep your streak alive
               </p>
             </div>
             <Button
-              onClick={() => (window.location.href = '/log/daily')}
-              className="bg-amber-600 hover:bg-amber-700 gap-2 w-full sm:w-auto"
+              onClick={() => (window.location.href = '/habits')}
+              className="bg-orange-600 hover:bg-orange-700 gap-2 w-full sm:w-auto"
             >
-              <Calendar className="h-4 w-4" />
-              Daily Log
+              <Flame className="h-4 w-4" />
+              View Habits
             </Button>
           </CardContent>
         </Card>

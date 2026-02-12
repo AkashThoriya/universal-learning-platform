@@ -16,7 +16,7 @@ import {
   Home,
   BookOpen,
   Target,
-  Calendar,
+  Flame,
   Menu,
   Brain,
 
@@ -147,11 +147,11 @@ export default function Navigation() {
     },
 
     {
-      href: '/log/daily',
-      label: 'Daily Log',
-      icon: Calendar,
-      isActive: isActive('/log/daily'),
-      description: 'Track daily progress',
+      href: '/habits',
+      label: 'Habits',
+      icon: Flame,
+      isActive: isActive('/habits'),
+      description: 'Track your consistency',
     },
     {
       href: '/workspace',

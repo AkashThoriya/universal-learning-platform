@@ -94,29 +94,45 @@ class GeminiProvider {
         const data = await response.json();
 
         if (!data.candidates?.[0]?.content) {
-          throw new Error('Invalid response from Gemini API');
+          throw new Error('Invalid response from Gemini API: No candidates found');
         }
 
         const generatedContent = data.candidates[0].content.parts[0].text;
-        const questions = this.parseQuestionResponse(generatedContent, request);
+        
+        try {
+          const questions = this.parseQuestionResponse(generatedContent, request);
+          
+          return {
+            success: true,
+            data: questions,
+            provider: 'gemini',
+            model: targetModel,
+            usage: {
+              promptTokens: data.usageMetadata?.promptTokenCount ?? 0,
+              completionTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
+              totalTokens: data.usageMetadata?.totalTokenCount ?? 0,
+            },
+          };
+        } catch (parseError) {
+          logWarning(`[LLM] Attempt ${attempts + 1} failed to parse: ${(parseError as Error).message}`);
+          throw parseError; // Re-throw to trigger retry
+        }
 
-        return {
-          success: true,
-          data: questions,
-          provider: 'gemini',
-          model: targetModel,
-          usage: {
-            promptTokens: data.usageMetadata?.promptTokenCount ?? 0,
-            completionTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
-            totalTokens: data.usageMetadata?.totalTokenCount ?? 0,
-          },
-        };
       } catch (error) {
         attempts++;
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        
+        logWarning(`[LLM] Attempt ${attempts} failed: ${errorMessage}`);
+
         if (attempts >= this.maxRetries) {
+           // Categorize final error for UI
+           let uiError = 'Failed to generate questions after multiple attempts.';
+           if (errorMessage.includes('429')) uiError = 'System is currently busy (Rate Limit). Please try again in a moment.';
+           if (errorMessage.includes('parse')) uiError = 'AI generated invalid format. Please try again.';
+
           return {
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error occurred after retries',
+            error: uiError,
             provider: 'gemini',
             model: this.model,
           };
@@ -129,77 +145,33 @@ class GeminiProvider {
   }
 
   /**
-   * Parse LLM response with multiple fallback strategies for robust JSON extraction.
-   * Returns valid questions even if some fail validation.
+   * Parse LLM response with focused strategies.
    */
   private parseQuestionResponse(content: string, request: QuestionGenerationRequest): LLMQuestionResponse[] {
-    const strategies = [
-      // Strategy 1: Direct parse (best case - LLM returned pure JSON)
-      () => JSON.parse(content.trim()),
+    // Strategy 1: Direct JSON parse (fastest)
+    try {
+      return this.validateAndNormalizeQuestions(JSON.parse(content), request);
+    } catch {}
 
-      // Strategy 2: Remove markdown code fences
-      () => {
-        const cleaned = content
-          .replace(/```(?:json)?\s*\n?/gi, '')
-          .replace(/\n?\s*```/g, '')
-          .trim();
-        return JSON.parse(cleaned);
-      },
-
-      // Strategy 3: Extract JSON array from surrounding text
-      () => {
-        const match = content.match(/\[\s*\{[\s\S]*\}\s*\]/);
-        if (!match) {
-          throw new Error('No JSON array found in response');
-        }
-        return JSON.parse(match[0]);
-      },
-
-      // Strategy 4: Fix common JSON issues and retry
-      () => {
-        const fixed = content
-          // Remove markdown
-          .replace(/```(?:json)?\s*\n?/gi, '')
-          .replace(/\n?\s*```/g, '')
-          // Fix trailing commas
-          .replace(/,(\s*[}\]])/g, '$1')
-          // Fix unquoted keys (simple cases)
-          .replace(/([{,]\s*)([a-zA-Z_]\w*)(\s*:)/g, '$1"$2"$3')
-          // Remove comments (// style)
-          .replace(/\/\/[^\n]*/g, '')
-          .trim();
-
-        const match = fixed.match(/\[\s*\{[\s\S]*\}\s*\]/);
-        if (!match) {
-          throw new Error('No JSON array after cleanup');
-        }
-        return JSON.parse(match[0]);
-      },
-    ];
-
-    let lastError: Error | null = null;
-
-    for (let i = 0; i < strategies.length; i++) {
-      try {
-        const strategy = strategies[i];
-        if (!strategy) {
-          continue;
-        }
-        const rawData = strategy();
-        const validated = this.validateAndNormalizeQuestions(rawData, request);
-
-        if (validated.length > 0) {
-          logInfo(`[LLM] Successfully parsed ${validated.length} questions using strategy ${i + 1}`);
-          return validated;
-        }
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error));
-        logWarning(`[LLM] Parse strategy ${i + 1} failed: ${lastError.message}`);
+    // Strategy 2: Extract JSON from code fences (common LLM behavior)
+    try {
+      const match = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      if (match) {
+        return this.validateAndNormalizeQuestions(JSON.parse(match[1]), request);
       }
-    }
+    } catch {}
 
-    logError('[LLM] All JSON parsing strategies failed', { rawContent: content.substring(0, 500) });
-    throw new Error(`Failed to parse LLM response: ${lastError?.message || 'Unknown error'}`);
+    // Strategy 3: Find first '[' and last ']' (fallback)
+    try {
+      const start = content.indexOf('[');
+      const end = content.lastIndexOf(']');
+      if (start !== -1 && end !== -1) {
+        const jsonStr = content.substring(start, end + 1);
+        return this.validateAndNormalizeQuestions(JSON.parse(jsonStr), request);
+      }
+    } catch {}
+
+    throw new Error('Failed to extract valid JSON array from response');
   }
 
   /**
@@ -231,6 +203,7 @@ class GeminiProvider {
         topics: Array.isArray(q.topics) ? q.topics : [],
         estimatedTime: typeof q.estimatedTime === 'number' ? q.estimatedTime : 60,
         bloomsLevel: q.bloomsLevel ?? 'understand',
+        ...(q.codeSnippet ? { codeSnippet: String(q.codeSnippet) } : {}),
       }));
   }
 
@@ -409,6 +382,7 @@ export class LLMService {
         subject: llmQuestion.subject,
         topics: llmQuestion.topics,
         timeLimit: llmQuestion.estimatedTime,
+        ...(llmQuestion.codeSnippet ? { codeSnippet: llmQuestion.codeSnippet } : {}),
         discriminationIndex: this.calculateInitialDiscrimination(llmQuestion.difficulty),
         responseHistory: [],
         metaTags: [

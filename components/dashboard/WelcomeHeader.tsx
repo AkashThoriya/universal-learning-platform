@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -25,51 +25,20 @@ interface WelcomeHeaderProps {
 }
 
 export function WelcomeHeader({
-  user,
-  timeOfDay = 'morning',
+  user: _user,
+  timeOfDay: _timeOfDay = 'morning',
   recentAchievements,
   onDismissAchievement,
   onViewAllAchievements,
 }: WelcomeHeaderProps) {
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-
-  const messages = {
-    morning: [
-      `Good morning! Ready to make today count? ☀️`,
-      'Morning champion! Your brain is fresh and ready! 🧠',
-      'Rise and shine! Another day of progress awaits! 🌅',
-      'Start your day with a win! 🏆',
-    ],
-    afternoon: [
-      `Afternoon power session! Keep the streak alive! 🔥`,
-      'Perfect time for a focused study session! 📚',
-      "Afternoon energy boost - let's keep going! ⚡",
-      'Halfway through the day, stay strong! 💪',
-    ],
-    evening: [
-      `Evening reflection time! You're doing great! 🌟`,
-      'Wind down with some light review! 🌙',
-      'Evening learning session - the best way to end! 🌆',
-      'Consolidate your knowledge before sleep! 🧠',
-    ],
-    night: [
-      'Night owl studying? Make sure to rest too! 🦉',
-      'Late-night sessions can be productive! 🌃',
-      'Burning the midnight oil? Consistency wins! 💡',
-      'Great work today, rest up for tomorrow! 😴',
-    ],
-  };
+  const [quote, setQuote] = useState<{ text: string; author: string; link?: string }>({ text: '', author: '' });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentMessageIndex(prev => prev + 1);
-    }, 15000); // Change every 15 seconds
-
-    return () => clearInterval(interval);
+    // Select a random quote on mount
+    import('@/lib/constants/quotes').then(({ MOTIVATIONAL_QUOTES }) => {
+      setQuote(MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)] ?? MOTIVATIONAL_QUOTES[0]!);
+    });
   }, []);
-
-  const currentMessages = messages[timeOfDay] || messages.morning;
-  const activeMessage = currentMessages[currentMessageIndex % currentMessages.length];
 
   const getRarityBadgeColor = (rarity: Achievement['rarity']): string => {
     switch (rarity) {
@@ -98,35 +67,34 @@ export function WelcomeHeader({
         <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold md:text-3xl mb-2 flex items-center gap-2">
-              {`Welcome back, ${user?.displayName?.split(' ')[0] || 'Champion'}!`}
-              <span className="animate-wave inline-block origin-bottom-right">👋</span>
+          <div className="max-w-3xl">
+            <h1 className="text-xl md:text-2xl font-bold mb-3 leading-tight">
+              {quote.text || "Loading inspiration..."}
             </h1>
 
-            <div className="relative min-h-[1.5rem] min-w-[200px]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeMessage}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.5 }}
-                  className="flex items-start gap-2 text-blue-100 font-medium"
-                >
-                  <div className="flex h-5 md:h-6 items-center flex-shrink-0">
-                    <span className="bg-white/20 p-1 rounded-full text-xs">💡</span>
-                  </div>
-                  <p className="text-sm md:text-base whitespace-normal break-words">{activeMessage}</p>
-                </motion.div>
-              </AnimatePresence>
+            <div className="relative min-h-[1.5rem]">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center gap-2 text-blue-100 font-medium"
+              >
+                <div className="h-1 w-8 bg-blue-400/50 rounded-full" />
+                {quote.link ? (
+                  <a
+                    href={quote.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm md:text-base italic hover:text-white hover:underline decoration-blue-300/50 underline-offset-4 transition-all"
+                  >
+                    {quote.author} ↗
+                  </a>
+                ) : (
+                  <p className="text-sm md:text-base italic">{quote.author}</p>
+                )}
+              </motion.div>
             </div>
           </div>
-
-          {/* Optional: Add a subtle 'Date/Streak' indicator if needed in future */}
-          {/* <div className="hidden md:block bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm">
-             <span className="text-sm font-semibold">Ready to learn? 🚀</span> 
-          </div> */}
         </div>
       </motion.div>
 

@@ -19,7 +19,6 @@ Exam Strategy Engine is a comprehensive exam preparation platform that combines 
 Prepare for multiple exams (UPSC, SSC, Banking) with complete data isolation between courses.
 - Switch between courses seamlessly
 - Course-scoped syllabus, progress, and analytics
-- [Architecture Documentation](./docs/MULTI_COURSE_ARCHITECTURE.md)
 
 ### 📚 Syllabus Management
 - Hierarchical syllabus: Subjects → Topics → Subtopics

@@ -47,7 +47,7 @@ export const PROMPTS = {
 
     return `IMPORTANT: You MUST respond with ONLY valid JSON. No markdown code fences, no comments, no explanations before or after. Start your response with [ and end with ].
 
-You are an expert Socratic Tutor and Exam Creator. Create high-quality, pedagogically rigorous assessment questions.
+You are an expert Socratic Tutor and Exam Creator. Your goal is to create high-quality, pedagogically rigorous assessment questions that test deep understanding, not just rote memorization.
 
 TASK: Generate exactly ${request.questionCount} ${request.questionType.replace('_', ' ')} questions.
 
@@ -60,23 +60,33 @@ ${syllabusContext}
 ${request.examContext ? `- Exam Type: ${request.examContext}` : ''}
 ${request.learningObjectives?.length ? `- Learning Objectives: ${request.learningObjectives.join(', ')}` : ''}
 
+CHAIN OF THOUGHT PROCESS (Do this internally, do not output):
+1. Analyze the target difficulty and topics.
+2. Identify common misconceptions or "traps" related to these topics.
+3. Formulate a clear, unambiguous question stem.
+4. For programming topics, draft a realistic, bug-free code snippet.
+5. Create one correct answer and three plausible distractors based on the identified misconceptions.
+6. Review against constraints (no negative phrasing, no "all of the above").
+
 STRICT CONSTRAINTS:
-1. NO "All of the above" or "None of the above" options
-2. NO ambiguous answers - exactly one correct answer
-3. NO negative phrasing (e.g., "Which is NOT...")
-4. Distractors must be plausible, based on common misconceptions
-5. Questions must be relevant to the specified topics
+1. NO "All of the above" or "None of the above" options.
+2. NO ambiguous answers - exactly one correct answer.
+3. NO negative phrasing (e.g., "Which is NOT...") unless absolutely necessary for the concept.
+4. Distractors must be plausible, based on common misconceptions.
+5. Questions must be relevant to the specified topics.
+6. For Computer Science/Programming questions, you MUST provide a "codeSnippet" field containing the relevant code context. The code must be valid, readable, and properly indented using \\n for newlines.
 
 REQUIRED JSON SCHEMA - Each object must have ALL these fields:
 {
   "question": "Clear, precise question text",
+  "codeSnippet": "def example():\\n    return 'Hello'", // Optional: Only for programming questions. Use \\n for newlines.
   "options": ["Option A text", "Option B text", "Option C text", "Option D text"],
-  "correctAnswer": "A",
-  "explanation": "Detailed explanation of why the answer is correct",
+  "correctAnswer": "A", // Must match one of the options exactly or be the option letter/index
+  "explanation": "Detailed explanation of why the answer is correct and why others are wrong.",
   "difficulty": "${request.difficulty}",
   "subject": "${request.subjects[0]}",
   "topics": ["topic1", "topic2"],
-  "estimatedTime": 90,
+  "estimatedTime": 60,
   "bloomsLevel": "${bloomsLevels[0]}"
 }
 

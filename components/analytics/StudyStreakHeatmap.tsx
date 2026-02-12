@@ -1,36 +1,44 @@
 'use client';
 
 import { eachDayOfInterval, subDays, format, getDay, startOfWeek } from 'date-fns';
-import { Timestamp } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import { Flame, Trophy } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/utils';
-import { DailyLog } from '@/types/exam';
 
 interface StudyStreakHeatmapProps {
-  logs: DailyLog[];
+  /** Sparse history map: "YYYY-MM-DD" → activity value (e.g. topics completed) */
+  habitHistory: Record<string, number>;
+  /** Target value per day — used to compute activity intensity levels */
+  targetValue?: number;
+  /** Number of days to show (default 365) */
   days?: number;
+  /** Current streak count (pre-computed by habit engine) */
+  currentStreak?: number;
+  /** Longest streak count (pre-computed by habit engine) */
+  longestStreak?: number;
   className?: string;
 }
 
-export function StudyStreakHeatmap({ logs, days = 365, className }: StudyStreakHeatmapProps) {
-  // 1. Process data into a map for fast lookup
-  const activityMap = new Map<string, DailyLog>();
-
-  logs.forEach(log => {
-    if (log.date) {
-      const dateStr = format(log.date instanceof Timestamp ? log.date.toDate() : new Date(log.date), 'yyyy-MM-dd');
-      activityMap.set(dateStr, log);
-    }
+export function StudyStreakHeatmap({
+  habitHistory,
+  targetValue = 3,
+  days = 365,
+  currentStreak: externalStreak,
+  longestStreak: externalLongest,
+  className,
+}: StudyStreakHeatmapProps) {
+  // 1. Build activity map from habit history
+  const activityMap = new Map<string, number>();
+  Object.entries(habitHistory).forEach(([dateStr, value]) => {
+    activityMap.set(dateStr, value);
   });
 
   // 2. Generate calendar days
   const today = new Date();
   const startDate = subDays(today, days);
-  // Align start date to Sunday for proper grid alignment
   const calendarStart = startOfWeek(startDate);
 
   const calendarDays = eachDayOfInterval({
@@ -38,87 +46,62 @@ export function StudyStreakHeatmap({ logs, days = 365, className }: StudyStreakH
     end: today,
   });
 
-  // 3. Calculate stats
-  // Current Streak
-  let currentStreak = 0;
-  const tempDate = new Date();
+  // 3. Calculate streaks (only if not provided externally)
+  let currentStreak = externalStreak ?? 0;
+  let longestStreak = externalLongest ?? 0;
 
-  // Check today
-  if (activityMap.has(format(tempDate, 'yyyy-MM-dd'))) {
-    currentStreak++;
-    tempDate.setDate(tempDate.getDate() - 1);
-
-    // Check previous days
-    while (activityMap.has(format(tempDate, 'yyyy-MM-dd'))) {
-      currentStreak++;
-      tempDate.setDate(tempDate.getDate() - 1);
-    }
-  } else {
-    // Check if yesterday was active (streak might be intact but today not done yet)
-    tempDate.setDate(tempDate.getDate() - 1);
+  if (externalStreak === undefined) {
+    const tempDate = new Date();
     if (activityMap.has(format(tempDate, 'yyyy-MM-dd'))) {
-      currentStreak++; // Yesterday counts
+      currentStreak++;
       tempDate.setDate(tempDate.getDate() - 1);
       while (activityMap.has(format(tempDate, 'yyyy-MM-dd'))) {
         currentStreak++;
         tempDate.setDate(tempDate.getDate() - 1);
       }
-    }
-  }
-
-  // Longest Streak (Simple approximation for now, optimized for recent data)
-  let longestStreak = 0;
-  let tempStreak = 0;
-  // Sort logs by date asc
-  const sortedLogs = [...logs].sort((a, b) => {
-    const da = a.date instanceof Timestamp ? a.date.toDate().getTime() : new Date(a.date).getTime();
-    const db = b.date instanceof Timestamp ? b.date.toDate().getTime() : new Date(b.date).getTime();
-    return da - db;
-  });
-
-  if (sortedLogs.length > 0) {
-    tempStreak = 1;
-    longestStreak = 1;
-    for (let i = 1; i < sortedLogs.length; i++) {
-      const prevLog = sortedLogs[i - 1];
-      const currLog = sortedLogs[i];
-
-      if (!prevLog || !currLog) {
-        continue;
-      }
-
-      const prev = prevLog.date instanceof Timestamp ? prevLog.date.toDate() : new Date(prevLog.date);
-      const curr = currLog.date instanceof Timestamp ? currLog.date.toDate() : new Date(currLog.date);
-
-      const diffTime = Math.abs(curr.getTime() - prev.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 1) {
-        tempStreak++;
-      } else if (diffDays > 1) {
-        tempStreak = 1;
-      }
-      if (tempStreak > longestStreak) {
-        longestStreak = tempStreak;
+    } else {
+      tempDate.setDate(tempDate.getDate() - 1);
+      if (activityMap.has(format(tempDate, 'yyyy-MM-dd'))) {
+        currentStreak++;
+        tempDate.setDate(tempDate.getDate() - 1);
+        while (activityMap.has(format(tempDate, 'yyyy-MM-dd'))) {
+          currentStreak++;
+          tempDate.setDate(tempDate.getDate() - 1);
+        }
       }
     }
   }
 
-  // Activity Level Helper
-  const getActivityLevel = (minutes: number) => {
-    if (minutes === 0) {
-      return 0;
+  if (externalLongest === undefined) {
+    let tempStreak = 0;
+    const sortedDates = Object.keys(habitHistory).sort();
+    if (sortedDates.length > 0) {
+      tempStreak = 1;
+      longestStreak = 1;
+      for (let i = 1; i < sortedDates.length; i++) {
+        const prev = new Date(sortedDates[i - 1]!);
+        const curr = new Date(sortedDates[i]!);
+        const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          tempStreak++;
+        } else if (diffDays > 1) {
+          tempStreak = 1;
+        }
+        if (tempStreak > longestStreak) {
+          longestStreak = tempStreak;
+        }
+      }
     }
-    if (minutes < 30) {
-      return 1;
-    } // Light
-    if (minutes < 60) {
-      return 2;
-    } // Medium
-    if (minutes < 120) {
-      return 3;
-    } // High
-    return 4; // Intense
+  }
+
+  // Activity Level Helper — normalize against target
+  const getActivityLevel = (value: number) => {
+    if (value === 0) return 0;
+    const ratio = value / targetValue;
+    if (ratio < 0.33) return 1;
+    if (ratio < 0.66) return 2;
+    if (ratio < 1) return 3;
+    return 4; // Met or exceeded target
   };
 
   const getCellColor = (level: number) => {
@@ -139,8 +122,8 @@ export function StudyStreakHeatmap({ logs, days = 365, className }: StudyStreakH
   };
 
   // Group days by weeks for CSS Grid
-  const weeks = [];
-  let currentWeek = [];
+  const weeks: Date[][] = [];
+  let currentWeek: Date[] = [];
 
   for (const day of calendarDays) {
     if (getDay(day) === 0 && currentWeek.length > 0) {
@@ -187,9 +170,8 @@ export function StudyStreakHeatmap({ logs, days = 365, className }: StudyStreakH
               <div key={weekIndex} className="flex flex-col gap-1">
                 {week.map((day, dayIndex) => {
                   const dateStr = format(day, 'yyyy-MM-dd');
-                  const log = activityMap.get(dateStr);
-                  const minutes = log?.goals?.actualMinutes || 0;
-                  const level = log ? getActivityLevel(minutes) : 0;
+                  const value = activityMap.get(dateStr) ?? 0;
+                  const level = getActivityLevel(value);
 
                   return (
                     <TooltipProvider key={dateStr}>
@@ -208,11 +190,10 @@ export function StudyStreakHeatmap({ logs, days = 365, className }: StudyStreakH
                         <TooltipContent>
                           <div className="text-xs">
                             <p className="font-semibold">{format(day, 'MMM do, yyyy')}</p>
-                            {log ? (
-                              <>
-                                <p>{minutes} mins studied</p>
-                                <p className="text-muted-foreground">{log.studiedTopics?.length || 0} topics</p>
-                              </>
+                            {value > 0 ? (
+                              <p>
+                                {value} / {targetValue} completed
+                              </p>
                             ) : (
                               <p className="text-muted-foreground">No activity</p>
                             )}

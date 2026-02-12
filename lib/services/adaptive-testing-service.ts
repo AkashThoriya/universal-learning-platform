@@ -760,6 +760,18 @@ export class AdaptiveTestingService {
         if (!progressResult.success) {
           console.warn('Failed to update progress from adaptive test:', progressResult.error);
         }
+
+        // Fire habit event for test completion
+        try {
+          const { habitEngine } = await import('@/lib/services/habit-engine');
+          await habitEngine.processEvent({
+            userId,
+            eventType: 'TEST_COMPLETED',
+            courseId: test.courseId ?? null,
+          });
+        } catch (habitError) {
+          console.warn('Failed to update habit from test:', habitError);
+        }
       }
 
       // Mission system integration removed - now handled through journey planning

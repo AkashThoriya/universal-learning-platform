@@ -17,7 +17,7 @@ import {
 
   Menu,
   BookOpen,
-  Calendar,
+  Flame,
   LogOut,
   User,
   Settings,
@@ -87,10 +87,10 @@ export default function BottomNav() {
       description: 'Study materials and topics',
     },
     {
-      href: '/log/daily',
-      label: 'Daily Log',
-      icon: <Calendar className="h-5 w-5 text-green-500" />,
-      description: 'Track your daily progress',
+      href: '/habits',
+      label: 'Habits',
+      icon: <Flame className="h-5 w-5 text-orange-500" />,
+      description: 'Track your consistency',
     },
     {
       href: '/profile',

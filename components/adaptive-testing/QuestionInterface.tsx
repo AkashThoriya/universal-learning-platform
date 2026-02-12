@@ -287,6 +287,50 @@ export default function QuestionInterface({
                 <div className="flex-1 prose prose-lg max-w-none text-gray-900 pr-4">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{question.question}</ReactMarkdown>
 
+                  {/* Use a simple pre block for code snippets to avoid heavy dependencies */}
+                  {question.codeSnippet && (
+                    <div className="my-4 relative group">
+                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <Badge variant="outline" className="text-xs text-slate-400 border-slate-600 bg-slate-800">
+                          Code
+                        </Badge>
+                      </div>
+                      <pre
+                        className="p-4 rounded-lg bg-slate-900 border border-slate-700 overflow-x-auto text-sm font-mono text-slate-50 leading-relaxed shadow-inner touch-pan-x"
+                        style={{ tabSize: 2 }}
+                      >
+                        <code>{question.codeSnippet}</code>
+                      </pre>
+                    </div>
+                  )}
+
+                  {/* Hint / Stuck Button */}
+                  {adaptiveMode && !isAnswered && (
+                    <div className="mt-4">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 px-2 gap-1.5"
+                          >
+                            <span className="text-lg">💡</span>
+                            Stuck?
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="max-w-xs">
+                          <p className="font-semibold mb-1">Hint:</p>
+                          <p className="text-xs text-gray-500">Focus on these concepts:</p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {question.topics?.map(t => (
+                              <Badge key={t} variant="secondary" className="text-[10px] h-4 px-1">{t}</Badge>
+                            ))}
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  )}
+
                   {/* Explanation showing below options now */}
                 </div>
                 <div className="flex items-center gap-1 ml-2 shrink-0">

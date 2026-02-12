@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 
 import QuestionInterface from '@/components/adaptive-testing/QuestionInterface';
 import TestAnalyticsDashboard from '@/components/adaptive-testing/TestAnalyticsDashboard';
-import { TestDetailSkeleton } from '@/components/skeletons';
+// import { TestDetailSkeleton } from '@/components/skeletons'; // Replaced with new specialized skeleton
+import { TestSkeleton } from '@/components/ui/skeletons/TestSkeleton';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -259,7 +260,7 @@ export default function TestDetailPage() {
   };
 
   if (loading) {
-    return <TestDetailSkeleton />;
+    return <TestSkeleton />;
   }
 
   if (!test) {

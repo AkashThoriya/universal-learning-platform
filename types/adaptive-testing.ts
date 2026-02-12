@@ -55,6 +55,7 @@ export interface AdaptiveQuestion {
   id: string;
   question: string; // Main question text (matches LLM service)
   content?: string; // Backward compatibility
+  codeSnippet?: string; // Code context for CS/Programming questions
   type?: 'multiple_choice' | 'true_false' | 'numerical' | 'text_input';
   options?: string[]; // Simplified options format for LLM compatibility
   correctAnswer: string | number; // Single correct answer (matches LLM service)

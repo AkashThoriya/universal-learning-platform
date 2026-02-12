@@ -190,6 +190,20 @@ export default function TopicDetailPage() {
           spread: 70,
           origin: { y: 0.6 },
         });
+
+        // Fire habit event for topic completion
+        import('@/lib/services/habit-engine').then(async ({ habitEngine }) => {
+          await habitEngine.processEvent({
+            userId: user.uid,
+            eventType: 'TOPIC_COMPLETED',
+            courseId: activeCourseId,
+          });
+          toast({
+            title: "Habit Progress Updated! 📈",
+            description: "Your daily consistency goal is closer!",
+            className: "bg-gradient-to-r from-green-50 to-emerald-50 border-emerald-200 text-emerald-800"
+          });
+        }).catch(console.warn);
       }
     } catch (error) {
       console.error('Error toggling completion:', error);
@@ -227,6 +241,20 @@ export default function TopicDetailPage() {
         origin: { y: 0.6 },
         colors: ['#10b981', '#34d399', '#f59e0b']
       });
+
+      // Fire habit event for mastery
+      import('@/lib/services/habit-engine').then(async ({ habitEngine }) => {
+        await habitEngine.processEvent({
+          userId: user.uid,
+          eventType: 'TOPIC_COMPLETED',
+          courseId: activeCourseId,
+        });
+        toast({
+          title: "Habit Progress Updated! 📈",
+          description: "Mastery counts towards your daily goal!",
+          className: "bg-gradient-to-r from-green-50 to-emerald-50 border-emerald-200 text-emerald-800"
+        });
+      }).catch(console.warn);
 
     } catch (error) {
       console.error('Error marking mastered:', error);

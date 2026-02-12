@@ -34,6 +34,7 @@ export interface QuestionGenerationOptions {
 
 export interface LLMQuestionResponse {
   question: string;
+  codeSnippet?: string;
   options?: string[];
   correctAnswer: string | number;
   explanation?: string;
