@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
@@ -143,7 +145,11 @@ export function TopicContentTabs({
                       <span className="flex-shrink-0 w-5 h-5 rounded-full bg-slate-200/50 text-slate-500 flex items-center justify-center text-[10px] font-bold mt-1">
                         {idx + 1}
                       </span>
-                      <span className="text-slate-700 leading-relaxed font-medium">{tip}</span>
+                      <div className="text-slate-700 leading-relaxed font-medium prose prose-sm max-w-none [&>p]:m-0 [&>p]:inline">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ p: 'span' }}>
+                          {tip}
+                        </ReactMarkdown>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -179,14 +185,16 @@ export function TopicContentTabs({
                               </span>
                             </div>
                           )}
-                          <p
+                          <div
                             className={cn(
-                              'leading-relaxed text-base font-medium max-w-prose',
+                              'leading-relaxed text-base font-medium max-w-prose prose prose-sm max-w-none [&>p]:m-0 [&>p]:inline',
                               category ? 'text-slate-800' : 'text-slate-700'
                             )}
                           >
-                            {content}
-                          </p>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={{ p: 'span' }}>
+                              {content}
+                            </ReactMarkdown>
+                          </div>
                         </div>
                       );
                     })}

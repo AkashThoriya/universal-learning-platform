@@ -92,39 +92,42 @@
             }
           ],
           "learningTip": [
-            "System design is about trade-offs - there's no perfect solution.",
-            "Start with requirements: QPS, data size, latency requirement.",
-            "Think in terms of bottlenecks - where will the system break first under load?",
-            "Draw diagrams! Visualizing components helps identify missing pieces."
+            "**Scalability vs Performance:** Performance = 'how fast for one user'. Scalability = 'how many users can it handle'. You can have a slow but scalable system.",
+            "**Latency vs Throughput:** Latency = time for one request. Throughput = requests per second. A highway can have high throughput (many cars) but high latency (traffic jam).",
+            "**Stateful vs Stateless:** Stateless (REST) scales horizontally easily. Stateful requires sticky sessions or db-storage.",
+            "**Bottlenecks:** Always ask 'Where does it break?'. CPU? RAM? Network I/O? Disk I/O?"
           ],
           "mustNotMiss": [
-            "CI/CD Pipeline: Source → Build → Test → Deploy. Understand each stage.",
-            "Blue-Green Deployment: Two identical envs, switch traffic instantly. Easy rollback!",
-            "Canary Deployment: Route 5% traffic to new version first, gradually increase.",
-            "Docker ensures consistency from dev to prod - same environment everywhere.",
-            "Infrastructure as Code (Terraform) - version control your infrastructure."
+            "**CI/CD Pipeline:** Commit → Build (Docker) → Test (Unit/Integration) → Deploy (K8s) → Monitor (Prometheus).",
+            "**Deployment Strategies:** \n1. **Blue-Green:** Instant switch, zero downtime, simple rollback. Expensive (2x infra). \n2. **Canary:** Gradual rollout (1% -> 10% -> 100%). Low risk, slow.",
+            "**Infrastructure as Code (IaC):** Terraform/Ansible. Treat infra like software (Version Control, Reproducible).",
+            "**Docker vs VM:** Docker = OS virtualization (lighter). VM = Hardware virtualization (heavier)."
           ],
           "interviewQuestions": [
             {
-              "question": "Explain the CI/CD pipeline stages for a microservices architecture.",
-              "answer": "**Continuous Integration (CI):** Dev commits code → Automated Build → Unit/Integration Tests run. If pass, create Docker Image. \n\n**Continuous Deployment (CD):** Deploy image to Staging → Run E2E tests → Promote to Production (Canary/Blue-Green). \n\n**Key Goal:** Reduce 'Integration Hell' and enable multiple deploys per day."
+              "question": "Design a CI/CD pipeline for a microservices architecture.",
+              "answer": "**Pipeline:** \n1. **Code Commit:** Trigger Webhook. \n2. **Build:** Run lint, unit tests, build Docker Image. \n3. **Push:** Tag image (`v1.2.3`) & push to Registry (ECR/DockerHub). \n4. **Deploy Staging:** Update K8s manifest in Staging. Run Integration/E2E tests. \n5. **Deploy Prod:** Manual Approval → Canary Rollout (10% traffic) → Monitor Error Rate → 100% Rollout."
             },
             {
-              "question": "What is the difference between Blue-Green and Canary deployment?",
-              "answer": "**Blue-Green:** Two identical environments (Active/Idle). Deploy to Idle. Switch Router to Idle. **Instant rollback**, but requires **2x resources**. \n\n**Canary:** Rollout to small % of users (e.g., 1%). Monitor metrics (errors, latency). Gradually increase to 100%. **Cheaper**, safer, but slower rollout."
+              "question": "Blue-Green vs Canary Deployment - when to use which?",
+              "answer": "**Blue-Green:** Use when you need **Instant Rollback** capability or strict zero-downtime requirements for major changes. Requires 2x budget. \n\n**Canary:** Use for **High-Risk** changes where you want to test on real users (A/B testing) without affecting everyone. Cheaper but slower."
             },
             {
-              "question": "How does Docker help in consistent deployments across environments?",
-              "answer": "**Containerization** packages code + dependencies + OS libraries into a single immutable artifact (Image). \n\n**Result:** 'Works on my machine' = Works in Prod. Eliminates configuration drift between Dev, Staging, and Prop."
+              "question": "How do you handle database migrations with zero downtime?",
+              "answer": "**Expand and Contract Pattern:** \n1. **Expand:** Add new column/table. Code writes to BOTH old & new (or purely optional). Deploy. \n2. **Migrate:** Backfill data from old to new. \n3. **Contract:** Deploy code to read/write ONLY new column. Remove old column."
             },
             {
-              "question": "What is Infrastructure as Code (IaC) and why is it important?",
-              "answer": "Managing infra (servers, LBs, VPCs) via **code** (Terraform, CloudFormation) instead of manual UI clicks. \n\n**Benefits:** Version control for infra, reproducible environments, disaster recovery, and audit trails."
+              "question": "What is 'Configuration Drift' and how does IaC solve it?",
+              "answer": "**Drift:** When servers in a cluster become different over time (manual updates, hotfixes). \n\n**IaC (Terraform):** Defines desired state in code. Running `terraform apply` forces all servers to match the code exactly, eliminating drift."
             },
             {
-              "question": "How would you handle database migrations in a CI/CD pipeline?",
-              "answer": "1. **Backward Compatibility:** DB changes should verify strict backward compatibility (e.g., add column is safe, drop column is not). \n\n2. **Decouple:** Deploy DB change *before* code change. \n\n3. **Tools:** Use Flyway/Liquibase to version control schema changes."
+              "question": "Explain the concept of 'Immutable Infrastructure'.",
+              "answer": "Never patch/update a running server. \n\n**Update:** Build new VM/Container image with updates deployed → Replace old one. \n\n**Benefit:** Predictable, easy to rollback, no 'works on my machine' issues."
             }
+          ],
+          "resources": [
+            "https://bytebytego.com/courses/system-design-interview/scale-from-zero-to-millions-of-users",
+            "https://github.com/donnemartin/system-design-primer#ci-cd"
           ]
         },
         {
@@ -141,39 +144,43 @@
             }
           ],
           "learningTip": [
-            "'What happens when you type google.com?' tests your entire networking knowledge.",
-            "Focus on Application (HTTP), Transport (TCP/UDP), Network (IP) layers.",
-            "DNS is often first to break - understand resolution, TTL, caching.",
-            "HTTPS = HTTP + TLS. Know the TLS handshake at high level."
+            "**Latency Numbers:** Memorize these! L1 Cache (0.5ns) << RAM (100ns) << SSD (150us) << Network (150ms).",
+            "**Bandwidth vs Latency:** You can stream Netflix (High Bandwidth) but lag in gaming (High Latency).",
+            "**OSI Model:** Interviewers ask about L4 (Transport - TCP/UDP) and L7 (Application - HTTP). L4 LB is fast, L7 LB is smart.",
+            "**DNS:** It's a hierarchy. Root (.) -> TLD (.com) -> Authoritative (google.com). Highly cached."
           ],
           "mustNotMiss": [
-            "OSI Model: Application (HTTP) → Transport (TCP/UDP) → Network (IP) → Physical.",
-            "TCP vs UDP: TCP = reliable, ordered. UDP = fast, no guarantees.",
-            "DNS Resolution: Browser → OS → Router → ISP → Root → TLD → Authoritative.",
-            "HTTP Methods: GET (read), POST (create), PUT (replace), PATCH (update), DELETE.",
-            "Status Codes: 2xx success, 3xx redirect, 4xx client error, 5xx server error."
+            "**TCP Handshake:** SYN → SYN-ACK → ACK. (3-Way). Reliable, Ordered, but Slower.",
+            "**UDP:** 'Fire and Assume'. No handshake. Fast. Used for Video/Gaming/DNS.",
+            "**HTTP/1.1 vs HTTP/2:** Text vs Binary. 1.1 has Head-of-Line blocking. 2.0 has Multiplexing.",
+            "**HTTPS:** Uses TLS/SSL. Handshake is expensive (RSA/ECDHE). Session Resumption speeds it up.",
+            "**Anycast DNS:** Route to 'closest' IP via BGP. Critical for CDN performance."
           ],
           "interviewQuestions": [
             {
-              "question": "Explain the OSI model layers relevant to backend engineering.",
-              "answer": "**L7 Application:** HTTP, GraphQL, gRPC. (Where we write code). \n\n**L4 Transport:** TCP/UDP. (Ports, Reliability, Congestion Control). \n\n**L3 Network:** IP. (Routing packets between networks). \n\n**Relevance:** L7 Load Balancers route by URL; L4 LBs route by IP/Port."
+              "question": "TCP vs UDP: Deep check.",
+              "answer": "**TCP:** Connection-Oriented, Reliable (Ack/Retransmit), Flow Control (Window), Ordered. **Use:** Web, Email, File Transfer. \n\n**UDP:** Datagram, Unreliable (packet loss ok), No Flow Control, Unordered. **Use:** Real-time (VoIP, FPS Gaming), Broadcasting, DNS."
             },
             {
-              "question": "What is the difference between TCP and UDP? When would you use UDP?",
-              "answer": "**TCP:** Connection-oriented, Reliable (Ack), Ordered, Heavy. Used for: Web (HTTP), File Transfer, Email. \n\n**UDP:** Fire-and-forget, Unreliable (packet loss ok), Fast, Lightweight. Used for: **Video Streaming, Gaming, VoIP, DNS**."
+              "question": "How does HTTPS overhead impact latency and how to minimize it?",
+              "answer": "**Overhead:** 2 RTT (Round Trip Time) for initial Handshake. \n\n**Optimization:** \n1. **TLS 1.3:** Reduces to 1 RTT (or 0-RTT for resumption). \n2. **Session Resumption:** Reuse session ID/tickets to skip full handshake. \n3. **OCSP Stapling:** Server sends cert status, saving client a lookup."
             },
             {
-              "question": "How does DNS resolution work from browser to server?",
-              "answer": "Browser Cache -> OS Cache -> **ISP Resolver** -> **Root Server** (.) -> **TLD Server** (.com) -> **Authoritative Nameserver** (google.com) -> Returns IP. \n\n*Senior Tip:* Mention **Anycast routing** for fast DNS resolution."
+              "question": "What happens when you type google.com? (Deep Dive)",
+              "answer": "1. **DNS:** Browser Cache -> OS -> ISP -> Root -> TLD -> Authoritative -> IP. \n2. **TCP:** 3-Way Handshake with IP. \n3. **TLS:** Key Exchange (HTTPS). \n4. **HTTP:** Client sends `GET /`. \n5. **Server:** LB -> Web Server -> App Server -> DB. \n6. **Response:** HTML/CSS/JS. Browser renders DOM."
             },
             {
-              "question": "What is the difference between HTTP/1.1, HTTP/2, and HTTP/3?",
-              "answer": "**HTTP/1.1:** Text-based, Head-of-line blocking (one req per cxn). \n\n**HTTP/2:** Binary, Multiplexing (many reqs over one cxn), Header Compression. \n\n**HTTP/3:** Runs on **QUIC (UDP)** instead of TCP to solve TCP Head-of-line blocking in lossy networks."
+              "question": "Explain HTTP/2 Multiplexing.",
+              "answer": "**Problem in 1.1:** Browser opens 6 TCP connections. Requests are serial per connection (Head-of-Line Blocking). \n\n**HTTP/2:** Single TCP connection. Break requests into **Frames**. Interleave frames (Stream 1 chunk, Stream 2 chunk...). Reassemble at destination. No blocking."
             },
             {
-              "question": "Explain the TLS handshake process.",
-              "answer": "1. **Client Hello** (Cipher suites). \n\n2. **Server Hello** + Certificate (Public Key). \n\n3. **Key Exchange** (Client validates cert, generates Session Key encrypted with Server Public Key). \n\n4. **Secure Session** established (Symmetric encryption using Session Key)."
+              "question": "What is a 'Sticky Session' in Load Balancing?",
+              "answer": "**Concept:** LB routes all requests from User A to Server X using a Cookie or IP Hash. \n\n**Pros:** easy to use local RAM cache. \n\n**Cons:** Uneven load (if User A is heavy), pain to auto-scale (removing Server X breaks session). **Avoid if possible; use Redis for shared state.**"
             }
+          ],
+          "resources": [
+            "https://github.com/alex/what-happens-when",
+            "https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/"
           ]
         }
       ]
@@ -198,39 +205,42 @@
             }
           ],
           "learningTip": [
-            "Layer 4 LB looks at IP/port (fast). Layer 7 looks at HTTP (smart routing).",
-            "Consistent hashing: when node dies, only neighbors affected, not entire cluster.",
-            "Virtual nodes improve load distribution - each physical node gets multiple ring positions.",
-            "Health checks are critical - detect unhealthy backends quickly."
+            "**L4 vs L7:** L4 is a 'dumb' packet forwarder (IP/Port). L7 is 'smart' (HTTP Headers/Cookies). L7 is CPU intensive (SSL Termination).",
+            "**Consistent Hashing:** Visualize a Ring. Nodes are points. Keys are points. Key maps to next node clockwise. Adding node = stealing keys from neighbor.",
+            "**Virtual Nodes:** The trick to fix uneven distribution. 1 Physical Node = 100 Virtual points on ring.",
+            "**Health Checks:** Passive (monitor 5xx rates) is better than Active (ping) for high-scale systems."
           ],
           "mustNotMiss": [
-            "LB Algorithms: Round Robin, Weighted Round Robin, Least Connections, IP Hash.",
-            "Layer 4 vs Layer 7: Transport (fast) vs Application (URL/header-based routing).",
-            "Consistent Hashing: Hash nodes and keys to ring. Key → first node clockwise.",
-            "Virtual Nodes: Each physical = 100+ virtual nodes. Better distribution.",
-            "Health Checks: Active (ping servers) or Passive (monitor responses)."
+            "**Algorithms:** Round Robin (stateless), Least Connections (stateful), IP Hash (stickiness), Consistent Hashing (distributed).",
+            "**Sticky Sessions:** Avoid if possible. Breaks auto-scaling. Use Redis for session state instead.",
+            "**SSL Termination:** Decrypt at LB, send plain HTTP to backend. Saves backend CPU.",
+            "**Single Point of Failure:** LB itself! Use Active-Passive (Keepalived/VRRP)."
           ],
           "interviewQuestions": [
             {
-              "question": "How does Consistent Hashing minimize data movement when a node is added?",
-              "answer": "In modulo hashing (`key % n`), adding a node changes `n`, reshuffling nearly ALL keys. \n\nIn **Consistent Hashing** (Ring), keys mapped to nearest clockwise node. Adding a node only takes keys from its **immediate neighbor**. Only `K/n` keys move. Critical for distributed caches."
+              "question": "L4 vs L7 Load Balancing: Deep Dive",
+              "answer": "**L4 (Transport):** Routes by IP+Port. Packet-level. Fast. No inspection. \n**L7 (Application):** Routes by URL, Cookie, Header. SSL Termination. Slow (~10x slower than L4). \n*Use Case:* L7 for Microservices routing (`/billing` -> BillingSvc). L4 for raw TCP throughput."
             },
             {
-              "question": "Compare Layer 4 vs Layer 7 Load Balancing.",
-              "answer": "**L4 (Transport):** Routes based on **IP + Port**. Doesn't decrypt SSL. Very fast, low CPU. \n\n**L7 (Application):** Decrypts request, reads **URL/Headers/Cookies**. Can do smart routing (e.g., `/api/user` to UserSvc). Slower, higher CPU cost."
+              "question": "How does Consistent Hashing minimize churn?",
+              "answer": "**Problem:** `hash(key) % N`. If N changes, nearly 100% keys move. \n**Solution:** Map keys & nodes to a 0-360° Ring. Key maps to next node. \n**Result:** Adding a node only takes keys from *one* neighbor. Only `K/N` keys move. Critical for Distributed Caches (DynamoDB, Cassandra, Memcached)."
             },
             {
-              "question": "Design a load balancer that handles sticky sessions.",
-              "answer": "**Sticky Sessions**: Ensure user always hits same backend server (useful for local session data). \n\n**Method:** \n\n1. **Source IP Hash:** Hash client IP to pick server. \n\n2. **Cookie-Based:** LB injects a cookie (`SERVERID=A`) to track assignment. \n\n*Senior Warning:* **Avoid if possible!** It causes uneven load distribution and makes autoscaling/draining servers painful."
+              "question": "What is the 'Thundering Herd' problem at the LB level?",
+              "answer": "When many processes wake up to handle one event (e.g., a socket becoming readable). \n*Modern Context:* 10,000 clients retrying simultaneously after a service outage, DDOS-ing the recovery. \n**Fix:** Exponential Backoff + Jitter."
             },
             {
-              "question": "What are virtual nodes and why are they needed?",
-              "answer": "In Consistent Hashing, a physical node is assigned multiple positions on the ring (Virtual Nodes). \n\n**Why:** Prevents **Hotspots** (uneven data distribution) when you have few nodes. Ensures uniform load distribution."
+              "question": "Explain 'Virtual Nodes' in Consistent Hashing.",
+              "answer": "**Problem:** With few nodes (A, B, C), random distribution might give Node A 50% of ring (Hotspot). \n**Solution:** Hash Node A 100 times (`A_1, A_2... A_100`) and place on ring. \n**Benefit:** Statistically uniform distribution of keys even with few physical nodes."
             },
             {
-              "question": "How would you handle LB becoming single point of failure?",
-              "answer": "Use **Active-Passive HA**. Two LBs effectively sharing a Virtual IP (VIP) using protocols like **VRRP (Keepalived)**. If Active dies, Passive detects heartbeat loss and takes over the VIP instantly."
+              "question": "How to handle LB failure?",
+              "answer": "**Floating IP (VIP) + Heartbeat:** \nTwo LBs (Active/Passive). \nActive owns VIP. Passive checks heartbeat. \nIf Active dies, Passive uses ARP spoofing/BGP to claim VIP."
             }
+          ],
+          "resources": [
+            "https://www.nginx.com/resources/glossary/load-balancing/",
+            "https://www.youtube.com/watch?v=re95eWf6rZ0"
           ]
         },
         {
@@ -253,39 +263,42 @@
             }
           ],
           "learningTip": [
-            "Cache-aside (lazy loading) is most common pattern.",
-            "Write-through is safer, write-back is faster.",
-            "CDN caches static content at edge - massive latency reduction.",
-            "Thundering herd: cache expires, 1000 requests hit DB. Use locking!"
+            "**Cache-Aside (Lazy):** App -> Cache. If miss, App -> DB -> Cache. Most common. Safe.",
+            "**Read-Through:** App -> Cache. If miss, Cache -> DB -> Cache. App doesn't touch DB.",
+            "**In-Memory vs Distributed:** Local Map (Fastest, not shared) vs Redis (Fast, Shared).",
+            "**Eviction:** How to choose what to delete when full? LRU (Recency) is standard. LFU (Frequency) is smarter but heavier."
           ],
           "mustNotMiss": [
-            "Cache-Aside: Check cache → miss → fetch DB → populate cache.",
-            "Write-Through: Write to cache AND DB synchronously.",
-            "Write-Back: Write to cache only, async to DB. Fast but risky.",
-            "CDN: Edge servers cache static content. TTL controls freshness.",
-            "Thundering Herd Solutions: Locking, request coalescing, staggered TTLs."
+            "**Cache Penetration:** Keys that *don't exist* anywhere hitting DB. Fix: Bloom Filter / Cache NULLs.",
+            "**Cache Breakdown:** Hot key expires -> 1000 reqs hit DB. Fix: Mutex / Logical Expiry.",
+            "**Cache Avalanche:** Many keys expire at once -> DB overload. Fix: Randomize TTL.",
+            "**Write-Through vs Back:** Through = Safe (Synch). Back = Fast (Async risk)."
           ],
           "interviewQuestions": [
             {
-              "question": "Pros/cons of Write-Through vs Write-Back caching?",
-              "answer": "**Write-Through:** Updates Cache + DB synchronously. \n\n*Pros:* Strong consistency, no data loss. \n\n*Cons:* Higher write latency (2 writes). \n\n**Write-Back:** Updates Cache only; DB updated async. \n\n*Pros:* Super fast writes. \n\n*Cons:* **Data loss risk** if cache crashes before flush."
+              "question": "Cache Penetration vs Breakdown vs Avalanche?",
+              "answer": "**Penetration:** Requesting *non-existent* data (e.g. ID=-1). Hits DB every time. \n*Fix:* **Bloom Filter** or cache empty object with short TTL. \n\n**Breakdown:** HOT key expires. Concurrent reqs hit DB. \n*Fix:* **Mutex Lock** (only 1 proc fetches) or 'Logical Expiration' (soft expire). \n\n**Avalanche:** massive number of keys expire same time. \n*Fix:* **Jitter** (Randomize TTLs)."
             },
             {
-              "question": "How does a CDN decide which edge server serves a user?",
-              "answer": "Via **Anycast DNS** or **Geo-DNS**. The DNS server resolves the CDN domain to the IP address of the edge server physically closest (lowest latency) to the user's resolver."
+              "question": "How to keep Cache in sync with DB?",
+              "answer": "1. **TTL:** Eventual consistency (simplest). \n2. **Double Delete:** Delete Cache -> Update DB -> Delete Cache again (catch race conditions). \n3. **CDC (Change Data Capture):** Debezium reads DB logs -> Updates Cache asynchronously (Robust)."
             },
             {
-              "question": "Explain the Thundering Herd problem and solutions.",
-              "answer": "**Problem:** A popular cache key expires. Thousands of requests miss cache simultaneously and hit the DB, crashing it. \n\n**Solutions:** \n\n1. **Request Coalescing:** (Singleflight) Hold 999 requests, let 1 fetch from DB. \n\n2. **Probabilistic Early Expiration:** Refresh cache slightly before it actually expires."
+              "question": "Design a Distributed Rate Limiter.",
+              "answer": "**Token Bucket Algo in Redis:** \nUse `INCR` and `EXPIRE`. \nKey: `user_id:minute`. Value: counter. \nIf `INCR > limit`, reject. \n*Advanced:* Use **Redis Lua Script** to ensure atomicity of check-and-decrement."
             },
             {
-              "question": "When would you invalidate cache vs set TTL?",
-              "answer": "**TTL (Time-To-Live):** Good for data where slight staleness is ok (e.g., View Counts). \n\n**Explicit Invalidation:** Critical for data that MUST be consistent (e.g., User Ban Status, Wallet Balance). Invalidate immediately on update."
+              "question": "Redis vs Memcached?",
+              "answer": "**Redis:** Data Structures (Lists, Sets, Maps), Persistence (RDB/AOF), Replication/Cluster, Single-Threaded. \n\n**Memcached:** Simple Key-Value, Multi-Threaded (better vertical scale), Volatile only. \n*Default choice:* Redis."
             },
             {
-              "question": "How to maintain cache consistency in distributed system?",
-              "answer": "Complete consistency is hard (CAP theorem). Strategies: \n\n1. **TTL:** Eventual consistency. \n\n2. **Write-Through:** Stronger consistency. \n\n3. **Debezium (CDC):** Listen to DB transaction logs and update cache async."
+              "question": "What is 'Cache Stampede' and how to solve it?",
+              "answer": "Same as Cache Breakdown. \n\n**Probabilistic Early Recomputation:** \n`if (now() + random_gap() > expiry) { recompute_in_background(); }` \nThis prevents all threads from noticing the expiry at the exact same millisecond."
             }
+          ],
+          "resources": [
+            "https://redis.io/docs/management/persistence/",
+            "https://research.facebook.com/publications/memcached-at-facebook/"
           ]
         },
         {
@@ -302,38 +315,42 @@
             }
           ],
           "learningTip": [
-            "Redis Sorted Sets (ZSET) are perfect - O(log N) insert and rank.",
-            "ZADD for score, ZRANK for rank, ZRANGE for top-K.",
-            "For 100M users, consider sharding by contest.",
-            "WebSocket/SSE for real-time rank push to clients."
+            "**Data Structure:** Redis Sorted Set (ZSET) is the only viable answer for real-time ranking.",
+            "**Complexity:** ZADD is O(log N). Sorting 1M users in SQL is O(N log N) - too slow.",
+            "**Partitioning:** Global leaderboard for 1B users isn't possible on one machine. Shard by UserID? No, can't sort. Shard by Score Range! (1-1000, 1001-2000).",
+            "**Ties:** Timestamp tie-breaker is standard interview pattern."
           ],
           "mustNotMiss": [
-            "Redis ZSET: ZADD, ZRANK, ZRANGE, ZREVRANGE for leaderboard ops.",
-            "Scaling: Shard by contest ID. Each contest → separate Redis.",
-            "Real-time: WebSocket + Pub/Sub for live updates.",
-            "Handling Ties: Composite score (score * 1e10 + timestamp)."
+            "**ZSET Implementation:** Skip List (multi-layer linked list). Probabilistic balance.",
+            "**Relative Rank:** `ZINCRBY` is atomic. No race conditions on score updates.",
+            "**Batch Updates:** Don't update Redis on every kill. Buffer in app, flush every 5s.",
+            "**Scatter-Gather:** If sharding by UserID, you must query Top 10 from ALL shards and merge."
           ],
           "interviewQuestions": [
             {
-              "question": "Design a real-time leaderboard for 1M concurrent users.",
-              "answer": "Use **Redis Sorted Sets (ZSET)**. \n\n`ZADD leaderboard <score> <user_id>`: O(log N). \n\n`ZREVRANGE leaderboard 0 9`: Get Top 10. O(log N + K). \n\nRDBMS cannot handle sorting 1M rows in real-time."
+              "question": "What is the underlying data structure of Redis ZSET?",
+              "answer": "**Skip List** + **Hash Map**. \n**Map:** Maps Member -> Score (O(1) lookup). \n**Skip List:** Maintains order. Layered linked list allowing O(log N) insertion/search. \n*Why not BST?* Skip lists are more memory efficient and simpler to implement concurrently."
             },
             {
-              "question": "What data structure fits best for ranking logic?",
-              "answer": "**Skip List** (used internally by Redis ZSet) or **Balanced BST**. Allows fast updates (insert/delete) and fast range queries (get top K) in O(log N)."
+              "question": "System Design: Real-time Game Leaderboard",
+              "answer": "1. **Ingest:** Game server sends `updateScore(user, points)` to Kafka. \n2. **Process:** Worker consumes Kafka, buffers updates (5s window). \n3. **Storage:** Redis ZSET `ZINCRBY leaderboard points user`. \n4. **Read:** Client polls/WebSocket for `ZREVRANGE 0 10`. \n5. **Persistence:** Redis AOF + Weekly Snapshot to SQL."
             },
             {
-              "question": "How do you handle ties in a leaderboard?",
-              "answer": "Use **Composite Scores**. \n\nFormula: `FinalScore = (Points * 10^10) + (MAX_TIME - Timestamp)`. \n\nThis guarantees that if points are equal, the user who achieved it *earlier* (smaller timestamp) gets a higher final score."
+              "question": "How to handle 100 Million daily active users?",
+              "answer": "**Sharding:** Single Redis can handle ~100k ops/sec. For 100M: \n**Option A:** Partition by **Score Range** (Elite, Pro, Noob). Problem: Hotspot in 'Noob' tier. \n**Option B:** Partition by **User ID** (Total Sharding). To get Top 10, query ALL partitions (Scatter-Gather) and merge. Preferable."
             },
             {
-              "question": "How to scale to 100M users across contests?",
-              "answer": "**Sharding:** \n\nSince users participate in specific *contests*, shard by `Contest_ID`. All data for Contest A goes to Redis Cluster A. \n\nFor global leaderboard: Use a **Map-Reduce** approach (Top K from each shard -> Aggregate)."
+              "question": "How to handle tie-breaking?",
+              "answer": "If same score, user who got it *first* should be higher. \n**Decimal Implementation:** \n`StoredScore = TrueScore + (1 / timestamp)`. \nOr `Score = TrueScore.Timestamp`. (Requires floating point precision care)."
             },
             {
-              "question": "How do you push real-time rank updates?",
-              "answer": "Don't poll! Use **WebSockets** or **SSE (Server-Sent Events)**. \n\nWhen rank changes significantly, publish event to a Channel (Pub/Sub). Service pushes update only to relevant connected clients."
+              "question": "Client-side: Polling vs WebSocket for updates?",
+              "answer": "**Leaderboard:** Top 10 changes frequently. \n**Polling:** Good cacheability (CDN can cache `/top10` json). OK for 'Global Top 10'. \n**WebSocket:** Required for 'My Relative Rank' (e.g. You just passed User X!). Expensive connection maintenance."
             }
+          ],
+          "resources": [
+            "https://redis.io/docs/data-types/sorted-sets/",
+            "https://medium.com/swlh/system-design-real-time-leaderboard-architecture-8a4cb751509f"
           ]
         }
       ]
@@ -358,37 +375,41 @@
             }
           ],
           "learningTip": [
-            "Fan-out on Write: Push to all followers. Fast reads, expensive writes.",
-            "Fan-out on Read: Pull from followed users. Fast writes, expensive reads.",
-            "Hybrid: Push for normal users, Pull for celebrities."
+            "**Fan-out:** The core problem. 1 user posts -> 10M followers. Do you write 10M times (Push) or read 10M times (Pull)?",
+            "**Hybrid:** The solution. Push for normal users. Pull for celebrities (Justin Bieber).",
+            "**Feed Generation:** Don't generate on-the-fly. Pre-compute 'Home Timeline' and store in Redis List."
           ],
           "mustNotMiss": [
-            "Push Model: Post → write to all followers' feeds. O(followers) writes.",
-            "Pull Model: Open feed → query all following. O(following) reads.",
-            "Celebrity Problem: 10M followers = 10M writes. Don't fan-out for them.",
-            "Hybrid: Push for <10K followers, Pull for celebrities."
+            "**Push (Write-Heavy):** User posts -> Write ID to all followers' timeline. **Pro:** Fast Read. **Con:** Slow Write (Fan-out).",
+            "**Pull (Read-Heavy):** User loads feed -> Fetch followees' recent posts -> Merge. **Pro:** Fast Write. **Con:** Slow Read.",
+            "**Celebrity Issue:** Push fails for 10M followers. Use Pull for them.",
+            "**Global Hotspot:** Don't shard by 'Post ID' if everyone reads the same viral post. Cache it everywhere."
           ],
           "interviewQuestions": [
             {
-              "question": "Explain Fan-out on Write vs Fan-out on Read.",
-              "answer": "**Fan-out on Write (Push):** Pre-compute feed when user posts. Writes to ALL followers' queues. **Fast Reads** (O(1)), but Slow Writes. Bad for celebrities (Justin Bieber). \n\n**Fan-out on Read (Pull):** Compute feed when user loads page. Fetches recent posts from all followees. **Fast Writes**, but Slow Reads."
+              "question": "Deep Dive: Hybrid Fan-out Architecture.",
+              "answer": "1. **Normal User Posts:** Push ID to all followers' Redis Lists. \n2. **Celebrity Posts:** Write to Celebrity's own 'Outbox' only. \n3. **User Reads Feed:** \n   - Fetch from their Redis List (Normal posts). \n   - Fetch from 'Outbox' of celebrities they follow. \n   - Merge & Sort by Time."
             },
             {
-              "question": "How do you handle celebrity users with millions of followers?",
-              "answer": "**Hybrid Approach:** \n\n1. **Push** for normal users (fast read). \n\n2. **Pull** for celebrities. When fetching feed, merge the pre-computed 'normal' feed with recent posts pulled from 'celebrity' storage."
+              "question": "How to generate 'Relevance' or 'Recommended' feed?",
+              "answer": "**Machine Learning Pipeline:** \n1. **Candidate Generation:** Filter 1B posts to 1000 candidates (via collaborative filtering / tags). \n2. **Ranking:** Score each candidate (P(Click) * Value). \n3. **Re-Ranking:** Remove duplicates, NSFW, ensure diversity. \n4. **Serve:** Return Top 20."
             },
             {
-              "question": "How does hybrid push-pull approach work?",
-              "answer": "Users have a pre-computed feed (Push). When they load the page, the system fetches this pre-computed list AND queries the 'Celebrity Cache' (Pull) for updates from high-traffic users, then merges them in memory."
+              "question": "Data Storage for Feed?",
+              "answer": "**Metadata (User -> Post IDs):** Cassandra/ScyllaDB (Wide column, time-ordered). \n**Content (Text/Image):** S3 + CDN. \n**Cache:** Redis Cluster (Sharded by UserID)."
             },
             {
-              "question": "How do you rank posts in a news feed?",
-              "answer": "Using an **EdgeRank** style algorithm. \n\n`Score = Affinity * Weight * TimeDecay`. \n\n- **Affinity:** How much I interact with the author. \n\n- **Weight:** Post type (Video > Photo > Text). \n\n- **Time Decay:** Newer posts score higher ($1 / (time + 1)$)."
+              "question": "How to handle 'Unfollow' in Push Model?",
+              "answer": "**Lazy Removal:** Don't scan 1000 items in Redis to remove 1 ID. \n- Just remove the 'Follow' relation in DB. \n- When User reads feed, app checks 'Am I still following author?' -> If no, discard item on the fly."
             },
             {
-              "question": "How to handle user unfollowing in push model?",
-              "answer": "Async process. Remove the unfollowed user's posts from the follower's pre-computed timeline (Redis list). If list is too long, just remove recent ones and let older ones expire (TTL)."
+              "question": "Pull vs Push Latency comparison?",
+              "answer": "**Push:** Write latency depends on follower count (Async Task Queue). Read latency is O(1) (Fetch Redis List). \n**Pull:** Write latency is O(1). Read latency is O(Followings) (Fan-in DB queries). **Push wins for user experience (Read-heavy).**"
             }
+          ],
+          "resources": [
+            "https://info.crunchydata.com/blog/designing-a-news-feed-system-postgresql-redis",
+            "https://neo4j.com/blog/designing-social-news-feed-graph-database/"
           ]
         },
         {
@@ -405,33 +426,37 @@
             }
           ],
           "learningTip": [
-            "Separate feed list (IDs) from post content (large).",
-            "Cursor pagination, not OFFSET. Consistent with new posts.",
-            "Pre-compute feeds for active users (cache warming)."
+            "**Separation of Concern:** Feed Service (List of IDs) vs Content Service (Text/Media).",
+            "**Pagination:** Never use OFFSET/LIMIT. Use Cursor (last_id) to avoid shifting results.",
+            "**Cache Warming:** If cache misses, don't just fetch from DB. Trigger a 'Rebuild Feed' job and return 'Loading' or 'Stale' data."
           ],
           "mustNotMiss": [
-            "Feed Metadata: Store (post_id, timestamp, score). Tiny, fast.",
-            "Content Hydration: Given IDs, batch-fetch content.",
-            "Cursor Pagination: 'after timestamp X' not OFFSET.",
-            "Cache Warming: Pre-compute for active users."
+            "**Metadata Store:** (Redis/Cassandra) stores `[PostID, Timestamp]`. Light-weight.",
+            "**Blob Store:** (S3/CDN) stores content. Heavy.",
+            "**Cursor Pagination:** `WHERE id < last_seen_id ORDER BY id DESC LIMIT 10`. O(1).",
+            "**Thundering Herd:** If Celebrity posts, millions read at once. Cache the CONTENT object at Edge (CDN) and local memory."
           ],
           "interviewQuestions": [
             {
-              "question": "How to store feed metadata vs post content?",
-              "answer": "**Feed (Metadata):** Store only IDs (`User_ID`, `Post_ID`) in lightweight storage (Redis, Cassini). Fast to sort/fetch. \n\n**Content (Blob):** Store actual text/media in Object Storage (S3, Cassandra) with `Post_ID` as key. \n\n*Fetch IDs first, then hydrate content in parallel.*"
+              "question": "Why separate Metadata from Content?",
+              "answer": "**Performance:** \n- Fetching list of 20 IDs + timestamps is tiny (2KB). \n- Fetching 20 full posts (Images/Text) is huge (5MB). \n**UX:** Allows lazy loading. Render skeletons immediately while content hydrates in parallel."
             },
             {
-              "question": "Why cursor-based pagination over offset-based?",
-              "answer": "**Offset (`LIMIT 10 OFFSET 1000`)** gets slower as data grows and drifts if new items are inserted (duplicates/missed items). \n\n**Cursor (`WHERE id < last_seen_id LIMIT 10`)** is O(1) jump, stable, and consistent even with real-time insertions."
+              "question": "How to implement Cursor-based Pagination?",
+              "answer": "Client requests: `GetFeed(limit=10)`. Server returns 10 items + `next_cursor='id_10'`. \nClient requests: `GetFeed(limit=10, after='id_10')`. \nServer Query: `SELECT * FROM Feed WHERE id < 'id_10' ORDER BY id DESC LIMIT 10`. \n**Benefit:** Efficient stable pagination even if new posts arrive."
             },
             {
-              "question": "How to handle cache invalidation on unfollow?",
-              "answer": "When User A unfollows B: \n\n1. Identify User A's **Timeline Cache**. \n\n2. Async Job: Scan top K items in cache. \n\n3. Remove items where `Author_ID == B`. \n\n*Don't invalidate entire cache; just scrub it.*"
+              "question": "Design Cache invalidation for Social Graph changes (Friend/Unfriend).",
+              "answer": "**Graph DB (Neo4j/Tao):** \nWhen A unfriends B: \n1. Update Graph DB edge. \n2. Invalidate 'Followers List' cache for B. \n3. Fan-out removal of B's posts from A's Timeline Cache."
             },
             {
-              "question": "How to warm caches for new users?",
-              "answer": "New users have no history. \n\n**Strategy:** Populate feed with 'Trending/Global Popular' content or 'Suggested Users' content until they build a follow graph. Use a generic 'Cold Start' cache."
+              "question": "How do you handle 'Viewed' status state?",
+              "answer": "Don't write to DB every time user scrolls. \n**Batching:** Client sends `[id1, id2, id3]` viewed every 5s. \nServer aggregates in Redis BitSet or Bloom Filter. \nAsync flush to Analytics DB (ClickHouse) for ML training."
             }
+          ],
+          "resources": [
+            "https://engineering.fb.com/2013/06/25/core-data/tao-the-power-of-the-graph/",
+            "https://meta.com/save/facebook-news-feed-architecture/"
           ]
         },
         {
@@ -448,38 +473,41 @@
             }
           ],
           "learningTip": [
-            "WebSocket for real-time bidirectional communication.",
-            "Message ordering via sequence numbers or timestamps.",
-            "Offline delivery: Store-and-forward pattern."
+            "**Protocol:** WebSocket for real-time (TCP, persistent). HTTP long-polling is fallback.",
+            "**Storage:** Write-heavy. RDBMS fails at scale. Use Wide-Column (Cassandra/Scylla) or LSM-tree based DB.",
+            "**Reliability:** Store-and-Forward. If user offline, store in 'Unread' bucket."
           ],
           "mustNotMiss": [
-            "WebSocket: Persistent connection for real-time messages.",
-            "Message Queue: Async delivery, guaranteed at-least-once.",
-            "Ordering: Sequence numbers per conversation.",
-            "Presence: Redis pub/sub for online status.",
-            "Group Chat: Fan-out to all members, efficient with message queue."
+            "**WebSocket:** Stateful connection. Need 'Gateway Service' to track which user is on which server.",
+            "**Sequence ID:** Timestamps are bad (clock skew). Use Discord Snowflake or Local Counter per Chat.",
+            "**Group Chat:** Don't duplicate message 1000 times. Store 1 copy. Users allow pointer/cursor.",
+            "**Encryption:** E2E (Signal Protocol). Server can't read messages."
           ],
           "interviewQuestions": [
             {
-              "question": "How do you maintain message ordering in chat?",
-              "answer": "Use **Sequence IDs** (monotonically increasing) generated by the Chat Service per conversation. \n\nFrontend sorts by Sequence ID. \n\n*Note:* Timestamps are unreliable due to clock skew."
+              "question": "Data Model for 1 Billion Messages/Day?",
+              "answer": "**Cassandra / ScyllaDB:** \n`PartitionKey: ChatID`. `ClusteringKey: MessageID`. \nEnsures all messages for a chat are stored together on disk. Fast range scans (`WHERE chat_id=X AND msg_id > Y`)."
             },
             {
-              "question": "Design 'Last Seen' and 'Online Status' feature.",
-              "answer": "Use **Redis Heartbeat**. \n\nClient sends 'I'm alive' signal every 5s. Server updates `LastActiveTimestamp` in Redis. \n\nStatus Check: `if (CurrentTime - LastActiveTime < 10s) return ONLINE`. \n\n*Don't write to DB; purely in-memory.*"
+              "question": "WebSocket Scaling Logic?",
+              "answer": "**Stateful Cluster:** \n1. User connects to `Gateway-1`. \n2. `Gateway-1` stores mapping `UserA -> Gateway-1` in Redis. \n3. When `UserB` sends msg to `UserA`, router checks Redis, finds `Gateway-1`, forwards msg to that server. \n4. `Gateway-1` pushes to `UserA` socket."
             },
             {
-              "question": "How to handle group chat for 1000+ members?",
-              "answer": "Don't fan-out messages to 1000 user queues (too heavy). \n\n**Strategy:** Store message ONCE in a 'Group Channel'. Users **Pull** (sync) from the group channel using a cursor (last read message ID) when they come online."
+              "question": "How to optimize Group Chat (10k users)?",
+              "answer": "Don't push to 10k sockets immediately (CPU spike). \n**Batching:** Store message to DB. \n**Pull Notification:** Send lightweight 'New Message' signal to online users. \n**Long Polling:** Users fetch batch of 50 new msgs."
             },
             {
-              "question": "How to ensure message delivery when user is offline?",
-              "answer": "Store-and-Forward. \n\n1. Save msg to 'Unread Messages' DB (Cassandra/HBase). \n\n2. When user connects (WebSocket), Push all unread messages. \n\n3. Client sends **ACK**. \n\n4. Server deletes from Unread DB."
+              "question": "Implement 'Sent', 'Delivered', 'Read'.",
+              "answer": "1. **Sent:** Client gets ACK from Server. \n2. **Delivered:** Recipient Client sends ACK to Server -> Server pushes to Sender. \n3. **Read:** Recipient opens chat. Client sends `ReadReceipt(LastID=50)`. Server updates `LastReadMap`. Pushes to Sender."
             },
             {
-              "question": "How do read receipts work at scale?",
-              "answer": "Batching is key. \n\nClient waits to read 5-10 messages, sends ONE 'Read up to ID: 50' ACK. \n\nServer updates 'LastReadID' for that user in that chat. \n\nNotify sender via WebSocket: 'User X read up to 50'."
+              "question": "Handling 'Typing...' indicators?",
+              "answer": "Ephemeral. Don't store in DB. \nUse Redis Pub/Sub or WebSocket broadcast. \nClient throttling: Send 'Typing' event max once every 2s to save bandwidth."
             }
+          ],
+          "resources": [
+            "https://discord.com/blog/how-discord-stores-billions-of-messages",
+            "https://engineering.fb.com/2018/11/15/tech-talks/designing-whatsapp/"
           ]
         }
       ]
@@ -504,38 +532,42 @@
             }
           ],
           "learningTip": [
-            "CAP: During Partition, choose Consistency or Availability.",
-            "PACELC: Even without partition, Latency vs Consistency trade-off.",
-            "Most systems are eventually consistent."
+            "**Partition Tolerance:** It's not optional. Network partitions WILL happen. You must choose AP or CP.",
+            "**PACELC:** The practical extension of CAP. Even when system is running normally (Else), you trade Latency for Consistency.",
+            "**Split Brain:** The nightmare scenario where two nodes both think they are Master. Solved by Quorum (Majority vote).",
+            "Fencing Tokens: Ensure that a zombie master cannot write to storage."
           ],
           "mustNotMiss": [
-            "CAP: Consistency + Availability + Partition Tolerance. Pick 2.",
-            "Reality: Partitions WILL happen. Choose CP or AP.",
-            "PACELC: P→(A vs C), Else→(L vs C).",
-            "Master-Slave: Master writes, slaves read. Write bottleneck.",
-            "Split-Brain: Two masters accepting writes. Need quorum."
+            "**Quorum:** `R + W > N`. Ensures you read the latest write. Standard is `N=3, W=2, R=2`.",
+            "**Eventual Consistency:** 'Gossip Protocol' spreads updates. Reads might be stale for milliseconds.",
+            "**Availability:** Measured in 9s (99.99% = 52 mins downtime/year).",
+            "**Sloppy Quorum:** Write to *any* 3 nodes (even if not owning the key) to stay Available (AP)."
           ],
           "interviewQuestions": [
             {
-              "question": "Why can't you have both Availability and Consistency during partition?",
-              "answer": "**CAP Theorem:** If network Partition (P) occurs (cable cut), you have two choices: \n\n1. **Availability (AP):** Keep serving requests, but data might be stale independently in two partitions. \n\n2. **Consistency (CP):** Stop serving requests (Error 500) until partition heals to prevent data divergence."
+              "question": "Explain PACELC with examples.",
+              "answer": "**CAP** is too simple. \n**PACELC** says: \nIf Partition (P), choose A or C. \nElse (E), choose **L**atency or **C**onsistency. \n\n*Example:* **DynamoDB** is PA/EL. (Prioritizes Availability during partition, and Low Latency during normal ops -> Eventual Consistency). \n**MySQL Cluster** is PC/EC. (Prioritizes Consistency always)."
             },
             {
-              "question": "How do you handle Master failure in replication?",
-              "answer": "**Failover Process:** \n\n1. Detect failure (Heartbeat timeout). \n\n2. Election: Slaves vote or Zookeeper appoints new Master (highest `log_id`). \n\n3. Reconfig: Clients pointed to new Master IP. \n\n4. Recovery: Old master rejoins as Slave."
+              "question": "How do you prevent Split Brain?",
+              "answer": "**Quorum & Fencing.** \n1. **Quorum:** To be leader, you need votes from `N/2 + 1` nodes. In a 5-node cluster, you need 3. If network splits 2 vs 3, the side with 2 cannot elect a leader. \n2. **Fencing Token:** Leader gets a monotonically increasing ID. Storage rejects writes from older IDs (Zombies)."
             },
             {
-              "question": "What is Split-Brain problem?",
-              "answer": "When network partitions cause **TWO nodes to think they are BOTH Master**. Both accept writes -> Data Corruption. \n\n**Fix:** **Quorum** (Majority Vote). A node needs 50%+1 votes to be Master. The partition with minority becomes Read-Only."
+              "question": "What is 'Sloppy Quorum' (Hinted Handoff)?",
+              "answer": "Used in **AP** systems (Cassandra/Dynamo). \nIf the 3 nodes responsible for Key K are down, write to *any* healthy node (with a note 'Please give this to Node X later'). \n*Benefit:* High Availability. \n*Cost:* Data is temporarily misplaced (Hinted Handoff)."
             },
             {
-              "question": "Difference between CAP and PACELC?",
-              "answer": "**CAP:** Only discusses Partition scenario. \n\n**PACELC:** Extends CAP. Even when **E**lse (no partition), you must tradeoff **L**atency vs **C**onsistency. (e.g., Sync replication = High Consistency/High Latency. Async = Low Latency/Eventual Consistency)."
+              "question": "Strong vs Eventual Consistency?",
+              "answer": "**Strong (Linearizability):** Once a write is acked, ALL subsequent reads see it. (Ref: Bank Balance). \n**Eventual:** Writes will propagate. Reads *might* be stale for a window. (Ref: Facebook Likes)."
             },
             {
-              "question": "Examples of CP and AP systems?",
-              "answer": "**CP (Consistency):** Banking Apps, HBase, MongoDB (default), Zookeeper. (Rather error than show wrong balance). \n\n**AP (Availability):** Cassandra, DynamoDB, DNS, Social Feeds. (Better to show stale post than crash)."
+              "question": "How does Master-Slave Replication handle lag?",
+              "answer": "Async replication = Lag is inevitable. \n**Implication:** User writes to Master, immediately reads from Slave -> Data missing (**Read-Your-Writes** problem). \n**Fix:** Sticky Session (read from Master for X seconds after write) or Versioning."
             }
+          ],
+          "resources": [
+            "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf",
+            "https://martinfowler.com/articles/patterns-of-distributed-systems/quorum.html"
           ]
         },
         {
@@ -552,38 +584,41 @@
             }
           ],
           "learningTip": [
-            "SQL: Strong consistency, complex joins, ACID.",
-            "NoSQL: Massive scale, flexible schema, high writes.",
-            "Shard key choice is critical - avoid hot spots."
+            "**ACID vs BASE:** SQL guarantees validity (ACID). NoSQL guarantees Uptime (Basically Available, Soft state, Eventual consistency).",
+            "**Key-Value (Redis/Dynamo):** O(1) fetch. opaque blobs. No joins.",
+            "**Document (Mongo):** Flexible JSON. Indexing on fields. Good for CMS/Catalogs.",
+            "**Wide-Column (Cassandra):** 2D Key-Value map. Write-heavy time-series data."
           ],
           "mustNotMiss": [
-            "ACID (SQL): Atomicity, Consistency, Isolation, Durability.",
-            "BASE (NoSQL): Basically Available, Soft-state, Eventually consistent.",
-            "NoSQL Types: Document, Key-Value, Wide-Column, Graph.",
-            "Sharding: Split by user_id, date, geography.",
-            "Bad shard key = hot spots. Need even distribution."
+            "**Polyglot Persistence:** Use the right tool. SQL for billing, Mongo for catalog, Redis for cache, Cassandra for logs.",
+            "**Normalization:** SQL (Reduce redundancy). **Denormalization:** NoSQL (Duplicate data to avoid read-time joins).",
+            "**Sharding:** Scaling horizontally. The 'Shard Key' is the most critical decision."
           ],
           "interviewQuestions": [
             {
-              "question": "When to choose MongoDB over PostgreSQL?",
-              "answer": "Choose **MongoDB (NoSQL)**: \n\n1. Flexible/Unstructured schema (JSON). \n\n2. Massive write loads (sharding built-in). \n\n3. Deep nesting of data. \n\n**PostgreSQL (SQL)**: Strict relations, ACID transactions required (Banking), Complex JOINs."
+              "question": "SQL vs NoSQL: How to decide?",
+              "answer": "**Choose SQL:** Relations are core (Social Graph, Billing). ACID is non-negotiable (Finance). Structured data. \n**Choose NoSQL:** \n1. **Scale:** Need >10k writes/sec (Cassandra). \n2. **Flexibility:** Schema changes frequently (Catalog). \n3. **Volume:** Petabytes of logs/IoT data."
             },
             {
-              "question": "Vertical Scaling vs Horizontal Sharding?",
-              "answer": "**Vertical:** Buy bigger RAM/CPU. Easiest, but expensive and hits a ceiling. \n\n**Horizontal:** Add more cheap machines. Infinite scale but High complexity (sharding logic, cross-shard joins management)."
+              "question": "Explain 'Polyglot Persistence'.",
+              "answer": "Modern apps don't use just one DB. \n*E-commerce Example:* \n- **Postgres:** Orders/Payments (ACID). \n- **MongoDB:** Product Catalog (Flexible Schema). \n- **Redis:** Cart/Session (Speed). \n- **ElasticSearch:** Search (Fuzzy matching)."
             },
             {
-              "question": "What is Shard Key and how to choose?",
-              "answer": "The column used to partition data (e.g., `User_ID`). \n\n**Criteria:** \n\n1. **High Cardinality:** (Many values). \n\n2. **Even Distribution:** Avoid 'Hot Partitions'. \n\n3. **Query Affinity:** Most queries should hit only 1 shard."
+              "question": "Document Store vs Wide-Column Store?",
+              "answer": "**Document (MongoDB):** Data = JSON. Good for complex objects (User Profile). Flexible queries. CP (usually). \n**Wide-Column (Cassandra):** Data = Map<RowKey, Map<ColKey, Val>>. Optimized for **Writes** (Append-only). Query patterns must be known upfront. AP."
             },
             {
-              "question": "ACID vs BASE properties?",
-              "answer": "**ACID (SQL):** Atomicty, Consistency (Strong), Isolation... \n\n**BASE (NoSQL):** \n\n- **B**asically **A**vailable (Uptime > Consistency) \n\n- **S**oft State (Can change without input) \n\n- **E**ventual Consistency (Reads match writes *later*)."
+              "question": "What is the 'N+1 Problem' in ORMs?",
+              "answer": "Fetching a list of Parents (N), then doing a query for each Parent (1) to get Children. \n*Result:* N+1 queries. \n*Fix:* **Batch Fetching** (`SELECT * FROM children WHERE parent_id IN (...)`)."
             },
             {
-              "question": "Cassandra vs MongoDB differences?",
-              "answer": "**MongoDB:** CP (Master-Slave). Good for flexible docs. \n\n**Cassandra:** AP (Masterless/Peer-to-Peer). Excellent for **Write-Heavy** workloads (LSM Trees). No single point of failure."
+              "question": "Vertical vs Horizontal Scaling databases?",
+              "answer": "**Vertical:** Bigger Instance (AWS RDS `db.m5.24xlarge`). Easy. No code change. Limit: Cost/Hardware. \n**Horizontal:** Sharding. Hard code changes. Relational Integrity breaks. Infinite scale."
             }
+          ],
+          "resources": [
+            "https://www.dynamodbguide.com/what-is-dynamodb/",
+            "https://cassandra.apache.org/_/index.html"
           ]
         },
         {
@@ -600,38 +635,40 @@
             }
           ],
           "learningTip": [
-            "Directory-based: Lookup table (flexible). Hash-based: Formula (fast).",
-            "Resharding is painful - use consistent hashing.",
-            "Cross-shard queries are expensive - denormalize."
+            "**Shard Key Selection:** High Cardinality (many values) + Uniform Distribution. Avoid `IsActive` (boolean) or Timestamp (sequential writes -> hotspot).",
+            "**Directory-Based:** Flexible but lookup is bottleneck. Helper service says 'User X is on Shard 4'.",
+            "**Hash-Based:** `Hash(ID) % N`. Uniform, but resizing is painful (Consistent Hashing helps)."
           ],
           "mustNotMiss": [
-            "Hash-Based: shard = hash(key) % n. Adding shard rehashes all.",
-            "Directory-Based: Lookup table. Flexible but adds latency.",
-            "Consistent Hashing: Adding shard only moves K/N keys.",
-            "Cross-Shard: Scatter-gather or denormalize.",
-            "Online Resharding: Dual-write → backfill → switch."
+            "**Hot Shard:** When one shard gets too much data/traffic (e.g. Partition by 'Celebrity Name').",
+            "**Scatter-Gather:** Query hitting all shards. High latency (wait for slowest shard). Avoid.",
+            "**Sidecar Proxy:** Vitess/ProxySQL handles sharding logic transparently."
           ],
           "interviewQuestions": [
             {
-              "question": "How to reshard without downtime?",
-              "answer": "**Hierarchical/Consistent Hashing:** \n\n1. Add new shards. \n\n2. **Double Write:** Apps write to Old + New shards. \n\n3. **Backfill:** Copy old data to new shards in background. \n\n4. **Validation:** Verify data parity. \n\n5. **Switch Reads:** Point apps to new shards."
+              "question": "How to handle a 'Celebrity Hotspot' in a sharded DB?",
+              "answer": "If sharding by `User_ID`, Justin Bieber's shard melts. \n**Fix:** \n1. **Hybrid Schema:** Store celebrity data separately. \n2. **Read Replica:** Dedicate replicas just for reading celebrity posts. \n3. **Append Randomness:** Append `_1` to `_100` to Key, spread across shards (write). Aggregate on read."
             },
             {
-              "question": "Directory-Based vs Hash-Based Sharding?",
-              "answer": "**Hash-Based:** `Shard = Key % N`. Fast, uniform. Hard to reshard constraints. \n\n**Directory-Based:** Lookup table (`KeyRange A-F -> Shard 1`). Flexible, easy to move data, but Lookup Table is Single Point of Failure/Bottleneck."
+              "question": "Design a globally distributed ID generator (Snowflake).",
+              "answer": "**Twitter Snowflake:** generates unique 64-bit IDs sorted by time. \n**Structure:** \n- 1 bit: sign \n- 41 bits: Timestamp (millis) \n- 10 bits: Machine ID (Worker) \n- 12 bits: Sequence Num (Per millisecond). \n*Why?* DB primary keys often need to be roughly sortable by time."
             },
             {
-              "question": "How to handle cross-shard joins?",
-              "answer": "**Avoid them.** They are performance killers. \n\n**Alternatives:** \n\n1. **Denormalize:** Duplicate data so join isn't needed. \n\n2. **Application Join:** Fetch from Shard A, then Shard B, join in code. \n\n3. **Analytics DB:** ETL data to Redshift/Snowflake for complex joins."
+              "question": "How to execute JOINs across shards?",
+              "answer": "Database won't do it. \n**Approaches:** \n1. **App-Side Join:** Fetch IDs from Shard A. Query Shard B with `IN (ids)`. \n2. **Denormalization:** duplicate the `User.Name` into the `Orders` table so you don't need to join. \n3. **Binding:** Ensure related data (User + Their Orders) lives on same shard (Hierarchical Key)."
             },
             {
-              "question": "How does consistent hashing help?",
-              "answer": "It decouples data keys from the number of servers. When scaling out (adding servers), it minimizes data migration (only K/N keys move), enabling elastic scaling."
+              "question": "Double-Write Migration Strategy?",
+              "answer": "**Zero-Downtime Migration:** \n1. App writes to Old + New. \n2. Background script backfills missing data from Old to New. \n3. Verify consistency. \n4. Flip switch: App reads from New. \n5. Stop writing to Old."
             },
             {
-              "question": "Tools for sharding (Vitess, ProxySQL)?",
-              "answer": "**Vitess:** Database clustering system for MySQL (used by YouTube). Handles sharding/routing transparently. \n\n**ProxySQL:** High performance SQL proxy. Routes queries to correct read/write nodes or shards."
+              "question": "Directory vs Hash Sharding: Tradeoffs?",
+              "answer": "**Directory:** (Map: ID 1-100 -> Shard A). \n*Pro:* Flexible, can move individual buckets. \n*Con:* Lookup DB is bottleneck/SPOF. \n**Hash:** (Hash(ID) % N). \n*Pro:* computed, no lookup. \n*Con:* Resharding requires moving massive data (use Consistent Hashing)."
             }
+          ],
+          "resources": [
+            "https://vitess.io/docs/overview/concepts/",
+            "https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake"
           ]
         },
         {
@@ -648,38 +685,41 @@
             }
           ],
           "learningTip": [
-            "LSM Tree: Writes to memory, flush to disk. Write-optimized.",
-            "B-Trees (SQL) are read-optimized.",
-            "Multi-master needs conflict resolution - vector clocks."
+            "**LSM Tree:** De-facto standard for Write-Heavy DBs (Cassandra, RocksDB). Appends to memory, flushes to disk. No random I/O.",
+            "**Bloom Filter:** Probabilistic data structure. Tells you 'Definitely No' or 'Maybe Yes'. Saves disk lookups.",
+            "**Compaction:** The 'Garbage Collection' of LSM trees. Merges files to reclaim space and remove deleted keys."
           ],
           "mustNotMiss": [
-            "LSM Write: WAL → Memtable → SSTable → Compaction.",
-            "LSM Read: Memtable → Bloom filters → SSTables.",
-            "Vector Clocks: Track causality, detect conflicts.",
-            "Last-Write-Wins: Timestamp resolves. Simple but lossy.",
-            "CRDTs: Auto-merge without conflicts."
+            "**Write Path:** WAL (Disk) -> MemTable (RAM) -> SSTable (Disk).",
+            "**Read Path:** MemTable -> Block Cache -> Bloom Filter -> SSTable Index -> SSTable Data.",
+            "**Tombstone:** You don't delete data in LSM. You write a 'Delete Marker'. Compaction removes it later.",
+            "**Vector Clock:** Used in masterless systems to detect concurrent writes. `[NodeA:2, NodeB:1]` vs `[NodeA:1, NodeB:2]` = Conflict."
           ],
           "interviewQuestions": [
             {
-              "question": "Explain LSM Tree write path.",
-              "answer": "1. Write to **WAL** (Append-only Log, disk) for durability. \n\n2. Write to **MemTable** (In-memory sorted tree). Fast! \n\n3. When MemTable full -> Flush to **SSTable** (Immutable file on disk). \n\n4. **Compaction:** Merge SSTables in background."
+              "question": "How does a Bloom Filter work?",
+              "answer": "It's a bit-array. \n**Add(Key):** Hash key K times, set bits to 1. \n**Check(Key):** Hash key K times. \n- If any bit is 0 -> **Definitely Not Present** (Skip disk read). \n- If all bits are 1 -> **Maybe Present** (Read disk to confirm). \n*False positives possible, False negatives impossible.*"
             },
             {
-              "question": "How does conflict resolution work with Vector Clocks?",
-              "answer": "Each node maintains a version counter `[NodeA:2, NodeB:1]`. \n\nIf Node A updates, it becomes `[A:3, B:1]`. \n\nIf Node B updates concurrently from old state, we get `[A:2, B:2]`. \n\n**Conflict:** Neither is strict descendant -> Application Logic required to merge (or Last Write Wins)."
+              "question": "What happens if MemTable is full?",
+              "answer": "1. It becomes **Immutable**. \n2. A new Mutable MemTable is created. \n3. The Immutable MemTable is flushed to disk as an **SSTable** (Sorted String Table). \n*During flush, machine can still accept writes.*"
             },
             {
-              "question": "B-Trees vs LSM Trees for write-heavy workloads?",
-              "answer": "**LSM (Cassandra, RocksDB):** Optimized for **Writes**. Sequential I/O (Append only). \n\n**B-Tree (MySQL, Postgres):** Optimized for **Reads**. Writes require random I/O (finding page to update)."
+              "question": "Conflict Resolution in Masterless (Gossip) Protocol?",
+              "answer": "**Last Write Wins (LWW):** Compare timestamps. Discard older. Simple, but data loss risk if clocks skewed. \n**Vector Clocks:** Detect causality. If conflict (`A` didn't know about `B`), keep siblings and ask App to resolve on Read."
             },
             {
-              "question": "What are CRDTs?",
-              "answer": "**Conflict-free Replicated Data Types.** \n\nData structures (like Counters, Sets) that guarantee mathematical convergence. \n\nExample: G-Counter (Grow only). Even if updates arrive out of order, the final `Sum` is always correct."
+              "question": "Why is Read-Repair important in Cassandra?",
+              "answer": "Cassandra is **Eventually Consistent**. \nOn Read (Quorum R=2): \nNode A says 'Val=5'. Node B says 'Val=4'. \nCoordinator sees timestamp of A > B. \n1. Returns '5' to client. \n2. **Background:** Sends '5' to Node B to fix staleness."
             },
             {
-              "question": "How does compaction work?",
-              "answer": "SSTables are immutable. Updates = New Record. Deletes = 'Tombstone' record. \n\n**Compaction** merges old SSTables, discarding overwritten values and tombstones, reclaiming disk space."
+              "question": "B-Tree vs LSM Tree: Read/Write trade-off?",
+              "answer": "**B-Tree (SQL):** Random Writes (slow), Fast Reads (Index structure perfectly balanced). \n**LSM (NoSQL):** Sequential Writes (super fast), Slower Reads (Check Memtable + multiple SSTables)."
             }
+          ],
+          "resources": [
+            "https://rocksdb.org/docs/getting-started.html",
+            "https://llimllib.github.io/bloomfilter-tutorial/"
           ]
         },
         {
@@ -702,38 +742,42 @@
             }
           ],
           "learningTip": [
-            "Trie data structure for prefix search. O(L) lookup.",
-            "Cache top-k results for common prefixes.",
-            "Two-tier: Aggregation service + Query service."
+            "**Data Structure:** Trie (Prefix Tree) is king. `Map<Char, Node>`. O(L) to find prefix.",
+            "**Optimization:** Store 'Top 5 Searches' directly in the Trie Node. Don't traverse down.",
+            "**Architecture:** Data collection (Logs -> Kafka -> Aggregator -> Trie Builder) is separate from Query Service.",
+            "**State:** Trie is read-only in memory. Rebuild every hour/day."
           ],
           "mustNotMiss": [
-            "Trie: Each node = character. Path = prefix.",
-            "Top-K: Store popularity scores, return most popular.",
-            "Sampling: Don't store all queries, sample for aggregation.",
-            "Caching: Cache 'appl' → [apple, application, apply].",
-            "Real-time vs Batch: Batch updates for popularity."
+            "**Trie:** Prefix-based lookups. Compressed Trie (Radix tree) saves space.",
+            "**Cache:** Browser Cache (Client) -> CDN -> LB -> Redis -> Trie (In-Mem).",
+            "**Sampling:** You can't aggregate ALL queries. Sample 1% of logs to determine 'Trending'.",
+            "**Shadow Replication:** If server dies, rebuilding Trie takes time. Keep standby replicas."
           ],
           "interviewQuestions": [
             {
-              "question": "How does Trie help in prefix search?",
-              "answer": "**Trie (Prefix Tree)** allows O(L) lookup where L is the length of prefix. \n\nStoring 'apple', 'app', 'application' shares the common 'app' nodes, saving space and making `Starts With 'app'` queries extremely fast compared to B-Tree or Hash Map."
+              "question": "How to optimize Typeahead for latency (Goal: <20ms)?",
+              "answer": "1. **Browser Caching:** Cache results for 'app' for 1 hour. \n2. **CDN:** Serve static JSON for common prefixes ('a', 'ap', 'the'). \n3. **Pre-computed Trie:** Store `Top5` list in the node itself. Return immediately upon reaching the node. No DFS."
             },
             {
-              "question": "How to cache top-k search queries?",
-              "answer": "Store **Top-K most searched terms** in each Trie Node. \n\nWhen user types 'a', the node 'a' already has `[amazon, apple, airbnb]` cached. Return immediately. \n\n*No need to traverse deep into the tree.*"
+              "question": "How would you handle 'Trending' logic?",
+              "answer": "**Streaming Pipeline:** \nLogs -> Kafka -> Flink/Spark Streaming. \nFlink counts frequency in 5-min sliding window. \nWrites heavily weighted scores to a separate 'Trending Redis'. \n**Query:** Merge Static Trie results + Trending Redis results."
             },
             {
-              "question": "How to estimate storage for global typeahead?",
-              "answer": "Assume 100M unique terms. Avg length 10 chars. 2 bytes/char. \n\n`100M * 20 bytes = 2GB` raw data. \n\nWith Trie pointers overhead (~4x) -> **~8-10GB**. \n\n**Conclusion:** Easily fits in RAM of a single large Redis instance."
+              "question": "How to serialize a Trie for storage?",
+              "answer": "Pickle/Protobuf to a file on S3. \n*Optimization:* Store as a flat array (succinct data structure) to map parent-child via index arithmetic, avoiding Pointer overhead (64-bit per pointer adds up)."
             },
             {
-              "question": "Functional vs non-functional requirements?",
-              "answer": "**Functional:** 'System must suggest terms starting with user input'. \n\n**Non-Functional:** 'Response time < 100ms (Real-time)', 'High Availability (99.99%)', 'Eventual Consistency (New trends appear in 5 mins)'."
+              "question": "How to handle spell check / fuzzy search?",
+              "answer": "**Levenshtein Distance:** Too slow for real-time. \n**Approximation:** If Trie lookup fails, check keys with 1-char difference. \n**Better:** Use a pre-computed map of `Common Misspellings -> Correct Word`. (amazn -> amazon)."
             },
             {
-              "question": "How to handle trending queries in real-time?",
-              "answer": "Use a **Streaming Pipeline** (Kafka + Flink). \n\n1. Log every search to Kafka. \n\n2. Flink aggregates counts in 5-min windows. \n\n3. Updates 'Trending' cache. \n\n4. Merge Trending Cache with Static History Cache at runtime."
+              "question": "Back of envelope: Memory estimation?",
+              "answer": "English language: ~500k words. \nAvg length: 6 chars. \nRaw text: 3MB. (Tiny). \n**BUT** Google scale: Search Phrases, not words. ~1 Billion phrases. \n1B * 20 bytes = 20GB. \nFits in RAM of 1 high-memory server (but use Sharding for CPU/Availability)."
             }
+          ],
+          "resources": [
+            "https://medium.com/@prefixyteam/how-we-built-prefixy-a-scalable-typeahead-service-6a5e5311c9d8",
+            "https://systemdesignprimer.com/design-typeahead"
           ]
         }
       ]
@@ -758,38 +802,41 @@
             }
           ],
           "learningTip": [
-            "Kafka = distributed commit log. Append-only, immutable.",
-            "Partitions enable parallelism. More partitions = more consumers.",
-            "Consumer groups: Each partition consumed by one consumer per group."
+            "**Log-based Storage:** Kafka is not a queue (RabbitMQ). It's a distributed commit log. Messages persist on disk.",
+            "**Throughput:** High throughput because of Sequential I/O (Append Only) and Zero-Copy (sendfile).",
+            "**Ordering:** Guaranteed ONLY within a partition. Global ordering is impossible at scale."
           ],
           "mustNotMiss": [
-            "Topic: Category of messages. Partition: Ordered log within topic.",
-            "Producer: Writes to partition (round-robin or key-based).",
-            "Consumer Group: Parallel consumption, each partition → one consumer.",
-            "Offset: Position in partition. Consumer commits offset after processing.",
-            "Zookeeper: Cluster coordination, leader election, metadata."
+            "**Topics & Partitions:** Topic = Table. Partition = Shard. Scaling unit.",
+            "**Consumer Group:** The magic sauce. 1 Partition -> Only 1 Consumer in a group. Auto-balancing.",
+            "**Offset Commits:** Async commit relies on 'At-least-once'. Sync commit is slow.",
+            "**Lag:** The #1 metric to watch. (Production Rate - Consumption Rate)."
           ],
           "interviewQuestions": [
             {
-              "question": "Difference between Topic and Partition in Kafka?",
-              "answer": "**Topic:** Logical category (e.g., 'UserClicks'). \n\n**Partition:** Physical append-only log file. A topic is split into partitions. \n\n**Scaling:** Partitions allow parallelism. 10 partitions = 10 consumers reading in parallel."
+              "question": "Kafka vs RabbitMQ?",
+              "answer": "**Kafka:** Pull-based. Persists data (Log). High Throughput (Millions/sec). 'Dumb Broker, Smart Consumer'. Used for Event Streaming/Pipelines. \n**RabbitMQ:** Push-based. RAM-based (mostly). Low Latency. Complex Routing (Exchanges). 'Smart Broker'. Used for Task Queues."
             },
             {
-              "question": "How does Kafka ensure exactly-once processing?",
-              "answer": "**Idempotency:** Producers attach sequence nums. Broker deduplicates retries. \n\n**Transactional API:** Messages across multiple partitions are written atomically (all or nothing). \n\n*Also requires Idempotent Consumers (handle duplicates).* "
+              "question": "How to ensure Global Ordering in Kafka?",
+              "answer": "You can't... unless you have **1 Partition**. \nBut 1 Partition = No concurrency. \n**Practical Answer:** You rarely need Global Ordering. You need **Key-Ordering** (e.g. All events for `User_123` are ordered). Use `UserID` as Partition Key."
             },
             {
-              "question": "Role of Zookeeper in Kafka cluster?",
-              "answer": "Historically used for: \n\n1. **Controller Election** (Who manages the cluster). \n\n2. **Topic Configuration**. \n\n3. **Consumer Offsets** (Old versions). \n\n*Modern Kafka (KRaft mode) removes Zookeeper dependency.*"
+              "question": "What is Consumer Rebalancing?",
+              "answer": "When a new Consumer joins a Group (or one dies), Kafka pauses consumption and re-assigns partitions. \n**Stop-the-world event.** \n*Optimization:* Static Membership (avoid rebalance on transient restart)."
             },
             {
-              "question": "How to handle poison pill messages?",
-              "answer": "A message that crashes the consumer. \n\n**Strategy:** \n\n1. Retry N times. \n\n2. Move to **Dead Letter Queue (DLQ)**. \n\n3. Alert developers. \n\n4. Continue processing next message. *Do not block the queue forever.*"
+              "question": "Explain 'Zero Copy' optimization.",
+              "answer": "Standard Send: Disk -> OS Page Cache -> App Buffer -> OS Socket Buffer -> NIC. (4 Copies). \n**Zero Copy (`sendfile`):** Disk -> OS Page Cache -> NIC. (2 Copies). \nKafka uses this to saturate 10Gbps networks with low CPU."
             },
             {
-              "question": "Explain Consumer Groups and offsets.",
-              "answer": "**Consumer Group:** A team of consumers sharing the work. Each partition is assigned to ONE consumer in the group. \n\n**Offset:** The cursor position. Stored in `__consumer_offsets`. Ensures if consumer crashes, it resumes from where it left off."
+              "question": "Log Compaction (Key-Value use case)?",
+              "answer": "Kafka keeps only the **latest value** for a Key. \nDeletes older versions. \nTurns Kafka into a distributed K-V store (used for restoring state on reboot)."
             }
+          ],
+          "resources": [
+            "https://kafka.apache.org/documentation/#design",
+            "https://www.confluent.io/blog/every-company-is-becoming-a-software-company/"
           ]
         },
         {
@@ -806,38 +853,40 @@
             }
           ],
           "learningTip": [
-            "Inverted Index: word → [doc1, doc2]. Enables fast text search.",
-            "Tokenization: Breaking text into searchable terms.",
-            "TF-IDF / BM25 for relevance scoring."
+            "**Inverted Index:** The heart of Search. Token -> List of DocIDs. Like the Index at back of a book.",
+            "**Analysis Chain:** Char Filter (strip HTML) -> Tokenizer (split spaces) -> Token Filter (lowercase, stop words).",
+            "**Scoring:** TF-IDF / BM25. Not just 'Found', but 'How Relevant?'."
           ],
           "mustNotMiss": [
-            "Inverted Index: Map term → list of documents containing it.",
-            "Analyzer: Tokenizer + Filters (lowercase, stemming, stopwords).",
-            "Sharding: Index split across nodes. Query hits all shards.",
-            "Fuzzy Search: Edit distance for typo tolerance.",
-            "Aggregations: Analytics on search results."
+            "**TF-IDF:** \n- TF: How often word appears in document. (Higher = Better). \n- IDF: How rare word is in corpus. (The, Is = Low. 'Platypus' = High).",
+            "**Mapping:** Schema definition. Text vs Keyword. (Keyword = exact match, Text = full-text).",
+            "**Sharding:** Similar to DBs. Primary Shards (Fixed) vs Replica Shards (Dynamic)."
           ],
           "interviewQuestions": [
             {
               "question": "How does an Inverted Index work?",
-              "answer": "Maps **Words -> Documents**. \n\nInstead of scanning docs for 'Apple', we look up 'Apple' in the index which contains `[Doc1, Doc5, Doc9]`. \n\nThis allows O(1) keyword lookups."
+              "answer": "Instead of `Doc -> Words`, it maps `Word -> [Doc1, Doc5, Doc9]`. \n**Search 'apple':** Look up 'apple' in dictionary (O(1) or O(log N)). Return list of DocIDs. \n**Intersection:** Search 'apple' AND 'pie' -> Get list 1, list 2, find intersection."
             },
             {
-              "question": "Explain Fuzzy Search and Tokenization.",
-              "answer": "**Tokenization:** Splitting 'System Design' -> `['system', 'design']`. \n\n**Fuzzy:** Handling typos ('appl' matches 'apple'). Implemented using **Levenshtein Distance** or **N-Grams** (Edge N-gram tokenizers)."
+              "question": "Explain TF-IDF and BM25.",
+              "answer": "**TF (Term Frequency):** Count of term in doc. \n**IDF (Inverse Document Frequency):** Penalizes common words ('the', 'a'). \n**BM25:** Modern version of TF-IDF. \n- Saturation: TF curve flattens (100 times 'apple' isn't 100x better than 10 times). \n- Length Norm: Penalizes very long documents."
             },
             {
-              "question": "How to optimize ES for heavy writes?",
-              "answer": "1. **Bulk API:** Send batch requests, not single docs. \n\n2. **Refresh Interval:** Increase from 1s to 30s (Searching real-time data is expensive). \n\n3. **Disable Replicas:** During initial massive load, then enable them."
+              "question": "Keyword vs Text data type?",
+              "answer": "**Text:** Analyzed. 'Blue Box' -> `[blue, box]`. Searchable by 'blue'. \n**Keyword:** Exact. 'Blue Box' -> `Blue Box`. Only matches exact string. Used for Filtering/Aggregations (Tags, Status)."
             },
             {
-              "question": "Explain Analyzers and Mapping in ES.",
-              "answer": "**Analyzer:** Pipeline of *Char Filter* -> *Tokenizer* -> *Token Filter*. (e.g., 'Running' -> 'run'). \n\n**Mapping:** Schema definition. Defines if a field is `text` (full-text search) or `keyword` (exact match only)."
+              "question": "How to handle updates in ElasticSearch?",
+              "answer": "**Documents are Immutable.** \nUpdate = Delete Old + Index New. \n(Lucene segments are write-once). \nFrequent updates cause 'Segment Merging' overhead. **ES is bad for frequently changing data.**"
             },
             {
-              "question": "How does sharding work in Elasticsearch?",
-              "answer": "Index is split into **Primary Shards**. \n\n`Shard = hash(routing_id) % num_primary_shards`. \n\nReplica Shards are copies of Primary for High Availability. \n\n*Note: Cannot change number of primary shards after creation.*"
+              "question": "Near Real-Time (NRT) Search?",
+              "answer": "ES is NRT (1 sec delay). \nWrites land in In-Memory buffer. \n**Refresh Interval (1s):** Buffer content written to a new Segment (OS Cache) and becomes searchable. \n*Flush:* Later synced to disk."
             }
+          ],
+          "resources": [
+            "https://www.elastic.co/guide/en/elasticsearch/guide/current/how-search-works.html",
+            "https://nlp.stanford.edu/IR-book/html/htmledition/scoring-term-weighting-and-the-vector-space-model-1.html"
           ]
         },
         {
@@ -854,37 +903,36 @@
             }
           ],
           "learningTip": [
-            "Zookeeper = distributed file system for coordination data.",
-            "ZNodes: Persistent or Ephemeral (disappear when client disconnects).",
-            "Watches: Get notified when ZNode changes."
+            "**Consistency Model:** Zookeeper provides Sequential Consistency. Updates from a client are applied in order.",
+            "**ZAB Protocol:** Zookeeper Atomic Broadcast. The protocol used for Leader Election and data replication.",
+            "**Heavy Reads, Light Writes:** optimized for 10:1 read:write ratio. All writes go to Leader (Bottleneck)."
           ],
           "mustNotMiss": [
-            "ZNodes: Persistent (survive disconnect), Ephemeral (auto-delete).",
-            "Leader Election: Create ephemeral sequential node, lowest = leader.",
-            "Distributed Lock: Create ephemeral node, only one succeeds.",
-            "Watches: Subscribe to changes, get callback.",
-            "Quorum: Majority must agree for write. 2f+1 nodes tolerate f failures."
+            "**Ephemeral Nodes:** Delete automatically when client disconnects. Used for **Failure Detection**.",
+            "**Sequential Nodes:** Append a monotonic number. Used for **Leader Election** (Is my ID the lowest?).",
+            "**Watches:** Push notifications for changes. Avoids polling. Critical for configuration updates.",
+            "**Quorum:** 2N+1 nodes. Tolerates N failures. Prevents **Split-Brain**."
           ],
           "interviewQuestions": [
             {
-              "question": "How does Zookeeper handle leader election?",
-              "answer": "Nodes attempt to create an **Ephemeral Sequential Node** `/election/n_`. \n\nZookeeper assigns sequence numbers. The node with the **Lowest Sequence Number** becomes Leader. Others Watch the node immediately preceding them."
+              "question": "How does Zookeeper handle Split-Brain?",
+              "answer": "**Quorum (Majority Vote).** \n\nIf a cluster of 5 nodes splits into 2 and 3: \n\n- The partition with 2 nodes cannot form a quorum (2 < 3). It stops accepting writes. \n\n- The partition with 3 nodes continues. \n\n*Ensures only one history of truth.*"
             },
             {
-              "question": "Discuss compaction strategies in LSM trees.",
-              "answer": "1. **Size-Tiered:** Merges similar sized SSTables (Good for Write). \n\n2. **Leveled:** Merges into levels (L0, L1...). Guarantees reads touch fewer files (Good for Read). \n\n*Trade-off: Write Amplification vs Read Amplification.*"
+              "question": "Why is Zookeeper performant for reads but slow for writes?",
+              "answer": "**Writes:** Must go through Leader -> Replicated to Followers -> Ack by Quorum. Slow. \n\n**Reads:** Can be served by ANY follower locally. Fast. \n\n*Trade-off:* Reads might be slightly stale (Eventual Consistency), but `sync()` can force currency."
             },
             {
-              "question": "What is the role of Zookeeper in Kafka?",
-              "answer": "Stores metadata: \n\n- Which broker is the Controller? \n\n- Which partitions are on which brokers? \n\n- Use for failure detection (Heartbeats)."
+              "question": "Implement a Distributed Lock using Zookeeper.",
+              "answer": "1. Create ephemeral sequential node `/lock/request-`.\n\n2. Get children. If my sequence is LOWEST, I have lock.\n\n3. If not, **Watch** the node immediately preceding me.\n\n4. When watched node is deleted, check again."
             },
             {
-              "question": "How do distributed locks work?",
-              "answer": "Clients try to create a znode `lock`. \n\nONLY ONE succeeds. \n\nOthers set a **Watch** on it. \n\nWhen owner deletes `lock` (or dies), Watch triggers, and others retry. \n\n*Prevents race conditions in distributed systems.*"
+              "question": "What is the ZAB Protocol?",
+              "answer": "**Zookeeper Atomic Broadcast.** \n\nSimilar to Raft/Paxos but specialized for primary-backup systems. \n\nTwo modes: **Recovery** (Leader Election) and **Broadcast** (Data Sync)."
             },
             {
-              "question": "What happens when Zookeeper leader fails?",
-              "answer": "The cluster enters **Election Phase**. \n\nWrites are blocked. Reads *might* be served (stale). \n\nOnce new leader elected (takes <200ms usually), standard operation resumes. \n\n*ZK favors Consistency over Availability (CP).* "
+              "question": "Use cases for Zookeeper vs Redis for coordination?",
+              "answer": "**Zookeeper:** Strong Consistency (CP), Reliability, Complex Recipes (Locks/Election). Heavyweight. \n\n**Redis:** Fast, AP (mostly), Pub/Sub. Good for simple locks (Redlock) or rate limiting. Bad for mission-critical consensus."
             }
           ]
         }
@@ -910,37 +958,36 @@
             }
           ],
           "learningTip": [
-            "Object storage: Flat namespace, no hierarchy (like file systems).",
-            "Replication (3 copies) vs Erasure Coding (more efficient).",
-            "HDFS: Large sequential reads, not random access."
+            "**S3 (Object Storage):** HTTP API (PUT/GET). Flat namespace (Buckets). Eventual Consistency. Good for WORM (Write Once Read Many).",
+            "**Block Storage (EBS):** Like a hard drive over network. Mountable. Fast/Low Latency. Expensive.",
+            "**File Storage (EFS/NAS):** Tree structure. Shared access. Locking overhead."
           ],
           "mustNotMiss": [
-            "S3: Object storage, RESTful API, virtually unlimited scale.",
-            "HDFS: Files split into blocks (128MB). Replicated 3x.",
-            "NameNode: Metadata server. DataNode: Actual data storage.",
-            "Erasure Coding: Reed-Solomon. Less storage than 3x replication.",
-            "Consistency: S3 is eventually consistent for overwrites."
+            "**Erasure Coding (EC):** Break file into `n` data chunks + `k` parity chunks. Recover from `k` failures. Saves 50% storage vs Replication.",
+            "**HDFS Federation:** Scale NameNode limits. Multiple NameNodes manage independent namespaces (Volumes).",
+            "**Small File Problem:** HDFS hates millions of 1KB files (NameNode memory bloat). Use **HAR (Hadoop Archive)** or SequenceFiles.",
+            "**Multipart Upload:** Break 5GB file into 100MB parts. Upload parallel. Retry individual failures."
           ],
           "interviewQuestions": [
             {
-              "question": "Design a system to store petabytes of immutable blobs.",
-              "answer": "Use **Object Storage Architecture (like S3)**. \n\n- **Frontend:** REST API. \n\n- **Metadata DB:** Key -> Disk Location (Sharded SQL/NoSQL). \n\n- **Data Store:** Commodity nodes. \n\n- **Blob Splitting:** Large files split into 64MB chunks."
+              "question": "Design Facebook's Photo Storage (Haystack/F4).",
+              "answer": "**Problem:** Billions of small files (photos). Metadata bottleneck. \n\n**Haystack:** Pack small photos into one giant 100GB physical file. \n\n- **In-Memory Index:** Maps `PhotoID -> (FileID, Offset, Size)`. \n\n- **Single Disk Seek:** Read exactly where photo is."
             },
             {
-              "question": "How does HDFS handle data replication and block storage?",
-              "answer": "Files split into **128MB Blocks**. \n\nEach block replicated **3x**. \n\nPlacement: (1) Local Node, (2) Different Rack, (3) Same Rack different Node. \n\n*Survives entire rack failure.*"
+              "question": "S3 Strong Consistency vs Eventual Consistency.",
+              "answer": "Historically S3 was Eventual. Now **Strongly Consistent** (after 2020). \n\n- **Write:** When you get `200 OK` after PUT, the object is replicated and safe. \n\n- **List:** Listing bucket immediately reflects new keys."
             },
             {
-              "question": "Replication vs Erasure Coding trade-offs?",
-              "answer": "**Replication (3 copies):** 200% storage overhead. Fast recovery. \n\n**Erasure Coding (Parity):** ~50% overhead. Slower recovery (need CPU to reconstruct). \n\n*Use EC for cold data, Replication for hot data.*"
+              "question": "Compare Erasure Coding vs Replication.",
+              "answer": "**Replication (3x):** \n- Cost: 300% storage. \n- Recovery: Fast (copy from neighbor). \n- Use: Hot Data. \n\n**Erasure Coding (RS 6,3):** \n- Cost: 150% storage. \n- Recovery: Slow (CPU compute to reconstruct). \n- Use: Cold/Warm Data."
             },
             {
-              "question": "What happens when HDFS NameNode fails?",
-              "answer": "NameNode is Single Point of Failure (SPOF) in HDFS v1. \n\n**HDFS v2 (HA):** Uses Active/Standby NameNodes with a shared edit log (JournalNodes). Automatic failover using Zookeeper."
+              "question": "Design a 'Pastebin' (text storage service).",
+              "answer": "1. **Write:** Client -> App Server -> Object Store (S3). Returns URL. \n2. **Key Generation:** KGS (Key Generation Service) produces 7-char unique strings. \n3. **DB:** Maps `ShortLink -> S3_Path`. \n4. **Optimization:** Cache popular pastes in Redis."
             },
             {
-              "question": "How does S3 achieve 11 nines durability?",
-              "answer": "By extensively replicating data across multiple **Availability Zones (AZs)** and using continuous checksums to detect 'bit rot'. \n\n*Probability of losing data is 0.00000000001%*."
+              "question": "How to optimize S3 upload speed/reliability?",
+              "answer": "**Multipart Upload** + **Transfer Acceleration** (Use Edge Locations). \n\n- Split file into chunks. \n- Upload chunks in parallel. \n- Failed chunk? Retry just that chunk."
             }
           ]
         },
@@ -958,37 +1005,36 @@
             }
           ],
           "learningTip": [
-            "Geohash: Encode lat/long into string. Nearby = similar prefix.",
-            "QuadTree: Recursively divide 2D space into quadrants.",
-            "Location updates are HIGH frequency - need efficient processing."
+            "**Geospatial Indexing:** Standard DBs (B-Trees) are 1D. Cannot index 2D (lat/long) efficiently. Need Spatial Index (R-Tree, QuadTree, Geohash).",
+            "**Write-Heavy:** 10M drivers * update every 5s = 2M TPS. Requires massive write buffering (Kafka) or ephemeral storage (Redis).",
+            "**Google S2:** The industry standard library for mapping 2D points to 1D integers (cell IDs)."
           ],
           "mustNotMiss": [
-            "Geohash: lat/long → 'gcpuv'. Prefix match = nearby.",
-            "QuadTree: Tree structure, each node = 4 children (NW, NE, SW, SE).",
-            "Spatial Index: Query 'all drivers within 5km' efficiently.",
-            "Location Updates: Store in Redis with TTL for freshness.",
-            "Matching: Find nearby drivers, estimate ETA, assign closest."
+            "**QuadTree:** InMemory structure. Breaks world into 4 quadrants. Adaptive (Dense city = deep tree, Ocean = shallow). Hard to shard.",
+            "**Geohash:** Base32 string. precision = length. `gcp` is inside `gc`. Easy to shard (just a string).",
+            "**Google S2:** Uses Hilbert Curves. Keeps nearby points close on the 1D curve. Better than Geohash.",
+            "**Sticky Connections:** Drivers maintain persistent WebSocket/TCP to Gateway for real-time updates."
           ],
           "interviewQuestions": [
             {
-              "question": "How does QuadTree or Geohash work for geospatial indexing?",
-              "answer": "**Geohash:** Strings (`gc7`). Shared prefix = proximity. \n\n**QuadTree:** Dynamic tree. Recursively split map into 4 quadrants until bucket size < 500 drivers. \n\n*QuadTree adapts better to density (City vs Rural).* "
+              "question": "QuadTree vs Geohash/S2 for Uber?",
+              "answer": "**QuadTree:** \n- Pros: perfect precision, adaptive. \n- Cons: Hard to update (rebalancing), hard to persist/shard. \n\n**Geohash/S2:** \n- Pros: It's just a number/string. Easy to shard/index in DB. \n- Cons: Edge cases (two close points might have totally different hashes)."
             },
             {
-              "question": "Design a driver matching algorithm that minimizes ETA.",
-              "answer": "1. Find drivers in user's QuadTree leaf (and neighbors). \n\n2. Filter by status (Available). \n\n3. Use Mapping Service (Dijkstra/A*) to calculate ETA. \n\n4. Greedily assign lowest ETA."
+              "question": "How to handle Driver Location Updates at scale?",
+              "answer": "**Do NOT write to DB.** \n1. **Redis (Geo):** Update `DRIVER_LOC` (TTL 10s). Used for 'Find Driver'. \n2. **Kafka:** Push location stream for Trip History/Analytics. \n3. **Batch:** Flush to Cassandra every 30s for audit."
             },
             {
-              "question": "How to handle high-frequency location updates?",
-              "answer": "**Batching + Throttling.** App sends updates every 5s. \n\nDon't write every point to DB. \n\n1. **Redis (Geospatial):** Latest location (Ephemeral). \n\n2. **Kafka:** Buffer for trip history (Analytics/Billing). \n\n3. **DB:** Persist only 'Trip Start/End'."
+              "question": "How to find nearby drivers efficiently?",
+              "answer": "Query the **Spatial Index**. \n\n**Geohash:** Find my hash `gc7`. Search for drivers with prefix `gc7`. AND check 8 neighbors (`gc6`, `gcK`...) to handle boundary issues."
             },
             {
-              "question": "Explain surge pricing from system design perspective.",
-              "answer": "**Supply/Demand Ratio per Grid Cell.** \n\nRun spark job every 5 mins. \n\n`Ratio = Requests / Available Drivers`. \n\nIf Ratio > 1, multiplier increases. \n\nStored in Redis: `Key=GridID, Val=Multiplier`."
+              "question": "Design 'Live Location Sharing' (WhatsApp/Uber).",
+              "answer": "**Architecture:** \n- **Client A:** Sends GPS to Gateway (WebSocket). \n- **Gateway:** Publishes to Redis Pub/Sub channel `loc_updates_userA`. \n- **Client B:** Subscribes to that channel. \n*Zero DB persistence needed for 'Live' view.*"
             },
             {
-              "question": "How to find nearest K drivers efficiently?",
-              "answer": "Using **Redis GEO API**: \n\n`GEOADD drivers lat long driver_id`. \n\n`GEORADIUS drivers user_lat user_long 5km ASC`."
+              "question": "How to handle 'Thundering Herd' when Uber goes down and comes back up?",
+              "answer": "If 10M apps reconnect at once, they will DDoS the servers. \n**Solution:** Client-side **Jitter** (Randomized exponential backoff). Wait `random(0, 5s)` before retrying."
             }
           ]
         },
@@ -1062,37 +1108,36 @@
             }
           ],
           "learningTip": [
-            "Rate limiting protects against abuse and overload.",
-            "UUID is random, not sortable. Snowflake is sorted by time.",
-            "Distributed rate limiter needs shared state (Redis)."
+            "**Client-Side vs Server-Side:** Client-side limiting is polite. Server-side is mandatory for protection.",
+            "**Granularity:** Global Limit (Protect DB) vs User Limit (Fairness).",
+            "**Race Conditions:** Read-Check-Write is risky in distributed env. Need Atomicity (Lua)."
           ],
           "mustNotMiss": [
-            "Token Bucket: Tokens added at fixed rate. Request takes token.",
-            "Leaky Bucket: Requests queue, process at fixed rate.",
-            "Fixed Window: Count per time window. Edge case at boundaries.",
-            "Sliding Window Log: Timestamp per request. More accurate.",
-            "Snowflake ID: Timestamp + Worker ID + Sequence. Sortable."
+            "**Token Bucket:** Bucket has tokens. Request takes one. Refill at rate R. **Allows Bursts**.",
+            "**Leaky Bucket:** Queue requests. Process at constant rate. **Smooths Traffic**.",
+            "**Sliding Window Log:** Store timestamp of every request. Precise but **Expensive (Memory)**.",
+            "**Sliding Window Counter:** Approximation. Hybrid of Fixed Window + Rolling. **Best of both worlds**."
           ],
           "interviewQuestions": [
             {
-              "question": "Design distributed unique ID generator (Twitter Snowflake).",
-              "answer": "64-bit Integer. \n\n- **1 bit:** Unused. \n\n- **41 bits:** Timestamp (ms). \n\n- **10 bits:** Machine ID. \n\n- **12 bits:** Sequence Number (per ms). \n\n**Result:** Roughly time-sorted, unique, numeric (efficient indexing)."
+              "question": "Token Bucket vs Leaky Bucket usage?",
+              "answer": "**Token Bucket:** Use when you *want* to allow short bursts (e.g., user loading a web page assets). \n**Leaky Bucket:** Use when backend is sensitive/slow (e.g., writing to Disc/DB) and needs a steady input stream."
             },
             {
-              "question": "Why is UUID not always good as primary key?",
-              "answer": "**Index Fragmentation.** \n\nUUIDs are random. Inserting them into B-Tree (Clustered Index) causes random page writes/splits, hurting write performance. \n\n**Size:** 128-bit (vs 64-bit BigInt) wastes memory."
+              "question": "How to implement Distributed Rate Limiter?",
+              "answer": "**Redis + Lua Script.** \n\nWhy Lua? Because fetching counter, checking limit, and incrementing are 3 separate ops. In a race, 2 users might both see '9 requests'. \n\nLua runs atomically on Redis server."
             },
             {
-              "question": "Compare rate limiting algorithms.",
-              "answer": "**Token Bucket:** Allows Bursts. Good for generic APIs. \n\n**Leaky Bucket:** Constant outflow rate. Good for packet shaping. \n\n**Fixed Window:** Edge-case spikes (2x rate) possible. \n\n**Sliding Window:** Most accurate, higher memory cost."
+              "question": "What is 'Rate Limiting' vs 'Throttling' vs 'Load Shedding'?",
+              "answer": "**Rate Limiting:** IP/User based. 'You use too much'. (429 Too Many Requests). \n**Throttling:** Global. 'System is busy'. Slow down everyone. \n**Load Shedding:** 'System is dying'. Drop non-critical requests (e.g., analytics) to save core features."
             },
             {
-              "question": "How to implement distributed rate limiter with Redis?",
-              "answer": "Use **Lua Scripts** to ensure atomicity. \n\n`Atomic { Get(Count); if Count < Limit { Incr(Count) } }`. \n\nOr use **Redis-Cell** module (Generic Cell Rate Algorithm)."
+              "question": "Design a Rate Limiter for 1 Billion Users.",
+              "answer": "Cannot store counters for 1B users in RAM. \n**Architecture:** \n- **Local Memory:** Cache hot users at API Gateway. \n- **Redis Cluster:** Sharded by UserID for global count. \n- **Database:** Don't use it. Too slow."
             },
             {
-              "question": "What happens at boundary in fixed window counter?",
-              "answer": "**Boundary Spike Issue.** \n\nIf limit is 100/min. \n\nUser sends 100 reqs at 10:00:59 and 100 reqs at 10:01:01. \n\nTotal 200 reqs in 2 seconds. \n\n**Fix:** Use Sliding Window Log."
+              "question": "How do you handle 'Hard' vs 'Soft' rate limits?",
+              "answer": "**Hard:** Strict reject (HTTP 429). \n**Soft:** Allow but log/alert, or add latency (tarpitting). \n*Use Soft limits during initial rollout to tune thresholds.*"
             }
           ]
         },
@@ -1163,11 +1208,26 @@
             "CDN: Videos cached at edge locations worldwide."
           ],
           "interviewQuestions": [
-            "How does Adaptive Bitrate Streaming (ABR) work?",
-            "Design video processing pipeline (upload → transcode → CDN).",
-            "How does HLS/DASH protocol work?",
-            "How to handle video uploads at scale?",
-            "How to implement video thumbnails/previews?"
+            {
+              "question": "How does Adaptive Bitrate Streaming (ABR) work?",
+              "answer": "**Client-Driven.** Use HLS/DASH. \n\n1. Video split into 4 second chunks at multiple qualities (360p, 720p, 4K). \n\n2. Player downloads Manifest (`.m3u8`). \n\n3. Player logic: If download speed > 5Mbps, fetch 1080p chunks. If buffer drops, switch to 480p."
+            },
+            {
+              "question": "Design the upload & processing pipeline.",
+              "answer": "1. **Upload:** Pre-signed S3 URL. \n2. **Trigger:** S3 Event -> Lambda/Kafka. \n3. **Transcode:** Split into chunks. Run **Parallel Workers** (EC2 Spot Instances). \n4. **Merge:** Create Manifest. \n5. **CDN:** Push to Edge."
+            },
+            {
+              "question": "How to handle popular vs unpopular videos (Long Tail)?",
+              "answer": "**Caching Tier:** \n- **Hot (Viral):** Cache at ISP/Edge (OCAs). \n- **Warm:** S3 Standard. \n- **Cold (Old):** S3 Glacier / Deep Archive. Fetch on-demand (latency penalty)."
+            },
+            {
+              "question": "Explain HLS vs DASH.",
+              "answer": "**HLS (HTTP Live Streaming):** Apple. `.m3u8` manifest. Widely supported. \n**DASH (Dynamic Adaptive Streaming over HTTP):** International standard. `.mpd` manifest. Codec agnostic."
+            },
+            {
+              "question": "How to implement video thumbnails/previews?",
+              "answer": "**Sprite Sheets.** \n\nGenerate one large image containing all thumbnails (e.g., 10x10 grid). \n\nClient downloads ONE image. CSS uses `background-position` to show the correct frame. \n*Reduces HTTP requests.*"
+            }
           ]
         },
         {
@@ -1196,11 +1256,26 @@
             "Personalization: Recently watched, continue watching, recommendations."
           ],
           "interviewQuestions": [
-            "How do you implement DRM for video content?",
-            "How to resume video from exact timestamp across devices?",
-            "How does video encryption work?",
-            "How to implement 'Continue Watching' feature?",
-            "How do recommendation systems work at scale?"
+            {
+              "question": "How do you implement DRM for video content?",
+              "answer": "1. **Encrypt:** Video chunks encrypted with AES-128. \n2. **License:** Player authenticates user -> Requests Key from License Server (Widevine/FairPlay). \n3. **Decrypt:** Browser CDM (Content Decryption Module) decrypts frame-by-frame in memory."
+            },
+            {
+              "question": "How to resume video from exact timestamp across devices?",
+              "answer": "**Heartbeat Mechanism.** \n\nClient sends heartbeat every 5s: `{ videoId: 123, timestamp: 45:20 }`. \n\n- Store in **Redis** (Last Active). \n- Flush to **Cassandra/DynamoDB** (Persistent History) periodically."
+            },
+            {
+              "question": "How does video encryption work (Symmetric vs Asymmetric)?",
+              "answer": "Content is encrypted using **Symmetric Key (AES)** because it's fast. \n\nThe Symmetric Key is encrypted using **Asymmetric Key (RSA)** for secure transmission to the client."
+            },
+            {
+              "question": "How to implement 'Continue Watching' feature?",
+              "answer": "Query the **History Service** (Cassandra). \n\nSelect video_id where `progress > 0` and `progress < 95%`. \n\nSort by `last_watched_timestamp` DESC."
+            },
+            {
+              "question": "How do recommendation systems work at scale?",
+              "answer": "**Two-Tower Architecture.** \n\n1. **Candidate Generation:** Fast retrieval of 1000 candidates (Collaborative Filtering / Matrix Factorization). \n2. **Ranking:** Heavy ML model scores top 1000 to pick top 10 (Deep Neural Networks)."
+            }
           ]
         }
       ]
@@ -1237,11 +1312,26 @@
             "Conway's Law: Architecture mirrors team structure."
           ],
           "interviewQuestions": [
-            "Benefits and drawbacks of Microservices vs Monolith?",
-            "Explain the API Gateway pattern.",
-            "When should you choose microservices?",
-            "How do you decompose a monolith into services?",
-            "What is Domain-Driven Design in microservices context?"
+            {
+              "question": "Benefits and drawbacks of Microservices vs Monolith?",
+              "answer": "**Benefits:** Independent scaling, tech freedom, failure isolation. \n**Drawbacks:** Network latency, eventual consistency difficult, operational complexity (K8s needed)."
+            },
+            {
+              "question": "Explain the API Gateway pattern.",
+              "answer": "**Single Entry Point.** \n\nHandles: \n1. **Routing** (Layer 7). \n2. **AuthN/AuthZ** (Offload from services). \n3. **Rate Limiting**. \n4. **Protocol Translation** (HTTP -> gRPC)."
+            },
+            {
+              "question": "When should you choose microservices?",
+              "answer": "**Based on Org Structure.** \n\nUse when you have multiple teams contributing to different business domains that need to release independently. \n*Don't use for a startup with 3 engineers (Monolith First).* "
+            },
+            {
+              "question": "How do you decompose a monolith into services?",
+              "answer": "**By Business Capability (Vertical Slices)** or **Subdomains (DDD)**. \n\nExample: Separate 'Billing', 'User', 'Search'. \n\n*Avoid decomposing by technical layer (e.g., 'DB Service').*"
+            },
+            {
+              "question": "What is Domain-Driven Design in microservices context?",
+              "answer": "Aligning code with business reality. \n**Bounded Context:** Explicit boundary within which a domain model applies. Ideally 1 Bounded Context = 1 Microservice."
+            }
           ]
         },
         {
@@ -1270,11 +1360,26 @@
             "Bulkhead: Isolate failures. Thread pools per service."
           ],
           "interviewQuestions": [
-            "How do you handle service discovery in microservices?",
-            "What is the Circuit Breaker pattern?",
-            "Sync vs Async communication trade-offs?",
-            "What is exponential backoff with jitter?",
-            "How do you prevent cascading failures?"
+            {
+              "question": "How do you handle service discovery in microservices?",
+              "answer": "**Dynamic Registry.** \n\nServices register IP/Port on startup with **Service Registry** (Consul/Eureka/K8s DNS). \n\nClients query Registry to find target Service IP."
+            },
+            {
+              "question": "What is the Circuit Breaker pattern?",
+              "answer": "Prevents cascading failure. \n\nIf Service B fails 50% of requests, **Open** the breaker. \n\nFail fast (return default/error) for 10s. \n\nThen **Half-Open** (test one request). If success, **Close**. \n*Tools: Resilience4j, Hystrix.*"
+            },
+            {
+              "question": "Sync vs Async communication trade-offs?",
+              "answer": "**Sync (REST/gRPC):** Simple. Real-time. **High coupling** (Chain of failure). \n**Async (Kafka/RabbitMQ):** Complex. Eventual consistency. **Decoupled** (Producer doesn't care if Consumer is down)."
+            },
+            {
+              "question": "What is exponential backoff with jitter?",
+              "answer": "Retry strategy. \n`WaitTime = min(Cap, Base * 2^Attempt) + Random(0, 100ms)`. \n\n**Jitter** prevents 'Thundering Herd' (synchronized retries hitting server at once)."
+            },
+            {
+              "question": "How do you prevent cascading failures?",
+              "answer": "1. **Timeouts:** Never wait forever. \n2. **Circuit Breakers:** Fail fast. \n3. **Bulkheads:** Isolate resources (separate thread pools for different downstream services)."
+            }
           ]
         },
         {
@@ -1303,11 +1408,26 @@
             "Config Server: Centralized config with live reload."
           ],
           "interviewQuestions": [
-            "Explain the Sidecar pattern in Service Mesh.",
-            "How to implement centralized configuration management?",
-            "What is Istio and how does it work?",
-            "Benefits of Service Mesh over library-based approach?",
-            "How does mTLS work in service mesh?"
+            {
+              "question": "Explain the Sidecar pattern in Service Mesh.",
+              "answer": "Deploying a proxy container (Envoy) alongside EACH application container. \n\nApp talks to localhost proxy. Proxy handles mTLS, retries, stats, tracing. \n*Decouples network logic from business logic.*"
+            },
+            {
+              "question": "How to implement centralized configuration management?",
+              "answer": "Use **Spring Cloud Config** or **Consul**. \n\n- Store config in Git. \n- Services fetch config on startup. \n- Use **Bus/Webhooks** to trigger runtime refresh (Hot Reload) without restart."
+            },
+            {
+              "question": "What is Istio and how does it work?",
+              "answer": "A Service Mesh. \n\n**Data Plane:** Envoy Proxies (Sidecars). Intercept traffic. \n**Control Plane:** Istiod. Manages config, certs, and routing rules pushed to proxies."
+            },
+            {
+              "question": "Benefits of Service Mesh over library-based approach?",
+              "answer": "**Polyglot support.** \n\nLibraries (Hystrix) are language-specific (Java). \n\nMesh (Sidecar) works with ANY language (Go, Node, Python) because it operates at L7 Network layer."
+            },
+            {
+              "question": "How does mTLS work in service mesh?",
+              "answer": "Isio automatically upgrades HTTP to HTTPS between proxies. \n\n1. Proxy A connects to Proxy B. \n2. They exchange certs (signed by internal CA). \n3. Traffic encrypted. \n*Zero code change for App.*"
+            }
           ]
         },
         {
@@ -1336,11 +1456,26 @@
             "Idempotency: Same operation multiple times = same result."
           ],
           "interviewQuestions": [
-            "Explain Saga Pattern (Choreography vs Orchestration).",
-            "Why is Two-Phase Commit often avoided?",
-            "How do you handle compensation in Saga?",
-            "What is the Outbox pattern?",
-            "How to ensure idempotency in distributed systems?"
+            {
+              "question": "Explain Saga Pattern (Choreography vs Orchestration).",
+              "answer": "**Choreography:** Decentralized. Service A emits event, B listens. Hard to track status. \n**Orchestration:** Central Coordinator (State Machine) calls A, then B. Easy to track, but single point of failure."
+            },
+            {
+              "question": "Why is Two-Phase Commit often avoided?",
+              "answer": "**Blocking Protocol.** \n\nIf Coordinator fails after 'Prepare' phase, all participants hold locks indefinitely. \n\n*Kills throughput in distributed systems.*"
+            },
+            {
+              "question": "How do you handle compensation in Saga?",
+              "answer": "If Step 3 (Payment) fails: \n\nTrigger `undo_payment()` (if charged), then `release_inventory()` (Step 2), then `cancel_order()` (Step 1). \n*Every forward action must have a compensating backward action.*"
+            },
+            {
+              "question": "What is the Outbox pattern?",
+              "answer": "**Problem:** Saving to DB and publishing to Kafka is not atomic. \n**Solution:** Save event to `Outbox` table in SAME transaction as data. \n**Relay:** A background poller reads `Outbox` and pushes to Kafka."
+            },
+            {
+              "question": "How to ensure idempotency in distributed systems?",
+              "answer": "**Idempotency Keys.** \n\nClient generates unique UUID (`request_id`). \n\nServer checks Redis/DB: 'Have I processed `request_id` already?'. \nIf yes, return cached response."
+            }
           ]
         },
         {
@@ -1369,11 +1504,26 @@
             "Eventual Consistency: Order confirmed ≠ immediately shipped."
           ],
           "interviewQuestions": [
-            "Design inventory management that prevents overselling.",
-            "How to handle shopping cart state (client vs server)?",
-            "Design the order processing saga.",
-            "How to handle payment failures?",
-            "How to handle flash sales with limited inventory?"
+            {
+              "question": "Design inventory management that prevents overselling.",
+              "answer": "**Optimistic Locking.** \n\n`UPDATE inventory SET count = count - 1 WHERE id = 123 AND count > 0`. \n\nIf rows updated = 0, transaction failed (Out of stock)."
+            },
+            {
+              "question": "How to handle shopping cart state (client vs server)?",
+              "answer": "**Guest:** Store in Browser Logic (LocalStorage). \n**LoggedIn:** Store in Redis (fast access) + Async write to DB (persistence). \n*Merge LocalStorage cart when user logs in.*"
+            },
+            {
+              "question": "Design the order processing saga.",
+              "answer": "1. **Order Service:** Create Order (Pending). \n2. **Inventory Service:** Reserve Stock. \n3. **Payment Service:** Charge Card. \n4. **Order Service:** Confirm Order. \n*Failure at any step triggers Compensation.*"
+            },
+            {
+              "question": "How to handle payment failures?",
+              "answer": "Use **Exponential Backoff** for network glitches. \n\nIf hard fail (Insuffient Funds), trigger Saga Compensation to release inventory and cancel order."
+            },
+            {
+              "question": "How to handle flash sales with limited inventory?",
+              "answer": "**Layered Filtering:** \n1. **CDN/WAF:** Block bots. \n2. **Redis:** Decrement counter in memory (Lua script). \n3. **Queue:** Push success events to Kafka for async DB processing. \n*Don't hit DB directly.*"
+            }
           ]
         },
         {
@@ -1402,11 +1552,26 @@
             "12-Factor App: Config in env, stateless, disposable."
           ],
           "interviewQuestions": [
-            "How to migrate monolith to microservices incrementally?",
-            "Discuss Bulkhead pattern for fault tolerance.",
-            "What is the Strangler Fig pattern?",
-            "Best practices for API versioning?",
-            "What are the 12-Factor App principles?"
+            {
+              "question": "How to migrate monolith to microservices incrementally?",
+              "answer": "**Strangler Fig Pattern.** \n\n1. Identify one cohesive features (e.g., Auth). \n2. Build new Auth Service. \n3. Route auth traffic to new service. \n4. Retire old code. \n5. Repeat."
+            },
+            {
+              "question": "Discuss Bulkhead pattern for fault tolerance.",
+              "answer": "Ship analogy: If one compartment floods, others stay dry. \n\n**Tech:** Use separate Thread Pools / Connection Pools for different downstream services. \nIf 'Recommendations' is slow, it won't starve 'Search' threads."
+            },
+            {
+              "question": "What is the Strangler Fig pattern?",
+              "answer": "A migration pattern where a new system helps gradually replace an old system. \n\nThe new system wraps the old one, intercepting calls and handling them or passing them through, until the old system is strangled (replaced)."
+            },
+            {
+              "question": "Best practices for API versioning?",
+              "answer": "**URL Versioning:** `/v1/users`. Explicit and easy to debug. \n**Header Versioning:** `Accept: application/vnd.myapi.v1+json`. Cleaner URLs but harder to test via browser."
+            },
+            {
+              "question": "What are the 12-Factor App principles?",
+              "answer": "A methodology for building SaaS apps. \n\nKey points: \n- **Config:** Store in Env vars. \n- **Backing Services:** Treat DB/Cache as attached resources. \n- **Process:** Stateless execution. \n- **Disposability:** Fast startup/shutdown."
+            }
           ]
         }
       ]
@@ -1443,11 +1608,26 @@
             "Cluster: Sharding across nodes. 16384 hash slots."
           ],
           "interviewQuestions": [
-            "Explain Redis data types and use cases.",
-            "How does Redis persistence (RDB vs AOF) work?",
-            "How does Redis Cluster handle sharding?",
-            "When to use Redis Streams vs Pub/Sub?",
-            "How does Redis Sentinel provide high availability?"
+            {
+              "question": "Explain Redis data types and use cases.",
+              "answer": "**String:** Cache, Counter. \n**Hash:** User Profile object. \n**List:** Job Queue. \n**Set:** Unique visitors. \n**Sorted Set:** Leaderboard. \n**HyperLogLog:** Count unique items (approx) with tiny memory."
+            },
+            {
+              "question": "How does Redis persistence (RDB vs AOF) work?",
+              "answer": "**RDB (Snapshot):** Forks process to save DB to disk every X mins. Compact but potential data loss. \n**AOF (Append Only File):** Logs every write. Slower restart but durable. \n*Use both for best reliability.*"
+            },
+            {
+              "question": "How does Redis Cluster handle sharding?",
+              "answer": "Uses **Hash Slots** (0 to 16383). \n\n`Slot = CRC16(Key) % 16384`. \n\nEvery node holds a subset of slots. Client redirects to correct node"
+            },
+            {
+              "question": "When to use Redis Streams vs Pub/Sub?",
+              "answer": "**Pub/Sub:** Fire and forget. No history. If consumer down, msg lost. \n**Streams:** Log-based (like Kafka lite). Persisted. Consumer Groups allow resume reading."
+            },
+            {
+              "question": "How does Redis Sentinel provide high availability?",
+              "answer": "Monitoring process. \n\nIf Master fails, Sentinels vote (Quorum). \n\nPromote Slave to Master. \n\nUpdate Clients with new Master IP."
+            }
           ]
         },
         {
@@ -1476,11 +1656,26 @@
             "Bulk API: Batch operations for efficiency."
           ],
           "interviewQuestions": [
-            "How to optimize ES for heavy write workloads?",
-            "Explain Analyzers and Mapping in ES.",
-            "How to handle mapping explosion?",
-            "Shard allocation strategy?",
-            "How to reindex without downtime?"
+            {
+              "question": "How to optimize ES for heavy write workloads?",
+              "answer": "1. **Increase Refresh Interval:** Default 1s -> 30s. Reduces segment merging. \n2. **Bulk Indexing:** Batch documents. \n3. **Disable Replicas:** Initially, then enable after load."
+            },
+            {
+              "question": "Explain Analyzers and Mapping in ES.",
+              "answer": "**Analyzer:** Tokenizer + Filter (Lowercase, Stopwords). \n**Mapping:** Schema definition (`integer`, `keyword`, `text`). \n*Keyword = Exact match. Text = Full-text search.*"
+            },
+            {
+              "question": "How to handle mapping explosion?",
+              "answer": "**Flattening:** Use `nested` object type carefully or `flattened` type. \n**Dynamic Mapping:** Disable it (`dynamic: false`) to prevent accidental field creation."
+            },
+            {
+              "question": "Shard allocation strategy?",
+              "answer": "**Avoid Oversharding.** \n\nIdeal Shard Size: **10GB - 50GB**. \n\nFormula: `Shards = Target_Size / 30GB`. \n*Too many small shards = High Heap usage.*"
+            },
+            {
+              "question": "How to reindex without downtime?",
+              "answer": "**Aliases.** \n\n1. App points to Alias `logs_current`. \n2. Create new Index `logs_v2`. \n3. Reindex data v1 -> v2. \n4. Switch Alias `logs_current` -> `logs_v2` atomically."
+            }
           ]
         },
         {
@@ -1509,11 +1704,26 @@
             "Log Compaction: Keep latest value per key. For KV store."
           ],
           "interviewQuestions": [
-            "How to handle poison pill messages?",
-            "Explain Consumer Groups and offsets.",
-            "How does exactly-once work in Kafka?",
-            "What is log compaction and when to use it?",
-            "How to handle consumer lag?"
+            {
+              "question": "How to handle poison pill messages?",
+              "answer": "A message that crashes the consumer. \n\n**Solution:** \n1. Dead Letter Queue (DLQ). After N retries, move to DLQ. \n2. Alert human to inspect DLQ."
+            },
+            {
+              "question": "Explain Consumer Groups and offsets.",
+              "answer": "**Consumer Group:** Logical subscriber. Each partition is consumed by ONLY one consumer in the group (Parallelism). \n**Offset:** Bookmark. Tracks position in the log."
+            },
+            {
+              "question": "How does exactly-once work in Kafka?",
+              "answer": "**Idempotent Producer:** Ensures no dupe writes to log. \n**Transactional Consumer:** `read_process_write` atomic transaction across topics. \n*Use Kafka Streams for this.*"
+            },
+            {
+              "question": "What is log compaction and when to use it?",
+              "answer": "Retains only the **Last Known Value** for each Key. \n\nUse for: State Stores (e.g., 'User Balance'). Deletes old balance updates."
+            },
+            {
+              "question": "How to handle consumer lag?",
+              "answer": "**Scale Up:** Add more partitions and more consumers. \n**Optimize Processing:** Make consumer logic faster (Async processing). \n*Monitor `MaxLag` metric.*"
+            }
           ]
         }
       ]
@@ -1550,11 +1760,26 @@
             "When gRPC: Internal microservices, performance critical."
           ],
           "interviewQuestions": [
-            "When would you choose gRPC over REST for internal services?",
-            "Explain Overfetching and Underfetching solved by GraphQL.",
-            "How does gRPC achieve better performance than REST?",
-            "Challenges with GraphQL (N+1, caching)?",
-            "How to version REST vs GraphQL APIs?"
+            {
+              "question": "When would you choose gRPC over REST for internal services?",
+              "answer": "**Performance & Type Safety.** \n\ngRPC uses Protobuf (binary, smaller) and HTTP/2 (multiplexing). It generates typed client/server code. \n\n*Ideal for high-throughput microservices.*"
+            },
+            {
+              "question": "Explain Overfetching and Underfetching solved by GraphQL.",
+              "answer": "**Overfetching:** REST returns full User object when you only need `name`. \n**Underfetching:** REST requires 3 calls (`/user`, `/posts`, `/comments`) to build a view. \n\nGraphQL solves both with a single query specifying exact fields."
+            },
+            {
+              "question": "How does gRPC achieve better performance than REST?",
+              "answer": "1. **Binary Serialization (Protobuf):** Smaller payload than JSON. \n2. **HTTP/2 Transport:** Multiplexing (multiple streams over one TCP conn) & Header Compression (HPACK)."
+            },
+            {
+              "question": "Challenges with GraphQL (N+1, caching)?",
+              "answer": "**N+1 Problem:** Query for 10 users + their latest post might trigger 10+1 DB queries. Fix: **DataLoader** (Batching). \n**Caching:** Harder than REST (POST requests). Need application-level caching (Persisted Queries)."
+            },
+            {
+              "question": "How to version REST vs GraphQL APIs?",
+              "answer": "**REST:** URL (`/v1/`) or Header. Explicit breaking changes. \n**GraphQL:** **Evolution**. Mark fields `@deprecated`. Add new fields. Client decides when to switch. Avoids versioning entire API."
+            }
           ]
         },
         {
@@ -1583,11 +1808,26 @@
             "Common Attacks: SQL injection, XSS, CSRF. Know prevention."
           ],
           "interviewQuestions": [
-            "Explain OAuth 2.0 Authorization Code flow.",
-            "How to secure public API against DDoS and MITM?",
-            "JWT vs Session-based authentication?",
-            "How does HTTPS/TLS protect data?",
-            "How to implement API key rotation?"
+            {
+              "question": "Explain OAuth 2.0 Authorization Code flow.",
+              "answer": "1. User clicks 'Login with Google'. \n2. Redirect to Google Auth Server. \n3. User approves. Google redirects back with `code`. \n4. Backend swaps `code` for `access_token`."
+            },
+            {
+              "question": "How to secure public API against DDoS and MITM?",
+              "answer": "**DDoS:** Rate Limiting (Token Bucket), WAF (Cloudflare), IP Blacklisting. \n**MITM:** HTTPS (TLS 1.3) with HSTS (Strict Transport Security) to force encrypted connection."
+            },
+            {
+              "question": "JWT vs Session-based authentication?",
+              "answer": "**Session:** Server stores state (Memory/Redis). Cookie sent by client. Revocable. \n**JWT:** Stateless. Data in token. Scalable but hard to revoke (needs Blacklist/Short Expiry)."
+            },
+            {
+              "question": "How does HTTPS/TLS protect data?",
+              "answer": "1. **Handshake:** Server sends Cert. Client verifies with CA. \n2. **Key Exchange:** ECDHE to agree on Session Key. \n3. **Encryption:** AES-GCM for data transfer."
+            },
+            {
+              "question": "How to implement API key rotation?",
+              "answer": "Support **Two Keys** (Active, Pending). \n\n1. Generate Key B. \n2. Update Client to use Key B. \n3. Monitor Key A usage (wait for 0). \n4. Revoke Key A."
+            }
           ]
         },
         {
@@ -1616,14 +1856,30 @@
             "Alerting: Alert on symptoms (latency), not causes (CPU)."
           ],
           "interviewQuestions": [
-            "Design centralized logging system using ELK Stack.",
-            "What are the Golden Signals of monitoring?",
-            "How does distributed tracing work?",
-            "How to implement request correlation across services?",
-            "Best practices for alerting (avoiding alert fatigue)?"
+            {
+              "question": "Design centralized logging system using ELK Stack.",
+              "answer": "1. **Filebeat:** Agent on App Server ships logs. \n2. **Kafka:** Buffers logs (Handling spikes). \n3. **Logstash:** Filters/Parses (Grok). \n4. **Elasticsearch:** Indexing. \n5. **Kibana:** Visualization."
+            },
+            {
+              "question": "What are the Golden Signals of monitoring?",
+              "answer": "Started by Google SRE: \n1. **Latency:** Time to serve. \n2. **Traffic:** RPS. \n3. **Errors:** 5xx rate. \n4. **Saturation:** Resource fullness (CPU, Queue Depth)."
+            },
+            {
+              "question": "How does distributed tracing work?",
+              "answer": "Pass a **TraceID** (Global) and **SpanID** (Local) in HTTP Headers (`X-B3-TraceId`) across all microservices. \nCollector (Jaeger) stitches Spans together to visualize the waterfall."
+            },
+            {
+              "question": "How to implement request correlation across services?",
+              "answer": "Middleware at entry point generates `Correlation-ID`. \n\nEvery Log line must include this ID. \n\nPass it downstream headers. \n*Enables searching all logs for one user request.*"
+            },
+            {
+              "question": "Best practices for alerting (avoiding alert fatigue)?",
+              "answer": "**Alert on Symptoms, not Causes.** \n\nAlert: 'High Error Rate' or 'High Latency'. \nDon't Alert: 'CPU > 80%' (if latency is fine, CPU is fine). \n*Page only for actionable, urgent issues.*"
+            }
           ]
         }
       ]
     }
-  ]
+  ],
+  "recommendedHoursPerWeek": 2
 }

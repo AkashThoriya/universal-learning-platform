@@ -73,6 +73,16 @@ import { getSyllabus, getAllProgress, saveSyllabusForCourse, getUser } from '@/l
 import { logInfo, logError } from '@/lib/utils/logger';
 import { SyllabusSubject, TopicProgress, SyllabusTopic } from '@/types/exam';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { TopicResourcesSection } from '@/components/topic-detail/TopicResourcesSection';
+import { getExamById } from '@/lib/data/exams-data';
+
 // Constants
 const MASTERY_THRESHOLD = 80;
 const MEDIUM_MASTERY_THRESHOLD = 50;
@@ -146,6 +156,17 @@ export default function SyllabusPage() {
 
     fetchData();
   }, [user, activeCourseId]);
+
+  // Fetch Exam Resources for the active course
+  const [examResources, setExamResources] = useState<string[]>([]);
+  useEffect(() => {
+    if (activeCourseId) {
+      const exam = getExamById(activeCourseId);
+      setExamResources(exam?.resources || []);
+    } else {
+      setExamResources([]);
+    }
+  }, [activeCourseId]);
 
   // Save syllabus changes to Firebase
   const saveSyllabusChanges = useCallback(async () => {
@@ -539,6 +560,29 @@ export default function SyllabusPage() {
                           Interview Questions
                         </Link>
                       </Button>
+
+                      {examResources.length > 0 && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <BookOpen className="h-4 w-4 mr-2" />
+                              Resources
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-3xl">
+                            <DialogHeader>
+                              <DialogTitle>Course Resources</DialogTitle>
+                            </DialogHeader>
+                            <TopicResourcesSection
+                              resources={examResources}
+                              title=""
+                              description=""
+                              className="mt-4"
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      )}
+
                       <Button variant="outline" size="sm" asChild>
                         <Link href="/notes-revision">
                           <FileText className="h-4 w-4 mr-2" />

@@ -45,6 +45,8 @@ export interface Exam {
   recommendedHoursPerWeek?: number;
   /** Icon identifier (e.g., emoji or lucide icon name) */
   icon?: string;
+  /** Array of external resource links for the entire course */
+  resources?: string[];
 }
 
 /**
@@ -258,6 +260,8 @@ export interface SyllabusTopic {
   practiceQuestions?: PracticeQuestion[];
   /** Common interview questions for this topic */
   interviewQuestions?: string[] | { question: string; answer: string }[];
+  /** Array of external resource links (e.g., DataLemur tutorials) */
+  resources?: string[];
 }
 
 /**

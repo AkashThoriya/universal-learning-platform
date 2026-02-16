@@ -3,7 +3,11 @@
   "name": "Low Level Design (Object-Oriented Design)",
   "description": "Comprehensive Low Level Design course covering SOLID principles, design patterns, UML diagrams, and real-world case studies like Parking Lot, BookMyShow, and Splitwise. Master object-oriented design for technical interviews.",
   "category": "Computer Science",
-  "totalEstimatedHours": 52,
+  "totalEstimatedHours": 55,
+  "resources": [
+    "https://refactoring.guru/design-patterns",
+    "https://github.com/tssovi/grokking-the-object-oriented-design-interview"
+  ],
   "stages": [
     {
       "id": "foundation",
@@ -92,18 +96,22 @@
             }
           ],
           "learningTip": [
-            "S - Single Responsibility: A class should have only ONE reason to change.",
-            "O - Open/Closed: Open for extension, closed for modification.",
-            "L - Liskov Substitution: Subtypes must be substitutable for base types.",
-            "I - Interface Segregation: Many specific interfaces > one general interface.",
-            "D - Dependency Inversion: Depend on abstractions, not concretions."
+            "**Single Responsibility Principle (SRP):** ONE reason to change. Separate `UserAuth` from `UserProfile`. Don't mix logic.",
+            "**Open/Closed Principle (OCP):** Extend functionality via subclasses/interfaces, DO NOT modify existing tested code.",
+            "**Liskov Substitution Principle (LSP):** Derived classes must be essentially 'is-a' substitutes. No 'NotImplementedExceptions'.",
+            "**Interface Segregation Principle (ISP):** Client shouldn't depend on methods it doesn't use. Split `Worker` into `Eater` and `Worker`.",
+            "**Dependency Inversion Principle (DIP):** High-level modules depend on Abstractions (Interfaces), not concrete Low-level details."
           ],
           "mustNotMiss": [
-            "SRP: UserService handles users only, not emails. EmailService for emails.",
-            "OCP: Add new shapes by creating new classes, not modifying Shape.",
-            "LSP: Square breaking Rectangle is the classic violation example.",
-            "ISP: Printer, Scanner, Fax as separate interfaces, not one Machine.",
-            "DIP: PaymentService depends on PaymentGateway interface, not Stripe directly."
+            "**SRP Violation:** `Invoice` class calculating tax AND saving to DB. Split into `InvoiceCalculator` and `InvoiceRepository`.",
+            "**OCP Example:** Strategy Pattern. Add new `PaymentStrategy` without touching `PaymentProcessor`.",
+            "**LSP Violation:** `Square` extends `Rectangle`. `setWidth` changes height. Breaks assumptions.",
+            "**ISP Example:** `java.util.List` vs `java.util.Deque`. Use specific interface for specific needs.",
+            "**DIP Implementation:** Dependency Injection (Spring/Guice). Inject `Database` interface, pass `MySQLDatabase` at runtime."
+          ],
+          "resources": [
+            "https://www.baeldung.com/solid-principles",
+            "https://refactoring.guru/design-patterns"
           ],
           "interviewQuestions": [
             {
@@ -150,17 +158,20 @@
             }
           ],
           "learningTip": [
-            "Singleton ensures one instance globally accessible.",
-            "Thread safety is critical - double-checked locking or enum.",
-            "Singleton makes unit testing hard - dependency injection is better.",
-            "Use for: Logger, Config, Connection Pool."
+            "**Singleton Purpose:** Ensure a class has only ONE instance and provide a global point of access.",
+            "**Concurrency Risk:** Lazy initialization requires synchronization (Double-Checked Locking).",
+            "**Testing Pain:** Singletons behave like global state, making unit tests hard to isolate. Use DI instead where possible.",
+            "**Enum Singleton:** The most robust way to implement Singleton in Java (References: Effective Java)."
           ],
           "mustNotMiss": [
-            "Lazy Initialization: Create instance only when first needed.",
-            "Double-Checked Locking: if null → synchronized → if null → create.",
-            "Enum Singleton: Best in Java. Thread-safe, serialization-safe.",
-            "Bill Pugh: Holder pattern using static inner class.",
-            "Anti-pattern when: Creates hidden dependencies, hard to test."
+            "**Double-Checked Locking:** `if (instance == null) synchronized { if (instance == null) instance = new ... }`",
+            "**Bill Pugh Singleton:** Uses static inner helper class <code>SingletonHelper</code>. loaded lazily.",
+            "**Serialization Safety:** define `readResolve()` to prevent new instance creation during deserialization.",
+            "**Anti-Pattern:** When used as a replacement for global variables. Breaks modularity."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/singleton",
+            "https://www.geeksforgeeks.org/java-singleton-design-pattern-practices-examples/"
           ],
           "interviewQuestions": [
             {
@@ -199,17 +210,20 @@
             }
           ],
           "learningTip": [
-            "Builder is for complex object construction with many params.",
-            "Fluent interface: return 'this' for method chaining.",
-            "Immutability: Builder builds immutable objects.",
-            "Director class orchestrates builders for common configurations."
+            "**Builder Purpose:** Construction of complex objects. Separates construction from representation.",
+            "**Telescoping Constructor Problem:** Avoids `new Pizza(12, true, false, true, null...)` hell.",
+            "**Immutability:** Builder is the best way to create immutable objects with many optional fields.",
+            "**Fluent API:** Method chaining `builder.setHeader().setBody().build()` makes code readable."
           ],
           "mustNotMiss": [
-            "Problem: Constructor with 10 params is unreadable and error-prone.",
-            "Solution: Pizza.builder().size(L).cheese(true).pepperoni(true).build()",
-            "Method Chaining: Each method returns the builder for fluent API.",
-            "Immutability: Final fields, set only through builder.",
-            "Director: Encapsulates common building sequences."
+            "**Director:** Optional class that defines order of construction steps for specific configurations.",
+            "**Inner Static Class:** Builder is often a static inner class of the product to access private constructor.",
+            "**Thread Safety:** The Builder itself is not thread-safe, but the object it builds IS thread-safe (Immutable).",
+            "**Lombok:** `@Builder` annotation automates this pattern in Java."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/builder",
+            "https://blogs.oracle.com/javamagazine/post/exploring-the-builder-design-pattern-in-java"
           ],
           "interviewQuestions": [
             {
@@ -248,17 +262,20 @@
             }
           ],
           "learningTip": [
-            "Factory encapsulates object creation logic.",
-            "Simple Factory: One factory class, switch on type.",
-            "Factory Method: Subclasses decide which class to instantiate.",
-            "Abstract Factory: Family of related objects without specifying classes."
+            "**Factory Method:** Defines interface for creating an object, but lets subclasses decide which class to instantiate.",
+            "**Abstract Factory:** Creates families of related objects (e.g., MacButton, MacScrollbar) without specifying concrete classes.",
+            "**Decoupling:** Client code works with `Button` interface, not `WindowsButton` implementation.",
+            "**Dependency Injection:** A form of Factory pattern where the container (Spring) acts as the factory."
           ],
           "mustNotMiss": [
-            "Simple Factory: NotificationFactory.create('email') → EmailNotification.",
-            "Factory Method: Document.createPage() overridden in Word, PDF.",
-            "Abstract Factory: UIFactory.createButton(), createCheckbox() for Win/Mac.",
-            "When to use: Object creation is complex or conditional.",
-            "OCP compliance: Add new types without modifying existing code."
+            "**Simple Factory:** Just a class with a static method. NOT a standard GoF pattern, but commonly used idiom.",
+            "**Factory Method vs Abstract Factory:** Factory Method = Inheritance (Subclass decides). Abstract Factory = Composition (Factory object decides).",
+            "**Open/Closed:** Add new product types by adding new Factories, without breaking existing client code.",
+            "**Real World:** JDBC `DriverManager.getConnection()`, `Calendar.getInstance()`."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/factory-method",
+            "https://refactoring.guru/design-patterns/abstract-factory"
           ],
           "interviewQuestions": [
             {
@@ -303,17 +320,20 @@
             }
           ],
           "learningTip": [
-            "Prototype: Clone existing object instead of creating new.",
-            "Useful when object creation is expensive.",
-            "Shallow copy: Reference same nested objects. Deep copy: Clone everything.",
-            "Registry: Store prototypes by name for easy lookup."
+            "**Prototype Purpose:** Avoids costly creation (DB calls) by cloning existing objects in memory.",
+            "**Shallow vs Deep:** Shallow copies references (dangerous for mutable fields). Deep copies values (safe).",
+            "**Registry Pattern:** Often used with Prototype to cache commonly used objects by name (`mobs.get('Orc')`).",
+            "**Java Cloneable:** The default `clone()` is shallow and tricky. Copy Constructors are often cleaner."
           ],
           "mustNotMiss": [
-            "clone() method: Returns copy of object.",
-            "Shallow Copy: Copies references. Changes to nested objects affect both.",
-            "Deep Copy: Recursively clone all nested objects.",
-            "Prototype Registry: Map<String, Prototype> for named prototypes.",
-            "Use case: Game character templates, document templates."
+            "**Shallow Copy Trap:** Modifying a list in the clone modifies the list in the original if they share the reference.",
+            "**Deep Copy Implementation:** Recursive cloning or Serialization/Deserialization (slower but easier).",
+            "**Use Case:** Object creation involves complex calculations or network calls.",
+            "**Real World:** Game Spawning (1000 bullets), Document Templates (Invoice Template)."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/prototype",
+            "https://www.geeksforgeeks.org/prototype-design-pattern/"
           ],
           "interviewQuestions": [
             {
@@ -360,17 +380,20 @@
             }
           ],
           "learningTip": [
-            "Adapter: Convert interface A to interface B.",
-            "Acts as wrapper/translator between incompatible interfaces.",
-            "Strategy: Define family of algorithms, make them interchangeable.",
-            "Encapsulate what varies - algorithms vary, so encapsulate them."
+            "**Adapter:** Matches two incompatible interfaces. Think 'Travel Power Adapter'. Wraps the Adaptee.",
+            "**Strategy:** Defines a family of interchangeable algorithms. Think 'Google Maps Route (Car, Walk, Bike)'.",
+            "**Composition over Inheritance:** Both prefer containing the object rather than extending it.",
+            "**Open/Closed:** precise application of OCP. Add new adapters/strategies without breaking client code."
           ],
           "mustNotMiss": [
-            "Adapter: OldPaymentProcessor wraps NewPaymentGateway.",
-            "Class Adapter: Inheritance. Object Adapter: Composition (preferred).",
-            "Strategy Context: Holds reference to current strategy.",
-            "Strategy Interface: Common interface for all algorithms.",
-            "Runtime Switching: Change strategy without changing context."
+            "**Adapter vs Decorator:** Adapter changes interface. Decorator stays same interface but adds behavior.",
+            "**Class Adapter:** uses Inheritance (extends Old and New). Less flexible.",
+            "**Object Adapter:** uses Composition (has instance of Old). More flexible, can adapt subclasses.",
+            "**Strategy Context:** The class that uses the strategy. It doesn't know concrete details, just the interface."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/adapter",
+            "https://refactoring.guru/design-patterns/strategy"
           ],
           "interviewQuestions": [
             {
@@ -409,17 +432,20 @@
             }
           ],
           "learningTip": [
-            "Observer: One-to-many dependency. Subject notifies observers.",
-            "Push model: Subject sends data. Pull model: Observers fetch data.",
-            "Decorator: Add behavior without modifying class.",
-            "Wrap object with decorators. Each adds functionality."
+            "**Observer Purpose:** One-to-Many dependency. When Subject changes, all Dependents are notified.",
+            "**Decorator Purpose:** Add responsibilities dynamically. Flexible alternative to subclassing.",
+            "**Loose Coupling:** Subject (Publisher) doesn't know concrete details of Observer (Subscriber).",
+            "**Recursive Composition:** Decorators can wrap other decorators (`BufferedInputStream(FileInputStream)`)."
           ],
           "mustNotMiss": [
-            "Observer Subject: registerObserver(), removeObserver(), notifyAll().",
-            "Observer Interface: update(data) called when subject changes.",
-            "Decorator Base: Wraps component, delegates to wrapped object.",
-            "Concrete Decorators: Milk, Sugar, Cream wrap Coffee.",
-            "Stacking: new Milk(new Sugar(new Coffee())) - wrap multiple."
+            "**Observer Memory Leak:** If observers aren't removed, they stay in memory (Lapsed Listener Problem).",
+            "**Push vs Pull:** Push sends data in payload (`update(data)`). Pull notifies change, observer fetches (`subject.getData()`).",
+            "**Decorator Order:** Order of wrapping matters! `Encrypt(Compress(Data))` != `Compress(Encrypt(Data))`.",
+            "**Real World:** React `useEffect` (Observer), Java I/O Streams (Decorator)."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/observer",
+            "https://refactoring.guru/design-patterns/decorator"
           ],
           "interviewQuestions": [
             {
@@ -458,17 +484,20 @@
             }
           ],
           "learningTip": [
-            "Facade: Simplified interface to complex subsystem.",
-            "Proxy: Placeholder that controls access to real object.",
-            "Chain: Request passes through chain until handled.",
-            "Use Chain for: Logging levels, request filters, approval workflows."
+            "**Facade:** Provides a simple interface to a complex system. Think 'One button to start car' (instead of ignition, fuel injection, etc).",
+            "**Proxy:** Controls access to an object. Think 'Security Guard' or 'Cache'.",
+            "**Chain of Responsibility:** Passes request along a chain. Each handler decides to process or pass.",
+            "**Separation of Concerns:** Chain decouples sender from receiver."
           ],
           "mustNotMiss": [
-            "Facade: VideoConverter hides Codec, Compressor, Mixer complexity.",
-            "Proxy Types: Virtual (lazy load), Protection (access control), Caching.",
-            "Proxy: Same interface as real object. Client doesn't know difference.",
-            "Chain: Handler has next handler. Handle or pass to next.",
-            "Chain Handlers: AuthHandler → RateLimitHandler → ValidationHandler."
+            "**Facade vs Adapter:** Facade *simplifies* interface (new). Adapter *converts* interface (compatibility).",
+            "**Proxy Types:** Remote Proxy (RPC), Virtual Proxy (Lazy Load), Protection Proxy (Auth), Smart Reference (Counting).",
+            "**Chain Pitfall:** Request might fall off the end of the chain unhandled. Always have a default handler.",
+            "**Real World:** SLF4J (Facade for logging), Hibernate Lazy Loading (Virtual Proxy), Servlet Filters (Chain)."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/proxy",
+            "https://refactoring.guru/design-patterns/chain-of-responsibility"
           ],
           "interviewQuestions": [
             {
@@ -515,17 +544,20 @@
             }
           ],
           "learningTip": [
-            "Class Diagram: Classes, attributes, methods, relationships.",
-            "Sequence Diagram: Object interactions over time.",
-            "Use Case Diagram: High-level user interactions.",
-            "Start with Use Cases → Sequence → Class diagrams."
+            "**Class Diagram:** Static structure. Shows classes, attributes, methods, and relationships. The 'Skeleton'.",
+            "**Sequence Diagram:** Dynamic behavior. Shows how objects interact over time. The 'Flow'.",
+            "**Use Case Diagram:** Functional requirements. Shows Actors and System boundaries. The 'Scope'.",
+            "**Timing:** Don't waste time on perfect syntax. Focus on clarity and correct relationships."
           ],
           "mustNotMiss": [
-            "Class Relationships: Association, Aggregation, Composition, Inheritance.",
-            "Aggregation: Has-a (weak). Car has Wheels. Wheels can exist independently.",
-            "Composition: Has-a (strong). House has Rooms. Rooms don't exist without House.",
-            "Sequence: Lifelines, messages, activation bars, return values.",
-            "Multiplicity: 1..*, 0..1, 1..1 - cardinality of relationships."
+            "**Class Relationships:** Association (Line), Aggregation (Empty Diamond), Composition (Filled Diamond), Inheritance (Triangle).",
+            "**Aggregation vs Composition:** Car has Wheels (Composition - strong). Library has Members (Aggregation - weak).",
+            "**Sequence Diagram Lifelines:** Vertical dashed lines representing object existence.",
+            "**Multiplicity:** `1` (One), `*` (Many), `0..1` (Optional). Crucial for database design."
+          ],
+          "resources": [
+            "https://www.uml-diagrams.org/class-diagrams-overview.html",
+            "https://www.uml-diagrams.org/sequence-diagrams.html"
           ],
           "interviewQuestions": [
             {
@@ -564,18 +596,21 @@
             }
           ],
           "learningTip": [
-            "First 5 minutes: Clarify requirements obsessively.",
-            "Identify nouns (entities) and verbs (behaviors).",
-            "Start with core entities, add complexity incrementally.",
-            "Think extensibility - what might change in future?"
+            "**Clarify First:** Don't start coding immediately. Ask about scale, users, and constraints.",
+            "**Noun-Verb Analysis:** Identify Nouns -> Classes/Entities. Identify Verbs -> Methods/Relationships.",
+            "**Bottom-Up or Top-Down:** core entities first (Bottom-Up) is usually safer for LLD than Top-Down.",
+            "**Extensibility:** Always ask 'What if X changes?'. Use interfaces/patterns to handle change."
           ],
           "mustNotMiss": [
-            "Step 1: Clarify requirements - functional and non-functional.",
-            "Step 2: Identify core entities (nouns in requirements).",
-            "Step 3: Define relationships and cardinality.",
-            "Step 4: Design APIs/methods for each entity.",
-            "Step 5: Apply design patterns where appropriate.",
-            "Step 6: Handle edge cases and concurrency."
+            "**Step 1: Requirements:** Functional (Book tickets) & Non-Functional (High concurrency).",
+            "**Step 2: Entities:** User, Movie, Theater, Booking, Payment.",
+            "**Step 3: Relationships:** Theater *has many* Screens. Screen *has many* Seats.",
+            "**Step 4: API Design:** `bookingService.createBooking(user, show, seats)`.",
+            "**Step 5: Code:** Write clean, modular code. Handle exceptions."
+          ],
+          "resources": [
+            "https://github.com/donnemartin/system-design-primer",
+            "https://www.educative.io/courses/grokking-the-object-oriented-design-interview"
           ],
           "interviewQuestions": [
             {
@@ -628,17 +663,19 @@
             }
           ],
           "learningTip": [
-            "Core Entities: Game, Board, Player, Cell, Symbol.",
-            "Board should be N×N generic from the start.",
-            "Strategy pattern for different player types (Human, Bot).",
-            "Command pattern for undo/redo functionality."
+            "**Core Entities:** Game, Board, Player, Cell, Symbol(Enum).",
+            "**Scalability:** Design for N*N board from day 1, not just 3x3.",
+            "**Extensibility:** Use `Player` abstract class to support Human and Bot strategies.",
+            "**Command Pattern:** Essential for implementing 'Undo' feature in games."
           ],
           "mustNotMiss": [
-            "Entities: Game, Board (N×N), Player, Cell, Symbol (X/O).",
-            "Board: 2D array of Cells. Each Cell has position and symbol.",
-            "Game: Has players, board, currentPlayer. Controls flow.",
-            "Win Check: O(N) per row, column, diagonal after each move.",
-            "Extensibility: N×N board, Undo, Bot players."
+            "**Board Representation:** `Cell[][] grid`. `Cell` has coordinates and symbol.",
+            "**Win Detection:** Naive `O(N^2)` is bad. Optimized `O(1)` using row/col counters is Senior level.",
+            "**Game Loop:** `while(!gameOver) { input -> move -> checkWin -> switchPlayer }`.",
+            "**Separation:** `Game` class controls flow. `Board` class manages state. `Player` class decides moves."
+          ],
+          "resources": [
+            "https://leetcode.com/discuss/interview-question/345744/Google-or-Onsite-or-Design-Tic-Tac-Toe"
           ],
           "interviewQuestions": [
             {
@@ -683,11 +720,14 @@
             "Keep classes focused - SRP."
           ],
           "mustNotMiss": [
-            "Board: Initialize N×N grid of Cells.",
-            "makeMove(row, col, symbol): Place symbol if valid.",
-            "isValidMove(row, col): Cell exists and empty.",
-            "Player: abstract getMove() for different player types.",
-            "Symbol enum: X, O (and EMPTY for unoccupied)."
+            "**Board:** Initialize N×N grid of Cells.",
+            "**makeMove(row, col, symbol):** Place symbol if valid.",
+            "**isValidMove(row, col):** Cell exists and empty.",
+            "**Player:** abstract getMove() for different player types.",
+            "**Symbol enum:** X, O (and EMPTY for unoccupied)."
+          ],
+          "resources": [
+            "https://www.geeksforgeeks.org/design-a-tic-tac-toe-game/"
           ],
           "interviewQuestions": [
             {
@@ -732,11 +772,14 @@
             "Command pattern stores moves for undo."
           ],
           "mustNotMiss": [
-            "Game Loop: while(!gameOver) { player = nextPlayer(); move = player.getMove(); board.makeMove(); checkWin(); }",
-            "O(1) Win Check: rowCounts[N], colCounts[N], diagCount, antiDiagCount.",
-            "Draw: Board full and no winner.",
-            "Bot Player: Extends Player, overrides getMove() with AI logic.",
-            "Minimax: Recursive algorithm for optimal moves."
+            "**Game Loop:** `while(!gameOver) { player = nextPlayer(); move = player.getMove(); board.makeMove(); checkWin(); }`",
+            "**O(1) Win Check:** `rowCounts[N], colCounts[N], diagCount, antiDiagCount`.",
+            "**Draw:** Board full and no winner.",
+            "**Bot Player:** Extends Player, overrides `getMove()` with AI logic.",
+            "**Minimax:** Recursive algorithm for optimal moves."
+          ],
+          "resources": [
+            "https://www.freecodecamp.org/news/minimax-algorithm-guide-how-to-create-an-unbeatable-ai/"
           ],
           "interviewQuestions": [
             {
@@ -783,17 +826,21 @@
             }
           ],
           "learningTip": [
-            "Core entities: ParkingLot, Floor, Spot, Vehicle, Ticket.",
-            "Spot types: Compact, Regular, Large for different vehicles.",
-            "Strategy pattern for pricing: Hourly, Flat, Tiered.",
-            "Factory pattern for vehicle and spot creation."
+            "**Core Entities:** ParkingLot, Floor, Spot, Vehicle, Ticket, Payment.",
+            "**Spot Allocation:** Strategy Pattern (Nearest vs Random). Min-Heap is best for 'Nearest'.",
+            "**Pricing Engine:** Strategy Pattern (Hourly, Member, Weekend). Decorator for 'EV Charging' add-on.",
+            "**Concurrency:** Optimistic Locking is usually sufficient for single-lot systems. Redis Lock for distributed."
           ],
           "mustNotMiss": [
-            "Entities: ParkingLot, Floor, Spot, Vehicle, Ticket, Payment.",
-            "Spot Types: Compact (bikes), Regular (cars), Large (trucks).",
-            "Vehicle Types: Bike, Car, Truck - each fits specific spots.",
-            "Pricing Strategy: HourlyPricing, FlatPricing, DynamicPricing.",
-            "Concurrency: Two users booking same spot simultaneously."
+            "**Entities:** ParkingLot(singleton?), Floor, Spot(type, status), Vehicle(type), Ticket(entryTime).",
+            "**Spot Types:** Compact(Bike), Large(Truck), Electric(EV charging).",
+            "**Pricing:** Strategy Interface `calculate(ticket)`. Easy to swap formulas.",
+            "**Factory:** `VehicleFactory.create(type)` to abstract vehicle creation.",
+            "**Concurrency:** Two drivers spot the same free space. Handle via DB Lock or Synchronized."
+          ],
+          "resources": [
+            "https://www.educative.io/blog/grokking-parking-lot-design",
+            "https://github.com/tssovi/grokking-the-object-oriented-design-interview"
           ],
           "interviewQuestions": [
             {
@@ -832,38 +879,40 @@
             }
           ],
           "learningTip": [
-            "findSpot(vehicle): Strategy for allocation (nearest, random).",
-            "Ticket: entry time, spot, vehicle. Calculate duration on exit.",
-            "Payment: Strategy calculates amount based on duration.",
-            "Synchronized access for spot allocation."
+            "**Search Index:** `Map<SpotType, PriorityQueue<Spot>>`. O(1) retrieval of best spot.",
+            "**Ticket Calculation:** `(ExitTime - EntryTime) * Rate`. Handle 'Lost Ticket' with max fee.",
+            "**Gate Management:** `EntryGate` issues ticket. `ExitGate` processes payment.",
+            "**Admin API:** `updateRates()`, `addFloor()`, `disableSpot()`."
           ],
           "mustNotMiss": [
-            "SpotAllocationStrategy: NearestEntrance, FirstAvailable.",
-            "findAvailableSpot(vehicleType): Returns appropriate spot or null.",
-            "Ticket: vehicleId, spotId, entryTime, exitTime.",
-            "calculateFee(ticket): Duration × rate per hour.",
-            "Thread Safety: synchronized block or ReentrantLock for spot assignment."
+            "**Slot Assignment:** `findNearest()` using Min-Heap is the key algorithm here.",
+            "**Payment Flow:** `PaymentService.process(ticket, amount, strategy)`.",
+            "**Monitoring:** Dashboard needs real-time count of free spots. Decrement atomic counters on entry.",
+            "**Extension:** Multi-level parking, Valet parking (Driver entity)."
+          ],
+          "resources": [
+            "https://leetcode.com/problems/design-parking-system/"
           ],
           "interviewQuestions": [
             {
               "question": "Implement Spot Allocation strategy (nearest to entrance).",
-              "answer": "Use a **PriorityQueue** (Min-Heap) for available spots. \nComparator checks: 1. Floor Number (Lower is better). 2. Distance from elevator. \nOn entry: `heap.poll()` (O(logN)). \nOn exit: `heap.offer()` (O(logN))."
+              "answer": "Use a **Min-Heap (PriorityQueue)** of available spots. \n\nComparator: `(Floor, Distance)`. \n\n**O(log N)** to find/park. \n**O(log N)** to free spot (add back to heap). \n*Much better than O(N) linear scan.*"
             },
             {
-              "question": "Implement Payment calculation logic.",
-              "answer": "**Strategy Pattern:** `PaymentStrategy.calculate(duration)`. \n**Decorator Pattern:** `CarWash(ParkingFee(ticket))`. \nBase rate is calculated, then additives (like EV charging, Valet) are added dynamically."
+              "question": "Implement Payment calculation logic (Strategy Pattern).",
+              "answer": "Interface `PricingStrategy { double calculate(Ticket t); }` \n\n`HourlyStrategy`: `$4 for 1st hour, $2 after`. \n`DynamicStrategy`: Higher rates if occupancy > 90%. \n`StrategyContext` selects strategy based on VehicleType/Day."
             },
             {
               "question": "How to handle race condition in spot booking?",
-              "answer": "1. **Database:** `UPDATE spots SET is_occupied=true WHERE id=1 AND is_occupied=false;` (Atomic Row Lock). Check return row count (1=Success, 0=Fail/Retry). \n2. **Distributed Lock:** Redis `SETNX` (Set if Not Exists) on spot ID."
+              "answer": "Problem: Two threads call `bookSpot(101)` same time. \n**Solution:** \n1. **Synchronized:** `synchronized bookSpot()` (Single instance). \n2. **DB Lock:** `SELECT ... FOR UPDATE` (Pessimistic). \n3. **Optimistic:** `UPDATE spots SET booked=true WHERE id=101 AND booked=false`."
             },
             {
               "question": "How to implement time-based pricing (peak hours)?",
-              "answer": "Configure `TimeMultiplier` rules. \nInterval tree or simple logic: \n`If (entry > 8am && entry < 6pm) rate *= 2.0`. \nEncapsulate inside `DynamicPricingStrategy`."
+              "answer": "Use a **Rule Engine**. \n\nRules: \n- `DayRule`: Weekday vs Weekend. \n- `TimeRule`: 8am-10am (Peak). \n- `ClientRule`: Corporate vs Guest. \nChain rules to calculate final multiplier."
             },
             {
               "question": "Design the database schema for parking lot.",
-              "answer": "`ParkingLots(id, address)` \n`Floors(id, parking_lot_id, level)` \n`Spots(id, floor_id, type, is_occupied)` \n`Tickets(id, spot_id, start_time, end_time, fee)`"
+              "answer": "**Tables:** \n- `ParkingLot` (id, geo_location) \n- `Floor` (id, level, lot_id) \n- `Spot` (id, floor_id, type_enum, status_enum) \n- `Ticket` (id, vehicle_number, entry_time, spot_id) \n- `Payment` (id, ticket_id, amount, status, txn_id)"
             }
           ]
         }
@@ -889,17 +938,21 @@
             }
           ],
           "learningTip": [
-            "Entities: Movie, Theater, Screen, Show, Seat, Booking, Payment.",
-            "Show = Movie + Screen + Time. Has its own seat map.",
-            "Seat locking during selection to prevent double booking.",
-            "State pattern for booking states: Pending, Confirmed, Cancelled."
+            "**Core Entities:** Movie, Cinema, Hall, Show(Time), Seat, Booking.",
+            "**Complexities:** Concurrency (Locking), Search (Filter by City/Date), Caching.",
+            "**Booking State:** Created -> Locked -> Paid -> Booked. (Handle 10-min timeout).",
+            "**Seat Map:** Bitmap or JSON blob. Needs efficient rendering data."
           ],
           "mustNotMiss": [
-            "Entities: Movie, Theater (has Screens), Screen (has Seats), Show, Booking.",
-            "Show: Combination of Movie + Screen + DateTime. Has ShowSeats.",
-            "ShowSeat: Seat + Show + Status (Available, Booked, Locked).",
-            "Seat Locking: Temporary lock during selection (5-10 minutes).",
-            "Booking Flow: Select → Lock → Pay → Confirm OR Timeout → Release."
+            "**Hierarchy:** City -> Cinema -> Hall -> Show -> ShowSeat.",
+            "**ShowSeat:** Decouples physical 'Seat' (static) from 'Show' (dynamic availability).",
+            "**Locking:** Redis Distributed Lock with TTL (10 mins) is the industry standard.",
+            "**Search:** Indexing on City + Date + Movie is critical for performance.",
+            "**Notifications:** Async event bus (Kafka) after successful payment."
+          ],
+          "resources": [
+            "https://medium.com/@narengowda/system-design-for-bookmyshow-9d4b455d3f2",
+            "https://www.geeksforgeeks.org/design-movie-ticket-booking-system-like-bookmyshow/"
           ],
           "interviewQuestions": [
             {
@@ -938,17 +991,19 @@
             }
           ],
           "learningTip": [
-            "MovieService: listByCity(), listByDate(), search().",
-            "ShowService: getShowsForMovie(movieId, date, city).",
-            "Booking: Create with selected seats, initial status = PENDING.",
-            "Seat Selection: Return available seats for a show."
+            "**Service Layer:** MovieService (Catalog), ShowService (Availability), BookingService (Transaction).",
+            "**Booking Workflow:** `selectSeats` -> `lockSeats` -> `initiatePayment` -> `confirmBooking`.",
+            "**Search Optimization:** Caching 'Now Showing' movies in Redis per city.",
+            "**Seat Map API:** Returns all seats with status (Available/Booked/Locked)."
           ],
           "mustNotMiss": [
-            "MovieService: search(city, date, genre), getMovieDetails(id).",
-            "TheaterService: getTheatersForMovie(movieId, city).",
-            "ShowService: getShows(theaterId, movieId, date).",
-            "SeatService: getAvailableSeats(showId).",
-            "BookingService: createBooking(showId, seatIds, userId)."
+            "**Controller:** `BookingController.create(payload)`. Validates input.",
+            "**Service:** `lockSeats()` must be atomic/transactional.",
+            "**Repository:** `ShowSeatRepository.findAvailable(showId)`.",
+            "**Factory:** `PaymentFactory` to switch between PayPal/Stripe."
+          ],
+          "resources": [
+            "https://leetcode.com/discuss/interview-question/system-design/"
           ],
           "interviewQuestions": [
             {
@@ -987,38 +1042,40 @@
             }
           ],
           "learningTip": [
-            "Optimistic locking: Version column, fail if version changed.",
-            "Pessimistic locking: SELECT FOR UPDATE locks rows.",
-            "Payment callback: Update booking status on success/failure.",
-            "Scheduler for releasing expired locks."
+            "**Distributed Locking:** Redis `SET resource_name my_random_value NX PX 30000`.",
+            "**State Machine:** Booking transitions must be strictly enforced.",
+            "**Payment Integration:** Webhooks from Stripe/PayPal to update status.",
+            "**Cleanup:** Scheduler (Cron) to release expired locks (`PENDING > 10m`)."
           ],
           "mustNotMiss": [
-            "Locking: UPDATE seats SET status='LOCKED', locked_at=NOW() WHERE status='AVAILABLE'.",
-            "Lock Expiry: Scheduled job releases locks older than 10 minutes.",
-            "Payment Gateway: Initiates payment, waits for callback.",
-            "On Payment Success: status = CONFIRMED, generate ticket.",
-            "On Payment Failure: status = FAILED, release seat locks."
+            "**Double Booking:** Prevent via database constraints or distributed locks.",
+            "**Idempotency:** Payment webhook might fire twice. Handle gracefully.",
+            "**Isolation:** `SERIALIZABLE` isolation level for booking transaction could be too slow. Use row locks.",
+            "**Failures:** If payment fails, release lock immediately for others."
+          ],
+          "resources": [
+            "https://redis.io/docs/manual/patterns/distributed-locks/"
           ],
           "interviewQuestions": [
             {
               "question": "Implement concurrency lock for seat selection.",
-              "answer": "**Distributed Lock (Redis):** `Lock(ShowID_SeatID)`. \n\nOr **Versioned Update:** each seat has version. \n`UPDATE seat SET status='LOCKED', version=v+1 WHERE id=x AND version=v`. \n\nIf rows updated == 0, somewhat else took it. Retry."
+              "answer": "Use **Redis Distributed Lock** (Redlock). \n\nKey: `lock:show:{showId}:seat:{seatId}`. TTL: 10 mins. \n\nIf User A acquires lock, User B gets 'Seat Unavailable'. \n*Releasing:* On payment success OR TTL expiry."
             },
             {
               "question": "Handle payment failures and seat release.",
-              "answer": "Webhook from Payment Gateway (Stripe) -> Application. \nIf `failure`: Trigger `SeatReleaseService`. \nSet `BookingStatus=CANCELLED`, `SeatStatus=AVAILABLE`. \nNotify user."
+              "answer": "Use **State Pattern** for Booking. \n`CREATED` -> `LOCKED` -> `PAID` / `FAILED`. \n\n**Scheduler:** Runs every minute. Finds `LOCKED` bookings created > 10 mins ago. \n- Updates status to `EXPIRED`. \n- Releases Redis/DB lock."
             },
             {
               "question": "How to implement optimistic vs pessimistic locking?",
-              "answer": "**Optimistic:** Use `version` column. Good for low contention. \n**Pessimistic:** `SELECT ... FOR UPDATE`. Locks row DB-side. Good for high contention (Ticket sales opening) but lowers throughput."
+              "answer": "**Optimistic (Version):** `UPDATE seats SET status='L' WHERE id=1 AND version=v`. Fast, no DB lock. Good for low contention. \n**Pessimistic (Select for Update):** `SELECT * ... FOR UPDATE`. Locks row. Good for high contention (Avengers Opening), but reduces throughput."
             },
             {
               "question": "How to handle partial payment failures?",
-              "answer": "Complex. Usually all-or-nothing. \nIf user booked 5 seats, paid for 3 (rare)? \nIdeally, reverse the whole transaction (Refund 3, Release 5). \nOr preserve 3, release 2 (Complex UX)."
+              "answer": "Scenario: User books 4 seats, payment gateway charges for 2. \n**Solution:** Atomic Transaction. \nEither ALL charged or NONE. \nIf ambiguous state: Auto-refund the partial amount and cancel booking."
             },
             {
               "question": "Design the notification system for booking confirmation.",
-              "answer": "After payment success event -> Publish message to **Kafka/RabbitMQ**. \n`NotificationService` consumes message. \nSends Email/SMS via 3rd party providers (SendGrid/Twilio). \nAsync processing ensures booking API is fast."
+              "answer": "**Async Event Bus.** \n\n1. `PaymentService` emits `BookingConfirmedEvent`. \n2. `NotificationService` listens (Kafka consumer). \n3. Sends Email/SMS/WhatsApp. \n*Decouples fast booking flow from slow email API.*"
             }
           ]
         }
@@ -1044,38 +1101,41 @@
             }
           ],
           "learningTip": [
-            "Core entities: User, Group, Expense, Split, Balance.",
-            "Split types: Equal, Exact amounts, Percentage.",
-            "Balance = What you owe - What you're owed.",
-            "Debt simplification: Minimize number of transactions."
+            "**Core Entities:** User, Group, Expense, Split(Type), Balance.",
+            "**Split Logic:** Factory Pattern to handle Equal/Exact/Percent splits.",
+            "**Debt Graph:** Directed graph where Edge(A, B) = Amount A owes B.",
+            "**Key Algorithm:** Debt Simplification (Minimize cash flow) using Greedy algo."
           ],
           "mustNotMiss": [
-            "Entities: User, Group (has members), Expense, Split, Balance.",
-            "Expense: paidBy (User), amount, splitType, splits[].",
-            "Split Types: EqualSplit, ExactSplit, PercentSplit.",
-            "Balance Sheet: For each user pair, net amount owed.",
-            "Simplification: Graph-based to minimize transactions."
+            "**Expense:** `type` (EQUAL, EXACT), `payer`, `splits` list.",
+            "**Validation:** Sum of splits must equal total amount. Percentages must sum to 100%.",
+            "**Balance Sheet:** `Map<User, Double>`. +ve means you are owed, -ve means you owe.",
+            "**Simplification:** `Debtors` (-ve) and `Creditors` (+ve) lists. Match max to max."
+          ],
+          "resources": [
+            "https://leetcode.com/problems/optimal-account-balancing/",
+            "https://medium.com/@swayamraina/redesigning-splitwise-a-system-design-perspective-1c888169134"
           ],
           "interviewQuestions": [
             {
               "question": "Design algorithm to simplify debts (minimize transactions).",
-              "answer": "Goal: Reduce O(N^2) transactions to O(N). \n\n1. Calculate Net Balance for everyone. \n\n2. Separate into Givers (+) and Receivers (-). \n\n3. Match max Giver with max Receiver. Settle min(give, receive). \n\n4. Repeat until all 0."
+              "answer": "**Greedy Approach (Standard):** \n1. Calculate Net Balance for each user. \n2. Separate into `Debtors` (Negative) and `Creditors` (Positive). \n3. Sort both by magnitude. \n4. Match Max Debtor with Max Creditor. Settle min(abs(debt), credit). \n5. Repeat O(N) times. \n*Note: Gets close to optimal (N-1 transactions) but is not strictly optimal (NP-Hard).* "
             },
             {
               "question": "Design schema for Users, Groups, Expenses.",
-              "answer": "**User:** id, name, email. \n\n**Group:** id, name. **GroupMembers:** group_id, user_id. \n\n**Expense:** id, group_id, payer_id, amount. \n\n**ExpenseSplits:** expense_id, user_id, amount_owed. \n\n**Settlements:** payer_id, payee_id, amount."
+              "answer": "**Users:** `(id, name, email)` \n**Expenses:** `(id, group_id, payer_id, amount, currency, created_at)` \n**ExpenseSplits:** `(expense_id, user_id, amount_owed)` \n**Settlements:** `(id, payer_id, payee_id, amount)` \n**GroupBalances:** `(group_id, user1_id, user2_id, net_amount)` *Snapshot for fast read.*"
             },
             {
               "question": "How to handle multi-currency expenses?",
-              "answer": "**FX Rate Risk:** Rates change daily. \n**Solution:** Store `exchange_rate` *at the time of expense creation*. \nSimplify debts using that frozen rate. \nOr, maintain separate graphs per currency and only convert during final Settlement."
+              "answer": "**Independent Graphs:** \nMaintain separate debt graphs for USD, EUR, INR. \nUser A owes User B $10. \nUser B owes User A €5. \n*Do not auto-convert* unless users trigger 'Settle Up' with a specific FX rate."
             },
             {
               "question": "How to split an expense by percentage?",
-              "answer": "**Validation is key.** \nEnsure sum(percentages) == 100%. \nCalculate amount: `total * (percent / 100)`. \nHandle rounding errors: Assign penny remains to the payer or random participant so sum matches total exactly."
+              "answer": "**Validation & Rounding:** \n1. Check `sum(percentages) == 100%`. \n2. `share = total * (percent/100)`. \n3. **Penny Problem:** If total is $100.00 split 3 ways (33.333...), shares are 33.33, 33.33, 33.34. The last penny goes to the payer or random user."
             },
             {
-              "question": "How to handle expense modifications?",
-              "answer": "Difficult with simplification running. \n**Solution:** 'Soft Delete' old expense (revert its impact on balances) and create 'New' expense (apply new impact). \nRecalculate Group Balances snapshot."
+              "question": "How to handle expense modifications/deletes?",
+              "answer": "**Immutable/Reversal Logic:** \nDon't update in place. \n1. Create a **Reverse Expense** (Negative amount) to nullify the old one. \n2. Create a **New Expense** with correct data. \n3. Re-run simplification on the new set of transactions."
             }
           ]
         },
@@ -1093,17 +1153,20 @@
             }
           ],
           "learningTip": [
-            "Expense: Factory method for different split types.",
-            "EqualSplit: amount / numberOfParticipants.",
-            "ExactSplit: Specified amounts, must sum to total.",
-            "PercentSplit: Percentages, must sum to 100%."
+            "**Expense Factory:** `ExpenseFactory.createExpense(type, amount, splits, metadata)`.",
+            "**Round Robin Rounding:** Handle 'Penny Problem' ($100/3 = 33.33, 33.33, 33.34).",
+            "**Strategy Pattern:** `SplitStrategy.validate()` ensures math is correct.",
+            "**Observer Pattern:** Notify users when added to an expense."
           ],
           "mustNotMiss": [
-            "Expense.createEqual(payer, amount, participants).",
-            "Expense.createExact(payer, splits): Validate sum = total.",
-            "Expense.createPercent(payer, amount, percentages): Validate = 100%.",
-            "Balance: Map<(user1, user2), amount> - positive = user1 owes user2.",
-            "updateBalances(expense): For each split, update payer-participant balance."
+            "**EqualSplit:** `amount = total / n`. Handle remainder.",
+            "**ExactSplit:** `sum(splits) == total`.",
+            "**PercentSplit:** `sum(percentages) == 100%`.",
+            "**Concurrency:** Updating `BalanceSheet` needs transactional integrity (DB or Lock).",
+            "**Immutability:** Expenses are usually immutable history. 'Edit' creates a reversal + new expense."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/factory-method"
           ],
           "interviewQuestions": [
             {
@@ -1148,11 +1211,14 @@
             "Graph: Find cycles, settle within cycles first."
           ],
           "mustNotMiss": [
-            "Calculate net per user: netBalance[user] = received - paid.",
-            "Split into creditors (positive) and debtors (negative).",
-            "Greedy Algorithm: Sort both lists. Match head of each.",
-            "Transaction: min(creditor amount, debtor amount). Update both.",
-            "Result: List of (from, to, amount) transactions."
+            "**Calculate net per user:** `netBalance[user] = received - paid`.",
+            "**Split:** into creditors (positive) and debtors (negative).",
+            "**Greedy Algorithm:** Sort both lists. Match head of each.",
+            "**Transaction:** `min(creditor amount, debtor amount)`. Update both.",
+            "**Result:** List of `(from, to, amount)` transactions."
+          ],
+          "resources": [
+            "https://medium.com/@mithunmk93/algorithm-to-settle-debts-simplify-debt-graph-34fd572e92c2"
           ],
           "interviewQuestions": [
             {
@@ -1217,38 +1283,41 @@
             }
           ],
           "learningTip": [
-            "Events have start, end, recurrence, attendees.",
-            "Recurring events: RRULE format (FREQ=WEEKLY;BYDAY=MO,WE).",
-            "Free slot finding: Merge all busy intervals, find gaps.",
-            "Conflict detection: Interval overlap check."
+            "**Event Structure:** Start, End, Recurrence Rule (RRULE), Attendees.",
+            "**Recurrence:** Don't store infinite rows. Store `RRULE` string (RFC 5545).",
+            "**Free Slots:** Merge Intervals algorithm (Busy Time) -> Invert -> Free Time.",
+            "**Conflict:** efficient overlap check using Segment Tree or Interval Tree."
           ],
           "mustNotMiss": [
-            "Entities: User, Calendar, Event, Recurrence, Invitation.",
-            "Event: title, start, end, recurrence, attendees[], reminders[].",
-            "Recurrence: Daily, Weekly, Monthly, Custom. Store pattern not instances.",
-            "Free Slot: Query all calendars, merge busy intervals, find gaps.",
-            "Invitation: Event + User + Status (Pending, Accepted, Declined)."
+            "**RRULE:** `FREQ=WEEKLY;BYDAY=MO,WE`. Expand on read.",
+            "**Storage Optim:** Store exceptions to the rule separately (e.g. Cancelled instance).",
+            "**Timezones:** Always store UTC. Convert to local time on UI.",
+            "**Availability:** `Intersect(UserA.Free, UserB.Free)`."
+          ],
+          "resources": [
+            "https://leetcode.com/discuss/interview-question/object-oriented-design/1582235/Design-Google-Calendar",
+            "https://icalendar.org/RFC-Specifications/iCalendar-RFC-5545/"
           ],
           "interviewQuestions": [
             {
               "question": "Design system to find common free slot for 5 users.",
-              "answer": "1. Fetch busy intervals for all 5 users for the day. \n\n2. **Merge Intervals:** Flatten overlapping intervals into a single list of 'Busy' times. \n\n3. **Invert:** The gaps between busy intervals are the 'Free' slots. \n\n*Complexity:* O(N log N) for sorting intervals."
+              "answer": "**Merge Intervals Algorithm:** \n1. Retrieve sorted busy intervals for all users. `[9-10], [9:30-11], [13-14]`. \n2. **Merge:** `[9-11], [13-14]`. \n3. **Invert:** Gaps are free slots: `[11-13], [14-17]`. \n4. Intersect with 'Working Hours' (9am-5pm)."
             },
             {
               "question": "How to handle recurring events in database?",
-              "answer": "Don't store infinite rows! \n\nStore a **Rule string** (RRULE: `FREQ=WEEKLY;BYDAY=MO`) in `Events` table. \n\nExpand the rule in-memory when querying for a specific date range. \n\nHandle exceptions (moved/deleted instances) in a separate `EventExceptions` table."
+              "answer": "**RRULE Standard (RFC 5545):** \nStore `RRULE:FREQ=WEEKLY;BYDAY=MO,FR;UNTIL=20251231`. \n**Exceptions Table:** Stores moved/deleted instances. `(event_id, original_start, new_start, status)`. \n*Read:* Generate instances from RRULE, then apply Overrides from Exceptions table."
             },
             {
-              "question": "How to detect conflicts with existing events?",
-              "answer": "**Interval Tree** or SQL Overlap Check: \n`SELECT * FROM events WHERE start < new_end AND end > new_start`. \nIf result > 0, conflict exists. \nFor performance, index ranges or use spatial index."
+              "question": "How to detect conflicts efficiently?",
+              "answer": "**Augmented Interval Tree:** \nTree nodes store `(start, end, max_end_in_subtree)`. \nQuery: Does any interval overlap with `[reqStart, reqEnd]`? \n**O(log N)** complexity. \nDatabase: Spatial Indexes (R-Tree) or PostgreSQL `tsrange` with `&&` operator."
             },
             {
               "question": "How to implement reminders?",
-              "answer": "1. **Job Queue:** When event created, schedule a job `(event_time - 10min)`. \n2. **Poller:** Every minute, query DB for `events WHERE reminder_time = now()`. \nPush to notification service."
+              "answer": "**Distributed Scheduler:** \n1. **Time-Partitioning:** Shard IDs by `minute_bucket`. \n2. **Poller:** Each minute, fetch events where `remind_at = now()`. \n3. **Push:** Send to Notification Queue (Kafka). \n4. **Idempotency:** Ensure duplicates don't send double alerts."
             },
             {
               "question": "How to handle timezone differences?",
-              "answer": "Store EVERYTHING in **UTC**. \nStore `UserPreferredTimezone` in User profile. \nConvert to User's timezone ONLY at the presentation layer (Frontend/UI). \nRRULE expansion also needs careful timezone handling."
+              "answer": "**Golden Rule: Store UTC.** \nUser sees events in their *Display Timezone*. \n**Challenge:** '9am Daily' recurring event. \nIf DST shifts, does it stay 9am (wall clock) or shift to 10am (absolute)? \n*RRULEs are typically loose (Wall Clock time) linked to a specific Timezone ID.*"
             }
           ]
         }
@@ -1292,11 +1361,14 @@
             "Mutual Exclusion: Only one thread in critical section at a time."
           ],
           "mustNotMiss": [
-            "Process vs Thread: Process = isolated. Thread = shared memory, lightweight.",
-            "Race Condition: Read-modify-write without synchronization.",
-            "synchronized keyword: Acquire lock before entering block.",
-            "volatile: Ensures visibility across threads. Not atomicity.",
-            "Thread Safety: Immutability, Synchronization, Thread-local, Atomic classes."
+            "**Process vs Thread:** Process = isolated. Thread = shared memory, lightweight.",
+            "**Race Condition:** Read-modify-write without synchronization.",
+            "**synchronized keyword:** Acquire lock before entering block.",
+            "**volatile:** Ensures visibility across threads. Not atomicity.",
+            "**Thread Safety:** Immutability, Synchronization, Thread-local, Atomic classes."
+          ],
+          "resources": [
+            "https://docs.oracle.com/javase/tutorial/essential/concurrency/"
           ],
           "interviewQuestions": [
             {
@@ -1347,17 +1419,20 @@
             }
           ],
           "learningTip": [
-            "Thread Pool: Reuse threads, avoid creation overhead.",
-            "Producer-Consumer: Buffer between producer and consumer threads.",
-            "wait/notify: Thread coordination. Always use with while loop.",
-            "Deadlock: Circular wait. Prevent by ordering lock acquisition."
+            "**Thread Pool:** Reuses threads to save creation overhead. (Fixed vs Cached).",
+            "**Producer-Consumer:** Decouples work submission from processing using a Queue.",
+            "**Semaphores:** Controls access to limited resources (Rate Limiting).",
+            "**Deadlock:** Circular dependency. Avoid by acquiring locks in consistent order."
           ],
           "mustNotMiss": [
-            "ExecutorService: Thread pool abstraction. submit(), shutdown().",
-            "BlockingQueue: Thread-safe queue. put() blocks if full, take() if empty.",
-            "Producer-Consumer: Producer → queue.put(item). Consumer → queue.take().",
-            "wait()/notify(): Release lock, wait. Notify wakes waiting thread.",
-            "Deadlock Conditions: Mutual exclusion, hold & wait, no preemption, circular wait."
+            "**ExecutorService:** The modern way to handle threads in Java (`submit()`).",
+            "**BlockingQueue:** The glue for Producer-Consumer. Handles wait/notify internally.",
+            "**Wait-Notify:** Low-level manual synchronization. Hard to get right (spurious wakeups).",
+            "**Deadlock Prevention:** 'Hold and Wait', 'Circular Wait'. Break the circle."
+          ],
+          "resources": [
+            "https://www.baeldung.com/java-concurrency",
+            "https://docs.oracle.com/javase/tutorial/essential/concurrency/"
           ],
           "interviewQuestions": [
             {
@@ -1404,17 +1479,21 @@
             }
           ],
           "learningTip": [
-            "Command: Encapsulate request as object with execute() and undo().",
-            "Invoker: Stores commands and calls execute().",
-            "Receiver: The actual object that performs the action.",
-            "History stack for undo, redo stack for redo."
+            "**Command Pattern:** Encapsulates a request as an object, allowing parameterization and queuing.",
+            "**Undo/Redo:** The primary use case. Store executed commands in a stack.",
+            "**Decoupling:** Sender (Invoker) doesn't know Receiver's details, just calls `execute()`.",
+            "**Macro Command:** A command that executes a list of other commands (Batch processing)."
           ],
           "mustNotMiss": [
-            "Command Interface: execute(), undo().",
-            "Concrete Commands: TypeCommand, DeleteCommand, CopyCommand.",
-            "Each command stores state needed for undo.",
-            "Invoker: executeCommand(cmd) { cmd.execute(); history.push(cmd); }",
-            "Undo: history.pop().undo(). Redo: redoStack.pop().execute()."
+            "**Interface:** `void execute()`, `void undo()`.",
+            "**Invoker:** The button/menu item. Holds the command. Calls `execute()`.",
+            "**Receiver:** The logic (e.g., Document). The command calls `receiver.action()`.",
+            "**History:** `Stack<Command>`. Undo = `stack.pop().undo()`.",
+            "**Redo:** Separate stack. Cleared when new command is executed."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/command",
+            "https://www.geeksforgeeks.org/command-pattern/"
           ],
           "interviewQuestions": [
             {
@@ -1453,17 +1532,21 @@
             }
           ],
           "learningTip": [
-            "State: Object behavior changes based on internal state.",
-            "Replaces complex if-else with polymorphism.",
-            "Composite: Treat individual objects and compositions uniformly.",
-            "Tree structures: File system, UI components, organizational charts."
+            "**State Pattern:** Object alters behavior when its internal state changes. Appears to change class.",
+            "**vs Strategy:** State is about *internal* state transitions. Strategy is about *external* algorithm injection.",
+            "**Composite Pattern:** Tree structure where Leaf and Composite (Node) share the same interface.",
+            "**Recursion:** Composite methods usually call valid functionality on children recursively."
           ],
           "mustNotMiss": [
-            "State Interface: handle() method for state-specific behavior.",
-            "Context: Holds current state, delegates behavior to state.",
-            "State Transitions: State objects can change context's state.",
-            "Composite Interface: Common interface for leaf and composite.",
-            "Composite Methods: add(), remove(), getChild(), operation()."
+            "**State Context:** The object having the state. Delegates calls to `currentState`.",
+            "**State Transition:** Can be triggered by Context OR by the State object itself.",
+            "**Composite Leaf:** The end node (File). Implements operation directly.",
+            "**Composite Node:** The container (Folder). Implements operation by looping children.",
+            "**Uniformity:** Client treats File and Folder exactly the same (`c.getSize()`)."
+          ],
+          "resources": [
+            "https://refactoring.guru/design-patterns/state",
+            "https://refactoring.guru/design-patterns/composite"
           ],
           "interviewQuestions": [
             {
@@ -1489,6 +1572,68 @@
           ]
         }
       ]
+    },
+    {
+      "id": "rate_limiter_lld",
+      "name": "Case Study: Rate Limiter",
+      "tier": 2,
+      "estimatedHours": 3,
+      "topics": [
+        {
+          "id": "design_rate_limiter",
+          "name": "Design Rate Limiter",
+          "estimatedHours": 3,
+          "description": "Design a Rate Limiter library and service - Token Bucket, Leaky Bucket, Sliding Window algorithms, and distributed limiting.",
+          "practiceQuestions": [
+            {
+              "name": "Logger Rate Limiter",
+              "slug": "logger-rate-limiter",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/logger-rate-limiter/"
+            }
+          ],
+          "learningTip": [
+            "**Core Concepts:** Throttling vs Rate Limiting. Soft (delay) vs Hard (reject) limits.",
+            "**Algorithms:** Token Bucket (Burst friendly), Leaky Bucket (Constant rate), Sliding Window (Strict).",
+            "**Granularity:** Global limit vs Per-User vs Per-IP.",
+            "**Distributed:** Redis is key. Lua scripts ensure atomicity."
+          ],
+          "mustNotMiss": [
+            "**Token Bucket:** `RefillRate`, `Capacity`. Tokens added periodically. Request consumes token.",
+            "**Leaky Bucket:** Queue with fixed size and fixed drain rate. Drops overflow.",
+            "**Sliding Window Log:** Stores timestamps. Precise but expensive (RAM).",
+            "**Sliding Window Counter:** Approximation using fixed windows. Efficient.",
+            "**HTTP Headers:** `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After`."
+          ],
+          "resources": [
+            "https://stripe.com/blog/rate-limiters",
+            "https://github.com/donnemartin/system-design-primer#rate-limiter"
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement Token Bucket algorithm (Thread-Safe).",
+              "answer": "Class `TokenBucket`. \nFields: `maxCapacity`, `currentTokens`, `refillRate`, `lastRefillTime`. \n`synchronized tryConsume()`: \n1. Refill tokens based on `(now - lastRefillTime)`. \n2. If `tokens > 0`, decrement and return true. \n3. Else return false."
+            },
+            {
+              "question": "Design the RateLimiter interface for a library.",
+              "answer": "`interface RateLimiter { boolean allow(String clientId); }` \n`abstract class RateLimiterBase` implements logic. \n`class TokenBucketLimiter extends RateLimiterBase`. \n`class SlidingWindowLimiter extends RateLimiterBase`. \n**Strategy Pattern** helps switch algorithms easily."
+            },
+            {
+              "question": "How to handle distributed rate limiting (Multiple App Servers)?",
+              "answer": "**Sticky Session:** Bad (Load Imbalance). \n**Central Store (Redis):** Good. \n**Race Condition:** Read-Modify-Write is risky. \n**Solution:** Use **Redis Lua Script** to `Get -> Check -> Decr` atomically in one round-trip."
+            },
+            {
+              "question": "Sliding Window Log vs Counter?",
+              "answer": "**Log:** Stores EVERY timestamp. Accurate but O(N) memory. \n**Counter:** Fixed windows (12:00-12:01). Lightweight O(1) memory but has 'Edge Case' (burst at 12:00:59 and 12:01:01 allows 2x limit). \n**Hybrid:** Sliding Window Counter (Weighted avg of previous + current window)."
+            },
+            {
+              "question": "How to implement client-side throttling (Backpressure)?",
+              "answer": "If server returns `429 Too Many Requests`: \n1. **Exponential Backoff:** Wait 1s, 2s, 4s, 8s. \n2. **Jitter:** Add random noise to prevent 'Thundering Herd'. \n3. **Circuit Breaker:** Stop calling server entirely for a while."
+            }
+          ]
+        }
+      ]
     }
-  ]
+  ],
+  "recommendedHoursPerWeek": 3
 }

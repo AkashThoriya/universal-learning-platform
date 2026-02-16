@@ -1,10 +1,11 @@
 {
   "id": "systems_dsa_c_foundation",
   "name": "Systems DSA (The C Foundation)",
-  "description": "Intensive 25-week Systems DSA bootcamp focused on C language for semiconductor/embedded systems interviews at Nvidia, Qualcomm, NXP, and Google Silicon. Covers pointers, memory, bit manipulation, data structures with hardware context including registers, UART, SPI, and RTOS concepts. Theme: 'Memory is a Flat Line' - understanding that variables are physical addresses in SRAM.",
+  "expectedDuration": "7 Months (28 Weeks @ 21 Hours/Week)",
+  "description": "Intensive Systems DSA bootcamp focused on C language for semiconductor/embedded systems interviews at Nvidia, Qualcomm, NXP, and Google Silicon. Covers pointers, memory, bit manipulation, data structures with hardware context including registers, UART, SPI, and RTOS concepts. Theme: 'Memory is a Flat Line' - understanding that variables are physical addresses in SRAM.",
   "category": "Computer Science",
-  "totalEstimatedHours": 500.5,
-  "recommendedHoursPerWeek": 18,
+  "totalEstimatedHours": 597,
+  "recommendedHoursPerWeek": 21,
   "stages": [
     {
       "id": "foundation",
@@ -113,29 +114,92 @@
       "id": "month_1_pointers_arrays_memory",
       "name": "Pointers, Arrays & Memory",
       "tier": 1,
-      "estimatedHours": 58.0,
+      "estimatedHours": 64,
       "topics": [
+        {
+          "id": "week_0_toolchain_standards",
+          "name": "Week 0: The Embedded Toolchain & Standards",
+          "estimatedHours": 6,
+          "description": "Before writing code, understand how it runs. Cross-compilation, Manual Memory Layout, and Safety Standards (MISRA).",
+          "learningTip": [
+            "**Cross-Compilation:** Host (x86) builds for Target (ARM). You need `arm-none-eabi-gcc`.",
+            "**Build System:** `Make` is standard. Understand `TARGET`, `CC`, `CFLAGS`, `LDFLAGS`.",
+            "**MISRA C:** Golden standard for safety. Often forbids dynamic memory (`malloc`) and recursion in safety-critical code."
+          ],
+          "mustNotMiss": [
+            "**stdint.h:** Always use `uint32_t`, `int8_t`. Never use `int` or `long` (size varies by arch).",
+            "**volatile:** Tells compiler \"Do not optimize this, hardware changes it\".",
+            "**static:** Local persistent scope OR File-private scope. Know the difference.",
+            "**const:** Read-only. `const int *p` (ptr to const) vs `int * const p` (const ptr)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the difference between `gcc` and `arm-none-eabi-gcc`?",
+              "answer": "**Target Architecture.** `gcc` builds for the host (your laptop). `arm-none-eabi-gcc` builds for Bare Metal ARM (EABI = Embedded Application Binary Interface)."
+            },
+            {
+              "question": "What is `startup.s`?",
+              "answer": "The Assembly file that runs before `main()`. It initializes the stack pointer (SP), copies .data from Flash to RAM, zeroes .bss, and calls system init."
+            },
+            {
+              "question": "Explain a standard Makefile build flow.",
+              "answer": "1. **Pre-process (`-E`):** Expand macros/includes. \n2. **Compile (`-c`):** C -> ASM -> Object (.o). \n3. **Link (`-o`):** Combine .o + Libs -> Executable (.elf/.bin) using Linker Script (.ld)."
+            }
+          ],
+          "resources": [
+            "https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html",
+            "https://www.misra.org.uk/"
+          ],
+          "practiceQuestions": []
+        },
         {
           "id": "week_1_physics_of_c",
           "name": "Week 1: The Physics of C (Pointers & Memory)",
           "estimatedHours": 15.5,
-          "description": "Master & (Address of) and * (Value at). Understand that arr[i] is syntax sugar for *(arr + i). Semiconductor context: Sensors dump data into linear buffers that cannot be resized. Passing a 1MB image buffer by pointer takes 4 bytes instead of copying.",
+          "description": "Master & (Address of) and * (Value at). Understand that arr[i] is syntax sugar for *(arr + i). Semiconductor context: Sensors dump data into linear buffers that cannot be resized. Passing a 1MB image buffer by pointer takes 4 bytes instead of copying. **New:** Memory Mapped I/O (MMIO) and Cache Coherency basics.",
           "learningTip": [
-            "In C, YOU control memory - no garbage collector, no safety net",
-            "Pointers are just variables holding memory addresses (4 bytes on 32-bit, 8 bytes on 64-bit)",
-            "arr[i] is syntactic sugar for *(arr + i) - understand this equivalence deeply",
-            "Every pointer bug becomes a segfault or silent corruption - master pointers completely",
-            "Drill: Write swap(int *a, int *b) from scratch - understand pointer dereferencing",
-            "Drill: Write strlen(char *s) using pointer arithmetic only",
-            "Drill: Write memcpy(void *dest, void *src, size_t n) from scratch",
-            "Project: Memory Alignment Drill - Create struct with char, int, char. Verify sizeof is 12 bytes (padding). Use #pragma pack(1) to force 6 bytes. Proves Data Bus Width knowledge."
+            "**Memory as a Flat Line:** RAM is just a giant array of bytes. `0x2000` is just an index in that array.",
+            "**Pointer Arithmetic:** `ptr + 1` increases address by `sizeof(*ptr)` bytes. For `int *p`, `p+1` adds 4 bytes. This is crucial for iterating hardware buffers.",
+            "**Data Bus Width:** Why `memcpy` is faster than a loop? It moves data in 32-bit or 64-bit chunks (word-aligned) rather than byte-by-byte.",
+            "**Stack vs Heap:** Embedded systems often ban `malloc` (Heap) due to fragmentation. Master `Stack` allocation and `Static` buffers.",
+            "**Structure Padding:** logical `struct {char a; int b;}` is 8 bytes, not 5, due to alignment. Hardware often crashes on unaligned access.",
+            "**Memory Mapped I/O (MMIO):** Hardware registers are mapped to specific memory addresses. Reading `0x40021000` might read a button state, not RAM. ALWAYS use `volatile`.",
+            "**Cache Coherency (DMA):** The CPU has a cache, but DMA writes directly to RAM. You must `invalidate` cache before reading DMA data, or you'll read stale cache values."
           ],
           "mustNotMiss": [
-            "& (address-of): Gets memory address. int x = 5; int *p = &x; // p holds address of x",
-            "* (dereference): Gets value at address. *p = 10; // changes x to 10",
-            "Pointer arithmetic: p+1 moves by sizeof(*p) bytes, not 1 byte. int* increments by 4 bytes",
-            "void* is the universal pointer - can hold any address but cannot be dereferenced directly",
-            "Always initialize pointers: int *p = NULL; prevents undefined behavior"
+            "**& (Address-Of):** Returns the memory address. `int *p = &x;`",
+            "**ptr[i] == *(ptr + i):** The most important equivalence in C.",
+            "**Null Pointer Checks:** ALWAYS check `if (!ptr) return;` before dereferencing. Segfaults in firmware halt the device.",
+            "**Volatile keyword:** Essential for hardware registers. Tells compiler: 'Do not optimize this read, hardware might change it'.",
+            "**Void Pointers:** `void *` is a generic handle. You CANNOT dereference it or do arithmetic on it (standard C) without casting.",
+            "**Cache Maintenance:** `Invalidate` (Rx) and `Clean/Flush` (Tx) when using DMA."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the size of `void *`?",
+              "answer": "**Architecture Dependent.** 4 bytes on 32-bit systems, 8 bytes on 64-bit systems. It holds a memory address."
+            },
+            {
+              "question": "Explain Little Endian vs Big Endian.",
+              "answer": "**Byte Order.** Little Endian stores LSB at lowest address (Intel/ARM). Big Endian stores MSB at lowest address (Network protocols). Vital for parsing binary sensor data."
+            },
+            {
+              "question": "Implement `aligned_malloc(size_t size, size_t alignment)`.",
+              "answer": "**Memory Management.** Allocates `size` bytes with address multiple of `alignment`. Strategy: Allocate `size + alignment + overhead`, shift pointer, store offset."
+            },
+            {
+              "question": "Why do we need `volatile` for MMIO?",
+              "answer": "**Prevent Optimization.** Compiler assumes variables only change by code. Hardware registers change externally (e.g., status bit). Without `volatile`, compiler might cache the value in a register and never read the real hardware address."
+            },
+            {
+              "question": "What is Cache Coherency in the context of DMA?",
+              "answer": "**Stale Data.** DMA writes directly to RAM, bypassing CPU cache. If CPU reads the buffer addresses, it might get old data from its cache. You must **Invalidate** the cache range before reading to force a reload from RAM."
+            }
+          ],
+          "resources": [
+            "https://godbolt.org/ - Compiler Explorer (See assembly output)",
+            "http://c-faq.com/ - The C Programming Language FAQ",
+            "https://visualgo.net/en - Visualizing Data Structures"
           ],
           "practiceQuestions": [
             {
@@ -209,17 +273,30 @@
           "estimatedHours": 13.5,
           "description": "Pre-calculating running totals for O(1) range queries. Semiconductor context: Telemetry & Battery - calculate total energy consumed between t=100ms and t=500ms without iterating the loop every time.",
           "learningTip": [
-            "Pre-compute running totals for O(1) range queries",
-            "Trade-off: O(n) space and build time for O(1) query time",
-            "Critical for telemetry: 'What was total energy between t=100ms and t=500ms?'",
-            "In embedded, CPU cycles are precious - precompute what you can"
+            "**Telemetry & Sensors:** 'What was the avg CPU temp between 10:00 and 10:05?'. Prefix Sums answer this in O(1) time.",
+            "**Space-Time Tradeoff:** You spend O(N) memory (the prefix array) to get O(1) query speed. In embedded, RAM is scarce, so only do this if queries are frequent.",
+            "**Integral Images:** In Image Processing (ISP), 2D prefix sums allow calculating the brightness of any rectangular area in O(1) - crucial for auto-exposure algorithms.",
+            "**Rolling Hash:** Prefix sums of character codes are the basis of the Rabin-Karp string matching algorithm (used in packet filtering)."
           ],
           "mustNotMiss": [
-            "Build: prefix[i] = prefix[i-1] + arr[i] with prefix[0] = arr[0]",
-            "Query: sum(l, r) = prefix[r] - prefix[l-1] (handle l=0 edge case)",
-            "C code: int prefix[n]; prefix[0] = arr[0]; for(int i=1; i<n; i++) prefix[i] = prefix[i-1] + arr[i];",
-            "Watch for integer overflow in cumulative sums - use int64_t for safety",
-            "Pattern extends to 2D: compute row prefix, then column prefix for O(1) rectangle sums"
+            "**Formula:** `prefix[i] = prefix[i-1] + arr[i]` (Handle i=0).",
+            "**Range Query:** `sum(L, R) = prefix[R] - prefix[L-1]` (If L=0, result is prefix[R]).",
+            "**Overflow:** Cumulative sums grow fast. If `arr[i]` is `int32`, `prefix[i]` might need `int64_t` or `long long`.",
+            "**Difference Array:** To ADD `k` to range `[L, R]` efficiently, use `diff[L] += k` and `diff[R+1] -= k`, then take prefix sum."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How to handle updates in a Prefix Sum array?",
+              "answer": "**Poorly.** Updating `arr[i]` requires rebuilding `prefix[i...n]` in O(N). If updates are frequent, use a Fenwick Tree (Binary Indexed Tree) for O(log N) updates."
+            },
+            {
+              "question": "Find the max average subarray of length K.",
+              "answer": "**Sliding Window.** While Prefix Sums work, Sliding Window is O(1) space if we just need the *current* sum. Prefix Sum is for *random access* queries."
+            }
+          ],
+          "resources": [
+            "https://cp-algorithms.com/data_structures/fenwick.html - For when Prefix Sums aren't enough (updates)",
+            "https://computersciencesource.wordpress.com/2010/09/03/computer-vision-the-integral-image/ - Integral Images in Computer Vision"
           ],
           "practiceQuestions": [
             {
@@ -291,19 +368,32 @@
           "id": "week_3_two_pointer",
           "name": "Week 3: The Two-Pointer Technique (Static)",
           "estimatedHours": 15.5,
-          "description": "Using left and right indices to scan buffers from both ends in O(n) instead of O(n\u00b2). Semiconductor context: Buffer Compaction - remove dead bytes (zeros) without creating new array (In-Place algorithm).",
+          "description": "Using left and right indices to scan buffers from both ends in O(n) instead of O(n²). Semiconductor context: Buffer Compaction - remove dead bytes (zeros) without creating new array (In-Place algorithm).",
           "learningTip": [
-            "Two pointers avoid O(n\u00b2) nested loops by moving intelligently",
-            "Sorted array: left from start, right from end - O(n) for pair finding",
-            "Fast/slow: detect cycles, find middle in one pass",
-            "This pattern appears in 40%+ of array/string problems"
+            "**In-Place Algorithms:** Embedded systems have limited RAM. Two pointers allow modifying data *without* allocating a new array (O(1) space).",
+            "**Partitioning:** This logic is the core of QuickSort. Moving elements < P to left and > P to right is a fundamental memory operation.",
+            "**Data Validation:** Checking for palindrome packets or symmetric signals often uses two pointers meeting in the middle.",
+            "**Sorted Arrays:** If input is sorted, Two Pointers is almost always the answer (vs Binary Search)."
           ],
           "mustNotMiss": [
-            "Pair sum in sorted array: if sum < target, move left++; if sum > target, move right--",
-            "Fast/slow for linked list: fast = fast->next->next; slow = slow->next; - cycle if they meet",
-            "Remove duplicates: slow writes, fast scans - maintain invariant that [0..slow] has unique elements",
-            "Partition: swap with two pointers from ends - foundation for QuickSort",
-            "C pattern: int left = 0, right = n-1; while(left < right) { ... left++; ... right--; }"
+            "**Read/Write Pointers:** Common pattern: `read_ptr` scans forward, `write_ptr` only moves when we keep an element (e.g., Remove Duplicates).",
+            "**Direction:** `left ->  <- right`: specific sum, palindrome. `slow -> fast ->`: cycle detection (Linked List context).",
+            "**Code Pattern:** `while (L < R) { if (check) L++; else R--; }`",
+            "**Constraint:** Only works on linear data structures (Arrays, Linked Lists) where index access or traversal is efficient."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Merge two sorted arrays without extra space.",
+              "answer": "**Gap Method or Shell Sort logic.** Start comparing elements with a gap, reduce gap. Or iterate backwards if one array has empty space at end."
+            },
+            {
+              "question": "Reverse an array in-place.",
+              "answer": "**Two Pointers.** `swap(arr[L], arr[R])`. Simple, but tests if you know how to manipulate memory directly."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/articles/two-pointer-technique/ - Official Guide",
+            "https://www.geeksforgeeks.org/two-pointers-technique/ - Basics"
           ],
           "practiceQuestions": [
             {
@@ -370,18 +460,18 @@
               "link": "https://leetcode.com/problems/merge-sorted-array/"
             },
             {
-              "name": "Container With Most Water (Medium)",
-              "slug": "container-with-most-water-(medium)",
+              "name": "Container With Most Water",
+              "slug": "container-with-most-water",
               "number": 11,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/container-with-most-water-(medium)/"
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/container-with-most-water/"
             },
             {
-              "name": "3Sum (Medium)",
-              "slug": "3sum-(medium)",
+              "name": "3Sum",
+              "slug": "3sum",
               "number": 15,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/3sum-(medium)/"
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/3sum/"
             }
           ]
         },
@@ -391,40 +481,51 @@
           "estimatedHours": 13.5,
           "description": "Mapping Row-Major [i][j] coordinates to linear memory addresses. Semiconductor context: Image Sensors & Displays - camera frames are 2D pixel matrices for ROI processing.",
           "learningTip": [
-            "2D arrays in C are contiguous memory - int arr[R][C] is R*C integers in a row",
-            "Row-major order: arr[i][j] = *(arr + i*COLS + j) - understand the address calculation",
-            "Cache locality matters: row-major iteration is 10-100x faster than column-major",
-            "Image buffers, sensor grids, lookup tables - 2D arrays are everywhere in embedded",
-            "Drill: Why row-major iteration is faster than column-major (cache locality)",
-            "Project: Write two functions to sum 1024x1024 int matrix - Row-Major vs Column-Major. Measure execution time difference. Understand CPU cache behavior."
+            "**Row-Major Order:** C stores 2D arrays row-by-row. `arr[i][j]` is next to `arr[i][j+1]` in RAM. `arr[i][j]` is NOT next to `arr[i+1][j]`.",
+            "**Cache Locality:** Iterating `for(i) for(j)` is 100x faster than `for(j) for(i)` because the CPU pre-fetches the next cache line.",
+            "**Flattening:** In embedded, we often malloc a 1D array `int *p = malloc(R*C*4)` and access it as `p[i*C + j]` to ensure contiguous memory.",
+            "**DMA (Direct Memory Access):** Peripherals (Camera, SPI) write to linear blocks. Understanding 2D-to-1D mapping is vital for processing these buffers."
           ],
           "mustNotMiss": [
-            "Memory layout: int arr[2][3] = {{1,2,3},{4,5,6}} stored as [1,2,3,4,5,6] contiguously",
-            "Access: arr[i][j] = *((int*)arr + i*COLS + j) - pointer decay when passed to function",
-            "Row-major iteration: for(i) for(j) is cache-friendly; for(j) for(i) causes cache misses",
-            "Passing to function: void f(int arr[][COLS], int rows) - column size must be compile-time constant",
-            "Or use: void f(int *arr, int rows, int cols) and access arr[i*cols + j]"
+            "**Address Formula:** `&arr[i][j] = Base + (i * COLS + j) * sizeof(Type)`. Memorize this.",
+            "**Pointer Decay:** `void func(int arr[][COLS])` - You MUST specify the column dimension so the compiler knows the stride.",
+            "**Stack Overflow:** `int matrix[1000][1000]` on stack (inside a function) will crash the firmware (Stack is usually < 8KB). Always use `static` or global or heap for large arrays.",
+            "**Rotation:** Rotating an image (matrix) in-place requires careful coordinate mapping `(i, j) -> (j, n-1-i)`."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why is looping columns-first slower than rows-first in C?",
+              "answer": "**Cache Misses.** Row-first accesses `addr, addr+4, addr+8` (Spatial Locality). Column-first accesses `addr, addr+4000, addr+8000`, causing a cache miss on every read."
+            },
+            {
+              "question": "Implement a 2D array using `malloc`.",
+              "answer": "**Single Block vs Array of Pointers.** Prefer single block `malloc(R*C*sizeof(int))` for fragmentation. `int**` (array of pointers) causes double dereference overhead and non-contiguous memory."
+            }
+          ],
+          "resources": [
+            "https://gallery.analyticsvidhya.com/view/row-major-vs-column-major-order-in-programming-languages-1  - Visualization of Memory Layout",
+            "https://stackoverflow.com/questions/992902/when-to-use-malloc-for-2d-array - Best practices for embedded C"
           ],
           "practiceQuestions": [
             {
               "name": "Rotate Image",
               "slug": "rotate-image",
               "number": 48,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/rotate-image/"
             },
             {
               "name": "Spiral Matrix",
               "slug": "spiral-matrix",
               "number": 54,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/spiral-matrix/"
             },
             {
               "name": "Spiral Matrix II",
               "slug": "spiral-matrix-ii",
               "number": 59,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/spiral-matrix-ii/"
             },
             {
@@ -445,14 +546,14 @@
               "name": "Set Matrix Zeroes",
               "slug": "set-matrix-zeroes",
               "number": 73,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/set-matrix-zeroes/"
             },
             {
               "name": "Search a 2D Matrix",
               "slug": "search-a-2d-matrix",
               "number": 74,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/search-a-2d-matrix/"
             },
             {
@@ -473,7 +574,7 @@
               "name": "Valid Sudoku",
               "slug": "valid-sudoku",
               "number": 36,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/valid-sudoku/"
             }
           ]
@@ -489,24 +590,38 @@
         {
           "id": "week_5_boolean_logic",
           "name": "Week 5: Basic Boolean Logic",
-          "estimatedHours": 17.0,
+          "estimatedHours": 17,
           "description": "Master & (Clear/Check), | (Set), ^ (Toggle), ~ (Flip), << (Shift). HIGHEST ROI section - in Embedded C, you control hardware by writing to 32-bit Registers. Set Bit 5 to turn on LED, read Bit 3 to check button press. Changing the wrong bit crashes the system.",
           "learningTip": [
-            "Bit manipulation is THE core skill for embedded/firmware engineering",
-            "Hardware registers are 32-bit words where each bit controls something",
-            "Set bit 5 = turn on LED. Read bit 3 = check button state. Wrong bit = system crash",
-            "Think in binary: 0x1F = 0001_1111 = bits 0-4 set. Visualize the bit pattern",
-            "Project: Write is_little_endian() function - detect system endianness",
-            "Project: SWAP_ENDIAN(x) macro - Flip 32-bit integer using shifts",
-            "Project: Write SET_BIT(reg, n), CLEAR_BIT(reg, n), TOGGLE_BIT(reg, n), CHECK_BIT(reg, n) macros - the building blocks of all firmware"
+            "**Registers:** A 32-bit register controls 32 different things. You must change ONE bit without touching the others.",
+            "**Read-Modify-Write:** The golden rule of embedded. Read register, modify local copy, write back. `REG |= (1<<5);`",
+            "**Masking:** A 'mask' selects specific bits. `0xFF` selects the bottom 8 bits.",
+            "**Signed vs Unsigned:** Shifting signed integers is dangerous (arithmetic shift vs logical shift). ALWAYS use `uint32_t` for bitwise ops."
           ],
           "mustNotMiss": [
-            "SET bit n:   reg |= (1 << n)     // OR with 1 at position n",
-            "CLEAR bit n: reg &= ~(1 << n)    // AND with 0 at position n (invert mask)",
-            "TOGGLE bit n: reg ^= (1 << n)    // XOR flips the bit",
-            "CHECK bit n: (reg >> n) & 1      // Shift to LSB, mask with 1. Returns 0 or 1",
-            "Create mask for bits m to n: ((1 << (n-m+1)) - 1) << m",
-            "Example: GPIO_PORT |= (1 << LED_PIN); // Set LED pin high"
+            "**SET Bit N:** `reg |= (1 << n);`",
+            "**CLEAR Bit N:** `reg &= ~(1 << n);` (The `~` inverts the mask, putting a 0 at N and 1s elsewhere).",
+            "**TOGGLE Bit N:** `reg ^= (1 << n);`",
+            "**CHECK Bit N:** `if ((reg >> n) & 1)` OR `if (reg & (1 << n))`.",
+            "**Extract N bits:** `(reg >> shift) & ((1 << width) - 1)`."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Write a macro to Set, Clear, and Toggle a bit.",
+              "answer": "`#define SET_BIT(reg, n) ((reg) |= (1U << (n)))` ... note the specific casting `1U` to avoid signed shift UB."
+            },
+            {
+              "question": "How to check if a number is a power of 2?",
+              "answer": "`x && !(x & (x - 1))` - Standard interview trick."
+            },
+            {
+              "question": "Swap two numbers without a temporary variable.",
+              "answer": "`a ^= b; b ^= a; a ^= b;` - Classic XOR swap."
+            }
+          ],
+          "resources": [
+            "https://graphics.stanford.edu/~seander/bithacks.html - The Bible of Bit Twiddling Hacks",
+            "https://en.wikipedia.org/wiki/Bitwise_operations_in_C - Reference"
           ],
           "practiceQuestions": [
             {
@@ -578,49 +693,63 @@
           "id": "week_6_advanced_bit_hacks",
           "name": "Week 6: Advanced Bit Hacks",
           "estimatedHours": 15.5,
-          "description": "Using masks to pack/unpack data. Semiconductor context: Packet Headers - a single 32-bit integer stores [Version: 4 bits][Length: 8 bits][Type: 4 bits][ID: 16 bits]. Extract using shifts and masks.",
+          "description": "Using masks to pack/unpack data. Semiconductor context: Packet Headers - a single 32-bit integer stores [Version: 4 bits][Length: 8 bits][Type: 4 bits][ID: 16 bits]. Extract using shifts and masks. **New:** Compiler Intrinsics and SWAR.",
           "learningTip": [
-            "Pack multiple fields into single integer - save memory, save bandwidth",
-            "Packet headers: 32 bits = [Version:4][Length:8][Type:4][ID:16]",
-            "Extract field: mask and shift. Insert field: clear, shift, and OR",
-            "Bitfields exist in C but are implementation-dependent - prefer manual bit ops",
-            "Project: Parse a 32-bit packet header - extract Version (bits 28-31), Length (bits 20-27), Type (bits 16-19), ID (bits 0-15)"
+            "**Bitfields vs Shifts:** C bitfields (`struct { int a:4; }`) are non-portable (endianness issues). Embedded engineers prefer strict manual shifts and masks.",
+            "**Branchless Programming:** `abs(x)` or `min(a,b)` can be done without `if` statements using bit hacks. Critical for pipelines.",
+            "**Circular Buffers:** `tail = (tail + 1) & (SIZE - 1)` works ONLY if SIZE is power of 2. This is the most common embedded optimization.",
+            "**Intrinsics (GCC/Clang):** Use `__builtin_clz(x)` (Count Leading Zeros) for finding highest priority bit. Use `__builtin_popcount(x)` for Hamming weight. These compile to SINGLE instructions on ARM/x86.",
+            "**SWAR (SIMD Within A Register):** Processing 4 bytes at once in a `uint32_t`. Example: Check if any byte is zero: `(v - 0x01010101UL) & ~v & 0x80808080UL`."
           ],
           "mustNotMiss": [
-            "Extract bits m to n from x: (x >> m) & ((1 << (n-m+1)) - 1)",
-            "Set bits m to n to val: x = (x & ~mask) | ((val << m) & mask)",
-            "Swap without temp: a ^= b; b ^= a; a ^= b; // XOR swap trick",
-            "Check power of 2: (n & (n-1)) == 0 && n > 0",
-            "Count set bits (fast): while(n) { n &= n-1; count++; } // Brian Kernighan's algorithm",
-            "Isolate lowest set bit: n & (-n) // returns power of 2"
+            "**Isolate Lowest Set Bit:** `x & (-x)`. Binary form of `-x` is `~x + 1`.",
+            "**Clear Lowest Set Bit:** `x & (x - 1)`. If `x` becomes 0, it was a power of 2.",
+            "**Brian Kernighan’s Algorithm:** `while(n) { n &= (n-1); count++; }` - counts set bits in O(set_bits) time, not O(32).",
+            "**Mask Creation:** `(1 << k) - 1` creates a mask of `k` ones.",
+            "**Intrinsic functions:** know `__builtin_ctz`, `__builtin_clz`, `__builtin_popcount`."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Reverse bits of a byte using a lookup table.",
+              "answer": "**Table Driven.** `O(1)` approach. `table[b]`. Trade-off: 256 bytes memory vs CPU cycles."
+            },
+            {
+              "question": "Detect if two integers have opposite signs.",
+              "answer": "`((x ^ y) < 0)`. The sign bit (MSB) will be 1 only if signs differ."
+            },
+            {
+              "question": "Compute `x % n` where `n` is power of 2.",
+              "answer": "`x & (n - 1)`. Much faster than modulo operator `%`."
+            },
+            {
+              "question": "Implement `strlen` without a loop (using SWAR).",
+              "answer": "**SWAR (SIMD Within A Register).** Read 4 bytes at a time as `uint32_t`. Use bit magic `(v - 0x01010101UL) & ~v & 0x80808080UL` to detect if any of the 4 bytes is NULL (0). Faster than byte-by-byte."
+            }
+          ],
+          "resources": [
+            "https://dev.to/somedood/bitwise-ops-for-networking-18n4 - Bitwise ops in Networking Headers",
+            "https://catonmat.net/low-level-bit-hacks - Low Level Bit Hacks"
           ],
           "practiceQuestions": [
             {
               "name": "Single Number II",
               "slug": "single-number-ii",
               "number": 137,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/single-number-ii/"
             },
             {
               "name": "Single Number III",
               "slug": "single-number-iii",
               "number": 260,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/single-number-iii/"
-            },
-            {
-              "name": "Bitwise AND of Numbers Range",
-              "slug": "bitwise-and-of-numbers-range",
-              "number": 201,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/bitwise-and-of-numbers-range/"
             },
             {
               "name": "Sum of Two Integers",
               "slug": "sum-of-two-integers",
               "number": 371,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/sum-of-two-integers/"
             },
             {
@@ -631,25 +760,11 @@
               "link": "https://leetcode.com/problems/counting-bits/"
             },
             {
-              "name": "Prime Number of Set Bits in Binary Representation",
-              "slug": "prime-number-of-set-bits-in-binary-representation",
-              "number": 762,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/prime-number-of-set-bits-in-binary-representation/"
-            },
-            {
               "name": "Binary Number with Alternating Bits",
               "slug": "binary-number-with-alternating-bits",
               "number": 693,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/binary-number-with-alternating-bits/"
-            },
-            {
-              "name": "Number of Steps to Reduce a Number to Zero",
-              "slug": "number-of-steps-to-reduce-a-number-to-zero",
-              "number": 1342,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/"
             },
             {
               "name": "Subsets",
@@ -671,41 +786,40 @@
           "id": "week_7_math_number_theory",
           "name": "Week 7: Math & Number Theory",
           "estimatedHours": 15.5,
-          "description": "Modulo arithmetic, GCD, Primes. Semiconductor context: Timers & Clocks - calculate divisor for 80MHz clock to 9600 baud rate. Cryptography relies on Primes and GCD.",
+          "description": "Modulo arithmetic, GCD, Primes. Semiconductor context: Timers & Clocks - calculate divisor for 80MHz clock to 9600 baud rate. Cryptography relies on Primes and GCD for secure boot.",
           "learningTip": [
-            "GCD, primes, modular arithmetic appear in checksums, crypto, hashing",
-            "Euclidean GCD: gcd(a,b) = gcd(b, a%b) until b=0",
-            "Modular arithmetic: (a + b) % m = ((a%m) + (b%m)) % m - prevents overflow",
-            "Prime checks: trial division up to sqrt(n) is O(sqrt(n))"
+            "**Prescalers:** How to get 1Hz from 80MHz? Divisors! GCD helps find the simplest integer ratio.",
+            "**Ring Buffers:** `index = (index + 1) % SIZE`. Modulo arithmetic is the engine of circular queues.",
+            "**Overflow:** `(a * b) % m` can overflow 32-bit `int` even if result < m. Cast to `uint64_t` first.",
+            "**Cryptography:** RSS/ECC relies on modular exponentiation. Understanding `(a^b) % m` is the first step to crypto firmware."
           ],
           "mustNotMiss": [
-            "GCD iterative: while(b) { int t = b; b = a % b; a = t; } return a;",
-            "LCM: lcm(a,b) = a * b / gcd(a,b) - but compute as a / gcd(a,b) * b to avoid overflow",
-            "Overflow-safe modular multiply: ((a%m) * (b%m)) % m",
-            "Sieve of Eratosthenes for all primes up to n: O(n log log n)",
-            "Fast power: x^n in O(log n) using repeated squaring"
+            "**Euclidean Algo:** `gcd(a, b) = gcd(b, a % b)`. Recurse until `b == 0`. The base cases are non-negotiable.",
+            "**LCM:** `lcm(a, b) = (a * b) / gcd(a, b)`. BEWARE: `a*b` might overflow. Do `(a / gcd(a,b)) * b` instead.",
+            "**Prime Check:** Trial division up to `sqrt(N)`. If no divisors found by then, it's prime.",
+            "**Fast Power:** `pow(x, n)` in O(log N) using binary exponentiation (`x^10 = (x^5)^2`)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement `pow(a, b) % m` safely.",
+              "answer": "**Modular Exponentiation.** Loop bits of `b`. If bit set, `res = (res * a) % m`. Always `a = (a * a) % m`."
+            },
+            {
+              "question": "Calculate the Least Common Multiple of two Timer periods.",
+              "answer": "`LCM(T1, T2) = (T1 * T2) / GCD(T1, T2)`. Used to synchronize tasks or find hyperperiod in RTOS schedulers."
+            }
+          ],
+          "resources": [
+            "https://cp-algorithms.com/algebra/binary-exp.html - Binary Exponentiation",
+            "https://www.embedded.com/mathematics-of-fixed-point-arithmetic/ - Embedded Math"
           ],
           "practiceQuestions": [
             {
               "name": "Count Primes",
               "slug": "count-primes",
               "number": 204,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/count-primes/"
-            },
-            {
-              "name": "Power of Three",
-              "slug": "power-of-three",
-              "number": 326,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/power-of-three/"
-            },
-            {
-              "name": "Excel Sheet Column Number",
-              "slug": "excel-sheet-column-number",
-              "number": 171,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/excel-sheet-column-number/"
             },
             {
               "name": "Happy Number",
@@ -715,39 +829,32 @@
               "link": "https://leetcode.com/problems/happy-number/"
             },
             {
-              "name": "Plus One",
-              "slug": "plus-one",
-              "number": 66,
+              "name": "Power of Three",
+              "slug": "power-of-three",
+              "number": 326,
               "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/plus-one/"
+              "link": "https://leetcode.com/problems/power-of-three/"
             },
             {
-              "name": "Palindrome Number",
-              "slug": "palindrome-number",
-              "number": 9,
+              "name": "Factorial Trailing Zeroes",
+              "slug": "factorial-trailing-zeroes",
+              "number": 172,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/factorial-trailing-zeroes/"
+            },
+            {
+              "name": "Excel Sheet Column Number",
+              "slug": "excel-sheet-column-number",
+              "number": 171,
               "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/palindrome-number/"
+              "link": "https://leetcode.com/problems/excel-sheet-column-number/"
             },
             {
               "name": "Sqrt(x)",
-              "slug": "sqrt(x)",
+              "slug": "sqrtx",
               "number": 69,
               "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/sqrt(x)/"
-            },
-            {
-              "name": "Divide Two Integers",
-              "slug": "divide-two-integers",
-              "number": 29,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/divide-two-integers/"
-            },
-            {
-              "name": "Reverse Integer",
-              "slug": "reverse-integer",
-              "number": 7,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/reverse-integer/"
+              "link": "https://leetcode.com/problems/sqrtx/"
             },
             {
               "name": "Pow(x, n)",
@@ -764,19 +871,70 @@
           "estimatedHours": 13.5,
           "description": "Review hardest Bit Manipulation problems. Project: Manual IEEE 754 Parser - proves understanding of how hardware stores decimals. Deep dive into floating point quirks.",
           "learningTip": [
-            "IEEE 754: sign(1) + exponent(8) + mantissa(23) for 32-bit float",
-            "Floats have precision issues: 0.1 + 0.2 != 0.3 in binary floating point",
-            "In embedded: avoid float for timing-critical code, fixed-point is often better",
-            "Comparison: use epsilon tolerance, never compare floats with ==",
-            "Project: IEEE 754 Parser - C function that takes float and prints sign, exponent, mantissa bits",
-            "Project: Implement fixed-point multiplication for Q16.16 format"
+            "**IEEE 754:** `Sign(1) | Exponent(8) | Mantissa(23)`. Understanding this layout is mandatory for writing specific drivers/bootloaders.",
+            "**Fixed-Point:** Most cheap microcontrollers (Cortex-M0) HAVE NO FPU! We use 'Q-Format'. `Q16.16` means 16 bits integer, 16 bits fraction.",
+            "**Precision:** `float` has ~7 decimal digits. `double` has ~15. `0.1 + 0.2 != 0.3` because 0.1 is infinite binary fraction.",
+            "**Exceptions:** `NaN` (0/0) and `Inf` (1/0). Hardware FPU raises flags when these happen."
           ],
           "mustNotMiss": [
-            "float: ~7 significant digits. double: ~15 significant digits",
-            "Comparison: fabs(a - b) < epsilon instead of a == b",
-            "Infinity: 1.0/0.0 = inf. NaN: 0.0/0.0 = nan. Check with isnan(), isinf()",
-            "Fixed-point alternative: store mV as int (1234 = 1.234V) - no float HW needed",
-            "Casting: (int)3.7 = 3 (truncates toward zero)"
+            "**Comparison:** NEVER use `a == b` for floats. Use `fabs(a - b) < EPSILON`.",
+            "**Casting:** `(int)3.99` is `3`. Truncation is not rounding. Use `(int)(x + 0.5)` to round positive numbers.",
+            "**Volatile Double:** Sometimes used to force FPU register flush, but generally avoid floats in Interrupt Service Routines (ISRs) - they are slow and save/restore context is huge."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Write a function to compare two floating point numbers.",
+              "answer": "`bool isEqual(float a, float b) { return fabsf(a - b) < 1e-9; }`"
+            },
+            {
+              "question": "What is a Subnormal (Denormal) number?",
+              "answer": "Very small numbers near zero where the exponent is all 0s. They effectively reduce precision to represent smaller values. Processing them is 100x slower on some FPUs."
+            },
+            {
+              "question": "Convert `3.5` to Q16.16 fixed-point format.",
+              "answer": "`3.5 * 65536 = 229376`. Or `(3 << 16) | (1 << 15)`."
+            }
+          ],
+          "resources": [
+            "https://www.h-schmidt.net/FloatConverter/IEEE754.html - Interactive IEEE 754 Viewer",
+            "https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/ - The danger of float comparison"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Max Points on a Line",
+              "slug": "max-points-on-a-line",
+              "number": 149,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/max-points-on-a-line/"
+            },
+            {
+              "name": "Valid Number",
+              "slug": "valid-number",
+              "number": 65,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/valid-number/"
+            },
+            {
+              "name": "Basic Calculator",
+              "slug": "basic-calculator",
+              "number": 224,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/basic-calculator/"
+            },
+            {
+              "name": "Fraction to Recurring Decimal",
+              "slug": "fraction-to-recurring-decimal",
+              "number": 166,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/fraction-to-recurring-decimal/"
+            },
+            {
+              "name": "Super Pow",
+              "slug": "super-pow",
+              "number": 372,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/super-pow/"
+            }
           ]
         }
       ]
@@ -785,27 +943,42 @@
       "id": "month_3_data_streams_sliding_windows",
       "name": "Data Streams & Sliding Windows",
       "tier": 1,
-      "estimatedHours": 53.0,
+      "estimatedHours": 53,
       "topics": [
         {
           "id": "week_9_string_parsing",
           "name": "Week 9: String Parsing (UART Context)",
-          "estimatedHours": 14.0,
+          "estimatedHours": 14,
           "description": "Handling char arrays without standard libraries. Semiconductor context: AT Commands - ESP32 WiFi module sends '+WIFI:CONNECTED', need to parse this string to know state. Data arrives byte-by-byte via UART or SPI.",
           "learningTip": [
-            "C strings are null-terminated char arrays - no built-in length tracking",
-            "String functions: strlen, strcpy, strcat, strcmp, strstr - know their complexity",
-            "Buffer overflow is #1 security vulnerability - always check bounds",
-            "Protocol parsing: extract fields from byte streams using pointers",
-            "Project: State Machine Parser - Parse stream byte-by-byte, trigger 'Command Found' only when exact sequence \\r\\nOK\\r\\n is detected",
-            "Project: Implement a simple AT command parser that handles: AT, AT+RST, AT+CWJAP=\"ssid\",\"pass\""
+            "**No std::string:** In embedded C, a string is just a `char` array. You manage the memory and the NULL terminator.",
+            "**Safety First:** `strcpy` is banned in safety-critical code (MISRA C). Use `strncpy` or `strlcpy` to prevent buffer overflows.",
+            "**State Machines:** Parsing UART streams usually involves a 'switch-case' state machine processing one char at a time.",
+            "**ATOI Implementation:** Writing `atoi` from scratch is a standard interview question to test ASCII arithmetic (`'5' - '0' = 5`)."
           ],
           "mustNotMiss": [
-            "Null terminator: char s[] = \"abc\" is actually 4 bytes: {'a','b','c','\\0'}",
-            "Safe copy: strncpy(dest, src, sizeof(dest)-1); dest[sizeof(dest)-1] = '\\0';",
-            "Parse number: int n = 0; while(*s >= '0' && *s <= '9') n = n*10 + (*s++ - '0');",
-            "Find char: char *p = s; while(*p && *p != target) p++; // p points to target or \\0",
-            "Compare: strcmp returns <0, 0, >0 for less, equal, greater"
+            "**NULL Terminator:** `char s[4] = \"ABC\";` includes `\\0`. Forgetting room for `\\0` is the #1 bug.",
+            "**Bounds Checking:** Always know the size of your buffer. `buf[i]` access must check `if (i < SIZE)`.",
+            "**Const Correctness:** `const char *s` means you can't change the characters. `char * const s` means you can't change the pointer.",
+            "**Ascii Arithmetic:** `isdigit(c)` is `c >= '0' && c <= '9'`. `to_upper(c)` is `c - 'a' + 'A'`."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement `atoi` (String to Integer) handling overflows and whitespace.",
+              "answer": "**Parsers.** Skip whitespace, handle sign, process digits `res = res*10 + (c-'0')`. Check `res > INT_MAX/10` for overflow."
+            },
+            {
+              "question": "Implement `strstr` (Find substring).",
+              "answer": "**Sliding Window / Brute Force.** Check if `needle` matches `haystack` starting at every position. optimize with KMP (advanced)."
+            },
+            {
+              "question": "How do you parse a comma-separated string in C?",
+              "answer": "**`strtok` vs Manual.** `strtok` modifies the string (inserts `\\0`). Re-entrant version `strtok_r` is preferred for RTOS threads."
+            }
+          ],
+          "resources": [
+            "https://barrgroup.com/embedded-systems/how-to/c-strings-embedded-software - Usage of Strings in Embedded",
+            "https://en.cppreference.com/w/c/string/byte - Standard Library Reference"
           ],
           "practiceQuestions": [
             {
@@ -824,10 +997,10 @@
             },
             {
               "name": "Implement strStr()",
-              "slug": "implement-strstr()",
+              "slug": "find-the-index-of-the-first-occurrence-in-a-string",
               "number": 28,
               "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/implement-strstr()/"
+              "link": "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/"
             },
             {
               "name": "Longest Common Prefix",
@@ -854,43 +1027,59 @@
               "name": "Reverse Words in a String",
               "slug": "reverse-words-in-a-string",
               "number": 151,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/reverse-words-in-a-string/"
             },
             {
               "name": "String to Integer (atoi)",
-              "slug": "string-to-integer-(atoi)",
+              "slug": "string-to-integer-atoi",
               "number": 8,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/string-to-integer-(atoi)/"
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/string-to-integer-atoi/"
             },
             {
-              "name": "Longest Palindromic Substring (Medium)",
-              "slug": "longest-palindromic-substring-(medium)",
+              "name": "Longest Palindromic Substring",
+              "slug": "longest-palindromic-substring",
               "number": 5,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/longest-palindromic-substring-(medium)/"
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-palindromic-substring/"
             }
           ]
         },
         {
           "id": "week_10_fixed_sliding_window",
-          "name": "Week 10: Fixed Sliding Window",
+          "name": "Week 10: Fixed Sliding Window (DSP Filters)",
           "estimatedHours": 12.5,
-          "description": "Window of size k moves across array. Semiconductor context: Moving Average Filter - smooth noisy temperature sensor by averaging last 10 readings. Foundation of Digital Signal Processing.",
+          "description": "Window of size k moves across array. Semiconductor context: Moving Average Filter - smooth noisy temperature sensor by averaging last 10 readings. Foundation of Digital Signal Processing (FIR Filters).",
           "learningTip": [
-            "Fixed window: maintain sum/data of exactly k elements",
-            "Slide by removing left element, adding right element - O(1) per slide",
-            "In embedded: moving average filters for sensor smoothing",
-            "Pattern: initialize window, then slide maintaining invariant",
-            "Project: Implement a moving average filter in C with configurable window size"
+            "**O(1) Update:** Don't re-sum the window! `newSum = oldSum - leaving + entering`. This is the definition of a recursive filter.",
+            "**DSP Context:** This pattern *is* a Moving Average Filter. It smooths out high-frequency noise from sensors.",
+            "**Circular Buffer:** In real firmware, the window wraps around. `buffer[head] = newVal; sum += newVal - buffer[tail];`",
+            "**Pattern:** Initialize first k elements manually, then loop from k to n."
           ],
           "mustNotMiss": [
-            "Initialize: for(int i=0; i<k; i++) windowSum += arr[i];",
-            "Slide: for(int i=k; i<n; i++) { windowSum = windowSum - arr[i-k] + arr[i]; update_max(); }",
-            "Moving average: avg = windowSum / k; uses integer division by default in C",
-            "Deque for min/max in window: O(n) total for all elements",
-            "Fixed window always has exactly k elements - simpler than dynamic"
+            "**Initialization:** Process first `k` elements separately -> `currentSum`.",
+            "**Loop:** `for(i = k; i < n; step++) { currentSum += arr[i] - arr[i-k]; maxSum = max(maxSum, currentSum); }`",
+            "**Boundary Check:** Ensure `n >= k`. If array is smaller than window, handle gracefully (return error or partial sum).",
+            "**Rolling Hash:** The same 'add new, remove old' logic applies to hashing (Rabin-Karp) for substring search."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement a Moving Average Filter efficiently.",
+              "answer": "**Circular Buffer + Running Sum.** `sum -= buffer[tail]; sum += new_val; buffer[tail] = new_val; tail = (tail+1)%K;` O(1) time."
+            },
+            {
+              "question": "Detect if a permutation of string S1 exists in S2.",
+              "answer": "**Fixed Frequency Map.** Window of size `len(S1)`. Maintain count of chars. If counts match, permutation found. O(N)."
+            },
+            {
+              "question": "Find the maximum sum of any contiguous subarray of size K.",
+              "answer": "**Sliding Window.** Calculate sum of first K. Then slide, adding `arr[i]` and subtracting `arr[i-k]`."
+            }
+          ],
+          "resources": [
+            "https://www.dsprelated.com/freebooks/filters/Moving_Average_Filters.html - The Math of Moving Averages",
+            "https://leetcode.com/articles/sliding-window-maximum/ - Sliding Window guide"
           ],
           "practiceQuestions": [
             {
@@ -901,25 +1090,39 @@
               "link": "https://leetcode.com/problems/maximum-average-subarray-i/"
             },
             {
-              "name": "Number of Sub",
-              "slug": "number-of-sub",
+              "name": "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold",
+              "slug": "number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold",
               "number": 1343,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/number-of-sub/"
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/"
             },
             {
               "name": "Permutation in String",
               "slug": "permutation-in-string",
               "number": 567,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/permutation-in-string/"
             },
             {
               "name": "Find All Anagrams in a String",
               "slug": "find-all-anagrams-in-a-string",
               "number": 438,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/find-all-anagrams-in-a-string/"
+            },
+            {
+              "name": "Repeated DNA Sequences",
+              "slug": "repeated-dna-sequences",
+              "number": 187,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/repeated-dna-sequences/"
+            },
+            {
+              "name": "Sliding Window Maximum",
+              "slug": "sliding-window-maximum",
+              "number": 239,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/sliding-window-maximum/"
             },
             {
               "name": "Contains Duplicate II",
@@ -943,13 +1146,6 @@
               "link": "https://leetcode.com/problems/k-radius-subarray-averages/"
             },
             {
-              "name": "Sliding Window Maximum (Hard)",
-              "slug": "sliding-window-maximum-(hard)",
-              "number": 239,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/sliding-window-maximum-(hard)/"
-            },
-            {
               "name": "Maximum Number of Vowels in a Substring",
               "slug": "maximum-number-of-vowels-in-a-substring",
               "number": 1456,
@@ -961,56 +1157,85 @@
         {
           "id": "week_11_dynamic_sliding_window",
           "name": "Week 11: Dynamic Sliding Window",
-          "estimatedHours": 14.0,
-          "description": "Window expands and shrinks based on data validity. Semiconductor context: Debouncing - look for longest continuous window of 'High' signals to confirm button press.",
+          "estimatedHours": 14,
+          "description": "Window expands and shrinks based on data validity. Semiconductor context: TCP Congestion Control - expand window until packet loss (condition fail), then shrink. Variable Bitrate Buffers.",
           "learningTip": [
-            "Dynamic window: grow right, shrink left based on condition",
-            "Find longest/shortest subarray satisfying constraint",
-            "Pattern: expand right, then contract left while condition holds",
-            "Time: O(n) - each element enters and exits window at most once"
+            "**Expand then Shrink:** `for(right...) { add(right); while(invalid) { remove(left); left++; } update_max(); }`",
+            "**Monotonicity:** The window only slides right. `left` never moves back. O(2N) = O(N).",
+            "**Embedded use:** Finding the longest interference-free signal block, or managing variable-length UART packets."
           ],
           "mustNotMiss": [
-            "Template: for(right=0; right<n; right++) { add arr[right] to window; while(invalid) { remove arr[left]; left++; } update_answer(); }",
-            "Longest subarray with sum \u2264 K: shrink while sum > K",
-            "Shortest subarray with sum \u2265 K: update answer inside the while loop",
-            "Character frequency: int freq[256] = {0}; freq[(unsigned char)s[i]]++;",
-            "Track distinct count: if(freq[c] == 0) distinct++; freq[c]++;"
+            "**Invariant:** The window `[left, right]` must always satisfy the condition (or be about to fix it).",
+            "**Min vs Max:** For 'Longest Valid Subarray', update answer *after* the while loop. For 'Shortest Valid Subarray', update *inside* the while loop.",
+            "**Frequency Map:** Use `int count[256]` instead of HashMaps for character problems. Much faster and zero-allocation."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find longest subarray with sum <= K.",
+              "answer": "**Dynamic Window.** Expand right, if sum > K, shrink left until sum <= K. O(N)."
+            },
+            {
+              "question": "Implement a Rate Limiter.",
+              "answer": "**Sliding Window Counter.** Keep timestamps in a queue. Remove timestamps older than 1 second. if `size() < LIMIT`, allow request."
+            },
+            {
+              "question": "Find the smallest window in String S containing all characters of String T.",
+              "answer": "**Minimum Window Substring.** Use frequency arrays. Expand until all chars found, then shrink left to minimize."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/minimum-window-substring/solution/ - The ultimate sliding window template",
+            "https://www.geeksforgeeks.org/window-sliding-technique/ - GeeksForGeeks Guide"
           ],
           "practiceQuestions": [
             {
               "name": "Longest Substring Without Repeating Characters",
               "slug": "longest-substring-without-repeating-characters",
               "number": 3,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters/"
             },
             {
               "name": "Max Consecutive Ones III",
               "slug": "max-consecutive-ones-iii",
               "number": 1004,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/max-consecutive-ones-iii/"
             },
             {
               "name": "Minimum Size Subarray Sum",
               "slug": "minimum-size-subarray-sum",
               "number": 209,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/minimum-size-subarray-sum/"
             },
             {
               "name": "Longest Repeating Character Replacement",
               "slug": "longest-repeating-character-replacement",
               "number": 424,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/longest-repeating-character-replacement/"
+            },
+            {
+              "name": "Minimum Window Substring",
+              "slug": "minimum-window-substring",
+              "number": 76,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/minimum-window-substring/"
             },
             {
               "name": "Fruit Into Baskets",
               "slug": "fruit-into-baskets",
               "number": 904,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/fruit-into-baskets/"
+            },
+            {
+              "name": "Count Number of Nice Subarrays",
+              "slug": "count-number-of-nice-subarrays",
+              "number": 1248,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/count-number-of-nice-subarrays/"
             },
             {
               "name": "Maximize the Confusion of an Exam",
@@ -1044,22 +1269,83 @@
         },
         {
           "id": "week_12_buffer_review",
-          "name": "Week 12: Buffer Review & Fixed-Point Arithmetic",
+          "name": "Week 12: Buffer Review (Ring Buffers)",
           "estimatedHours": 12.5,
-          "description": "Re-solve hardest Sliding Window problems. Challenge: Implement Moving Average without float/double for FPU-less microcontrollers. Real embedded constraint.",
+          "description": "Deep dive into Data Structures for Data Streams. Semiconductor context: UART RX Buffer (Ring Buffer), Audio DMA (Double Buffering), and Frame Buffers. **New:** DMA Descriptors & Scatter-Gather.",
           "learningTip": [
-            "Review and solidify Month 3 concepts before moving to data structures",
-            "Focus on: pointer arithmetic, two-pointer, sliding window patterns",
-            "In embedded: buffers are everywhere - data acquisition, communication, logging",
-            "Practice implementing standard library functions from scratch",
-            "Project: Fixed-Point Arithmetic - Re-implement Moving Average without float/double"
+            "**Ring Buffer:** FIFO structure with fixed size. `head` writes, `tail` reads. Critical for UART/SPI drivers.",
+            "**DMA (Direct Memory Access):** Hardware copies data from Peripheral to RAM while CPU sleeps. You just process the buffer.",
+            "**Double Buffering (Ping-Pong):** Use two buffers. DMA fills Buffer A. When full, DMA switches to Buffer B (interrupt fires). CPU processes A while DMA fills B. Zero downtime.",
+            "**DMA Descriptors:** A Linked List in hardware! Each node contains: `srcptr`, `destptr`, `size`, `next_desc_ptr`. Allows DMA to scatter/gather data without CPU intervention.",
+            "**Atomic access:** Updating `head` or `tail` must be atomic if shared between ISR and Main Loop."
           ],
           "mustNotMiss": [
-            "Implement memcpy: while(n--) *dest++ = *src++;",
-            "Implement memmove: handle overlap by copying backward if dest > src",
-            "Implement strrev: two pointers swap from ends",
-            "Circular buffer: if(++head >= SIZE) head = 0; // or head = (head+1) % SIZE",
-            "Review: what's the complexity? What's the space? Can we do better?"
+            "**Next Position:** `next = (current + 1) % SIZE`. Avoid `%` if SIZE is power of 2: `(current + 1) & (SIZE - 1)`.",
+            "**Full vs Empty:** If `head == tail`, is it empty or full? Standard solution: Keep one slot open. `(head + 1) % SIZE == tail` means Full.",
+            "**Volatile:** Buffer memory shared with ISR must be `volatile` to prevent compiler caching.",
+            "**Descriptor Chaining:** How to process non-contiguous memory blocks using DMA? Chain descriptors."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement a Circular Buffer in C.",
+              "answer": "**Struct-based.** `typedef struct { uint8_t data[SIZE]; size_t head; size_t tail; } RingBuf;`. Implement `push()` and `pop()`."
+            },
+            {
+              "question": "Why do we need 'volatile' for DMA buffers?",
+              "answer": "**Cache Coherency.** The hardware modifies memory behind the CPU's back. The compiler must know values can change unexpectedly."
+            },
+            {
+              "question": "Explain 'Scatter-Gather' DMA.",
+              "answer": "**Non-Contiguous IO.** Instead of one large block, DMA reads a Linked List of 'Descriptors'. Each descriptor points to a small buffer. Allows copying fragmented memory into a single peripheral stream without CPU copying."
+            }
+          ],
+          "resources": [
+            "https://embed.org/blog/ring-buffer/ - Ring Buffer implementation details",
+            "https://www.doulos.com/knowhow/c/volatile/ - Understanding Volatile"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Design Circular Deque",
+              "slug": "design-circular-deque",
+              "number": 641,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-circular-deque/"
+            },
+            {
+              "name": "Design Circular Queue",
+              "slug": "design-circular-queue",
+              "number": 622,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-circular-queue/"
+            },
+            {
+              "name": "Moving Average from Data Stream",
+              "slug": "moving-average-from-data-stream",
+              "number": 346,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/moving-average-from-data-stream/"
+            },
+            {
+              "name": "Implement Queue using Stacks",
+              "slug": "implement-queue-using-stacks",
+              "number": 232,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/implement-queue-using-stacks/"
+            },
+            {
+              "name": "Peeking Iterator",
+              "slug": "peeking-iterator",
+              "number": 284,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/peeking-iterator/"
+            },
+            {
+              "name": "Flatten Nested List Iterator",
+              "slug": "flatten-nested-list-iterator",
+              "number": 341,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/flatten-nested-list-iterator/"
+            }
           ]
         }
       ]
@@ -1072,23 +1358,38 @@
       "topics": [
         {
           "id": "week_13_singly_linked_lists",
-          "name": "Week 13: Singly Linked Lists (Basics)",
-          "estimatedHours": 23.0,
-          "description": "Manipulating next pointers. Semiconductor context: OS Kernel (FreeRTOS/Linux) manages processes using Linked Lists - the 'Ready Queue' is a Linked List of tasks waiting to run.",
+          "name": "Week 13: Singly Linked Lists (OS Basics)",
+          "estimatedHours": 23,
+          "description": "Manipulating next pointers. Semiconductor context: OS Kernel (FreeRTOS) 'ReadyQueue' is a Linked List of tasks. 'Malloc' uses a Free List to track empty memory blocks.",
           "learningTip": [
-            "Linked list = dynamic data structure with O(1) insert/delete at known position",
-            "Node structure: struct Node { int data; struct Node *next; };",
-            "In embedded: used for dynamic queues, memory pools, event lists",
-            "Draw the pointers before coding - most bugs are incorrect pointer updates",
-            "Project: Implement a simple task queue using linked list with add_task() and get_next_task()"
+            "**Cache Miss:** Linked Lists are terrible for CPU cache. Random jumps in memory. Use arrays unless O(1) mid-insert is strictly required.",
+            "**Intrusive Lists:** In kernels, the 'next' pointer is embedded *inside* the Task struct, not a separate Wrapper Node. `struct Task { ... struct list_head list; ... }`.",
+            "**Sentinel Nodes:** Always use a 'Dummy Head' to simplify edge cases (inserting at start/end).",
+            "**Cycle Detection:** Drivers often hang in infinite loops if a list becomes circular. Floyd's Algorithm protects against this."
           ],
           "mustNotMiss": [
-            "Create node: struct Node *n = (struct Node*)malloc(sizeof(struct Node)); n->data = val; n->next = NULL;",
-            "Insert at head: newNode->next = head; head = newNode;",
-            "Delete node: prev->next = curr->next; free(curr);",
-            "Traverse: while(curr != NULL) { process(curr); curr = curr->next; }",
-            "ALWAYS free() what you malloc() - memory leaks crash embedded systems",
-            "Sentinel/dummy node simplifies edge cases: struct Node dummy; dummy.next = head;"
+            "**Traversal:** `while(curr) { process(curr); curr = curr->next; }`",
+            "**Reverse:** `next = curr->next; curr->next = prev; prev = curr; curr = next;` - Memorize this.",
+            "**Fast/Slow:** Pattern for finding middle (1x/2x speed) or cycles.",
+            "**Memory Leak:** Removing a node? `free()` it! In embedded, leaking 10 bytes/sec crashes the system in days."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Reverse a Linked List in-place.",
+              "answer": "**3 Pointers.** `prev`, `curr`, `next`. Iterate and flip pointers. Return `prev` as new head."
+            },
+            {
+              "question": "Detect a cycle in a linked list.",
+              "answer": "**Floyd's Cycle-Finding Algorithm.** Slow pointer moves 1 step, Fast moves 2. If they collide, there is a cycle."
+            },
+            {
+              "question": "Why avoid Linked Lists in real-time systems?",
+              "answer": "**Determinism.** Traversing a list is O(N) with unknown cache hits. Arrays allows O(1) access and prefetching."
+            }
+          ],
+          "resources": [
+            "https://kernel.org/doc/html/latest/core-api/kernel-api.html#list-management-functions - Linux Kernel List API",
+            "https://www.data-structures-in-practice.com/intrusive-linked-lists/ - Intrusive Lists explained"
           ],
           "practiceQuestions": [
             {
@@ -1134,6 +1435,13 @@
               "link": "https://leetcode.com/problems/intersection-of-two-linked-lists/"
             },
             {
+              "name": "Linked List Cycle",
+              "slug": "linked-list-cycle",
+              "number": 141,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/linked-list-cycle/"
+            },
+            {
               "name": "Palindrome Linked List",
               "slug": "palindrome-linked-list",
               "number": 234,
@@ -1146,97 +1454,106 @@
               "number": 203,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/remove-linked-list-elements/"
-            },
-            {
-              "name": "Linked List Cycle",
-              "slug": "linked-list-cycle",
-              "number": 141,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/linked-list-cycle/"
             }
           ]
         },
         {
           "id": "week_14_advanced_lists",
-          "name": "Week 14: Advanced Lists (Cycles & Doubly Linked)",
+          "name": "Week 14: Advanced Lists (Doubly Linked & LRU)",
           "estimatedHours": 25.5,
-          "description": "prev and next pointers. Cycle detection. Semiconductor context: Deadlock Detection - if Task A waits for Task B and vice versa, you have a cycle. Tortoise and Hare algorithm detects this.",
+          "description": "Doubly Linked Lists and complex pointer manipulation. Semiconductor context: LRU Cache implementation - how CPU decides which cache line to evict.",
           "learningTip": [
-            "Doubly linked: O(1) delete with just the node pointer, bidirectional traversal",
-            "Reverse, merge, detect cycle - core linked list patterns",
-            "LRU cache = hashmap + doubly linked list",
-            "In embedded: task lists, memory allocators, undo buffers",
-            "Project: No-Malloc Pool - Pre-allocate array of 100 Nodes, write alloc_node() and free_node() functions (Automotive safety-critical pattern)"
+            "**Doubly Linked:** `prev` pointer allows O(1) deletion if you have the node pointer. Essential for LRU Cache.",
+            "**LRU Cache:** The 'Hello World' of System Design. HashMap (for lookup) + Doubly Linked List (for ordering).",
+            "**Merge Sort:** The preferred sorting algorithm for Linked Lists (no random access needed).",
+            "**Kernel API:** Linux uses `list_add`, `list_del`, `list_for_each` macros. Learn to read them."
           ],
           "mustNotMiss": [
-            "Reverse: prev=NULL, curr=head; while(curr) { next=curr->next; curr->next=prev; prev=curr; curr=next; } return prev;",
-            "Detect cycle (Floyd's): slow=fast=head; while(fast && fast->next) { slow=slow->next; fast=fast->next->next; if(slow==fast) return true; }",
-            "Find cycle start: after detection, reset slow=head, advance both by 1 until meet",
-            "Merge sorted: dummy head, compare and link smaller, handle remaining tail",
-            "Doubly linked delete: if(n->prev) n->prev->next = n->next; if(n->next) n->next->prev = n->prev; free(n);"
+            "**Delete DLL Node:** `node->prev->next = node->next; node->next->prev = node->prev;` (Check NULLs!)",
+            "**Insert After:** `new->next = cur->next; new->prev = cur; cur->next->prev = new; cur->next = new;`",
+            "**LRU Logic:** Access -> Move to Head. Full -> Remove Tail.",
+            "**XOR List:** Obscure trick to save memory: `next ^ prev`. Interviewers love asking about this for embedded."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement an LRU Cache.",
+              "answer": "**Hash Map + Doubly Linked List.** Map stores `<Key, Node*>`. List stores `Nodes` ordered by recency. Get: Move to head. Put: Add to head, evict tail if full."
+            },
+            {
+              "question": "Reverse a Doubly Linked List.",
+              "answer": "**Swap Pointers.** For each node, `swap(curr->next, curr->prev)`. Then `head = curr->prev` at the end."
+            },
+            {
+              "question": "How to implement a simplified 'malloc'?",
+              "answer": "**Free List.** A linked list of free blocks. `malloc` finds a block of size >= N. `free` adds it back to the list."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/lru-cache/solution/ - Standard LRU Implementation",
+            "https://wiki.osdev.org/Memory_Allocation - OS Memory Allocators"
           ],
           "practiceQuestions": [
-            {
-              "name": "Linked List Cycle",
-              "slug": "linked-list-cycle",
-              "number": 141,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/linked-list-cycle/"
-            },
             {
               "name": "Linked List Cycle II",
               "slug": "linked-list-cycle-ii",
               "number": 142,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/linked-list-cycle-ii/"
             },
             {
               "name": "Remove Nth Node From End of List",
               "slug": "remove-nth-node-from-end-of-list",
               "number": 19,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+            },
+            {
+              "name": "Copy List with Random Pointer",
+              "slug": "copy-list-with-random-pointer",
+              "number": 138,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/copy-list-with-random-pointer/"
+            },
+            {
+              "name": "LRU Cache",
+              "slug": "lru-cache",
+              "number": 146,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/lru-cache/"
+            },
+            {
+              "name": "Reorder List",
+              "slug": "reorder-list",
+              "number": 143,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/reorder-list/"
             },
             {
               "name": "Rotate List",
               "slug": "rotate-list",
               "number": 61,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/rotate-list/"
             },
             {
               "name": "Swap Nodes in Pairs",
               "slug": "swap-nodes-in-pairs",
               "number": 24,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/swap-nodes-in-pairs/"
-            },
-            {
-              "name": "Reorder List",
-              "slug": "reorder-list",
-              "number": 143,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/reorder-list/"
             },
             {
               "name": "Add Two Numbers",
               "slug": "add-two-numbers",
               "number": 2,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/add-two-numbers/"
-            },
-            {
-              "name": "Copy List with Random Pointer",
-              "slug": "copy-list-with-random-pointer",
-              "number": 138,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/copy-list-with-random-pointer/"
             },
             {
               "name": "Reverse Linked List II",
               "slug": "reverse-linked-list-ii",
               "number": 92,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/reverse-linked-list-ii/"
             },
             {
@@ -1251,13 +1568,15 @@
         {
           "id": "week_15_stacks",
           "name": "Week 15: Stacks (LIFO)",
-          "estimatedHours": 23.0,
-          "description": "Last In, First Out. Semiconductor context: Nested Interrupts - CPU pushes context to stack when ISR fires, pops it back when done. Stack overflow causes Hard Fault.",
+          "estimatedHours": 23,
+          "description": "Last In, First Out. Semiconductor context: Nested Interrupts - CPU pushes context to stack when ISR fires, pops it back when done. Stack overflow causes Hard Fault. **New:** Stack Painting & Canaries.",
           "learningTip": [
             "Stack: LIFO - Last In First Out",
             "Used for: function calls (call stack), expression evaluation, undo, DFS",
             "Array implementation: O(1) push/pop, fixed size",
-            "Understanding call stack is essential for debugging and recursion"
+            "Understanding call stack is essential for debugging and recursion",
+            "**Stack Painting:** Fill stack memory with a pattern (e.g., `0xDEADBEEF`) at startup. To find 'High Water Mark' (max usage), count how many patterns remain untouched.",
+            "**Stack Canary:** A special value placed at the end of a stack frame. If a buffer overflow overwrites it, the CPU triggers a Fault before returning, preventing code injection."
           ],
           "mustNotMiss": [
             "Array stack: int stack[SIZE]; int top = -1;",
@@ -1265,7 +1584,18 @@
             "Pop: if(top >= 0) return stack[top--]; else underflow_error();",
             "Peek: if(top >= 0) return stack[top];",
             "In C: function calls use stack - local variables, return addresses stored there",
-            "Stack overflow: recursion too deep, or large local arrays - use static/heap instead"
+            "Stack overflow: recursion too deep, or large local arrays - use static/heap instead",
+            "**Hard Fault:** What happens when Stack Pointer hits the end of RAM? The CPU crashes safely (hopefully)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How do you detect Stack Overflow in an embedded system?",
+              "answer": "**Stack Painting.** Fill stack with `0xCC` or `0xDEADBEEF`. Periodically check from the bottom up to see how much of the pattern is overwritten. The boundary is the 'High Water Mark'."
+            },
+            {
+              "question": "What is a Stack Canary?",
+              "answer": "**Security/Safety.** A magic number placed before the Return Address on the stack. If a buffer overflow occurs, the canary is overwritten first. The function checks the canary before returning; if changed, it faults."
+            }
           ],
           "practiceQuestions": [
             {
@@ -1325,39 +1655,44 @@
               "link": "https://leetcode.com/problems/simplify-path/"
             },
             {
-              "name": "Decode String (Medium)",
-              "slug": "decode-string-(medium)",
+              "name": "Decode String",
+              "slug": "decode-string",
               "number": 394,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/decode-string-(medium)/"
-            },
-            {
-              "name": "Basic Calculator (Hard)",
-              "slug": "basic-calculator-(hard)",
-              "number": 224,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/basic-calculator-(hard)/"
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/decode-string/"
             }
           ]
         },
         {
           "id": "week_16_monotonic_stacks",
-          "name": "Week 16: Monotonic Stacks",
-          "estimatedHours": 23.0,
-          "description": "Finding the 'Next Greater Element'. Semiconductor context: Telemetry Spikes - finding next time temperature exceeds current threshold. Critical for alerting systems.",
+          "name": "Week 16: Monotonic Stacks (Telemetry Analysis)",
+          "estimatedHours": 23,
+          "description": "Finding the 'Next Greater Element'. Semiconductor context: Sensor Peak Detection - finding the next time temperature exceeds current threshold in a stream of log data.",
           "learningTip": [
-            "Monotonic stack: maintain increasing/decreasing order for next greater/smaller element",
-            "Pop smaller/larger elements when new element arrives - they found their answer",
-            "O(n) total: each element pushed and popped at most once",
-            "Pattern solves: next greater, previous greater, stock span, largest rectangle",
-            "Project: Implement a peak detector that finds the next time a sensor reading exceeds a threshold"
+            "**Monotonic Decreasing Stack:** Finds the 'Next Greater Element'. Elements in stack are always sorted descending.",
+            "**Monotonic Increasing Stack:** Finds the 'Next Smaller Element'.",
+            "**Pattern:** `while(!stack.isEmpty() && stack.peek() < current) { process(stack.pop()); } stack.push(current);`",
+            "**Applications:** Histogram areas, stock spans, sensor threshold alerts."
           ],
           "mustNotMiss": [
-            "Next greater element: stack stores indices, decreasing order of values",
-            "When arr[i] > arr[stack[top]], pop and set answer[popped] = arr[i]",
-            "Template: for(i=0; i<n; i++) { while(top>=0 && arr[stack[top]] < arr[i]) ans[stack[top--]]=arr[i]; stack[++top]=i; }",
-            "Remaining in stack have no next greater - set answer to -1",
-            "Previous greater: same logic but iterate from right or use different condition"
+            "**Next Greater Element:** Store indices, not values, to calculate distance.",
+            "**Circular Array:** Loop indices `i % N` to simulate circular buffer behavior with monotonic stacks.",
+            "**Trapping Rain Water:** Classic hard problem solvable with Monotonic Stack (or Two Pointers).",
+            "**Complexity:** O(N). Each element is pushed once and popped once."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find the Next Greater Element for every element in an array.",
+              "answer": "**Monotonic Stack.** Iterate. While `current > stack.top`, pop stack and mark `current` as the next greater for the popped element."
+            },
+            {
+              "question": "Find the largest rectangle in a histogram.",
+              "answer": "**Monotonic Stack.** For each bar, find the first smaller bar to the left and right. The width is `right - left - 1`."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/next-greater-element-ii/solution/ - NEXT Greater Element Pattern",
+            "https://cp-algorithms.com/data_structures/stack_queue_modification.html - Advanced Stack Modifications"
           ],
           "practiceQuestions": [
             {
@@ -1368,46 +1703,39 @@
               "link": "https://leetcode.com/problems/next-greater-element-i/"
             },
             {
+              "name": "Next Greater Element II",
+              "slug": "next-greater-element-ii",
+              "number": 503,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/next-greater-element-ii/"
+            },
+            {
               "name": "Daily Temperatures",
               "slug": "daily-temperatures",
               "number": 739,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/daily-temperatures/"
+            },
+            {
+              "name": "Largest Rectangle in Histogram",
+              "slug": "largest-rectangle-in-histogram",
+              "number": 84,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/largest-rectangle-in-histogram/"
+            },
+            {
+              "name": "Trapping Rain Water",
+              "slug": "trapping-rain-water",
+              "number": 42,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/trapping-rain-water/"
             },
             {
               "name": "Online Stock Span",
               "slug": "online-stock-span",
               "number": 901,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/online-stock-span/"
-            },
-            {
-              "name": "Asteroid Collision",
-              "slug": "asteroid-collision",
-              "number": 735,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/asteroid-collision/"
-            },
-            {
-              "name": "Sum of Subarray Minimums",
-              "slug": "sum-of-subarray-minimums",
-              "number": 907,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/sum-of-subarray-minimums/"
-            },
-            {
-              "name": "Largest Rectangle in Histogram (Hard)",
-              "slug": "largest-rectangle-in-histogram-(hard)",
-              "number": 84,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/largest-rectangle-in-histogram-(hard)/"
-            },
-            {
-              "name": "Maximal Rectangle (Hard)",
-              "slug": "maximal-rectangle-(hard)",
-              "number": 85,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/maximal-rectangle-(hard)/"
             }
           ]
         }
@@ -1421,37 +1749,52 @@
       "topics": [
         {
           "id": "week_17_circular_queues",
-          "name": "Week 17: Circular Queues (CRITICAL)",
-          "estimatedHours": 27.0,
-          "description": "Fixed array that wraps around using Modulo %. THE #1 MOST USED structure in firmware - connects hardware (UART) to software. Master this completely.",
+          "name": "Week 17: Circular Queues (UART Buffers)",
+          "estimatedHours": 27,
+          "description": "Fixed array that wraps around using Modulo %. THE #1 MOST USED structure in firmware - connects hardware (UART/ADC) to software. Connects ISRs to Main Loop.",
           "learningTip": [
-            "Queue: FIFO - First In First Out. Circular queue wraps around fixed array",
-            "Ring buffer is THE most common data structure in embedded systems",
-            "In embedded: UART buffers, sensor data, interrupt-safe producer-consumer",
-            "Fixed size, no malloc - perfect for constrained environments",
-            "Project: Implement a full UART RX circular buffer with: enqueue (called from ISR), dequeue (called from main), is_empty, is_full, available_space"
+            "**Ring Buffer:** The standard for async data. `head` is where data comes in (ISR), `tail` is where you read it.",
+            "**Lock-Free:** If single producer (ISR) and single consumer (Main), you often don't need locks IF `head` and `tail` depend on atomic writes.",
+            "**Modulo vs Bitwise:** `idx = (idx + 1) % SIZE` is slow. `idx = (idx + 1) & (SIZE - 1)` is fast implies SIZE is power of 2.",
+            "**Project:** Write a UART Driver. `void UART_Handler() { rx_buffer.push(REG_DATA); }`"
           ],
           "mustNotMiss": [
-            "Structure: struct CircQueue { int data[SIZE]; int front, rear, count; };",
-            "Enqueue: if(count < SIZE) { data[rear] = val; rear = (rear+1) % SIZE; count++; }",
-            "Dequeue: if(count > 0) { val = data[front]; front = (front+1) % SIZE; count--; return val; }",
-            "Empty: count == 0. Full: count == SIZE",
-            "ISR-safe single producer/consumer: producer only writes rear, consumer only writes front - no lock needed",
-            "volatile for shared variables: volatile int front; - prevents compiler optimization"
+            "**Full Condition:** `(head + 1) % SIZE == tail`. Leave one slot empty to distinguish Full from Empty.",
+            "**Volatile:** `volatile int head, tail;` is mandatory if shared with ISR.",
+            "**Decoupling:** Queues detaches 'hard absolute real-time' (ISR) from 'soft real-time' (processing).",
+            "**DMA:** Advanced ring buffers use DMA to write memory directly. CPU only updates `tail`."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement a Lock-Free Ring Buffer in C.",
+              "answer": "**Atomic Indices.** `push()` updates `data` then `head`. `pop()` reads `data` then updates `tail`. Memory barriers may be needed on ARM."
+            },
+            {
+              "question": "Why is `size_t` better than `int` for array indexing?",
+              "answer": "**Portability.** `size_t` guarantees holding the max array size of the platform (32-bit or 64-bit). `int` might overflow."
+            },
+            {
+              "question": "How to handle buffer overflow in a UART RX ISR?",
+              "answer": "**Drop or Overwrite.** Oldest Data (Overwrite) or Newest Data (Drop). Usually drop new data and set an 'Overflow Error' flag."
+            }
+          ],
+          "resources": [
+            "https://ferrous-systems.com/blog/lock-free-ring-buffer/ - Rust/Embedded Lock Free Ring Buffer",
+            "https://www.embedded.com/ring-buffer-basics/ - Embedded.com Guide"
           ],
           "practiceQuestions": [
             {
               "name": "Design Circular Queue",
               "slug": "design-circular-queue",
               "number": 622,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/design-circular-queue/"
             },
             {
               "name": "Design Circular Deque",
               "slug": "design-circular-deque",
               "number": 641,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/design-circular-deque/"
             },
             {
@@ -1483,48 +1826,231 @@
               "link": "https://leetcode.com/problems/time-needed-to-buy-tickets/"
             },
             {
-              "name": "First Unique Character in a String",
-              "slug": "first-unique-character-in-a-string",
-              "number": 387,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/first-unique-character-in-a-string/"
-            },
-            {
               "name": "Dota2 Senate",
               "slug": "dota2-senate",
               "number": 649,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/dota2-senate/"
             }
           ]
         },
         {
-          "id": "week_18_heaps",
-          "name": "Week 18: Heaps (Priority Queues)",
-          "estimatedHours": 22.5,
-          "description": "Accessing Min or Max element in O(1). Semiconductor context: RTOS Event Scheduling - 'Run Task A in 5ms, Task B in 2ms'. Min-Heap organizes timer events by expiry time.",
+          "id": "week_18_trees_bst",
+          "name": "Week 18: Trees & BST (File Systems)",
+          "estimatedHours": 24.5,
+          "description": "Hierarchical data. Semiconductor context: File Systems (FAT32/Ext4) - directories are nodes, files are leaves. Device Trees (DTS) in Linux/Zephyr describe hardware topology.",
           "learningTip": [
-            "Heap = complete binary tree with heap property, stored in array",
-            "Min-heap: parent \u2264 children. Max-heap: parent \u2265 children",
-            "O(1) get-min/max, O(log n) insert and extract",
-            "Used for: priority queues, heapsort, top-k, scheduling",
-            "Project: Implement a timer event queue using min-heap - add_timer(callback, delay_ms), tick()"
+            "**Recursive Structure:** A tree is a node with pointers to children. File systems are trees.",
+            "**BST Property:** Left < Root < Right. In-order traversal gives sorted data. Used in `CFS` (Linux Scheduler) to track tasks by runtime.",
+            "**Recursion vs Iteration:** Recursion uses stack space (potentially unsafe in firmware). Iterative DFS uses an explicit heap stack.",
+            "**Project:** Implement a mock 'ls -R' (recursive list) for a simulated directory structure."
           ],
           "mustNotMiss": [
-            "Array indexing: parent(i) = (i-1)/2, left(i) = 2*i+1, right(i) = 2*i+2",
-            "Insert (heapify-up): add at end, while child < parent: swap with parent",
-            "Extract (heapify-down): swap root with last, remove last, bubble down swapping with smaller child",
-            "Build heap in O(n): start from last parent ((n-1)/2), heapify-down each",
-            "In C: int heap[SIZE]; int size = 0; // implement push(), pop(), peek()",
-            "Heapsort in-place: build max-heap, repeatedly extract to end of array"
+            "**Traversals:** Pre-order (Copy/Clone), In-order (Sorted), Post-order (Delete/Free).",
+            "**Height:** `1 + max(height(left), height(right))`. Base case: `if(!node) return 0;`",
+            "**BST Search:** `if(val < root->val) go_left; else go_right;` O(log N).",
+            "**Stack Overflow:** In embedded, stick to 1-2KB stack. Avoid deep recursion. Use iterative traversal for deep trees."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find the Lowest Common Ancestor (LCA) of two file paths.",
+              "answer": "**Recursion.** If root matches either, return root. Look in left/right. If both return non-null, root is LCA."
+            },
+            {
+              "question": "Validate a Binary Search Tree.",
+              "answer": "**Range Check.** Pass `(min, max)` down. `validate(node, min, max)`. Left must be in `(min, node->val)`, Right in `(node->val, max)`."
+            },
+            {
+              "question": "Serialize and Deserialize a Binary Tree (for storage).",
+              "answer": "**Pre-order with Null markers.** Save `1,2,#,#,3,#,#`. Reconstruct by consuming stream."
+            }
+          ],
+          "resources": [
+            "https://devicetree.org/ - Linux Device Tree Specification",
+            "https://leetcode.com/problems/validate-binary-search-tree/solution/ - BST Validation Patterns"
           ],
           "practiceQuestions": [
             {
-              "name": "Kth Largest Element in Array",
-              "slug": "kth-largest-element-in-array",
-              "number": 215,
+              "name": "Maximum Depth of Binary Tree",
+              "slug": "maximum-depth-of-binary-tree",
+              "number": 104,
               "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/kth-largest-element-in-array/"
+              "link": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+            },
+            {
+              "name": "Same Tree",
+              "slug": "same-tree",
+              "number": 100,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/same-tree/"
+            },
+            {
+              "name": "Invert Binary Tree",
+              "slug": "invert-binary-tree",
+              "number": 226,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/invert-binary-tree/"
+            },
+            {
+              "name": "Binary Tree Level Order Traversal",
+              "slug": "binary-tree-level-order-traversal",
+              "number": 102,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+            },
+            {
+              "name": "Validate Binary Search Tree",
+              "slug": "validate-binary-search-tree",
+              "number": 98,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/validate-binary-search-tree/"
+            },
+            {
+              "name": "Lowest Common Ancestor of a Binary Search Tree",
+              "slug": "lowest-common-ancestor-of-a-binary-search-tree",
+              "number": 235,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/"
+            },
+            {
+              "name": "Construct Binary Tree from Preorder and Inorder Traversal",
+              "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
+              "number": 105,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+            },
+            {
+              "name": "Serialize and Deserialize Binary Tree",
+              "slug": "serialize-and-deserialize-binary-tree",
+              "number": 297,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"
+            }
+          ]
+        },
+        {
+          "id": "week_19_tries",
+          "name": "Week 19: Tries (IP Routing)",
+          "estimatedHours": 22.5,
+          "description": "Prefix Trees. Semiconductor context: IP Routing Tables (Longest Prefix Match). Flash Filesystems (JFFS2) use trie-like structures for compression and path lookups.",
+          "learningTip": [
+            "**Prefix Tree:** Nodes are characters. Root -> c -> a -> t (word 'cat').",
+            "**Space vs Time:** Tries trade memory for O(L) time complexity (L = string length). Faster than Hash Map O(L) for many strings with common prefixes.",
+            "**Bitwise Trie:** Used in routers. Nodes are 0 or 1. Depth 32 for IPv4.",
+            "**Project:** Implement an Autocomplete engine or a simple IP router lookup `search_ip(uint32_t ip)`."
+          ],
+          "mustNotMiss": [
+            "**Structure:** `struct TrieNode { struct TrieNode *children[26]; bool isEnd; };`",
+            "**Insert:** Loop char by char. If child is NULL, malloc it. Move down.",
+            "**Search:** Loop char by char. If child NULL, return false. At end, return `isEnd`.",
+            "**Memory Pool:** Mallocing millions of nodes is slow/fragmented. Use a static array of nodes `TrieNode pool[10000];` for high peformance."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement a Router with Longest Prefix Match.",
+              "answer": "**Bitwise Trie.** Insert routes (e.g. 192.168.1.0/24). Search IP bit-by-bit. Keep track of the *last valid* leaf seen."
+            },
+            {
+              "question": "Design an Autocomplete System.",
+              "answer": "**Trie + Metadata.** Each node stores 'Top 3 hottest searches' with this prefix. O(1) retrieval after traversal."
+            },
+            {
+              "question": "Replace Hash Map with Trie?",
+              "answer": "**Yes, for Strings.** Trie has no collisions, sorted order (lexicographical), and can save space if prefixes are shared."
+            }
+          ],
+          "resources": [
+            "https://vincent.bernat.ch/en/blog/2017-ipv4-route-lookup-linux - How Linux does Route Lookup (Trie/Radix)",
+            "https://leetcode.com/problems/implement-trie-prefix-tree/solution/ - Standard Trie Implementation"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Implement Trie (Prefix Tree)",
+              "slug": "implement-trie-prefix-tree",
+              "number": 208,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/implement-trie-prefix-tree/"
+            },
+            {
+              "name": "Design Add and Search Words Data Structure",
+              "slug": "design-add-and-search-words-data-structure",
+              "number": 211,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
+            },
+            {
+              "name": "Word Search II",
+              "slug": "word-search-ii",
+              "number": 212,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/word-search-ii/"
+            },
+            {
+              "name": "Longest Word in Dictionary",
+              "slug": "longest-word-in-dictionary",
+              "number": 720,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-word-in-dictionary/"
+            },
+            {
+              "name": "Map Sum Pairs",
+              "slug": "map-sum-pairs",
+              "number": 677,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/map-sum-pairs/"
+            },
+            {
+              "name": "Maximum XOR of Two Numbers in an Array",
+              "slug": "maximum-xor-of-two-numbers-in-an-array",
+              "number": 421,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/"
+            }
+          ]
+        },
+        {
+          "id": "week_20_heaps",
+          "name": "Week 20: Heaps (RTOS Schedulers)",
+          "estimatedHours": 22.5,
+          "description": "Priority Queues. Semiconductor context: RTOS Task Scheduler (Earliest Deadline First). Timer Wheel management for software timers.",
+          "learningTip": [
+            "**Heap Property:** Min-Heap (Parent <= Child) or Max-Heap (Parent >= Child).",
+            "**Implicit Tree:** Stored in an array. Children of `i` are `2i+1`, `2i+2`. No pointers needed!",
+            "**O(1) Access:** `peek()` is O(1). `push()` and `pop()` are O(log N).",
+            "**Project:** Implement a 'cooperative scheduler' that runs the task with the earliest deadline."
+          ],
+          "mustNotMiss": [
+            "**Indexing (0-based):** `left = 2*i + 1`, `right = 2*i + 2`, `parent = (i-1)/2`.",
+            "**Heapify Up (Push):** Add to end, swap with parent until restored.",
+            "**Heapify Down (Pop):** Swap root with last, remove last, swap new root with smallest child until restored.",
+            "**Make Heap:** Build from bottom-up in O(N).",
+            "**Memory:** Heaps are cache-friendly (contiguous array), unlike linked-node trees."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement a Priority Queue for interrupts.",
+              "answer": "**Max Heap.** Higher priority number = closer to root. `pop()` returns the interrupt to handle next."
+            },
+            {
+              "question": "Find the Kth largest element in a stream.",
+              "answer": "**Min Heap of size K.** Keep top K elements. Root is the Kth largest. If new element > root, replace root and heapify."
+            },
+            {
+              "question": "Heapsort vs Mergesort?",
+              "answer": "**Heapsort** is O(1) space (in-place) but unstable and poor cache locality compared to Mergesort. **Mergesort** is stable but O(N) space."
+            }
+          ],
+          "resources": [
+            "https://www.freertos.org/Implementation/a00010.html - FreeRTOS Task Scheduling (Linked Lists, but concepts apply)",
+            "https://leetcode.com/problems/design-twitter/solution/ - Merging K sorted feeds (Heap application)"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Kth Largest Element in an Array",
+              "slug": "kth-largest-element-in-an-array",
+              "number": 215,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
             },
             {
               "name": "Last Stone Weight",
@@ -1537,250 +2063,43 @@
               "name": "Top K Frequent Elements",
               "slug": "top-k-frequent-elements",
               "number": 347,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/top-k-frequent-elements/"
-            },
-            {
-              "name": "Sort Characters By Frequency",
-              "slug": "sort-characters-by-frequency",
-              "number": 451,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/sort-characters-by-frequency/"
             },
             {
               "name": "K Closest Points to Origin",
               "slug": "k-closest-points-to-origin",
               "number": 973,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/k-closest-points-to-origin/"
-            },
-            {
-              "name": "Relative Ranks",
-              "slug": "relative-ranks",
-              "number": 506,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/relative-ranks/"
             },
             {
               "name": "Task Scheduler",
               "slug": "task-scheduler",
               "number": 621,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/task-scheduler/"
             },
             {
-              "name": "Find Median from Data Stream (Hard)",
-              "slug": "find-median-from-data-stream-(hard)",
+              "name": "Find Median from Data Stream",
+              "slug": "find-median-from-data-stream",
               "number": 295,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/find-median-from-data-stream-(hard)/"
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/find-median-from-data-stream/"
             },
             {
-              "name": "Design Twitter (Medium)",
-              "slug": "design-twitter-(medium)",
-              "number": 355,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/design-twitter-(medium)/"
+              "name": "Merge k Sorted Lists",
+              "slug": "merge-k-sorted-lists",
+              "number": 23,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/merge-k-sorted-lists/"
             },
             {
-              "name": "Kth Largest Element in a Stream",
-              "slug": "kth-largest-element-in-a-stream",
-              "number": 703,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/kth-largest-element-in-a-stream/"
-            }
-          ]
-        },
-        {
-          "id": "week_19_hash_maps",
-          "name": "Week 19: Hash Maps & Sets",
-          "estimatedHours": 22.5,
-          "description": "O(1) lookup using keys. Semiconductor context: Device Whitelisting - checking if Bluetooth MAC address is authorized. Symbol tables for debuggers.",
-          "learningTip": [
-            "Hash table trades space for O(1) average lookup",
-            "In C: implement with array + linked list (chaining) or open addressing",
-            "For embedded: often use perfect hashing or direct arrays when key range is known",
-            "Understanding collision resolution is essential for system reliability",
-            "Project: Implement an LRU cache for firmware config parameters"
-          ],
-          "mustNotMiss": [
-            "Hash function: h(key) = key % TABLE_SIZE - choose prime TABLE_SIZE",
-            "Chaining: struct Entry { int key; int val; struct Entry *next; }; Entry *table[SIZE];",
-            "Open addressing: linear probing h(k,i) = (h(k) + i) % SIZE - watch for clustering",
-            "Load factor \u03b1 = n/SIZE: keep \u03b1 < 0.75 for chaining, \u03b1 < 0.5 for open addressing",
-            "In embedded: fixed arrays when key range bounded, perfect hash when keys known",
-            "String hash: h = 0; while(*s) h = h * 31 + *s++; return h % SIZE;"
-          ],
-          "practiceQuestions": [
-            {
-              "name": "Two Sum",
-              "slug": "two-sum",
-              "number": 1,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/two-sum/"
-            },
-            {
-              "name": "Contains Duplicate",
-              "slug": "contains-duplicate",
-              "number": 217,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/contains-duplicate/"
-            },
-            {
-              "name": "Majority Element",
-              "slug": "majority-element",
-              "number": 169,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/majority-element/"
-            },
-            {
-              "name": "Ransom Note",
-              "slug": "ransom-note",
-              "number": 383,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/ransom-note/"
-            },
-            {
-              "name": "Group Anagrams",
-              "slug": "group-anagrams",
-              "number": 49,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/group-anagrams/"
-            },
-            {
-              "name": "Longest Consecutive Sequence",
-              "slug": "longest-consecutive-sequence",
-              "number": 128,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/longest-consecutive-sequence/"
-            },
-            {
-              "name": "Word Pattern",
-              "slug": "word-pattern",
-              "number": 290,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/word-pattern/"
-            },
-            {
-              "name": "Design HashMap",
-              "slug": "design-hashmap",
-              "number": 706,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/design-hashmap/"
-            },
-            {
-              "name": "LRU Cache (Medium)",
-              "slug": "lru-cache-(medium)",
-              "number": 146,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/lru-cache-(medium)/"
-            },
-            {
-              "name": "Insert Delete GetRandom O(1) (Medium)",
-              "slug": "insert-delete-getrandom-o(1)-(medium)",
-              "number": 380,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/insert-delete-getrandom-o(1)-(medium)/"
-            }
-          ]
-        },
-        {
-          "id": "week_20_binary_trees",
-          "name": "Week 20: Binary Trees (BFS/DFS)",
-          "estimatedHours": 24.5,
-          "description": "Hierarchical data nodes. Semiconductor context: Filesystems (FAT/LittleFS), device trees, interrupt hierarchies. Understanding recursive traversal.",
-          "learningTip": [
-            "Trees model hierarchical data: file systems, parse trees, decision trees",
-            "Recursion is natural: each subtree is itself a tree",
-            "In embedded: expression parsing, protocol state machines, config hierarchies",
-            "Stack space for recursion is limited - know max depth or use iterative",
-            "Project: Calculate exactly how much stack memory Merge Sort uses for 1M elements"
-          ],
-          "mustNotMiss": [
-            "Node: struct TreeNode { int val; struct TreeNode *left, *right; };",
-            "Traversals: Preorder (root-L-R), Inorder (L-root-R), Postorder (L-R-root)",
-            "Recursive inorder: void inorder(Node *n) { if(!n) return; inorder(n->left); process(n); inorder(n->right); }",
-            "Iterative with stack: push, go left, pop, process, go right",
-            "Height = 1 + max(left_height, right_height); base: height of NULL is 0 (or -1 depending on convention)",
-            "BST property: left < root < right for all nodes - inorder gives sorted sequence"
-          ],
-          "practiceQuestions": [
-            {
-              "name": "Maximum Depth of Binary Tree",
-              "slug": "maximum-depth-of-binary-tree",
-              "number": 104,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
-            },
-            {
-              "name": "Invert Binary Tree",
-              "slug": "invert-binary-tree",
-              "number": 226,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/invert-binary-tree/"
-            },
-            {
-              "name": "Same Tree",
-              "slug": "same-tree",
-              "number": 100,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/same-tree/"
-            },
-            {
-              "name": "Symmetric Tree",
-              "slug": "symmetric-tree",
-              "number": 101,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/symmetric-tree/"
-            },
-            {
-              "name": "Binary Tree Level Order Traversal",
-              "slug": "binary-tree-level-order-traversal",
-              "number": 102,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
-            },
-            {
-              "name": "Path Sum",
-              "slug": "path-sum",
-              "number": 112,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/path-sum/"
-            },
-            {
-              "name": "Merge Two Binary Trees",
-              "slug": "merge-two-binary-trees",
-              "number": 617,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/merge-two-binary-trees/"
-            },
-            {
-              "name": "Lowest Common Ancestor",
-              "slug": "lowest-common-ancestor",
-              "number": 236,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/lowest-common-ancestor/"
-            },
-            {
-              "name": "Validate Binary Search Tree (Medium)",
-              "slug": "validate-binary-search-tree-(medium)",
-              "number": 98,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/validate-binary-search-tree-(medium)/"
-            },
-            {
-              "name": "Kth Smallest Element in a BST (Medium)",
-              "slug": "kth-smallest-element-in-a-bst-(medium)",
-              "number": 230,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/kth-smallest-element-in-a-bst-(medium)/"
-            },
-            {
-              "name": "Sort an Array",
-              "slug": "sort-an-array",
-              "number": 912,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/sort-an-array/"
+              "name": "IPO",
+              "slug": "ipo",
+              "number": 502,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/ipo/"
             }
           ]
         }
@@ -1790,119 +2109,243 @@
       "id": "month_6_graphs_dp_final",
       "name": "Graphs, DP & The Final Exam",
       "tier": 3,
-      "estimatedHours": 137.0,
+      "estimatedHours": 129.5,
       "topics": [
         {
-          "id": "week_21_graphs",
-          "name": "Week 21: Graphs (DFS/BFS)",
-          "estimatedHours": 32.5,
-          "description": "Visiting nodes in a network. Semiconductor context: State Machines (FSM) - device moves from Init \u2192 Idle \u2192 Active \u2192 Error. Network topology analysis.",
+          "id": "week_21_graphs_bfs_dfs",
+          "name": "Week 21: Graph BFS/DFS (Garbage Collection)",
+          "estimatedHours": 26,
+          "description": "Nodes and Edges. Semiconductor context: Garbage Collection (Mark-and-Sweep) using DFS. Mesh Network Broadcasting using BFS.",
           "learningTip": [
-            "Graph = vertices + edges. Trees are connected acyclic graphs",
-            "Representations: adjacency matrix O(V\u00b2), adjacency list O(V+E)",
-            "BFS for shortest path in unweighted, DFS for connectivity and cycles",
-            "In embedded: state machines, network topology, dependency graphs",
-            "Project: Traffic Light Controller FSM - States (RED, YEL, GRN), Events (TIMER, BTN), switch-case transitions. This IS firmware."
+            "**Adjacency List:** `vector<vector<int>> adj;` Best for sparse graphs (most embedded networks).",
+            "**BFS:** Shortest path in unweighted graph. Use a Queue. 'Broadcasting' a message.",
+            "**DFS:** Exhaustive connection check. Use Recursion/Stack. 'Marking' live objects.",
+            "**Project:** Simulate a 'Mark-and-Sweep' GC. Start from 'root' pointers, DFS to mark reachable blocks."
           ],
           "mustNotMiss": [
-            "Adjacency matrix: int adj[V][V]; adj[i][j] = 1 if edge i\u2192j",
-            "Adjacency list in C: int adj[V][MAX_EDGES]; int adj_count[V]; or linked lists",
-            "BFS: queue-based, O(V+E), finds shortest path in unweighted graphs",
-            "DFS: stack/recursion-based, O(V+E), for connectivity, cycles, topological sort",
-            "Topological sort: DFS post-order reversed, or Kahn's BFS with in-degree",
-            "Cycle detection: DFS with 3 states (WHITE/GRAY/BLACK) - cycle if visit GRAY"
+            "**Visited Array:** `bool visited[N];` Crucial to avoid infinite loops in cycles.",
+            "**Implicit Graphs:** Matrix Grid. `dx[]={0,0,1,-1}; dy[]={1,-1,0,0};`",
+            "**Connected Components:** Loop 0..N, if !visited[i] -> DFS(i), count++.",
+            "**Flood Fill:** Typical BFS recursion in image processing."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement 'Mark and Sweep' GC phase.",
+              "answer": "**DFS/BFS.** Start from root set (stack/globals). Mark every reachable object 'alive'. Unmarked are garbage."
+            },
+            {
+              "question": "Find shortest path in a mesh network.",
+              "answer": "**BFS.** Flood network from source. First time packet reaches dest = shortest path (hops)."
+            }
+          ],
+          "resources": [
+            "https://spin.atomicobject.com/2014/09/03/mark-and-sweep-gc-go/ - Visualizing Mark and Sweep",
+            "https://leetcode.com/problems/number-of-islands/solution/ - Standard Flood Fill"
           ],
           "practiceQuestions": [
             {
               "name": "Number of Islands",
               "slug": "number-of-islands",
               "number": 200,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/number-of-islands/"
             },
             {
-              "name": "Flood Fill",
-              "slug": "flood-fill",
-              "number": 733,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/flood-fill/"
+              "name": "01 Matrix",
+              "slug": "01-matrix",
+              "number": 542,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/01-matrix/"
             },
             {
-              "name": "Find the Town Judge",
-              "slug": "find-the-town-judge",
-              "number": 997,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/find-the-town-judge/"
-            },
-            {
-              "name": "Find Center of Star Graph",
-              "slug": "find-center-of-star-graph",
-              "number": 1791,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/find-center-of-star-graph/"
+              "name": "Clone Graph",
+              "slug": "clone-graph",
+              "number": 133,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/clone-graph/"
             },
             {
               "name": "Keys and Rooms",
               "slug": "keys-and-rooms",
               "number": 841,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/keys-and-rooms/"
             },
             {
               "name": "Rotting Oranges",
               "slug": "rotting-oranges",
               "number": 994,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/rotting-oranges/"
             },
             {
-              "name": "Clone Graph",
-              "slug": "clone-graph",
-              "number": 133,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/clone-graph/"
-            },
-            {
-              "name": "Course Schedule",
-              "slug": "course-schedule",
-              "number": 207,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/course-schedule/"
-            },
-            {
-              "name": "Course Schedule II (Medium)",
-              "slug": "course-schedule-ii-(medium)",
-              "number": 210,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/course-schedule-ii-(medium)/"
-            },
-            {
-              "name": "Network Delay Time (Medium)",
-              "slug": "network-delay-time-(medium)",
-              "number": 743,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/network-delay-time-(medium)/"
+              "name": "Word Ladder",
+              "slug": "word-ladder",
+              "number": 127,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/word-ladder/"
             }
           ]
         },
         {
-          "id": "week_22_dynamic_programming",
-          "name": "Week 22: Dynamic Programming (1D)",
-          "estimatedHours": 29.5,
-          "description": "Solving sub-problems once. Semiconductor context: Path Optimization - finding most power-efficient route for packet in mesh network. Resource allocation.",
+          "id": "week_22_graph_topo",
+          "name": "Week 22: Topological Sort (Build Systems)",
+          "estimatedHours": 24,
+          "description": "Ordering dependencies. Semiconductor context: Build Systems (Make/CMake) - determining compilation order. Deadlock detection in resource graphs.",
           "learningTip": [
-            "DP = recursion + memoization (or bottom-up tabulation)",
-            "Key insight: optimal solution uses optimal solutions to subproblems",
-            "Identify: overlapping subproblems + optimal substructure",
-            "In embedded: minimize memory with 1D DP or rolling array when possible"
+            "**DAG:** Directed Acyclic Graph. Topo sort only exists for DAGs.",
+            "**Kahn's Algorithm (BFS):** Count in-degrees. Queue nodes with 0 in-degree. Remove and decrement neighbors.",
+            "**DFS Approach:** Post-order traversal reversed.",
+            "**Cycle Detection:** If Topo Sort doesn't include all nodes, there is a cycle (Deadlock/Circular Dependency)."
           ],
           "mustNotMiss": [
-            "Top-down: recursive with memo - if(memo[n] != -1) return memo[n]; return memo[n] = compute(n);",
-            "Bottom-up: fill table from base cases - often more cache-friendly",
-            "State: what parameters define a subproblem? These become array dimensions",
-            "Transition: how does dp[i] depend on smaller subproblems?",
-            "Space optimization: often only need previous row - dp[2][n] or dp[n] with careful ordering",
-            "Common patterns: Fibonacci, Knapsack, LCS, Edit Distance, Longest Increasing Subsequence"
+            "**State Array:** 0=Unvisited, 1=Visiting, 2=Visited. If DFS sees 1, Cycle!",
+            "**Project:** Write a simplified 'make' utility that orders 10 files based on `#include` dependencies."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Detect task deadlock in a scheduler.",
+              "answer": "**Cycle Detection.** Build 'waits-for' graph. DFS. Back edge to 'Visiting' node = Deadlock."
+            },
+            {
+              "question": "Order compilation of C files.",
+              "answer": "**Topological Sort.** Files are nodes. Includes are edges. Kahn's Algo."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/course-schedule-ii/solution/ - Standard Topo Sort",
+            "https://www.geeksforgeeks.org/detect-cycle-in-a-graph/ - Cycle Detection"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Course Schedule",
+              "slug": "course-schedule",
+              "number": 207,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/course-schedule/"
+            },
+            {
+              "name": "Course Schedule II",
+              "slug": "course-schedule-ii",
+              "number": 210,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/course-schedule-ii/"
+            },
+            {
+              "name": "Alien Dictionary",
+              "slug": "alien-dictionary",
+              "number": 269,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/alien-dictionary/"
+            },
+            {
+              "name": "Find Eventual Safe States",
+              "slug": "find-eventual-safe-states",
+              "number": 802,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/find-eventual-safe-states/"
+            }
+          ]
+        },
+        {
+          "id": "week_23_union_find",
+          "name": "Week 23: Union Find (Clustering)",
+          "estimatedHours": 22,
+          "description": "Start with N disjoint sets, merge them. Semiconductor context: Network Clustering - grouping sensor nodes. Image Processing - Connected Component Labeling.",
+          "learningTip": [
+            "**Disjoint Set Union (DSU):** `parent[]` array. `find(x)` returns representative.",
+            "**Path Compression:** `parent[x] = find(parent[x])`. Flattens tree. Essential for O(1) amortized.",
+            "**Union by Rank:** Attach small tree to big tree.",
+            "**Kruskal's MST:** Use DSU to build Minimum Spanning Tree (Network Cabling)."
+          ],
+          "mustNotMiss": [
+            "**Find:** `if(parent[x] == x) return x; return parent[x] = find(parent[x]);`",
+            "**Union:** `rootX = find(x); rootY = find(y); if(rootX != rootY) parent[rootX] = rootY;`",
+            "**Time:** Inverse Ackermann function α(N) ≈ O(1). Theoretically fastest graph algo.",
+            "**Grid to Graph:** 2D Grid cells can be nodes. Union adjacent '1's."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find number of connected components in a network.",
+              "answer": "**Union Find.** Initialize N components. For each valid link, Union. Answer = `initial_count - successful_unions`."
+            },
+            {
+              "question": "Minimum cable to connect all sensors.",
+              "answer": "**Kruskal's Algorithm.** Sort edges by cost. Iterate and Union if endpoints not already connected."
+            }
+          ],
+          "resources": [
+            "https://cp-algorithms.com/data_structures/disjoint_set_union.html - DSU Deep Dive",
+            "https://leetcode.com/problems/number-of-provinces/solution/ - Basic Union Find"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Number of Provinces",
+              "slug": "number-of-provinces",
+              "number": 547,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/number-of-provinces/"
+            },
+            {
+              "name": "Redundant Connection",
+              "slug": "redundant-connection",
+              "number": 684,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/redundant-connection/"
+            },
+            {
+              "name": "Accounts Merge",
+              "slug": "accounts-merge",
+              "number": 721,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/accounts-merge/"
+            },
+            {
+              "name": "Min Cost to Connect All Points",
+              "slug": "min-cost-to-connect-all-points",
+              "number": 1584,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/min-cost-to-connect-all-points/"
+            },
+            {
+              "name": "Longest Consecutive Sequence",
+              "slug": "longest-consecutive-sequence",
+              "number": 128,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-consecutive-sequence/"
+            }
+          ]
+        },
+        {
+          "id": "week_24_dp_resource",
+          "name": "Week 24: DP Resource Optimization",
+          "estimatedHours": 29.5,
+          "description": "Solving sub-problems once. Semiconductor context: 0/1 Knapsack for Memory Allocation (fitting tasks into limited RAM). Bitmask DP for Peripheral State Management.",
+          "learningTip": [
+            "**DP = Recursion + Memoization:** Top-down is easier to write. Bottom-up saves stack space.",
+            "**Knapsack Pattern:** `dp[w] = max(dp[w], dp[w-weight] + value)`. Essential for resource constraint problems.",
+            "**Bitmask DP:** Use an integer to represent a set of visited nodes/states (up to 32/64).",
+            "**Project:** Implement a memory allocator optimizer that fits the most high-priority checks into 16KB of SRAM."
+          ],
+          "mustNotMiss": [
+            "**Memoization Table:** Initialize with -1. `if(memo[state] != -1) return memo[state];`",
+            "**State Reduction:** If `dp[i]` only needs `dp[i-1]`, use two variables or one array. Modulo `%` for rolling arrays.",
+            "**Bit Manipulation:** `(mask >> i) & 1` check bit. `mask | (1 << i)` set bit.",
+            "**Complexity:** O(N * Capacity) for Knapsack is pseudo-polynomial. Beware of large capacities."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Maximize value of tasks fitting in fixed time/RAM.",
+              "answer": "**0/1 Knapsack.** `dp[capacity] = max(val + dp[capacity-cost], dp[capacity])`."
+            },
+            {
+              "question": "Count ways to climb stairs with 1 or 2 steps.",
+              "answer": "**Fibonacci.** `dp[i] = dp[i-1] + dp[i-2]`. Base cases `dp[1]=1`, `dp[2]=2`."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/partition-equal-subset-sum/solution/ - Knapsack Application",
+            "https://cp-algorithms.com/dynamic_programming/profile-dynamics.html - DP on Broken Profiles (Advanced)"
           ],
           "practiceQuestions": [
             {
@@ -1913,25 +2356,25 @@
               "link": "https://leetcode.com/problems/climbing-stairs/"
             },
             {
-              "name": "Min Cost Climbing Stairs",
-              "slug": "min-cost-climbing-stairs",
-              "number": 746,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/min-cost-climbing-stairs/"
-            },
-            {
               "name": "House Robber",
               "slug": "house-robber",
               "number": 198,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/house-robber/"
             },
             {
               "name": "Coin Change",
               "slug": "coin-change",
               "number": 322,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/coin-change/"
+            },
+            {
+              "name": "Partition Equal Subset Sum",
+              "slug": "partition-equal-subset-sum",
+              "number": 416,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/partition-equal-subset-sum/"
             },
             {
               "name": "Maximum Subarray",
@@ -1948,131 +2391,286 @@
               "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
             },
             {
-              "name": "Pascal's Triangle",
-              "slug": "pascals-triangle",
-              "number": 118,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/pascals-triangle/"
+              "name": "Word Break",
+              "slug": "word-break",
+              "number": 139,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/word-break/"
             },
             {
               "name": "Decode Ways",
               "slug": "decode-ways",
               "number": 91,
-              "difficulty": "Easy",
+              "difficulty": "Medium",
               "link": "https://leetcode.com/problems/decode-ways/"
-            },
-            {
-              "name": "Longest Increasing Subsequence (Medium)",
-              "slug": "longest-increasing-subsequence-(medium)",
-              "number": 300,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/longest-increasing-subsequence-(medium)/"
-            },
-            {
-              "name": "Maximum Product Subarray (Medium)",
-              "slug": "maximum-product-subarray-(medium)",
-              "number": 152,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/maximum-product-subarray-(medium)/"
             }
           ]
         },
         {
-          "id": "week_23_hard_problems",
-          "name": "Week 23: Hard Problems (The Capstone)",
-          "estimatedHours": 42.5,
-          "description": "Deep focus sessions: 3-4 hours per problem. These are the problems that separate senior engineers from juniors. Expect to struggle. Each problem requires multiple attempts.",
+          "id": "week_25_dp_sequence",
+          "name": "Week 25: DP Sequence Alignment (Text & Bio)",
+          "estimatedHours": 28,
+          "description": "String Algorithms. Semiconductor context: Text Diffing (git diff), DNA Sequencing (Bio-Chips), Error Correction Codes (ECC distance).",
           "learningTip": [
-            "Hard problems combine multiple techniques",
-            "Pattern recognition from previous weeks is key",
-            "Time pressure: 45 min for medium, 60 min for hard",
-            "Don't panic - break problem into smaller parts"
+            "**LCS (Longest Common Subsequence):** Foundational for diff tools. `dp[i][j] = (c1==c2) ? 1+dp[i-1][j-1] : max(...)`.",
+            "**Edit Distance (Levenshtein):** Min ops to convert A to B. Used in spell checkers and autocorrect.",
+            "**Space Optimization:** These usually require O(N*M) space. Can be optimized to O(min(N,M)) if only length is needed.",
+            "**Project:** Build a 'Tiny Diff' tool that takes two strings and outputs the edit script."
           ],
           "mustNotMiss": [
-            "Start with brute force, then optimize",
-            "Common optimizations: sorting, hashing, binary search, two pointers",
-            "If stuck: try different data structure, work backwards from answer",
-            "Test edge cases: empty input, single element, maximum size",
-            "Analyze: What's the complexity? Can we do better theoretically?",
-            "For embedded: mention memory constraints, no malloc, interrupt considerations"
+            "**2D Table:** Row = String A, Col = String B. Cell `dp[i][j]` = answer for prefixes `A[0..i]` and `B[0..j]`.",
+            "**Traceback:** To reconstruct the *actual* solution (not just cost), store 'from_left', 'from_top', 'match' in a separate table.",
+            "**Hirschberg's Algo:** O(N) space for reconstructing LCS is advanced but worth knowing exists.",
+            "**Palindromes:** Longest Palindromic Subseq is LCS(s, reverse(s))."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How does `git diff` work?",
+              "answer": "**Longest Common Subsequence.** Lines are 'characters'. Find LCS, anything not in LCS is an insertion/deletion."
+            },
+            {
+              "question": "Fuzzy matching search.",
+              "answer": "**Edit Distance.** Find words in dictionary with Edit Distance < K from query."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/edit-distance/solution/ - Classical Edit Distance",
+            "https://neerc.ifmo.ru/wiki/index.php?title=Hirschberg%27s_algorithm - Linear Space LCS"
           ],
           "practiceQuestions": [
             {
-              "name": "Trapping Rain Water",
-              "slug": "trapping-rain-water",
-              "number": 42,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/trapping-rain-water/"
+              "name": "Longest Common Subsequence",
+              "slug": "longest-common-subsequence",
+              "number": 1143,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-common-subsequence/"
             },
             {
-              "name": "Merge k Sorted Lists",
-              "slug": "merge-k-sorted-lists",
-              "number": 23,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/merge-k-sorted-lists/"
+              "name": "Edit Distance",
+              "slug": "edit-distance",
+              "number": 72,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/edit-distance/"
             },
             {
-              "name": "Sliding Window Maximum",
-              "slug": "sliding-window-maximum",
-              "number": 239,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/sliding-window-maximum/"
+              "name": "Distinct Subsequences",
+              "slug": "distinct-subsequences",
+              "number": 115,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/distinct-subsequences/"
             },
             {
-              "name": "Largest Rectangle in Histogram",
-              "slug": "largest-rectangle-in-histogram",
-              "number": 84,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/largest-rectangle-in-histogram/"
+              "name": "Longest Palindromic Subsequence",
+              "slug": "longest-palindromic-subsequence",
+              "number": 516,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-palindromic-subsequence/"
             },
             {
-              "name": "Serialize and Deserialize Binary Tree",
-              "slug": "serialize-and-deserialize-binary-tree",
-              "number": 297,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"
+              "name": "Minimum ASCII Delete Sum for Two Strings",
+              "slug": "minimum-ascii-delete-sum-for-two-strings",
+              "number": 712,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/"
             },
             {
-              "name": "Implement Trie (Prefix Tree)",
-              "slug": "implement-trie-(prefix-tree)",
-              "number": 208,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/implement-trie-(prefix-tree)/"
+              "name": "Uncrossed Lines",
+              "slug": "uncrossed-lines",
+              "number": 1035,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/uncrossed-lines/"
             },
             {
-              "name": "Word Search II (Hard)",
-              "slug": "word-search-ii-(hard)",
-              "number": 212,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/word-search-ii-(hard)/"
+              "name": "Interleaving String",
+              "slug": "interleaving-string",
+              "number": 97,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/interleaving-string/"
             },
             {
-              "name": "Median of Two Sorted Arrays (Hard)",
-              "slug": "median-of-two-sorted-arrays-(hard)",
-              "number": 4,
+              "name": "Shortest Common Supersequence",
+              "slug": "shortest-common-supersequence",
+              "number": 1092,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/shortest-common-supersequence/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "month_7_expert_systems",
+      "name": "Expert Systems & Capstone",
+      "tier": 4,
+      "estimatedHours": 98,
+      "topics": [
+        {
+          "id": "week_26_concurrency",
+          "name": "Week 26: Concurrency & Real-Time Systems",
+          "estimatedHours": 20,
+          "description": "Low-level synchronization without an OS. Focus on Atomics, Memory Barriers, and Real-Time constraints. Semiconductor context: Multi-core synchronization and Lock-free data structures.",
+          "learningTip": [
+            "**Volatile != Atomic:** Volatile prevents optimization. Atomic ensures indivisibility. You usually need both.",
+            "**Spinlock vs Mutex:** Spinlock = Busy Wait (burns CPU, good for short hold). Mutex = Sleep (context switch, good for long hold).",
+            "**ABA Problem:** If a value changes A -> B -> A, a CAS (Compare-And-Swap) might pass incorrectly. Use Version Counters.",
+            "**Memory Barriers:** `DMB` (Data Memory Barrier) forces memory order. Essential when interacting with DMA or other cores."
+          ],
+          "mustNotMiss": [
+            "**Atomic CAS:** `bool compare_exchange_weak(expected, desired)`.",
+            "**LDREX/STREX:** ARM exclusives. `LDREX` loads and tags. `STREX` fails if tag is broken.",
+            "**Priority Inversion:** High priority task blocked by Low priority task holding a lock. Fix: **Priority Inheritance**.",
+            "**Deadlock:** Circular dependency. Prevention: Acquire locks in efficient fixed order."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Implement a Spinlock using C11 atomics.",
+              "answer": "`while(flag.test_and_set(std::memory_order_acquire));` to lock. `flag.clear(std::memory_order_release);` to unlock."
+            },
+            {
+              "question": "What is the 'Mars Pathfinder' problem?",
+              "answer": "**Priority Inversion.** A low-priority weather task held a mutex, blocking a high-priority bus task. A medium task preempted the low task, stalling the high task forever. Fixed with Priority Inheritance."
+            },
+            {
+              "question": "Explain Memory Barriers (DMB/DSB/ISB) on ARM.",
+              "answer": "**DMB:** Data Memory Barrier - ensures memory accesses finished. **DSB:** Data Synchronization Barrier - waits for specific instructions. **ISB:** Instruction Synchronization Barrier - flushes pipeline."
+            }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Print FooBar Alternately",
+              "slug": "print-foobar-alternately",
+              "number": 1115,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/print-foobar-alternately/"
+            },
+            {
+              "name": "Building H2O",
+              "slug": "building-h2o",
+              "number": 1117,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/building-h2o/"
+            },
+            {
+              "name": "The Dining Philosophers",
+              "slug": "the-dining-philosophers",
+              "number": 1226,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/the-dining-philosophers/"
+            },
+            {
+              "name": "Traffic Light Controlled Intersection",
+              "slug": "traffic-light-controlled-intersection",
+              "number": 1279,
               "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/median-of-two-sorted-arrays-(hard)/"
+              "link": "https://leetcode.com/problems/traffic-light-controlled-intersection/"
+            }
+          ],
+          "resources": [
+            "https://preshing.com/20120612/an-introduction-to-lock-free-programming/ - Lock Free Intro",
+            "https://www.youtube.com/watch?v=tIibPzrcw6I - Mars Pathfinder Explanation"
+          ]
+        },
+        {
+          "id": "week_27_advanced_c_architecture",
+          "name": "Week 27: Advanced C Architecture (Linux Kernel Style)",
+          "estimatedHours": 18,
+          "description": "Writing Object-Oriented C without classes. Polymorphism, Encapsulation, and Opaque Types used in Linux Kernel and large embedded codebases.",
+          "learningTip": [
+            "**Opaque Types:** `typedef struct Context ctx_t;` in header. Define struct in `.c` file. Forces users to use API, preventing direct member access.",
+            "**V-Tables:** `struct file_ops { int (*read)(...); int (*write)(...); };`. Simulate classes/interfaces using function pointers.",
+            "**Intrusive Data Structures:** `container_of(ptr, type, member)`. Don't put data in nodes; put nodes in data. Avoids `malloc` for every list element.",
+            "**Error Handling (goto):** `if(fail) goto cleanup;`. The standard pattern for resource cleanup in C kernels."
+          ],
+          "mustNotMiss": [
+            "**container_of Macro:** `#define container_of(ptr, type, member) ({ ... })`. Magic pointer arithmetic to get parent struct.",
+            "**Inheritance in C:** Struct embedding. `struct Child { struct Parent p; int child_data; };`. Cast `Child*` to `Parent*` safe due to layout.",
+            "**Polymorphism:** `void* private_data` pattern for drivers. Allows same driver structure to point to different hardware contexts."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How do you implement a 'class' with private members in C?",
+              "answer": "**Opaque Types (Pimpl Idiom).** Declare `typedef struct Object obj_t;` in `.h`. Define `struct Object { int private; };` in `.c`. User only sees the pointer."
+            },
+            {
+              "question": "What is `container_of` used for?",
+              "answer": "**Intrusive Linked Lists.** Given a pointer to a `list_head` inside a struct, calculate the address of the containing struct using `offsetof`."
+            },
+            {
+              "question": "Why use `goto` in system programming?",
+              "answer": "**Cleanup.** In functions with multiple failure points, `goto fail;` jumping to a unified cleanup section (free memory, close fds) reduces code redundancy and bugs."
+            }
+          ],
+          "resources": [
+            "https://kernel.org/doc/html/latest/core-api/kernel-api.html - Linux Kernel API",
+            "https://www.youtube.com/watch?v=PSvJ13w5h_s - Object Oriented Programming in C"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Encode and Decode TinyURL",
+              "slug": "encode-and-decode-tinyurl",
+              "number": 535,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/encode-and-decode-tinyurl/"
+            },
+            {
+              "name": "Design Hit Counter",
+              "slug": "design-hit-counter",
+              "number": 362,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-hit-counter/"
             }
           ]
         },
         {
-          "id": "week_24_25_mock_interviews",
-          "name": "Week 24-25: Mock Interviews (Whiteboard Mode)",
-          "estimatedHours": 32.5,
-          "description": "Two full weeks of intensive mock interview practice. No IDE. No Google. Paper and Pen only. This is how real interviews work. Practice speaking your logic out loud. Aim for 2-3 problems per day.",
+          "id": "week_28_capstone_kv_store",
+          "name": "Week 28: Capstone Project 'Graphite' (Pure C KV Store)",
+          "estimatedHours": 60,
+          "description": "The Final Boss. Build a persistent Key-Value Store based on Log-Structured Merge Trees (like RocksDB) using strict C99. No Classes, No STL.",
           "learningTip": [
-            "Practice under time pressure - simulate real interview conditions",
-            "Communicate your thought process clearly",
-            "Start with brute force, discuss trade-offs, then optimize",
-            "For embedded roles: always mention memory, real-time, power considerations"
+            "**Architecture:** Write -> WAL (Append Only) -> Memtable (SkipList) -> Flush -> SSTable (Disk).",
+            "**LSM Tree:** Optimized for high write throughput. Random writes become sequential writes.",
+            "**Polymorphism in C:** Use `void*` keys/values and function pointer comparators `int (*cmp)(void*, void*)`.",
+            "**Manual Memory:** You must implement your own allocators or carefully `malloc/free` nodes."
           ],
           "mustNotMiss": [
-            "Clarify: input size, constraints, edge cases BEFORE coding",
-            "Think aloud: 'I'm considering a hashmap for O(1) lookup because...'",
-            "Test with examples, including edge cases",
-            "Analyze complexity: 'This is O(n) time, O(1) space'",
-            "Embedded context: 'In a real system, I'd consider memory footprint, cache behavior, ISR safety'",
-            "Know projects on resume cold - be ready to go deep on anything listed"
+            "**Memtable:** Use **Skip List** (Week 14) or Red-Black Tree. Fast in-memory insert.",
+            "**SSTable:** Sorted String Table. Immutable file on disk. Sparse Index for fast seek.",
+            "**Cache:** Block Cache using **LRU** (Week 14) to store uncompressed data blocks.",
+            "**Manifest:** Metadata file tracking all SSTables and current 'Version'."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why LSM Tree over B+ Tree for Write-Heavy workloads?",
+              "answer": "**Sequential I/O.** LSM appends to end of file (Log). B+ Tree updates pages in place (Random I/O). Sequential is 10x-100x faster on SSD/HDD."
+            },
+            {
+              "question": "How do you handle deletes in an append-only system?",
+              "answer": "**Tombstones.** Write a special 'DELETE' marker for the key. Real deletion happens during Compaction (garbage collection)."
+            },
+            {
+              "question": "Design the 'Get(Key)' path.",
+              "answer": "1. Check Memtable. 2. Check Immutable Memtables. 3. Check Block Cache. 4. Check SSTables (Level 0 to N) using Bloom Filters first."
+            }
+          ],
+          "resources": [
+            "https://github.com/facebook/rocksdb/wiki/RocksDB-Basics - RocksDB Architecture",
+            "https://dataintensive.net/ - Designing Data-Intensive Applications (The Bible)"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Design In-Memory File System",
+              "slug": "design-in-memory-file-system",
+              "number": 588,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/design-in-memory-file-system/"
+            },
+            {
+              "name": "Design Log Storage System",
+              "slug": "design-log-storage-system",
+              "number": 635,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-log-storage-system/"
+            }
           ]
         }
       ]

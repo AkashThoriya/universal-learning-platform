@@ -14,6 +14,7 @@ import { TopicDetailSkeleton } from '@/components/skeletons';
 import { TopicContentTabs } from '@/components/topic-detail/TopicContentTabs';
 import { InterviewQuestionsSection } from '@/components/topic-detail/InterviewQuestionsSection';
 import { TopicDetailLayout } from '@/components/topic-detail/TopicDetailLayout';
+import { TopicResourcesSection } from '@/components/topic-detail/TopicResourcesSection';
 import { TopicHero } from '@/components/topic-detail/TopicHero';
 import { TopicStatsRail } from '@/components/topic-detail/TopicStatsRail';
 import { Button } from '@/components/ui/button';
@@ -389,6 +390,8 @@ export default function TopicDetailPage() {
                   onSaveNotes={handleSaveNotes}
                   onToggleQuestion={handleToggleQuestion}
                 />
+
+                <TopicResourcesSection resources={topic.resources} />
 
                 <InterviewQuestionsSection questions={topic.interviewQuestions || []} />
               </div>
