@@ -40,7 +40,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils/utils';
-import type { CreateHabitInput, Frequency, MetricType } from '@/types/habit';
+import type { CreateHabitInput, Frequency, MetricType, HabitDocument } from '@/types/habit';
+import { useEffect } from 'react';
 
 // Available icons for habits
 const ICON_OPTIONS: { name: string; icon: LucideIcon; label: string }[] = [
@@ -52,13 +53,21 @@ const ICON_OPTIONS: { name: string; icon: LucideIcon; label: string }[] = [
   { name: 'Sparkles', icon: Sparkles, label: 'Sparkle' },
 ];
 
+const QUICK_TEMPLATES = [
+  { title: 'Drink Water', icon: 'Flame', metric: 'COUNT', target: 8, freq: 'DAILY' },
+  { title: 'Read 30m', icon: 'BookOpen', metric: 'DURATION', target: 30, freq: 'DAILY' },
+  { title: 'Walk 10k Steps', icon: 'Flame', metric: 'COUNT', target: 10000, freq: 'DAILY' },
+  { title: 'Journal', icon: 'Star', metric: 'BOOLEAN', target: 1, freq: 'DAILY' },
+];
+
 interface AddHabitDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (input: CreateHabitInput) => Promise<void>;
+  onSubmit: (input: CreateHabitInput, habitId?: string) => Promise<void>;
+  initialHabit?: HabitDocument | null;
 }
 
-export function AddHabitDialog({ open, onOpenChange, onSubmit }: AddHabitDialogProps) {
+export function AddHabitDialog({ open, onOpenChange, onSubmit, initialHabit }: AddHabitDialogProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [frequency, setFrequency] = useState<Frequency>('DAILY');
@@ -67,6 +76,22 @@ export function AddHabitDialog({ open, onOpenChange, onSubmit }: AddHabitDialogP
   const [selectedIcon, setSelectedIcon] = useState('Star');
   const [submitting, setSubmitting] = useState(false);
 
+  // Sync with initialHabit when it changes or dialog opens
+  useEffect(() => {
+    if (open) {
+      if (initialHabit) {
+        setTitle(initialHabit.title);
+        setDescription(initialHabit.description || '');
+        setFrequency(initialHabit.frequency);
+        setMetricType(initialHabit.metricType);
+        setTargetValue(initialHabit.targetValue);
+        setSelectedIcon(initialHabit.icon || 'Star');
+      } else {
+        resetForm();
+      }
+    }
+  }, [open, initialHabit]);
+
   const resetForm = () => {
     setTitle('');
     setDescription('');
@@ -74,6 +99,14 @@ export function AddHabitDialog({ open, onOpenChange, onSubmit }: AddHabitDialogP
     setMetricType('BOOLEAN');
     setTargetValue(1);
     setSelectedIcon('Star');
+  };
+
+  const applyTemplate = (t: any) => {
+    setTitle(t.title);
+    setSelectedIcon(t.icon);
+    setMetricType(t.metric as MetricType);
+    setTargetValue(t.target);
+    setFrequency(t.freq as Frequency);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,7 +126,9 @@ export function AddHabitDialog({ open, onOpenChange, onSubmit }: AddHabitDialogP
       if (trimmedDesc) {
         input.description = trimmedDesc;
       }
-      await onSubmit(input);
+
+      await onSubmit(input, initialHabit?.id);
+
       resetForm();
       onOpenChange(false);
     } finally {
@@ -112,14 +147,30 @@ export function AddHabitDialog({ open, onOpenChange, onSubmit }: AddHabitDialogP
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/40 dark:to-amber-900/40">
                 <Sparkles className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               </div>
-              Create Custom Habit
+
+              {initialHabit ? 'Edit Habit' : 'Create Custom Habit'}
             </DialogTitle>
             <DialogDescription>
-              Build a habit that matters to you. Pick an icon and set how you want to track it.
+              {initialHabit ? 'Update your habit details below.' : 'Build a habit that matters to you. Pick an icon and set how you want to track it.'}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            {/* Quick Templates (Only in Create Mode) */}
+            {!initialHabit && (
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                {QUICK_TEMPLATES.map((t, i) => (
+                  <Badge
+                    key={i}
+                    variant="outline"
+                    className="cursor-pointer hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-colors shrink-0 font-normal"
+                    onClick={() => applyTemplate(t)}
+                  >
+                    {t.title}
+                  </Badge>
+                ))}
+              </div>
+            )}
             {/* Live Preview Card */}
             <motion.div
               initial={{ opacity: 0, y: -8 }}
@@ -289,7 +340,7 @@ export function AddHabitDialog({ open, onOpenChange, onSubmit }: AddHabitDialogP
               size="sm"
               className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-sm"
             >
-              {submitting ? 'Creating...' : 'Create Habit'}
+              {submitting ? 'Saving...' : (initialHabit ? 'Save Changes' : 'Create Habit')}
             </Button>
           </DialogFooter>
         </form>

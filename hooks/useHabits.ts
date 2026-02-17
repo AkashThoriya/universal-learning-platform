@@ -24,6 +24,7 @@ interface UseHabitsReturn {
   error: string | null;
   toggleHabit: (habitId: string) => Promise<void>;
   incrementHabit: (habitId: string, value?: number) => Promise<void>;
+  updateHabit: (habitId: string, updates: Partial<CreateHabitInput>) => Promise<void>;
   createHabit: (input: CreateHabitInput) => Promise<void>;
   deleteHabit: (habitId: string) => Promise<void>;
   initializeDefaults: () => Promise<void>;
@@ -147,6 +148,20 @@ export function useHabits(
     [userId, courseId]
   );
 
+
+
+  const updateHabit = useCallback(
+    async (habitId: string, updates: Partial<CreateHabitInput>) => {
+      if (!userId) return;
+      const result = await habitEngine.updateHabit(userId, habitId, updates);
+      if (!result.success) {
+        setError('Failed to update habit');
+      }
+    },
+    [userId]
+  );
+
+
   const deleteHabit = useCallback(
     async (habitId: string) => {
       if (!userId) return;
@@ -174,6 +189,7 @@ export function useHabits(
     toggleHabit,
     incrementHabit,
     createHabit,
+    updateHabit,
     deleteHabit,
     initializeDefaults,
   };

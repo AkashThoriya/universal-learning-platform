@@ -119,6 +119,8 @@ export interface CreateHabitInput {
   courseId?: string | null;
 }
 
+export interface UpdateHabitInput extends Partial<CreateHabitInput> {}
+
 // ============================================
 // Wellness Check-In — replaces daily log mood tracking
 // ============================================

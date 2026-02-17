@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, MoreVertical, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { HabitDocument, HabitStats } from '@/types/habit';
+import type { HabitDocument } from '@/types/habit';
 
 interface HistoryLayoutProps {
   habit: HabitDocument;
@@ -20,7 +20,7 @@ interface HistoryLayoutProps {
 }
 
 export function HistoryLayout({ habit, children }: HistoryLayoutProps) {
-  const router = useRouter();
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 pb-20">

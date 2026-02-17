@@ -8,6 +8,7 @@ import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
 import { AddHabitDialog } from '@/components/habits/AddHabitDialog';
 import { HabitGrid } from '@/components/habits/HabitGrid';
+import type { HabitDocument, CreateHabitInput } from '@/types/habit';
 import { StreakHeatmap } from '@/components/habits/StreakHeatmap';
 import { WellnessCheckIn } from '@/components/habits/WellnessCheckIn';
 import PageContainer from '@/components/layout/PageContainer';
@@ -37,12 +38,22 @@ export default function HabitsPage() {
     toggleHabit,
     incrementHabit,
     createHabit,
+    updateHabit,
     deleteHabit,
     initializeDefaults,
   } = useHabits(user?.uid, activeCourseId);
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<HabitDocument | null>(null);
   const [initialized, setInitialized] = useState(false);
+
+  const handleSaveHabit = async (input: CreateHabitInput, habitId?: string) => {
+    if (habitId) {
+      await updateHabit(habitId, input);
+    } else {
+      await createHabit(input);
+    }
+  };
 
   // Initialize default system habits on first visit
   useEffect(() => {
@@ -289,7 +300,14 @@ export default function HabitsPage() {
                         onToggle={toggleHabit}
                         onIncrement={incrementHabit}
                         onDelete={deleteHabit}
-                        onAddClick={() => setAddDialogOpen(true)}
+                          onEdit={(habit) => {
+                            setEditingHabit(habit);
+                            setAddDialogOpen(true);
+                          }}
+                          onAddClick={() => {
+                            setEditingHabit(null);
+                            setAddDialogOpen(true);
+                          }}
                       />
                     )}
                   </div>
@@ -375,8 +393,12 @@ export default function HabitsPage() {
         {/* Add Habit Dialog */}
         <AddHabitDialog
           open={addDialogOpen}
-          onOpenChange={setAddDialogOpen}
-          onSubmit={createHabit}
+          onOpenChange={(open) => {
+            setAddDialogOpen(open);
+            if (!open) setEditingHabit(null);
+          }}
+          onSubmit={handleSaveHabit}
+          initialHabit={editingHabit}
         />
       </div>
     </AuthGuard>

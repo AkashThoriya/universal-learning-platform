@@ -16,7 +16,8 @@ import {
   Pencil,
   type LucideIcon,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
+import confetti from 'canvas-confetti';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,6 +62,7 @@ interface HabitCardProps {
   onToggle: (habitId: string) => void;
   onIncrement: (habitId: string, value: number) => void;
   onDelete?: (habitId: string) => void;
+  onEdit?: (habit: HabitDocument) => void;
 }
 
 /** Circular progress ring component */
@@ -151,7 +153,7 @@ function SegmentedProgress({
   );
 }
 
-export function HabitCard({ habit, onToggle, onIncrement, onDelete }: HabitCardProps) {
+export function HabitCard({ habit, onToggle, onIncrement, onDelete, onEdit }: HabitCardProps) {
   const IconComponent = ICON_MAP[habit.icon ?? 'Star'] ?? Star;
 
   // Safety check: ensure targetValue is valid to prevent division by zero or NaN
@@ -164,6 +166,21 @@ export function HabitCard({ habit, onToggle, onIncrement, onDelete }: HabitCardP
   );
 
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const prevCompletedRef = useRef(habit.isCompletedToday);
+
+  // Trigger confetti on completion
+  useEffect(() => {
+    if (!prevCompletedRef.current && habit.isCompletedToday) {
+      confetti({
+        particleCount: 40,
+        spread: 70,
+        origin: { y: 0.7 },
+        colors: ['#22c55e', '#f97316', '#eab308'],
+        disableForReducedMotion: true,
+      });
+    }
+    prevCompletedRef.current = habit.isCompletedToday;
+  }, [habit.isCompletedToday]);
 
   const streakMessage = useMemo(() => {
     if ((habit.currentStreak || 0) >= 30) return '🏆 Legendary!';
@@ -197,7 +214,7 @@ export function HabitCard({ habit, onToggle, onIncrement, onDelete }: HabitCardP
           </AnimatePresence>
 
           {/* Settings Menu (Custom Habits Only) */}
-          {habit.type === 'CUSTOM' && onDelete && (
+          {habit.type === 'CUSTOM' && (onDelete || onEdit) && (
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -206,7 +223,7 @@ export function HabitCard({ habit, onToggle, onIncrement, onDelete }: HabitCardP
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-32">
-                  <DropdownMenuItem disabled>
+                  <DropdownMenuItem onClick={() => onEdit?.(habit)}>
                     <Pencil className="mr-2 h-3.5 w-3.5" />
                     <span>Edit</span>
                   </DropdownMenuItem>

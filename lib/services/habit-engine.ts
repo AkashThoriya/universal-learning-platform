@@ -549,6 +549,44 @@ class HabitEngine {
   }
 
   // ============================================
+  // updateHabit — Edit habit details
+  // ============================================
+
+  async updateHabit(
+    userId: string,
+    habitId: string,
+    updates: Partial<CreateHabitInput>
+  ): Promise<Result<void>> {
+    try {
+      const habitRef = doc(db, this.habitsPath(userId), habitId);
+      
+      const payload: any = {
+        ...updates,
+        updatedAt: serverTimestamp(),
+      };
+
+      // Ensure we don't accidentally set undefined
+      Object.keys(payload).forEach(
+        (key) => payload[key] === undefined && delete payload[key]
+      );
+
+      // If metric type changes to BOOLEAN, enforce target = 1
+      if (updates.metricType === 'BOOLEAN') {
+        payload.targetValue = 1;
+      }
+
+      await updateDoc(habitRef, payload);
+      logInfo('Habit updated', { userId, habitId });
+      return createSuccess(undefined);
+    } catch (error) {
+      logError('Failed to update habit', { userId, habitId });
+      return createError(
+        error instanceof Error ? error : new Error('Failed to update habit')
+      );
+    }
+  }
+
+  // ============================================
   // deleteHabit — Soft-delete
   // ============================================
 

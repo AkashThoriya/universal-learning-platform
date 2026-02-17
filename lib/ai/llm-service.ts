@@ -17,7 +17,7 @@ import {
   LLMResponse,
   LLMQuestionResponse,
 } from '@/lib/ai/types';
-import { logInfo, logError, logWarning } from '@/lib/utils/logger';
+import { logWarning } from '@/lib/utils/logger';
 import { createError, createSuccess, Result } from '@/lib/utils/types-utils';
 import { AdaptiveQuestion } from '@/types/adaptive-testing';
 import { MissionDifficulty } from '@/types/mission-system';
@@ -156,7 +156,7 @@ class GeminiProvider {
     // Strategy 2: Extract JSON from code fences (common LLM behavior)
     try {
       const match = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-      if (match) {
+      if (match && match[1]) {
         return this.validateAndNormalizeQuestions(JSON.parse(match[1]), request);
       }
     } catch {}

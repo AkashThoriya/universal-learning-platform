@@ -10,8 +10,8 @@ import { HistoryLayout } from '@/components/habits/history/HistoryLayout';
 import { HistoryList } from '@/components/habits/history/HistoryList';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { habitHistoryService } from '@/lib/services/habit-history';
-import { habitEngine } from '@/lib/services/habit-engine';
-import type { HabitDocument, HabitStats } from '@/types/habit';
+
+import type { HabitDocument } from '@/types/habit';
 import { Flame, Trophy, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
@@ -26,7 +26,7 @@ export default function HabitHistoryPage() {
 
     const [habit, setHabit] = useState<HabitDocument | null>(null);
     const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState<HabitStats | null>(null);
+
     const [isBackfilling, setIsBackfilling] = useState(false);
 
     useEffect(() => {
@@ -41,9 +41,7 @@ export default function HabitHistoryPage() {
                     const matchedHabit = { id: docSnap.id, ...docSnap.data() } as HabitDocument;
                     setHabit(matchedHabit);
 
-                    // Calculate stats for this single habit
-                    const singleHabitStats = habitEngine.getHabitStats([matchedHabit]);
-                    setStats(singleHabitStats);
+
                 }
             } catch (error) {
                 console.error('Failed to fetch habit details', error);
@@ -150,7 +148,7 @@ export default function HabitHistoryPage() {
             {/* Detailed List Section */}
             <div className="space-y-4">
                 <h2 className="text-lg font-semibold px-1">Detailed Logs</h2>
-                <HistoryList userId={user?.uid!} habitId={habitId} />
+                {user?.uid && habitId && <HistoryList userId={user.uid} habitId={habitId} />}
             </div>
 
         </HistoryLayout>

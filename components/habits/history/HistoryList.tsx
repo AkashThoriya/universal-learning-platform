@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { format } from 'date-fns';
-import { Calendar, CheckCircle2, Circle, Clock, MoreHorizontal, Plus } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, CheckCircle2, Circle, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

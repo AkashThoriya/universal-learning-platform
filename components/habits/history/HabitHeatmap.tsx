@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/utils';
-import type { HabitDocument } from '@/types/habit';
+
 
 interface HabitHeatmapProps {
   history: Record<string, number>;
@@ -12,7 +12,7 @@ interface HabitHeatmapProps {
   colorTheme?: 'green' | 'orange' | 'blue';
 }
 
-export function HabitHeatmap({ history, targetValue, colorTheme = 'orange' }: HabitHeatmapProps) {
+export function HabitHeatmap({ history, targetValue }: HabitHeatmapProps) {
   // Generate last 365 days
   const days = useMemo(() => {
     const result = [];
