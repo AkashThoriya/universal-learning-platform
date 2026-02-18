@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Clock, CheckCircle, Flame, Target } from 'lucide-react';
 
 import MobileScrollGrid from '@/components/layout/MobileScrollGrid';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils/utils';
 
