@@ -18,6 +18,7 @@ export { SkeletonCard, ShimmerOverlay, SkeletonGrid } from './SkeletonCard';
 // Specific skeletons
 export { StatCardSkeleton, StatCardSkeletonGrid } from './StatCardSkeleton';
 export { TestCardSkeleton, TestCardSkeletonGrid } from './TestCardSkeleton';
+export { TestConfigSkeleton } from './TestConfigSkeleton';
 export { RecommendationCardSkeleton, RecommendationCardSkeletonGrid } from './RecommendationCardSkeleton';
 export { TestDetailSkeleton } from './TestDetailSkeleton';
 export { ReviewPageSkeleton } from './ReviewPageSkeleton';

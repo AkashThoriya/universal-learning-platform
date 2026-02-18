@@ -335,6 +335,7 @@ export default function TestDetailPage() {
             result={questionResult}
             adaptiveMode
             showTimer
+            timeLimit={test.timeLimitPerQuestion}
           />
         </div>
       </div>
@@ -459,10 +460,11 @@ export default function TestDetailPage() {
                   <Clock className="w-4 h-4 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">No Time Limit per Question</h3>
+                  <h3 className="font-semibold text-gray-900">{test.timeLimitPerQuestion ? 'Timed Response' : 'No Time Limit per Question'}</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    While there is an estimated duration, take your time to think. Accuracy is more important than speed
-                    for your score.
+                    {test.timeLimitPerQuestion
+                      ? `You have ${test.timeLimitPerQuestion} seconds to answer each question. Speed counts!`
+                      : 'While there is an estimated duration, take your time to think. Accuracy is more important than speed for your score.'}
                   </p>
                 </div>
               </div>

@@ -270,7 +270,7 @@ export default function NotesRevisionPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="secondary">Tier {subjectData.subject.tier}</Badge>
+
                       {expandedSubjects.has(subjectData.subject.id) ? (
                         <ChevronDown className="h-5 w-5 text-muted-foreground" />
                       ) : (

@@ -16,6 +16,7 @@ import {
 
   LucideIcon,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { CourseOverviewCard } from '@/components/dashboard/CourseOverviewCard';
@@ -35,9 +36,10 @@ import { customLearningService } from '@/lib/firebase/firebase-services';
 import { getUser, getSyllabus, updateUser, getAllProgress } from '@/lib/firebase/firebase-utils';
 import { adaptiveTestingService } from '@/lib/services/adaptive-testing-service';
 import { progressService } from '@/lib/services/progress-service';
+import { generateTodayRecommendations } from '@/lib/utils/dashboard-utils';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
 import { cn } from '@/lib/utils/utils';
-import { Exam, SyllabusSubject, SelectedCourse, TopicProgress } from '@/types/exam';
+import { Exam, SelectedCourse } from '@/types/exam';
 
 interface DashboardStats {
   totalStudyTime: number;
@@ -69,110 +71,14 @@ interface AdaptiveDashboardProps {
   className?: string;
 }
 
-// Helper function to generate today's study recommendations
-const generateTodayRecommendations = (
-  _exam: Exam,
-  syllabus: SyllabusSubject[],
-  topicProgress: TopicProgress[],
-  examDaysLeft?: number
-): {
-  currentTopic?: string;
-  currentTopicId?: string;
-  currentSubjectId?: string;
-  nextAction?: string;
-  studyGoal?: string;
-  examDaysLeft?: number;
-  subjectRecommendation?: string;
-  todaysPlan?: string[];
-  allTopicsComplete?: boolean;
-} => {
-  // Find the next topic to study (first incomplete topic)
-  let currentTopic = '';
-  let currentTopicId = '';
-  let currentSubjectId = '';
-  let nextAction = '';
-  let subjectRecommendation = '';
-  const todaysPlan: string[] = [];
-  let foundIncompleteTopic = false;
 
-  if (syllabus.length > 0) {
-    // Find first subject with incomplete topics
-    for (const subject of syllabus) {
-      if (subject.topics && subject.topics.length > 0) {
-        const incompleteTopic = subject.topics.find(topic => {
-          // Check topic progress status from Firebase data
-          const progress = topicProgress.find(p => p.topicId === topic.id);
-          // Only recommend topics that are NOT completed or mastered
-          const status = progress?.status;
-          return !status || !['completed', 'mastered'].includes(status);
-        });
-
-        if (incompleteTopic) {
-          currentTopic = `${subject.name} - ${incompleteTopic.name}`;
-          currentTopicId = incompleteTopic.id;
-          currentSubjectId = subject.id;
-          subjectRecommendation = subject.name;
-          todaysPlan.push(`📚 Study ${incompleteTopic.name}`);
-          todaysPlan.push(`⏱️ Target: ${incompleteTopic.estimatedHours ?? 2} hours`);
-          foundIncompleteTopic = true;
-          break;
-        }
-      }
-    }
-  }
-
-  // Generate action based on day and exam timeline
-  if (examDaysLeft !== undefined) {
-    if (examDaysLeft <= 7) {
-      nextAction = 'Take a practice test';
-    } else if (examDaysLeft <= 30) {
-      nextAction = 'Review and practice questions';
-    } else {
-      nextAction = 'Study new topics';
-    }
-  } else {
-    nextAction = 'Continue your learning journey';
-  }
-
-  // Generate study goal
-  let studyGoal = '';
-  if (examDaysLeft !== undefined) {
-    if (examDaysLeft <= 7) {
-      studyGoal = 'Focus on revision and mock tests';
-    } else if (examDaysLeft <= 30) {
-      studyGoal = 'Complete topic review and practice';
-    } else {
-      studyGoal = 'Master fundamental concepts';
-    }
-  } else {
-    studyGoal = 'Build strong foundations';
-  }
-
-  // Add general plan items
-  if (todaysPlan.length === 0) {
-    todaysPlan.push('📚 Choose a topic to study');
-    todaysPlan.push('⏱️ Target: 2 hours focused study');
-  }
-  todaysPlan.push('🧪 Take practice test');
-  todaysPlan.push('📝 Review weak areas');
-
-  return {
-    ...(foundIncompleteTopic ? { currentTopic } : {}),
-    ...(currentTopicId ? { currentTopicId } : {}),
-    ...(currentSubjectId ? { currentSubjectId } : {}),
-    nextAction,
-    studyGoal,
-    subjectRecommendation: subjectRecommendation || 'Choose a subject to begin',
-    todaysPlan,
-    ...(examDaysLeft !== undefined ? { examDaysLeft } : {}),
-    allTopicsComplete: !foundIncompleteTopic && syllabus.length > 0,
-  };
-};
 
 export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps) {
   const { user } = useAuth();
   const { activeCourseId: contextCourseId } = useCourse();
+
   const { toast } = useToast();
+  const router = useRouter();
 
   logInfo('AdaptiveDashboard component initialized', {
     userId: user?.uid ?? 'no-user',
@@ -334,19 +240,54 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
 
           if (progressResult.success && progressResult.data) {
             const progress = progressResult.data;
+
+            // Recalculate metrics from topicProgress to ensure consistency with Strategy page
+            // (Fixes issue where Strategy shows data but Dashboard shows 0)
+            const topicInfoMap = new Map<string, { estimatedHours: number, isCustom: boolean }>();
+            (syllabus || []).forEach(subject => {
+              if (subject.topics) {
+                subject.topics.forEach(topic => {
+                  topicInfoMap.set(topic.id, {
+                    estimatedHours: topic.estimatedHours || 1,
+                    isCustom: subject.isCustom || false
+                  });
+                });
+              }
+            });
+
+            let calculatedStudyMinutes = 0;
+            let calculatedCustomMinutes = 0;
+            let calculatedCompletedTopics = 0;
+
+            (topicProgress || []).forEach(p => {
+              const info = topicInfoMap.get(p.topicId);
+              let duration = p.totalStudyTime || 0;
+
+              // Fallback Logic: If completed/mastered but 0 time logged, use estimated hours
+              if (duration === 0 && (p.status === 'completed' || p.status === 'mastered')) {
+                duration = (info?.estimatedHours || 1) * 60;
+              }
+
+              calculatedStudyMinutes += duration;
+
+              if (p.status === 'completed' || p.status === 'mastered') {
+                calculatedCompletedTopics++;
+              }
+
+              if (info?.isCustom) {
+                calculatedCustomMinutes += duration;
+              }
+            });
+
             realStats = {
-              totalStudyTime: Math.round(progress.overallProgress.totalTimeInvested / 60), // Convert minutes to hours
+              totalStudyTime: Math.round(calculatedStudyMinutes / 60), // Use calculated time
               completedSessions: progress.overallProgress.totalMissionsCompleted,
               currentStreak: progress.overallProgress.currentStreak,
               weeklyGoalProgress: Math.min(progress.overallProgress.consistencyRating, 100),
-              completedTopics:
-                progress.trackProgress.exam.masteredSkills.length +
-                progress.trackProgress.course_tech.masteredSkills.length,
+              completedTopics: calculatedCompletedTopics, // Use calculated count
               customGoalsActive: 0,
               customGoalsCompleted: 0,
-              customLearningHours: Math.round(
-                (progress.trackProgress.exam.timeInvested + progress.trackProgress.course_tech.timeInvested) / 60
-              ),
+              customLearningHours: Math.round(calculatedCustomMinutes / 60), // Use calculated custom time
               adaptiveTestsCompleted: userTests.filter(t => t.status === 'completed').length,
               adaptiveTestsAverage:
                 userTests.filter(t => t.status === 'completed').length > 0
@@ -627,7 +568,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </div>
               <Button
                 onClick={() =>
-                  (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)
+                  router.push(`/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)
                 }
                 className="bg-green-600 hover:bg-green-700 gap-2 w-full sm:w-auto"
               >
@@ -661,7 +602,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               </p>
             </div>
             <Button
-              onClick={() => (window.location.href = '/habits')}
+              onClick={() => router.push('/habits')}
               className="bg-orange-600 hover:bg-orange-700 gap-2 w-full sm:w-auto"
             >
               <Flame className="h-4 w-4" />
@@ -713,7 +654,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       variant="outline"
                       className="h-8 text-xs bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
                       onClick={() =>
-                        (window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)
+                        router.push(`/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`)
                       }
                     >
                       Log Progress
@@ -754,7 +695,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             <Button
               variant="outline"
               size="sm"
-              onClick={() => (window.location.href = '/syllabus')}
+              onClick={() => router.push('/syllabus')}
               className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px] h-10"
             >
               <BookOpen className="h-4 w-4 mr-2" />
@@ -763,7 +704,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             <Button
               variant="outline"
               size="sm"
-              onClick={() => (window.location.href = '/test')}
+              onClick={() => router.push('/test')}
               className="bg-white/60 hover:bg-white/80 flex-1 min-w-[120px] h-10"
             >
               <Brain className="h-4 w-4 mr-2" />
@@ -809,7 +750,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       <Button
                         size="sm"
                         className="bg-green-600 hover:bg-green-700"
-                        onClick={() => (window.location.href = '/test')}
+                        onClick={() => router.push('/test')}
                       >
                         Take Test
                       </Button>
@@ -826,7 +767,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       <Button
                         size="sm"
                         className="bg-orange-600 hover:bg-orange-700"
-                        onClick={() => (window.location.href = '/syllabus')}
+                          onClick={() => router.push('/syllabus')}
                       >
                         View Syllabus
                       </Button>
@@ -856,7 +797,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                       <Button
                         size="sm"
                         className="bg-blue-600 hover:bg-blue-700"
-                        onClick={() => (window.location.href = '/syllabus')}
+                        onClick={() => router.push('/syllabus')}
                       >
                         Start Now
                       </Button>
@@ -898,7 +839,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
                     <Button
                       size="sm"
                       className="bg-indigo-600 hover:bg-indigo-700"
-                      onClick={() => (window.location.href = '/test')}
+                      onClick={() => router.push('/test')}
                     >
                       {stats.adaptiveTestsCompleted > 0 ? 'Continue' : 'Try Now'}
                     </Button>
@@ -1042,9 +983,9 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
           <CourseOverviewCard
             onContinue={() => {
               if (todayRecommendations?.currentTopicId && todayRecommendations?.currentSubjectId) {
-                window.location.href = `/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`;
+                router.push(`/syllabus/${todayRecommendations.currentTopicId}?subject=${todayRecommendations.currentSubjectId}`);
               } else {
-                window.location.href = '/syllabus';
+                router.push('/syllabus');
               }
             }}
           />

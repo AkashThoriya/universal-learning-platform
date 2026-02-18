@@ -155,9 +155,9 @@ export default function StrategyPage() {
   syllabus.forEach(subject => {
      subject.topics.forEach(topic => {
         const p = progressMapLocal.get(topic.id);
-        if (!p) {
+        if (!p || p.status === 'not_started') {
            pipelineStats.discovery++;
-        } else if (p.status === 'completed' && (p.masteryScore || 0) >= 80) {
+        } else if (p.status === 'mastered' || (p.status === 'completed' && (p.masteryScore || 0) >= 80)) {
            pipelineStats.mastered++;
         } else if (p.status === 'completed') {
            pipelineStats.polishing++;

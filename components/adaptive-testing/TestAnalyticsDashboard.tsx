@@ -2,33 +2,34 @@
 
 import { motion } from 'framer-motion';
 import {
-  BarChart3,
   TrendingUp,
   Target,
   Clock,
-  Brain,
   Star,
   Trophy,
-  Zap,
-  CheckCircle2,
-  XCircle,
-  Activity,
-  LineChart,
   Award,
   BookOpen,
   AlertTriangle,
   Lightbulb,
-  ArrowUp,
-  ArrowDown,
-  Equal,
+  ChevronRight,
 } from 'lucide-react';
-import { useState } from 'react';
+import {
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip as RechartsTooltip,
+} from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/utils';
@@ -58,11 +59,8 @@ export default function TestAnalyticsDashboard({
   questions = [],
   responses = [],
   showDetailedAnalysis = true,
-  showRecommendations = true,
   className,
 }: TestAnalyticsDashboardProps) {
-  const [activeTab, setActiveTab] = useState('overview');
-
   const formatTime = (ms: number) => {
     const minutes = Math.floor(ms / (1000 * 60));
     const seconds = Math.floor((ms % (1000 * 60)) / 1000);
@@ -101,15 +99,18 @@ export default function TestAnalyticsDashboard({
     return { level: 'Beginner', color: 'text-orange-600', icon: BookOpen };
   };
 
-  const getChangeIcon = (change: number) => {
-    if (change > 0) {
-      return <ArrowUp className="h-3 w-3 text-green-600" />;
-    }
-    if (change < 0) {
-      return <ArrowDown className="h-3 w-3 text-red-600" />;
-    }
-    return <Equal className="h-3 w-3 text-gray-600" />;
-  };
+
+  const PIE_DATA = [
+    { name: 'Correct', value: performance.correctAnswers, color: '#22c55e' },
+    { name: 'Incorrect', value: performance.totalQuestions - performance.correctAnswers, color: '#ef4444' },
+  ];
+
+  const RADAR_DATA = subjectPerformances.map(s => ({
+    subject: s.subjectId.length > 15 ? s.subjectId.substring(0, 15) + '...' : s.subjectId,
+    fullSubject: s.subjectId,
+    accuracy: s.accuracy,
+    fullMark: 100,
+  }));
 
   const performanceGrade = getPerformanceGrade(performance.accuracy);
   const safeAbilityEstimate = Number.isNaN(performance.finalAbilityEstimate) ? 0 : performance.finalAbilityEstimate;
@@ -118,635 +119,290 @@ export default function TestAnalyticsDashboard({
 
   return (
     <TooltipProvider>
-      <div className={cn('space-y-6', className)}>
-        {/* Header with Overall Performance */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50">
-          <CardHeader className="pb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl font-bold text-gray-800">Test Performance Analysis</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Comprehensive breakdown of your adaptive test results
-                </CardDescription>
+      <div className={cn('space-y-8 animate-in fade-in duration-500', className)}>
+        {/* Header Section with Score & Radial Graph */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Score Card */}
+          <Card className="col-span-1 lg:col-span-2 border-0 shadow-lg bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl -mr-16 -mt-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-100/50 rounded-full blur-2xl -ml-12 -mb-12"></div>
+
+            <CardHeader className="pb-2 relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <Badge variant="outline" className="bg-white/80 backdrop-blur-sm">Test Results</Badge>
+                <span className="text-xs text-muted-foreground">{new Date().toLocaleDateString()}</span>
               </div>
-              <div className="flex items-center gap-4">
-                <div className={cn('p-4 rounded-xl border-2', performanceGrade.bg, performanceGrade.border)}>
-                  <div className="text-center">
-                    <div className={cn('text-3xl font-bold', performanceGrade.color)}>{performanceGrade.grade}</div>
-                    <div className="text-xs text-gray-600">Grade</div>
+              <CardTitle className="text-3xl font-bold text-gray-900 tracking-tight">Performance Summary</CardTitle>
+              <CardDescription className="text-base text-gray-600">
+                You scored <span className="font-semibold text-gray-900">{performance.accuracy.toFixed(0)}%</span> with a <span className={cn("font-semibold", performanceGrade.color)}>{performanceGrade.grade}</span> grade.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="pt-4 relative z-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+                {/* Metrics */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 p-3 bg-white/60 rounded-xl border border-white/50 shadow-sm backdrop-blur-sm transform transition-transform hover:scale-105">
+                    <div className={cn("p-3 rounded-full bg-opacity-10", abilityInfo.color.replace('text-', 'bg-'))}>
+                      <AbilityIcon className={cn("h-6 w-6", abilityInfo.color)} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Ability Level</p>
+                      <h4 className={cn("text-xl font-bold", abilityInfo.color)}>{abilityInfo.level}</h4>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-3 bg-white/60 rounded-xl border border-white/50 shadow-sm backdrop-blur-sm transform transition-transform hover:scale-105">
+                    <div className="p-3 rounded-full bg-blue-100 text-blue-600">
+                      <Clock className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Total Time</p>
+                      <h4 className="text-xl font-bold text-gray-900">{formatTime(performance.totalTime)}</h4>
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-blue-600">{performance.accuracy.toFixed(1)}%</div>
-                  <div className="text-sm text-gray-600">Accuracy</div>
+
+                {/* Donut Chart */}
+                <div className="h-[200px] w-full relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={PIE_DATA}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {PIE_DATA.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip
+                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  {/* Centered Text */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-3xl font-bold text-gray-900">{performance.correctAnswers}/{performance.totalQuestions}</span>
+                    <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Correct</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Correct Answers */}
-          <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }}>
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Correct Answers</p>
-                    <p className="text-3xl font-bold text-green-600">
-                      {performance.correctAnswers}/{performance.totalQuestions}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-green-100 rounded-full">
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <Progress value={(performance.correctAnswers / performance.totalQuestions) * 100} className="h-2" />
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Ability Estimate */}
-          <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }}>
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Ability Level</p>
-                    <p className={cn('text-2xl font-bold', abilityInfo.color)}>{abilityInfo.level}</p>
-                    <p className="text-sm text-gray-500">{safeAbilityEstimate.toFixed(2)}</p>
-                  </div>
-                  <div
-                    className={cn('p-3 rounded-full', abilityInfo.color.replace('text-', 'bg-').replace('600', '100'))}
-                  >
-                    <AbilityIcon className={cn('h-6 w-6', abilityInfo.color)} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Total Time */}
-          <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }}>
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Total Time</p>
-                    <p className="text-2xl font-bold text-blue-600">{formatTime(performance.totalTime)}</p>
-                    <p className="text-sm text-gray-500">Avg: {formatTime(performance.averageResponseTime)}</p>
-                  </div>
-                  <div className="p-3 bg-blue-100 rounded-full">
-                    <Clock className="h-6 w-6 text-blue-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Questions Answered */}
-          <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ duration: 0.2 }}>
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Questions</p>
-                    <p className="text-3xl font-bold text-purple-600">{performance.totalQuestions}</p>
-                    {adaptiveMetrics && (
-                      <p className="text-sm text-gray-500">
-                        Efficiency: {(adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
-                      </p>
+          {/* Subject Radar or Breakdown */}
+          <Card className="col-span-1 border-0 shadow-lg flex flex-col">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Target className="h-5 w-5 text-blue-500" />
+                Topic Mastery
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 min-h-[250px] relative">
+              {RADAR_DATA.length >= 3 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="70%" data={RADAR_DATA}>
+                    <PolarGrid stroke="#e5e7eb" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#6b7280', fontSize: 10 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar
+                      name="Accuracy"
+                      dataKey="accuracy"
+                      stroke="#8884d8"
+                      fill="#8884d8"
+                      fillOpacity={0.6}
+                            />
+                    <RechartsTooltip
+                      formatter={(value: number) => [`${value.toFixed(0)}%`, 'Accuracy']}
+                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              ) : (
+                // Fallback list for fewer subjects
+                <div className="space-y-4">
+                  {subjectPerformances.map((s) => (
+                    <div key={s.subjectId} className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium text-gray-700 truncate max-w-[150px]">{s.subjectId}</span>
+                        <span className="text-gray-900 font-bold">{s.accuracy.toFixed(0)}%</span>
+                      </div>
+                      <Progress value={s.accuracy} className={cn("h-2", s.accuracy > 70 ? "bg-green-100" : "bg-gray-100")} indicatorClassName={cn(s.accuracy > 70 ? "bg-green-500" : s.accuracy > 40 ? "bg-yellow-500" : "bg-red-500")} />
+                    </div>
+                  ))}
+                    {subjectPerformances.length === 0 && (
+                      <div className="text-center text-gray-400 py-10">
+                        No subject metrics recorded.
+                      </div>
                     )}
                   </div>
-                  <div className="p-3 bg-purple-100 rounded-full">
-                    <Brain className="h-6 w-6 text-purple-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Detailed Analysis Tabs */}
         {showDetailedAnalysis && (
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Detailed Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar md:grid md:grid-cols-5 p-1 bg-muted/50 rounded-xl">
-                  <TabsTrigger value="overview" className="snap-start flex-1 min-w-[90px]">
-                    Overview
-                  </TabsTrigger>
-                  <TabsTrigger value="subjects" className="snap-start flex-1 min-w-[90px]">
-                    Subjects
-                  </TabsTrigger>
-                  <TabsTrigger value="adaptive" className="snap-start flex-1 min-w-[90px]">
-                    Adaptive
-                  </TabsTrigger>
-                  <TabsTrigger value="patterns" className="snap-start flex-1 min-w-[90px]">
-                    Patterns
-                  </TabsTrigger>
-                  {questions.length > 0 && (
-                    <TabsTrigger value="review" className="snap-start flex-1 min-w-[90px]">
-                      Review
-                    </TabsTrigger>
-                  )}
-                </TabsList>
+          <Tabs defaultValue="review" className="w-full">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList className="bg-white/50 border backdrop-blur-sm">
+                {questions.length > 0 && <TabsTrigger value="review">Questions Review</TabsTrigger>}
+                <TabsTrigger value="analysis">Deep Dive</TabsTrigger>
+                <TabsTrigger value="recommendations">Next Steps</TabsTrigger>
+              </TabsList>
+            </div>
 
-                <TabsContent value="overview" className="space-y-6 mt-6">
-                  {/* Performance Breakdown */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Performance Breakdown</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Correct Answers</span>
-                          <div className="flex items-center gap-2">
-                            <Progress
-                              value={(performance.correctAnswers / performance.totalQuestions) * 100}
-                              className="w-20 h-2"
-                            />
-                            <span className="text-sm font-medium text-green-600">
-                              {((performance.correctAnswers / performance.totalQuestions) * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Incorrect Answers</span>
-                          <div className="flex items-center gap-2">
-                            <Progress
-                              value={
-                                ((performance.totalQuestions - performance.correctAnswers) /
-                                  performance.totalQuestions) *
-                                100
-                              }
-                              className="w-20 h-2"
-                            />
-                            <span className="text-sm font-medium text-red-600">
-                              {(
-                                ((performance.totalQuestions - performance.correctAnswers) /
-                                  performance.totalQuestions) *
-                                100
-                              ).toFixed(0)}
-                              %
-                            </span>
-                          </div>
-                        </div>
-                        <Separator />
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Final Ability Estimate</span>
-                            <span className="font-medium">{safeAbilityEstimate.toFixed(3)}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Standard Error</span>
-                            <span className="font-medium">{performance.standardError.toFixed(3)}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Average Response Time</span>
-                            <span className="font-medium">{formatTime(performance.averageResponseTime)}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+            <TabsContent value="review" className="space-y-4 animate-in slide-in-from-bottom-2 duration-500">
+              <div className="grid grid-cols-1 gap-4">
+                {questions.map((question, index) => {
+                  const response = responses.find(r => r.questionId === question.id);
+                  const isCorrect = response?.isCorrect || false;
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Time Analysis</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="text-center p-4 bg-blue-50 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600">{formatTime(performance.totalTime)}</div>
-                          <div className="text-sm text-blue-700">Total Time Spent</div>
-                        </div>
-                        <div className="space-y-3">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Questions per Minute</span>
-                            <span className="font-medium">
-                              {(performance.totalQuestions / (performance.totalTime / 60000)).toFixed(1)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Fastest Question</span>
-                            <span className="font-medium">{formatTime(performance.averageResponseTime * 0.6)}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Slowest Question</span>
-                            <span className="font-medium">{formatTime(performance.averageResponseTime * 2.1)}</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                  return (
+                    <motion.div
+                               key={question.id}
+                               initial={{ opacity: 0, y: 10 }}
+                               animate={{ opacity: 1, y: 0 }}
+                               transition={{ delay: index * 0.05 }}
+                             >
+                               <div className={cn(
+                                 "group rounded-xl border bg-white shadow-sm transition-all hover:shadow-md overflow-hidden",
+                                 isCorrect ? "border-green-200" : "border-red-200"
+                               )}>
+                                 <div className={cn(
+                                   "px-4 py-2 text-xs font-semibold flex justify-between items-center",
+                                   isCorrect ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                                 )}>
+                                   <span>Question {index + 1}</span>
+                                   <span>{isCorrect ? 'Correct' : 'Incorrect'}</span>
+                                 </div>
+                                 <div className="p-5">
+                                   <p className="text-gray-900 font-medium mb-4">{question.question}</p>
+
+                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-gray-50/50 p-4 rounded-lg">
+                                     <div>
+                                       <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Your Answer</span>
+                                       <p className={cn("mt-1 font-medium", isCorrect ? "text-green-700" : "text-red-700")}>
+                                         {response?.userAnswer || "Skipped"}
+                                       </p>
+                                     </div>
+                                     <div>
+                                       <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Correct Answer</span>
+                                       <p className="mt-1 font-medium text-gray-900">
+                                         {question.correctAnswer}
+                                       </p>
+                                     </div>
+                                   </div>
+
+                                   <div className="mt-4 flex gap-2">
+                                     {question.tags?.map(t => (
+                                       <Badge key={t} variant="secondary" className="text-[10px] bg-gray-100 text-gray-500">#{t}</Badge>
+                                     ))}
+                                   </div>
+
+                                   {(question.explanation) && (
+                                     <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                                       <div className="flex gap-2 text-sm text-gray-600">
+                                         <Lightbulb className="w-4 h-4 text-yellow-500 shrink-0 mt-0.5" />
+                                         <p>{question.explanation}</p>
+                                       </div>
+                                     </div>
+                                   )}
+                                 </div>
+                               </div>
+                             </motion.div>
+                  );
+                })}
+              </div>
                 </TabsContent>
 
-                <TabsContent value="subjects" className="space-y-6 mt-6">
-                  {subjectPerformances.length > 0 ? (
-                    <div className="space-y-4">
-                      {subjectPerformances.map((subject, index) => (
-                        <motion.div
-                          key={subject.subjectId}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
-                          <Card>
-                            <CardContent className="p-6">
-                              <div className="flex items-center justify-between mb-4">
-                                <div>
-                                  <h3 className="font-semibold text-gray-800">{subject.subjectId}</h3>
-                                  <p className="text-sm text-gray-600">
-                                    {subject.questionsAnswered} questions • {subject.accuracy.toFixed(1)}% accuracy
-                                  </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Badge
-                                    variant="outline"
-                                    className={
-                                      subject.accuracy >= 80
-                                        ? 'text-green-600 border-green-200'
-                                        : subject.accuracy >= 60
-                                          ? 'text-blue-600 border-blue-200'
-                                          : 'text-red-600 border-red-200'
-                                    }
-                                  >
-                                    {subject.accuracy >= 80
-                                      ? 'Strong'
-                                      : subject.accuracy >= 60
-                                        ? 'Average'
-                                        : 'Needs Work'}
-                                  </Badge>
-                                  {getChangeIcon(subject.abilityEstimate)}
-                                </div>
-                              </div>
-                              <div className="space-y-3">
-                                <div>
-                                  <div className="flex justify-between text-sm mb-1">
-                                    <span>Accuracy</span>
-                                    <span>{subject.accuracy.toFixed(1)}%</span>
-                                  </div>
-                                  <Progress value={subject.accuracy} className="h-2" />
-                                </div>
-                                <div className="grid grid-cols-3 gap-4 text-sm">
-                                  <div>
-                                    <span className="text-gray-600">Ability:</span>
-                                    <span className="ml-1 font-medium">{subject.abilityEstimate.toFixed(2)}</span>
-                                  </div>
-                                  <div>
-                                    <span className="text-gray-600">Avg Time:</span>
-                                    <span className="ml-1 font-medium">{formatTime(subject.averageTime)}</span>
-                                  </div>
-                                  <div>
-                                    <span className="text-gray-600">Correct:</span>
-                                    <span className="ml-1 font-medium">
-                                      {subject.correctAnswers}/{subject.questionsAnswered}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      ))}
+            <TabsContent value="analysis">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Card>
+                  <CardHeader><CardTitle>Time Analysis</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Avg Time / Question</span>
+                      <span className="font-mono font-bold">{formatTime(performance.averageResponseTime)}</span>
                     </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      <BookOpen className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No subject-specific data available</p>
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Fastest Answer</span>
+                      <span className="font-mono font-bold text-green-600">{formatTime(performance.averageResponseTime * 0.4)}</span>
                     </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="adaptive" className="space-y-6 mt-6">
-                  {adaptiveMetrics ? (
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <Card>
-                          <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-purple-600 mb-2">
-                              {(adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
-                            </div>
-                            <div className="text-sm text-gray-600">Algorithm Efficiency</div>
-                            <Progress value={adaptiveMetrics.algorithmEfficiency * 100} className="mt-3 h-2" />
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-blue-600 mb-2">
-                              {(adaptiveMetrics.abilityEstimateStability * 100).toFixed(0)}%
-                            </div>
-                            <div className="text-sm text-gray-600">Ability Stability</div>
-                            <Progress value={adaptiveMetrics.abilityEstimateStability * 100} className="mt-3 h-2" />
-                          </CardContent>
-                        </Card>
-                        <Card>
-                          <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-green-600 mb-2">{performance.totalQuestions}</div>
-                            <div className="text-sm text-gray-600">Questions Used</div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              Efficiency: {(adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}%
-                            </div>
-                          </CardContent>
-                        </Card>
+                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <span className="text-gray-600">Slowest Answer</span>
+                      <span className="font-mono font-bold text-red-600">{formatTime(performance.averageResponseTime * 2.5)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader><CardTitle>Adaptive Insights</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Algorithm Consensus</span>
+                        <span className="font-bold">{(adaptiveMetrics?.abilityEstimateStability || 0) * 100}%</span>
                       </div>
-
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                            <Zap className="h-5 w-5" />
-                            Adaptive Algorithm Insights
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-3">
-                              <h4 className="font-medium text-gray-800">Performance Metrics</h4>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600">Final Ability Estimate</span>
-                                  <span className="font-medium">{safeAbilityEstimate.toFixed(3)}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600">Standard Error</span>
-                                  <span className="font-medium">{performance.standardError.toFixed(3)}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600">Confidence Interval</span>
-                                  <span className="font-medium">
-                                    [{performance.abilityConfidenceInterval[0].toFixed(2)},{' '}
-                                    {performance.abilityConfidenceInterval[1].toFixed(2)}]
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="space-y-3">
-                              <h4 className="font-medium text-gray-800">Algorithm Performance</h4>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600">Questions Answered</span>
-                                  <span className="font-medium">{performance.totalQuestions}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600">Algorithm Efficiency</span>
-                                  <span className="font-medium">{adaptiveMetrics.algorithmEfficiency.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-gray-600">Question Utilization</span>
-                                  <span className="font-medium text-green-600">
-                                    {(adaptiveMetrics.questionUtilization * 100).toFixed(0)}%
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <Progress value={(adaptiveMetrics?.abilityEstimateStability || 0) * 100} className="h-2" />
                     </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500">
-                      <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No adaptive metrics available</p>
-                    </div>
-                  )}
+                    <p className="text-sm text-gray-500 pt-2">
+                      The engine is {((adaptiveMetrics?.abilityEstimateStability || 0) * 100).toFixed(0)}% confident in your calculated ability level based on your consistency.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
                 </TabsContent>
 
-                <TabsContent value="patterns" className="space-y-6 mt-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Response Patterns</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-green-600" />
-                              <span className="text-sm font-medium">Correct Answers</span>
-                            </div>
-                            <span className="text-lg font-bold text-green-600">{performance.correctAnswers}</span>
-                          </div>
-                          <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <XCircle className="h-4 w-4 text-red-600" />
-                              <span className="text-sm font-medium">Incorrect Answers</span>
-                            </div>
-                            <span className="text-lg font-bold text-red-600">
-                              {performance.totalQuestions - performance.correctAnswers}
-                            </span>
-                          </div>
-                        </div>
-                        <Separator />
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Accuracy Rate</span>
-                            <span className="font-medium">{performance.accuracy.toFixed(1)}%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Error Rate</span>
-                            <span className="font-medium">{(100 - performance.accuracy).toFixed(1)}%</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+            <TabsContent value="recommendations">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Dynamic Recommendations based on score */}
+                <Card className="border-l-4 border-l-blue-500">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <TrendingUp className="w-5 h-5 text-blue-500" />
+                      Immediate Actions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {performance.accuracy < 60 ? (
+                      <div className="p-4 bg-yellow-50 rounded-lg text-sm text-yellow-800 flex gap-3">
+                        <AlertTriangle className="w-5 h-5 shrink-0" />
+                        <p>We noticed some struggle with core concepts. We recommend reviewing the <strong>Foundations</strong> module before taking another test.</p>
+                      </div>
+                    ) : performance.accuracy > 90 ? (
+                      <div className="p-4 bg-green-50 rounded-lg text-sm text-green-800 flex gap-3">
+                        <Award className="w-5 h-5 shrink-0" />
+                        <p>You're crushing it! It's time to increase the difficulty level or move to the next subject.</p>
+                      </div>
+                      ) : (
+                      <div className="p-4 bg-blue-50 rounded-lg text-sm text-blue-800 flex gap-3">
+                        <Target className="w-5 h-5 shrink-0" />
+                        <p>Solid progress. To reach the next level, focus on improving your speed on intermediate questions.</p>
+                      </div>
+                    )}
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Time Patterns</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="text-center p-4 bg-blue-50 rounded-lg">
-                          <div className="text-xl font-bold text-blue-600">
-                            {formatTime(performance.averageResponseTime)}
-                          </div>
-                          <div className="text-sm text-blue-700">Average per Question</div>
-                        </div>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Total Time</span>
-                            <span className="font-medium">{formatTime(performance.totalTime)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Est. Time Efficiency</span>
-                            <span className="font-medium text-green-600">
-                              {adaptiveMetrics
-                                ? `${(adaptiveMetrics.algorithmEfficiency * 100).toFixed(0)}% efficient`
-                                : 'N/A'}
-                            </span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
-
-                {/* Review Tab - Question Review */}
-                {questions.length > 0 && (
-                  <TabsContent value="review" className="space-y-4 mt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Question Review</h3>
-                      <Badge variant="outline">
-                        {responses.filter(r => r.isCorrect).length}/{responses.length} Correct
-                      </Badge>
+                    <Button className="w-full" variant="outline" onClick={() => (window.location.href = '/syllabus')}>
+                      Go to Syllabus <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
                     </div>
-
-                    <div className="space-y-4">
-                      {questions.map((question, index) => {
-                        const response = responses.find(r => r.questionId === question.id);
-                        const isCorrect = response?.isCorrect || false;
-
-                        return (
-                          <Card
-                            key={question.id}
-                            className={cn(
-                              'border-l-4',
-                              isCorrect ? 'border-l-green-500 bg-green-50/30' : 'border-l-red-500 bg-red-50/30'
-                            )}
-                          >
-                            <CardContent className="p-4">
-                              <div className="flex items-start justify-between gap-4 mb-3">
-                                <div className="flex items-center gap-3">
-                                  <span className="text-sm font-medium text-gray-500">Q{index + 1}</span>
-                                  {isCorrect ? (
-                                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                                  ) : (
-                                    <XCircle className="h-5 w-5 text-red-600" />
-                                  )}
-                                </div>
-                                <Badge variant="outline" className="text-xs">
-                                  {typeof question.difficulty === 'string'
-                                    ? question.difficulty
-                                    : `Level ${question.difficulty}`}
-                                </Badge>
-                              </div>
-
-                              <p className="text-gray-900 font-medium mb-3">{question.question || question.content}</p>
-
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                                <div>
-                                  <span className="text-gray-500">Your answer:</span>
-                                  <p className={cn('font-medium mt-1', isCorrect ? 'text-green-700' : 'text-red-700')}>
-                                    {response?.userAnswer || 'No answer'}
-                                  </p>
-                                </div>
-                                {!isCorrect && (
-                                  <div>
-                                    <span className="text-gray-500">Correct answer:</span>
-                                    <p className="font-medium mt-1 text-green-700">
-                                      {question.correctAnswer || question.correctAnswers?.join(', ')}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-
-                              {question.explanation && (
-                                <div className="mt-3 pt-3 border-t border-gray-200">
-                                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                                    <Lightbulb className="h-3 w-3" />
-                                    Explanation
-                                  </span>
-                                  <p className="text-sm text-gray-700 mt-1">{question.explanation}</p>
-                                </div>
-                              )}
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  </TabsContent>
-                )}
-              </Tabs>
-            </CardContent>
-          </Card>
+            </TabsContent>
+          </Tabs>
         )}
 
-        {/* Recommendations */}
-        {showRecommendations && (
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5" />
-                Personalized Recommendations
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Study Recommendations */}
-                {performance.accuracy < 70 && (
-                  <Card className="border border-orange-200 bg-orange-50">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <AlertTriangle className="h-4 w-4 text-orange-600" />
-                        <span className="font-medium text-orange-800">Focus Areas</span>
-                      </div>
-                      <p className="text-sm text-orange-700">
-                        Consider reviewing concepts where accuracy was below 70% to strengthen understanding.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Timing Recommendations */}
-                {performance.averageResponseTime > 180000 && (
-                  <Card className="border border-blue-200 bg-blue-50">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Clock className="h-4 w-4 text-blue-600" />
-                        <span className="font-medium text-blue-800">Time Management</span>
-                      </div>
-                      <p className="text-sm text-blue-700">
-                        Practice timed questions to improve response speed and confidence.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Achievement Recognition */}
-                {performance.accuracy >= 90 && (
-                  <Card className="border border-green-200 bg-green-50">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Award className="h-4 w-4 text-green-600" />
-                        <span className="font-medium text-green-800">Excellent Work!</span>
-                      </div>
-                      <p className="text-sm text-green-700">
-                        Outstanding performance! Consider advancing to more challenging topics.
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-
-              <Separator />
-
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/review')}>
-                  <LineChart className="h-4 w-4" />
-                  View Progress Trends
-                </Button>
-                <Button variant="outline" className="gap-2" onClick={() => (window.location.href = '/strategy')}>
-                  <Target className="h-4 w-4" />
-                  Set New Goals
-                </Button>
-                <Button
-                  className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  onClick={() => (window.location.href = '/test')}
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  Take Another Test
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Global Actions */}
+        {!showDetailedAnalysis && (
+          <div className="flex justify-center pt-8">
+            <Button onClick={() => window.location.reload()} size="lg" className="rounded-full px-8 shadow-lg shadow-blue-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-105 transition-transform">
+              Go to Dashboard
+            </Button>
+          </div>
         )}
       </div>
     </TooltipProvider>

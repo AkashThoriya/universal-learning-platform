@@ -20,6 +20,7 @@ import {
   TestRecommendation,
   TestAnalyticsData,
 } from '@/types/adaptive-testing';
+import { STATIC_MOCK_TEST_QUESTIONS } from '@/lib/data/mock-test-data';
 import { MissionDifficulty } from '@/types/mission-system';
 
 export class AdaptiveTestingService {
@@ -50,14 +51,18 @@ export class AdaptiveTestingService {
         ...(request.courseId && { courseId: request.courseId }), // Store course context only if defined
         track: request.track ?? ('exam' as const),
         totalQuestions: request.questionCount ?? request.targetQuestions ?? 5,
-        estimatedDuration: (request.questionCount ?? request.targetQuestions ?? 5) * 2, // 2 minutes per question
+        estimatedDuration: request.timeLimitPerQuestion
+          ? Math.ceil(((request.questionCount ?? request.targetQuestions ?? 5) * request.timeLimitPerQuestion) / 60)
+          : (request.questionCount ?? request.targetQuestions ?? 5) * 2, // Default 2 mins per question if untimed
         difficultyRange: request.difficultyRange ?? {
           min: 'beginner',
           max: 'expert',
         },
         algorithmType: request.algorithmType ?? 'HYBRID',
         convergenceThreshold: 0.3,
-        initialDifficulty: 'intermediate',
+        initialDifficulty: request.difficulty ?? 'intermediate',
+        ...(request.timeLimitPerQuestion && { timeLimitPerQuestion: request.timeLimitPerQuestion }), // Pass through time limit
+        filterMode: request.filterMode ?? 'all', // Pass through filter mode
         status: 'draft',
         currentQuestion: 0,
         questions: [],
@@ -93,6 +98,52 @@ export class AdaptiveTestingService {
     } catch (error) {
       console.error('[AdaptiveTestingService] Unexpected error creating test:', error);
       return createError(error instanceof Error ? error : new Error('Failed to create adaptive test'));
+    }
+  }
+
+  /**
+   * Create a static mock test for demonstration purposes
+   */
+  async createStaticMockTest(userId: string): Promise<Result<AdaptiveTest>> {
+    console.log('[AdaptiveTestingService] createStaticMockTest called:', { userId });
+    try {
+      const test: AdaptiveTest = {
+        id: `mock_test_${Date.now()}`,
+        userId,
+        title: 'Platform Demo Assessment',
+        description: 'A static mock test showcasing the various question types and adaptive UI features of the platform.',
+        linkedSubjects: ['General Knowledge'],
+        track: 'exam',
+        totalQuestions: STATIC_MOCK_TEST_QUESTIONS.length,
+        estimatedDuration: 10, // 10 minutes
+        difficultyRange: {
+          min: 'beginner',
+          max: 'expert',
+        },
+        algorithmType: 'HYBRID',
+        convergenceThreshold: 0,
+        initialDifficulty: 'intermediate',
+        status: 'active', // Immediately active
+        currentQuestion: 0,
+        questions: STATIC_MOCK_TEST_QUESTIONS,
+        responses: [],
+        performance: this.initializePerformance(),
+        adaptiveMetrics: this.initializeMetrics(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdFrom: 'manual',
+        filterMode: 'all',
+      };
+
+      // Save to Firebase
+      const result = await adaptiveTestingFirebaseService.createAdaptiveTest(userId, test);
+      if (result.success) {
+        console.log('[AdaptiveTestingService] Mock test created successfully');
+      }
+      return result;
+    } catch (error) {
+      console.error('[AdaptiveTestingService] Error creating mock test:', error);
+      return createError(error instanceof Error ? error : new Error('Failed to create mock test'));
     }
   }
 
@@ -416,13 +467,13 @@ export class AdaptiveTestingService {
    * @param userId - User's ID
    * @param courseId - Optional course ID for filtering tests by course
    */
-  async getUserTests(userId?: string, courseId?: string): Promise<AdaptiveTest[]> {
+  async getUserTests(userId?: string, courseId?: string, limit?: number): Promise<AdaptiveTest[]> {
     try {
       if (!userId) {
         return [];
       }
 
-      const result = await adaptiveTestingFirebaseService.getUserTests(userId, courseId);
+      const result = await adaptiveTestingFirebaseService.getUserTests(userId, courseId, limit);
       return result.success ? (result.data ?? []) : [];
     } catch (error) {
       console.error('Error getting user tests:', error);
@@ -527,13 +578,54 @@ export class AdaptiveTestingService {
   private async generateQuestionBank(test: AdaptiveTest): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const difficulties: MissionDifficulty[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+      
+      // Filter Logic: Weakness Focus
+      let targetSubjects = test.linkedSubjects;
+      if (test.filterMode === 'weakness') {
+        try {
+          // Get user analytics to find weak areas
+          const analyticsResult = await adaptiveTestingFirebaseService.getTestAnalytics(test.userId);
+          if (analyticsResult.success && analyticsResult.data.subjectAnalytics) {
+             // Find subjects with accuracy < 70%, sorted by accuracy ascending
+             const weakByscore = analyticsResult.data.subjectAnalytics
+                .filter(s => s.averageAccuracy < 70 && test.linkedSubjects.includes(s.subject))
+                .sort((a, b) => a.averageAccuracy - b.averageAccuracy)
+                .map(s => s.subject);
+             
+             if (weakByscore.length > 0) {
+               console.log('[AdaptiveTestingService] Focusing on weak subjects:', weakByscore);
+               targetSubjects = weakByscore;
+             }
+          }
+        } catch (e) {
+          console.warn('[AdaptiveTestingService] Failed to determine weak subjects, falling back to all selected', e);
+        }
+      }
+
+      // Filter Logic: Unseen Only
+      let excludeIds: string[] = [];
+      if (test.filterMode === 'unseen') {
+        try {
+          // Get recent responses to exclude
+          const recentResponsesResult = await adaptiveTestingFirebaseService.getRecentUserResponses(test.userId, 200);
+          if (recentResponsesResult.success && recentResponsesResult.data) {
+             excludeIds = recentResponsesResult.data.map(r => r.questionId);
+             console.log(`[AdaptiveTestingService] Unseen mode: excluding ${excludeIds.length} recent questions.`);
+          }
+        } catch (e) {
+           console.warn('[AdaptiveTestingService] Failed to fetch unseen exclusion list', e);
+        }
+      }
 
       // First try to get questions from Firebase (System bank + User's private bank)
+      // Use targetSubjects (which might be narrowed down for weakness)
       const firebaseResult = await adaptiveTestingFirebaseService.getQuestionBank(
         test.userId,
-        test.linkedSubjects,
+        targetSubjects,
         difficulties,
-        test.totalQuestions * 3 // Get 3x questions for selection flexibility
+        test.totalQuestions * 3, // Get 3x questions for selection flexibility
+        test.courseId,
+        excludeIds
       );
 
       if (firebaseResult.success && firebaseResult.data.length >= test.totalQuestions) {
@@ -549,7 +641,7 @@ export class AdaptiveTestingService {
 
         const llmResult = await llmService.generateAdaptiveQuestions(
           {
-            subjects: test.linkedSubjects,
+            subjects: targetSubjects, // Use filtered subjects (e.g. weakness focus)
             topics: test.linkedTopics ?? [],
             difficulty: primaryDifficulty,
             questionCount: questionsNeeded,
@@ -576,9 +668,33 @@ export class AdaptiveTestingService {
           // Save generated questions to Firebase for future use
           await this.saveGeneratedQuestions(taggedQuestions);
 
-          // Combine with any existing Firebase questions
-          const allQuestions = [...(firebaseResult.data ?? []), ...taggedQuestions];
-          return createSuccess(allQuestions);
+          // Combine with any existing Firebase questions with DE-DUPLICATION
+          const existingQuestions = firebaseResult.data ?? [];
+          const seenTexts = new Set<string>();
+          const uniqueQuestions: AdaptiveQuestion[] = [];
+
+          // Helper to normalize text for comparison
+          const normalize = (text: string) => text.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+
+          // 1. Add existing Firebase questions first (Priority)
+          for (const q of existingQuestions) {
+            const norm = normalize(q.question);
+            if (!seenTexts.has(norm)) {
+              seenTexts.add(norm);
+              uniqueQuestions.push(q);
+            }
+          }
+
+          // 2. Add new LLM questions if unique
+          for (const q of taggedQuestions) {
+            const norm = normalize(q.question);
+            if (!seenTexts.has(norm)) {
+              seenTexts.add(norm);
+              uniqueQuestions.push(q);
+            }
+          }
+          
+          return createSuccess(uniqueQuestions);
         }
         console.warn('LLM question generation failed:', llmResult.error);
       }

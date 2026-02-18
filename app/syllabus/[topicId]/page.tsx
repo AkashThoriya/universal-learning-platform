@@ -163,6 +163,10 @@ export default function TopicDetailPage() {
       const updates: Partial<TopicProgress> = {
         status: newStatus as 'not_started' | 'in_progress' | 'completed' | 'mastered',
         masteryScore: Math.min(Math.max((topicProgress.masteryScore || 0) + scoreChange, 0), 100),
+        // Auto-log estimated time if currently 0
+        totalStudyTime: (topicProgress.totalStudyTime || 0) === 0 && isCompleted
+          ? (topic?.estimatedHours || 1) * 60
+          : topicProgress.totalStudyTime,
         // Use null to clear the timestamp in Firestore (requires casting as type expects Timestamp | undefined)
         completedAt: isCompleted ? (null as unknown as Timestamp) : Timestamp.now(),
       };
@@ -222,6 +226,10 @@ export default function TopicDetailPage() {
         status: 'mastered' as const,
         masteryScore: 100,
         completedAt: Timestamp.now(),
+        // Auto-log estimated time if currently 0
+        totalStudyTime: (topicProgress.totalStudyTime || 0) === 0
+          ? (topic?.estimatedHours || 1) * 60
+          : topicProgress.totalStudyTime,
         lastRevised: Timestamp.now(),
         nextRevision: Timestamp.fromDate(nextDate),
         revisionCount: (topicProgress.revisionCount || 0) + 1,
@@ -369,6 +377,32 @@ export default function TopicDetailPage() {
     );
   }
 
+  // Calculate next topic (with cross-subject support)
+  let nextTopic: any = null;
+  let nextSubjectId: string | undefined = undefined;
+
+  if (subject) {
+    const topicIndex = subject.topics.findIndex(t => t.id === topicId);
+
+    if (topicIndex !== -1) {
+      if (topicIndex < subject.topics.length - 1) {
+        // Next topic in current subject
+        nextTopic = subject.topics[topicIndex + 1];
+        nextSubjectId = subject.id;
+      } else {
+        // Last topic in subject, find next subject
+        const subjectIndex = syllabus.findIndex(s => s.id === subject.id);
+        if (subjectIndex !== -1 && subjectIndex < syllabus.length - 1) {
+          const nextSubject = syllabus[subjectIndex + 1];
+          if (nextSubject && nextSubject.topics && nextSubject.topics.length > 0) {
+            nextTopic = nextSubject.topics[0];
+            nextSubjectId = nextSubject.id;
+          }
+        }
+      }
+    }
+  }
+
   return (
     <AuthGuard>
       <div className="min-h-screen bg-slate-50">
@@ -377,7 +411,7 @@ export default function TopicDetailPage() {
 
         <PageTransition>
           <TopicDetailLayout
-            hero={<TopicHero topic={topic} subject={subject} progress={topicProgress} />}
+            hero={<TopicHero topic={topic} subject={subject} progress={topicProgress} nextTopic={nextTopic} nextSubjectId={nextSubjectId} />}
             content={
               <div className="space-y-8">
                 <TopicContentTabs

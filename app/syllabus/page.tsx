@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { isToday, isPast } from 'date-fns';
 
 import AuthGuard from '@/components/AuthGuard';
 import BottomNav from '@/components/BottomNav';
@@ -427,15 +428,16 @@ export default function SyllabusPage() {
   };
 
   const getSubjectMastery = (subject: SyllabusSubject) => {
-    const topicProgresses = subject.topics.map(topic => getTopicProgress(topic.id));
-    const validProgresses = topicProgresses.filter(p => p !== undefined);
-
-    if (validProgresses.length === 0) {
+    if (!subject.topics || subject.topics.length === 0) {
       return 0;
     }
 
-    const totalMastery = validProgresses.reduce((sum, p) => sum + (p?.masteryScore || 0), 0);
-    return Math.round(totalMastery / validProgresses.length);
+    const totalMastery = subject.topics.reduce((sum, topic) => {
+      const progress = getTopicProgress(topic.id);
+      return sum + (progress?.masteryScore || 0);
+    }, 0);
+
+    return Math.round(totalMastery / subject.topics.length);
   };
 
   const filteredSyllabus = syllabus.filter(subject => {
@@ -778,13 +780,11 @@ export default function SyllabusPage() {
                     <p className="text-xl sm:text-2xl font-bold text-slate-900">
                       {
                         progress.filter(p => {
-                          if (!p.nextRevision?.toMillis) {
+                          if (!p.nextRevision?.toDate) {
                             return false;
                           }
-                          const daysSince = Math.floor(
-                            (Date.now() - p.nextRevision.toMillis()) / (1000 * 60 * 60 * 24)
-                          );
-                          return daysSince >= 0;
+                          const nextRevDate = p.nextRevision.toDate();
+                          return isPast(nextRevDate) || isToday(nextRevDate);
                         }).length
                       }
                     </p>

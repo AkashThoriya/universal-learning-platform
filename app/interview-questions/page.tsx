@@ -233,9 +233,7 @@ export default function InterviewQuestionsPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 hover:bg-slate-200">
-                          Tier {subjectData.subject.tier}
-                        </Badge>
+
                         {expandedSubjects.has(subjectData.subject.id) ? (
                           <ChevronDown className="h-5 w-5 text-slate-400" />
                         ) : (

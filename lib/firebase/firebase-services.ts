@@ -1622,7 +1622,7 @@ const adaptiveTestingFirebaseService = {
    * @param userId - User's ID
    * @param courseId - Optional course ID for filtering tests by course
    */
-  async getUserTests(userId?: string, courseId?: string): Promise<Result<AdaptiveTest[]>> {
+  async getUserTests(userId?: string, courseId?: string, limitCount = 100): Promise<Result<AdaptiveTest[]>> {
     try {
       // Build query constraints
       const constraints: QueryConstraint[] = [];
@@ -1633,6 +1633,7 @@ const adaptiveTestingFirebaseService = {
         constraints.push(where('courseId', '==', courseId));
       }
       constraints.push(orderBy('createdAt', 'desc'));
+      constraints.push(limit(limitCount));
 
       const q = query(collection(db, ADAPTIVE_TESTING_COLLECTIONS.ADAPTIVE_TESTS), ...constraints);
 
@@ -1686,12 +1687,14 @@ const adaptiveTestingFirebaseService = {
    * Get question bank for test generation
    * @param courseId - Optional course ID for filtering questions by course/exam context
    */
+
   async getQuestionBank(
     userId: string,
     subjects: string[],
     difficulties: MissionDifficulty[],
     maxQuestions = 100,
-    courseId?: string
+    courseId?: string,
+    excludeQuestionIds: string[] = []
   ): Promise<Result<AdaptiveQuestion[]>> {
     try {
       const questionsRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.QUESTION_BANK_ITEMS);
@@ -1710,7 +1713,7 @@ const adaptiveTestingFirebaseService = {
         where('createdBy', 'in', ['system', 'llm']),
         ...(courseId ? [where('courseId', '==', courseId)] : []),
         orderBy('discriminationIndex', 'desc'),
-        limit(maxQuestions),
+        limit(maxQuestions * 3), // Fetch more to allow for client-side filtering
       ];
       const systemQuery = query(questionsRef, ...systemConstraints);
 
@@ -1721,7 +1724,7 @@ const adaptiveTestingFirebaseService = {
         where('createdBy', '==', userId),
         ...(courseId ? [where('courseId', '==', courseId)] : []),
         orderBy('discriminationIndex', 'desc'),
-        limit(maxQuestions),
+        limit(maxQuestions * 3), // Fetch more to allow for client-side filtering
       ];
       const userQuery = query(questionsRef, ...userConstraints);
 
@@ -1741,9 +1744,14 @@ const adaptiveTestingFirebaseService = {
       // Merge and deduplicate
       const allQuestions = [...userQuestions, ...systemQuestions];
       const uniquequestions = Array.from(new Map(allQuestions.map(q => [q.id, q])).values());
+      
+      // Filter out excluded questions
+      // We convert excludeQuestionIds to a Set for O(1) lookup
+      const excludeSet = new Set(excludeQuestionIds);
+      const filteredQuestions = uniquequestions.filter(q => !excludeSet.has(q.id));
 
       // Sort by discrimination index (desc) and success rate (asc)
-      const sortedQuestions = uniquequestions.sort((a, b) => {
+      const sortedQuestions = filteredQuestions.sort((a, b) => {
         if (b.discriminationIndex !== a.discriminationIndex) {
           return b.discriminationIndex - a.discriminationIndex; // Desc
         }
@@ -2179,6 +2187,35 @@ const adaptiveTestingFirebaseService = {
       return createSuccess(responses);
     } catch (error) {
       return createError(error instanceof Error ? error : new Error('Failed to get test responses'));
+    }
+  },
+
+  /**
+   * Get recent user responses across all tests
+   * Used for 'Unseen' filtering
+   */
+  async getRecentUserResponses(userId: string, limitCount = 200): Promise<Result<TestResponse[]>> {
+    try {
+      const responsesRef = collection(db, ADAPTIVE_TESTING_COLLECTIONS.TEST_RESPONSES);
+      const q = query(
+        responsesRef,
+        where('userId', '==', userId),
+        orderBy('timestamp', 'desc'),
+        limit(limitCount)
+      );
+
+      const snapshot = await getDocs(q);
+      const responses = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        userId: doc.data().userId,
+        testId: doc.data().testId,
+        timestamp: doc.data().timestamp?.toDate() ?? new Date(),
+      })) as TestResponse[];
+
+      return createSuccess(responses);
+    } catch (error) {
+      // Index might be missing for this specific query
+      return createError(error instanceof Error ? error : new Error('Failed to get recent responses'));
     }
   },
 };

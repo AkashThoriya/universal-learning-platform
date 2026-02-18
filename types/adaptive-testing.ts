@@ -20,10 +20,14 @@ export interface AdaptiveTest {
   // Test configuration
   totalQuestions: number;
   estimatedDuration: number; // minutes
+  timeLimitPerQuestion?: number; // seconds (0 or undefined = no limit)
+
   difficultyRange: {
     min: MissionDifficulty;
     max: MissionDifficulty;
   };
+  
+  filterMode?: 'all' | 'unseen' | 'weakness';
 
   // LLM integration properties
   examContext?: string; // Context for question generation
@@ -245,6 +249,10 @@ export interface CreateAdaptiveTestRequest {
   targetQuestions?: number;
   questionCount?: number;
   questionType?: 'multiple_choice' | 'true_false' | 'short_answer' | 'essay';
+
+  // New features
+  timeLimitPerQuestion?: number;
+  filterMode?: 'all' | 'unseen' | 'weakness';
 
   algorithmType?: AdaptiveTest['algorithmType'];
   difficultyRange?: {

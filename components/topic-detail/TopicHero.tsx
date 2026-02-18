@@ -1,16 +1,19 @@
-import { ChevronLeft, Clock } from 'lucide-react';
+import { ChevronLeft, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { SyllabusSubject, SyllabusTopic, TopicProgress } from '@/types/exam';
 
 interface TopicHeroProps {
   topic: SyllabusTopic;
   subject: SyllabusSubject;
   progress: TopicProgress | null;
+  nextTopic?: SyllabusTopic | null;
+  nextSubjectId?: string | undefined;
 }
 
-export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
+export function TopicHero({ topic, subject, progress, nextTopic, nextSubjectId }: TopicHeroProps) {
   const masteryScore = progress?.masteryScore || 0;
 
   // Calculate color based on mastery
@@ -29,16 +32,27 @@ export function TopicHero({ topic, subject, progress }: TopicHeroProps) {
   return (
     <div className="relative w-full">
       <div className="space-y-6 py-2">
-        {/* Navigation Breadcrumb */}
-        <Link
-          href="/syllabus"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors group"
-        >
-          <div className="p-1 rounded-full group-hover:bg-muted transition-colors mr-1">
-            <ChevronLeft className="w-4 h-4" />
-          </div>
-          Back to Syllabus
-        </Link>
+        {/* Navigation Breadcrumb & Next Topic Button */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/syllabus"
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors group"
+          >
+            <div className="p-1 rounded-full group-hover:bg-muted transition-colors mr-1">
+              <ChevronLeft className="w-4 h-4" />
+            </div>
+            Back to Syllabus
+          </Link>
+
+          {nextTopic && (
+            <Link href={`/syllabus/${nextTopic.id}?subject=${nextSubjectId ?? subject.id}`}>
+              <Button variant="outline" size="sm" className="group text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                Next: {nextTopic.name}
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          )}
+        </div>
 
         <div className="flex flex-col md:flex-row gap-6 md:items-start md:justify-between">
           <div className="space-y-4 flex-1">

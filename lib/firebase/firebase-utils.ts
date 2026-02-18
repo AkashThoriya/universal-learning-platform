@@ -29,7 +29,10 @@ import {
   QueryConstraint,
 } from 'firebase/firestore';
 
+import { getExamById } from '@/lib/data/exams-data';
+import { habitEngine } from '@/lib/services/habit-engine';
 import { logError, logInfo, measurePerformance } from '@/lib/utils/logger';
+import { CourseSettings, UserCourse } from '@/types/course-progress';
 import {
   User,
   SyllabusSubject,
@@ -40,9 +43,13 @@ import {
   RevisionItem,
   StudyInsight,
 } from '@/types/exam';
-import { CourseSettings, UserCourse } from '@/types/course-progress';
 
 import { db } from './firebase';
+
+/**
+ * Retrieves the syllabus for a specific course
+ * Uses in-memory caching with 10-minute TTL
+ */
 
 // User Management
 
@@ -326,7 +333,7 @@ export const updateTopicStatus = async (
         // Legacy/Global fallback
         subjectRef = doc(db, 'users', userId, 'syllabus', subjectId);
       }
-      
+
       const subjectDoc = await getDoc(subjectRef);
 
       if (!subjectDoc.exists()) {
@@ -368,7 +375,15 @@ export const updateTopicStatus = async (
         overallProgress,
         completedTopics,
         timeSpent: totalTimeSpent,
-        status: overallProgress === 100 ? 'completed' : overallProgress > 0 ? 'in_progress' : 'not_started',
+        status: (() => {
+          if (overallProgress === 100) {
+            return 'completed';
+          }
+          if (overallProgress > 0) {
+            return 'in_progress';
+          }
+          return 'not_started';
+        })(),
         ...(overallProgress === 100 && !subjectData.subjectProgress?.completedAt && { completedAt: Timestamp.now() }),
         ...(overallProgress > 0 && !subjectData.subjectProgress?.startedAt && { startedAt: Timestamp.now() }),
       };
@@ -619,8 +634,8 @@ export const saveSyllabusForCourse = async (userId: string, courseId: string, sy
  * Stores in: users/{userId}/courses/{courseId} (merges with existing data)
  */
 export const saveCourseSettings = async (
-  userId: string, 
-  courseId: string, 
+  userId: string,
+  courseId: string,
   settings: Partial<CourseSettings> | any, // Use any to allow flexible updates during migration
   additionalData?: any
 ) => {
@@ -629,12 +644,12 @@ export const saveCourseSettings = async (
 
     try {
       const courseRef = doc(db, 'users', userId, 'courses', courseId);
-      
+
       // Prepare update data
-      const updateData: any = {
+      const updateData: Record<string, any> = {
         updatedAt: Timestamp.now(),
-        settings: settings,
-        ...additionalData
+        settings,
+        ...additionalData,
       };
 
       // Use setDoc with merge: true to ensure we don't overwrite entire document
@@ -692,12 +707,6 @@ export const invalidateSyllabusCache = (courseId: string): void => {
   syllabusCache.delete(courseId);
 };
 
-/**
- * Retrieves the syllabus for a specific course
- * Uses in-memory caching with 10-minute TTL
- */
-import { getExamById } from '@/lib/data/exams-data';
-
 export const getSyllabusForCourse = async (userId: string, courseId: string): Promise<SyllabusSubject[]> => {
   return measurePerformance('getSyllabusForCourse', async () => {
     // Check cache first
@@ -727,7 +736,7 @@ export const getSyllabusForCourse = async (userId: string, courseId: string): Pr
       if (sortedSubjects.length === 0) {
         logInfo('No syllabus in Firestore, checking default data', { courseId });
         const exam = getExamById(courseId);
-        if (exam && exam.defaultSyllabus) {
+        if (exam?.defaultSyllabus) {
           logInfo('Found default syllabus', { courseId, subjectCount: exam.defaultSyllabus.length });
           sortedSubjects = [...exam.defaultSyllabus];
         }
@@ -841,7 +850,7 @@ export const updateTopicProgress = async (
       await setDoc(progressRef, {
         id: topicId,
         topicId,
-        courseId: courseId || null, // Track which course this belongs to
+        courseId: courseId ?? null, // Track which course this belongs to
         masteryScore: 0,
         lastRevised: Timestamp.now(),
         nextRevision: Timestamp.now(),
@@ -858,14 +867,14 @@ export const updateTopicProgress = async (
     }
 
     // Invalidate cache after update
-    // We invalidate both global and course-specific caches to be safe, 
+    // We invalidate both global and course-specific caches to be safe,
     // or we could be more granular. For now, simple invalidation.
     invalidateProgressCache(userId);
 
     logInfo('Topic progress updated', {
       userId,
       topicId,
-      courseId: courseId || 'global',
+      courseId: courseId ?? 'global',
       updateFields: Object.keys(updates),
     });
   } catch (error) {
@@ -887,7 +896,11 @@ export const updateTopicProgress = async (
  * @param {string} [courseId] - Optional course ID (if provided, reads from course-scoped path)
  * @returns {Promise<TopicProgress | null>} Promise that resolves to progress data or null if not found
  */
-export const getTopicProgress = async (userId: string, topicId: string, courseId?: string): Promise<TopicProgress | null> => {
+export const getTopicProgress = async (
+  userId: string,
+  topicId: string,
+  courseId?: string
+): Promise<TopicProgress | null> => {
   // Determine path based on courseId presence
   const progressRef = courseId
     ? doc(db, 'users', userId, 'courses', courseId, 'progress', topicId)
@@ -930,7 +943,7 @@ export const getTopicProgress = async (userId: string, topicId: string, courseId
 export const getAllProgress = async (userId: string, courseId?: string): Promise<TopicProgress[]> => {
   // Create a composite cache key if courseId is present
   const cacheKey = courseId ? `${userId}_${courseId}` : userId;
-  
+
   // Check cache first
   const cached = progressCache.get(cacheKey);
 
@@ -941,7 +954,7 @@ export const getAllProgress = async (userId: string, courseId?: string): Promise
 
   // Fetch from Firestore
   // Determine path based on courseId presence
-  const progressRef = courseId 
+  const progressRef = courseId
     ? collection(db, 'users', userId, 'courses', courseId, 'progress')
     : collection(db, 'users', userId, 'progress');
 
@@ -991,7 +1004,7 @@ export const markQuestionSolved = async (
 ): Promise<void> => {
   try {
     const current = await getTopicProgress(userId, topicId, courseId);
-    const solvedQuestions = current?.solvedQuestions || [];
+    const solvedQuestions = current?.solvedQuestions ?? [];
 
     // Only add if not already solved
     if (!solvedQuestions.includes(questionSlug)) {
@@ -1000,7 +1013,7 @@ export const markQuestionSolved = async (
         topicId,
         {
           solvedQuestions: [...solvedQuestions, questionSlug],
-          practiceCount: (current?.practiceCount || 0) + 1,
+          practiceCount: (current?.practiceCount ?? 0) + 1,
           lastPracticed: Timestamp.now(),
         },
         courseId
@@ -1047,7 +1060,7 @@ export const toggleQuestionSolved = async (
 ): Promise<boolean> => {
   try {
     const current = await getTopicProgress(userId, topicId, courseId);
-    const solvedQuestions = current?.solvedQuestions || [];
+    const solvedQuestions = current?.solvedQuestions ?? [];
     const isSolved = solvedQuestions.includes(questionSlug);
 
     if (isSolved) {
@@ -1069,7 +1082,7 @@ export const toggleQuestionSolved = async (
       topicId,
       {
         solvedQuestions: [...solvedQuestions, questionSlug],
-        practiceCount: (current?.practiceCount || 0) + 1,
+        practiceCount: (current?.practiceCount ?? 0) + 1,
         lastPracticed: Timestamp.now(),
       },
       courseId
@@ -1289,6 +1302,16 @@ export const saveMockTest = async (userId: string, test: MockTestLog, courseId?:
       platform: test.platform,
       testName: test.testName,
     });
+
+    // Auto-track habit: TEST_COMPLETED
+    habitEngine
+      .processEvent({
+        userId,
+        eventType: 'TEST_COMPLETED',
+        courseId: courseId ?? null,
+        value: 1,
+      })
+      .catch(err => logError('Failed to auto-track test habit', { userId, error: err }));
   } catch (error) {
     logError('Failed to save mock test', {
       userId,
@@ -1320,7 +1343,7 @@ export const saveMockTest = async (userId: string, test: MockTestLog, courseId?:
  */
 export const getMockTests = async (userId: string, limitCount = 10, courseId?: string): Promise<MockTestLog[]> => {
   const testsRef = collection(db, 'users', userId, 'logs_mocks');
-  
+
   // Build query constraints - filter by courseId if provided
   const constraints: QueryConstraint[] = [];
   if (courseId) {
@@ -1328,7 +1351,7 @@ export const getMockTests = async (userId: string, limitCount = 10, courseId?: s
   }
   constraints.push(orderBy('date', 'desc'));
   constraints.push(limit(limitCount));
-  
+
   const testsQuery = query(testsRef, ...constraints);
 
   const testsSnap = await getDocs(testsQuery);
@@ -1431,7 +1454,7 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
     // Get current unified progress
     const progressRef = doc(db, 'users', userId, 'progress', 'unified');
     const progressSnap = await getDoc(progressRef);
-    
+
     // Define default progress structure if it doesn't exist
     const defaultProgress = {
       userId,
@@ -1489,88 +1512,102 @@ const updateUserStats = async (userId: string, log: DailyLog) => {
       updatedAt: new Date(),
     };
 
-    const currentProgress = progressSnap.exists() 
-      ? progressSnap.data()
-      : defaultProgress;
+    const currentProgress = progressSnap.exists() ? progressSnap.data() : defaultProgress;
 
     // Calculate study time from log
     const studyMinutes = log.studiedTopics?.reduce((sum, session) => sum + session.minutes, 0) ?? 0;
-    
+
     // Update overall stats
-    currentProgress.overallProgress.totalTimeInvested = 
+    currentProgress.overallProgress.totalTimeInvested =
       (currentProgress.overallProgress.totalTimeInvested ?? 0) + studyMinutes;
-    currentProgress.overallProgress.totalMissionsCompleted = 
+    currentProgress.overallProgress.totalMissionsCompleted =
       (currentProgress.overallProgress.totalMissionsCompleted ?? 0) + 1;
-    
+
     // Update streak (check if this is a consecutive day)
     const lastUpdate = currentProgress.updatedAt;
-    const lastActivityDate = lastUpdate 
+    const lastActivityDate = lastUpdate
       ? (lastUpdate.toDate ? lastUpdate.toDate() : new Date(lastUpdate)).toDateString()
       : null;
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
-    
+
     if (lastActivityDate === yesterday) {
       // Consecutive day - increment streak
-      currentProgress.overallProgress.currentStreak = 
-        (currentProgress.overallProgress.currentStreak ?? 0) + 1;
+      currentProgress.overallProgress.currentStreak = (currentProgress.overallProgress.currentStreak ?? 0) + 1;
     } else if (lastActivityDate !== today) {
       // Not consecutive and not same day - reset to 1
       currentProgress.overallProgress.currentStreak = 1;
     }
     // If same day, don't change streak
-    
+
     // Update longest streak
     if ((currentProgress.overallProgress.currentStreak ?? 0) > (currentProgress.overallProgress.longestStreak ?? 0)) {
       currentProgress.overallProgress.longestStreak = currentProgress.overallProgress.currentStreak;
     }
-    
+
     // Update consistency rating (0-100 scale for weeklyGoalProgress)
     const streakScore = Math.min((currentProgress.overallProgress.currentStreak ?? 0) / 30, 1);
     const volumeScore = Math.min((currentProgress.overallProgress.totalMissionsCompleted ?? 0) / 100, 1);
     currentProgress.overallProgress.consistencyRating = Math.round((streakScore * 0.6 + volumeScore * 0.4) * 100);
-    
+
     // Update timestamp
     currentProgress.updatedAt = Timestamp.now();
-    
+
     await setDoc(progressRef, currentProgress, { merge: true });
-    
-    logInfo('User stats updated from daily log', { 
-      userId, 
+
+    logInfo('User stats updated from daily log', {
+      userId,
       studyMinutes,
       currentStreak: currentProgress.overallProgress.currentStreak,
       totalTimeInvested: currentProgress.overallProgress.totalTimeInvested,
     });
   } catch (error) {
-    logError('Failed to update user stats', { 
-      userId, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    logError('Failed to update user stats', {
+      userId,
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
 
 const updateMasteryScoresFromTest = async (userId: string, test: MockTestLog, courseId?: string) => {
   // Update mastery scores based on topic-wise performance
-  for (const topicPerf of test.topicWisePerformance) {
+  const updatePromises = test.topicWisePerformance.map(async topicPerf => {
     const currentProgress = await getTopicProgress(userId, topicPerf.topicId, courseId);
 
     if (currentProgress) {
       // Calculate new mastery score based on accuracy
-      const improvementFactor = topicPerf.accuracy > 0.8 ? 10 : topicPerf.accuracy > 0.6 ? 5 : -5;
+      let improvementFactor = -5;
+      if (topicPerf.accuracy > 0.8) {
+        improvementFactor = 10;
+      } else if (topicPerf.accuracy > 0.6) {
+        improvementFactor = 5;
+      }
+
       const newMasteryScore = Math.max(0, Math.min(100, currentProgress.masteryScore + improvementFactor));
 
-      await updateTopicProgress(userId, topicPerf.topicId, {
-        masteryScore: newMasteryScore,
-        lastScoreImprovement: improvementFactor,
-      }, courseId);
+      await updateTopicProgress(
+        userId,
+        topicPerf.topicId,
+        {
+          masteryScore: newMasteryScore,
+          lastScoreImprovement: improvementFactor,
+        },
+        courseId
+      );
     }
-  }
+  });
+
+  await Promise.all(updatePromises);
 };
 
 // Real-time subscriptions
-export const subscribeToRevisionQueue = (userId: string, callback: (items: RevisionItem[]) => void, courseId?: string) => {
+export const subscribeToRevisionQueue = (
+  userId: string,
+  callback: (items: RevisionItem[]) => void,
+  courseId?: string
+) => {
   // Use course-scoped path if courseId provided, else legacy global path
-  const progressRef = courseId 
+  const progressRef = courseId
     ? collection(db, 'users', userId, 'courses', courseId, 'progress')
     : collection(db, 'users', userId, 'progress');
   const today = Timestamp.now();

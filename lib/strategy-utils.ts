@@ -150,7 +150,13 @@ export function calculateStrategyMetrics(
       if (p) {
         if (p.status === 'completed' || p.status === 'mastered') completed++;
         masterySum += p.masteryScore || 0;
-        studyMinutes += p.totalStudyTime || 0;
+        
+        let duration = p.totalStudyTime || 0;
+        // Fallback: If completed/mastered but 0 time logged, use estimated hours (default 1h)
+        if (duration === 0 && (p.status === 'completed' || p.status === 'mastered')) {
+             duration = (topic.estimatedHours || 1) * 60;
+        }
+        studyMinutes += duration;
       }
     });
 
@@ -194,7 +200,8 @@ export function calculateStrategyMetrics(
   };
 
   // 3. Study Efficiency
-  const totalStudyMinutes = Array.from(topicProgressMap?.values() || []).reduce((acc, p) => acc + (p.totalStudyTime || 0), 0);
+  // Use the calculated subject metrics to ensure consistency with the table (includes fallback estimates)
+  const totalStudyMinutes = subjectMetrics.reduce((acc, s) => acc + (s.totalStudyHours * 60), 0);
   const totalStudyHours = totalStudyMinutes / 60;
 
   // Granular Schedule Logic

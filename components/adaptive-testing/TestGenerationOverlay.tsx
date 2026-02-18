@@ -72,88 +72,80 @@ export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps)
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-md p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-white/90 backdrop-blur-xl p-4"
         >
-          <div className="max-w-md w-full space-y-8">
-            <div className="text-center space-y-2">
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-100/50 rounded-full blur-[100px] animate-pulse"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-100/50 rounded-full blur-[100px] animate-pulse delay-1000"></div>
+          </div>
+
+          <div className="max-w-md w-full space-y-8 relative z-10">
+            <div className="text-center space-y-4">
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: 'spring', damping: 20 }}
-                className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg mb-4"
+                initial={{ scale: 0.8, opacity: 0, rotate: -10 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ type: 'spring', damping: 15 }}
+                className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-xl shadow-purple-200 mb-2"
               >
-                <Sparkles className="w-8 h-8" />
+                <Sparkles className="w-10 h-10 animate-pulse" />
               </motion.div>
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-                Designing Your Test
-              </h2>
-              <p className="text-gray-500">Our AI is crafting a personalized assessment just for you.</p>
+              <div>
+                <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 pb-1">
+                  Constructing Test
+                </h2>
+                <p className="text-gray-500 font-medium">Personalizing your assessment...</p>
+              </div>
             </div>
 
-            <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur">
-              <CardContent className="p-6 space-y-6">
-                <div className="space-y-4">
-                  {STEPS.map((step, index) => {
-                    // Logic:
-                    // - Completed: index < currentStepIndex
-                    // - Current: index === currentStepIndex
-                    // - Pending: index > currentStepIndex
+            <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-lg overflow-hidden ring-1 ring-black/5">
+              <CardContent className="p-8 space-y-8">
+                <div className="space-y-5 relative">
+                  {/* Vertical Line */}
+                  <div className="absolute left-4 top-2 bottom-4 w-0.5 bg-gray-100" />
 
+                  {STEPS.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
                     const isPending = index > currentStepIndex;
-
-                    // Special case for last step: If it's current, keep it "active" (spinning/pulsing) forever
                     const isLastStep = index === STEPS.length - 1;
 
                     return (
                       <div
                         key={step.id}
-                        className={cn('flex items-center gap-4 transition-all duration-300', isPending && 'opacity-40')}
+                        className={cn('flex items-center gap-4 relative z-10 transition-all duration-500', isPending && 'opacity-30 blur-[0.5px] scale-95 origin-left')}
                       >
-                        <div className="relative">
-                          <div
-                            className={cn(
-                              'w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300',
-                              isCompleted
-                                ? 'bg-green-100 text-green-600'
-                                : isCurrent
-                                  ? 'bg-blue-100 text-blue-600'
-                                  : 'bg-gray-100 text-gray-400'
-                            )}
-                          >
-                            {isCompleted ? (
-                              <CheckCircle2 className="w-5 h-5" />
-                            ) : (
-                              <step.icon
-                                className={cn('w-4 h-4', isCurrent && (isLastStep ? 'animate-spin' : 'animate-pulse'))}
-                              />
-                            )}
-                          </div>
-                          {index < STEPS.length - 1 && (
-                            <div
-                              className={cn(
-                                'absolute top-8 left-4 w-0.5 h-6 -ml-[1px]',
-                                isCompleted ? 'bg-green-200' : 'bg-gray-100'
-                              )}
+                        <div
+                          className={cn(
+                            'w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 border-2',
+                            isCompleted
+                              ? 'bg-green-500 border-green-500 text-white scale-100 shadow-lg shadow-green-200'
+                              : isCurrent
+                                ? 'bg-white border-blue-500 text-blue-600 scale-110 shadow-lg shadow-blue-100'
+                                : 'bg-gray-50 border-gray-200 text-gray-300 scale-90'
+                          )}
+                        >
+                          {isCompleted ? (
+                            <CheckCircle2 className="w-5 h-5" />
+                          ) : (
+                            <step.icon
+                                className={cn('w-4 h-4', isCurrent && 'animate-pulse')}
                             />
                           )}
                         </div>
                         <div className="flex-1">
                           <p
                             className={cn(
-                              'text-sm font-medium transition-colors',
-                              isCurrent ? 'text-blue-700' : isCompleted ? 'text-gray-600' : 'text-gray-400'
+                              'text-sm font-semibold transition-colors duration-300',
+                              isCurrent ? 'text-gray-900 translate-x-1' : isCompleted ? 'text-gray-500' : 'text-gray-300'
                             )}
                           >
                             {isLastStep && isCurrent ? 'Finalizing details...' : step.label}
                           </p>
                         </div>
                         {isCurrent && (
-                          <motion.div
-                            layoutId="active-step-indicator"
-                            className="w-2 h-2 rounded-full bg-blue-500"
-                            transition={{ type: 'spring', damping: 20 }}
+                          <motion.div 
+                            layoutId="spinner"
+                            className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"
                           />
                         )}
                       </div>
@@ -162,37 +154,34 @@ export function TestGenerationOverlay({ isVisible }: TestGenerationOverlayProps)
                 </div>
 
                 {/* Rotating Tips Section */}
-                <div className="pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-bold text-purple-600 px-2 py-0.5 bg-purple-50 rounded-full">
-                      Pro Tip
-                    </span>
-                  </div>
-                  <div className="h-10 relative overflow-hidden">
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={currentTipIndex}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="text-sm text-gray-600 leading-snug absolute w-full"
-                      >
-                        {TIPS[currentTipIndex]}
-                      </motion.p>
-                    </AnimatePresence>
+                <div className="pt-6 border-t border-gray-100">
+                  <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100/50">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-blue-100 p-1 rounded text-blue-600">
+                        <Brain className="w-3 h-3" />
+                      </div>
+                      <span className="text-xs font-bold text-blue-600 uppercase tracking-wide">
+                        Pro Tip
+                      </span>
+                    </div>
+                    <div className="h-10 relative overflow-hidden flex items-center">
+                      <AnimatePresence mode="wait">
+                        <motion.p
+                          key={currentTipIndex}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ duration: 0.3 }}
+                          className="text-sm text-gray-600 font-medium leading-relaxed"
+                        >
+                          "{TIPS[currentTipIndex]}"
+                        </motion.p>
+                      </AnimatePresence>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-center text-xs text-gray-400"
-            >
-              Powered by Gemini 2.5 Pro
-            </motion.p>
           </div>
         </motion.div>
       )}

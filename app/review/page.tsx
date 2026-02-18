@@ -143,7 +143,7 @@ export default function ConceptReviewPage() {
         }
 
         // Check topic due for revision
-        if (effectiveProgress?.nextRevision && effectiveProgress.nextRevision.toDate() <= new Date()) {
+        if (effectiveProgress?.nextRevision && (effectiveProgress.nextRevision.toDate() <= new Date() || isToday(effectiveProgress.nextRevision.toDate()))) {
           const exists = items.find(i => i.type === 'topic' && i.id === topic.id);
           if (!exists) {
             items.push({

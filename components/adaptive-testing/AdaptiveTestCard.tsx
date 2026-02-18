@@ -126,45 +126,43 @@ export default function AdaptiveTestCard({
         className={cn('group active:scale-[0.98] transition-transform h-full', className)}
       >
         <Card className="h-full flex flex-col hover:shadow-xl transition-all duration-300 border-0 shadow-md overflow-hidden">
-          {/* Header with gradient background */}
-          <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 p-6 text-white relative overflow-hidden">
-            <div className="absolute inset-0 bg-black/10" />
-            <div className="relative z-10">
-              <CardHeader className="p-0 space-y-2">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-xl font-bold mb-1 text-white">{test.title}</CardTitle>
-                    <CardDescription className="text-blue-100 line-clamp-2">{test.description}</CardDescription>
-                  </div>
-                  <Badge variant="outline" className={cn('border-white/30 text-white', getStatusColor())}>
-                    <StatusIcon className="h-3 w-3 mr-1" />
+          {/* Header with clean design and colored accent border */}
+          <div className={cn('absolute left-0 top-0 bottom-0 w-1.5', getStatusColor().replace('bg-', 'bg-').replace('text-', '').replace('border-', 'bg-'))} />
+
+          <CardHeader className="pb-3 pl-6">
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className={cn('capitalize font-medium px-2 py-0.5 h-6', getStatusColor())}>
+                    <StatusIcon className="h-3 w-3 mr-1.5" />
                     {test.status}
                   </Badge>
+                  <span className="text-xs text-slate-400 font-medium px-2 py-0.5 bg-slate-100 rounded-full">
+                    {test.algorithmType}
+                  </span>
                 </div>
-
-                {/* Quick stats row */}
-                <div className="flex items-center gap-4 text-sm text-blue-100">
-                  <div className="flex items-center gap-1">
-                    <Target className="h-4 w-4" />
-                    <span>{test.totalQuestions} questions</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{formatDuration(test.estimatedDuration)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Brain className="h-4 w-4" />
-                    <span>{test.algorithmType}</span>
-                  </div>
-                </div>
-              </CardHeader>
+                <CardTitle className="text-lg font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">
+                  {test.title}
+                </CardTitle>
+              </div>
             </div>
+            <CardDescription className="line-clamp-2 text-slate-500 text-sm mt-1">
+              {test.description}
+            </CardDescription>
+          </CardHeader>
 
-            {/* Animated background pattern */}
-            <motion.div className="absolute -right-10 -top-10 w-32 h-32 rounded-full bg-white/10" />
-          </div>
-
-          <CardContent className="flex-1 flex flex-col p-6 space-y-6">
+          <CardContent className="flex-1 flex flex-col pt-0 pb-6 px-6 space-y-6">
+            {/* Metrics Row */}
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-1.5 text-slate-600">
+                <Target className="h-4 w-4 text-slate-400" />
+                <span className="font-medium">{test.totalQuestions} Qs</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-slate-600">
+                <Clock className="h-4 w-4 text-slate-400" />
+                <span className="font-medium">{formatDuration(test.estimatedDuration)}</span>
+              </div>
+            </div>
             {/* Configuration Details */}
             <div className="grid grid-cols-2 gap-4">
               <div>

@@ -637,7 +637,12 @@ class HabitEngine {
     let totalPossible = 0;
     let totalCompleted = 0;
 
-    activeHabits.forEach((habit) => {
+    // For consistency with "Today's Progress" (which hides incomplete weekly habits),
+    // we also exclude them from the Rate calculation so users aren't penalized for a weekly task 
+    // that isn't "due" today.
+    activeHabits
+      .filter(h => h.frequency === 'DAILY' || h.isCompletedToday)
+      .forEach((habit) => {
       // For overall rate, we still track weekly as "should do once a week"
       // But for the sake of the simplified "daily progress" stats above, we treated them differently.
       // Here, we calculate a robust historical rate.

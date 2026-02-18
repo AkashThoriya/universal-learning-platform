@@ -31,62 +31,70 @@ export function StatsGrid({ stats }: StatsGridProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
       <MobileScrollGrid className="md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card
-          className={cn('bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden relative', cardClass)}
-        >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium opacity-90">Study Time</CardTitle>
-            <Clock className="h-4 w-4 opacity-80" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatTime(stats.totalStudyTime)}</div>
-            <p className="text-xs opacity-80 mt-1">This week</p>
+        <Card className={cn('bg-white border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all group', cardClass)}>
+          <CardContent className="p-6 flex flex-col justify-between h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <Clock className="h-5 w-5" />
+              </div>
+              <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                This Week
+              </span>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 tracking-tight">{formatTime(stats.totalStudyTime)}</div>
+              <p className="text-sm text-gray-500 font-medium">Total Study Time</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card
-          className={cn('bg-gradient-to-br from-green-500 to-green-600 text-white overflow-hidden relative', cardClass)}
-        >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium opacity-90">Sessions</CardTitle>
-            <CheckCircle className="h-4 w-4 opacity-80" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.completedSessions}</div>
-            <p className="text-xs opacity-80 mt-1">Completed</p>
+        <Card className={cn('bg-white border-green-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all group', cardClass)}>
+          <CardContent className="p-6 flex flex-col justify-between h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 rounded-xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                <CheckCircle className="h-5 w-5" />
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 tracking-tight">{stats.completedSessions}</div>
+              <p className="text-sm text-gray-500 font-medium">Completed Sessions</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card
-          className={cn('bg-gradient-to-br from-orange-500 to-red-500 text-white overflow-hidden relative', cardClass)}
-        >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium opacity-90">Streak</CardTitle>
-            <Flame className="h-4 w-4 opacity-80" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.currentStreak} days</div>
-            <p className="text-xs opacity-80 mt-1">Keep it burning! 🔥</p>
+        <Card className={cn('bg-white border-orange-100 shadow-sm hover:shadow-md hover:border-orange-200 transition-all group', cardClass)}>
+          <CardContent className="p-6 flex flex-col justify-between h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 rounded-xl bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                <Flame className="h-5 w-5" />
+              </div>
+              {stats.currentStreak > 3 && (
+                <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-full flex items-center gap-1">
+                  🔥 On Fire
+                </span>
+              )}
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 tracking-tight">{stats.currentStreak} <span className="text-lg text-gray-400 font-normal">days</span></div>
+              <p className="text-sm text-gray-500 font-medium">Current Streak</p>
+            </div>
           </CardContent>
         </Card>
 
-        <Card
-          className={cn(
-            'bg-gradient-to-br from-purple-500 to-purple-600 text-white overflow-hidden relative',
-            cardClass
-          )}
-        >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium opacity-90">Weekly Goal</CardTitle>
-            <Target className="h-4 w-4 opacity-80" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.weeklyGoalProgress}%</div>
-            <Progress value={stats.weeklyGoalProgress} className="mt-2 bg-white/20" />
+        <Card className={cn('bg-white border-purple-100 shadow-sm hover:shadow-md hover:border-purple-200 transition-all group', cardClass)}>
+          <CardContent className="p-6 flex flex-col justify-between h-full">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                <Target className="h-5 w-5" />
+              </div>
+              <span className="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                {stats.weeklyGoalProgress}%
+              </span>
+            </div>
+            <div>
+              <Progress value={stats.weeklyGoalProgress} className="h-2 bg-purple-100 mb-2" indicatorClassName="bg-purple-600" />
+              <p className="text-sm text-gray-500 font-medium">Weekly Goal</p>
+            </div>
           </CardContent>
         </Card>
       </MobileScrollGrid>
