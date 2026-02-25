@@ -202,7 +202,7 @@ export default function OfflinePage() {
 
           {/* Footer */}
           <div className="text-center text-sm text-slate-500">
-            <p>Exam Strategy Engine • Built for offline learning</p>
+            <p>Universal Learning Platform • Built for offline learning</p>
           </div>
         </div>
       </PageTransition>

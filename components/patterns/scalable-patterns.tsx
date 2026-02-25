@@ -15,7 +15,7 @@
  * architecture principles. Includes composition patterns, render props,
  * and higher-order components for maximum flexibility.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

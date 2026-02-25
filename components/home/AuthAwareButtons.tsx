@@ -20,7 +20,7 @@ export default function AuthAwareButtons() {
   if (user) {
     return (
       <Link href="/dashboard">
-        <Button className="text-sm gradient-primary text-white border-0">Go to Dashboard</Button>
+        <Button className="text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 shadow-md hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all hover:-translate-y-0.5">Go to Dashboard</Button>
       </Link>
     );
   }
@@ -28,12 +28,12 @@ export default function AuthAwareButtons() {
   return (
     <div className="flex items-center space-x-2 sm:space-x-4">
       <Link href="/login">
-        <Button variant="ghost" className="text-sm">
+        <Button variant="ghost" className="text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           Sign In
         </Button>
       </Link>
       <Link href="/login">
-        <Button className="text-sm gradient-primary text-white border-0">Get Started</Button>
+        <Button className="text-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 shadow-md hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all hover:-translate-y-0.5">Get Started</Button>
       </Link>
     </div>
   );

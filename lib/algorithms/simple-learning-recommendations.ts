@@ -3,7 +3,7 @@
  *
  * Provides basic personalized learning recommendations for the Universal Learning Platform.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

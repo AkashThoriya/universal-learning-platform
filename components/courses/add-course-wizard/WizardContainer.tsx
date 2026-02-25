@@ -45,7 +45,7 @@ const STEPS = [
   {
     id: 1,
     title: 'Select Course',
-    description: 'Choose your exam or skill track',
+    description: 'Choose your goal or skill track',
     icon: <BookOpen className="w-5 h-5 text-blue-600" />,
     helpText: 'Select the exam you are preparing for. This determines your syllabus.'
   },

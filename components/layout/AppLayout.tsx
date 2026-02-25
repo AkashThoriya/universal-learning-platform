@@ -4,7 +4,7 @@
  * Provides consistent layout structure across all authenticated pages
  * with unified navigation, proper spacing, and responsive design.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

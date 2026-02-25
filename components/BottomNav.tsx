@@ -7,7 +7,7 @@
  * Features 4 primary quick-access tabs and a "More" drawer for secondary items.
  * Handles active states, routing, and user actions.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

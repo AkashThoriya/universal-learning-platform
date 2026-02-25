@@ -43,7 +43,7 @@ export default function MockTestLogPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // User and exam data
+  // User and goal data
   const [userData, setUserData] = useState<User | null>(null);
   const [examData, setExamData] = useState<Exam | null>(null);
 
@@ -97,7 +97,7 @@ export default function MockTestLogPage() {
           const exam = getExamById(userDoc.currentExam.id);
           setExamData(exam ?? null);
 
-          // Initialize scores and max scores based on exam structure
+          // Initialize scores and max scores based on goal structure
           if (exam && exam.stages.length > 0) {
             const firstStage = exam.stages[0];
             if (firstStage) {

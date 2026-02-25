@@ -4,7 +4,7 @@
  * Advanced type utilities, type guards, and generic helpers to improve
  * type safety and developer experience across the application.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

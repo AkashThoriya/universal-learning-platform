@@ -8,7 +8,7 @@
  * - Learning preferences and persona
  * - Subject-specific strengths and weaknesses
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

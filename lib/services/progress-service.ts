@@ -2,9 +2,9 @@
  * @fileoverview User Progress Service Layer
  *
  * Production-ready progress tracking system with Firebase integration.
- * Handles unified progress tracking across exam and tech learning tracks.
+ * Handles unified progress tracking across goal and tech learning tracks.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -391,7 +391,7 @@ export class ProgressService {
         };
       }
 
-      // Subject-specific progress is tracked via trackProgress.exam and trackProgress.course_tech
+      // Subject-specific progress is tracked via trackProgress.goal and trackProgress.course_tech
       // The subjectProgress property is not part of the UnifiedProgress interface
 
       // for (const [subjectId, subjectPerf] of Object.entries(testResults.subjectPerformance)) {
@@ -436,12 +436,12 @@ export class ProgressService {
       const examTrack = progress.trackProgress.exam;
       const techTrack = progress.trackProgress.course_tech;
 
-      // Check exam track performance
+      // Check goal track performance
       if (examTrack.averageScore < 75 && examTrack.skillsInProgress.length > 0) {
         recommendations.push({
           testId: `weakness_test_exam`,
           title: `Exam Track Assessment`,
-          description: `Targeted adaptive test for improving exam performance`,
+          description: `Targeted adaptive test for improving goal performance`,
           confidence: 0.8,
           reasons: [
             `Current score: ${examTrack.averageScore.toFixed(1)}% (below 75%)`,
@@ -466,7 +466,7 @@ export class ProgressService {
               max: 'advanced' as const,
             },
           },
-          expectedBenefit: 'Improve weak areas in exam track',
+          expectedBenefit: 'Improve weak areas in goal track',
 
           estimatedAccuracy: 0.75,
           aiGenerated: true,

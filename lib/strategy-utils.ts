@@ -65,7 +65,7 @@ export function calculateStrategyMetrics(
   const today = new Date();
   const startDate = courseStartDate || user.preparationStartDate?.toDate();
 
-  // Robustly resolve exam date
+  // Robustly resolve target date
   let targetDate: Date | undefined = courseTargetDate;
 
   // Only fallback to global user.currentExam if we are NOT in a specific course context
@@ -128,7 +128,7 @@ export function calculateStrategyMetrics(
   if (daysRemaining <= 0 && remainingTopics > 0) {
     status = 'critical';
   } else if (projectedFinishDate > examDate) {
-    // If projection is way past exam date
+    // If projection is way past target date
     const delayDays = Math.ceil((projectedFinishDate.getTime() - examDate.getTime()) / (1000 * 60 * 60 * 24));
     status = delayDays > 14 ? 'critical' : 'at_risk';
   } else if (projectedFinishDate < new Date(examDate.getTime() - 14 * 24 * 60 * 60 * 1000)) {

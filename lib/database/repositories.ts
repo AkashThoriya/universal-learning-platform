@@ -4,7 +4,7 @@
  * Base repository class that provides domain-specific data operations
  * using the database abstraction layer.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

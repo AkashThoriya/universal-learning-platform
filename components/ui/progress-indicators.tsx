@@ -5,7 +5,7 @@
  * and goal tracking. Designed with accessibility and customization
  * in mind following design system standards.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -2,10 +2,10 @@
  * @fileoverview Comprehensive User Profile Management Page
  *
  * A complete profile page that allows users to view and edit all personal information,
- * exam details, study preferences, and settings that were configured during onboarding.
+ * goal details, study preferences, and settings that were configured during onboarding.
  * Features advanced form validation, real-time updates, and premium UI/UX.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -84,7 +84,7 @@ interface ProfileFormData {
   email: string;
   userPersona: UserPersona | undefined;
 
-  // Exam Configuration
+  // Goal Configuration
   selectedExamId: string;
   selectedCourses: SelectedCourse[];
   examDate: string;
@@ -327,7 +327,7 @@ function ProfileContent() {
         if (fetchedUser) {
           setUserData(fetchedUser);
 
-          // Load selected exam
+          // Load selected goal
           if (fetchedUser.currentExam?.id && fetchedUser.currentExam.id !== 'custom') {
             const exam = getExamById(fetchedUser.currentExam.id);
             setSelectedExam(exam ?? null);
@@ -401,7 +401,7 @@ function ProfileContent() {
     loadUserData();
   }, [user, form.setData, toast, activeCourseId]);
 
-  // Handle deep-link URL params (e.g., ?tab=exam&focus=prepDate)
+  // Handle deep-link URL params (e.g., ?tab=goal&focus=prepDate)
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     const focusParam = searchParams.get('focus');
@@ -649,7 +649,7 @@ function ProfileContent() {
       completed += 25;
     }
 
-    // Exam setup (25%)
+    // Goal setup (25%)
     total += 25;
     if (form.data.selectedExamId && form.data.examDate) {
       completed += 25;
@@ -675,7 +675,7 @@ function ProfileContent() {
     return Math.round((completed / total) * 100);
   }, [form.data]);
 
-  // Filtered exams for display
+  // Filtered goals for display
 
   if (loading) {
     return <ProfileSkeleton />;
@@ -1011,7 +1011,7 @@ function ProfileContent() {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="custom-exam-name">Exam Name *</Label>
+                          <Label htmlFor="custom-exam-name">Goal Name *</Label>
                           <Input
                             id="custom-exam-name"
                             value={form.data.customExam?.name || ''}
@@ -1050,7 +1050,7 @@ function ProfileContent() {
                                 description: e.target.value,
                               })
                             }
-                            placeholder="Brief description of your exam"
+                            placeholder="Brief description of your goal"
                             rows={3}
                           />
                         </div>
@@ -1058,18 +1058,18 @@ function ProfileContent() {
                     </Card>
                   )}
 
-                  {/* Exam Date */}
+                  {/* Target Date */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center space-x-2">
                         <Calendar className="h-5 w-5 text-blue-600" />
-                        <span>Exam Schedule</span>
+                        <span>Goal Schedule</span>
                       </CardTitle>
-                      <CardDescription>Set the target date for your primary exam</CardDescription>
+                      <CardDescription>Set the target date for your primary goal</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <Label htmlFor="exam-date">Exam Date *</Label>
+                        <Label htmlFor="exam-date">Target Date *</Label>
                         <Input
                           id="exam-date"
                           type="date"
@@ -1497,10 +1497,10 @@ function ProfileContent() {
 
                 {/* Exam Info */}
                 <div>
-                  <h3 className="font-semibold mb-2">Exam Configuration</h3>
+                  <h3 className="font-semibold mb-2">Goal Configuration</h3>
                   <div className="bg-gray-50 p-3 rounded-lg space-y-1">
                     <p>
-                      <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
+                      <strong>Goal:</strong> {selectedExam?.name || form.data.customExam?.name}
                     </p>
                     <p>
                       <strong>Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}

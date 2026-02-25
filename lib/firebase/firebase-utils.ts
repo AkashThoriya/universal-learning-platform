@@ -1,11 +1,11 @@
 /**
- * @fileoverview Firebase Firestore utility functions for the Exam Strategy Engine
+ * @fileoverview Firebase Firestore utility functions for the Universal Learning Platform
  *
  * This module provides a comprehensive set of functions for managing user data,
  * syllabus, progress tracking, daily logs, mock tests, and analytics within
  * Firebase Firestore. All functions include proper error handling and TypeScript support.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -228,12 +228,12 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
 /**
  * Saves a complete syllabus for a user, replacing any existing syllabus
  *
- * This function now automatically resolves the user's current exam/course
+ * This function now automatically resolves the user's current goal/course
  * and saves to the course-based storage.
  *
  * @param {string} userId - The unique user ID
  * @param {SyllabusSubject[]} syllabus - Array of syllabus subjects to save
- * @param {string} [courseId] - Optional course ID (will use user's current exam if not provided)
+ * @param {string} [courseId] - Optional course ID (will use user's current goal if not provided)
  * @returns {Promise<void>} Promise that resolves when syllabus is saved
  *
  * @example
@@ -242,7 +242,7 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
  *   { id: 'history', name: 'History', tier: 1, topics: [...] },
  *   { id: 'geography', name: 'Geography', tier: 2, topics: [...] }
  * ];
- * // Auto-resolve from user's current exam
+ * // Auto-resolve from user's current goal
  * await saveSyllabus('user123', syllabus);
  *
  * // Or specify a specific course
@@ -252,7 +252,7 @@ export const updateUser = async (userId: string, updates: Partial<User>) => {
 export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[], courseId?: string) => {
   return measurePerformance('saveSyllabus', async () => {
     try {
-      // If courseId not provided, resolve from user's current exam
+      // If courseId not provided, resolve from user's current goal
       let resolvedCourseId = courseId;
 
       if (!resolvedCourseId) {
@@ -260,7 +260,7 @@ export const saveSyllabus = async (userId: string, syllabus: SyllabusSubject[], 
         resolvedCourseId = user?.currentExam?.id;
 
         if (!resolvedCourseId) {
-          logError('Cannot save syllabus: No courseId provided and user has no current exam', { userId });
+          logError('Cannot save syllabus: No courseId provided and user has no current goal', { userId });
           throw new Error('No course selected. Please select an exam first.');
         }
       }
@@ -508,16 +508,16 @@ export const updateSubtopic = async (
 /**
  * Retrieves the complete syllabus for a user
  *
- * This function now automatically resolves the user's current exam/course
+ * This function now automatically resolves the user's current goal/course
  * and fetches the syllabus from the course-based storage.
  *
  * @param {string} userId - The unique user ID
- * @param {string} [courseId] - Optional course ID (will use user's current exam if not provided)
+ * @param {string} [courseId] - Optional course ID (will use user's current goal if not provided)
  * @returns {Promise<SyllabusSubject[]>} Promise that resolves to array of syllabus subjects
  *
  * @example
  * ```typescript
- * // Auto-resolve from user's current exam
+ * // Auto-resolve from user's current goal
  * const syllabus = await getSyllabus('user123');
  *
  * // Or specify a specific course
@@ -526,7 +526,7 @@ export const updateSubtopic = async (
  */
 export const getSyllabus = async (userId: string, courseId?: string): Promise<SyllabusSubject[]> => {
   try {
-    // If courseId not provided, resolve from user's current exam
+    // If courseId not provided, resolve from user's current goal
     let resolvedCourseId = courseId;
 
     if (!resolvedCourseId) {
@@ -534,7 +534,7 @@ export const getSyllabus = async (userId: string, courseId?: string): Promise<Sy
       resolvedCourseId = user?.currentExam?.id;
 
       if (!resolvedCourseId) {
-        logInfo('No courseId provided and user has no current exam, returning empty syllabus', { userId });
+        logInfo('No courseId provided and user has no current goal, returning empty syllabus', { userId });
         return [];
       }
     }
@@ -764,7 +764,7 @@ export const getAllSyllabi = async (userId: string): Promise<Record<string, Syll
 
   const results: Record<string, SyllabusSubject[]> = {};
 
-  // Currently focusing on primary exam
+  // Currently focusing on primary goal
   results[user.currentExam.id] = await getSyllabusForCourse(userId, user.currentExam.id);
 
   return results;

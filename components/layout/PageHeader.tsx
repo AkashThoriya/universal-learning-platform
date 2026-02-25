@@ -5,7 +5,7 @@
  * descriptions, icons, and actions across all pages in the application.
  * Features glass-morphism, subtle animations, and responsive design.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 2.0.0
  */
 

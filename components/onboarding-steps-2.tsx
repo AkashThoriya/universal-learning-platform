@@ -3,7 +3,7 @@
  *
  * Syllabus Management and Preferences step components for the enhanced onboarding flow.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -37,7 +37,7 @@ import { EXAMS_DATA } from '@/lib/data/exams-data';
 import { Exam, SyllabusSubject, SyllabusTopic, OnboardingFormData } from '@/types/exam';
 
 /**
- * Get context-aware strategy tips based on the selected exam
+ * Get context-aware strategy tips based on the selected goal
  */
 function getExamSpecificTips(selectedExamId: string) {
   const exam = EXAMS_DATA.find(e => e.id === selectedExamId);
@@ -51,7 +51,7 @@ function getExamSpecificTips(selectedExamId: string) {
     };
   }
 
-  // Exam-specific strategy tips
+  // Goal-specific strategy tips
   const examTips: Record<string, { strategyTip: string; topicManagement: string }> = {
     upsc_cse_prelims: {
       strategyTip:
@@ -101,7 +101,7 @@ function getExamSpecificTips(selectedExamId: string) {
     examTips[selectedExamId] || {
       strategyTip: `Focus on high-weightage subjects first. For ${exam.category} exams, prioritize accuracy over speed and maintain consistent daily practice across all subjects.`,
       topicManagement:
-        'Expand each subject to see topics. Customize based on your exam pattern - add emerging areas, remove outdated topics, and align with latest syllabus changes.',
+        'Expand each subject to see topics. Customize based on your goal pattern - add emerging areas, remove outdated topics, and align with latest syllabus changes.',
     }
   );
 }
@@ -138,7 +138,7 @@ export function SyllabusManagementStep({
   const [tempTopicName, setTempTopicName] = useState('');
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
 
-  // Get exam-specific strategy tips
+  // Get goal-specific strategy tips
   const examTips = getExamSpecificTips(form.data.selectedExamId || '');
 
   // Helper to get primary course name

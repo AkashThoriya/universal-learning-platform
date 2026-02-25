@@ -2,9 +2,9 @@
  * @fileoverview Learning Recommendations Service
  *
  * AI-powered recommendation engine for the Universal Learning Platform
- * providing personalized suggestions for exam preparation and custom learning goals.
+ * providing personalized suggestions for goal preparation and custom learning goals.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -257,7 +257,7 @@ class LearningRecommendationsService {
   private async generateTopicFocusRecommendations(context: LearningContext): Promise<EnhancedLearningRecommendation[]> {
     const recommendations: EnhancedLearningRecommendation[] = [];
 
-    // Focus on weak areas for exam preparation
+    // Focus on weak areas for goal preparation
     if (context.examPreparation.weakAreas.length > 0) {
       recommendations.push({
         id: 'weak-areas-focus',
@@ -466,7 +466,7 @@ class LearningRecommendationsService {
           resources: [
             {
               type: 'article',
-              title: 'Strategic Exam Preparation',
+              title: 'Strategic Goal Preparation',
               description: 'Maximizing scores with limited time',
             },
           ],

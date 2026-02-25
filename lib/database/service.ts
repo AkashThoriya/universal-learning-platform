@@ -5,7 +5,7 @@
  * the existing Firebase-enhanced service layer, providing backward
  * compatibility while enabling future database flexibility.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

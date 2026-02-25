@@ -5,7 +5,7 @@
  * data operations, and cross-cutting concerns. Implements repository pattern
  * and dependency injection for better testability and maintainability.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

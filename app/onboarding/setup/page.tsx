@@ -9,7 +9,7 @@
  * - Offline support and data persistence
  * - Premium UI/UX with microinteractions
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 4.0.0
  */
 
@@ -408,7 +408,7 @@ export default function OnboardingSetupPage() {
     },
   });
 
-  // Load selected exam when exam ID changes
+  // Load selected goal when goal ID changes
   useEffect(() => {
     if (form.data.selectedExamId && form.data.selectedExamId !== 'custom') {
       const exam = getExamById(form.data.selectedExamId);
@@ -420,7 +420,7 @@ export default function OnboardingSetupPage() {
         syllabusSubjects: exam?.defaultSyllabus?.length ?? 0,
       });
 
-      // Auto-populate syllabus for predefined exams
+      // Auto-populate syllabus for predefined goals
       if (exam && !form.data.isCustomExam) {
         form.updateField('syllabus', exam.defaultSyllabus);
         logInfo('Syllabus auto-populated from exam', {
@@ -434,7 +434,7 @@ export default function OnboardingSetupPage() {
     }
   }, [form.data.selectedExamId, form.data.isCustomExam]);
 
-  // Filter exams based on search query
+  // Filter goals based on search query
   const filteredExams = EXAMS_DATA.filter(
     exam =>
       exam.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -625,7 +625,7 @@ export default function OnboardingSetupPage() {
           error: error instanceof Error ? error.message : 'Unknown error',
         });
         // Optionally show user-friendly error message
-        console.error('Failed to select exam:', error);
+        console.error('Failed to select goal:', error);
       }
     },
     [form]
@@ -1503,7 +1503,7 @@ export default function OnboardingSetupPage() {
                     <strong>Profile:</strong> {form.data.userPersona?.type.replace('_', ' ')}
                   </p>
                   <p>
-                    <strong>Exam:</strong> {selectedExam?.name || form.data.customExam?.name}
+                    <strong>Goal:</strong> {selectedExam?.name || form.data.customExam?.name}
                   </p>
                   <p>
                     <strong>Target Date:</strong> {new Date(form.data.examDate).toLocaleDateString()}

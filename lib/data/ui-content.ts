@@ -3,7 +3,7 @@
  *
  * Centralized content for marketing, features, and UI text across the application.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -160,7 +160,7 @@ export const PROFILE_TABS: readonly ProfileTab[] = [
     id: 'courses',
     label: 'Courses',
     icon: BookOpen,
-    description: 'Manage your exam preparations',
+    description: 'Manage your goal preparations',
   },
   {
     id: 'exam',

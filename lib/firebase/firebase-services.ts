@@ -4,7 +4,7 @@
  * Simplified service layer that integrates with existing Firebase utilities
  * while adding performance monitoring, caching, and error handling.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -1685,7 +1685,7 @@ const adaptiveTestingFirebaseService = {
 
   /**
    * Get question bank for test generation
-   * @param courseId - Optional course ID for filtering questions by course/exam context
+   * @param courseId - Optional course ID for filtering questions by course/goal context
    */
 
   async getQuestionBank(

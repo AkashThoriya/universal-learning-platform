@@ -4,7 +4,7 @@
  * Firebase configuration with proper error handling,
  * environment validation, and offline capabilities.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -4,7 +4,7 @@
  * @fileoverview Analytics Dashboard - Enterprise UI/UX Implementation
  *
  * Comprehensive analytics dashboard providing real-time insights across
- * exam and course learning tracks with interactive visualizations,
+ * goal and course learning tracks with interactive visualizations,
  * performance metrics, and adaptive recommendations.
  *
  * Features:
@@ -15,7 +15,7 @@
  * - Predictive analytics and success forecasting
  * - Responsive design optimized for all devices
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -384,7 +384,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Comprehensive insights across your exam and course learning journey</p>
+          <p className="text-muted-foreground">Comprehensive insights across your goal and course learning journey</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -423,7 +423,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ className }) =>
       {/* Performance Metrics Cards */}
       <MobileScrollGrid className="gap-6">
         <PerformanceMetricCard
-          title="Exam Performance"
+          title="Goal Performance"
           value={performanceMetrics?.examSuccess.current || 0}
           unit="%"
           trend={performanceMetrics?.examSuccess.trend || 0}
@@ -682,7 +682,7 @@ const ProgressAnalytics: React.FC<AnalyticsComponentProps> = ({ analytics }) => 
         <div className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Exam Preparation</span>
+              <span>Goal Preparation</span>
               <span>{analytics.examPerformance.averageScore}%</span>
             </div>
             <Progress value={analytics.examPerformance.averageScore} />
@@ -710,7 +710,7 @@ const PredictiveAnalytics: React.FC<AnalyticsComponentProps> = ({ analytics }) =
       <CardContent>
         <div className="space-y-4">
           <div className="p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
-            <div className="text-lg font-semibold">Exam Success Probability</div>
+            <div className="text-lg font-semibold">Goal Success Probability</div>
             <div className="text-3xl font-bold text-blue-600">{analytics.predictions.examSuccessProbability}%</div>
           </div>
         </div>
@@ -811,7 +811,7 @@ const CrossTrackInsights: React.FC<CrossTrackInsightsProps> = ({ insights }) => 
           <Brain className="h-5 w-5 text-purple-500" />
           Cross-Track Learning Insights
         </CardTitle>
-        <CardDescription>Discover how your exam and course learning complement each other</CardDescription>
+        <CardDescription>Discover how your goal and course learning complement each other</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -1,22 +1,22 @@
 import { Timestamp } from 'firebase/firestore';
 
 /**
- * @fileoverview Core type definitions for the Exam Strategy Engine
+ * @fileoverview Core type definitions for the Universal Learning Platform
  *
  * This file contains all TypeScript interfaces and types used throughout the application.
- * It defines the data models for exams, users, progress tracking, and all related entities.
+ * It defines the data models for goals, users, progress tracking, and all related entities.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
 /**
- * Represents a competitive exam with all its stages, sections, and default syllabus
+ * Represents a competitive goal with all its stages, sections, and default syllabus
  *
- * @interface Exam
+ * @interface Goal
  * @example
  * ```typescript
- * const upscExam: Exam = {
+ * const upscExam: Goal = {
  *   id: 'upsc_cse_prelims',
  *   name: 'UPSC CSE - Prelims',
  *   description: 'Union Public Service Commission Civil Services Examination',
@@ -27,17 +27,17 @@ import { Timestamp } from 'firebase/firestore';
  * ```
  */
 export interface Exam {
-  /** Unique identifier for the exam (e.g., "upsc_cse_prelims") */
+  /** Unique identifier for the goal (e.g., "upsc_cse_prelims") */
   id: string;
-  /** Human-readable exam name (e.g., "UPSC CSE - Prelims") */
+  /** Human-readable goal name (e.g., "UPSC CSE - Prelims") */
   name: string;
-  /** Detailed description of the exam */
+  /** Detailed description of the goal */
   description: string;
   /** Category classification (e.g., "Civil Services", "Banking", "Engineering") */
   category: string;
-  /** Array of exam stages (prelims, mains, interview, etc.) */
+  /** Array of goal stages (prelims, mains, interview, etc.) */
   stages: ExamStage[];
-  /** Default syllabus structure for this exam */
+  /** Default syllabus structure for this goal */
   defaultSyllabus: SyllabusSubject[];
   /** Total estimated hours to complete all subjects and topics, optional */
   totalEstimatedHours?: number;
@@ -50,7 +50,7 @@ export interface Exam {
 }
 
 /**
- * Represents a single stage within an exam (e.g., Prelims, Mains, Interview)
+ * Represents a single stage within an goal (e.g., Prelims, Mains, Interview)
  *
  * @interface ExamStage
  * @example
@@ -78,7 +78,7 @@ export interface ExamStage {
 }
 
 /**
- * Represents a section within an exam stage (e.g., General Studies Paper I, CSAT)
+ * Represents a section within an goal stage (e.g., General Studies Paper I, CSAT)
  *
  * @interface ExamSection
  * @example
@@ -265,11 +265,11 @@ export interface SyllabusTopic {
 }
 
 /**
- * Represents a user in the system with their profile, settings, and current exam
+ * Represents a user in the system with their profile, settings, and current goal
  *
  * @interface User
  * @description Core user entity stored at /users/{userId} in Firestore.
- * Contains profile data, exam configuration, and preferences.
+ * Contains profile data, goal configuration, and preferences.
  *
  * @example
  * ```typescript
@@ -307,7 +307,7 @@ export interface User {
   primaryCourseId: string;
 
   /**
-   * Cached current exam info for UI display (denormalized from primary course)
+   * Cached current goal info for UI display (denormalized from primary course)
    * Should be kept in sync when primary course changes
    */
   currentExam?: {
@@ -360,18 +360,18 @@ export interface User {
 
 /**
  * Course document stored in /users/{userId}/courses/{courseId}
- * Represents a course/exam the user is preparing for
+ * Represents a course/goal the user is preparing for
  *
  * @interface Course
  */
 export interface Course {
   /** Course document ID (same as examId) */
   id: string;
-  /** Reference to the exam from catalog, or 'custom' */
+  /** Reference to the goal from catalog, or 'custom' */
   examId: string;
   /** Display name of the course */
   name: string;
-  /** Target completion/exam date */
+  /** Target completion/target date */
   targetDate: Timestamp;
   /** Whether this is the primary/active course */
   isPrimary: boolean;
@@ -661,7 +661,7 @@ export interface TopicProgress {
   totalStudyTime: number;
   /** User's personal notes for this topic */
   userNotes: string;
-  /** User's answer to "Why is this important for my exam?" */
+  /** User's answer to "Why is this important for my goal?" */
   personalContext: string;
   /** Legacy field for banking context - kept for backward compatibility */
   userBankingContext?: string;
@@ -854,11 +854,11 @@ export interface MockTestLog {
   platform: string;
   /** Name of the specific test */
   testName: string;
-  /** Exam stage this test belongs to (references exam stage name) */
+  /** Goal stage this test belongs to (references goal stage name) */
   stage: string;
   /** Type classification of the test */
   type: 'full_length' | 'sectional' | 'topic_wise' | 'previous_year';
-  /** Scores achieved in each section (dynamic based on exam structure) */
+  /** Scores achieved in each section (dynamic based on goal structure) */
   scores: Record<string, number>;
   /** Maximum possible scores for each section */
   maxScores: Record<string, number>;

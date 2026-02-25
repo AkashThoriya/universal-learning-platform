@@ -4,7 +4,7 @@
  * Comprehensive performance optimization tools including memoization,
  * virtualization helpers, bundle optimization, and performance monitoring.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

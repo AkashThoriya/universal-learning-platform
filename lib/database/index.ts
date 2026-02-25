@@ -5,7 +5,7 @@
  * a unified interface for database operations while maintaining
  * backward compatibility with the existing Firebase implementation.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

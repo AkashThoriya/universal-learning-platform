@@ -20,7 +20,7 @@ export default function AuthAwareCTAButton() {
     <Link href={href}>
       <Button
         size="lg"
-        className="gradient-primary text-white border-0 shadow-2xl hover:shadow-primary/25 transition-all duration-300 px-8 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-bold hover:-translate-y-0.5"
+        className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0 shadow-2xl hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] transition-all duration-300 px-8 sm:px-10 py-4 sm:py-6 text-base sm:text-lg font-bold hover:-translate-y-0.5"
       >
         <Rocket className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
         {text}

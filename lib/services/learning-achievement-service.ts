@@ -1,10 +1,10 @@
 /**
  * @fileoverview Learning Achievement Service
  *
- * Tracks and manages learning achievements across exam preparation and custom learning goals.
+ * Tracks and manages learning achievements across goal preparation and custom learning goals.
  * Provides gamification and motivation features for the Universal Learning Platform.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -198,7 +198,7 @@ class LearningAchievementService {
         criteria: [{ metric: 'weekly_consistency', operator: 'gte', value: 90 }],
       },
 
-      // Exam Preparation Achievements
+      // Goal Preparation Achievements
       {
         id: 'exam_explorer',
         type: 'progress',

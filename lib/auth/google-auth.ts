@@ -4,7 +4,7 @@
  * Provides Google OAuth integration using Firebase Auth.
  * Handles Google sign-in, error handling, and user data management.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -4,7 +4,7 @@
  * Calculates realistic study goals and schedules based on user persona and work schedule.
  * Adapts study time recommendations for different lifestyle contexts.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

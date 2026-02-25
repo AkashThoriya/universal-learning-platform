@@ -7,7 +7,7 @@
  * throughout the application. Includes focus management, screen reader
  * support, keyboard navigation, and accessibility testing helpers.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -4,7 +4,7 @@
  * Production-ready achievement management system with Firebase integration.
  * Handles achievement definitions, user achievement tracking, and progress updates.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -513,10 +513,22 @@
               "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/"
             },
             {
+              "name": "Contains Duplicate",
+              "slug": "contains-duplicate",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/contains-duplicate/"
+            },
+            {
               "name": "Remove Duplicates from Sorted Array II",
               "slug": "remove-duplicates-from-sorted-array-ii",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/"
+            },
+            {
+              "name": "Next Permutation",
+              "slug": "next-permutation",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/next-permutation/"
             }
           ],
           "learningTip": [
@@ -597,6 +609,14 @@
           ],
           "resources": [
             "https://leetcode.com/problems/reverse-string/"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Rotate Array",
+              "slug": "rotate-array",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/rotate-array/"
+            }
           ]
         },
         {
@@ -610,6 +630,12 @@
               "slug": "best-time-to-buy-and-sell-stock",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+            },
+            {
+              "name": "Product of Array Except Self",
+              "slug": "product-of-array-except-self",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/product-of-array-except-self/"
             }
           ],
           "learningTip": [
@@ -678,6 +704,12 @@
               "slug": "move-zeroes",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/move-zeroes/"
+            },
+            {
+              "name": "Pascal's Triangle",
+              "slug": "pascals-triangle",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/pascals-triangle/"
             }
           ],
           "learningTip": [
@@ -744,6 +776,18 @@
               "slug": "single-number",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/single-number/"
+            },
+            {
+              "name": "Majority Element",
+              "slug": "majority-element",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/majority-element/"
+            },
+            {
+              "name": "Majority Element II",
+              "slug": "majority-element-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/majority-element-ii/"
             }
           ],
           "learningTip": [
@@ -1139,10 +1183,22 @@
           "description": "Merge all overlapping intervals",
           "practiceQuestions": [
             {
+              "name": "Meeting Rooms",
+              "slug": "meeting-rooms",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/meeting-rooms/"
+            },
+            {
               "name": "Merge Intervals",
               "slug": "merge-intervals",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/merge-intervals/"
+            },
+            {
+              "name": "Meeting Rooms II",
+              "slug": "meeting-rooms-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/meeting-rooms-ii/"
             }
           ],
           "learningTip": [
@@ -1210,6 +1266,12 @@
               "slug": "employee-free-time",
               "difficulty": "Hard",
               "link": "https://leetcode.com/problems/employee-free-time/"
+            },
+            {
+              "name": "Minimum Interval to Include Each Query",
+              "slug": "minimum-interval-to-include-each-query",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/minimum-interval-to-include-each-query/"
             }
           ],
           "learningTip": [
@@ -1277,6 +1339,12 @@
               "slug": "find-all-duplicates-in-an-array",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/find-all-duplicates-in-an-array/"
+            },
+            {
+              "name": "Find the Duplicate Number",
+              "slug": "find-the-duplicate-number",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/find-the-duplicate-number/"
             }
           ],
           "learningTip": [
@@ -1588,6 +1656,12 @@
               "slug": "odd-even-linked-list",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/odd-even-linked-list/"
+            },
+            {
+              "name": "Copy List with Random Pointer",
+              "slug": "copy-list-with-random-pointer",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/copy-list-with-random-pointer/"
             }
           ],
           "learningTip": [
@@ -1828,6 +1902,12 @@
               "slug": "middle-of-the-linked-list",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/middle-of-the-linked-list/"
+            },
+            {
+              "name": "Reorder List",
+              "slug": "reorder-list",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/reorder-list/"
             }
           ],
           "learningTip": [
@@ -2408,6 +2488,12 @@
               "slug": "group-anagrams",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/group-anagrams/"
+            },
+            {
+              "name": "Encode and Decode Strings",
+              "slug": "encode-and-decode-strings",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/encode-and-decode-strings/"
             }
           ],
           "learningTip": [
@@ -2856,6 +2942,12 @@
               "slug": "valid-parentheses",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/valid-parentheses/"
+            },
+            {
+              "name": "Decode String",
+              "slug": "decode-string",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/decode-string/"
             }
           ],
           "learningTip": [
@@ -2980,6 +3072,12 @@
               "slug": "evaluate-reverse-polish-notation",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/evaluate-reverse-polish-notation/"
+            },
+            {
+              "name": "Asteroid Collision",
+              "slug": "asteroid-collision",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/asteroid-collision/"
             }
           ],
           "learningTip": [
@@ -3013,6 +3111,12 @@
               "slug": "next-greater-element-i",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/next-greater-element-i/"
+            },
+            {
+              "name": "Online Stock Span",
+              "slug": "online-stock-span",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/online-stock-span/"
             }
           ],
           "learningTip": [
@@ -3046,6 +3150,18 @@
               "slug": "daily-temperatures",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/daily-temperatures/"
+            },
+            {
+              "name": "Car Fleet",
+              "slug": "car-fleet",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/car-fleet/"
+            },
+            {
+              "name": "Largest Rectangle in Histogram",
+              "slug": "largest-rectangle-in-histogram",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/largest-rectangle-in-histogram/"
             }
           ],
           "learningTip": [
@@ -3230,6 +3346,12 @@
               "slug": "search-in-rotated-sorted-array",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/search-in-rotated-sorted-array/"
+            },
+            {
+              "name": "Search a 2D Matrix",
+              "slug": "search-a-2d-matrix",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/search-a-2d-matrix/"
             }
           ],
           "learningTip": [
@@ -3298,6 +3420,12 @@
               "slug": "find-peak-element",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/find-peak-element/"
+            },
+            {
+              "name": "Koko Eating Bananas",
+              "slug": "koko-eating-bananas",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/koko-eating-bananas/"
             }
           ],
           "learningTip": [
@@ -3483,6 +3611,12 @@
               "slug": "find-k-closest-elements",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/find-k-closest-elements/"
+            },
+            {
+              "name": "Time Based Key-Value Store",
+              "slug": "time-based-key-value-store",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/time-based-key-value-store/"
             }
           ],
           "learningTip": [
@@ -3885,6 +4019,12 @@
               "slug": "permutation-in-string",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/permutation-in-string/"
+            },
+            {
+              "name": "Minimum Window Substring",
+              "slug": "minimum-window-substring",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/minimum-window-substring/"
             }
           ],
           "learningTip": [
@@ -4293,6 +4433,20 @@
               "mustNotMiss": [
                 "**Constraint:** If perfect binary tree, logic is simpler."
               ]
+            }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Binary Tree Level Order Traversal",
+              "slug": "binary-tree-level-order-traversal",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/binary-tree-level-order-traversal/"
+            },
+            {
+              "name": "Binary Tree Right Side View",
+              "slug": "binary-tree-right-side-view",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/binary-tree-right-side-view/"
             }
           ]
         },
@@ -4778,6 +4932,50 @@
                 "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
               ]
             }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Maximum Depth of Binary Tree",
+              "slug": "maximum-depth-of-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+            },
+            {
+              "name": "Same Tree",
+              "slug": "same-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/same-tree/"
+            },
+            {
+              "name": "Invert Binary Tree",
+              "slug": "invert-binary-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/invert-binary-tree/"
+            },
+            {
+              "name": "Subtree of Another Tree",
+              "slug": "subtree-of-another-tree",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/subtree-of-another-tree/"
+            },
+            {
+              "name": "Count Good Nodes in Binary Tree",
+              "slug": "count-good-nodes-in-binary-tree",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/count-good-nodes-in-binary-tree/"
+            },
+            {
+              "name": "Construct Binary Tree from Preorder and Inorder Traversal",
+              "slug": "construct-binary-tree-from-preorder-and-inorder-traversal",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+            },
+            {
+              "name": "Binary Tree Maximum Path Sum",
+              "slug": "binary-tree-maximum-path-sum",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+            }
           ]
         }
       ]
@@ -5076,6 +5274,14 @@
           ],
           "resources": [
             "https://leetcode.com/problems/kth-largest-element-in-an-array/"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Last Stone Weight",
+              "slug": "last-stone-weight",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/last-stone-weight/"
+            }
           ]
         },
         {
@@ -5153,6 +5359,14 @@
             "Constraints: Always look at input size (N). If N=100, O(n³) is fine. If N=10^5, you need O(n) or O(n log n).",
             "Edge Cases: Empty inputs, single elements, negative numbers, overflow.",
             "Dry Run: Always manually trace your code with a simple example before saying 'I'm done'."
+          ],
+          "practiceQuestions": [
+            {
+              "name": "K Closest Points to Origin",
+              "slug": "k-closest-points-to-origin",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/k-closest-points-to-origin/"
+            }
           ]
         },
         {
@@ -5583,6 +5797,12 @@
               "slug": "two-sum-ii-input-array-is-sorted",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/"
+            },
+            {
+              "name": "Subarray Sum Equals K",
+              "slug": "subarray-sum-equals-k",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/subarray-sum-equals-k/"
             }
           ],
           "learningTip": [
@@ -5771,6 +5991,12 @@
           "estimatedHours": 2,
           "description": "Design a data structure that supports adding integers and finding the median",
           "practiceQuestions": [
+            {
+              "name": "Design Twitter",
+              "slug": "design-twitter",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-twitter/"
+            },
             {
               "name": "Find Median from Data Stream",
               "slug": "find-median-from-data-stream",
@@ -6328,6 +6554,18 @@
               "slug": "palindrome-partitioning",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/palindrome-partitioning/"
+            },
+            {
+              "name": "Generate Parentheses",
+              "slug": "generate-parentheses",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/generate-parentheses/"
+            },
+            {
+              "name": "Combination Sum II",
+              "slug": "combination-sum-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/combination-sum-ii/"
             }
           ],
           "learningTip": [
@@ -6360,6 +6598,12 @@
               "slug": "word-search",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/word-search/"
+            },
+            {
+              "name": "Letter Combinations of a Phone Number",
+              "slug": "letter-combinations-of-a-phone-number",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/"
             }
           ],
           "learningTip": [
@@ -6392,6 +6636,12 @@
               "slug": "n-queens",
               "difficulty": "Hard",
               "link": "https://leetcode.com/problems/n-queens/"
+            },
+            {
+              "name": "Sudoku Solver",
+              "slug": "sudoku-solver",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/sudoku-solver/"
             }
           ],
           "learningTip": [
@@ -6521,6 +6771,12 @@
               "slug": "lemonade-change",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/lemonade-change/"
+            },
+            {
+              "name": "Valid Parenthesis String",
+              "slug": "valid-parenthesis-string",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/valid-parenthesis-string/"
             }
           ],
           "learningTip": [
@@ -6553,6 +6809,18 @@
               "slug": "best-time-to-buy-and-sell-stock-ii",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/"
+            },
+            {
+              "name": "Jump Game",
+              "slug": "jump-game",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/jump-game/"
+            },
+            {
+              "name": "Jump Game II",
+              "slug": "jump-game-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/jump-game-ii/"
             }
           ],
           "learningTip": [
@@ -6585,6 +6853,18 @@
               "slug": "partition-labels",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/partition-labels/"
+            },
+            {
+              "name": "Hand of Straights",
+              "slug": "hand-of-straights",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/hand-of-straights/"
+            },
+            {
+              "name": "Merge Triplets to Form Target Triplet",
+              "slug": "merge-triplets-to-form-target-triplet",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/merge-triplets-to-form-target-triplet/"
             }
           ],
           "learningTip": [
@@ -6945,6 +7225,12 @@
               "slug": "house-robber",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/house-robber/"
+            },
+            {
+              "name": "Best Time to Buy and Sell Stock with Cooldown",
+              "slug": "best-time-to-buy-and-sell-stock-with-cooldown",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/"
             }
           ],
           "learningTip": [
@@ -6978,6 +7264,18 @@
               "slug": "house-robber-ii",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/house-robber-ii/"
+            },
+            {
+              "name": "Best Time to Buy and Sell Stock with Transaction Fee",
+              "slug": "best-time-to-buy-and-sell-stock-with-transaction-fee",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/"
+            },
+            {
+              "name": "Best Time to Buy and Sell Stock IV",
+              "slug": "best-time-to-buy-and-sell-stock-iv",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/"
             }
           ],
           "learningTip": [
@@ -7043,6 +7341,18 @@
               "slug": "coin-change",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/coin-change/"
+            },
+            {
+              "name": "Burst Balloons",
+              "slug": "burst-balloons",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/burst-balloons/"
+            },
+            {
+              "name": "Minimum Cost to Cut a Stick",
+              "slug": "minimum-cost-to-cut-a-stick",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/minimum-cost-to-cut-a-stick/"
             }
           ],
           "learningTip": [
@@ -7075,6 +7385,12 @@
               "slug": "palindromic-substrings",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/palindromic-substrings/"
+            },
+            {
+              "name": "Longest Palindromic Subsequence",
+              "slug": "longest-palindromic-subsequence",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/longest-palindromic-subsequence/"
             }
           ],
           "learningTip": [
@@ -7270,6 +7586,12 @@
               "slug": "word-break",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/word-break/"
+            },
+            {
+              "name": "Regular Expression Matching",
+              "slug": "regular-expression-matching",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/regular-expression-matching/"
             }
           ],
           "learningTip": [
@@ -7336,6 +7658,12 @@
               "slug": "partition-equal-subset-sum",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/partition-equal-subset-sum/"
+            },
+            {
+              "name": "Target Sum",
+              "slug": "target-sum",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/target-sum/"
             }
           ],
           "learningTip": [
@@ -7402,6 +7730,18 @@
               "slug": "unique-paths",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/unique-paths/"
+            },
+            {
+              "name": "Minimum Path Sum",
+              "slug": "minimum-path-sum",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/minimum-path-sum/"
+            },
+            {
+              "name": "Unique Paths II",
+              "slug": "unique-paths-ii",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/unique-paths-ii/"
             }
           ],
           "learningTip": [
@@ -7434,6 +7774,24 @@
               "slug": "longest-common-subsequence",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/longest-common-subsequence/"
+            },
+            {
+              "name": "Edit Distance",
+              "slug": "edit-distance",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/edit-distance/"
+            },
+            {
+              "name": "Interleaving String",
+              "slug": "interleaving-string",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/interleaving-string/"
+            },
+            {
+              "name": "Distinct Subsequences",
+              "slug": "distinct-subsequences",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/distinct-subsequences/"
             }
           ],
           "learningTip": [
@@ -7631,6 +7989,26 @@
           ],
           "resources": [
             "https://leetcode.com/tag/depth-first-search/"
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Number of Islands",
+              "slug": "number-of-islands",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/number-of-islands/"
+            },
+            {
+              "name": "Clone Graph",
+              "slug": "clone-graph",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/clone-graph/"
+            },
+            {
+              "name": "Max Area of Island",
+              "slug": "max-area-of-island",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/max-area-of-island/"
+            }
           ]
         },
         {
@@ -7803,6 +8181,12 @@
               "slug": "shortest-path-in-binary-matrix",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/shortest-path-in-binary-matrix/"
+            },
+            {
+              "name": "Word Ladder",
+              "slug": "word-ladder",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/word-ladder/"
             }
           ],
           "learningTip": [
@@ -8479,6 +8863,478 @@
       ]
     },
     {
+      "id": "pattern_bit_manipulation",
+      "name": "Pattern: Bit Manipulation",
+      "tier": 2,
+      "estimatedHours": 3.5,
+      "topics": [
+        {
+          "id": "counting_bits",
+          "name": "Counting Bits",
+          "estimatedHours": 1,
+          "description": "Count the number of 1s in the binary representation of every number from 0 to n",
+          "practiceQuestions": [
+            {
+              "name": "Counting Bits",
+              "slug": "counting-bits",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/counting-bits/"
+            }
+          ],
+          "learningTip": [
+            "**DP Pattern:** `bits[i] = bits[i >> 1] + (i & 1)`. The count of 1s in `i` equals count in `i/2` plus whether `i` is odd.",
+            "**Bit Trick:** `i & 1` checks if the last bit is 1 (odd number).",
+            "**Right Shift:** `i >> 1` is equivalent to `Math.floor(i / 2)`."
+          ],
+          "mustNotMiss": [
+            "**O(n) Solution:** Don't count bits individually for each number. Use the DP relation.",
+            "**Base Case:** `bits[0] = 0`."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Can you solve Counting Bits in O(n) time without using any built-in popcount?",
+              "answer": "**DP Approach:** Use `bits[i] = bits[i >> 1] + (i & 1)`. Each number's bit count relates to the number with its last bit removed."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/counting-bits/"
+          ]
+        },
+        {
+          "id": "number_of_1_bits",
+          "name": "Number of 1 Bits",
+          "estimatedHours": 0.5,
+          "description": "Count the number of set bits (1s) in the binary representation of an unsigned integer",
+          "practiceQuestions": [
+            {
+              "name": "Number of 1 Bits",
+              "slug": "number-of-1-bits",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-1-bits/"
+            }
+          ],
+          "learningTip": [
+            "**Brian Kernighan's Algorithm:** `n = n & (n - 1)` removes the lowest set bit. Count iterations until n becomes 0.",
+            "**Why it works:** `n - 1` flips all bits from the rightmost set bit to the end. AND-ing with `n` clears that bit.",
+            "**Alternative:** Use `n & 1` to check last bit and `n >>>= 1` (unsigned right shift) to process each bit."
+          ],
+          "mustNotMiss": [
+            "**Unsigned Right Shift:** In JavaScript, use `>>>` not `>>` for unsigned integers to avoid sign extension.",
+            "**Time:** O(number of set bits), not O(32). Brian Kernighan's is faster for sparse bits."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the difference between >> and >>> in JavaScript?",
+              "answer": "**>> (Signed):** Preserves the sign bit. Negative numbers stay negative. \n**>>> (Unsigned):** Fills with 0s from the left. Converts to unsigned 32-bit integer."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/number-of-1-bits/"
+          ]
+        },
+        {
+          "id": "reverse_bits",
+          "name": "Reverse Bits",
+          "estimatedHours": 1,
+          "description": "Reverse the bits of a given 32-bit unsigned integer",
+          "practiceQuestions": [
+            {
+              "name": "Reverse Bits",
+              "slug": "reverse-bits",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-bits/"
+            }
+          ],
+          "learningTip": [
+            "**Bit by Bit:** Extract last bit with `n & 1`, shift result left, OR the bit in. Repeat 32 times.",
+            "**Pattern:** `result = (result << 1) | (n & 1); n >>>= 1;`",
+            "**JavaScript Gotcha:** Use `>>> 0` to convert final result to unsigned 32-bit integer."
+          ],
+          "mustNotMiss": [
+            "**Exactly 32 iterations:** Always loop 32 times, even if `n` becomes 0 early (leading zeros matter).",
+            "**Unsigned conversion:** `result >>> 0` is essential in JS to handle the unsigned requirement."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How would you optimize Reverse Bits if it's called many times?",
+              "answer": "**Cache/Lookup:** Reverse bytes (8-bit chunks) and store in a lookup table. Reverse 4 bytes and swap their order. Reduces repeated computation."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/reverse-bits/"
+          ]
+        },
+        {
+          "id": "sum_of_two_integers",
+          "name": "Sum of Two Integers",
+          "estimatedHours": 1,
+          "description": "Calculate the sum of two integers without using + or - operators",
+          "practiceQuestions": [
+            {
+              "name": "Sum of Two Integers",
+              "slug": "sum-of-two-integers",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sum-of-two-integers/"
+            }
+          ],
+          "learningTip": [
+            "**XOR for Sum:** `a ^ b` gives the sum without carries.",
+            "**AND + Shift for Carry:** `(a & b) << 1` gives the carry bits.",
+            "**Loop:** Repeat until carry is 0: `sum = a ^ b; carry = (a & b) << 1; a = sum; b = carry;`"
+          ],
+          "mustNotMiss": [
+            "**Negative Numbers:** Works correctly with two's complement representation.",
+            "**JavaScript:** May need to handle 32-bit overflow. In interviews, discuss the approach clearly."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why does XOR simulate addition without carry?",
+              "answer": "**Binary Addition:** `0+0=0`, `0+1=1`, `1+0=1`, `1+1=0` (carry 1). XOR gives exactly these results for the non-carry part. AND finds where both bits are 1 (carry positions)."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/sum-of-two-integers/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "math_geometry_matrix",
+      "name": "Math & Geometry / Matrix",
+      "tier": 2,
+      "estimatedHours": 7,
+      "topics": [
+        {
+          "id": "plus_one",
+          "name": "Plus One",
+          "estimatedHours": 0.5,
+          "description": "Increment a large integer represented as an array of digits by one",
+          "practiceQuestions": [
+            {
+              "name": "Plus One",
+              "slug": "plus-one",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/plus-one/"
+            }
+          ],
+          "learningTip": [
+            "**Traverse Right to Left:** Start from the last digit. If it's < 9, just increment and return.",
+            "**Carry Propagation:** If digit is 9, set it to 0 and continue left.",
+            "**Edge Case:** All 9s (e.g., [9,9,9]) → need to prepend 1 → [1,0,0,0]."
+          ],
+          "mustNotMiss": [
+            "**No conversion to number:** Large arrays overflow `Number.MAX_SAFE_INTEGER`.",
+            "**Early return:** If any digit < 9, no need to process remaining digits."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why can't you just convert the array to a number, add 1, and convert back?",
+              "answer": "**Overflow:** Arrays can represent numbers larger than `Number.MAX_SAFE_INTEGER` (2^53). Converting would lose precision."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/plus-one/"
+          ]
+        },
+        {
+          "id": "set_matrix_zeroes",
+          "name": "Set Matrix Zeroes",
+          "estimatedHours": 1,
+          "description": "If an element in an m×n matrix is 0, set its entire row and column to 0s",
+          "practiceQuestions": [
+            {
+              "name": "Set Matrix Zeroes",
+              "slug": "set-matrix-zeroes",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/set-matrix-zeroes/"
+            }
+          ],
+          "learningTip": [
+            "**O(1) Space Trick:** Use the first row and first column as markers instead of extra arrays.",
+            "**Two Passes:** First pass marks which rows/cols need zeroing. Second pass applies the zeros.",
+            "**Special handling:** Track `firstRowZero` and `firstColZero` separately before using them as markers."
+          ],
+          "mustNotMiss": [
+            "**Order matters:** Zero out inner cells first, then handle first row/col last.",
+            "**Don't modify markers prematurely:** If you zero the first row too early, you corrupt your markers."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Can you solve this in O(1) extra space?",
+              "answer": "**Yes:** Use the matrix itself. First row marks which columns to zero, first column marks which rows. Track whether first row/col themselves need zeroing with boolean flags."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/set-matrix-zeroes/"
+          ]
+        },
+        {
+          "id": "spiral_matrix",
+          "name": "Spiral Matrix",
+          "estimatedHours": 1,
+          "description": "Return all elements of a matrix in spiral order",
+          "practiceQuestions": [
+            {
+              "name": "Spiral Matrix",
+              "slug": "spiral-matrix",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/spiral-matrix/"
+            }
+          ],
+          "learningTip": [
+            "**Four Boundaries:** Maintain `top`, `bottom`, `left`, `right` pointers.",
+            "**Shrink Borders:** After traversing right → shrink top. After down → shrink right. After left → shrink bottom. After up → shrink left.",
+            "**Loop until:** `top <= bottom && left <= right`."
+          ],
+          "mustNotMiss": [
+            "**Non-square matrices:** Handle rectangles (more rows than cols or vice versa).",
+            "**Boundary checks:** After each direction change, re-check the loop condition to avoid duplicate traversal."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How do you handle a single-row or single-column matrix?",
+              "answer": "**Boundary check:** After traversing right, if `top > bottom`, stop. After traversing down, if `left > right`, stop. This naturally handles edge cases."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/spiral-matrix/"
+          ]
+        },
+        {
+          "id": "rotate_image",
+          "name": "Rotate Image",
+          "estimatedHours": 1,
+          "description": "Rotate an n×n 2D matrix by 90 degrees clockwise in-place",
+          "practiceQuestions": [
+            {
+              "name": "Rotate Image",
+              "slug": "rotate-image",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/rotate-image/"
+            }
+          ],
+          "learningTip": [
+            "**Two-Step Trick:** 1) Transpose the matrix (swap rows↔cols). 2) Reverse each row.",
+            "**Transpose:** `matrix[i][j]` ↔ `matrix[j][i]` for `j > i`.",
+            "**Why it works:** Transpose + Row Reverse = 90° clockwise rotation."
+          ],
+          "mustNotMiss": [
+            "**In-place requirement:** You cannot use an extra matrix.",
+            "**Transpose correctly:** Only swap upper triangle (`j > i`) to avoid double-swapping."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How would you rotate 90° counter-clockwise?",
+              "answer": "**Reverse first, then transpose.** Or: transpose first, then reverse each column instead of each row."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/rotate-image/"
+          ]
+        },
+        {
+          "id": "valid_sudoku",
+          "name": "Valid Sudoku",
+          "estimatedHours": 1,
+          "description": "Determine if a 9×9 Sudoku board is valid (no repeats in rows, columns, or 3×3 sub-boxes)",
+          "practiceQuestions": [
+            {
+              "name": "Valid Sudoku",
+              "slug": "valid-sudoku",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/valid-sudoku/"
+            }
+          ],
+          "learningTip": [
+            "**Three Sets:** Use Sets for each row (9), each column (9), and each 3×3 box (9).",
+            "**Box Index:** `Math.floor(row / 3) * 3 + Math.floor(col / 3)` gives the box number (0–8).",
+            "**Skip empty:** Only validate cells containing digits 1–9."
+          ],
+          "mustNotMiss": [
+            "**Box formula:** The `floor(r/3)*3 + floor(c/3)` trick is the key insight.",
+            "**Only check filled cells:** Empty cells (`.`) are valid."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the time and space complexity?",
+              "answer": "**Time: O(81) = O(1)** since the board is always 9×9. **Space: O(81) = O(1)** for the 27 sets (9 rows + 9 cols + 9 boxes)."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/valid-sudoku/"
+          ]
+        },
+        {
+          "id": "pow_x_n",
+          "name": "Pow(x, n)",
+          "estimatedHours": 1,
+          "description": "Implement pow(x, n) which calculates x raised to the power n",
+          "practiceQuestions": [
+            {
+              "name": "Pow(x, n)",
+              "slug": "powx-n",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/powx-n/"
+            }
+          ],
+          "learningTip": [
+            "**Binary Exponentiation:** If n is even: `x^n = (x^(n/2))^2`. If n is odd: `x^n = x * x^(n-1)`.",
+            "**O(log n):** Each step halves the exponent. Much faster than naive O(n).",
+            "**Negative n:** Compute `1 / pow(x, -n)`. Handle `n = -2^31` carefully (overflow when negating)."
+          ],
+          "mustNotMiss": [
+            "**Overflow edge case:** `n = -2147483648`. Negating gives `2147483648` which overflows 32-bit int.",
+            "**x = 0 and n < 0:** Undefined (division by zero)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why is binary exponentiation O(log n)?",
+              "answer": "**Halving:** Each step reduces n by half (n/2). After log₂(n) steps, n reaches 0. This is the same principle as binary search."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/powx-n/"
+          ]
+        },
+        {
+          "id": "multiply_strings",
+          "name": "Multiply Strings",
+          "estimatedHours": 1.5,
+          "description": "Multiply two non-negative integers represented as strings without using BigInt",
+          "practiceQuestions": [
+            {
+              "name": "Multiply Strings",
+              "slug": "multiply-strings",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/multiply-strings/"
+            }
+          ],
+          "learningTip": [
+            "**Grade School Multiplication:** Digit `i` of num1 × digit `j` of num2 contributes to position `i+j` and `i+j+1` in result.",
+            "**Result Array:** Size is `m + n` (max digits of product of m-digit × n-digit numbers).",
+            "**Process carries:** After all multiplications, process carries from right to left."
+          ],
+          "mustNotMiss": [
+            "**Leading zeros:** Trim leading zeros from result. Handle `0 × anything = 0`.",
+            "**No BigInt/parseInt:** Must simulate digit-by-digit multiplication."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the maximum length of the product of two numbers?",
+              "answer": "**m + n digits.** A number with m digits has max value 10^m - 1. Product of 10^m × 10^n = 10^(m+n), which has m+n+1 digits. But (10^m-1) × (10^n-1) has at most m+n digits."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/multiply-strings/"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "system_design_dsa",
+      "name": "System Design Basics (DSA)",
+      "tier": 3,
+      "estimatedHours": 4.5,
+      "topics": [
+        {
+          "id": "design_lru_cache",
+          "name": "Design LRU Cache",
+          "estimatedHours": 1.5,
+          "description": "Design a data structure for Least Recently Used (LRU) cache with O(1) get and put",
+          "practiceQuestions": [
+            {
+              "name": "LRU Cache",
+              "slug": "lru-cache",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/lru-cache/"
+            }
+          ],
+          "learningTip": [
+            "**Combo:** HashMap + Doubly Linked List. Map gives O(1) lookup. DLL gives O(1) insert/remove.",
+            "**Operations:** `get` → move node to head (most recent). `put` → add to head, if over capacity remove tail (least recent).",
+            "**Sentinel Nodes:** Use dummy `head` and `tail` nodes to simplify edge cases (empty list, single element)."
+          ],
+          "mustNotMiss": [
+            "**Both O(1):** Both `get` and `put` must be O(1). Arrays alone can't achieve this.",
+            "**Update existing:** If key already exists in `put`, update value AND move to head."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why can't you use just a HashMap or just a LinkedList?",
+              "answer": "**HashMap alone:** No ordering info (can't find least recently used in O(1)). \n**LinkedList alone:** No O(1) lookup by key. \n**Combined:** HashMap gives O(1) key→node lookup. DLL gives O(1) reordering."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/lru-cache/"
+          ]
+        },
+        {
+          "id": "insert_delete_getrandom",
+          "name": "Insert Delete GetRandom O(1)",
+          "estimatedHours": 1.5,
+          "description": "Design a data structure that supports insert, delete, and getRandom in O(1) average time",
+          "practiceQuestions": [
+            {
+              "name": "Insert Delete GetRandom O(1)",
+              "slug": "insert-delete-getrandom-o1",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/insert-delete-getrandom-o1/"
+            }
+          ],
+          "learningTip": [
+            "**Combo:** HashMap + Array. Map stores `value → index`. Array enables O(1) random access.",
+            "**Delete Trick:** Swap element to delete with last element, then pop. Updates map for swapped element.",
+            "**GetRandom:** `arr[Math.floor(Math.random() * arr.length)]` — O(1) because array has no gaps."
+          ],
+          "mustNotMiss": [
+            "**Swap-and-pop:** The key insight. Can't delete from middle of array in O(1) otherwise.",
+            "**Map update:** After swapping, update the swapped element's index in the map."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why can't a HashSet alone support getRandom in O(1)?",
+              "answer": "**No indexing:** HashSets don't support random access by index. You'd need to convert to array first (O(n)). The array component provides the O(1) random access."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/insert-delete-getrandom-o1/"
+          ]
+        },
+        {
+          "id": "design_lfu_cache",
+          "name": "Design LFU Cache",
+          "estimatedHours": 1.5,
+          "description": "Design a Least Frequently Used (LFU) cache with O(1) operations",
+          "practiceQuestions": [
+            {
+              "name": "LFU Cache",
+              "slug": "lfu-cache",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/lfu-cache/"
+            }
+          ],
+          "learningTip": [
+            "**Three Maps:** 1) key→value+freq, 2) freq→DLL of keys (ordered by recency), 3) key→node pointer.",
+            "**Min Frequency:** Track `minFreq`. When evicting, remove from the DLL at `freqMap[minFreq]`.",
+            "**On access:** Move key from freq `f` list to freq `f+1` list. If freq `f` list is now empty and `f === minFreq`, increment `minFreq`."
+          ],
+          "mustNotMiss": [
+            "**Tie-breaking:** When multiple keys have same frequency, evict the least recently used one (LRU within same freq).",
+            "**New inserts:** Always have `freq = 1`, so `minFreq` resets to 1 on every new insert."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How does LFU differ from LRU?",
+              "answer": "**LRU:** Evicts the key not used for the longest time. \n**LFU:** Evicts the key used the fewest times. If tie, evicts the least recently used among those. LFU is harder because you need to track frequencies."
+            }
+          ],
+          "resources": [
+            "https://leetcode.com/problems/lfu-cache/"
+          ]
+        }
+      ]
+    },
+    {
       "id": "searching_sorting_advanced",
       "name": "Searching & Sorting - Advanced",
       "tier": 2,
@@ -8570,16 +9426,16 @@
           "description": "Implement the Stable Counting Sort algorithm.",
           "practiceQuestions": [
             {
-              "name": "Sort Colors",
-              "slug": "sort-colors",
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/sort-colors/"
-            },
-            {
               "name": "Height Checker",
               "slug": "height-checker",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/height-checker/"
+            },
+            {
+              "name": "Sort Colors",
+              "slug": "sort-colors",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sort-colors/"
             }
           ],
           "learningTip": [
@@ -8673,6 +9529,6 @@
       ]
     }
   ],
-  "totalEstimatedHours": 556,
+  "totalEstimatedHours": 571,
   "recommendedHoursPerWeek": 2
 }

@@ -4,7 +4,7 @@
  * Comprehensive persona detection step for the onboarding flow.
  * Captures user type, work schedule, and career context for adaptive learning.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

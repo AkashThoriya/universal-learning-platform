@@ -69,7 +69,7 @@ export function ReviewStep({ data }: ReviewStepProps) {
                 <Target className="w-5 h-5 text-gray-400" />
                 <div>
                   <div className="text-sm font-medium text-gray-900">Target Completion</div>
-                  <div className="text-xs text-muted-foreground">Based on your exam date</div>
+                  <div className="text-xs text-muted-foreground">Based on your target date</div>
                 </div>
               </div>
               <div className="text-right">

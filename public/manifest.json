@@ -1,7 +1,7 @@
 {
-  "name": "Exam Strategy Engine - Strategic Exam Preparation Platform",
-  "short_name": "Exam Strategy",
-  "description": "Transform your exam preparation with AI-powered adaptive learning, strategic planning, and data-driven insights.",
+  "name": "Universal Learning Platform - Strategic Goal Preparation Platform",
+  "short_name": "Universal Learning Platform",
+  "description": "Transform your goal preparation with AI-powered adaptive learning, strategic planning, and data-driven insights.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -10,7 +10,7 @@
   "categories": ["education", "productivity", "utilities"],
   "lang": "en",
   "scope": "/",
-  "id": "exam-strategy-engine",
+  "id": "universal-learning-platform",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",

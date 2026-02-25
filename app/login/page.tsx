@@ -81,10 +81,10 @@ export default function LoginPage() {
             <div className="hidden xl:block space-y-8 text-left">
               <div className="space-y-4">
                 <h1 className="text-4xl xl:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
-                  Exam Strategy Engine
+                  Universal Learning Platform
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed">
-                  Universal Strategic Platform for Competitive Exam Success
+                  Universal Strategic Platform for Competitive Goal Success
                 </p>
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   <Shield className="h-4 w-4" />
@@ -130,10 +130,10 @@ export default function LoginPage() {
               {/* Header - Visible on mobile and tablet (hidden on xl+) */}
               <div className="xl:hidden text-center mb-8">
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight pb-2">
-                  Exam Strategy Engine
+                  Universal Learning Platform
                 </h1>
                 <p className="text-sm sm:text-base text-gray-600 max-w-sm mx-auto">
-                  Universal Strategic Platform for Competitive Exam Success
+                  Universal Strategic Platform for Competitive Goal Success
                 </p>
                 {/* Compact Trust Badges for Tablet */}
                 <div className="hidden sm:flex xl:hidden items-center justify-center gap-4 mt-4 text-xs text-gray-500">

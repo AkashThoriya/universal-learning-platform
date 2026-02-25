@@ -1,19 +1,19 @@
-# Exam Data Files
+# Goal Data Files
 
-This directory contains JSON data files for all supported exams in the Exam Strategy Engine.
+This directory contains JSON data files for all supported goals in the Universal Learning Platform.
 
 ## Structure
 
-Each JSON file represents a complete exam with:
+Each JSON file represents a complete goal with:
 
-- **Exam metadata**: ID, name, description, category
-- **Stages**: Different phases of the exam (e.g., Prelims, Mains, Interview)
+- **Goal metadata**: ID, name, description, category
+- **Stages**: Different phases of the goal (e.g., Prelims, Mains, Interview)
 - **Sections**: Subdivisions within each stage
 - **Default syllabus**: Complete syllabus structure with subjects, topics, and estimated study hours
 
 ## File Naming Convention
 
-Files should be named using kebab-case following the pattern: `{exam-identifier}.json`
+Files should be named using kebab-case following the pattern: `{goal-identifier}.json`
 
 Examples:
 
@@ -21,22 +21,22 @@ Examples:
 - `sql-mastery.json` - SQL Mastery Course
 - `devops-mastery.json` - DevOps Mastery Course
 
-## Adding New Exams
+## Adding New Goals
 
 1. Create a new JSON file following the existing structure
-2. Add the import statement in `lib/exams-data.ts`
-3. Add the exam to the `EXAMS_DATA` array
+2. Add the import statement in `lib/goals-data.ts`
+3. Add the goal to the `EXAMS_DATA` array
 4. Update documentation if needed
 
 ## JSON Schema
 
-Each exam JSON file should follow this structure:
+Each goal JSON file should follow this structure:
 
 ```json
 {
   "id": "unique_exam_identifier",
-  "name": "Human Readable Exam Name",
-  "description": "Detailed description of the exam",
+  "name": "Human Readable Goal Name",
+  "description": "Detailed description of the goal",
   "category": "Category (e.g., Technology, Banking, Civil Services)",
   "stages": [
     {
@@ -78,9 +78,9 @@ Each exam JSON file should follow this structure:
 Current supported categories:
 
 - **Computer Science**: Programming (React, etc.), DevOps, Database courses, Data Structures & Algorithms
-- **Banking**: Banking sector competitive exams
-- **Civil Services**: Government service exams
-- **Engineering**: Technical engineering exams
-- **Management**: Business management exams
-- **Medical**: Medical entrance exams
+- **Banking**: Banking sector competitive goals
+- **Civil Services**: Government service goals
+- **Engineering**: Technical engineering goals
+- **Management**: Business management goals
+- **Medical**: Medical entrance goals
 - **Entrance**: General entrance examinations

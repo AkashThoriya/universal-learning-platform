@@ -4,7 +4,7 @@
  * Factory for creating database providers and managing configurations
  * for different database backends.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Intelligent Analytics Service - Enterprise Implementation
  *
- * Comprehensive analytics system providing deep insights across exam and course
+ * Comprehensive analytics system providing deep insights across goal and course
  * learning tracks with real-time data processing, predictive analytics, and
  * cross-track pattern recognition.
  *
@@ -13,7 +13,7 @@
  * - Historical data analysis with time-series insights
  * - Firebase real-time synchronization with offline support
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -59,7 +59,7 @@ export interface AnalyticsEvent {
  * Analytics event types
  */
 export type AnalyticsEventType =
-  // Exam Analytics Events
+  // Goal Analytics Events
   | 'mock_test_started'
   | 'mock_test_completed'
   | 'mock_test_abandoned'
@@ -144,7 +144,7 @@ export interface AnalyticsMetadata {
  * Performance analytics aggregated data
  */
 export interface PerformanceAnalytics {
-  // Exam Performance
+  // Goal Performance
   examPerformance: {
     totalMockTests: number;
     averageScore: number;
@@ -424,7 +424,7 @@ export class IntelligentAnalyticsService {
   }
 
   /**
-   * Track exam-specific events
+   * Track goal-specific events
    */
   async trackExamEvent(
     userId: string,
@@ -636,10 +636,10 @@ export class IntelligentAnalyticsService {
   // ============================================================================
 
   /**
-   * Analyze learning transfer between exam and course tracks
+   * Analyze learning transfer between goal and course tracks
    */
   /**
-   * Analyze learning transfer between exam and course tracks
+   * Analyze learning transfer between goal and course tracks
    */
   async analyzeLearningTransfer(userId: string, courseId?: string): Promise<LearningTransfer[]> {
     try {
@@ -676,10 +676,10 @@ export class IntelligentAnalyticsService {
   }
 
   /**
-   * Identify skill synergies between exam and tech skills
+   * Identify skill synergies between goal and tech skills
    */
   /**
-   * Identify skill synergies between exam and tech skills
+   * Identify skill synergies between goal and tech skills
    */
   async identifySkillSynergies(userId: string, courseId?: string): Promise<SkillSynergy[]> {
     try {
@@ -882,7 +882,7 @@ export class IntelligentAnalyticsService {
 
   // Placeholder implementations for complex analytics methods
   private async getExamPerformance(_userId: string, _courseId?: string): Promise<PerformanceAnalytics['examPerformance']> {
-    // Implementation would analyze exam-related events and generate performance metrics
+    // Implementation would analyze goal-related events and generate performance metrics
     return {
       totalMockTests: 0,
       averageScore: 0,

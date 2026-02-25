@@ -2,13 +2,13 @@
  * @fileoverview Universal Learning Analytics Service
  *
  * Provides comprehensive analytics and insights across all learning tracks:
- * - Exam preparation analytics
+ * - Goal preparation analytics
  * - Custom learning goal analytics
  * - Unified progress tracking
  * - Learning recommendations
  * - Performance insights
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -138,7 +138,7 @@ export class UniversalLearningAnalytics {
    */
   async getUnifiedProgress(userId: string, courseId?: string): Promise<Result<UnifiedLearningProgress>> {
     try {
-      // Get exam preparation progress
+      // Get goal preparation progress
       const examProgress = await this.getExamProgress(userId, courseId);
 
       // Get custom learning progress
@@ -227,7 +227,7 @@ export class UniversalLearningAnalytics {
   }
 
   /**
-   * Get exam preparation progress
+   * Get goal preparation progress
    */
   private async getExamProgress(userId: string, courseId?: string) {
     try {
@@ -249,7 +249,7 @@ export class UniversalLearningAnalytics {
       const snapshot = await getDocs(recentMissionsQuery);
       const allCompletedMissions = snapshot.docs.map(doc => doc.data());
 
-      // Filter for exam and course_tech tracks in memory
+      // Filter for goal and course_tech tracks in memory
       const completedMissions = allCompletedMissions.filter(
         mission => mission.track === 'exam' || mission.track === 'course_tech'
       );
@@ -363,7 +363,7 @@ export class UniversalLearningAnalytics {
     const learningStreak = Math.max(examProgress.currentStreak, 0);
 
     // Calculate overall progress as a weighted average
-    const examWeight = 0.6; // Slightly higher weight for exam preparation
+    const examWeight = 0.6; // Slightly higher weight for goal preparation
     const customWeight = 0.4;
     const examProgressPercent = examProgress.weeklyGoalProgress ?? 0;
     const customProgressPercent = customProgress.averageCompletionRate ?? 0;

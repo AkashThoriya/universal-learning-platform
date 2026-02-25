@@ -6,7 +6,7 @@
  * Enterprise-grade navigation with accessibility, responsive design,
  * and intelligent badge system.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -201,7 +201,7 @@ export default function Navigation() {
             <Link
               href="/dashboard"
               className="flex items-center space-x-2 group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1"
-              aria-label="Exam Strategy Engine - Go to dashboard"
+              aria-label="Universal Learning Platform - Go to dashboard"
             >
               <div className="relative flex-shrink-0">
                 <Target className="h-7 w-7 text-primary transition-transform duration-200" />

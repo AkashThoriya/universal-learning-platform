@@ -2,9 +2,9 @@
  * @fileoverview Onboarding Flow Static Data
  *
  * Centralized data for all onboarding-related components including
- * persona options, study preferences, exam categories, and workflow steps.
+ * persona options, study preferences, goal categories, and workflow steps.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -142,7 +142,7 @@ export interface ExamCategory {
 }
 
 /**
- * Popular exam categories for onboarding
+ * Popular goal categories for onboarding
  * Used in: PersonalInfoStepCompact.tsx
  */
 export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
@@ -237,7 +237,7 @@ export const getStudyTimeById = (id: string): StudyTimePreference | undefined =>
 };
 
 /**
- * Get exam category by ID
+ * Get goal category by ID
  */
 export const getExamCategoryById = (id: string): ExamCategory | undefined => {
   return POPULAR_EXAM_CATEGORIES.find(category => category.id === id);

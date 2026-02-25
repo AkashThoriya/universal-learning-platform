@@ -12,7 +12,7 @@
  * - Real-time analytics data synchronization
  * - Error tracking and recovery analytics
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -75,7 +75,7 @@ export const useAnalytics = () => {
     [user?.uid, activeCourseId]
   );
 
-  // Track exam events
+  // Track goal events
   const trackExamEvent = useCallback(
     (
       eventType: Extract<
@@ -132,7 +132,7 @@ export const useAnalytics = () => {
 // ============================================================================
 
 /**
- * Specialized hook for exam-related analytics
+ * Specialized hook for goal-related analytics
  */
 export const useExamAnalytics = () => {
   const { trackExamEvent } = useAnalytics();

@@ -6,7 +6,7 @@
  * - Learning path/course selection
  * - Clean, focused UX without redundancy
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -210,7 +210,7 @@ export function BasicInfoStep({
     [form]
   );
 
-  // Group exams by category with enhanced filtering
+  // Group goals by category with enhanced filtering
   const examsByCategory = useMemo(() => {
     const grouped: { [key: string]: Exam[] } = {};
     filteredExams.forEach(exam => {
@@ -223,7 +223,7 @@ export function BasicInfoStep({
     return grouped;
   }, [filteredExams]);
 
-  // Get exams for display with enhanced logic
+  // Get goals for display with enhanced logic
   const displayExams = useMemo(() => {
     if (searchQuery) {
       return showAllExams ? filteredExams : filteredExams.slice(0, 8);
@@ -234,10 +234,10 @@ export function BasicInfoStep({
     return showAllExams ? filteredExams : filteredExams.slice(0, 12);
   }, [searchQuery, activeCategory, filteredExams, examsByCategory, showAllExams]);
 
-  // Enhanced custom exam handler
+  // Enhanced custom goal handler
   const handleCustomExam = useCallback(() => {
     try {
-      // For custom exams in multi-select, we might need more complex logic
+      // For custom goals in multi-select, we might need more complex logic
       // For now, custom acts as single select or primary replacement
       if (isMultiSelectMode) {
         // TODO: Add logic for custom course in multi-select (future enhancement)

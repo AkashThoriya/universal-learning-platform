@@ -1,5 +1,5 @@
 /**
- * @fileoverview Push Notification Service for Exam Strategy Engine
+ * @fileoverview Push Notification Service for Universal Learning Platform
  *
  * Handles push notification subscription, sending, and management:
  * - VAPID key configuration

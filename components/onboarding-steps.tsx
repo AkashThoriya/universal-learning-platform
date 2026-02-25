@@ -2,10 +2,10 @@
  * @fileoverview Onboarding Step Components
  *
  * Individual step components for the enhanced onboarding flow.
- * Each component f                (formData?.selectedExamId === exam.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50')llows enterprise patterns with proper type safety,
+ * Each component f                (formData?.selectedExamId === goal.id ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50')llows enterprise patterns with proper type safety,
  * accessibility, and UX best practices.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -119,7 +119,7 @@ export function PersonalInfoStep({
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search for your exam..."
+            placeholder="Search for your goal..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -167,8 +167,8 @@ export function PersonalInfoStep({
             <CardContent className="p-4 flex items-center justify-center min-h-[100px]">
               <div className="text-center">
                 <Plus className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm font-medium">Create Custom Exam</p>
-                <p className="text-xs text-gray-600">For competitive exams not listed</p>
+                <p className="text-sm font-medium">Create Custom Goal</p>
+                <p className="text-xs text-gray-600">For competitive goals not listed</p>
               </div>
             </CardContent>
           </Card>
@@ -189,7 +189,7 @@ export function PersonalInfoStep({
         )}
       </div>
 
-      {/* Exam Date */}
+      {/* Target Date */}
       {formData?.selectedExamId && (
         <div className="space-y-2">
           <Label htmlFor="examDate" className="text-sm font-medium">
@@ -236,7 +236,7 @@ export function PersonalInfoStep({
 }
 
 /**
- * Custom Exam Details Step
+ * Custom Goal Details Step
  */
 interface CustomExamStepProps {
   form: UseFormReturn<unknown>;
@@ -256,10 +256,10 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
       </CardHeader>
 
       <div className="space-y-4">
-        {/* Exam Name */}
+        {/* Goal Name */}
         <div className="space-y-2">
           <Label htmlFor="customExamName" className="text-sm font-medium">
-            Exam Name *
+            Goal Name *
           </Label>
           <Input
             id="customExamName"
@@ -297,7 +297,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
             }
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select exam category" />
+              <SelectValue placeholder="Select goal category" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Government">Government Jobs</SelectItem>
@@ -346,7 +346,7 @@ export function CustomExamStep({ form }: CustomExamStepProps) {
 }
 
 /**
- * Exam Review Step (for predefined exams)
+ * Goal Review Step (for predefined goals)
  */
 interface ExamReviewStepProps {
   form: UseFormReturn<unknown>;
@@ -370,7 +370,7 @@ export function ExamReviewStep({ form, selectedExam }: ExamReviewStepProps) {
       <CardHeader className="px-0 pt-0">
         <div className="flex items-center space-x-2">
           <CheckCircle className="h-6 w-6 text-green-600" />
-          <CardTitle>Exam Overview</CardTitle>
+          <CardTitle>Goal Overview</CardTitle>
         </div>
         <CardDescription>Review your selected exam details and preparation timeline.</CardDescription>
       </CardHeader>

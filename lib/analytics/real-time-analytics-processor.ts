@@ -3,7 +3,7 @@
  *
  * Advanced analytics processing engine that provides real-time data
  * aggregation, pattern recognition, and intelligent insights generation
- * across exam and course learning tracks.
+ * across goal and course learning tracks.
  *
  * Features:
  * - Real-time data aggregation and processing
@@ -13,7 +13,7 @@
  * - Performance prediction algorithms
  * - Weak area identification and tracking
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -265,7 +265,7 @@ export class RealTimeAnalyticsProcessor {
     const detectedPatterns: LearningPattern[] = [];
 
     try {
-      // Analyze exam performance patterns
+      // Analyze goal performance patterns
       const examEvents = events.filter(e => e.category === 'exam');
       const examPatterns = await this.analyzeExamPatterns(examEvents);
       detectedPatterns.push(...examPatterns);
@@ -288,7 +288,7 @@ export class RealTimeAnalyticsProcessor {
   }
 
   /**
-   * Analyze exam-specific patterns
+   * Analyze goal-specific patterns
    */
   private async analyzeExamPatterns(events: AnalyticsEvent[]): Promise<LearningPattern[]> {
     const patterns: LearningPattern[] = [];
@@ -443,7 +443,7 @@ export class RealTimeAnalyticsProcessor {
         insightType: 'behavior',
         title: 'Learning Balance Opportunity',
         description:
-          "You've been focusing heavily on exam preparation. Consider balancing with some course work for cross-track benefits.",
+          "You've been focusing heavily on goal preparation. Consider balancing with some course work for cross-track benefits.",
         impact: 'medium',
         actionable: true,
         expiresAt: Timestamp.fromMillis(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -533,7 +533,7 @@ export class RealTimeAnalyticsProcessor {
    */
   private async updatePredictions(userId: string, events: AnalyticsEvent[]): Promise<void> {
     try {
-      // Update exam success prediction
+      // Update goal success prediction
       await this.updateExamSuccessPrediction(userId, events);
 
       // Update skill mastery predictions

@@ -4,7 +4,7 @@
  * Centralized logging system that replaces console statements with
  * proper production logging, error reporting, and debugging tools.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

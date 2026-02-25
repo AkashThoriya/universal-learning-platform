@@ -5,7 +5,7 @@
  * during data fetching and processing. Includes skeleton screens,
  * progressive loading indicators, and accessible loading feedback.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 2.0.0
  */
 

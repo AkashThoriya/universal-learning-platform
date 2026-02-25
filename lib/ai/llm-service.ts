@@ -5,7 +5,7 @@
  * with support for multiple providers (Gemini, OpenAI, etc.) and
  * specialized question generation for adaptive testing.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

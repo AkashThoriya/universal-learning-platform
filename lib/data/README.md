@@ -1,17 +1,17 @@
 # Data Directory
 
-This directory contains data files and utilities for the Exam Strategy Engine.
+This directory contains data files and utilities for the Universal Learning Platform.
 
 ## Directory Structure
 
 ```
 lib/data/
-├── exams/              # JSON files containing exam data
-│   ├── README.md       # Documentation for exam data files
-│   ├── cat.json        # CAT exam data
-│   ├── gate-cse.json   # GATE CSE exam data
+├── goals/              # JSON files containing goal data
+│   ├── README.md       # Documentation for goal data files
+│   ├── cat.json        # CAT goal data
+│   ├── gate-cse.json   # GATE CSE goal data
 │   ├── sql-mastery.json # SQL Mastery course data
-│   └── ...             # Other exam JSON files
+│   └── ...             # Other goal JSON files
 ├── index.ts            # Main data exports
 ├── learning-templates.ts # Learning path templates
 ├── onboarding.ts       # Onboarding flow data
@@ -20,10 +20,10 @@ lib/data/
 
 ## File Types
 
-### JSON Files (`exams/` directory)
+### JSON Files (`goals/` directory)
 
-- **Purpose**: Static exam data with complete syllabus structures
-- **Format**: Structured JSON following the exam schema
+- **Purpose**: Static goal data with complete syllabus structures
+- **Format**: Structured JSON following the goal schema
 - **Usage**: Imported into TypeScript modules for type-safe access
 
 ### TypeScript Files (root `data/` directory)
@@ -37,15 +37,15 @@ lib/data/
 1. **Separation of Concerns**: JSON data files are separated from TypeScript utilities
 2. **Type Safety**: All data is properly typed using TypeScript interfaces
 3. **Maintainability**: Clear directory structure makes it easy to find and update files
-4. **Scalability**: New exams can be easily added without cluttering the main directory
+4. **Scalability**: New goals can be easily added without cluttering the main directory
 
 ## Adding New Data
 
-### For Exam Data
+### For Goal Data
 
-1. Create a new JSON file in the `exams/` directory
-2. Follow the schema documented in `exams/README.md`
-3. Import and register the exam in `lib/exams-data.ts`
+1. Create a new JSON file in the `goals/` directory
+2. Follow the schema documented in `goals/README.md`
+3. Import and register the goal in `lib/goals-data.ts`
 
 ### For Utility Data
 

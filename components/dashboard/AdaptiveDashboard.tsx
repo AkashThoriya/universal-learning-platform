@@ -168,7 +168,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             return;
           }
 
-          // Fetch real user data including profile and exam info
+          // Fetch real user data including profile and goal info
           // OPTIMIZED: Fetch all independent data in parallel to reduce latency
           const [progressResult, userProfile, userTests, syllabus, customGoalsResult, topicProgress] =
             await Promise.all([
@@ -180,7 +180,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
               getAllProgress(user.uid, contextCourseId ?? undefined).catch(() => []), // Fetch topic progress for recommendations
             ]);
 
-          // Load selected exam information
+          // Load selected goal information
           const currentExamId = userProfile?.currentExam?.id || '';
           setActiveCourseId(currentExamId);
 
@@ -203,7 +203,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
             if (exam) {
               setSelectedExam(exam);
 
-              // Calculate exam countdown
+              // Calculate goal countdown
               const examDate = userProfile?.currentExam?.targetDate;
               const examDaysLeft = examDate
                 ? Math.max(
@@ -416,7 +416,7 @@ export default function AdaptiveDashboard({ className }: AdaptiveDashboardProps)
       // Update local state
       setActiveCourseId(courseId);
 
-      // Load new exam data
+      // Load new goal data
       const exam = getExamById(courseId);
       if (exam) {
         setSelectedExam(exam);

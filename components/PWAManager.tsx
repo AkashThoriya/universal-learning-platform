@@ -145,7 +145,7 @@ export function PWAManager() {
 
       toast({
         title: 'App Installed!',
-        description: 'Exam Strategy Engine is now installed on your device.',
+        description: 'Universal Learning Platform is now installed on your device.',
       });
     };
 
@@ -470,7 +470,7 @@ export function PWAManager() {
               <CardTitle className="text-lg text-blue-900">Install App</CardTitle>
             </div>
             <CardDescription className="text-blue-700">
-              Install Exam Strategy Engine for faster access and offline study
+              Install Universal Learning Platform for faster access and offline study
             </CardDescription>
           </CardHeader>
           <CardContent>

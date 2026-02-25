@@ -161,7 +161,7 @@ export function StrategyStep({ data, onChange }: StrategyStepProps) {
 
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Label htmlFor="target-date">Target Exam Date</Label>
+              <Label htmlFor="target-date">Target Target Date</Label>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>

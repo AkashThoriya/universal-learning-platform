@@ -2,9 +2,9 @@
  * @fileoverview Micro-Learning System Type Definitions
  *
  * This file contains TypeScript interfaces for the dual-track micro-learning system
- * that supports both exam preparation and course/tech learning with persona-aware adaptations.
+ * that supports both goal preparation and course/tech learning with persona-aware adaptations.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -19,7 +19,7 @@ import { UserPersona as _UserPersona } from './exam';
  * const session: MicroLearningSession = {
  *   id: 'session_123',
  *   userId: 'user_456',
- *   learningTrack: 'exam',
+ *   learningTrack: 'goal',
  *   subjectId: 'mathematics',
  *   topicId: 'calculus',
  *   sessionType: 'practice',
@@ -65,7 +65,7 @@ export interface MicroLearningSession {
 }
 
 /**
- * Validation method for exam-focused learning sessions
+ * Validation method for goal-focused learning sessions
  *
  * @interface ExamValidation
  */
@@ -78,9 +78,9 @@ export interface ExamValidation {
   revisionTopics: string[];
   /** Practice session score */
   practiceScore?: number;
-  /** Target exam identifier */
+  /** Target goal identifier */
   targetExam: string;
-  /** Exam stage (prelims, mains, etc.) */
+  /** Goal stage (prelims, mains, etc.) */
   examStage?: string;
 }
 
@@ -379,7 +379,7 @@ export interface SessionPerformance {
 }
 
 /**
- * Performance metrics specific to exam track sessions
+ * Performance metrics specific to goal track sessions
  *
  * @interface ExamTrackMetrics
  */
@@ -388,7 +388,7 @@ export interface ExamTrackMetrics {
   mockTestScore: number;
   /** Revision effectiveness rating */
   revisionEffectiveness: number;
-  /** Exam readiness score */
+  /** Goal readiness score */
   examReadinessScore: number;
   /** Topics identified as weak */
   weakTopics: string[];

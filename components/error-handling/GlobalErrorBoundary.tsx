@@ -4,7 +4,7 @@
  * Provides application-wide error handling with detailed error reporting,
  * fallback UI, and automatic error recovery mechanisms.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -13,7 +13,7 @@ export interface RecommendationResult {
 }
 
 /**
- * Generates study recommendations based on the user's current progress and exam date.
+ * Generates study recommendations based on the user's current progress and target date.
  */
 export const generateTodayRecommendations = (
   _exam: Exam,
@@ -56,7 +56,7 @@ export const generateTodayRecommendations = (
     }
   }
 
-  // Generate action based on day and exam timeline
+  // Generate action based on day and goal timeline
   if (examDaysLeft !== undefined) {
     if (examDaysLeft <= 7) {
       nextAction = 'Take a practice test';

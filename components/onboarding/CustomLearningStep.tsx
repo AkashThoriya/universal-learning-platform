@@ -4,7 +4,7 @@
  * Allows users to set up their custom learning goals during onboarding
  * for the Universal Learning Platform functionality.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

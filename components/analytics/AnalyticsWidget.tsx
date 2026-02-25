@@ -13,7 +13,7 @@
  * - Interactive charts and progress indicators
  * - Deep-link to full analytics dashboard
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -196,7 +196,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-blue-600" />
-              <span className="text-sm font-medium">Exam Performance</span>
+              <span className="text-sm font-medium">Goal Performance</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold">{summaryMetrics?.examPerformance.current.toFixed(1)}%</span>
@@ -293,7 +293,7 @@ const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({ className }) => {
                   <div>
                     <p className="text-sm font-medium text-blue-800">High Success Probability</p>
                     <p className="text-xs text-blue-700">
-                      {analytics.predictions.examSuccessProbability}% predicted exam success
+                      {analytics.predictions.examSuccessProbability}% predicted goal success
                     </p>
                   </div>
                   <TrendingUp className="h-4 w-4 text-blue-600" />

@@ -8,7 +8,7 @@
  * - Progressive disclosure for reduced cognitive load
  * - Analytics integration for user behavior tracking
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 3.0.0
  */
 

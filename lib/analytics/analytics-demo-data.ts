@@ -6,13 +6,13 @@
  * showcases the full capabilities of the intelligent analytics system.
  *
  * Features:
- * - Realistic exam performance data with trends
+ * - Realistic goal performance data with trends
  * - Course learning progress simulation
  * - Cross-track skill transfer examples
  * - Weak area identification patterns
  * - Predictive analytics sample data
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

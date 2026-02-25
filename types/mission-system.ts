@@ -2,16 +2,16 @@
  * @fileoverview Mission System Type Definitions
  *
  * Comprehensive type definitions for the Week 4-5 Adaptive Mission System.
- * Supports both exam and course/tech tracks with persona-aware adaptations.
+ * Supports both goal and course/tech tracks with persona-aware adaptations.
  *
  * Features:
- * - Dual-track mission support (exam + course/tech)
+ * - Dual-track mission support (goal + course/tech)
  * - User-configurable mission cycles and duration
  * - Unified progress tracking across learning tracks
  * - Persona-aware achievement system
  * - Adaptive difficulty and content generation
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -38,7 +38,7 @@ export type MissionDifficulty = 'beginner' | 'intermediate' | 'advanced' | 'expe
 export type MissionStatus = 'not_started' | 'in_progress' | 'completed' | 'failed' | 'skipped';
 
 /**
- * Learning track types - supports both traditional exams and custom learning paths
+ * Learning track types - supports both traditional goals and custom learning paths
  */
 export type LearningTrack = 'exam' | 'course_tech' | 'custom_skill' | 'language' | 'certification';
 
@@ -127,7 +127,7 @@ export interface MissionContentStructure {
 }
 
 /**
- * Exam track mission content configuration
+ * Goal track mission content configuration
  */
 export interface ExamMissionContent {
   /** Number of questions/problems */
@@ -363,7 +363,7 @@ export interface Mission {
 export interface MissionContent {
   /** Content type */
   type: MissionContentStructure['type'];
-  /** Exam track content */
+  /** Goal track content */
   examContent?: {
     questions: ExamQuestion[];
     timeLimit: number;
@@ -380,7 +380,7 @@ export interface MissionContent {
 }
 
 /**
- * Exam question structure
+ * Goal question structure
  */
 export interface ExamQuestion {
   /** Question identifier */

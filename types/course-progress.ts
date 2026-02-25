@@ -5,13 +5,13 @@
  * Supports multiple simultaneous courses per user with isolated progress tracking.
  *
  * Features:
- * - Course entity definitions (exam, skill, custom types)
+ * - Course entity definitions (goal, skill, custom types)
  * - User-course relationships with status tracking
  * - Course-scoped progress and statistics
  * - Per-topic mastery within a course
  * - Course-specific settings and preferences
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -55,9 +55,9 @@ export interface Course {
   icon?: string;
   /** Primary color for UI theming (hex) */
   color?: string;
-  /** Category for grouping (e.g., "Government Exams", "Tech Skills") */
+  /** Category for grouping (e.g., "Government Goals", "Tech Skills") */
   category?: string;
-  /** Whether this is a predefined exam or custom course */
+  /** Whether this is a predefined goal or custom course */
   isCustom: boolean;
   /** Estimated duration in months */
   estimatedDurationMonths?: number;
@@ -93,7 +93,7 @@ export interface UserCourse {
   status: CourseStatus;
   /** Whether this is the user's primary/active course */
   isPrimary: boolean;
-  /** Target date for completion (exam date, goal deadline) */
+  /** Target date for completion (target date, goal deadline) */
   targetDate?: Timestamp;
   /** When user started this course */
   startedAt: Timestamp;
@@ -295,7 +295,7 @@ export interface CourseContextValue {
  * Course creation input (for adding new courses)
  */
 export interface CreateCourseInput {
-  /** Course ID (from predefined exams or generated for custom) */
+  /** Course ID (from predefined goals or generated for custom) */
   courseId: string;
   /** Course name */
   courseName: string;

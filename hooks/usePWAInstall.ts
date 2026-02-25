@@ -143,7 +143,7 @@ export function usePWAInstall() {
 
     toast({
       title: 'App Installed Successfully! 🎉',
-      description: 'Exam Strategy Engine is now available on your home screen.',
+      description: 'Universal Learning Platform is now available on your home screen.',
     });
 
     // Track installation

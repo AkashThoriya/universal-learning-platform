@@ -120,7 +120,7 @@ export function CoursesTab() {
                 <span>My Courses</span>
               </CardTitle>
               <CardDescription className="text-gray-500 mt-1">
-                Manage your exam preparations. Switch between courses anytime.
+                Manage your goal preparations. Switch between courses anytime.
               </CardDescription>
             </div>
             <Link href="/courses/add">

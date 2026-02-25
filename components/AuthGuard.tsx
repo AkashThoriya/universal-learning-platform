@@ -4,7 +4,7 @@
  * A higher-order component that protects routes by ensuring user authentication.
  * Redirects unauthenticated users to the login page and shows loading states.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -4,7 +4,7 @@
  * Custom hooks that provide reusable state management, data fetching,
  * and business logic patterns. Optimized for performance and type safety.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

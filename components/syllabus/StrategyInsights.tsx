@@ -112,7 +112,7 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
                 <Calendar className="h-3 w-3" /> Start: {formatDate(metrics.startDate)}
               </span>
               <span className="flex items-center gap-1">
-                <Target className="h-3 w-3" /> Exam: {formatDate(metrics.examDate)}
+                <Target className="h-3 w-3" /> Goal: {formatDate(metrics.examDate)}
               </span>
             </div>
 
@@ -201,7 +201,7 @@ export default function StrategyInsights({ user, syllabus, completedTopicsCount 
               </div>
               <div>
                 <p className="font-medium text-gray-900">{metrics.daysRemaining} Days Left</p>
-                <p className="text-xs text-gray-500">until exam day</p>
+                <p className="text-xs text-gray-500">until target date</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-sm">

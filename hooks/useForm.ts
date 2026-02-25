@@ -4,7 +4,7 @@
  * Comprehensive form state management with validation, error handling,
  * persistence, and submission management following enterprise patterns.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

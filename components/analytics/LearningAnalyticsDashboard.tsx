@@ -2,9 +2,9 @@
  * @fileoverview Learning Analytics Dashboard Component
  *
  * Comprehensive analytics dashboard for the Universal Learning Platform
- * showing insights across exam preparation and custom learning goals.
+ * showing insights across goal preparation and custom learning goals.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -148,7 +148,7 @@ export default function LearningAnalyticsDashboard({ className }: LearningAnalyt
           Learning Analytics
         </h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Comprehensive insights across your exam preparation and custom learning goals
+          Comprehensive insights across your goal preparation and custom learning goals
         </p>
       </motion.div>
 
@@ -380,14 +380,14 @@ function DetailedProgressSection({ progress }: { progress: UnifiedLearningProgre
       <h2 className="text-xl font-semibold">Detailed Progress Analysis</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Exam Preparation Progress */}
+        {/* Goal Preparation Progress */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-blue-500" />
-              Exam Preparation
+              Goal Preparation
             </CardTitle>
-            <CardDescription>Traditional exam preparation metrics</CardDescription>
+            <CardDescription>Traditional goal preparation metrics</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">

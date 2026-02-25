@@ -5,7 +5,7 @@
  * validation, persistence, and analytics. Follows React patterns used
  * in top product companies.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

@@ -6,7 +6,7 @@
  * - Daily study hours capacity
  * - Smart date calculation with AI recommendations
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -147,7 +147,7 @@ export function PersonaScheduleStep({ form, selectedExam }: PersonaScheduleStepP
     [form]
   );
 
-  // Enhanced exam date validation
+  // Enhanced target date validation
   const handleDateChange = useCallback(
     (value: string) => {
       form.updateField('examDate', value);

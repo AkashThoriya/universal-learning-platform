@@ -4,7 +4,7 @@
  * Implements the DatabaseProvider interface for Firebase Firestore,
  * providing a standardized API while maintaining Firebase-specific optimizations.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

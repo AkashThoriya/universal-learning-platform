@@ -6,7 +6,7 @@
  *
  * Storage path: users/{userId}/notes/{topicId}/{fileName}
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

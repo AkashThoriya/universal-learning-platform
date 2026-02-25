@@ -1,10 +1,10 @@
 /**
- * @fileoverview Firebase Authentication Context for the Exam Strategy Engine
+ * @fileoverview Firebase Authentication Context for the Universal Learning Platform
  *
  * Provides authentication state management using Firebase Auth with real-time
  * user state updates. Handles user login state, loading states, and logout functionality.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

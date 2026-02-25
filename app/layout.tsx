@@ -12,8 +12,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Exam Strategy Engine - Universal Learning Platform',
-    template: '%s | Exam Strategy Engine',
+    default: 'Universal Learning Platform - Universal Learning Platform',
+    template: '%s | Universal Learning Platform',
   },
   description:
     'A strategic operating system for learning and skill development that transforms unstructured studying into a data-driven, adaptive process with AI-powered insights.',
@@ -30,13 +30,13 @@ export const metadata: Metadata = {
     'spaced repetition',
     'AI tutoring',
     'adaptive learning',
-    'exam strategy',
+    'universal learning platform',
     'revision planner',
     'progress tracking',
   ],
-  authors: [{ name: 'Exam Strategy Engine Team', url: 'https://examstrategyengine.com' }],
-  creator: 'Exam Strategy Engine Team',
-  publisher: 'Exam Strategy Engine',
+  authors: [{ name: 'Universal Learning Platform Team', url: 'https://examstrategyengine.com' }],
+  creator: 'Universal Learning Platform Team',
+  publisher: 'Universal Learning Platform',
   formatDetection: {
     email: false,
     address: false,
@@ -50,22 +50,22 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://examstrategyengine.com',
-    title: 'Exam Strategy Engine - Universal Learning Platform',
+    title: 'Universal Learning Platform - Universal Learning Platform',
     description:
       'Transform your learning with AI-powered adaptive systems, strategic planning, and data-driven insights.',
-    siteName: 'Exam Strategy Engine',
+    siteName: 'Universal Learning Platform',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Exam Strategy Engine - Strategic Learning Platform',
+        alt: 'Universal Learning Platform - Strategic Learning Platform',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Exam Strategy Engine - Universal Learning Platform',
+    title: 'Universal Learning Platform - Universal Learning Platform',
     description:
       'Transform your learning with AI-powered adaptive systems, strategic planning, and data-driven insights.',
     images: ['/twitter-image.png'],
@@ -114,7 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Exam Strategy" />
+        <meta name="apple-mobile-web-app-title" content="Universal Learning Platform" />
 
         {/* App Icons */}
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />

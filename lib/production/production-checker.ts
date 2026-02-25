@@ -4,7 +4,7 @@
  * Comprehensive validation system that ensures every component,
  * page, and feature meets enterprise standards for production deployment.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

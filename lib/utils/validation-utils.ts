@@ -5,7 +5,7 @@
  * for user inputs across the application. Includes XSS prevention, SQL injection
  * protection, and data format validation.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -97,7 +97,7 @@ export const ValidationSchemas = {
   // Date validation
   examDate: z
     .string()
-    .min(1, 'Please select an exam date')
+    .min(1, 'Please select an target date')
     .refine(date => {
       const selectedDate = new Date(date);
       const today = new Date();

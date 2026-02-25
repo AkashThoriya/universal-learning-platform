@@ -4,7 +4,7 @@
  * Defines contracts for database operations that can be implemented
  * by different database providers (Firebase, PostgreSQL, MongoDB, etc.)
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 

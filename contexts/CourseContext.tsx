@@ -10,7 +10,7 @@
  * - Progress tracking for active course
  * - Course list management
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 1.0.0
  */
 
@@ -172,7 +172,7 @@ export function CourseProvider({ children }: { children: ReactNode }) {
     const initializeCourses = async () => {
       setIsLoading(true);
       try {
-        // Load user profile to get current exam
+        // Load user profile to get current goal
         const profile = await getUser(user.uid);
         const currentExamId = profile?.currentExam?.id;
 

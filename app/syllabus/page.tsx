@@ -158,7 +158,7 @@ export default function SyllabusPage() {
     fetchData();
   }, [user, activeCourseId]);
 
-  // Fetch Exam Resources for the active course
+  // Fetch Goal Resources for the active course
   const [examResources, setExamResources] = useState<string[]>([]);
   useEffect(() => {
     if (activeCourseId) {

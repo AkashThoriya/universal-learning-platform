@@ -3,12 +3,12 @@
  *
  * A sophisticated personal information and learning path selection component with:
  * - Advanced search and filtering capabilities
- * - Intelligent exam recommendations
+ * - Intelligent goal recommendations
  * - Enhanced accessibility and validation
  * - Real-time form feedback
  * - Mobile-optimized interface
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 3.0.0
  */
 
@@ -203,7 +203,7 @@ export function PersonalInfoStepCompact({
     [form]
   );
 
-  // Enhanced exam date validation
+  // Enhanced target date validation
   const handleDateChange = useCallback(
     (value: string) => {
       form.updateField('examDate', value);
@@ -229,7 +229,7 @@ export function PersonalInfoStepCompact({
     [form]
   );
 
-  // Group exams by category with enhanced filtering
+  // Group goals by category with enhanced filtering
   const examsByCategory = useMemo(() => {
     const grouped: { [key: string]: Exam[] } = {};
     filteredExams.forEach(exam => {
@@ -242,7 +242,7 @@ export function PersonalInfoStepCompact({
     return grouped;
   }, [filteredExams]);
 
-  // Get exams for display with enhanced logic
+  // Get goals for display with enhanced logic
   const displayExams = useMemo(() => {
     if (searchQuery) {
       return showAllExams ? filteredExams : filteredExams.slice(0, 8);
@@ -253,7 +253,7 @@ export function PersonalInfoStepCompact({
     return showAllExams ? filteredExams : filteredExams.slice(0, 12);
   }, [searchQuery, activeCategory, filteredExams, examsByCategory, showAllExams]);
 
-  // Enhanced custom exam handler
+  // Enhanced custom goal handler
   const handleCustomExam = useCallback(() => {
     try {
       onExamSelect('custom');
@@ -429,14 +429,14 @@ export function PersonalInfoStepCompact({
                     : 'Available Learning Paths'}
               </Label>
               {(() => {
-                // Calculate the total available exams for current context
+                // Calculate the total available goals for current context
                 const totalAvailable = searchQuery
                   ? filteredExams.length
                   : activeCategory && examsByCategory[activeCategory]
                     ? examsByCategory[activeCategory].length
                     : filteredExams.length;
 
-                // Show button if there are more exams than currently displayed
+                // Show button if there are more goals than currently displayed
                 return (
                   displayExams.length < totalAvailable && (
                     <Button
@@ -532,9 +532,9 @@ export function PersonalInfoStepCompact({
               >
                 <CardContent className="p-6 text-center">
                   <Plus className="h-8 w-8 text-gray-400 mx-auto mb-3" />
-                  <h3 className="font-medium text-gray-700 mb-2">Create Custom Exam</h3>
+                  <h3 className="font-medium text-gray-700 mb-2">Create Custom Goal</h3>
                   <p className="text-sm text-gray-600 mb-3">
-                    Don't see your exam? Create a custom one with your own syllabus
+                    Don't see your goal? Create a custom one with your own syllabus
                   </p>
                   <Badge variant="outline">Fully Customizable</Badge>
                 </CardContent>
@@ -633,7 +633,7 @@ export function PersonalInfoStepCompact({
         </Card>
       )}
 
-      {/* Enhanced Exam Date */}
+      {/* Enhanced Target Date */}
       {form.data.selectedExamId && form.data.preferences?.dailyStudyGoalMinutes && (
         <Card>
           <CardContent className="p-6">
@@ -770,7 +770,7 @@ export function PersonalInfoStepCompact({
             <div className="space-y-4">
               <div>
                 <Label htmlFor="custom-exam-name" className="text-sm font-medium mb-2 block">
-                  Exam Name *
+                  Goal Name *
                 </Label>
                 <Input
                   id="custom-exam-name"
@@ -846,7 +846,7 @@ export function PersonalInfoStepCompact({
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-green-800 mb-3">Excellent! Your exam setup is complete</h3>
+                  <h3 className="text-lg font-semibold text-green-800 mb-3">Excellent! Your goal setup is complete</h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div className="bg-white/70 p-3 rounded-lg">
@@ -863,7 +863,7 @@ export function PersonalInfoStepCompact({
                       )}
                     </div>
                     <div className="bg-white/70 p-3 rounded-lg">
-                      <h4 className="font-medium text-gray-800 mb-1">Exam Date</h4>
+                      <h4 className="font-medium text-gray-800 mb-1">Target Date</h4>
                       <p className="text-gray-700">
                         {new Date(form.data.examDate).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -886,7 +886,7 @@ export function PersonalInfoStepCompact({
                   <p className="text-green-700">
                     Perfect! We'll now create a personalized study strategy for{' '}
                     {selectedExam?.name ?? form.data.customExam?.name}
-                    with your exam scheduled for{' '}
+                    with your goal scheduled for{' '}
                     <strong>
                       {new Date(form.data.examDate).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -922,8 +922,8 @@ export function PersonalInfoStepCompact({
               <ul className="list-disc list-inside space-y-1 text-sm">
                 {validationErrors.displayName && <li>Enter a valid name</li>}
                 {!form.data.selectedExamId && <li>Select your learning path</li>}
-                {validationErrors.examDate && <li>Set a valid exam date</li>}
-                {form.data.isCustomExam && !form.data.customExam?.name && <li>Enter custom exam name</li>}
+                {validationErrors.examDate && <li>Set a valid target date</li>}
+                {form.data.isCustomExam && !form.data.customExam?.name && <li>Enter custom goal name</li>}
               </ul>
             </div>
           </AlertDescription>

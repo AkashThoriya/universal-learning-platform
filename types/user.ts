@@ -3,15 +3,15 @@ import { Timestamp } from 'firebase/firestore';
 /**
  * @fileoverview User Type Definitions
  *
- * This file re-exports the canonical User type from exam.ts and provides
+ * This file re-exports the canonical User type from goal.ts and provides
  * legacy type definitions for backward compatibility during migration.
  *
- * @author Exam Strategy Engine Team
+ * @author Universal Learning Platform Team
  * @version 2.0.0
  */
 
 /**
- * Re-export the comprehensive User type from exam.ts as the standard
+ * Re-export the comprehensive User type from goal.ts as the standard
  * This ensures all code uses the same User interface
  */
 export type {
@@ -58,7 +58,7 @@ export interface UserDiagnostic {
 }
 
 /**
- * @deprecated Use SyllabusSubject from exam.ts instead.
+ * @deprecated Use SyllabusSubject from goal.ts instead.
  */
 export interface Subject {
   subjectId: string;
@@ -68,7 +68,7 @@ export interface Subject {
 }
 
 /**
- * @deprecated Use SyllabusTopic from exam.ts instead.
+ * @deprecated Use SyllabusTopic from goal.ts instead.
  */
 export interface Topic {
   id: string;
@@ -77,7 +77,7 @@ export interface Topic {
 }
 
 /**
- * @deprecated Use TopicProgress from exam.ts instead.
+ * @deprecated Use TopicProgress from goal.ts instead.
  */
 export interface UserProgress {
   progressId: string;
@@ -93,7 +93,7 @@ export interface UserProgress {
 }
 
 /**
- * @deprecated Use MockTestLog from exam.ts instead.
+ * @deprecated Use MockTestLog from goal.ts instead.
  */
 export interface MockTest {
   testId: string;
@@ -123,7 +123,7 @@ export interface MockTest {
 }
 
 /**
- * @deprecated Use DailyLog from exam.ts instead.
+ * @deprecated Use DailyLog from goal.ts instead.
  */
 export interface DailyLog {
   logId: string;
