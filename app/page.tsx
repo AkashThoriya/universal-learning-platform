@@ -13,6 +13,8 @@ import {
   Smartphone,
   PlayCircle,
   Flame,
+  Heart,
+  Github,
 } from 'lucide-react';
 
 import CTAActions from '@/components/home/CTAActions';
@@ -85,6 +87,20 @@ export default function HomePage() {
                 <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
                 <span className="text-xs sm:text-sm font-medium">Instant Access</span>
               </div>
+            </div>
+
+            {/* Open Source Badge */}
+            <div className="mt-8 flex justify-center">
+              <a
+                href="https://github.com/AkashThoriya/universal-learning-platform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-full text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-700 transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-xl border border-slate-700"
+              >
+                <Github className="w-4 h-4" />
+                Proudly Open Source
+                <span className="text-slate-400 group-hover:text-white transition-colors ml-1">&rarr;</span>
+              </a>
             </div>
           </div>
         </section>
@@ -728,6 +744,21 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Minimal Footer */}
+        <footer className="py-8 border-t border-slate-200/50 dark:border-slate-800/50 text-center relative z-10">
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center justify-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors">
+            Created with <Heart className="w-4 h-4 text-red-500 animate-pulse" fill="currentColor" /> by
+            <a
+              href="https://github.com/AkashThoriya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-700 dark:hover:text-blue-300 font-bold transition-all"
+            >
+              Akash Thoriya
+            </a>
+          </p>
+        </footer>
       </PageTransition>
     </div>
   );
