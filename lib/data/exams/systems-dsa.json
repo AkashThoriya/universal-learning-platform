@@ -4,7 +4,7 @@
   "expectedDuration": "7 Months (28 Weeks @ 21 Hours/Week)",
   "description": "Intensive Systems DSA bootcamp focused on C language for semiconductor/embedded systems interviews at Nvidia, Qualcomm, NXP, and Google Silicon. Covers pointers, memory, bit manipulation, data structures with hardware context including registers, UART, SPI, and RTOS concepts. Theme: 'Memory is a Flat Line' - understanding that variables are physical addresses in SRAM.",
   "category": "Computer Science",
-  "totalEstimatedHours": 597,
+  "totalEstimatedHours": 702,
   "recommendedHoursPerWeek": 21,
   "stages": [
     {
@@ -150,7 +150,20 @@
             "https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html",
             "https://www.misra.org.uk/"
           ],
-          "practiceQuestions": []
+          "practiceQuestions": [
+            {
+              "name": "Running Sum of 1d Array",
+              "slug": "running-sum-of-1d-array",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/running-sum-of-1d-array/"
+            },
+            {
+              "name": "Richest Customer Wealth",
+              "slug": "richest-customer-wealth",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/richest-customer-wealth/"
+            }
+          ]
         },
         {
           "id": "week_1_physics_of_c",
@@ -508,6 +521,34 @@
           ],
           "practiceQuestions": [
             {
+              "name": "Transpose Matrix",
+              "slug": "transpose-matrix",
+              "number": 867,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/transpose-matrix/"
+            },
+            {
+              "name": "Reshape the Matrix",
+              "slug": "reshape-the-matrix",
+              "number": 566,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reshape-the-matrix/"
+            },
+            {
+              "name": "Matrix Diagonal Sum",
+              "slug": "matrix-diagonal-sum",
+              "number": 1572,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/matrix-diagonal-sum/"
+            },
+            {
+              "name": "Toeplitz Matrix",
+              "slug": "toeplitz-matrix",
+              "number": 766,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/toeplitz-matrix/"
+            },
+            {
               "name": "Rotate Image",
               "slug": "rotate-image",
               "number": 48,
@@ -529,20 +570,6 @@
               "link": "https://leetcode.com/problems/spiral-matrix-ii/"
             },
             {
-              "name": "Transpose Matrix",
-              "slug": "transpose-matrix",
-              "number": 867,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/transpose-matrix/"
-            },
-            {
-              "name": "Reshape the Matrix",
-              "slug": "reshape-the-matrix",
-              "number": 566,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/reshape-the-matrix/"
-            },
-            {
               "name": "Set Matrix Zeroes",
               "slug": "set-matrix-zeroes",
               "number": 73,
@@ -555,20 +582,6 @@
               "number": 74,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/search-a-2d-matrix/"
-            },
-            {
-              "name": "Matrix Diagonal Sum",
-              "slug": "matrix-diagonal-sum",
-              "number": 1572,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/matrix-diagonal-sum/"
-            },
-            {
-              "name": "Toeplitz Matrix",
-              "slug": "toeplitz-matrix",
-              "number": 766,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/toeplitz-matrix/"
             },
             {
               "name": "Valid Sudoku",
@@ -732,27 +745,6 @@
           ],
           "practiceQuestions": [
             {
-              "name": "Single Number II",
-              "slug": "single-number-ii",
-              "number": 137,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/single-number-ii/"
-            },
-            {
-              "name": "Single Number III",
-              "slug": "single-number-iii",
-              "number": 260,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/single-number-iii/"
-            },
-            {
-              "name": "Sum of Two Integers",
-              "slug": "sum-of-two-integers",
-              "number": 371,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/sum-of-two-integers/"
-            },
-            {
               "name": "Counting Bits",
               "slug": "counting-bits",
               "number": 338,
@@ -779,6 +771,27 @@
               "number": 477,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/total-hamming-distance/"
+            },
+            {
+              "name": "Single Number II",
+              "slug": "single-number-ii",
+              "number": 137,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/single-number-ii/"
+            },
+            {
+              "name": "Single Number III",
+              "slug": "single-number-iii",
+              "number": 260,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/single-number-iii/"
+            },
+            {
+              "name": "Sum of Two Integers",
+              "slug": "sum-of-two-integers",
+              "number": 371,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/sum-of-two-integers/"
             }
           ]
         },
@@ -815,13 +828,6 @@
           ],
           "practiceQuestions": [
             {
-              "name": "Count Primes",
-              "slug": "count-primes",
-              "number": 204,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/count-primes/"
-            },
-            {
               "name": "Happy Number",
               "slug": "happy-number",
               "number": 202,
@@ -834,13 +840,6 @@
               "number": 326,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/power-of-three/"
-            },
-            {
-              "name": "Factorial Trailing Zeroes",
-              "slug": "factorial-trailing-zeroes",
-              "number": 172,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/factorial-trailing-zeroes/"
             },
             {
               "name": "Excel Sheet Column Number",
@@ -862,6 +861,20 @@
               "number": 50,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/pow(x,-n)/"
+            },
+            {
+              "name": "Count Primes",
+              "slug": "count-primes",
+              "number": 204,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/count-primes/"
+            },
+            {
+              "name": "Factorial Trailing Zeroes",
+              "slug": "factorial-trailing-zeroes",
+              "number": 172,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/factorial-trailing-zeroes/"
             }
           ]
         },
@@ -901,6 +914,20 @@
           ],
           "practiceQuestions": [
             {
+              "name": "Fraction to Recurring Decimal",
+              "slug": "fraction-to-recurring-decimal",
+              "number": 166,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/fraction-to-recurring-decimal/"
+            },
+            {
+              "name": "Super Pow",
+              "slug": "super-pow",
+              "number": 372,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/super-pow/"
+            },
+            {
               "name": "Max Points on a Line",
               "slug": "max-points-on-a-line",
               "number": 149,
@@ -920,20 +947,6 @@
               "number": 224,
               "difficulty": "Hard",
               "link": "https://leetcode.com/problems/basic-calculator/"
-            },
-            {
-              "name": "Fraction to Recurring Decimal",
-              "slug": "fraction-to-recurring-decimal",
-              "number": 166,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/fraction-to-recurring-decimal/"
-            },
-            {
-              "name": "Super Pow",
-              "slug": "super-pow",
-              "number": 372,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/super-pow/"
             }
           ]
         }
@@ -1090,6 +1103,34 @@
               "link": "https://leetcode.com/problems/maximum-average-subarray-i/"
             },
             {
+              "name": "Contains Duplicate II",
+              "slug": "contains-duplicate-ii",
+              "number": 219,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/contains-duplicate-ii/"
+            },
+            {
+              "name": "Diet Plan Performance",
+              "slug": "diet-plan-performance",
+              "number": 1176,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/diet-plan-performance/"
+            },
+            {
+              "name": "K Radius Subarray Averages",
+              "slug": "k-radius-subarray-averages",
+              "number": 2090,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/k-radius-subarray-averages/"
+            },
+            {
+              "name": "Maximum Number of Vowels in a Substring",
+              "slug": "maximum-number-of-vowels-in-a-substring",
+              "number": 1456,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring/"
+            },
+            {
               "name": "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold",
               "slug": "number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold",
               "number": 1343,
@@ -1123,34 +1164,6 @@
               "number": 239,
               "difficulty": "Hard",
               "link": "https://leetcode.com/problems/sliding-window-maximum/"
-            },
-            {
-              "name": "Contains Duplicate II",
-              "slug": "contains-duplicate-ii",
-              "number": 219,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/contains-duplicate-ii/"
-            },
-            {
-              "name": "Diet Plan Performance",
-              "slug": "diet-plan-performance",
-              "number": 1176,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/diet-plan-performance/"
-            },
-            {
-              "name": "K Radius Subarray Averages",
-              "slug": "k-radius-subarray-averages",
-              "number": 2090,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/k-radius-subarray-averages/"
-            },
-            {
-              "name": "Maximum Number of Vowels in a Substring",
-              "slug": "maximum-number-of-vowels-in-a-substring",
-              "number": 1456,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring/"
             }
           ]
         },
@@ -1189,6 +1202,34 @@
           ],
           "practiceQuestions": [
             {
+              "name": "Maximize the Confusion of an Exam",
+              "slug": "maximize-the-confusion-of-an-exam",
+              "number": 2024,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximize-the-confusion-of-an-exam/"
+            },
+            {
+              "name": "Binary Subarrays With Sum",
+              "slug": "binary-subarrays-with-sum",
+              "number": 930,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/binary-subarrays-with-sum/"
+            },
+            {
+              "name": "Count Complete Subarrays in an Array",
+              "slug": "count-complete-subarrays-in-an-array",
+              "number": 2799,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/count-complete-subarrays-in-an-array/"
+            },
+            {
+              "name": "Minimum Window Substring (Hard)",
+              "slug": "minimum-window-substring-(hard)",
+              "number": 76,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/minimum-window-substring-(hard)/"
+            },
+            {
               "name": "Longest Substring Without Repeating Characters",
               "slug": "longest-substring-without-repeating-characters",
               "number": 3,
@@ -1217,13 +1258,6 @@
               "link": "https://leetcode.com/problems/longest-repeating-character-replacement/"
             },
             {
-              "name": "Minimum Window Substring",
-              "slug": "minimum-window-substring",
-              "number": 76,
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/minimum-window-substring/"
-            },
-            {
               "name": "Fruit Into Baskets",
               "slug": "fruit-into-baskets",
               "number": 904,
@@ -1238,32 +1272,11 @@
               "link": "https://leetcode.com/problems/count-number-of-nice-subarrays/"
             },
             {
-              "name": "Maximize the Confusion of an Exam",
-              "slug": "maximize-the-confusion-of-an-exam",
-              "number": 2024,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/maximize-the-confusion-of-an-exam/"
-            },
-            {
-              "name": "Binary Subarrays With Sum",
-              "slug": "binary-subarrays-with-sum",
-              "number": 930,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/binary-subarrays-with-sum/"
-            },
-            {
-              "name": "Count Complete Subarrays in an Array",
-              "slug": "count-complete-subarrays-in-an-array",
-              "number": 2799,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/count-complete-subarrays-in-an-array/"
-            },
-            {
-              "name": "Minimum Window Substring (Hard)",
-              "slug": "minimum-window-substring-(hard)",
+              "name": "Minimum Window Substring",
+              "slug": "minimum-window-substring",
               "number": 76,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/minimum-window-substring-(hard)/"
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/minimum-window-substring/"
             }
           ]
         },
@@ -1305,20 +1318,6 @@
           ],
           "practiceQuestions": [
             {
-              "name": "Design Circular Deque",
-              "slug": "design-circular-deque",
-              "number": 641,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/design-circular-deque/"
-            },
-            {
-              "name": "Design Circular Queue",
-              "slug": "design-circular-queue",
-              "number": 622,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/design-circular-queue/"
-            },
-            {
               "name": "Moving Average from Data Stream",
               "slug": "moving-average-from-data-stream",
               "number": 346,
@@ -1331,6 +1330,20 @@
               "number": 232,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/implement-queue-using-stacks/"
+            },
+            {
+              "name": "Design Circular Deque",
+              "slug": "design-circular-deque",
+              "number": 641,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-circular-deque/"
+            },
+            {
+              "name": "Design Circular Queue",
+              "slug": "design-circular-queue",
+              "number": 622,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-circular-queue/"
             },
             {
               "name": "Peeking Iterator",
@@ -1494,6 +1507,13 @@
           ],
           "practiceQuestions": [
             {
+              "name": "Reverse Nodes in k",
+              "slug": "reverse-nodes-in-k",
+              "number": 25,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/reverse-nodes-in-k/"
+            },
+            {
               "name": "Linked List Cycle II",
               "slug": "linked-list-cycle-ii",
               "number": 142,
@@ -1555,13 +1575,6 @@
               "number": 92,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/reverse-linked-list-ii/"
-            },
-            {
-              "name": "Reverse Nodes in k",
-              "slug": "reverse-nodes-in-k",
-              "number": 25,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/reverse-nodes-in-k/"
             }
           ]
         },
@@ -1717,6 +1730,13 @@
               "link": "https://leetcode.com/problems/daily-temperatures/"
             },
             {
+              "name": "Online Stock Span",
+              "slug": "online-stock-span",
+              "number": 901,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/online-stock-span/"
+            },
+            {
               "name": "Largest Rectangle in Histogram",
               "slug": "largest-rectangle-in-histogram",
               "number": 84,
@@ -1729,13 +1749,6 @@
               "number": 42,
               "difficulty": "Hard",
               "link": "https://leetcode.com/problems/trapping-rain-water/"
-            },
-            {
-              "name": "Online Stock Span",
-              "slug": "online-stock-span",
-              "number": 901,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/online-stock-span/"
             }
           ]
         }
@@ -1784,20 +1797,6 @@
           ],
           "practiceQuestions": [
             {
-              "name": "Design Circular Queue",
-              "slug": "design-circular-queue",
-              "number": 622,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/design-circular-queue/"
-            },
-            {
-              "name": "Design Circular Deque",
-              "slug": "design-circular-deque",
-              "number": 641,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/design-circular-deque/"
-            },
-            {
               "name": "Moving Average from Data Stream",
               "slug": "moving-average-from-data-stream",
               "number": 346,
@@ -1824,6 +1823,20 @@
               "number": 2073,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/time-needed-to-buy-tickets/"
+            },
+            {
+              "name": "Design Circular Queue",
+              "slug": "design-circular-queue",
+              "number": 622,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-circular-queue/"
+            },
+            {
+              "name": "Design Circular Deque",
+              "slug": "design-circular-deque",
+              "number": 641,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/design-circular-deque/"
             },
             {
               "name": "Dota2 Senate",
@@ -1979,13 +1992,6 @@
               "link": "https://leetcode.com/problems/design-add-and-search-words-data-structure/"
             },
             {
-              "name": "Word Search II",
-              "slug": "word-search-ii",
-              "number": 212,
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/word-search-ii/"
-            },
-            {
               "name": "Longest Word in Dictionary",
               "slug": "longest-word-in-dictionary",
               "number": 720,
@@ -2005,6 +2011,13 @@
               "number": 421,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/"
+            },
+            {
+              "name": "Word Search II",
+              "slug": "word-search-ii",
+              "number": 212,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/word-search-ii/"
             }
           ]
         },
@@ -2046,18 +2059,18 @@
           ],
           "practiceQuestions": [
             {
-              "name": "Kth Largest Element in an Array",
-              "slug": "kth-largest-element-in-an-array",
-              "number": 215,
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
-            },
-            {
               "name": "Last Stone Weight",
               "slug": "last-stone-weight",
               "number": 1046,
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/last-stone-weight/"
+            },
+            {
+              "name": "Kth Largest Element in an Array",
+              "slug": "kth-largest-element-in-an-array",
+              "number": 215,
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/kth-largest-element-in-an-array/"
             },
             {
               "name": "Top K Frequent Elements",
@@ -2232,18 +2245,18 @@
               "link": "https://leetcode.com/problems/course-schedule-ii/"
             },
             {
-              "name": "Alien Dictionary",
-              "slug": "alien-dictionary",
-              "number": 269,
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/alien-dictionary/"
-            },
-            {
               "name": "Find Eventual Safe States",
               "slug": "find-eventual-safe-states",
               "number": 802,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/find-eventual-safe-states/"
+            },
+            {
+              "name": "Alien Dictionary",
+              "slug": "alien-dictionary",
+              "number": 269,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/alien-dictionary/"
             }
           ]
         },
@@ -2356,6 +2369,20 @@
               "link": "https://leetcode.com/problems/climbing-stairs/"
             },
             {
+              "name": "Maximum Subarray",
+              "slug": "maximum-subarray",
+              "number": 53,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/maximum-subarray/"
+            },
+            {
+              "name": "Best Time to Buy and Sell Stock",
+              "slug": "best-time-to-buy-and-sell-stock",
+              "number": 121,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+            },
+            {
               "name": "House Robber",
               "slug": "house-robber",
               "number": 198,
@@ -2375,20 +2402,6 @@
               "number": 416,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/partition-equal-subset-sum/"
-            },
-            {
-              "name": "Maximum Subarray",
-              "slug": "maximum-subarray",
-              "number": 53,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/maximum-subarray/"
-            },
-            {
-              "name": "Best Time to Buy and Sell Stock",
-              "slug": "best-time-to-buy-and-sell-stock",
-              "number": 121,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
             },
             {
               "name": "Word Break",
@@ -2446,20 +2459,6 @@
               "link": "https://leetcode.com/problems/longest-common-subsequence/"
             },
             {
-              "name": "Edit Distance",
-              "slug": "edit-distance",
-              "number": 72,
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/edit-distance/"
-            },
-            {
-              "name": "Distinct Subsequences",
-              "slug": "distinct-subsequences",
-              "number": 115,
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/distinct-subsequences/"
-            },
-            {
               "name": "Longest Palindromic Subsequence",
               "slug": "longest-palindromic-subsequence",
               "number": 516,
@@ -2488,6 +2487,20 @@
               "link": "https://leetcode.com/problems/interleaving-string/"
             },
             {
+              "name": "Edit Distance",
+              "slug": "edit-distance",
+              "number": 72,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/edit-distance/"
+            },
+            {
+              "name": "Distinct Subsequences",
+              "slug": "distinct-subsequences",
+              "number": 115,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/distinct-subsequences/"
+            },
+            {
               "name": "Shortest Common Supersequence",
               "slug": "shortest-common-supersequence",
               "number": 1092,
@@ -2502,7 +2515,7 @@
       "id": "month_7_expert_systems",
       "name": "Expert Systems & Capstone",
       "tier": 4,
-      "estimatedHours": 98,
+      "estimatedHours": 203,
       "topics": [
         {
           "id": "week_26_concurrency",
@@ -2537,6 +2550,13 @@
           ],
           "practiceQuestions": [
             {
+              "name": "Traffic Light Controlled Intersection",
+              "slug": "traffic-light-controlled-intersection",
+              "number": 1279,
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/traffic-light-controlled-intersection/"
+            },
+            {
               "name": "Print FooBar Alternately",
               "slug": "print-foobar-alternately",
               "number": 1115,
@@ -2556,13 +2576,6 @@
               "number": 1226,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/the-dining-philosophers/"
-            },
-            {
-              "name": "Traffic Light Controlled Intersection",
-              "slug": "traffic-light-controlled-intersection",
-              "number": 1279,
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/traffic-light-controlled-intersection/"
             }
           ],
           "resources": [
@@ -2658,19 +2671,195 @@
           ],
           "practiceQuestions": [
             {
-              "name": "Design In-Memory File System",
-              "slug": "design-in-memory-file-system",
-              "number": 588,
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/design-in-memory-file-system/"
-            },
-            {
               "name": "Design Log Storage System",
               "slug": "design-log-storage-system",
               "number": 635,
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/design-log-storage-system/"
+            },
+            {
+              "name": "Design In-Memory File System",
+              "slug": "design-in-memory-file-system",
+              "number": 588,
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/design-in-memory-file-system/"
             }
+          ]
+        },
+        {
+          "id": "week_29_codecrafters_shell",
+          "name": "Week 29: Capstone II — Build Your Own Shell (CodeCrafters)",
+          "estimatedHours": 25,
+          "description": "Build a fully functional Unix shell from scratch in C. Parse commands, spawn processes with fork/exec, implement pipes, I/O redirection, autocompletion, and history. This project teaches the OS primitives that semiconductor engineers at Nvidia/Qualcomm use daily — process management, IPC, and file descriptor manipulation.",
+          "learningTip": [
+            "**fork() + execvp():** Master the parent-child process model. fork() duplicates the process, execvp() replaces the child's memory with the new program. waitpid() collects the exit status.",
+            "**pipe() + dup2():** These two syscalls are the backbone of IPC. pipe() creates a pair of file descriptors; dup2() redirects stdin/stdout to pipe ends. This is exactly how RTOS tasks communicate via message queues.",
+            "**File descriptors are integers:** stdin=0, stdout=1, stderr=2. Redirection is just closing one FD and opening another in its place. This maps directly to hardware register I/O.",
+            "**Signal handling:** SIGINT (Ctrl+C), SIGCHLD (child terminated). Use sigaction() — it's the portable, reliable way to handle signals. Signals are the userspace analog of hardware interrupts."
+          ],
+          "mustNotMiss": [
+            "**fork/exec/wait lifecycle:** The holy trinity of process management. Every embedded Linux interview asks about this.",
+            "**pipe() for IPC:** How `ls | grep foo` works — one process writes to pipe, another reads. Identical to producer-consumer in RTOS.",
+            "**dup2() for redirection:** Replacing stdout with a file descriptor. This is how logging frameworks work in embedded systems.",
+            "**PATH resolution:** How the shell finds executables — traversing directories, checking permissions. Tests string manipulation and filesystem APIs."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Explain the fork/exec/wait pattern in Unix process creation.",
+              "answer": "**fork()** creates a child process (exact copy of parent). **exec()** replaces the child's memory image with a new program. **wait()/waitpid()** in the parent blocks until the child terminates and collects its exit status. This separation allows the parent to set up the child's environment (redirections, pipes) between fork and exec."
+            },
+            {
+              "question": "How does a Unix pipe work internally?",
+              "answer": "**pipe()** creates two file descriptors: fd[0] for reading, fd[1] for writing. Data written to fd[1] can be read from fd[0]. The kernel maintains a 64KB buffer between them. For `cmd1 | cmd2`: fork twice, connect cmd1's stdout to fd[1] and cmd2's stdin to fd[0] using dup2(). Close unused ends to avoid deadlock."
+            },
+            {
+              "question": "What happens if you forget to close unused pipe ends?",
+              "answer": "**Deadlock or hang.** The reading process waits for EOF, which only happens when ALL write ends are closed. If the parent still holds the write end open, the reader blocks forever. Always close unused pipe FDs after dup2() — this is a classic embedded systems interview gotcha."
+            }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Build Your Own Shell (CodeCrafters)",
+              "slug": "codecrafters-shell",
+              "difficulty": "Hard",
+              "link": "https://app.codecrafters.io/courses/shell/overview"
+            }
+          ],
+          "resources": [
+            "https://app.codecrafters.io/courses/shell/overview",
+            "https://man7.org/linux/man-pages/man2/fork.2.html"
+          ]
+        },
+        {
+          "id": "week_30_codecrafters_interpreter_1",
+          "name": "Week 30: Capstone III — Build Your Own Interpreter Part 1: Lexer, Parser & Evaluator (CodeCrafters)",
+          "estimatedHours": 30,
+          "description": "Build the first half of a tree-walk interpreter in C. Implement a lexer/scanner that tokenizes source code, a recursive descent parser that builds an AST, and an expression evaluator. Heavy pointer manipulation, dynamic memory allocation, and recursive algorithms. The tokenizer mirrors UART/SPI protocol frame parsing — reading raw bytes and extracting structured data.",
+          "learningTip": [
+            "**Lexer = Protocol parser:** A lexer reads a raw character stream and produces tokens. This is identical to parsing UART frames — read bytes, identify start/stop markers, extract payload. Same state machine approach.",
+            "**AST nodes = malloc + pointers:** Every AST node is a heap-allocated struct with pointers to children. Building an AST exercises the exact memory management skills tested at Nvidia/Qualcomm.",
+            "**Recursive descent:** Each grammar rule becomes a function. `parseExpression()` calls `parseTerm()` calls `parseFactor()`. The call stack IS the parse tree. Deep recursion tests stack overflow awareness.",
+            "**Error recovery:** When the parser encounters invalid input, it must recover gracefully (synchronize to the next statement). This mirrors error handling in communication protocols — skip corrupted frames, resync on the next valid header."
+          ],
+          "mustNotMiss": [
+            "**Token struct design:** Define a Token struct with type (enum), lexeme (char*), literal value (union), and line number. This tests struct/union/enum — core C interview topics.",
+            "**Dynamic array for tokens:** Grow the token list with realloc(). Track size vs capacity. This is the same pattern as circular buffers in embedded systems.",
+            "**Visitor pattern for AST:** Use function pointers to dispatch on node type. This is the C equivalent of virtual methods — exactly how hardware abstraction layers (HAL) work.",
+            "**Memory ownership:** Who frees the AST nodes? Track ownership carefully to prevent leaks. Use valgrind to verify zero leaks."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How would you design a tokenizer for a simple language in C?",
+              "answer": "**State machine approach:** Maintain a current position and a start position in the source string. Switch on the current character: single chars → emit token directly. Multi-char operators (==, !=) → look ahead one char. Strings → advance until closing quote. Numbers → advance while isdigit(). Identifiers → advance while isalnum(). Store tokens in a dynamically-grown array (realloc pattern)."
+            },
+            {
+              "question": "What is a recursive descent parser and why is it popular?",
+              "answer": "**Each grammar rule = one function.** The parser has functions like `expression()`, `term()`, `factor()`, `primary()`. Each consumes tokens and builds AST nodes. It's popular because: (1) simple to implement, (2) easy to debug (stack trace = parse tree), (3) produces good error messages, (4) no external tools needed (unlike yacc/bison)."
+            },
+            {
+              "question": "How do you handle operator precedence in a parser?",
+              "answer": "**Precedence climbing:** Lower-precedence rules call higher-precedence rules. `expression()` handles `+`/`-` and calls `term()`. `term()` handles `*`/`/` and calls `unary()`. `unary()` handles `-`/`!` and calls `primary()`. The call depth enforces precedence — deeper = higher precedence = binds tighter."
+            }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Build Your Own Interpreter (CodeCrafters)",
+              "slug": "codecrafters-interpreter",
+              "difficulty": "Hard",
+              "link": "https://app.codecrafters.io/courses/interpreter/overview"
+            }
+          ],
+          "resources": [
+            "https://app.codecrafters.io/courses/interpreter/overview",
+            "https://craftinginterpreters.com/"
+          ]
+        },
+        {
+          "id": "week_31_codecrafters_interpreter_2",
+          "name": "Week 31: Capstone III (contd.) — Interpreter Part 2: State, Functions, Classes & Inheritance",
+          "estimatedHours": 30,
+          "description": "Complete the interpreter by implementing variables, scoping, control flow (if/else, while, for), user-defined functions with closures, and a class system with inheritance. This half exercises symbol tables (hash maps), function pointers for dispatch, scope chains (stack-based memory), and vtable-style method resolution — all directly applicable to firmware architecture.",
+          "learningTip": [
+            "**Environment = Hash map:** Variables live in an Environment struct — a hash map of name→value pairs. Each scope gets a new Environment pointing to its parent. This chain is identical to how firmware maintains nested configuration contexts.",
+            "**Function pointers for dispatch:** When the evaluator encounters a function call, it looks up a function pointer and invokes it. This is the same dispatch mechanism used in interrupt vector tables and HAL layers.",
+            "**Closures capture environment:** A closure is a function + a pointer to the environment where it was defined. In C, this means storing a struct pointer alongside the function pointer — exactly how RTOS callbacks carry context.",
+            "**Vtable for classes:** Method resolution = look up method name in a function pointer table. If not found, walk up the superclass chain. This is how C++ vtables work under the hood, and how HAL drivers resolve platform-specific implementations."
+          ],
+          "mustNotMiss": [
+            "**Scope chain traversal:** Variable lookup walks the environment chain (current → parent → grandparent). This is O(n) in scope depth. Mirrors stack frame unwinding in debuggers.",
+            "**Closures in C:** A closure struct holds { function_ptr, captured_environment_ptr }. When called, restore the captured environment. Tests deep understanding of pointer lifetime and ownership.",
+            "**Control flow as AST nodes:** if/while/for are just AST nodes with condition + body pointers. The evaluator checks the condition, then recursively evaluates the body. Clean separation of parsing and execution.",
+            "**Garbage collection awareness:** Without GC, you must manually track when environments and AST nodes can be freed. Reference counting or arena allocation are common strategies."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How do closures work at the memory level in C?",
+              "answer": "**A closure is a pair: (function_ptr, environment_ptr).** When a function is defined, we capture a pointer to the current environment (scope). When the closure is later called, we restore that environment as the enclosing scope — NOT the caller's scope. This requires the captured environment to outlive the scope where it was created, which means heap allocation and careful lifetime management."
+            },
+            {
+              "question": "How would you implement a simple class system with inheritance in C?",
+              "answer": "**Vtable pattern:** Each class has a struct with a pointer to its method table (array of function pointers) and a pointer to its superclass. Method lookup: search the class's table first, then walk up the superclass chain. Instance = struct with { class_ptr, fields_hash_map }. Constructor = allocate instance, call init method. This is exactly how C++ implements virtual dispatch."
+            },
+            {
+              "question": "What is the difference between static and dynamic scoping?",
+              "answer": "**Static (lexical) scoping:** Variable resolved based on where the function is DEFINED in the source code. Most languages use this. **Dynamic scoping:** Variable resolved based on the CALL STACK at runtime. Bash uses this. Static scoping is predictable and enables closures. Dynamic scoping is simpler to implement but harder to reason about."
+            }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Build Your Own Interpreter - Part 2 (CodeCrafters)",
+              "slug": "codecrafters-interpreter-2",
+              "difficulty": "Hard",
+              "link": "https://app.codecrafters.io/courses/interpreter/overview"
+            }
+          ],
+          "resources": [
+            "https://app.codecrafters.io/courses/interpreter/overview",
+            "https://craftinginterpreters.com/statements-and-state.html"
+          ]
+        },
+        {
+          "id": "week_32_codecrafters_http_server",
+          "name": "Week 32: Capstone IV — Build Your Own HTTP Server (CodeCrafters)",
+          "estimatedHours": 20,
+          "description": "Build a multi-threaded HTTP/1.1 server from scratch in C using raw TCP sockets. Handle GET/POST requests, serve static files, support gzip compression, and manage persistent connections. This project teaches the networking and concurrency primitives that map directly to network stack development on SoCs — socket programming, buffer management, and interrupt-driven concurrent I/O.",
+          "learningTip": [
+            "**Socket API is the foundation:** socket() → bind() → listen() → accept() → recv()/send(). This is the same sequence used in every network-capable embedded device. Master each syscall's parameters and error handling.",
+            "**Buffer management is critical:** HTTP requests arrive as raw bytes. You must parse headers from a byte buffer — find '\\r\\n' delimiters, extract Content-Length, read the body. This is identical to UART/SPI frame parsing with start bytes, length fields, and payloads.",
+            "**Concurrency model choice:** pthread_create() for thread-per-connection (simple, but expensive) vs select()/poll()/epoll for event-driven I/O (efficient, mirrors interrupt-driven embedded systems). Know the trade-offs.",
+            "**Gzip compression in C:** Use zlib's deflate() and inflate(). Understand that compression reduces bandwidth at the cost of CPU — a constant trade-off in embedded systems with limited network and compute resources."
+          ],
+          "mustNotMiss": [
+            "**TCP is a byte stream:** Unlike UDP, TCP has no message boundaries. You must handle partial reads (recv returns fewer bytes than expected) and buffer reassembly. This is the #1 networking bug in embedded systems.",
+            "**struct sockaddr_in:** IP address + port packed into a struct. Use htons() for byte order conversion — network byte order is big-endian. This tests your endianness knowledge directly.",
+            "**Concurrent connections:** Use either threads (pthread) or I/O multiplexing (select/poll). For embedded systems, event-driven (select) is preferred because threads are expensive on constrained hardware.",
+            "**HTTP keep-alive:** Reuse TCP connections for multiple requests. Requires careful state management — track which connection is in which state. Same pattern as managing multiple UART channels."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Walk through the TCP socket API lifecycle for a server.",
+              "answer": "**1. socket()** — create a socket file descriptor (AF_INET, SOCK_STREAM). **2. bind()** — associate with an IP:port. **3. listen()** — mark as passive (accept connections). **4. accept()** — block until a client connects, return a NEW fd for that connection. **5. recv()/send()** — read/write data on the connection fd. **6. close()** — tear down. Key insight: accept() returns a new FD — the original socket keeps listening."
+            },
+            {
+              "question": "How would you handle 10,000 concurrent connections in C?",
+              "answer": "**Event-driven I/O with epoll (Linux):** One thread monitors all connections. epoll_wait() returns only the FDs that have data ready — O(1) per ready FD vs O(n) for select(). Use non-blocking sockets. This is the foundation of nginx and Node.js. In embedded systems, this maps to interrupt-driven I/O where the CPU sleeps until an interrupt fires."
+            },
+            {
+              "question": "Why is TCP a byte stream and what problems does this cause?",
+              "answer": "**TCP guarantees delivery and ordering, but NOT message boundaries.** A single send() of 1000 bytes might arrive as two recv() calls of 600 + 400 bytes. You must: (1) buffer incoming data, (2) parse for delimiters (\\r\\n in HTTP) or read Content-Length bytes, (3) handle partial messages. This is the exact same challenge as assembling UART frames from a DMA buffer."
+            }
+          ],
+          "practiceQuestions": [
+            {
+              "name": "Build Your Own HTTP Server (CodeCrafters)",
+              "slug": "codecrafters-http-server",
+              "difficulty": "Hard",
+              "link": "https://app.codecrafters.io/courses/http-server/overview"
+            }
+          ],
+          "resources": [
+            "https://app.codecrafters.io/courses/http-server/overview",
+            "https://beej.us/guide/bgnet/"
           ]
         }
       ]

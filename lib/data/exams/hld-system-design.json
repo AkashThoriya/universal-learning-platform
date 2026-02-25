@@ -1052,9 +1052,10 @@
             }
           ],
           "learningTip": [
-            "Millions of drivers sending updates every 5 seconds = massive write load.",
-            "Cell-based sharding: Shard by geographic region.",
-            "Trip state machine: Requested → Matched → En-route → Completed."
+            "**Geo-sharding:** Partition driver data by geographic region (city/zone). Each shard handles a smaller area, reducing query scope.",
+            "**QuadTree vs Geohash:** QuadTrees dynamically subdivide space (good for uneven density). Geohashes convert 2D coords to 1D strings (good for range queries in databases).",
+            "**ETA calculation:** Combine historical travel data + real-time traffic + road graph shortest path. Use ML models for accuracy.",
+            "**Supply-demand matching:** Surge pricing signals drivers to move to high-demand areas. Matching algorithm considers distance, wait time, and driver rating."
           ],
           "mustNotMiss": [
             "Location Updates: Batch + Async. Don't persist every update.",
@@ -1155,9 +1156,10 @@
             }
           ],
           "learningTip": [
-            "Token Bucket allows bursts. Leaky Bucket smooths traffic.",
-            "Sliding Window Log is accurate but memory-intensive.",
-            "Sliding Window Counter is a balance of accuracy and efficiency."
+            "**Token Bucket:** Imagine a bucket with tokens added at a fixed rate. Each request needs a token. Burst = full bucket draining at once.",
+            "**Sliding Window Log:** Store each request's timestamp. Count requests in the last N seconds. Precise but memory-heavy.",
+            "**Sliding Window Counter:** Hybrid approach — use counters for fixed windows, interpolate for the sliding effect. Best balance of accuracy and performance.",
+            "**Fixed Window:** Simplest — count requests per minute/hour. Problem: boundary bursts (2× limit at window edges)."
           ],
           "mustNotMiss": [
             "Token Bucket: refill_rate, bucket_size. Allows bursts up to bucket_size.",
@@ -1167,11 +1169,26 @@
             "Redis INCR + EXPIRE for simple distributed rate limiting."
           ],
           "interviewQuestions": [
-            "Compare Token Bucket vs Leaky Bucket vs Fixed Window.",
-            "How to implement distributed rate limiter using Redis?",
-            "How to handle rate limiting at API Gateway level?",
-            "What are the trade-offs of different algorithms?",
-            "How to rate limit by user, IP, and API key together?"
+            {
+              "question": "Compare Token Bucket vs Sliding Window rate limiting algorithms.",
+              "answer": "**Token Bucket:** Tokens added at fixed rate, each request consumes a token. Allows bursts (up to bucket capacity). Simple, memory efficient. \n**Sliding Window:** Counts requests in a moving time window. Smoother rate enforcement, no bursts. More memory (stores timestamps). \n**Trade-off:** Token Bucket is better for APIs needing burst tolerance; Sliding Window for strict rate enforcement."
+            },
+            {
+              "question": "How would you implement distributed rate limiting across multiple servers?",
+              "answer": "**Redis-based approach:** Use Redis as a centralized counter with `INCR` + `EXPIRE`. All servers check the same key. \n**Challenges:** Network latency to Redis adds overhead. Race conditions solved with Lua scripts for atomic check-and-increment. \n**Alternative:** Sticky sessions (route same user to same server) — simpler but less fault-tolerant."
+            },
+            {
+              "question": "What happens when a rate limiter goes down?",
+              "answer": "**Fail-open:** Allow all requests (risk of overload but keeps service available). \n**Fail-closed:** Block all requests (safe but causes outage). \n**Best practice:** Fail-open with circuit breakers. Log and alert. Have a local in-memory fallback rate limiter that applies a conservative limit when Redis is unreachable."
+            },
+            {
+              "question": "How do you rate limit at different granularities (per user, per IP, per API endpoint)?",
+              "answer": "**Composite keys:** Use `user_id:endpoint` or `ip:endpoint` as the Redis key. Each combination gets its own counter and limit. \n**Tiered limits:** Apply multiple rules — e.g., 100 req/min per user AND 1000 req/min per IP AND 10000 req/min globally. Request must pass ALL tiers."
+            },
+            {
+              "question": "Why is the Leaky Bucket algorithm used in network traffic shaping?",
+              "answer": "**Constant output rate:** Leaky Bucket processes requests at a fixed rate regardless of input burst. Like water leaking from a bucket at a constant drip. \n**Use case:** Network routers use it to shape traffic into a smooth, predictable flow. \n**vs Token Bucket:** Token Bucket allows bursts; Leaky Bucket smooths them out completely."
+            }
           ]
         }
       ]
@@ -1196,9 +1213,10 @@
             }
           ],
           "learningTip": [
-            "Video goes through multiple transcodes: 4K, 1080p, 720p, 480p.",
-            "HLS/DASH protocols for adaptive streaming.",
-            "CDN is critical - most traffic is video."
+            "**Adaptive Bitrate Streaming (ABR):** Video encoded at multiple quality levels. Client dynamically switches based on bandwidth. HLS and DASH are the two main protocols.",
+            "**CDN strategy:** Popular content cached at edge servers. Long-tail content served from origin. Use consistent hashing for cache distribution.",
+            "**Video processing pipeline:** Upload → Transcode (multiple resolutions) → Generate thumbnails → DRM encryption → Push to CDN. All async via message queue.",
+            "**Recommendation engine:** Collaborative filtering (users who watched X also watched Y) + Content-based (genre, actors, director). Cold start problem for new users."
           ],
           "mustNotMiss": [
             "Transcoding: Convert to multiple resolutions and codecs.",
@@ -1244,9 +1262,10 @@
             }
           ],
           "learningTip": [
-            "DRM encrypts video segments. Keys from license server.",
-            "Playback position needs real-time sync across devices.",
-            "Recommendations use collaborative filtering."
+            "**DRM (Digital Rights Management):** Widevine (Google), FairPlay (Apple), PlayReady (Microsoft). Content encrypted at rest, decrypted only on authorized devices.",
+            "**Cross-device sync:** Persist playback position in user profile service. On device switch, fetch last position and resume. Handle conflicts with last-write-wins.",
+            "**Live streaming vs VOD:** Live needs ultra-low latency (WebRTC < 1s, LL-HLS ~2s). VOD can buffer ahead. Different CDN caching strategies for each.",
+            "**Content moderation:** AI-based classification for uploaded content. Human review for edge cases. Publish → Review pipeline prevents harmful content from being served."
           ],
           "mustNotMiss": [
             "DRM: Widevine (Google), FairPlay (Apple), PlayReady (Microsoft).",
@@ -1300,9 +1319,10 @@
             }
           ],
           "learningTip": [
-            "Microservices = organizational scalability, not just technical.",
-            "API Gateway is the front door - authentication, rate limiting, routing.",
-            "Start monolith, extract services when needed."
+            "**Monolith vs Microservices:** Monolith = single deployable unit (simpler, faster initially). Microservices = independently deployable services (scalable, complex).",
+            "**Single Responsibility:** Each service owns one business capability. E.g., User Service, Payment Service, Notification Service.",
+            "**Database per service:** Each microservice owns its data store. No direct DB access between services. Data shared only via APIs or events.",
+            "**When NOT to use:** Small team, simple product, unclear domain boundaries. Start monolith, extract services as you understand boundaries."
           ],
           "mustNotMiss": [
             "Benefits: Independent deployment, tech diversity, team autonomy.",
@@ -1348,9 +1368,10 @@
             }
           ],
           "learningTip": [
-            "Sync (REST/gRPC): Simple, but tight coupling.",
-            "Async (Events): Loose coupling, but eventual consistency.",
-            "Circuit Breaker prevents cascade failures."
+            "**Sync vs Async communication:** REST/gRPC = synchronous (request-response). Message queues = asynchronous (fire-and-forget or pub/sub).",
+            "**gRPC advantages:** Binary protocol (faster than JSON), strong typing via protobuf, HTTP/2 streaming, auto-generated client libraries.",
+            "**API Gateway pattern:** Single entry point for all clients. Handles routing, auth, rate limiting, request aggregation. E.g., Kong, AWS API Gateway.",
+            "**Service discovery:** Services register themselves (Consul, Eureka). Clients look up service addresses dynamically instead of hardcoding IPs."
           ],
           "mustNotMiss": [
             "Service Discovery: Services register, clients lookup. (Consul, Eureka)",
@@ -1396,9 +1417,10 @@
             }
           ],
           "learningTip": [
-            "Service Mesh moves network logic to infrastructure.",
-            "Sidecar proxy handles all network traffic.",
-            "Mutual TLS for service-to-service encryption."
+            "**Service Mesh:** Infrastructure layer for service-to-service communication. Handles retries, timeouts, mTLS, observability without app code changes.",
+            "**Sidecar proxy pattern:** Each service gets a proxy (e.g., Envoy) that intercepts all network traffic. The mesh control plane configures these proxies.",
+            "**Istio components:** Pilot (config), Citadel (security/mTLS), Galley (validation). Data plane = Envoy sidecars. Control plane = management.",
+            "**When to adopt:** At scale (50+ services). Small teams: overhead usually not worth it. Consider simpler alternatives like built-in retry libraries first."
           ],
           "mustNotMiss": [
             "Sidecar Pattern: Proxy container alongside app container.",
@@ -1444,9 +1466,10 @@
             }
           ],
           "learningTip": [
-            "2PC is blocking and doesn't scale. Avoid in microservices.",
-            "Saga: Sequence of local transactions with compensations.",
-            "Choreography: Events trigger next step. Orchestration: Central coordinator."
+            "**Saga pattern:** Break distributed transaction into a sequence of local transactions. Each has a compensating action for rollback.",
+            "**Choreography vs Orchestration:** Choreography = each service publishes events, others react (decoupled). Orchestration = central coordinator directs the flow (easier to debug).",
+            "**Two-Phase Commit (2PC):** Coordinator asks all participants to prepare, then commit. Guarantees atomicity but is slow and blocks resources. Rarely used in microservices.",
+            "**Eventual consistency:** Accept that data may be temporarily inconsistent. Design for it with idempotent operations, conflict resolution, and read-your-writes guarantees."
           ],
           "mustNotMiss": [
             "2PC: Prepare + Commit. Coordinator blocks. Doesn't scale.",
@@ -1492,9 +1515,10 @@
             }
           ],
           "learningTip": [
-            "Inventory is the critical resource - prevent overselling.",
-            "Cart can be client-side (simple) or server-side (persistence).",
-            "Order is a saga spanning inventory, payment, shipping."
+            "**Domain decomposition:** Product catalog, Inventory, Cart, Order, Payment, Shipping, Notification, User — each a separate service.",
+            "**Event-driven order flow:** Order placed → Payment service charges → Inventory service reserves stock → Shipping service schedules delivery. All via message queue.",
+            "**CQRS pattern:** Separate Command (write) and Query (read) models. Write-optimized DB for orders, read-optimized (denormalized) for product search.",
+            "**Inventory challenges:** Prevent overselling with distributed locks or optimistic concurrency. Reserve stock on cart-add, release on timeout."
           ],
           "mustNotMiss": [
             "Services: User, Product, Inventory, Cart, Order, Payment, Shipping.",
@@ -1540,9 +1564,10 @@
             }
           ],
           "learningTip": [
-            "Strangler Fig: Gradually replace monolith pieces.",
-            "Database per service is ideal but hard. Start shared, extract.",
-            "Observability is non-negotiable: logs, metrics, traces."
+            "**12-Factor App principles:** Config from environment, stateless processes, log to stdout, port binding, disposable processes. Essential for cloud-native services.",
+            "**Anti-patterns:** Distributed monolith (microservices that can't deploy independently), shared databases, chatty services, lack of circuit breakers.",
+            "**Testing strategy:** Unit tests per service, contract tests between services (Pact), integration tests for critical flows, chaos engineering in production.",
+            "**Migration path:** Strangler Fig pattern — gradually extract services from monolith. Route traffic to new service. Retire old code piece by piece."
           ],
           "mustNotMiss": [
             "Strangler Fig: New features in new service, gradually migrate.",
@@ -1596,9 +1621,10 @@
             }
           ],
           "learningTip": [
-            "Redis is single-threaded but incredibly fast due to memory + efficient data structures.",
-            "Pub/Sub is fire-and-forget. Use Streams for persistence.",
-            "Cluster mode for scaling beyond single node."
+            "**Data structures:** Strings, Hashes, Lists, Sets, Sorted Sets, Streams, Bitmaps. Each optimized for specific use cases.",
+            "**Persistence:** RDB (point-in-time snapshots) vs AOF (append-only log of writes). RDB = faster recovery, AOF = less data loss. Use both in production.",
+            "**Cluster mode:** Data sharded across multiple nodes using hash slots (16384 total). Each key hashes to a slot, each node owns a range of slots.",
+            "**Pub/Sub vs Streams:** Pub/Sub is fire-and-forget (no persistence). Streams persist messages, support consumer groups, and replay — like a lightweight Kafka."
           ],
           "mustNotMiss": [
             "Data Types: String, List, Set, Sorted Set, Hash, Stream.",
@@ -1644,9 +1670,10 @@
             }
           ],
           "learningTip": [
-            "Avoid mapping explosion - limit dynamic fields.",
-            "Refresh interval affects indexing speed vs search freshness.",
-            "Bulk operations for high-throughput indexing."
+            "**Inverted index:** Core data structure. Maps each word → list of documents containing it. Enables O(1) full-text search instead of scanning all documents.",
+            "**Shards and replicas:** Index split into shards (horizontal scaling). Each shard has replicas (fault tolerance). Primary shard handles writes, replicas serve reads.",
+            "**Analyzers:** Text processing pipeline = Character filters → Tokenizer → Token filters. E.g., 'The Quick Brown FOX' → ['quick', 'brown', 'fox'].",
+            "**Near real-time:** Documents available for search ~1 second after indexing (refresh interval). Use `refresh=wait_for` for immediate consistency when needed."
           ],
           "mustNotMiss": [
             "Mapping: Define field types upfront. Dynamic = risky.",
@@ -1692,9 +1719,10 @@
             }
           ],
           "learningTip": [
-            "More partitions = more parallelism but also overhead.",
-            "Consumer lag monitoring is critical for health.",
-            "Compression at producer reduces network and storage."
+            "**Log-based architecture:** Topics are append-only logs partitioned across brokers. Consumers track their position (offset) independently.",
+            "**Partitioning:** Messages with same key go to same partition (ordering guarantee). More partitions = more parallelism but more overhead.",
+            "**Consumer groups:** Each partition consumed by exactly one consumer in a group. Adding consumers (up to partition count) scales reads linearly.",
+            "**Exactly-once semantics:** Achieved with idempotent producers + transactional writes + consumer offset commits in the same transaction. Complex but possible."
           ],
           "mustNotMiss": [
             "ISR (In-Sync Replicas): Replicas caught up with leader.",
@@ -1748,9 +1776,10 @@
             }
           ],
           "learningTip": [
-            "REST: Simple, stateless, cacheable. Great for public APIs.",
-            "GraphQL: Client specifies exact data. Great for varied clients.",
-            "gRPC: Binary, fast, streaming. Great for internal services."
+            "**REST:** Resource-oriented, HTTP verbs (GET/POST/PUT/DELETE), stateless, widely adopted. Best for CRUD APIs and public-facing services.",
+            "**GraphQL:** Query language — client specifies exactly what data it needs. Solves over-fetching/under-fetching. Single endpoint. Best for complex, nested data.",
+            "**gRPC:** Binary protocol (protobuf), HTTP/2, streaming support. 10× faster than REST/JSON. Best for internal service-to-service communication.",
+            "**When to choose:** Public API → REST. Mobile/frontend with complex data needs → GraphQL. Internal high-performance microservices → gRPC."
           ],
           "mustNotMiss": [
             "REST: Resources, HTTP methods, stateless. Simple and universal.",
@@ -1796,9 +1825,10 @@
             }
           ],
           "learningTip": [
-            "OAuth is for authorization, not authentication. OpenID Connect adds auth.",
-            "JWT: Self-contained tokens. No DB lookup needed.",
-            "Rate limiting is first line of defense against DDoS."
+            "**Authentication vs Authorization:** AuthN = who you are (login). AuthZ = what you can do (permissions). OAuth 2.0 for delegated auth, JWT for stateless tokens.",
+            "**OWASP Top 10:** SQL Injection, XSS, CSRF, Broken Auth, Security Misconfiguration. Know the mitigations for each.",
+            "**Encryption:** TLS in transit, AES-256 at rest. Never store plaintext passwords — use bcrypt/scrypt with salt. Key management via KMS (AWS KMS, HashiCorp Vault).",
+            "**Zero Trust:** Never trust, always verify. Every request authenticated and authorized, even internal. mTLS between services, principle of least privilege."
           ],
           "mustNotMiss": [
             "OAuth 2.0 Flows: Authorization Code (web), Client Credentials (M2M).",
@@ -1844,9 +1874,10 @@
             }
           ],
           "learningTip": [
-            "Three pillars: Logs (events), Metrics (numbers), Traces (requests).",
-            "Golden Signals: Latency, Traffic, Errors, Saturation.",
-            "Structured logging enables querying. JSON, not plain text."
+            "**Three pillars:** Logs (events), Metrics (measurements), Traces (request flow across services). All three needed for full observability.",
+            "**Distributed tracing:** Assign a trace ID at the edge. Propagate through all services via headers. Visualize the full request path (Jaeger, Zipkin).",
+            "**Metrics strategy:** RED method — Rate, Errors, Duration for request-driven services. USE method — Utilization, Saturation, Errors for resources (CPU, disk).",
+            "**Alerting best practices:** Alert on symptoms (high error rate), not causes (high CPU). Use SLOs (Service Level Objectives) to define alert thresholds."
           ],
           "mustNotMiss": [
             "ELK Stack: Elasticsearch + Logstash + Kibana for centralized logs.",

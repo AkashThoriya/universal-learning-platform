@@ -151,34 +151,43 @@
           "practiceQuestions": [
             {
               "name": "Data Science Skills",
-              "slug": "data-science-skills",
+              "slug": "matching-skills",
               "difficulty": "Easy",
-              "link": "https://datalemur.com/questions/data-science-skills"
+              "link": "https://datalemur.com/questions/matching-skills"
             },
             {
-              "name": "Facebook App Completeness",
-              "slug": "facebook-web-log",
+              "name": "App Click-through Rate (CTR)",
+              "slug": "click-through-rate",
               "difficulty": "Easy",
-              "link": "https://datalemur.com/questions/facebook-web-log"
+              "link": "https://datalemur.com/questions/click-through-rate"
             },
             {
-              "name": "Review Stars",
-              "slug": "sql-select-where",
+              "name": "Second Day Confirmation",
+              "slug": "second-day-confirmation",
               "difficulty": "Easy",
-              "link": "https://datalemur.com/questions/sql-select-where"
+              "link": "https://datalemur.com/questions/second-day-confirmation"
             }
           ],
           "learningTip": [
-            "Use `IS NULL` to check for missing values, never `= NULL`.",
-            "The `IN` operator is a cleaner way to specify multiple OR conditions for the same column.",
-            "Remember that `WHERE` filters rows before any grouping or aggregation happens."
+            "**IS NULL vs = NULL:** Use `IS NULL` to check for missing values, never `= NULL`. NULL is not equal to anything, not even itself.",
+            "**IN operator:** The `IN` operator is a cleaner way to specify multiple OR conditions for the same column. E.g., `WHERE status IN ('active', 'pending')`.",
+            "**WHERE execution order:** `WHERE` filters rows *before* any grouping or aggregation happens. This is crucial for understanding query performance."
           ],
           "mustNotMiss": [
             "Checking for NULL: `WHERE column IS NULL`",
             "Pattern matching: `WHERE column LIKE 'A%'`",
             "Multiple values: `WHERE column IN (1, 2, 3)`"
           ],
-          "interviewQuestions": []
+          "interviewQuestions": [
+            {
+              "question": "What is the difference between WHERE and HAVING?",
+              "answer": "**WHERE** filters individual rows *before* grouping. **HAVING** filters groups *after* `GROUP BY` aggregation. You can't use aggregate functions (COUNT, SUM) in WHERE — use HAVING for that."
+            },
+            {
+              "question": "What does NULL mean in SQL, and how do you check for it?",
+              "answer": "**NULL** means 'unknown' or 'missing value'. It is *not* the same as 0 or empty string. **Always** use `IS NULL` or `IS NOT NULL` — never `= NULL`, because NULL compared to anything (even itself) returns NULL, not TRUE."
+            }
+          ]
         }
       ]
     },
@@ -302,6 +311,18 @@
               "slug": "not-boring-movies",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/not-boring-movies/"
+            },
+            {
+              "name": "Triangle Judgement",
+              "slug": "triangle-judgement",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/triangle-judgement/"
+            },
+            {
+              "name": "Swapped Food Delivery",
+              "slug": "sql-swapped-food-delivery",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/sql-swapped-food-delivery"
             }
           ],
           "learningTip": [
@@ -465,6 +486,30 @@
               "slug": "sql-avg-review-ratings",
               "difficulty": "Easy",
               "link": "https://datalemur.com/questions/sql-avg-review-ratings"
+            },
+            {
+              "name": "Project Employees I",
+              "slug": "project-employees-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/project-employees-i/"
+            },
+            {
+              "name": "Percentage of Users Attended a Contest",
+              "slug": "percentage-of-users-attended-a-contest",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/percentage-of-users-attended-a-contest/"
+            },
+            {
+              "name": "Queries Quality and Percentage",
+              "slug": "queries-quality-and-percentage",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/queries-quality-and-percentage/"
+            },
+            {
+              "name": "Compressed Mode",
+              "slug": "alibaba-compressed-mode",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/alibaba-compressed-mode"
             }
           ],
           "learningTip": [
@@ -551,6 +596,12 @@
               "slug": "sql-page-with-no-likes",
               "difficulty": "Easy",
               "link": "https://datalemur.com/questions/sql-page-with-no-likes"
+            },
+            {
+              "name": "Number of Unique Subjects Taught by Each Teacher",
+              "slug": "number-of-unique-subjects-taught-by-each-teacher",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/number-of-unique-subjects-taught-by-each-teacher/"
             },
             {
               "name": "Signup Activation Rate",
@@ -644,6 +695,18 @@
               "link": "https://leetcode.com/problems/replace-employee-id-with-the-unique-identifier/"
             },
             {
+              "name": "Average Time of Process per Machine",
+              "slug": "average-time-of-process-per-machine",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/average-time-of-process-per-machine/"
+            },
+            {
+              "name": "Customer Who Visited but Did Not Make Any Transactions",
+              "slug": "customer-who-visited-but-did-not-make-any-transactions",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/customer-who-visited-but-did-not-make-any-transactions/"
+            },
+            {
               "name": "Managers with at Least 5 Direct Reports",
               "slug": "managers-with-at-least-5-direct-reports",
               "difficulty": "Medium",
@@ -656,22 +719,22 @@
               "link": "https://leetcode.com/problems/confirmation-rate/"
             },
             {
-              "name": "Average Time of Process per Machine",
-              "slug": "average-time-of-process-per-machine",
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/average-time-of-process-per-machine/"
-            },
-            {
               "name": "Product Sales Analysis III",
               "slug": "product-sales-analysis-iii",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/product-sales-analysis-iii/"
             },
             {
-              "name": "Customer Who Visited but Did Not Make Any Transactions",
-              "slug": "customer-who-visited-but-did-not-make-any-transactions",
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/customer-who-visited-but-did-not-make-any-transactions/"
+              "name": "Customers Who Bought All Products",
+              "slug": "customers-who-bought-all-products",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/customers-who-bought-all-products/"
+            },
+            {
+              "name": "Friend Requests II: Who Has the Most Friends",
+              "slug": "friend-requests-ii-who-has-the-most-friends",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/friend-requests-ii-who-has-the-most-friends/"
             }
           ],
           "learningTip": [
@@ -687,12 +750,30 @@
             "**3+ Table Joins:** The database joins two tables, takes the result, and joins it to the third. The order of INNER JOINS doesn't matter for the result, but the optimizer might reorder them for speed."
           ],
           "interviewQuestions": [
-            "Find all customers who have never placed an order (using LEFT JOIN).",
-            "Write a query to find duplicate email addresses in a Users table.",
-            "How do you find records in table A that have no match in table B?",
-            "Write a query to list products that have never been ordered.",
-            "Find employees who belong to departments that have more than 5 employees.",
-            "How would you optimize a query that joins 5+ tables?"
+            {
+              "question": "How do you find all customers who have never placed an order?",
+              "answer": "**LEFT JOIN + NULL check:** `SELECT c.* FROM customers c LEFT JOIN orders o ON c.id = o.customer_id WHERE o.id IS NULL`. The LEFT JOIN keeps all customers, and `WHERE o.id IS NULL` filters to those with no matching order."
+            },
+            {
+              "question": "Write a query to find duplicate email addresses in a Users table.",
+              "answer": "**GROUP BY + HAVING:** `SELECT email, COUNT(*) as cnt FROM users GROUP BY email HAVING COUNT(*) > 1`. The `HAVING` clause filters groups after aggregation, unlike `WHERE` which filters rows before."
+            },
+            {
+              "question": "How do you find records in table A that have no match in table B?",
+              "answer": "**Three approaches:** \n1. `LEFT JOIN ... WHERE b.id IS NULL` (most readable)\n2. `NOT EXISTS (SELECT 1 FROM B WHERE B.id = A.id)` (often fastest)\n3. `WHERE id NOT IN (SELECT id FROM B)` (beware of NULLs — if subquery returns NULL, entire result is empty)"
+            },
+            {
+              "question": "How would you write a query to list products that have never been ordered?",
+              "answer": "**Anti-join pattern:** `SELECT p.* FROM products p LEFT JOIN order_items oi ON p.id = oi.product_id WHERE oi.product_id IS NULL`. This is the classic anti-join — find rows in the left table with no match in the right."
+            },
+            {
+              "question": "Find employees who belong to departments that have more than 5 employees.",
+              "answer": "**Subquery approach:** `SELECT * FROM employees WHERE dept_id IN (SELECT dept_id FROM employees GROUP BY dept_id HAVING COUNT(*) > 5)`. Alternatively, use a JOIN with a derived table for better performance on large datasets."
+            },
+            {
+              "question": "How would you optimize a query that joins 5+ tables?",
+              "answer": "**Key strategies:** \n1. **Indexes:** Ensure JOIN columns are indexed \n2. **Reduce early:** Use WHERE clauses to filter before JOINs \n3. **EXPLAIN plan:** Check execution plan for full table scans \n4. **Denormalize:** If reads vastly outnumber writes, consider denormalization \n5. **Subqueries vs JOINs:** Sometimes CTEs or subqueries are faster than multi-table JOINs"
+            }
           ]
         }
       ]
@@ -732,13 +813,19 @@
               "slug": "immediate-food-delivery-ii",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/immediate-food-delivery-ii/"
+            },
+            {
+              "name": "Second Highest Salary",
+              "slug": "sql-second-highest-salary",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/sql-second-highest-salary"
             }
           ],
           "learningTip": [
-            "Non-correlated subquery runs ONCE, returns a value, outer query uses it. Like computing MAX salary once, then finding all employees with that salary.",
-            "Correlated subquery runs ONCE PER ROW of outer query - it references outer query's columns. Much slower but sometimes necessary.",
-            "Views are 'saved queries' that act like tables. CREATE VIEW high_earners AS SELECT * FROM emp WHERE salary > 100000. Then: SELECT * FROM high_earners",
-            "Use subqueries when you need to compute something (max, avg) then use the result in a comparison."
+            "**Subquery types:** Scalar (returns single value), Row (returns single row), Table (returns result set). Know when to use each.",
+            "**Correlated vs Non-correlated:** A correlated subquery references the outer query and runs once per row. Non-correlated runs once total — much faster.",
+            "**Views are virtual tables:** They don't store data, just store the query. Modifying the base table instantly reflects in the view.",
+            "**EXISTS vs IN:** `EXISTS` stops at the first match (short-circuits), making it faster for large subquery results. `IN` evaluates the entire list."
           ],
           "mustNotMiss": [
             "Non-correlated: SELECT * FROM employees WHERE salary = (SELECT MAX(salary) FROM employees) - inner query runs once, doesn't reference outer",
@@ -859,10 +946,10 @@
             }
           ],
           "learningTip": [
-            "Imagine transferring ₹1000 from Account A to Account B. Two operations: Debit A, Credit B. If system crashes between them, money is LOST. Transactions prevent this.",
-            "ATOMICITY: All or nothing. Either BOTH debit and credit happen, or NEITHER happens. No partial state.",
-            "CONSISTENCY: Database moves from one valid state to another. If a rule says balance >= 0, transaction that violates this is rejected.",
-            "DURABILITY: Once you see 'success', the data is safe even if server catches fire 1 second later. Written to disk, not just memory."
+            "**Atomicity:** All operations in a transaction succeed or all fail. There's no partial commit.",
+            "**Consistency:** The database moves from one valid state to another. Constraints (PK, FK, CHECK) are enforced.",
+            "**Isolation:** Concurrent transactions don't interfere. The level of isolation is configurable (READ COMMITTED, SERIALIZABLE, etc.).",
+            "**Durability:** Once a transaction is committed, it survives system crashes. Data is written to disk/WAL."
           ],
           "mustNotMiss": [
             "BEGIN TRANSACTION or START TRANSACTION - marks the start. All subsequent statements are part of this transaction.",
@@ -915,10 +1002,10 @@
             }
           ],
           "learningTip": [
-            "Isolation level is a trade-off: Higher isolation = safer but slower (more locking). Lower isolation = faster but risk of reading incorrect data.",
-            "Interview question: 'User sees their balance is ₹1000, starts a transfer of ₹800. Another transaction deducts ₹500 in between. What happens?' Answer depends on isolation level!",
-            "Optimistic locking: Assume no conflict, check at commit time. Good when conflicts are rare. Uses version numbers.",
-            "Pessimistic locking: Lock data when you read it, prevent others from modifying. Good when conflicts are common but reduces concurrency."
+            "**READ UNCOMMITTED:** Fastest but allows dirty reads (reading uncommitted data from other transactions).",
+            "**READ COMMITTED:** Default in most databases. Prevents dirty reads, but a query run twice in the same transaction might return different results (non-repeatable reads).",
+            "**REPEATABLE READ:** Locks rows once read. Prevents non-repeatable reads but allows phantom rows (new rows matching WHERE clause).",
+            "**SERIALIZABLE:** Strictest level. Transactions execute as if they were serial. Prevents all anomalies but has the highest performance cost."
           ],
           "mustNotMiss": [
             "READ UNCOMMITTED: Can read data that other transactions haven't committed yet. Risk: Dirty Read - reading data that might be rolled back!",
@@ -986,10 +1073,10 @@
             }
           ],
           "learningTip": [
-            "Why normalize? Imagine storing {StudentName, CourseName, InstructorName, InstructorEmail} in one table. If instructor changes email, you must update EVERY row for their courses!",
-            "1NF: 'Atomic values' - no lists in cells. Bad: 'Math, Physics, Chemistry'. Good: Three separate rows.",
-            "2NF: 'No partial dependencies' - every non-key column must depend on the ENTIRE primary key, not just part of it.",
-            "3NF: 'No transitive dependencies' - non-key columns must depend on the KEY, not on OTHER non-key columns."
+            "**1NF → 2NF → 3NF:** Think of normalization as progressive elimination of redundancy. Each form builds on the previous.",
+            "**Identify dependencies:** Before normalizing, list all functional dependencies (column A determines column B).",
+            "**Denormalization is intentional:** Sometimes you deliberately add redundancy for read performance. This is a conscious design trade-off, not laziness.",
+            "**Junction tables:** Many-to-many relationships always require a junction/bridge table with foreign keys to both related tables."
           ],
           "mustNotMiss": [
             "1NF Rules: Each cell has single value (no arrays). Each row is unique (has primary key). No repeating groups of columns.",
@@ -999,12 +1086,30 @@
             "3NF is sufficient for 90% of applications. It eliminates most redundancy while keeping the design practical."
           ],
           "interviewQuestions": [
-            "Explain 1NF, 2NF, and 3NF with examples.",
-            "Why is 3NF (Third Normal Form) usually sufficient for most applications?",
-            "Convert a flat spreadsheet of Student-Course data into a normalized schema.",
-            "What are update anomalies and how does normalization prevent them?",
-            "When is BCNF required over 3NF?",
-            "What are insertion, deletion, and update anomalies?"
+            {
+              "question": "Explain 1NF, 2NF, and 3NF with examples.",
+              "answer": "**1NF:** Each cell has a single atomic value (no arrays/lists). E.g., split `phones: '123,456'` into separate rows. \n**2NF:** 1NF + no partial dependencies. Every non-key column depends on the *entire* primary key, not just part of a composite key. \n**3NF:** 2NF + no transitive dependencies. Non-key columns depend *only* on the primary key, not on other non-key columns."
+            },
+            {
+              "question": "Why is 3NF (Third Normal Form) usually sufficient for most applications?",
+              "answer": "**Practical balance:** 3NF eliminates all major data anomalies (insert, update, delete) while keeping queries reasonably simple. Going beyond (BCNF, 4NF) adds complexity with diminishing returns. Most real-world schemas stop at 3NF and selectively denormalize for performance."
+            },
+            {
+              "question": "Convert a flat spreadsheet of Student-Course data into a normalized schema.",
+              "answer": "**Step-by-step:** \n1. **Identify entities:** Students, Courses, Enrollments \n2. **Create tables:** `students(id, name, email)`, `courses(id, title, credits)` \n3. **Junction table:** `enrollments(student_id, course_id, grade, enrolled_date)` with composite PK \n4. **Foreign keys:** `enrollments.student_id → students.id`, `enrollments.course_id → courses.id`"
+            },
+            {
+              "question": "What are update anomalies and how does normalization prevent them?",
+              "answer": "**Update anomaly:** When the same data is stored in multiple rows, updating one copy but not others creates inconsistency. E.g., if `department_name` is stored with every employee, renaming a department requires updating every row. **Normalization fix:** Store `department_name` in a separate `departments` table. Now you update exactly one row."
+            },
+            {
+              "question": "When is BCNF required over 3NF?",
+              "answer": "**BCNF is needed when:** A table has multiple overlapping candidate keys where a non-candidate-key attribute determines part of a candidate key. In practice, this is rare. BCNF decomposes further than 3NF but may sacrifice some dependency preservation. Use BCNF when you notice anomalies that 3NF doesn't catch."
+            },
+            {
+              "question": "What are insertion, deletion, and update anomalies?",
+              "answer": "**Insertion anomaly:** Cannot add data without unrelated data (e.g., can't add a new department without an employee). \n**Deletion anomaly:** Deleting one piece of data unintentionally removes other data (e.g., deleting the last employee in a department loses the department info). \n**Update anomaly:** Redundant data requires multiple updates to stay consistent (e.g., changing a department name in 100 employee rows)."
+            }
           ],
           "resources": [
             "https://datalemur.com/sql-tutorial/sql-normalization",
@@ -1031,10 +1136,10 @@
             }
           ],
           "learningTip": [
-            "E-R diagrams are a THINKING tool, not just documentation. Draw boxes (entities), connect with lines (relationships), note cardinality (1-to-many, etc.).",
-            "Denormalization is purposely adding redundancy to speed up reads. Store customer name directly in Order table instead of joining every time.",
-            "Normalize for write-heavy (banking, transactions). Denormalize for read-heavy (analytics dashboards, reporting).",
-            "NoSQL databases often require denormalized designs because they don't support joins efficiently."
+            "**Entities → Tables:** Each entity becomes a table. Attributes become columns. The primary key uniquely identifies each row.",
+            "**Relationships:** One-to-One (FK with UNIQUE), One-to-Many (FK in the 'many' table), Many-to-Many (junction table with two FKs).",
+            "**Cardinality notation:** Crow's foot (most common): `||--o{` means 'one-to-many'. The fork means 'many', the line means 'one'.",
+            "**Denormalization trade-offs:** Adding redundant data speeds up reads but increases storage and makes writes/updates more complex and error-prone."
           ],
           "mustNotMiss": [
             "One-to-One: User → UserProfile. Either share primary key, or one table has foreign key with UNIQUE constraint.",
@@ -1095,22 +1200,10 @@
               "link": "https://leetcode.com/problems/rank-scores/"
             },
             {
-              "name": "Department Top Three Salaries",
-              "slug": "department-top-three-salaries",
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/department-top-three-salaries/"
-            },
-            {
               "name": "Consecutive Numbers",
               "slug": "consecutive-numbers",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/consecutive-numbers/"
-            },
-            {
-              "name": "Human Traffic of Stadium",
-              "slug": "human-traffic-of-stadium",
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/human-traffic-of-stadium/"
             },
             {
               "name": "Game Play Analysis IV",
@@ -1141,6 +1234,72 @@
               "slug": "top-fans-rank",
               "difficulty": "Medium",
               "link": "https://datalemur.com/questions/top-fans-rank"
+            },
+            {
+              "name": "Monthly Transactions I",
+              "slug": "monthly-transactions-i",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/monthly-transactions-i/"
+            },
+            {
+              "name": "Restaurant Growth",
+              "slug": "restaurant-growth",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/restaurant-growth/"
+            },
+            {
+              "name": "FAANG Stock Min-Max (Part 1)",
+              "slug": "sql-bloomberg-stock-min-max-1",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/sql-bloomberg-stock-min-max-1"
+            },
+            {
+              "name": "User Shopping Sprees",
+              "slug": "amazon-shopping-spree",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/amazon-shopping-spree"
+            },
+            {
+              "name": "Histogram of Users and Purchases",
+              "slug": "histogram-users-purchases",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/histogram-users-purchases"
+            },
+            {
+              "name": "Card Launch Success",
+              "slug": "card-launch-success",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/card-launch-success"
+            },
+            {
+              "name": "Department Top Three Salaries",
+              "slug": "department-top-three-salaries",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/department-top-three-salaries/"
+            },
+            {
+              "name": "Human Traffic of Stadium",
+              "slug": "human-traffic-of-stadium",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/human-traffic-of-stadium/"
+            },
+            {
+              "name": "Consecutive Filing Years",
+              "slug": "consecutive-filing-years",
+              "difficulty": "Hard",
+              "link": "https://datalemur.com/questions/consecutive-filing-years"
+            },
+            {
+              "name": "Marketing Touch Streak",
+              "slug": "marketing-touch-streak",
+              "difficulty": "Hard",
+              "link": "https://datalemur.com/questions/marketing-touch-streak"
+            },
+            {
+              "name": "Patient Support Analysis (Part 4)",
+              "slug": "long-calls-growth",
+              "difficulty": "Hard",
+              "link": "https://datalemur.com/questions/long-calls-growth"
             }
           ],
           "learningTip": [
@@ -1212,6 +1371,12 @@
               "link": "https://leetcode.com/problems/employees-whose-manager-left-the-company/"
             },
             {
+              "name": "The Number of Employees Which Report to Each Employee",
+              "slug": "the-number-of-employees-which-report-to-each-employee",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/customers-who-never-order/"
+            },
+            {
               "name": "Tree Node",
               "slug": "tree-node",
               "difficulty": "Medium",
@@ -1222,12 +1387,6 @@
               "slug": "investments-in-2016",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/investments-in-2016/"
-            },
-            {
-              "name": "The Number of Employees Which Report to Each Employee",
-              "slug": "the-number-of-employees-which-report-to-each-employee",
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/customers-who-never-order/"
             },
             {
               "name": "Supercloud Customer",
@@ -1267,9 +1426,39 @@
             },
             {
               "name": "Best-Selling Product",
-              "slug": "best-selling-product",
+              "slug": "best-selling-products",
               "difficulty": "Medium",
-              "link": "https://datalemur.com/questions/best-selling-product"
+              "link": "https://datalemur.com/questions/best-selling-products"
+            },
+            {
+              "name": "Spotify Streaming History",
+              "slug": "spotify-streaming-history",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/spotify-streaming-history"
+            },
+            {
+              "name": "Patient Support Analysis (Part 2)",
+              "slug": "uncategorized-calls-percentage",
+              "difficulty": "Medium",
+              "link": "https://datalemur.com/questions/uncategorized-calls-percentage"
+            },
+            {
+              "name": "Patient Support Analysis (Part 3)",
+              "slug": "patient-call-history",
+              "difficulty": "Hard",
+              "link": "https://datalemur.com/questions/patient-call-history"
+            },
+            {
+              "name": "Reactivated Users",
+              "slug": "reactivated-users",
+              "difficulty": "Hard",
+              "link": "https://datalemur.com/questions/reactivated-users"
+            },
+            {
+              "name": "Senior Managers",
+              "slug": "senior-managers-reportees",
+              "difficulty": "Hard",
+              "link": "https://datalemur.com/questions/senior-managers-reportees"
             }
           ],
           "learningTip": [
@@ -1330,6 +1519,12 @@
           "description": "Learn database programming - encapsulating logic inside the database itself. Stored Procedures for reusable parameterized logic, Functions for computed values, and Triggers for automatic actions when data changes.",
           "practiceQuestions": [
             {
+              "name": "Average Selling Price",
+              "slug": "average-selling-price",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/average-selling-price/"
+            },
+            {
               "name": "Exchange Seats",
               "slug": "exchange-seats",
               "difficulty": "Medium",
@@ -1340,12 +1535,6 @@
               "slug": "movie-rating",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/movie-rating/"
-            },
-            {
-              "name": "Average Selling Price",
-              "slug": "average-selling-price",
-              "difficulty": "Easy",
-              "link": "https://leetcode.com/problems/average-selling-price/"
             }
           ],
           "learningTip": [
@@ -1411,13 +1600,31 @@
               "slug": "recyclable-and-low-fat-products",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/recyclable-and-low-fat-products/"
+            },
+            {
+              "name": "User Activity for the Past 30 Days I",
+              "slug": "user-activity-for-the-past-30-days-i",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/user-activity-for-the-past-30-days-i/"
+            },
+            {
+              "name": "Find Users With Valid E-Mails",
+              "slug": "find-users-with-valid-e-mails",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/find-users-with-valid-e-mails/"
+            },
+            {
+              "name": "List the Products Ordered in a Period",
+              "slug": "list-the-products-ordered-in-a-period",
+              "difficulty": "Easy",
+              "link": "https://leetcode.com/problems/list-the-products-ordered-in-a-period/"
             }
           ],
           "learningTip": [
-            "String functions are crucial for data cleaning and formatting. `TRIM`, `LOWER`, `UPPER`, `SUBSTRING` are your friends.",
-            "Date functions are essential for time-series analysis. `DATE_PART` (Postgres) or `EXTRACT` (SQL Server/Oracle) for components, `DATE_ADD`/`DATE_SUB` for arithmetic.",
-            "Regular expressions (`REGEXP_LIKE` or `RLIKE`) offer powerful pattern matching beyond `LIKE`.",
-            "Always check your specific SQL dialect's documentation for exact function names and syntax (e.g., `CONCAT` vs `||`, `GETDATE()` vs `NOW()`)."
+            "**CONCAT vs ||:** Use `CONCAT(a, b)` for portability. Some databases support `||` for concatenation (PostgreSQL, Oracle) but others don't (MySQL uses it for logical OR).",
+            "**Date arithmetic:** `DATEDIFF(end, start)` gives days between two dates. `DATE_ADD(date, INTERVAL n DAY)` adds time. Syntax varies by database.",
+            "**Pattern matching:** `LIKE '%pattern%'` for simple patterns. `REGEXP` / `RLIKE` for complex regex matching. Remember `%` = any chars, `_` = exactly one char.",
+            "**EXTRACT function:** `EXTRACT(YEAR FROM date_column)` extracts date parts. More portable than database-specific functions like `YEAR()` or `TO_CHAR()`."
           ],
           "mustNotMiss": [
             "String: `CONCAT(str1, str2)`, `SUBSTRING(str, start, length)`, `LENGTH(str)`, `REPLACE(str, old, new)`, `TRIM(str)`, `LOWER(str)`, `UPPER(str)`",
@@ -1594,6 +1801,12 @@
           "description": "Practice the most common SQL interview patterns - Top-N per group, finding gaps and islands (consecutive sequences), calculating running totals and moving averages, handling hierarchical data, and solving complex business logic problems.",
           "practiceQuestions": [
             {
+              "name": "Product Price at a Given Date",
+              "slug": "product-price-at-a-given-date",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/product-price-at-a-given-date/"
+            },
+            {
               "name": "Trips and Users",
               "slug": "trips-and-users",
               "difficulty": "Hard",
@@ -1616,12 +1829,6 @@
               "slug": "market-analysis-ii",
               "difficulty": "Hard",
               "link": "https://leetcode.com/problems/rank-scores/"
-            },
-            {
-              "name": "Product Price at a Given Date",
-              "slug": "product-price-at-a-given-date",
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/product-price-at-a-given-date/"
             },
             {
               "name": "Game Play Analysis V",
@@ -1684,23 +1891,23 @@
               "link": "https://datalemur.com/questions/international-call-percentage"
             },
             {
-              "name": "Department vs. Company Salary",
-              "slug": "sql-department-company-salary",
+              "name": "Top Three Salaries",
+              "slug": "sql-top-three-salaries",
               "difficulty": "Hard",
-              "link": "https://datalemur.com/questions/sql-department-company-salary"
+              "link": "https://datalemur.com/questions/sql-top-three-salaries"
             },
             {
-              "name": "Patient Support Analysis",
-              "slug": "patient-support-analysis",
+              "name": "Patient Support Analysis (Part 1)",
+              "slug": "frequent-callers",
               "difficulty": "Hard",
-              "link": "https://datalemur.com/questions/patient-support-analysis"
+              "link": "https://datalemur.com/questions/frequent-callers"
             }
           ],
           "learningTip": [
-            "Top N per group: ROW_NUMBER() OVER(PARTITION BY group ORDER BY value DESC), then WHERE rn <= N",
-            "Gaps and islands: Subtract row_number from the date/sequence. Consecutive items will have the same difference (the 'island' identifier).",
-            "Month-over-month: Use LAG(value) OVER(ORDER BY month) to get previous month, then compute percentage change.",
-            "Always test edge cases mentally: What if there's only one row? What if there are ties? What if the column has NULLs?"
+            "**Gaps and Islands:** Classic pattern — find consecutive sequences or gaps in data. Use `ROW_NUMBER()` and subtract from the value to create groups.",
+            "**Running totals:** `SUM(amount) OVER (ORDER BY date)` gives cumulative sum. Essential for financial and analytics queries.",
+            "**Top-N per group:** Use `ROW_NUMBER() OVER (PARTITION BY group_col ORDER BY rank_col)` then filter `WHERE rn <= N`.",
+            "**Pivot without PIVOT:** Use `CASE WHEN` with `SUM/MAX` and `GROUP BY` to manually pivot data when your database doesn't support PIVOT."
           ],
           "mustNotMiss": [
             "Top N per group: WITH ranked AS (SELECT *, ROW_NUMBER() OVER(PARTITION BY dept ORDER BY sal DESC) rn FROM emp) SELECT * FROM ranked WHERE rn <= 3",

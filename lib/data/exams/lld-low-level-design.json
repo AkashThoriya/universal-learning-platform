@@ -650,16 +650,16 @@
           "description": "Design and implement TicTacToe - understand requirements, design entities, and plan for extensibility like N×N boards and undo functionality.",
           "practiceQuestions": [
             {
-              "name": "N-Queens",
-              "slug": "n-queens",
-              "difficulty": "Hard",
-              "link": "https://leetcode.com/problems/n-queens/"
-            },
-            {
               "name": "Valid Sudoku",
               "slug": "valid-sudoku",
               "difficulty": "Medium",
               "link": "https://leetcode.com/problems/valid-sudoku/"
+            },
+            {
+              "name": "N-Queens",
+              "slug": "n-queens",
+              "difficulty": "Hard",
+              "link": "https://leetcode.com/problems/n-queens/"
             }
           ],
           "learningTip": [
@@ -714,10 +714,10 @@
             }
           ],
           "learningTip": [
-            "Board class: 2D grid, makeMove(), getCell(row, col).",
-            "Player class: name, symbol. Abstract for Human/Bot.",
-            "Cell class: position (row, col), symbol, isEmpty().",
-            "Keep classes focused - SRP."
+            "**Separation of concerns:** Board, Player, Game, and Move should be separate classes. Board handles grid state, Game handles rules and turns.",
+            "**Enums for markers:** Use an enum (`X`, `O`, `EMPTY`) instead of strings or chars. Type safety prevents bugs.",
+            "**Win checking:** Check rows, columns, and diagonals after each move. Only need to check the row/col/diagonal of the last move — O(n) not O(n²).",
+            "**Board representation:** 2D array is simplest. For O(1) win checks, maintain count arrays for each row, column, and both diagonals."
           ],
           "mustNotMiss": [
             "**Board:** Initialize N×N grid of Cells.",
@@ -766,10 +766,10 @@
             }
           ],
           "learningTip": [
-            "Game loop: While not won/draw → get move → make move → check win.",
-            "O(1) win check: Track count per row, col, diagonals.",
-            "Bot player: Random move, or Minimax for optimal.",
-            "Command pattern stores moves for undo."
+            "**Strategy pattern for players:** Abstract `Player` class with `makeMove()`. Subclass `HumanPlayer` (input) and `AIPlayer` (minimax algorithm).",
+            "**Undo functionality:** Use Command pattern — store each move as a command object. Undo = pop last command and reverse it.",
+            "**Extensibility:** Design for NxN board, not just 3x3. Win condition = N in a row. Factory creates the right-sized board.",
+            "**Game loop:** `while (!game.isOver()) { currentPlayer.makeMove(board); game.switchTurn(); }` — clean separation of control flow."
           ],
           "mustNotMiss": [
             "**Game Loop:** `while(!gameOver) { player = nextPlayer(); move = player.getMove(); board.makeMove(); checkWin(); }`",
@@ -1205,10 +1205,10 @@
             }
           ],
           "learningTip": [
-            "Net balance per user: Sum(owed to user) - Sum(user owes).",
-            "Positive = creditor (to receive), Negative = debtor (to pay).",
-            "Greedy: Match largest creditor with largest debtor.",
-            "Graph: Find cycles, settle within cycles first."
+            "**Debt simplification:** After all expenses, compute net balances. A person with +500 owes nothing; a person with -300 owes 300. Match positives with negatives.",
+            "**Graph-based approach:** Model debts as a directed graph. Simplify by computing net flow. Use greedy matching (largest creditor ↔ largest debtor).",
+            "**Split strategies:** Equal, exact amounts, percentage-based. Use Strategy pattern — `SplitStrategy` interface with `calculateShares()` method.",
+            "**Concurrency concern:** Multiple users adding expenses simultaneously. Use optimistic locking on group balance or event sourcing for conflict resolution."
           ],
           "mustNotMiss": [
             "**Calculate net per user:** `netBalance[user] = received - paid`.",
@@ -1355,10 +1355,10 @@
             }
           ],
           "learningTip": [
-            "Process: Own memory space. Thread: Shares memory with other threads.",
-            "Race Condition: Multiple threads access shared data, at least one writes.",
-            "Critical Section: Code that accesses shared resource.",
-            "Mutual Exclusion: Only one thread in critical section at a time."
+            "**Thread vs Process:** Threads share memory (faster communication, harder synchronization). Processes have separate memory (safer, more overhead).",
+            "**Mutex vs Semaphore:** Mutex = binary lock, only one thread at a time. Semaphore = counting lock, allows N threads. Mutex has ownership; Semaphore doesn't.",
+            "**Deadlock conditions:** Mutual exclusion + Hold & wait + No preemption + Circular wait. Remove ANY one to prevent deadlock.",
+            "**Producer-Consumer pattern:** Shared buffer with `produce()` and `consume()`. Use BlockingQueue or condition variables. Classic interview problem."
           ],
           "mustNotMiss": [
             "**Process vs Thread:** Process = isolated. Thread = shared memory, lightweight.",
@@ -1400,16 +1400,16 @@
           "description": "Advanced concurrency patterns - thread pools, producer-consumer, wait/notify, semaphores, and deadlock prevention.",
           "practiceQuestions": [
             {
-              "name": "Web Crawler Multithreaded",
-              "slug": "web-crawler-multithreaded",
-              "difficulty": "Medium",
-              "link": "https://leetcode.com/problems/fizz-buzz-multithreaded/"
-            },
-            {
               "name": "Design HashMap",
               "slug": "design-hashmap",
               "difficulty": "Easy",
               "link": "https://leetcode.com/problems/design-hashmap/"
+            },
+            {
+              "name": "Web Crawler Multithreaded",
+              "slug": "web-crawler-multithreaded",
+              "difficulty": "Medium",
+              "link": "https://leetcode.com/problems/fizz-buzz-multithreaded/"
             },
             {
               "name": "LRU Cache",
