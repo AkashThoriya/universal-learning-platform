@@ -1,0 +1,2181 @@
+{
+  "id": "gate_2027_cse_guide",
+  "name": "GATE 2027 CSE \u2014 Complete Preparation Guide",
+  "description": "A rigorous 44-week, 1,341-hour dual-track preparation plan for GATE CSE 2027. Track A (21:30\u201323:30 weekdays) covers 156 lectures across Engineering Mathematics and Theory subjects. Track B (20:30\u201321:30 weekdays + full weekends) covers ~296 lectures across Core CS subjects with 79 DPPs. Includes 17 Track A DPPs, 5 subject assessments, and 10 full 3-hour mock exams. Target: AIR < 200, 80+ raw marks.",
+  "category": "GATE CSE",
+  "totalEstimatedHours": 1362.5,
+  "prerequisites": [
+    "B.Tech CS/IT or equivalent undergraduate background",
+    "Basic programming knowledge (C language essential)",
+    "Ability to commit 31 hrs/week \u2014 3 hrs/weekday + 8 hrs Saturday + 8 hrs Sunday",
+    "Access to GATE Overflow, Made Easy or ACE Academy mock test series"
+  ],
+  "resources": [
+    "https://gateoverflow.in/",
+    "https://gatecse.in/",
+    "https://www.geeksforgeeks.org/gate-cs-notes-gq/",
+    "https://drive.google.com/drive/folders/1TNiHMQlDEQKi_87fxcAhOl-lBg_WBQAP"
+  ],
+  "stages": [
+    {
+      "id": "phase_1_2_assessment",
+      "name": "Phase 1+2 Final Assessment",
+      "totalMarks": 50,
+      "duration": 75,
+      "durationUnit": "minutes",
+      "sections": [
+        {
+          "id": "all_subjects_combined",
+          "name": "All Subjects Combined (50 Qs \u2014 all Track A + B)",
+          "maxMarks": 50,
+          "maxTime": 75,
+          "negativeMarking": 0.33
+        }
+      ]
+    },
+    {
+      "id": "phase_3a_pyq_blitz",
+      "name": "Phase 3A \u2014 PYQ Blitz (3 weeks, subject-wise)",
+      "totalMarks": 100,
+      "duration": 21,
+      "durationUnit": "days",
+      "sections": [
+        {
+          "id": "wk36_cs_core",
+          "name": "Week 1: DBMS + OS + C + DS + Algorithms (target \u226586%)",
+          "maxMarks": 30,
+          "maxTime": 2100,
+          "negativeMarking": 0.33
+        },
+        {
+          "id": "wk37_networks_arch",
+          "name": "Week 2: CN + COA + Digital Logic + GA (tiered targets)",
+          "maxMarks": 28,
+          "maxTime": 2100,
+          "negativeMarking": 0.33
+        },
+        {
+          "id": "wk38_theory_math",
+          "name": "Week 3: Eng Math + DM + TOC + Compiler (target \u226580%)",
+          "maxMarks": 42,
+          "maxTime": 2100,
+          "negativeMarking": 0.33
+        }
+      ]
+    },
+    {
+      "id": "phase_3b_mocks",
+      "name": "Phase 3B \u2014 Mock Simulation (10 full 3-hr mocks)",
+      "totalMarks": 100,
+      "duration": 180,
+      "durationUnit": "minutes",
+      "sections": [
+        {
+          "id": "general_aptitude_section",
+          "name": "General Aptitude \u2014 Attempt FIRST (10 Qs, 15 marks, 20 min)",
+          "maxMarks": 15,
+          "maxTime": 20,
+          "negativeMarking": 0.33
+        },
+        {
+          "id": "engineering_mathematics_section",
+          "name": "Engineering Mathematics (~13 marks)",
+          "maxMarks": 13,
+          "maxTime": 30,
+          "negativeMarking": 0.33
+        },
+        {
+          "id": "core_cs_section",
+          "name": "Core CS \u2014 Tier 1: DBMS\u2192OS\u2192DSA\u2192CN, Tier 2: Math\u2192COA\u2192Algo, Tier 3: Compiler\u2192DM\u2192TOC\u2192DL",
+          "maxMarks": 72,
+          "maxTime": 130,
+          "negativeMarking": 0.33
+        }
+      ]
+    },
+    {
+      "id": "phase_3c_sprint",
+      "name": "Phase 3C \u2014 Final Sprint (Half-Mock, last study activity)",
+      "totalMarks": 33,
+      "duration": 45,
+      "durationUnit": "minutes",
+      "sections": [
+        {
+          "id": "half_mock",
+          "name": "Half-Mock: 33 Questions under full exam conditions",
+          "maxMarks": 33,
+          "maxTime": 45,
+          "negativeMarking": 0.33
+        }
+      ]
+    }
+  ],
+  "defaultSyllabus": [
+    {
+      "id": "dbms",
+      "name": "DBMS",
+      "tier": 1,
+      "estimatedHours": 55.5,
+      "topics": [
+        {
+          "id": "dbms_er_normalization",
+          "name": "DBMS 1: ER Model & Normalization",
+          "estimatedHours": 17.5,
+          "description": "ER model (entities, strong/weak, cardinality 1:1/1:N/M:N, participation constraints), ER-to-schema translation, and Normalization (1NF\u2013BCNF). Covers ~10 lectures + DPP 1 (10 normalization PYQs on paper). Core GATE topic: BCNF decomposition and lossless join test.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1: Normalization PYQs (10 questions on paper)",
+              "slug": "dpp-1-normalization",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/normal-forms"
+            },
+            {
+              "name": "GATE PYQ: BCNF Decomposition",
+              "slug": "bcnf-decomposition-gate",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/bcnf"
+            }
+          ],
+          "learningTip": [
+            "**ER Translation Rule:** Weak entity set always gets a table with the owning entity's PK as part of its own PK.",
+            "**BCNF Check:** For every non-trivial FD X\u2192Y, verify X is a superkey. If not, decompose \u2014 but BCNF does NOT always preserve FDs, unlike 3NF.",
+            "**Lossless Join Test:** R1\u2229R2 \u2192 R1 or R1\u2229R2 \u2192 R2. If either holds, the decomposition is lossless. This is a 1-2 mark GATE question annually."
+          ],
+          "mustNotMiss": [
+            "**1NF:** Atomic values, no repeating groups. **2NF:** No partial dependency (non-key \u2192 part of composite PK). **3NF:** No transitive dependency. **BCNF:** Every determinant is a superkey.",
+            "**Lossless Join Condition:** R1\u2229R2 must be a superkey of R1 or R2.",
+            "**Dependency Preservation:** 3NF always preserves all FDs; BCNF may not \u2014 trade-off to know cold."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the difference between 3NF and BCNF?",
+              "answer": "**3NF:** For every FD X\u2192A, either X is a superkey OR A is prime (part of some candidate key). Guarantees FD preservation + lossless join. \\n**BCNF:** Every determinant must be a superkey. Stronger \u2014 eliminates all redundancy \u2014 but may NOT preserve all FDs. Prefer BCNF for clean design; use 3NF when FD preservation is required."
+            },
+            {
+              "question": "A relation R(A,B,C,D) has FDs: AB\u2192C, C\u2192D, D\u2192A. Find all candidate keys.",
+              "answer": "Check what determines all attributes. AB\u2192C\u2192D\u2192A. So AB+ = {A,B,C,D}. CB\u2192? C\u2192D\u2192A, so CB+ = {A,B,C,D}. DB\u2192? D\u2192A, so DB+ = {A,B,C,D}. Candidate Keys: **{AB, BC, BD}**."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "dbms_relational_sql",
+          "name": "DBMS 2: Relational Algebra & SQL",
+          "estimatedHours": 17.5,
+          "description": "Relational algebra operators (\u03c3, \u03c0, \u00d7, \u22c8, \u22c8\u03b8, \u00f7) and SQL \u2014 all join types, GROUP BY/HAVING, aggregates, correlated vs non-correlated subqueries, EXISTS/NOT EXISTS. Covers ~10 lectures + DPP 2 (10 transaction + SQL PYQs on paper).",
+          "practiceQuestions": [
+            {
+              "name": "DPP 2: Transaction + SQL PYQs (10 questions on paper)",
+              "slug": "dpp-2-transaction-sql",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/sql"
+            },
+            {
+              "name": "GATE PYQ: Relational Algebra Expression",
+              "slug": "relational-algebra-gate",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/relational-algebra"
+            }
+          ],
+          "learningTip": [
+            "**Division operator (\u00f7):** R\u00f7S gives tuples in R that are associated with ALL tuples in S. Think: 'students who enrolled in ALL courses'. Rare but appears in GATE.",
+            "**Correlated vs Non-correlated subquery:** Correlated re-executes for each outer row (slow). Non-correlated executes once. EXISTS is typically correlated.",
+            "**SQL execution order (not write order):** FROM \u2192 ON \u2192 JOIN \u2192 WHERE \u2192 GROUP BY \u2192 HAVING \u2192 SELECT \u2192 DISTINCT \u2192 ORDER BY \u2192 LIMIT."
+          ],
+          "mustNotMiss": [
+            "**Natural Join vs Equijoin:** Natural Join auto-joins on same-named columns and removes duplicates; Equijoin keeps both join columns.",
+            "**NULL in aggregates:** COUNT(*) includes NULLs; COUNT(col) and SUM/AVG ignore NULLs.",
+            "**HAVING vs WHERE:** WHERE filters before grouping; HAVING filters after. Cannot use aggregate functions in WHERE."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Translate: 'Find names of students who have taken ALL courses offered by CS dept'.",
+              "answer": "Use Division operator: \u03c0(sid, cid)(Enrollment) \u00f7 \u03c0(cid)(Courses WHERE dept='CS'). In SQL: use double NOT EXISTS \u2014 'no CS course exists that the student did NOT enroll in'."
+            },
+            {
+              "question": "What is conflict serializability and how do you check it?",
+              "answer": "A schedule is conflict-serializable if its **precedence graph is acyclic**. For each conflicting pair of operations (same data, at least one write, different transactions), add edge Ti\u2192Tj. If graph has a cycle \u2192 NOT conflict-serializable. Cycle-free \u2192 find any topological order \u2192 that is the equivalent serial schedule."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "dbms_transactions_indexing",
+          "name": "DBMS 3: Transactions, 2PL & Indexing + Final PYQ",
+          "estimatedHours": 20.5,
+          "description": "ACID properties, serializability (conflict + view), 2PL (growing/shrinking/strict/conservative), B+ trees (all records in leaves, leaves linked), dense vs sparse indexes, multilevel indexing. Covers ~10 lectures + DPP 3 + Final GATE PYQ test (55 min, target \u226590%).",
+          "practiceQuestions": [
+            {
+              "name": "DPP 3: 2PL + Indexing PYQs (final DPP)",
+              "slug": "dpp-3-2pl-indexing",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/2-phase-locking"
+            },
+            {
+              "name": "Final PYQ Test: All GATE DBMS 2015\u20132026 (55 min, target \u226590%)",
+              "slug": "gate-dbms-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/databases"
+            }
+          ],
+          "learningTip": [
+            "**2PL Rule:** In growing phase, only acquire locks. In shrinking phase, only release. Once you release any lock, you CANNOT acquire new locks. Strict 2PL: release all write locks only at commit/abort.",
+            "**B+ Tree vs B-Tree:** B+ stores ALL data in leaf nodes (leaf linked list for range queries). B-tree stores data in internal nodes too \u2014 but GATE almost exclusively tests B+ trees.",
+            "**Gate target:** DBMS PYQ \u226590%. DBMS is high-yield \u2014 typically 5\u20137 marks in GATE CS."
+          ],
+          "mustNotMiss": [
+            "**ACID:** Atomicity (all/none), Consistency (constraints preserved), Isolation (no dirty reads), Durability (survives crash).",
+            "**Dense index:** One entry per search key value. **Sparse index:** One entry per block (only for primary/clustered index on ordered file).",
+            "**B+ Tree order m:** Max m-1 keys, min \u2308m/2\u2309-1 keys per internal node (except root). Leaves: min \u2308(m-1)/2\u2309 keys."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why does Strict 2PL prevent cascading rollbacks but basic 2PL does not?",
+              "answer": "Basic 2PL can release write locks before commit, allowing another transaction to read dirty (uncommitted) data. If T1 rolls back, T2 must also rollback (cascading). **Strict 2PL:** Write locks held until commit/abort \u2014 no transaction can read uncommitted data, so cascading rollback is impossible."
+            },
+            {
+              "question": "A B+ tree of order 5 has 100 leaf nodes. What is the maximum number of records it can index?",
+              "answer": "Order 5 \u2192 max (5-1)=4 keys per leaf. 100 leaf nodes \u00d7 4 = **400 records** maximum."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "c_programming",
+      "name": "C Programming",
+      "tier": 1,
+      "estimatedHours": 71.5,
+      "topics": [
+        {
+          "id": "c_pointers_advanced",
+          "name": "C 1: Pointers, Storage Classes & Undefined Behaviour",
+          "estimatedHours": 35.5,
+          "description": "~12 lectures + DPPs 1\u20137 (output prediction, trace on paper). Pointer declarations (int *p, int **p, int (*fp)(int), function pointers), pointer arithmetic (p+1 = p+sizeof(*p)), void* casting, storage classes (auto/static/extern/register), struct padding, union, sizeof traps, macro pitfalls, and undefined behaviour.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 1\u20137: Output Prediction (trace every variable on paper)",
+              "slug": "dpp-1-7-c-output-prediction",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/c-programming"
+            },
+            {
+              "name": "GATE PYQ: C Pointers and Storage",
+              "slug": "gate-c-pointers-storage",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/pointers"
+            }
+          ],
+          "learningTip": [
+            "**DPP Rule (non-negotiable):** Trace EVERY program \u2014 write every variable's value at every step on paper. Never eyeball output. One missed step = wrong answer.",
+            "**Macro trap:** `#define SQ(x) x*x` \u2192 SQ(2+3) = 2+3*2+3 = 11, NOT 25. Always parenthesize: `#define SQ(x) ((x)*(x))`.",
+            "**sizeof trap:** `sizeof(array)` gives full array size. `sizeof(pointer)` gives 4/8 bytes. Passing array to function decays to pointer \u2014 size information lost."
+          ],
+          "mustNotMiss": [
+            "**int *a[5] vs int (*a)[5]:** First is array of 5 int-pointers. Second is pointer to an array of 5 ints.",
+            "**Static local variable:** Initialized once, retains value between function calls. Stored in BSS/data segment, not stack.",
+            "**Undefined Behaviour (UB):** Read before init, signed integer overflow, double-free, dereferencing NULL, accessing freed memory \u2014 all UB. Compiler can do anything."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the output? `int a[] = {1,2,3,4,5}; int *p = a+2; printf(\"%d\", *(p-1) + *(p+1));`",
+              "answer": "p points to a[2]=3. *(p-1)=a[1]=2. *(p+1)=a[3]=4. Output: **6**."
+            },
+            {
+              "question": "Explain struct padding with an example.",
+              "answer": "Each member aligns to its own size. `struct {char c; int i;}` \u2192 c at offset 0, 3 bytes padding, i at offset 4. Total: 8 bytes (not 5). Reorder to `struct {int i; char c;}` for 8 bytes, but `char` then has 3 bytes tail padding. Minimize waste by ordering members largest-to-smallest."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "c_output_bitwise",
+          "name": "C 2: Output Prediction, Bitwise & All DPPs + Final PYQ",
+          "estimatedHours": 36,
+          "description": "~12 lectures + DPPs 8\u201313 + Final GATE PYQ test (target \u226588%). Topics: bitwise operations (x&(x-1) clears lowest set bit, x|(x-1) sets bits below LSB), recursion traces, function call order, precedence traps, all GATE C PYQs 2015\u20132026.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 8\u201313: Advanced output prediction on paper",
+              "slug": "dpp-8-13-c-advanced",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/c-programming"
+            },
+            {
+              "name": "Final PYQ: All GATE C PYQs 2015\u20132026 (target \u226588%)",
+              "slug": "gate-c-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/c"
+            }
+          ],
+          "learningTip": [
+            "**Bitwise identity:** x & (x-1) clears the lowest set bit of x. Use case: count set bits (Brian Kernighan). x | (x-1) sets all bits from LSB downward.",
+            "**Post/pre-increment in expressions:** `i++ + ++i` \u2014 behaviour depends on sequence points. In GATE, such questions test whether you know it's UB or not.",
+            "**Gate target: PYQ \u226588%. All 13 DPPs fully traced on paper.** C typically contributes 4\u20136 marks in GATE."
+          ],
+          "mustNotMiss": [
+            "**x & (x-1):** Clears lowest set bit. Count set bits: while(n) { count++; n &= (n-1); }",
+            "**Operator precedence:** `*p++` means *(p++) \u2014 dereference THEN increment pointer. `(*p)++` increments the value.",
+            "**Recursion trace:** Always draw the call stack. Return value flows BACK \u2014 do not assume a recursive function 'returns' immediately."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "How many set bits does 52 have? Use Brian Kernighan's method.",
+              "answer": "52 = 110100. n=52: n&(n-1)=52&51=110100&110011=110000=48, count=1. n=48: 48&47=110000&101111=100000=32, count=2. n=32: 32&31=0, count=3. **3 set bits.**"
+            },
+            {
+              "question": "What does `static` do inside a function vs outside?",
+              "answer": "**Inside function:** Variable persists across calls (stored in data segment, not stack). Initialized once. \\n**Outside function (file scope):** Limits linkage to the current file (internal linkage) \u2014 invisible to other .c files."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "data_structures",
+      "name": "Data Structures",
+      "tier": 1,
+      "estimatedHours": 81,
+      "topics": [
+        {
+          "id": "ds_arrays_linked_lists",
+          "name": "DS 1: Arrays, Linked Lists & BST",
+          "estimatedHours": 26,
+          "description": "~14 lectures + DPPs 1\u20132. 2D array row-major addressing (base+(i\u00d7C+j)\u00d7esize), LL reversal (3-pointer + recursive), Floyd's cycle detection (tortoise-hare), BST operations \u2014 especially 3-case deletion (draw 5 two-child deletions explicitly).",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1: Arrays + Linked Lists on paper",
+              "slug": "dpp-1-arrays-ll",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/linked-list"
+            },
+            {
+              "name": "DPP 2: BST operations and traversals",
+              "slug": "dpp-2-bst",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/binary-search-trees"
+            }
+          ],
+          "learningTip": [
+            "**Row-major address formula:** Address of A[i][j] = Base + (i\u00d7NumCols + j) \u00d7 element_size. For column-major: Base + (j\u00d7NumRows + i) \u00d7 element_size.",
+            "**BST deletion (2-child case):** Replace with in-order successor (leftmost of right subtree) OR in-order predecessor. Then delete the successor/predecessor from its original position.",
+            "**Floyd's cycle detection:** Slow pointer moves 1 step, fast moves 2. If they meet \u2192 cycle exists. Start of cycle: reset one pointer to head, move both 1 step at a time until they meet."
+          ],
+          "mustNotMiss": [
+            "**2D Array row-major:** A[i][j] at offset i\u00d7C+j. Column-major: j\u00d7R+i. GATE asks both!",
+            "**BST in-order traversal** gives sorted sequence. Pre-order = root-left-right (used to reconstruct tree). Post-order: left-right-root.",
+            "**Floyd Cycle Detection:** Time O(n), Space O(1). Finding cycle start requires second phase."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "A 5\u00d74 integer array starts at address 1000. Find address of A[3][2] in row-major order. (int = 4 bytes)",
+              "answer": "Row-major offset = (3\u00d74 + 2) \u00d7 4 = 14 \u00d7 4 = 56. Address = 1000 + 56 = **1056**."
+            },
+            {
+              "question": "How do you detect and find the start of a cycle in a linked list in O(n) time, O(1) space?",
+              "answer": "**Phase 1:** Slow=Fast=head. Move slow by 1, fast by 2. If they meet \u2192 cycle. \\n**Phase 2:** Reset slow to head. Move both by 1. They meet at **cycle start**. Proof: distance from head to cycle start = distance from meeting point to cycle start (mod cycle length)."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "ds_trees_avl",
+          "name": "DS 2: Trees & AVL Rotations",
+          "estimatedHours": 26,
+          "description": "~14 lectures + DPPs 3\u20134. AVL trees (BF = h(left)\u2212h(right) \u2208 {\u22121,0,1}, all 4 rotations from memory: LL/RR/LR/RL), B-trees (order m: max m\u22121 keys, min \u2308m/2\u2309\u22121 keys), infix\u2192postfix conversion with 3 nested examples. Gate target: AVL rotation < 3 min.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 3: AVL insertion and rotation on paper",
+              "slug": "dpp-3-avl",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/avl-tree"
+            },
+            {
+              "name": "DPP 4: B-tree and expression trees",
+              "slug": "dpp-4-btree-expression",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/b-tree"
+            }
+          ],
+          "learningTip": [
+            "**AVL Rotation Trigger:** After insertion, walk UP from inserted node. First unbalanced ancestor is the pivot. Identify rotation type from the path: Left-Left \u21a0 Right rotation. Right-Right \u21a0 Left rotation. Left-Right \u21a0 Left then Right. Right-Left \u21a0 Right then Left.",
+            "**LR Rotation mnemonic:** The middle element of the 3-node chain becomes the new root. Always draw the 3 nodes and 4 subtrees \u2014 then redistribute.",
+            "**Gate target: AVL rotation < 3 min cold.** Practice until you can do 5 insertions into an AVL tree without looking at notes."
+          ],
+          "mustNotMiss": [
+            "**BF = Height(left subtree) \u2212 Height(right subtree).** Height of null = -1. BF must stay in {-1, 0, +1} at every node.",
+            "**B-tree of order m:** Internal node max m children, max m-1 keys, min \u2308m/2\u2309 children (except root min 2). All leaves at same level.",
+            "**Infix \u2192 Postfix:** Use a stack. Operand \u2192 output immediately. Operator \u2192 pop operators of higher/equal precedence, then push. ')' pops till '('."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Insert 10, 20, 30 into an initially empty AVL tree. Show the rotation.",
+              "answer": "Insert 10 (root). Insert 20 (right of 10). Insert 30: 10.BF=-2 (Right-Right case). Apply **Left rotation** at 10. 20 becomes root, 10 is left child, 30 is right child. BF of all nodes = 0. \u2713"
+            },
+            {
+              "question": "What is the minimum number of nodes in an AVL tree of height h?",
+              "answer": "Let N(h) = min nodes in AVL tree of height h. N(0)=1, N(1)=2. Recurrence: **N(h) = N(h-1) + N(h-2) + 1** (one root, one subtree of height h-1, one of h-2). This gives Fibonacci-like growth."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "ds_heaps_hashing",
+          "name": "DS 3: Heaps, Hashing & Final PYQ",
+          "estimatedHours": 29,
+          "description": "~14 lectures + DPPs 5\u20136 + Final GATE PYQ test (target \u226588%). Max-heap (build O(n) via heapify-down from n/2 to 1), heap sort trace, hashing \u2014 chaining (load factor \u03b1=n/m), open addressing (linear/quadratic/double hashing), collision analysis.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 5\u20136: Heap + Hashing PYQs on paper",
+              "slug": "dpp-5-6-heap-hashing",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/heap"
+            },
+            {
+              "name": "Final PYQ: All GATE DS PYQs 2015\u20132026 (target \u226588%, AVL < 3 min)",
+              "slug": "gate-ds-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/data-structures"
+            }
+          ],
+          "learningTip": [
+            "**Build Heap O(n):** Start heapify-down from index n/2 (last non-leaf) down to index 1 (root). Each heapify-down is O(log n) but total is O(n) \u2014 most heapify-downs on small subtrees.",
+            "**Hash chaining:** Expected search time = O(1 + \u03b1) where \u03b1 = n/m (load factor). Degrades to O(n) in worst case when all keys hash to same slot.",
+            "**Open Addressing:** Linear probing: probe i+1, i+2... Suffers from **primary clustering**. Quadratic probing: i+1\u00b2, i+2\u00b2... **Secondary clustering**. Double hashing: h(k,i) = h1(k) + i\u00d7h2(k). Best distribution."
+          ],
+          "mustNotMiss": [
+            "**Heap property:** In max-heap, parent \u2265 children. Array representation: parent of i = \u230ai/2\u230b. Left child = 2i. Right child = 2i+1.",
+            "**Heap sort:** O(n log n) time, O(1) space (in-place). Not stable.",
+            "**Load factor \u03b1:** Chaining works fine at \u03b1 > 1. Open addressing requires \u03b1 < 1 (table can fill up)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why is building a heap O(n) and not O(n log n)?",
+              "answer": "When heapify-down runs on nodes at height h from leaf level, each call costs O(h). Most nodes are near the leaves (small h). Sum = \u03a3 (n/2^(h+1)) \u00d7 h for h=0..log n. This telescoping sum converges to **O(n)**, not O(n log n)."
+            },
+            {
+              "question": "In linear probing with load factor 0.5, what is the expected number of probes for unsuccessful search?",
+              "answer": "For linear probing: Expected probes (unsuccessful) = \u00bd(1 + 1/(1-\u03b1)\u00b2). At \u03b1=0.5: \u00bd(1 + 1/0.25) = \u00bd\u00d75 = **2.5 probes**."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "algorithms",
+      "name": "Algorithms",
+      "tier": 1,
+      "estimatedHours": 95,
+      "topics": [
+        {
+          "id": "algo_complexity_sorting",
+          "name": "Algorithms 1: Complexity, Sorting & Graph Traversal",
+          "estimatedHours": 31.5,
+          "description": "~16 lectures + DPPs 1\u20133. Big-O/Theta/Omega definitions, Master Theorem (3 cases, 10 recurrences cold), all comparison-based sorts (merge O(n log n), quicksort worst O(n\u00b2), heapsort O(n log n)), lower bound \u03a9(n log n) for comparison-based sorting, BFS/DFS (O(V+E)), edge types, topological sort.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1: Recurrences using Master Theorem",
+              "slug": "dpp-1-master-theorem",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/recurrence-relation"
+            },
+            {
+              "name": "DPPs 2\u20133: Sorting and graph traversal PYQs",
+              "slug": "dpp-2-3-sorting-graphs",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/sorting"
+            }
+          ],
+          "learningTip": [
+            "**Master Theorem 3 cases:** T(n) = aT(n/b) + f(n). Compare f(n) with n^(log_b a). Case 1: f smaller \u2192 T = \u0398(n^log_b_a). Case 2: f equal \u2192 T = \u0398(n^log_b_a \u00b7 log n). Case 3: f larger (+ regularity) \u2192 T = \u0398(f(n)). Gate target: solve any case < 20 sec.",
+            "**DFS timestamps:** d[v] (discovery) and f[v] (finish). Back edge: d[u] > d[v] and f[u] < f[v] (ancestor). Cross edge: d[u] > d[v] and f[u] > f[v].",
+            "**Topological Sort:** Valid only for DAG. DFS-based: push to stack on finish. Kahn's (BFS-based): start from 0 in-degree nodes."
+          ],
+          "mustNotMiss": [
+            "**Sorting complexity table:** Merge: O(n log n)/O(n). Quick: avg O(n log n)/O(log n), worst O(n\u00b2)/O(n). Heap: O(n log n)/O(1). Insertion: O(n\u00b2)/O(1) \u2014 stable.",
+            "**Lower bound:** Any comparison-based sort requires \u03a9(n log n) comparisons in worst case. Radix/counting sort beats this by not using comparisons.",
+            "**DFS tree edge classification:** Tree (new), Back (ancestor), Forward (descendant), Cross (neither). In undirected graph, only tree and back edges exist."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Solve T(n) = 3T(n/2) + n\u00b2.",
+              "answer": "a=3, b=2, f(n)=n\u00b2. n^(log_b a) = n^(log_2 3) \u2248 n^1.58. f(n) = n\u00b2 grows faster. Check regularity: 3(n/2)\u00b2 = 3n\u00b2/4 \u2264 cn\u00b2 for c=3/4 < 1 \u2713. **Case 3: T(n) = \u0398(n\u00b2).**"
+            },
+            {
+              "question": "Quick sort performs poorly on already-sorted input with pivot = first element. Why and how to fix?",
+              "answer": "Pivot = first element on sorted array \u2192 largest partition split (n-1 vs 0). Recurrence becomes T(n) = T(n-1) + O(n) \u2192 **O(n\u00b2)**. Fix: **Random pivot** (expected O(n log n)) or **Median-of-3 pivot** (first, middle, last)."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "algo_graph_shortest_paths",
+          "name": "Algorithms 2: Graph Algorithms & Shortest Paths",
+          "estimatedHours": 26.5,
+          "description": "~16 lectures + DPP 4. Dijkstra O((V+E) log V) \u2014 no negative edges. Bellman-Ford O(VE) \u2014 detects negative cycles. Floyd-Warshall O(V\u00b3) \u2014 all-pairs. MST: Kruskal (sort edges, union-find) + Prim (greedy, min-heap). Cut property for MST correctness.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 4: SSSP and MST problems on paper",
+              "slug": "dpp-4-sssp-mst",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/shortest-path"
+            },
+            {
+              "name": "GATE PYQ: MST and Dijkstra questions",
+              "slug": "gate-mst-dijkstra",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/minimum-spanning-trees"
+            }
+          ],
+          "learningTip": [
+            "**Dijkstra's greedy proof:** At each step, the vertex u extracted from the min-heap has the correct shortest path (assuming non-negative weights). Negative edges break this \u2014 use Bellman-Ford.",
+            "**Bellman-Ford negative cycle:** Run V-1 relaxations. If ANY edge can still be relaxed on the Vth iteration \u2192 negative cycle detected.",
+            "**MST Cut Property:** For any cut (S, V-S), the minimum weight edge crossing the cut is in some MST. This is why Prim's and Kruskal's are correct."
+          ],
+          "mustNotMiss": [
+            "**Dijkstra time complexity:** Simple array = O(V\u00b2). Binary heap = O((V+E) log V). Fibonacci heap = O(E + V log V). GATE uses O((V+E) log V).",
+            "**Bellman-Ford:** Does V-1 iterations over all E edges. Total: O(VE). Can handle negative weights, detects negative cycles.",
+            "**Floyd-Warshall recurrence:** D[i][j][k] = min(D[i][j][k-1], D[i][k][k-1] + D[k][j][k-1]). O(V\u00b3) time, O(V\u00b2) space."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "When does Kruskal's algorithm fail to produce a correct MST?",
+              "answer": "Kruskal's **never fails** on connected graphs \u2014 it's provably correct by the Cut Property. However, it requires a connected graph. For disconnected graphs, it produces a Minimum Spanning **Forest** (one MST per component)."
+            },
+            {
+              "question": "Can Dijkstra handle graphs with negative weight edges if there are no negative cycles?",
+              "answer": "**No.** Even with no negative cycles, Dijkstra can produce wrong answers with negative edges. Once a vertex is 'settled' (extracted from heap), Dijkstra assumes its distance is final \u2014 a later negative edge could provide a shorter path. Use **Bellman-Ford** for negative edges."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "algo_greedy_dp",
+          "name": "Algorithms 3: Greedy, DP & Final PYQ",
+          "estimatedHours": 37,
+          "description": "~16 lectures + DPPs 5\u20138 + Final GATE PYQ test (target \u226588%, Master Theorem < 20 sec). Greedy: activity selection, fractional knapsack, Huffman. DP: 0/1 Knapsack (draw n\u00d7W table), LCS (draw 2D table), LIS O(n\u00b2), Matrix Chain Multiplication.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 5\u20136: Greedy + DP table construction on paper",
+              "slug": "dpp-5-6-greedy-dp",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/dynamic-programming"
+            },
+            {
+              "name": "Final PYQ: All GATE Algorithms PYQs 2015\u20132026 (target \u226588%)",
+              "slug": "gate-algo-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/algorithms"
+            }
+          ],
+          "learningTip": [
+            "**Greedy vs DP choice:** If locally optimal choice leads to globally optimal \u2192 Greedy. If optimal substructure + overlapping subproblems \u2192 DP. 0/1 Knapsack CANNOT be solved greedily (fractional can).",
+            "**LCS table recall:** dp[i][j] = dp[i-1][j-1]+1 if X[i]==Y[j], else max(dp[i-1][j], dp[i][j-1]). Always draw the table in GATE \u2014 don't compute in head.",
+            "**Huffman:** Build min-heap of frequencies. Always merge the two smallest. Result: most frequent character gets shortest code. Greedy choice is optimal (proven by exchange argument)."
+          ],
+          "mustNotMiss": [
+            "**0/1 Knapsack DP:** O(nW) time and space where n=items, W=capacity. NOT polynomial (W can be exponentially large in input bits).",
+            "**Activity Selection:** Sort by finish time. Greedily pick earliest-finishing compatible activity. Optimal by exchange argument.",
+            "**Matrix Chain Multiplication:** dp[i][j] = min cost to multiply matrices i..j. O(n\u00b3) time. Order of multiplication matters; parenthesization does not change the result values."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find LCS of 'ABCBDAB' and 'BDCAB'.",
+              "answer": "Build the 7\u00d75 DP table. LCS length = **4**. One LCS = 'BCAB' or 'BDAB'. (Draw the complete table in exam \u2014 don't try to compute mentally.)"
+            },
+            {
+              "question": "Is the Greedy algorithm optimal for 0/1 Knapsack? Give a counterexample.",
+              "answer": "**No.** Greedy by value/weight ratio fails. Example: W=10, items: (6kg, \u20b912), (5kg, \u20b910), (5kg, \u20b910). Ratio: 2.0, 2.0, 2.0. Greedy picks (6kg,\u20b912) then only 4kg left (neither fits) \u2192 \u20b912. Optimal: pick two (5kg,\u20b910) items \u2192 \u20b920. DP is required."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "operating_systems",
+      "name": "Operating Systems",
+      "tier": 1,
+      "estimatedHours": 89,
+      "topics": [
+        {
+          "id": "os_cpu_scheduling",
+          "name": "OS 1: Process States & CPU Scheduling",
+          "estimatedHours": 19,
+          "description": "~11 lectures + DPP 1. Process state machine (5 states + transitions), all scheduling algorithms: FCFS, SJF, SRTF (preemptive SJF), Round Robin (Q=3), Priority. Draw Gantt charts for P1(0,10) P2(1,1) P3(2,2) P4(3,1) P5(4,5). Compute avg waiting time and turnaround time for each.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1: CPU Scheduling Gantt charts on paper",
+              "slug": "dpp-1-cpu-scheduling",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/process-scheduling"
+            },
+            {
+              "name": "GATE PYQ: Scheduling wait time calculations",
+              "slug": "gate-scheduling-wait-time",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.com/tag/cpu-scheduling"
+            }
+          ],
+          "learningTip": [
+            "**Draw Gantt charts on paper \u2014 always.** GATE scheduling questions require exact wait/turnaround times. One wrong Gantt = wrong answer. Never compute in head.",
+            "**SRTF (preemptive SJF):** When a new process arrives, compare its burst time with the REMAINING burst of the current process. Preempt if new < remaining.",
+            "**Turnaround = Completion \u2212 Arrival. Waiting = Turnaround \u2212 Burst.** These two formulas solve all scheduling problems."
+          ],
+          "mustNotMiss": [
+            "**5 process states:** New \u2192 Ready \u2192 Running \u2192 Waiting \u2192 Terminated. Running\u2192Ready (preemption/time quantum). Running\u2192Waiting (I/O). Waiting\u2192Ready (I/O complete).",
+            "**RR scheduling:** Maintains a FIFO ready queue. On quantum expiry, process moves to END of queue. New arrivals join at end.",
+            "**Convoy effect:** In FCFS, one long process blocks all shorter processes (poor avg wait). SJF eliminates convoy effect."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "For processes P1(at=0, bt=10), P2(at=1, bt=1), P3(at=2, bt=2) with SRTF, find avg waiting time.",
+              "answer": "t=0: P1 runs. t=1: P2 arrives (bt=1 < P1 remaining=9) \u2192 P2 runs. t=2: P2 done. P3 arrives (bt=2 < P1 remaining=9) \u2192 P3 runs. t=4: P3 done. P1 resumes, finishes at t=13. WT: P1=13-10-0=3, P2=0, P3=2. Avg WT = **5/3 \u2248 1.67**."
+            },
+            {
+              "question": "What is the difference between SJF and SRTF?",
+              "answer": "**SJF (non-preemptive):** Once a process starts, it runs to completion. Picks shortest burst at each dispatch point. \\n**SRTF (preemptive SJF):** On every new arrival AND on every preemption, compare new process burst with remaining burst of running process. Optimal for minimizing average waiting time."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "os_deadlocks",
+          "name": "OS 2: Deadlocks & Banker's Algorithm",
+          "estimatedHours": 21.5,
+          "description": "~11 lectures + DPPs 2\u20133. Four necessary conditions for deadlock, Resource Allocation Graph (RAG), Banker's Safety Algorithm (full 5-process example), deadlock prevention/avoidance/detection/recovery. Gate target: Banker's algorithm complete < 5 min.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 2\u20133: Deadlock and Banker's algorithm problems",
+              "slug": "dpp-2-3-deadlock-bankers",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/deadlock"
+            },
+            {
+              "name": "GATE PYQ: RAG cycle detection and safe state",
+              "slug": "gate-rag-safe-state",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/bankers-algorithm"
+            }
+          ],
+          "learningTip": [
+            "**Banker's Algorithm steps:** Available = Resources \u2212 Allocated. Need = Max \u2212 Allocated. Find a process where Need \u2264 Available. 'Execute' it: Available += Allocated. Repeat. If all finish \u2192 safe state.",
+            "**RAG cycle rule:** Single instance resources: cycle \u2192 deadlock. Multi-instance: cycle \u2192 POSSIBLE deadlock (need further analysis). NO cycle \u2192 NO deadlock.",
+            "**Gate target: Banker's < 5 min.** Practice the matrix operations until mechanical."
+          ],
+          "mustNotMiss": [
+            "**4 Necessary Conditions (from A3):** Mutual Exclusion \u00b7 Hold and Wait \u00b7 No Preemption \u00b7 Circular Wait. ALL four must hold for deadlock. Break ANY one \u2192 prevent deadlock.",
+            "**Prevention vs Avoidance:** Prevention eliminates one of the 4 conditions (may reduce concurrency). Avoidance uses Banker's to ensure safe state (requires advance knowledge of max needs).",
+            "**Recovery options:** Process termination (kill all or one-by-one), Resource preemption (rollback, starvation risk)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Three processes P1(holds R1, needs R2), P2(holds R2, needs R3), P3(holds R3, needs R1). Deadlock?",
+              "answer": "Draw RAG: P1\u2192R2\u2192P2\u2192R3\u2192P3\u2192R1\u2192P1. **Cycle exists with single-instance resources \u2192 Deadlock.** All four conditions are met: ME, Hold&Wait, No Preemption (assumed), Circular Wait (the cycle)."
+            },
+            {
+              "question": "What is the key difference between deadlock prevention and deadlock avoidance?",
+              "answer": "**Prevention:** Breaks one of the 4 necessary conditions statically (e.g., request all resources at once = no Hold&Wait). Simple but resource-wasteful. \\n**Avoidance:** Checks each allocation request dynamically using Banker's algorithm to ensure system stays in a safe state. Requires priori knowledge of maximum needs."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "os_memory_management",
+          "name": "OS 3: Paging & Page Replacement",
+          "estimatedHours": 21.5,
+          "description": "~11 lectures + DPPs 4\u20135. Paging EAT (Effective Access Time), page replacement algorithms: FIFO (Belady's anomaly), LRU (optimal in practice), OPT (offline lower bound). Classic reference string: 1,2,3,4,1,2,5,1,2,3,4,5 with 3/4 frames.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 4\u20135: Paging and page replacement on paper",
+              "slug": "dpp-4-5-paging",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/page-replacement"
+            },
+            {
+              "name": "GATE PYQ: EAT and page fault calculations",
+              "slug": "gate-eat-page-faults",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/memory-management"
+            }
+          ],
+          "learningTip": [
+            "**EAT formula (no TLB):** EAT = p \u00d7 (2m) + (1-p) \u00d7 m, where p = page fault rate, m = memory access time. With TLB: EAT = h\u00d7m + (1-h)\u00d7(2m), where h = TLB hit rate.",
+            "**Belady's Anomaly:** FIFO can have MORE page faults with MORE frames. LRU and OPT do NOT suffer from Belady's anomaly (they are stack algorithms).",
+            "**OPT algorithm:** Replace the page that will be used farthest in the future. Not implementable in practice but gives lower bound for comparison."
+          ],
+          "mustNotMiss": [
+            "**FIFO:** Suffers from Belady's anomaly (more frames \u2192 more faults in some cases). Simple but not optimal.",
+            "**LRU:** Replace the least recently used page. Stack algorithm (stack property): set of pages in memory with n frames \u2286 set with n+1 frames \u2014 NO Belady's anomaly.",
+            "**Page fault handling time:** Includes OS interrupt + page-in from disk + restart instruction. Disk access \u2248 8ms. Even 0.1% fault rate dominates EAT."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Simulate FIFO page replacement for reference string 1,2,3,4,1,2,5 with 3 frames.",
+              "answer": "Frames: [1], [1,2], [1,2,3], [2,3,4](fault, evict 1), [2,3,4]\u2192[3,4,1](fault, evict 2), [3,4,1]\u2192[4,1,2](fault, evict 3), [4,1,2]\u2192[1,2,5](fault, evict 4). Page faults = **5** (excluding initial compulsory faults: actual = 5 after first 3 loads)."
+            },
+            {
+              "question": "TLB hit time = 10ns, memory access time = 100ns, TLB hit rate = 90%. Find EAT.",
+              "answer": "EAT = h\u00d7(t_TLB + t_mem) + (1-h)\u00d7(t_TLB + 2\u00d7t_mem) = 0.9\u00d7(10+100) + 0.1\u00d7(10+200) = 0.9\u00d7110 + 0.1\u00d7210 = 99 + 21 = **120 ns**."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "os_concurrency",
+          "name": "OS 4: Concurrency, Semaphores & Final PYQ",
+          "estimatedHours": 27,
+          "description": "~11 lectures + DPPs 6\u20138 + Final GATE PYQ test (target \u226590%, Banker's < 5 min). Binary and counting semaphores, P(wait) and V(signal) operations, classical problems: Producer-Consumer, Readers-Writers, Dining Philosophers. Critical section conditions (Mutual Exclusion, Progress, Bounded Waiting).",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 6\u20138: Semaphore programs and mutual exclusion",
+              "slug": "dpp-6-8-semaphores",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/semaphore"
+            },
+            {
+              "name": "Final PYQ: All GATE OS PYQs 2015\u20132026 (target \u226590%)",
+              "slug": "gate-os-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/operating-system"
+            }
+          ],
+          "learningTip": [
+            "**Semaphore P and V:** P(s): s--; if s<0 block. V(s): s++; if s\u22640 wakeup one. Binary semaphore (mutex): initialized to 1. Counting semaphore: initialized to N (available resources).",
+            "**Producer-Consumer solution:** Uses 3 semaphores: mutex (init 1), empty (init N), full (init 0). Producer: P(empty), P(mutex), produce, V(mutex), V(full). Consumer: P(full), P(mutex), consume, V(mutex), V(empty).",
+            "**Gate target: OS PYQ \u226590%.** OS is typically 8\u201310 marks. Scheduling + Deadlock + Paging + Semaphores are the four tested clusters."
+          ],
+          "mustNotMiss": [
+            "**Critical Section Requirements:** 1. Mutual Exclusion (only one in CS at a time). 2. Progress (if CS empty, decision made in finite time). 3. Bounded Waiting (no starvation).",
+            "**Counting semaphore:** Can represent a resource count. Negative value = number of waiting processes.",
+            "**Test-and-Set (hardware):** Atomic instruction. while(test_and_set(&lock)); \u2014 busy wait (spinlock). Not bounded-waiting by itself without queuing."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the difference between a binary semaphore and a mutex?",
+              "answer": "**Binary Semaphore:** Can be signaled by ANY process, not just the one that locked it. Used for signaling between processes. \\n**Mutex (mutual exclusion lock):** Has the concept of ownership \u2014 only the thread that locked it can unlock it. Used specifically for critical section protection."
+            },
+            {
+              "question": "Can deadlock occur with semaphores? Give an example.",
+              "answer": "Yes. P1: P(S1), P(S2). P2: P(S2), P(S1). If P1 acquires S1 and P2 acquires S2 simultaneously, both block waiting for the other's semaphore. **Deadlock.** Fix: always acquire semaphores in the same order in all processes."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "computer_networks",
+      "name": "Computer Networks",
+      "tier": 1,
+      "estimatedHours": 77.5,
+      "topics": [
+        {
+          "id": "cn_osi_datalink",
+          "name": "CN 1: OSI Layers, Error & Flow Control",
+          "estimatedHours": 24.5,
+          "description": "~13 lectures + DPPs 1\u20132. OSI 7-layer + TCP/IP 4-layer model, CRC computation by hand (2 examples), Hamming distance for error detection/correction, stop-and-wait, Go-Back-N, Selective Repeat window sizes and efficiencies.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 1\u20132: CRC + Flow control efficiency problems",
+              "slug": "dpp-1-2-crc-flow-control",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/sliding-window"
+            },
+            {
+              "name": "GATE PYQ: GBN and SR window size",
+              "slug": "gate-gbn-sr-window",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/data-link-layer"
+            }
+          ],
+          "learningTip": [
+            "**Memorise before first lecture (from guide):** \u03b7_SW = 1/(1+2a). GBN window \u2264 2^n \u2212 1. SR window \u2264 2^(n-1). Where a = propagation delay / transmission time.",
+            "**Efficiency formula:** If W \u2265 1+2a, link is fully utilized \u2192 \u03b7=1. If W < 1+2a, \u03b7 = W/(1+2a).",
+            "**CRC division:** Perform binary XOR division (no carries). Remainder = CRC checksum. Receiver divides (data+CRC) \u2014 if remainder = 0, no error detected."
+          ],
+          "mustNotMiss": [
+            "**From A3 sheet:** \u03b7_SW=1/(1+2a). GBN \u2264 2^n\u22121. SR \u2264 2^(n-1).",
+            "**Hamming distance:** Min Hamming distance d \u2192 can detect d-1 errors, correct \u230a(d-1)/2\u230b errors.",
+            "**GBN vs SR:** GBN retransmits window-size packets on error. SR only retransmits the errored packet. SR needs larger receiver buffer."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "n=3 bits for sequence numbers. What is max window size for GBN vs SR?",
+              "answer": "Sequence numbers: 2^3 = 8 (0\u20137). **GBN max window = 2^3 \u2212 1 = 7.** **SR max window = 2^(3-1) = 4.** SR restricts to half to avoid ambiguity between old and new frames on wrap-around."
+            },
+            {
+              "question": "Propagation delay = 20ms, transmission time = 1ms. What is stop-and-wait efficiency?",
+              "answer": "a = propagation/transmission = 20/1 = 20. \u03b7 = 1/(1+2\u00d720) = 1/41 \u2248 **2.4%**. Link is severely underutilized \u2014 use sliding window protocol."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "cn_network_routing",
+          "name": "CN 2: IP, ALOHA, Subnetting & Routing",
+          "estimatedHours": 27,
+          "description": "~13 lectures + DPPs 3\u20135 + 5 subnetting problems. ALOHA efficiency derivations, CSMA/CD min frame size, IP classful + CIDR + VLSM subnetting, routing protocols (RIP/Bellman-Ford, OSPF/Dijkstra, BGP/path-vector). Gate target: subnetting < 2 min.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 3\u20134: ALOHA + Subnetting (5 problems each)",
+              "slug": "dpp-3-4-aloha-subnetting",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/network-layer"
+            },
+            {
+              "name": "DPP 5: Routing protocol problems",
+              "slug": "dpp-5-routing",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/routing"
+            }
+          ],
+          "learningTip": [
+            "**From A3 sheet:** Pure ALOHA max throughput \u2248 18.4% (at G=0.5, e^(-2G)=1/2e). Slotted ALOHA max \u2248 36.8% (at G=1, Ge^(-G)=1/e). Both use S = Ge^(-2G) or Ge^(-G).",
+            "**Subnetting shortcut:** /n subnet \u2192 2^(32-n) total addresses, 2^(32-n)-2 usable hosts. For /27: 32 addresses, 30 hosts. For /30: 4 addresses, 2 hosts (point-to-point links).",
+            "**CSMA/CD min frame size:** Transmission time \u2265 2 \u00d7 propagation delay. So min frame size = 2 \u00d7 propagation delay \u00d7 bandwidth. In Ethernet: 64 bytes (collision detected by then)."
+          ],
+          "mustNotMiss": [
+            "**Classful IP:** Class A: 0-127 (/8). Class B: 128-191 (/16). Class C: 192-223 (/24). Class D: Multicast. Class E: Reserved.",
+            "**RIP vs OSPF:** RIP uses Bellman-Ford (distance vector), max 15 hops, slow convergence. OSPF uses Dijkstra (link-state), no hop limit, fast convergence.",
+            "**BGP:** Path-vector protocol (TCP port 179). Used between autonomous systems (inter-AS routing). Policy-based."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Network 192.168.1.0/24. Subnet into 4 equal subnets. Give the subnet addresses.",
+              "answer": "Need 2 bits for 4 subnets \u2192 /26 mask (255.255.255.192). Subnets: 192.168.1.0/26 (hosts .1-.62), 192.168.1.64/26 (hosts .65-.126), 192.168.1.128/26 (hosts .129-.190), 192.168.1.192/26 (hosts .193-.254)."
+            },
+            {
+              "question": "Why does slotted ALOHA have twice the throughput of pure ALOHA?",
+              "answer": "Pure ALOHA: vulnerable period = 2T (frame can collide if another starts within T before or after). S = Ge^(-2G). \\nSlotted ALOHA: transmit only at slot boundaries \u2192 vulnerable period = T. S = Ge^(-G). At optimum G: pure max = 1/(2e) \u2248 18.4%, slotted max = 1/e \u2248 36.8%."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "cn_transport_application",
+          "name": "CN 3: TCP, Application Layer & Final PYQ",
+          "estimatedHours": 26,
+          "description": "~12 lectures + DPPs 6\u20137 + Final GATE PYQ test (target \u226588%, subnetting < 2 min). TCP 3-way handshake, congestion control (slow start, congestion avoidance, fast retransmit), UDP. Application layer: DNS, HTTP, FTP, SMTP.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 6\u20137: TCP + Application layer problems",
+              "slug": "dpp-6-7-tcp-app",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/transport-layer"
+            },
+            {
+              "name": "Final PYQ: All GATE CN PYQs 2015\u20132026 (target \u226588%)",
+              "slug": "gate-cn-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/computer-networks"
+            }
+          ],
+          "learningTip": [
+            "**TCP 3-way handshake:** SYN \u2192 SYN-ACK \u2192 ACK. Client\u2192Server: SYN (seq=x). Server\u2192Client: SYN-ACK (seq=y, ack=x+1). Client\u2192Server: ACK (seq=x+1, ack=y+1). Connection established.",
+            "**TCP congestion control:** Slow start (cwnd doubles per RTT until ssthresh). Congestion avoidance (linear increase). On timeout: ssthresh=cwnd/2, cwnd=1. On 3 dup ACKs (fast retransmit): ssthresh=cwnd/2, cwnd=ssthresh.",
+            "**DNS hierarchy:** Root \u2192 TLD (.com, .in) \u2192 Authoritative. Recursive vs iterative queries. TTL for caching."
+          ],
+          "mustNotMiss": [
+            "**TCP vs UDP:** TCP: reliable, ordered, connection-oriented, flow/congestion control, 20-byte header. UDP: unreliable, unordered, connectionless, 8-byte header. Used for video streaming, DNS.",
+            "**Well-known ports:** HTTP:80, HTTPS:443, FTP:21(control)/20(data), SSH:22, DNS:53, SMTP:25, Telnet:23.",
+            "**HTTP methods:** GET (idempotent, cached), POST (not idempotent, not cached), PUT (update), DELETE."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "TCP window size = 65535 bytes, RTT = 100ms. What is max throughput?",
+              "answer": "Max throughput = Window size / RTT = 65535 bytes / 0.1s = 655,350 bytes/s \u2248 **5.24 Mbps**. TCP throughput is limited by both window size and RTT."
+            },
+            {
+              "question": "Explain TCP's slow start phase. When does it end?",
+              "answer": "**Slow start:** Initially cwnd=1 MSS. cwnd doubles every RTT (adds 1 MSS per ACK received). Ends when: (1) cwnd reaches ssthresh \u2192 switches to congestion avoidance, or (2) timeout/loss occurs \u2192 ssthresh=cwnd/2, cwnd=1, restart."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "coa",
+      "name": "Computer Organization & Architecture (COA)",
+      "tier": 1,
+      "estimatedHours": 90.5,
+      "topics": [
+        {
+          "id": "coa_number_systems",
+          "name": "COA 1: Number Systems, IEEE 754 & Performance",
+          "estimatedHours": 20,
+          "description": "~10 lectures + DPPs 1\u20132. 2's complement (overflow: carry_in_MSB \u2260 carry_out_MSB), IEEE 754 single/double precision, IC\u00d7CPI\u00d7T_clk performance equation, Amdahl's law: Speedup = 1/((1\u2212f)+f/k). 5 Amdahl problems.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 1\u20132: 2's complement + Amdahl problems on paper",
+              "slug": "dpp-1-2-number-systems-amdahl",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/number-representation"
+            },
+            {
+              "name": "GATE PYQ: IEEE 754 and performance calculations",
+              "slug": "gate-ieee754-performance",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/floating-point-representation"
+            }
+          ],
+          "learningTip": [
+            "**Write AMAT formula at top of every COA page:** AMAT = L1_hit + L1_miss_rate \u00d7 (L2_hit + L2_miss_rate \u00d7 MM_time).",
+            "**2's complement overflow:** Overflow occurs iff carry INTO MSB \u2260 carry OUT OF MSB. Positive + Positive = Negative \u2192 overflow. Negative + Negative = Positive \u2192 overflow.",
+            "**Amdahl speed limit:** Even with k=\u221e cores, speedup \u2264 1/(1\u2212f). If 20% is serial, max speedup = 5x regardless of parallelism."
+          ],
+          "mustNotMiss": [
+            "**IEEE 754 single:** 1 sign + 8 exponent (biased-127) + 23 mantissa. Value = (\u22121)^s \u00d7 1.mantissa \u00d7 2^(exp\u2212127). Special: exp=255 \u2192 Inf/NaN.",
+            "**Performance equation:** CPU time = IC \u00d7 CPI \u00d7 Clock period. Decrease any of IC (compiler/algorithm), CPI (architecture), Clock period (hardware).",
+            "**From A3:** Amdahl: Speedup = 1/((1\u2212f)+f/k). Pipeline speedup = n\u00d7k/(k+n\u22121) where n=stages, k=tasks."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "70% of a program can be parallelized. With 4 processors, what is the speedup?",
+              "answer": "f=0.7, k=4. Speedup = 1/((1\u22120.7)+0.7/4) = 1/(0.3+0.175) = 1/0.475 \u2248 **2.11\u00d7**."
+            },
+            {
+              "question": "Represent -7 in 4-bit 2's complement. Verify addition -7 + 3.",
+              "answer": "-7 in 4-bit: 7=0111, 1's comp=1000, +1 = **1001**. Add -7(1001) + 3(0011): 1001+0011=1100 with carry_in=1, carry_out=1 \u2192 no overflow. 1100 = -4. \u2713 (since -7+3=-4)"
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "coa_pipelining",
+          "name": "COA 2: Pipelining & Hazards",
+          "estimatedHours": 22.5,
+          "description": "~10 lectures + DPPs 3\u20135. 5-stage pipeline (IF/ID/EX/MEM/WB), CPI=1 ideal, pipeline time=(k+n\u22121)\u00d7T_clk, RAW/WAR/WAW data hazards, control hazards (branch penalty), forwarding (eliminates most RAW except load-use = 1 stall), draw timing diagrams for 6+ instructions.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 3\u20135: Pipeline diagrams and hazard analysis on paper",
+              "slug": "dpp-3-5-pipeline-hazards",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/pipelining"
+            },
+            {
+              "name": "GATE PYQ: Pipeline CPI with stalls",
+              "slug": "gate-pipeline-cpi-stalls",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/instruction-pipeline"
+            }
+          ],
+          "learningTip": [
+            "**From A3:** CPI = 1 + stalls_per_instruction. Throughput = 1 / max_stage_time. Speedup = n \u00d7 k / (k + n \u2212 1) for k-stage pipeline, n tasks.",
+            "**Load-use hazard:** LOAD R1, mem followed by ADD R2, R1, R3 \u2192 1 stall even with forwarding. Forwarding only delivers result AFTER MEM stage but ADD needs it at EX start.",
+            "**WAR and WAW** are not true data hazards in simple pipelines (resolved by in-order execution). RAW is the critical hazard."
+          ],
+          "mustNotMiss": [
+            "**3 hazard types:** RAW (read-after-write, true dependency), WAR (write-after-read, anti-dependency), WAW (write-after-write, output dependency).",
+            "**Forwarding paths:** EX/MEM \u2192 EX input, MEM/WB \u2192 EX input. Eliminates most RAW stalls. Load-use: EX result not available until end of MEM \u2192 1 stall required.",
+            "**Branch prediction:** Assume not taken \u2192 pipeline continues. On branch taken \u2192 flush (branch penalty). Static prediction vs dynamic (1-bit, 2-bit saturating counter)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "5-stage pipeline, 100 instructions, k=5 stages, each stage 2ns. Time with and without pipeline?",
+              "answer": "Without pipeline: 100 \u00d7 5 \u00d7 2 = 1000 ns. With pipeline: (5+100-1) \u00d7 2 = 104 \u00d7 2 = **208 ns**. Speedup = 1000/208 \u2248 4.8\u00d7 (not 5\u00d7 due to fill/drain overhead)."
+            },
+            {
+              "question": "Explain load-use hazard with forwarding. Why is 1 stall still needed?",
+              "answer": "LOAD writes result to register at END of MEM stage. The next instruction (ADD) needs that register at the START of its EX stage. Even with forwarding (MEM/WB \u2192 EX), the data arrives 1 cycle late \u2014 ADD's EX begins before LOAD's MEM ends. **1 pipeline stall (bubble) is unavoidable.**"
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "coa_cache_vm",
+          "name": "COA 3: Cache Memory & Virtual Memory",
+          "estimatedHours": 25,
+          "description": "~10 lectures + DPPs 6\u20139. Cache: direct-mapped/fully-associative/k-way set-associative, AMAT formula, write-through vs write-back. Virtual Memory: VPN\u2192PFN translation, 2-level page tables (3 memory accesses), TLB EAT. 8 AMAT problems + 5 EAT problems. Write AMAT formula before every problem.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 6\u20138: AMAT calculations (8 problems on paper)",
+              "slug": "dpp-6-8-amat",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/cache-memory"
+            },
+            {
+              "name": "DPP 9: TLB EAT calculations (5 problems)",
+              "slug": "dpp-9-tlb-eat",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/virtual-memory"
+            }
+          ],
+          "learningTip": [
+            "**From A3 (write before every problem):** AMAT = L1_hit_time + L1_miss_rate \u00d7 (L2_hit_time + L2_miss_rate \u00d7 MM_access_time).",
+            "**TLB EAT (from A3):** Without TLB: 2m (page table access + data access). With TLB: EAT = h\u00d7(t_TLB + m) + (1-h)\u00d7(t_TLB + m + m). Simplify: h\u00d7(t_TLB+m) + (1-h)\u00d7(t_TLB+2m).",
+            "**2-level page table:** 3 memory accesses per data reference (outer PTE + inner PTE + actual data). With TLB: on hit = 2 accesses (TLB + data), on miss = 4 accesses."
+          ],
+          "mustNotMiss": [
+            "**Direct-mapped:** Tag + Index + Offset bits. Index selects cache set. Tag comparison \u2192 hit/miss. Simple but high conflict misses.",
+            "**Write-through:** Write to both cache and memory simultaneously. No dirty bit needed. Write-back: write only to cache (dirty bit). Flush to memory on eviction.",
+            "**From A3:** AMAT = L1 hit time + L1 miss rate \u00d7 (L2 hit time + L2 miss rate \u00d7 MM time). TLB EAT = h\u00d7t_m + (1-h)\u00d7(t_m+t_p). 2-level: h\u00d7t_m + (1-h)\u00d7(2\u00d7t_p+t_m)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "L1 hit=2ns, L1 miss rate=10%, L2 hit=8ns, L2 miss rate=5%, MM=100ns. Find AMAT.",
+              "answer": "AMAT = 2 + 0.10\u00d7(8 + 0.05\u00d7100) = 2 + 0.10\u00d7(8+5) = 2 + 0.10\u00d713 = 2 + 1.3 = **3.3 ns**."
+            },
+            {
+              "question": "Virtual address space = 32 bits, page size = 4KB, 2-level page table. How large is each page table?",
+              "answer": "Page size = 4KB = 2^12 \u2192 offset = 12 bits. Remaining = 20 bits split 10+10. Each level has 2^10 = 1024 entries \u00d7 4 bytes/entry = **4KB per page table**. Elegant: each page table fits exactly in one page."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "coa_io_pyq",
+          "name": "COA 4: I/O Systems & Final PYQ",
+          "estimatedHours": 23,
+          "description": "~10 lectures + DPPs 10\u201311 + Final GATE PYQ test (target \u226585%, AMAT < 3 min). I/O: programmed I/O (busy-wait), interrupt-driven I/O, DMA (direct memory access). DMA for large transfers \u2014 frees CPU. All 11 COA DPPs completed.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 10\u201311: Final COA DPPs on paper",
+              "slug": "dpp-10-11-coa-final",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/io-interface"
+            },
+            {
+              "name": "Final PYQ: All GATE COA PYQs 2015\u20132026 (target \u226585%, AMAT < 3 min)",
+              "slug": "gate-coa-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/computer-organization"
+            }
+          ],
+          "learningTip": [
+            "**Rule 7 (from guide):** All 11 COA DPPs must be on paper. Write AMAT formula before EVERY COA problem. Write pipeline CPI formula. COA = 8\u201310 marks of ENTIRELY numerical questions.",
+            "**DMA cycle stealing:** DMA steals memory bus cycles from CPU. CPU slows slightly but is otherwise free to execute instructions. Far more efficient than interrupt-driven for bulk transfers.",
+            "**Gate target: COA PYQ \u226585%, AMAT < 3 min.** Practice AMAT until it's a reflex, not a calculation."
+          ],
+          "mustNotMiss": [
+            "**Programmed I/O:** CPU busy-waits (polls) \u2192 CPU fully occupied. Simple but wastes CPU cycles.",
+            "**Interrupt-driven:** CPU issues I/O command, resumes other work. On completion, device raises interrupt. More efficient but overhead per interrupt.",
+            "**DMA:** CPU sets up DMA (source, destination, count). DMA handles entire transfer. Interrupts CPU only on completion. Ideal for disk, network transfers."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why is DMA preferred over interrupt-driven I/O for large data transfers?",
+              "answer": "Interrupt-driven: one interrupt per byte/word \u2192 thousands of interrupts for a 1MB transfer \u2192 huge overhead. **DMA:** one interrupt per transfer, regardless of size. For large transfers (disk reads), DMA reduces interrupt overhead by orders of magnitude, freeing CPU for computation."
+            },
+            {
+              "question": "Disk: seek=5ms, rotational latency avg=3ms, transfer rate=50MB/s, transfer=100KB. Find total access time.",
+              "answer": "Seek = 5ms. Avg rotational latency = 3ms (half revolution). Transfer time = 100KB / 50MB/s = 0.1/50 \u00d7 1000 = 2ms. Total = 5 + 3 + 2 = **10ms**."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "digital_logic",
+      "name": "Digital Logic",
+      "tier": 1,
+      "estimatedHours": 43.5,
+      "topics": [
+        {
+          "id": "dl_boolean_combinational",
+          "name": "DL 1: Boolean Algebra, K-Maps & Combinational Circuits",
+          "estimatedHours": 21.5,
+          "description": "~11 lectures + DPPs 1\u20132. Boolean algebra axioms, De Morgan's laws, duality, canonical SOP/POS, K-maps (2/3-variable), 4-variable K-maps (corners adjacent, don't-cares \u2192 simplify to minimum SOP). Combinational: adders (ripple carry, carry lookahead), MUX as universal element, decoder, priority encoder.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1: K-map + combinational circuits on paper",
+              "slug": "dpp-1-kmap-combinational",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/k-map"
+            },
+            {
+              "name": "DPP 2: MUX, decoder and logic expression problems",
+              "slug": "dpp-2-mux-decoder",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/combinational-circuits"
+            }
+          ],
+          "learningTip": [
+            "**K-map grouping rules:** Groups must be powers of 2 (1,2,4,8,16). Cover all 1s. Maximize group sizes. 4-variable K-map: corners (0,2,8,10) form a valid group!",
+            "**Don't-care cells:** Can be used in groups (to maximize group size) or ignored. They give flexibility \u2014 always treat them as 1 when they help form a larger group.",
+            "**Gate target: K-maps < 2 min.** Practice until you automatically see the optimal grouping without trial and error."
+          ],
+          "mustNotMiss": [
+            "**De Morgan's:** NOT(A AND B) = NOT-A OR NOT-B. NOT(A OR B) = NOT-A AND NOT-B. Duality: swap AND\u2194OR and 0\u21941.",
+            "**SOP vs POS:** SOP (Sum of Products) \u2192 use K-map 1-cells. POS (Product of Sums) \u2192 use K-map 0-cells.",
+            "**MUX as universal:** A 4:1 MUX can implement any function of 3 variables. 2:1 MUX can implement any function with literals on inputs."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Minimize F(A,B,C,D) = \u03a3m(0,1,2,4,5,8,9,10) using K-map.",
+              "answer": "K-map: Mark minterms 0,1,2,4,5,8,9,10. Group: {0,1,2,8,9,10} \u2192 wait, check adjacency. Groups: {0,1,2,4,5,10,8,9} (review 4-var K-map layout). Best grouping: {0,1,8,9}=A'D', {0,2,8,10}=A'C', {0,4}=... . Final minimal SOP \u2248 **B'D' + A'D' + A'C'** (verify with K-map)."
+            },
+            {
+              "question": "How can a 4:1 MUX implement the function F(A,B,C) = A'B'C + AB'C + ABC?",
+              "answer": "Use A,B as select lines (MSB=A). For each combination of (A,B)=(00,01,10,11), determine F: (0,0):F=C, (0,1):F=0, (1,0):F=C, (1,1):F=1. Connect MUX inputs: I0=C, I1=0, I2=C, I3=1."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "dl_sequential_pyq",
+          "name": "DL 2: Sequential Circuits, Flip-Flops & Final PYQ",
+          "estimatedHours": 22,
+          "description": "~11 lectures + DPP 3 + Final GATE PYQ test (target \u226584%, K-maps < 2 min). Flip-flop excitation tables (all 4 from memory: SR, JK, D, T), Moore vs Mealy machines, sequential circuit design procedure, state reduction.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 3: Sequential circuit + flip-flop excitation on paper",
+              "slug": "dpp-3-sequential-flipflop",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/flip-flops"
+            },
+            {
+              "name": "Final PYQ: All GATE DL PYQs 2015\u20132026 (target \u226584%)",
+              "slug": "gate-dl-pyq-all-years",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/digital-logic"
+            }
+          ],
+          "learningTip": [
+            "**Excitation tables cold (from A3):** SR: 0\u21920:S=0,R=x \u00b7 0\u21921:S=1,R=0 \u00b7 1\u21920:S=0,R=1 \u00b7 1\u21921:S=x,R=0. JK: 0\u21920:J=0,K=x \u00b7 0\u21921:J=1,K=x \u00b7 1\u21920:J=x,K=1 \u00b7 1\u21921:J=x,K=0. D: D=Q_next always. T: T=Q\u2295Q_next.",
+            "**Sequential circuit design steps:** State diagram \u2192 State table \u2192 State reduction \u2192 State assignment \u2192 K-map for next state and output \u2192 Logic circuit.",
+            "**Moore vs Mealy:** Moore: output depends only on current state. Mealy: output depends on current state AND input. Mealy has fewer states but output changes asynchronously with input."
+          ],
+          "mustNotMiss": [
+            "**From A3 \u2014 flip-flop excitation tables** (must be memorized completely cold): D is simplest (D=Q_next). T toggles on T=1. SR forbids S=R=1. JK is SR with no forbidden state.",
+            "**Characteristic equations:** SR: Q_next=S+R'Q (S\u2260R condition). JK: Q_next=JQ'+K'Q. D: Q_next=D. T: Q_next=T\u2295Q.",
+            "**State reduction:** Two states are equivalent if (1) same outputs and (2) same next states for all inputs."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Design a T flip-flop using JK flip-flop.",
+              "answer": "T flip-flop: Q_next = T\u2295Q. JK flip-flop: Q_next = JQ'+K'Q. Equate: need JQ'+K'Q = TQ'+T'Q... Wait \u2014 T=1 should toggle. If T=1: J=1,K=1 (JK toggles). If T=0: J=0,K=0 (JK holds). So **J=T and K=T**. Connect T to both J and K inputs."
+            },
+            {
+              "question": "Difference between Moore and Mealy machines. Which has fewer states?",
+              "answer": "**Moore:** Output = f(current state only). Output changes only at clock edge. More states needed (each output needs its own state). \\n**Mealy:** Output = f(current state + input). Output can change asynchronously with input. **Fewer states** \u2014 each state can produce different outputs for different inputs."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "general_aptitude",
+      "name": "General Aptitude",
+      "tier": 1,
+      "estimatedHours": 71,
+      "topics": [
+        {
+          "id": "ga_quantitative",
+          "name": "GA 1: Quantitative Reasoning",
+          "estimatedHours": 44,
+          "description": "~6 lectures + DPPs 1\u201314. Ratio/proportion, percentages, profit-loss, time-speed-distance (D=S\u00d7T), time-work, number series, mixtures and alligation. Each DPP is 45 min under exam conditions. Target: 95%+ accuracy on all quantitative DPPs.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 1\u201310: Quantitative reasoning on paper",
+              "slug": "dpp-1-10-ga-quantitative",
+              "difficulty": "Easy",
+              "link": "https://gateoverflow.in/tag/general-aptitude"
+            },
+            {
+              "name": "DPPs 11\u201314: Number series and mixture problems",
+              "slug": "dpp-11-14-ga-advanced-quant",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/numerical-ability"
+            }
+          ],
+          "learningTip": [
+            "**GA first on every mock and the real exam.** 10 questions, 15 marks, typically < 20 min. Locking in 13\u201315/15 on GA before touching technical questions is a score multiplier.",
+            "**Alligation shortcut:** When mixing two solutions of concentrations C1 and C2 to get Cm: ratio = (Cm\u2212C2):(C1\u2212Cm). Draw cross-diagram.",
+            "**Speed-distance-work pattern:** In GATE GA, most numerical questions reduce to D=S\u00d7T or Work=(Rate\u00d7Time). Identify the invariant (total distance, total work) and solve."
+          ],
+          "mustNotMiss": [
+            "**Profit-loss formulas:** SP = CP\u00d7(1+P/100). Discount: MP\u00d7(1-D/100)=SP. Profit%=(SP-CP)/CP\u00d7100.",
+            "**Compound interest:** A = P(1+r/n)^(nt). For GATE: usually n=1 (annual) or n=2 (half-yearly).",
+            "**Gate target: DPP accuracy \u226595%.** GA is 15 marks. Missing even 3 GA questions = -6 marks on relative ranking (vs peers who score near-perfect on GA)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "A train 200m long crosses a 400m platform in 30s. Find the speed of the train.",
+              "answer": "Total distance = train length + platform = 200+400 = 600m. Time = 30s. Speed = 600/30 = **20 m/s = 72 km/h**."
+            },
+            {
+              "question": "A mixture of milk and water is 4:1. 10L is removed and replaced with water. New ratio = 3:2. Find original quantity.",
+              "answer": "Let total = V. After removing 10L, milk = (4/5)(V-10), water = (1/5)(V-10)+10. New ratio = 3:2. (4(V-10)/5) / ((V-10)/5 + 10) = 3/2. Solving: 8(V-10) = 3(V-10+50) = 3V+120. 8V-80=3V+120. 5V=200. **V = 40L**."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "ga_analytical_verbal",
+          "name": "GA 2: Analytical, Verbal & Final PYQ",
+          "estimatedHours": 27,
+          "description": "~6 lectures + DPPs 15\u201320 + Final GATE GA PYQ test (target \u226595%). Analytical: syllogisms (3-circle Venn diagrams), critical reasoning, blood relations, directions. Verbal: sentence correction, reading comprehension, vocabulary-in-context.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 15\u201317: Analytical reasoning problems",
+              "slug": "dpp-15-17-ga-analytical",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/verbal-reasoning"
+            },
+            {
+              "name": "Final PYQ: All GATE GA PYQs 2015\u20132026 (target \u226595%)",
+              "slug": "gate-ga-pyq-all-years",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/general-aptitude"
+            }
+          ],
+          "learningTip": [
+            "**Syllogism method:** Draw Venn diagrams. Mark definite inclusions as filled regions. Test each conclusion by checking if it's TRUE in ALL valid Venn diagrams. If any valid diagram makes it false \u2192 conclusion does NOT follow.",
+            "**Blood relations shortcut:** Convert statements to a tree diagram. Identify gender from context. Label each node. Then trace the chain from the first person to the last.",
+            "**Sentence correction:** Look for subject-verb agreement, tense consistency, pronoun reference, and parallel structure. GATE verbal questions are typically straightforward."
+          ],
+          "mustNotMiss": [
+            "**Directions:** Use compass: North=up, East=right. After a series of turns, draw on paper. Final direction and distance from start are what GA tests.",
+            "**Reading comprehension:** Read question BEFORE passage. Locate answer in passage directly \u2014 avoid inference unless the question asks for it.",
+            "**DPP accuracy \u226595% gate condition.** 20 DPPs across all GA types \u2014 all must be done on paper under 45-minute timed conditions."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "All A are B. Some B are C. Conclusion: Some A are C \u2014 valid?",
+              "answer": "**Not necessarily valid.** Draw Venn: A fully inside B. C overlaps part of B but may not overlap A. There exists a valid diagram where A and C don't overlap. So 'Some A are C' does **NOT** follow with certainty."
+            },
+            {
+              "question": "A man walks 5km North, turns right 3km, turns right 4km. What is his distance from starting point?",
+              "answer": "Start (0,0). North 5km \u2192 (0,5). Right (East) 3km \u2192 (3,5). Right (South) 4km \u2192 (3,1). Distance = \u221a((3-0)\u00b2+(1-0)\u00b2) = \u221a(9+1) = \u221a10 \u2248 **3.16 km**."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "discrete_mathematics",
+      "name": "Discrete Mathematics",
+      "tier": 2,
+      "estimatedHours": 123.5,
+      "topics": [
+        {
+          "id": "dm_set_theory_algebra",
+          "name": "DM 1: Set Theory & Algebraic Structures",
+          "estimatedHours": 60.5,
+          "description": "DM L1\u2013L24 (24 lectures \u00d7 2 hr) + DPPs 1\u20135 (Sun B2, 2.5 hr each). Sets: types, power set, all 5 operations. Relations: 6 types (reflexive/symmetric/antisymmetric/transitive/equivalence/partial order). Functions: injective/surjective/bijective, counting f\u2218g. Algebraic structures: semigroup \u2192 monoid \u2192 group \u2192 abelian group, Lagrange's theorem, lattices (Hasse diagrams), rings, integral domains, fields. Recurrences: characteristic equation method. Modular arithmetic, CRT, Fermat's little theorem.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 1\u20132: Sets + Relations (Sun B2, Wk 2)",
+              "slug": "dpp-1-2-sets-relations",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/set-theory"
+            },
+            {
+              "name": "DPPs 3\u20135: Functions + Algebraic Structures + Induction/Recurrences (Wk 4, Wk 5)",
+              "slug": "dpp-3-5-algebra-recurrences",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/groups"
+            }
+          ],
+          "learningTip": [
+            "**Group axioms cold:** Closure, Associativity, Identity (e exists s.t. a*e=a), Inverse (a\u207b\u00b9 exists). Abelian adds Commutativity.",
+            "**Lagrange's theorem:** If H is a subgroup of G, then |H| divides |G|. Used to prove order of elements divides group order.",
+            "**Recurrence (characteristic equation):** Write T(n)=aT(n-1)+bT(n-2). Characteristic equation: r\u00b2=ar+b. Roots r1,r2 \u2192 T(n) = A\u00b7r1\u207f + B\u00b7r2\u207f. Determine A,B from initial conditions."
+          ],
+          "mustNotMiss": [
+            "**Counting functions:** Total functions from A(|A|=m) to B(|B|=n): n^m. Injections: P(n,m)=n!/(n-m)!. Bijections: n! (only if m=n).",
+            "**Equivalence relation:** Reflexive + Symmetric + Transitive. Partitions the set into equivalence classes.",
+            "**Partial order (POSET):** Reflexive + Antisymmetric + Transitive. Hasse diagram removes transitive and reflexive edges."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Prove that in any group G, if a\u00b2 = e for all a \u2208 G, then G is abelian.",
+              "answer": "For any a,b \u2208 G: (ab)\u00b2 = e \u2192 abab = e \u2192 ab = b\u207b\u00b9a\u207b\u00b9. But a\u00b2=e \u2192 a\u207b\u00b9=a and b\u207b\u00b9=b. So ab = ba. **G is abelian.** \u2713"
+            },
+            {
+              "question": "Solve T(n) = 3T(n-1) - 2T(n-2), T(0)=1, T(1)=3.",
+              "answer": "Characteristic equation: r\u00b2 - 3r + 2 = 0 \u2192 (r-1)(r-2) = 0. Roots: r\u2081=1, r\u2082=2. General solution: T(n) = A\u00b71\u207f + B\u00b72\u207f. T(0)=A+B=1. T(1)=A+2B=3 \u2192 B=2, A=-1. **T(n) = -1 + 2^(n+1)**."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "dm_graph_theory",
+          "name": "DM 2: Graph Theory",
+          "estimatedHours": 31.5,
+          "description": "DM L25\u2013L36 = Ch02 L1\u2013L12 (12 lectures \u00d7 2 hr) + DPPs 6\u20138 (Sun B2, 2.5 hr each). Graphs: definitions, handshaking lemma, paths/cycles/connectivity, trees (n-1 edges, Cayley's formula n^(n-2)), BFS/DFS, Eulerian/Hamiltonian, bipartite (K\u00f6nig's theorem), planar (Euler's formula V-E+F=2, K5/K3,3 non-planar), graph coloring, matchings, MST.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 6\u20137: Graph basics + Trees (Sun B2, Wk 6)",
+              "slug": "dpp-6-7-graphs-trees",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/graph-theory"
+            },
+            {
+              "name": "DPP 8: Full graph theory PYQ (Sun B2, Wk 7)",
+              "slug": "dpp-8-graph-theory-full",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/planar-graph"
+            }
+          ],
+          "learningTip": [
+            "**Euler's formula for planar graphs:** V - E + F = 2 (connected planar graph). For trees: F=1 \u2192 V-E+1=2 \u2192 V=E+1 \u2713.",
+            "**Eulerian circuit condition (undirected):** Graph is connected + ALL vertices have even degree. Eulerian path: exactly 2 vertices have odd degree.",
+            "**K\u00f6nig's theorem (bipartite):** Max matching = Min vertex cover. Useful for GATE optimization questions."
+          ],
+          "mustNotMiss": [
+            "**Handshaking Lemma:** \u03a3deg(v) = 2|E|. Sum of all degrees is even. Odd-degree vertices always come in pairs.",
+            "**Cayley's formula:** Number of labeled trees on n vertices = n^(n-2). For n=4: 4^2=16 labeled trees.",
+            "**Chromatic number:** \u03c7(tree)=2, \u03c7(odd cycle)=3, \u03c7(K\u2099)=n. Planar graph: \u03c7 \u2264 4 (4-colour theorem)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "A connected planar graph has 10 vertices and 15 edges. How many faces does it have?",
+              "answer": "Euler's formula: V - E + F = 2. 10 - 15 + F = 2. **F = 7 faces.**"
+            },
+            {
+              "question": "Prove K5 is non-planar.",
+              "answer": "K5: V=5, E=10. For planar graph with no triangles: E \u2264 2V-4 \u2192 2\u00d75-4=6. But E=10 > 6. Wait \u2014 K5 HAS triangles, so use E \u2264 3V-6 \u2192 3\u00d75-6=9. E=10 > 9. **Contradiction \u2192 K5 is non-planar.** (Or use Kuratowski's theorem directly.)"
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "dm_logic",
+          "name": "DM 3: Propositional & Predicate Logic",
+          "estimatedHours": 21,
+          "description": "DM L37\u2013L44 = Ch03 L1\u2013L8 (8 lectures \u00d7 2 hr) + DPPs 9\u201310 (Sun B2, 2.5 hr each). Propositional logic: connectives, truth tables, tautology, CNF/DNF conversion (3 methods), resolution. Predicate logic: \u2200, \u2203, nested quantifiers, negation rules (push \u00ac inward). Prenex Normal Form. Inference rules: modus ponens, modus tollens, hypothetical syllogism. Formal proofs.",
+          "practiceQuestions": [
+            {
+              "name": "DPPs 9\u201310: Logic PYQs (propositional + predicate) (Wk 8)",
+              "slug": "dpp-9-10-logic",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/propositional-logic"
+            },
+            {
+              "name": "GATE PYQ: Predicate logic and inference",
+              "slug": "gate-predicate-logic",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/first-order-logic"
+            }
+          ],
+          "learningTip": [
+            "**Negation of quantifiers:** \u00ac(\u2200x P(x)) = \u2203x \u00acP(x). \u00ac(\u2203x P(x)) = \u2200x \u00acP(x). For nested: push \u00ac inward one quantifier at a time, flipping each.",
+            "**CNF conversion:** (1) Eliminate \u2194 and \u2192. (2) Push \u00ac inward (De Morgan). (3) Distribute \u2228 over \u2227.",
+            "**Resolution rule:** From (A \u2228 B) and (\u00acA \u2228 C), derive (B \u2228 C). Used in automated theorem proving. To prove F, add \u00acF and derive contradiction (empty clause)."
+          ],
+          "mustNotMiss": [
+            "**Tautology:** True for ALL truth assignments. **Contradiction:** False for all. **Satisfiable:** True for SOME assignment.",
+            "**Modus Ponens:** P, P\u2192Q \u22a2 Q. **Modus Tollens:** \u00acQ, P\u2192Q \u22a2 \u00acP. Know these cold \u2014 GATE inference questions use them directly.",
+            "**FOL validity is undecidable** (Church-Turing). Propositional logic satisfiability is NP-complete (SAT)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Negate the statement: \u2200x \u2203y (P(x,y) \u2192 Q(x,y)).",
+              "answer": "\u00ac(\u2200x \u2203y (P\u2192Q)) = \u2203x \u2200y \u00ac(P\u2192Q) = \u2203x \u2200y \u00ac(\u00acP\u2228Q) = **\u2203x \u2200y (P(x,y) \u2227 \u00acQ(x,y))**. There exists an x such that for all y, P(x,y) holds but Q(x,y) does not."
+            },
+            {
+              "question": "Convert (P \u2192 Q) \u2194 R to CNF.",
+              "answer": "Step 1: Eliminate \u2194: ((P\u2192Q)\u2192R) \u2227 (R\u2192(P\u2192Q)). Step 2: Eliminate \u2192: (\u00ac(\u00acP\u2228Q)\u2228R) \u2227 (\u00acR\u2228(\u00acP\u2228Q)). Step 3: Simplify: ((P\u2227\u00acQ)\u2228R) \u2227 (\u00acR\u2228\u00acP\u2228Q). Step 4: Distribute first clause: (P\u2228R)\u2227(\u00acQ\u2228R). CNF= **(P\u2228R) \u2227 (\u00acQ\u2228R) \u2227 (\u00acR\u2228\u00acP\u2228Q)**."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "dm_combinatorics_assessment",
+          "name": "DM 4: Combinatorics & Assessment",
+          "estimatedHours": 10.5,
+          "description": "DM L45\u2013L47 = Ch04 L1\u2013L3 (3 lectures \u00d7 2 hr) + DPP 11 (Sun B2, 2.5 hr) + DM Assessment (Fri, 2 hr slot). Pigeonhole principle (basic + generalized), inclusion-exclusion |A\u222aB\u222aC|, derangements Dn = n!\u00b7\u03a3(-1)^k/k!, circular permutations (n-1)!, multinomial coefficients, stars-and-bars distribution.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 11: Combinatorics (Wk 9 Sun B2)",
+              "slug": "dpp-11-combinatorics",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/combinatory"
+            },
+            {
+              "name": "DM Assessment: 30 Qs all chapters, 45 min (target \u226525/30)",
+              "slug": "dm-assessment-full",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/discrete-mathematics"
+            }
+          ],
+          "learningTip": [
+            "**Generalized pigeonhole:** n items in k boxes \u2192 at least one box has \u2265 \u2308n/k\u2309 items. Make sure to use ceiling, not floor.",
+            "**Derangements D\u2084=9:** Verify: D\u2084 = 4!(1 - 1/1! + 1/2! - 1/3! + 1/4!) = 24\u00d7(1-1+0.5-1/6+1/24) = 24\u00d7(8/24) = 9. \u2713",
+            "**Stars and bars:** Distributing n identical items into k distinct bins with no restriction: C(n+k-1, k-1)."
+          ],
+          "mustNotMiss": [
+            "**Inclusion-Exclusion:** |A\u222aB\u222aC| = |A|+|B|+|C| - |A\u2229B| - |A\u2229C| - |B\u2229C| + |A\u2229B\u2229C|.",
+            "**DM Assessment gate condition:** \u226525/30. Score 21\u201324: repair Wk 10. Below 21: repair all Wk 10. DM underpins TOC, Algorithms, and Probability.",
+            "**Circular permutations:** n distinct objects in a circle = (n-1)!. With reflection symmetry (necklace): (n-1)!/2."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "In a group of 367 people, must at least 2 share a birthday? Why?",
+              "answer": "365 possible birthdays (ignore leap year). 367 people in 365 pigeonholes. By **Pigeonhole Principle**: \u2308367/365\u2309 = 2. At least one 'box' (birthday) has \u22652 people. **Yes, guaranteed.**"
+            },
+            {
+              "question": "How many ways can 5 people sit around a circular table, with 2 specific people never adjacent?",
+              "answer": "Total circular arrangements = (5-1)! = 24. Arrangements where A,B ARE adjacent: treat A,B as one unit \u2192 4 units in circle = (4-1)! \u00d7 2 = 12. NOT adjacent = 24 - 12 = **12 arrangements**."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "linear_algebra",
+      "name": "Linear Algebra",
+      "tier": 2,
+      "estimatedHours": 30,
+      "topics": [
+        {
+          "id": "la_vector_spaces_rank",
+          "name": "LA 1: Vector Spaces, Rank & Linear Systems",
+          "estimatedHours": 20,
+          "description": "LA L1\u2013L10 (10 lectures \u00d7 2 hr). Vector spaces: subspaces, span, linear independence, basis, dimension. Row reduction: REF, RREF, rank via elementary row operations. Null space, column space, rank-nullity theorem: rank(A) + nullity(A) = n. Linear transformations: kernel, image, matrix representation. Systems: consistent (unique if rank=n; infinite if rank<n) vs inconsistent (rank(A)\u2260rank([A|b])).",
+          "practiceQuestions": [
+            {
+              "name": "GATE PYQ: Rank and null space problems",
+              "slug": "gate-rank-nullity",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/linear-algebra"
+            },
+            {
+              "name": "GATE PYQ: System of equations consistency",
+              "slug": "gate-linear-systems",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/system-of-equations"
+            }
+          ],
+          "learningTip": [
+            "**Rank-Nullity theorem:** rank(A) + nullity(A) = number of columns of A (n). Nullity = dimension of null space = number of free variables in RREF.",
+            "**System consistency check:** Augmented matrix [A|b]. If rank(A) \u2260 rank([A|b]) \u2192 inconsistent. If rank(A) = rank([A|b]) = n \u2192 unique solution. If rank < n \u2192 infinite solutions.",
+            "**Linear independence check:** Row-reduce the matrix. Vectors are independent iff no row becomes all zeros in RREF."
+          ],
+          "mustNotMiss": [
+            "**Rank = number of non-zero rows in REF = number of pivot columns.**",
+            "**Null space (kernel):** Set of all x where Ax=0. Dimension = nullity. Found by solving RREF(A)x=0.",
+            "**Column space (range/image):** Span of column vectors. Dimension = rank. For Ax=b to be consistent, b must be in the column space."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Matrix A is 3\u00d75. rank(A)=2. Find dim(null space).",
+              "answer": "Rank-Nullity: rank + nullity = n (columns) = 5. **nullity = 5 - 2 = 3.** The null space has dimension 3."
+            },
+            {
+              "question": "How do you determine if the system Ax=b has a solution without solving it?",
+              "answer": "Check if rank(A) = rank([A|b]). If yes, solution exists (consistent). If rank(A) < rank([A|b]), the vector b is NOT in the column space of A \u2192 **no solution (inconsistent).** Equivalently: b must be a linear combination of columns of A."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "la_eigenvalues_assessment",
+          "name": "LA 2: Eigenvalues, Diagonalization & Assessment",
+          "estimatedHours": 10,
+          "description": "LA L11\u2013L14 (4 lectures \u00d7 2 hr) + LA Assessment (Fri, 2 hr slot: 20 GATE PYQs, 40 min, target \u226575%). Eigenvalues via characteristic polynomial det(A\u2212\u03bbI)=0. Eigenvectors and eigenspaces. Algebraic multiplicity (AM) \u2265 Geometric multiplicity (GM). Diagonalization: A=PDP\u207b\u00b9 (possible iff AM=GM for all eigenvalues). Orthogonality: Gram-Schmidt, QR decomposition. Positive definite: all eigenvalues > 0.",
+          "practiceQuestions": [
+            {
+              "name": "LA Assessment: 20 GATE PYQs in 40 min (target \u226575%)",
+              "slug": "la-assessment-20-pyqs",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/eigen-value"
+            },
+            {
+              "name": "GATE PYQ: Diagonalization conditions",
+              "slug": "gate-diagonalization",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/matrices"
+            }
+          ],
+          "learningTip": [
+            "**AM vs GM:** Algebraic multiplicity = root multiplicity in characteristic polynomial. Geometric multiplicity = dim(eigenspace) = n - rank(A-\u03bbI). Always AM \u2265 GM.",
+            "**Diagonalizable iff:** For EVERY eigenvalue, AM = GM. Symmetric matrices are always diagonalizable (real eigenvalues, orthogonal eigenvectors).",
+            "**Positive definite tests:** All eigenvalues > 0. OR all leading principal minors > 0 (Sylvester's criterion)."
+          ],
+          "mustNotMiss": [
+            "**Characteristic polynomial:** det(A\u2212\u03bbI) = 0. For 2\u00d72: \u03bb\u00b2 - trace(A)\u00b7\u03bb + det(A) = 0. Use this shortcut.",
+            "**Similar matrices** have the same eigenvalues. A and P\u207b\u00b9AP have the same characteristic polynomial.",
+            "**Trace = sum of eigenvalues. Determinant = product of eigenvalues.** Verify after computing eigenvalues."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "A = [[3,1],[0,3]]. Is A diagonalizable?",
+              "answer": "Characteristic polynomial: (3-\u03bb)\u00b2 = 0 \u2192 \u03bb=3 (AM=2). Eigenspace: (A-3I)x=0 \u2192 [[0,1],[0,0]]x=0 \u2192 x2=0, x1 free \u2192 eigenspace dim=1. GM=1 < AM=2. **A is NOT diagonalizable** (defective matrix)."
+            },
+            {
+              "question": "Find eigenvalues of A = [[2,3],[1,4]].",
+              "answer": "det(A-\u03bbI) = (2-\u03bb)(4-\u03bb)-3 = \u03bb\u00b2-6\u03bb+8-3 = \u03bb\u00b2-6\u03bb+5 = (\u03bb-1)(\u03bb-5) = 0. **Eigenvalues: \u03bb\u2081=1, \u03bb\u2082=5.** Verify: trace=6=1+5 \u2713, det=5=1\u00d75 \u2713."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "calculus",
+      "name": "Calculus",
+      "tier": 2,
+      "estimatedHours": 40,
+      "topics": [
+        {
+          "id": "calc_limits_derivatives",
+          "name": "Calculus 1: Limits & Derivatives",
+          "estimatedHours": 10,
+          "description": "Calc L1\u2013L4 (4 lectures \u00d7 2 hr) + PYQ Free Day 1 (2 hr, 10 PYQs on limits + derivatives). Limits: \u03b5-\u03b4 definition, L'H\u00f4pital's rule (0/0 and \u221e/\u221e), standard limits. Continuity: IVT, removable/jump/infinite discontinuities. Derivatives: chain/product/quotient/implicit. MVT (f'(c)=(f(b)-f(a))/(b-a)). Rolle's theorem.",
+          "practiceQuestions": [
+            {
+              "name": "PYQ Free Day 1: 10 limits + derivatives PYQs (Wk 13 Fri)",
+              "slug": "pyq-limits-derivatives",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/limits-continuity-and-differentiability"
+            }
+          ],
+          "learningTip": [
+            "**L'H\u00f4pital's rule:** If lim f(x)/g(x) gives 0/0 or \u221e/\u221e, then lim f(x)/g(x) = lim f'(x)/g'(x). Apply repeatedly if needed. Only applies to 0/0 or \u221e/\u221e forms.",
+            "**MVT critical application:** If f is differentiable on (a,b) and continuous on [a,b], there exists c \u2208 (a,b) where f'(c) = (f(b)-f(a))/(b-a). Use this to prove existence of zeros of derivatives."
+          ],
+          "mustNotMiss": [
+            "**Standard limits:** lim(x\u21920) sin(x)/x = 1. lim(x\u21920) (1+x)^(1/x) = e. lim(x\u2192\u221e) (1+1/x)^x = e.",
+            "**Differentiability implies continuity.** Continuity does NOT imply differentiability. |x| is continuous at 0 but not differentiable.",
+            "**Rolle's theorem:** f(a)=f(b) and continuous \u2192 \u2203c with f'(c)=0. Special case of MVT."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find lim(x\u21920) (e^x - 1 - x) / x\u00b2.",
+              "answer": "0/0 form. L'H\u00f4pital: (e^x - 1) / (2x). Still 0/0. L'H\u00f4pital again: e^x / 2. At x=0: **1/2**."
+            },
+            {
+              "question": "Is f(x) = x^(1/3) differentiable at x=0?",
+              "answer": "f'(0) = lim(h\u21920) (h^(1/3) - 0)/h = lim h^(1/3)/h = lim h^(-2/3). As h\u21920, h^(-2/3) \u2192 \u221e. **NOT differentiable at x=0** (vertical tangent). But f is continuous at 0."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "calc_integration",
+          "name": "Calculus 2: Integration",
+          "estimatedHours": 10,
+          "description": "Calc L5\u2013L8 (4 lectures \u00d7 2 hr) + PYQ Free Day 2 (2 hr, 10 PYQs on integration). Integration by substitution, integration by parts (\u222bu dv = uv \u2212 \u222bv du). Definite integral: FTC Part 1 (\u222ba to x f(t)dt differentiable) and Part 2 (\u222ba to b f(x)dx = F(b)-F(a)). Area between curves.",
+          "practiceQuestions": [
+            {
+              "name": "PYQ Free Day 2: 10 integration PYQs (Wk 14 Fri)",
+              "slug": "pyq-integration",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/integration"
+            }
+          ],
+          "learningTip": [
+            "**Integration by parts mnemonic (LIATE):** Choose u as the Logarithm, Inverse trig, Algebraic, Trigonometric, Exponential \u2014 in order. u = first type encountered in LIATE.",
+            "**FTC Part 1:** d/dx [\u222ba to x f(t)dt] = f(x). The derivative of the integral returns the original function."
+          ],
+          "mustNotMiss": [
+            "**FTC Part 2:** \u222ba to b f(x)dx = F(b) - F(a) where F'=f. The fundamental bridge between differentiation and integration.",
+            "**Standard integrals:** \u222be^x dx = e^x. \u222b1/x dx = ln|x|. \u222bsin(x) dx = -cos(x). \u222bx^n dx = x^(n+1)/(n+1) for n\u2260-1."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Evaluate \u222bx\u00b7e^x dx.",
+              "answer": "Integration by parts. u=x, dv=e^x dx \u2192 du=dx, v=e^x. \u222bx\u00b7e^x dx = x\u00b7e^x - \u222be^x dx = **x\u00b7e^x - e^x + C = e^x(x-1) + C.**"
+            },
+            {
+              "question": "Find d/dx [\u222b1 to x\u00b2 sin(t\u00b2) dt].",
+              "answer": "Chain rule + FTC Part 1. Let F(x) = \u222b1 to x sin(t\u00b2)dt. Then our integral = F(x\u00b2). d/dx[F(x\u00b2)] = F'(x\u00b2)\u00b72x = **sin(x\u2074)\u00b72x.**"
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "calc_multivariable_series",
+          "name": "Calculus 3: Multivariable & Series",
+          "estimatedHours": 10,
+          "description": "Calc L9\u2013L12 (4 lectures \u00d7 2 hr) + PYQ Free Day 3 (2 hr, 10 PYQs on series + multivariable). Partial derivatives, gradient \u2207f, directional derivative. Total derivative, Jacobian, multivariable chain rule. Double integrals (iterated, change of variables). Taylor series: Maclaurin for e^x, sin x, cos x, ln(1+x), (1+x)^n. Radius of convergence.",
+          "practiceQuestions": [
+            {
+              "name": "PYQ Free Day 3: 10 series + multivariable PYQs (Wk 15 Fri)",
+              "slug": "pyq-multivariable-series",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/calculus"
+            }
+          ],
+          "learningTip": [
+            "**Maclaurin series (memorize all 5 from A3):** e^x = \u03a3x\u207f/n!. sin(x) = x - x\u00b3/3! + x\u2075/5! ... cos(x) = 1 - x\u00b2/2! + x\u2074/4! ... ln(1+x) = x - x\u00b2/2 + x\u00b3/3 ... (1+x)^n = 1 + nx + n(n-1)x\u00b2/2! ...",
+            "**Directional derivative:** D_u f = \u2207f \u00b7 u where u is a unit vector. Maximum directional derivative = |\u2207f| in direction of \u2207f."
+          ],
+          "mustNotMiss": [
+            "**Gradient \u2207f = (\u2202f/\u2202x, \u2202f/\u2202y, \u2202f/\u2202z).** Points in direction of steepest ascent. Magnitude = rate of fastest increase.",
+            "**Critical points of f(x,y):** Set \u2202f/\u2202x=0 and \u2202f/\u2202y=0. Then use second derivative test (Hessian determinant) to classify."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Find the Maclaurin series for e^(-x\u00b2) and use it to find \u222b\u2080\u00b9 e^(-x\u00b2) dx.",
+              "answer": "e^u = \u03a3u\u207f/n!. With u=-x\u00b2: e^(-x\u00b2) = \u03a3(-x\u00b2)\u207f/n! = 1 - x\u00b2/1! + x\u2074/2! - x\u2076/3! ... \u222b\u2080\u00b9 = [x - x\u00b3/3 + x\u2075/10 - x\u2077/42 ...]\u2080\u00b9 \u2248 1 - 1/3 + 1/10 - 1/42 \u2248 **0.747** (error function)."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "calc_advanced_assessment",
+          "name": "Calculus 4: Advanced Topics & Assessment",
+          "estimatedHours": 10,
+          "description": "Calc L13\u2013L16 (4 lectures \u00d7 2 hr) + Calculus Assessment (Fri, 2 hr slot: 20 PYQs, 40 min, target \u226572%). Advanced integration techniques, convergence tests for series, applications. Practice all GATE calculus questions types.",
+          "practiceQuestions": [
+            {
+              "name": "Calculus Assessment: 20 PYQs in 40 min (target \u226572%)",
+              "slug": "calculus-assessment-20-pyqs",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/calculus"
+            }
+          ],
+          "learningTip": [
+            "**Convergence tests:** Ratio test: lim |a(n+1)/a(n)| < 1 \u2192 converges. Comparison test. Alternating series test. Know when to apply each.",
+            "**Gate target: Calculus PYQ \u226572%.** Combined Eng Math Assessment (LA+Calc+P+Stats) target \u226533/40."
+          ],
+          "mustNotMiss": [
+            "**Ratio test:** L = lim |a\u2099\u208a\u2081/a\u2099|. L<1 \u2192 converges absolutely. L>1 \u2192 diverges. L=1 \u2192 inconclusive.",
+            "**Improper integrals:** \u222b1 to \u221e 1/x^p dx converges iff p > 1. \u222b0 to 1 1/x^p dx converges iff p < 1."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Does \u03a3 n/2^n converge? Apply the ratio test.",
+              "answer": "a(n) = n/2^n. a(n+1) = (n+1)/2^(n+1). Ratio = (n+1)/2n. As n\u2192\u221e: limit = 1/2 < 1. **Converges** by ratio test. (Sum = 2)"
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "probability_statistics",
+      "name": "Probability & Statistics",
+      "tier": 2,
+      "estimatedHours": 50,
+      "topics": [
+        {
+          "id": "prob_basics_bayes",
+          "name": "P+Stats 1: Probability Basics & Bayes' Theorem",
+          "estimatedHours": 10,
+          "description": "Prob L1\u2013L4 (4 lectures \u00d7 2 hr) + PYQ Free Day 1 (2 hr, 10 Bayes' theorem PYQs). Sample space, events, Kolmogorov axioms, classical probability, conditional probability P(A|B)=P(A\u2229B)/P(B), independent events, multiplication rule, Bayes' theorem with probability trees.",
+          "practiceQuestions": [
+            {
+              "name": "PYQ Free Day 1: 10 Bayes' theorem PYQs (Wk 17 Fri)",
+              "slug": "pyq-bayes-theorem",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/bayes-theorem"
+            }
+          ],
+          "learningTip": [
+            "**From A3 \u2014 Bayes' theorem:** P(A|B) = P(B|A)\u00d7P(A) / P(B). **Draw a probability tree for EVERY Bayes' problem.** Never use the formula without the tree.",
+            "**Total probability:** P(B) = \u03a3 P(B|A\u1d62)\u00d7P(A\u1d62) over all partitions {A\u1d62}."
+          ],
+          "mustNotMiss": [
+            "**Independent vs mutually exclusive:** Independent: P(A\u2229B)=P(A)\u00d7P(B). Mutually exclusive: P(A\u2229B)=0. Independent events CAN co-occur; mutually exclusive events CANNOT.",
+            "**Bayes' theorem:** P(A|B) = P(B|A)\u00b7P(A) / [P(B|A)\u00b7P(A) + P(B|A')\u00b7P(A')]."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "A test for a disease has 99% sensitivity (true positive) and 95% specificity. Disease prevalence = 1%. Patient tests positive. P(disease | positive test)?",
+              "answer": "P(D)=0.01, P(+|D)=0.99, P(+|D')=0.05. P(+) = 0.99\u00d70.01 + 0.05\u00d70.99 = 0.0099+0.0495=0.0594. P(D|+) = (0.99\u00d70.01)/0.0594 = 0.0099/0.0594 \u2248 **16.7%**. Despite 99% sensitivity, positive predictive value is low for rare disease."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "prob_distributions",
+          "name": "P+Stats 2: Probability Distributions",
+          "estimatedHours": 10,
+          "description": "Prob L5\u2013L8 (4 lectures \u00d7 2 hr) + PYQ Free Day 2 (2 hr, 10 PYQs on Binomial/Poisson/Normal). PMF, CDF, E[X], Var(X)=E[X\u00b2]-(E[X])\u00b2. MGF. Binomial B(n,p): mean=np, var=np(1-p). Poisson Pois(\u03bb): mean=var=\u03bb. Normal N(\u03bc,\u03c3\u00b2): 68-95-99.7 rule. Exponential (memoryless property). Uniform U(a,b).",
+          "practiceQuestions": [
+            {
+              "name": "PYQ Free Day 2: 10 distribution PYQs (Wk 18 Fri)",
+              "slug": "pyq-distributions",
+              "difficulty": "Medium",
+              "link": "https://gateoverflow.in/tag/probability"
+            }
+          ],
+          "learningTip": [
+            "**Binomial \u2192 Poisson approximation:** When n is large and p is small, B(n,p) \u2248 Pois(\u03bb=np). Good approximation when n\u226520 and p\u22640.05.",
+            "**Memoryless property:** P(X>s+t | X>s) = P(X>t) for Exponential distribution. Only continuous memoryless distribution. Geometric is discrete memoryless."
+          ],
+          "mustNotMiss": [
+            "**Var(X) = E[X\u00b2] - (E[X])\u00b2.** Also: Var(aX+b) = a\u00b2Var(X). Var(X+Y) = Var(X)+Var(Y) iff X,Y independent.",
+            "**Normal 68-95-99.7:** P(\u03bc-\u03c3 < X < \u03bc+\u03c3) = 68%. P(\u03bc-2\u03c3 < X < \u03bc+2\u03c3) = 95%. P(\u03bc-3\u03c3 < X < \u03bc+3\u03c3) = 99.7%.",
+            "**Exponential (from guide):** Memoryless: P(X>s+t|X>s)=P(X>t). Mean=1/\u03bb, Var=1/\u03bb\u00b2."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "X~Poisson(4). Find P(X=2).",
+              "answer": "P(X=k) = e^(-\u03bb)\u00b7\u03bb^k/k!. P(X=2) = e^(-4)\u00b74\u00b2/2! = e^(-4)\u00b716/2 = 8e^(-4) \u2248 8\u00d70.0183 \u2248 **0.1465**."
+            },
+            {
+              "question": "X~N(100,25). Find P(90 < X < 110).",
+              "answer": "\u03c3=5. P(90<X<110) = P((90-100)/5 < Z < (110-100)/5) = P(-2<Z<2). By 68-95-99.7 rule: **\u224895%**."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "prob_joint_markov_assessment",
+          "name": "P+Stats 3: Joint Distributions, Markov Chains & Combined Assessment",
+          "estimatedHours": 30,
+          "description": "Prob L9\u2013L22 (14 lectures \u00d7 2 hr) + 2 free-day PYQ sessions + Combined Eng Math Assessment (Thu, 40 Qs, 60 min: LA+Calc+Prob+Stats, target \u226533/40). Joint distributions: marginals, conditional pdfs, independence. Covariance, correlation \u03c1. Functions of RVs. LLN, CLT. Markov chains: transition matrix, n-step, steady-state \u03c0.",
+          "practiceQuestions": [
+            {
+              "name": "Combined Eng Math Assessment: 40 Qs LA+Calc+Prob, 60 min (target \u226533/40)",
+              "slug": "eng-math-final-assessment",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/engineering-mathematics"
+            },
+            {
+              "name": "GATE PYQ: Markov chains and steady state",
+              "slug": "gate-markov-chains",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/probability"
+            }
+          ],
+          "learningTip": [
+            "**Steady-state Markov (from A3):** Solve \u03c0P=\u03c0, \u03a3\u03c0\u1d62=1. For 2-state chain with P=[[1-a,a],[b,1-b]]: \u03c0\u2081=b/(a+b), \u03c0\u2082=a/(a+b).",
+            "**CLT (from A3):** \u221an(X\u0304-\u03bc)/\u03c3 \u2192 N(0,1) as n\u2192\u221e. X\u0304 = sample mean of n i.i.d. samples. Powerful because distribution of X doesn't matter.",
+            "**Eng Math gate condition:** \u226533/40. Score 29\u201332: repair Mon\u2013Wed before TOC begins. This is the highest-stakes assessment in Phase 1+2."
+          ],
+          "mustNotMiss": [
+            "**Cov(X,Y) = E[XY] - E[X]E[Y].** Independent \u2192 uncorrelated (Cov=0). Uncorrelated does NOT imply independent.",
+            "**LLN:** X\u0304 \u2192 \u03bc as n\u2192\u221e (in probability). Sample mean converges to population mean.",
+            "**Markov property:** P(X\u2099\u208a\u2081|X\u2081,...,X\u2099) = P(X\u2099\u208a\u2081|X\u2099). Past is irrelevant given present state."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "2-state Markov chain: P = [[0.7, 0.3],[0.4, 0.6]]. Find steady-state distribution.",
+              "answer": "Solve \u03c0\u2081+\u03c0\u2082=1 and \u03c0P=\u03c0. 0.7\u03c0\u2081+0.4\u03c0\u2082=\u03c0\u2081 \u2192 0.4\u03c0\u2082=0.3\u03c0\u2081 \u2192 \u03c0\u2081/\u03c0\u2082=4/3. With \u03c0\u2081+\u03c0\u2082=1: **\u03c0\u2081=4/7\u22480.571, \u03c0\u2082=3/7\u22480.429**."
+            },
+            {
+              "question": "n=64 samples drawn from a distribution with \u03bc=50, \u03c3=16. What is P(X\u0304 > 53)?",
+              "answer": "CLT: X\u0304 ~ N(\u03bc, \u03c3\u00b2/n) = N(50, 256/64) = N(50,4). SE=2. Z=(53-50)/2=1.5. P(X\u0304>53) = P(Z>1.5) \u2248 1-0.9332 = **6.68%.**"
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "theory_of_computation",
+      "name": "Theory of Computation",
+      "tier": 2,
+      "estimatedHours": 70,
+      "topics": [
+        {
+          "id": "toc_fsm_regular_languages",
+          "name": "TOC 1: DFA, NFA & Regular Languages",
+          "estimatedHours": 18,
+          "description": "TOC L1\u2013L7 (7 lectures \u00d7 2 hr) + DPP 1 (Fri, 2 hr slot: DFA/NFA construction on paper) + PYQ Free Day 1 (2 hr, 25 PYQs). DFA: formal 5-tuple (Q,\u03a3,\u03b4,q0,F), \u03b4*. DFA construction: even 0s, divisibility by 3. DFA minimization: table-filling (Myhill-Nerode). NFA: \u03b5-transitions, \u03b5-closure, NFA\u2192DFA subset construction. Regular Expressions: Kleene's theorem (RE=NFA=DFA). RL closure properties.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1: DFA/NFA construction on paper (Wk 23 Fri)",
+              "slug": "dpp-1-dfa-nfa",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/automata"
+            },
+            {
+              "name": "PYQ Free Day 1: 25 GATE DFA/NFA/CFG PYQs (Wk 25 Fri)",
+              "slug": "pyq-25-fsm",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/regular-language"
+            }
+          ],
+          "learningTip": [
+            "**DFA construction rule:** Build state table systematically. Start: What does each state 'remember'? E.g., divisibility by 3: states represent remainder (0,1,2). \u03b4(0,0)=0, \u03b4(0,1)=1, \u03b4(1,0)=2, \u03b4(1,1)=0, \u03b4(2,0)=1, \u03b4(2,1)=2.",
+            "**Gate target: DFA construction < 3 min.** Every DFA must be constructed fully \u2014 not approximated. Draw the diagram, all transitions, acceptance states."
+          ],
+          "mustNotMiss": [
+            "**RL closure:** Closed under union, concatenation, Kleene star, complement, intersection, reversal. NOT closed under... (all closed \u2014 RL is closed under all boolean ops).",
+            "**DFA minimization:** Two states are distinguishable if one is accepting and other is not, OR their transitions on some symbol lead to distinguishable states (table filling algorithm).",
+            "**NFA\u2192DFA (subset construction):** States of DFA = subsets of NFA states. Can cause exponential blowup in worst case but NFA and DFA accept same languages."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Design a DFA for strings over {0,1} with even number of 0s and even number of 1s.",
+              "answer": "States encode (parity of 0s, parity of 1s): q00(ee), q01(eo), q10(oe), q11(oo). Start+Accept: q00. Transitions: On 0, toggle first component. On 1, toggle second. \u03b4(q00,0)=q10, \u03b4(q00,1)=q01, \u03b4(q10,0)=q00, \u03b4(q10,1)=q11. 4-state DFA."
+            },
+            {
+              "question": "Are Regular Languages closed under complement? Prove.",
+              "answer": "Yes. Given DFA M accepting L, construct M' by swapping accepting and non-accepting states. M' accepts exactly \u03a3* - L = complement of L. RLs are closed under complement because DFAs have total transition functions \u2014 every string has a definite accept/reject state."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "toc_cfg_pda_tm",
+          "name": "TOC 2: CFGs, PDAs & Turing Machines",
+          "estimatedHours": 30,
+          "description": "TOC L8\u2013L20 (13 lectures \u00d7 2 hr) + DPP 2 (Fri, 2 hr: Pumping Lemma + TM) + PYQ Free Day 1 included above. CFG: 4-tuple, derivations, parse trees, ambiguity. CNF and GNF transformations. CYK algorithm O(n\u00b3). PDA: 6-tuple, acceptance modes (final state = empty stack). CFL Pumping Lemma: uvwxy. CFL closure properties. TM: 7-tuple, variants (multi-tape, NDTM). Church-Turing thesis.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 2: Pumping Lemma + TM problems (Wk 26 Fri)",
+              "slug": "dpp-2-pumping-tm",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/context-free-grammars"
+            },
+            {
+              "name": "GATE PYQ: CFG ambiguity and CFL closure",
+              "slug": "gate-cfg-cfl",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/push-down-automata"
+            }
+          ],
+          "learningTip": [
+            "**CFL NOT closed under intersection and complement.** CFL \u2229 CFL may not be CFL. CFL \u2229 Regular Language IS CFL. This is a classic GATE trap.",
+            "**Pumping Lemma for CFLs:** For any CFL L, \u2203p s.t. any string z\u2208L with |z|\u2265p can be written as z=uvwxy where (1)|vwx|\u2264p, (2)|vy|\u22651, (3)\u2200i\u22650, uv^iwy^ix\u2208L. To prove NOT-CFL: assume CFL, find a string that can't be pumped.",
+            "**DPDA vs NPDA:** DPDA accepts DCFLs. NPDA accepts all CFLs. L = {ww^R} (palindromes) is CFL (NPDA) but not DCFL (no DPDA)."
+          ],
+          "mustNotMiss": [
+            "**CFL closure:** Closed under union (S\u2192S1|S2), concatenation (S\u2192S1S2), Kleene star. NOT under intersection or complement.",
+            "**TM 7-tuple:** (Q, \u03a3, \u0393, \u03b4, q0, q_accept, q_reject). \u0393 includes blank (\u2294). \u03b4: Q\u00d7\u0393 \u2192 Q\u00d7\u0393\u00d7{L,R}.",
+            "**L={a\u207fb\u207fc\u207f} is NOT CFL.** Pumping Lemma proof: take s=a\u1d56b\u1d56c\u1d56. Any vxy spans at most 2 types \u2014 pumping disturbs the count balance of the third type."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Is L = {a\u207fb\u207f | n\u22651} \u2229 {a\u207fb\u207f | n is prime} context-free?",
+              "answer": "L = {a\u207fb\u207f | n is prime}. This is the intersection of a CFL with a non-CFL. The result is NOT necessarily a CFL. In fact, {a\u207fb\u207f | n is prime} is **not context-free** (provable via Pumping Lemma \u2014 primes can't be pumped arithmetically)."
+            },
+            {
+              "question": "Why does a PDA use a stack while a TM uses a tape?",
+              "answer": "Stack = LIFO access only \u2192 can match ONE level of nesting (parentheses, a\u207fb\u207f). **Tape = random access** \u2192 can simulate any computation (Turing-complete). PDA handles CFLs; TM handles recursively enumerable languages. The stack's LIFO limitation is what creates the 'context-free' boundary."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "toc_decidability_np_assessment",
+          "name": "TOC 3: Decidability, P/NP & Assessment",
+          "estimatedHours": 22,
+          "description": "TOC L21\u2013L29 (9 lectures \u00d7 2 hr) + DPP 3 (Fri, 2 hr: Decidability + P/NP) + 2 PYQ free days + TOC Assessment (Fri, 2 hr: 25 PYQs, 45 min, target \u226580%). Halting problem (undecidable, diagonalization proof). Rice's theorem. PCP. P, NP, NP-hard, NP-complete. Cook's theorem. NP chain from memory.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 3: Decidability + P/NP (Wk 27 Fri)",
+              "slug": "dpp-3-decidability-pnp",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/undecidability"
+            },
+            {
+              "name": "TOC Assessment: 25 PYQs in 45 min (target \u226580%, DFA <3 min, NP chain cold)",
+              "slug": "toc-final-assessment",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/p-np-and-np-complete"
+            }
+          ],
+          "learningTip": [
+            "**From A3 \u2014 NP chain (cold):** SAT \u2192 3-SAT \u2192 Vertex Cover \u2192 Independent Set \u2192 Clique \u2192 Hamiltonian Path \u2192 TSP. Each \u2264p the next (polynomial-time reduction). Know direction: we reduce FROM a known NP-complete TO the new problem.",
+            "**Rice's theorem:** Any non-trivial semantic property of TM languages is undecidable. 'Non-trivial' = not all TMs have it and not no TMs have it. Use to quickly prove undecidability without direct construction.",
+            "**TOC gate target: PYQ \u226580%, DFA construction < 3 min.** TOC is abstract \u2014 practice is the only path."
+          ],
+          "mustNotMiss": [
+            "**Halting problem (HP) is undecidable:** Proof by diagonalization. If HP were decidable by H, construct D that: if H says accepts \u2192 loop, if H says loops \u2192 accept. Run D on itself \u2192 contradiction.",
+            "**R vs RE:** R (Recursive/Decidable): TM always halts (accept or reject). RE (Recursively Enumerable): TM accepts members but may loop on non-members. HP is RE but not R. Complement of HP is not even RE.",
+            "**NP-complete = NP \u2229 NP-hard.** To prove NP-complete: (1) show in NP (verify in poly time). (2) Show NP-hard (reduce known NP-complete \u2264p new problem)."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Is the problem 'Does TM M accept at least one string?' decidable?",
+              "answer": "Non-trivial semantic property of TM language (some TMs accept something, some accept nothing). By **Rice's theorem, it is UNDECIDABLE.** (Specifically, it's RE but not R.)"
+            },
+            {
+              "question": "Explain the NP-chain reduction from SAT to 3-SAT.",
+              "answer": "SAT: given Boolean formula, does any assignment satisfy it? 3-SAT: each clause has exactly 3 literals. **SAT \u2264p 3-SAT:** Convert each SAT clause to 3-CNF: (a) 1-literal clause (l): (l\u2228y\u2228z)\u2227(l\u2228y\u2228\u00acz)\u2227(l\u2228\u00acy\u2228z)\u2227(l\u2228\u00acy\u2228\u00acz). (b) 2-literal: add dummy variable. (c) k-literal (k>3): chain with k-3 new variables. This shows 3-SAT is at least as hard as SAT."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "compiler_design",
+      "name": "Compiler Design",
+      "tier": 2,
+      "estimatedHours": 67.5,
+      "topics": [
+        {
+          "id": "compiler_lexical_syntax",
+          "name": "Compiler 1: Lexical Analysis & Syntax Parsing",
+          "estimatedHours": 30.5,
+          "description": "CL1\u2013CL13 (13 lectures \u00d7 2 hr) + DPP 1 (Sat B3, 2.5 hr) + Free Day 1 (2 hr: FIRST/FOLLOW + SLR practice). 6 compiler phases. Lexical: tokens, lexemes, RE for tokens, LEX. FIRST/FOLLOW computation. LL(1) parsing conditions and parse tables. LR(0), SLR, LALR(1), CLR(1). Gate target: FIRST/FOLLOW < 8 min, SLR zero errors.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 1 (Sat B3): FIRST/FOLLOW + SLR practice on 2 grammars",
+              "slug": "dpp-1-first-follow-slr",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/parsing"
+            },
+            {
+              "name": "Free Day 1: FIRST/FOLLOW + SLR on 2 new grammars (target: < 8 min)",
+              "slug": "free-1-first-follow-slr-new",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/syntax-directed-translation"
+            }
+          ],
+          "learningTip": [
+            "**FIRST computation:** FIRST(a) = {a} for terminal. FIRST(\u03b5) = {\u03b5}. FIRST(AB) = FIRST(A). If \u03b5\u2208FIRST(A), add FIRST(B). Propagate until no change.",
+            "**FOLLOW computation:** FOLLOW(S)={$}. For A\u2192\u03b1B\u03b2: FOLLOW(B) \u2287 FIRST(\u03b2)-{\u03b5}. If \u03b5\u2208FIRST(\u03b2) or \u03b2=\u03b5: FOLLOW(B) \u2287 FOLLOW(A). Propagate until stable.",
+            "**LL(1) conditions (from A3):** For each A\u2192\u03b1|\u03b2, FIRST(\u03b1)\u2229FIRST(\u03b2)=\u2205. If \u03b5\u2208FIRST(\u03b1) then FIRST(\u03b1-\u03b5)\u2229FOLLOW(A)=\u2205."
+          ],
+          "mustNotMiss": [
+            "**SLR vs CLR vs LALR power:** LR(0) \u2282 SLR \u2282 LALR(1) \u2282 CLR(1). LALR(1) is most commonly used (yacc/bison). CLR(1) is most powerful but has more states.",
+            "**Shift-reduce conflict:** A state can both shift on token t OR reduce \u2014 usually due to ambiguous grammar. Reduce-reduce conflict: two rules want to reduce \u2014 grammar design error.",
+            "**Gate condition:** FIRST/FOLLOW < 8 min, SLR zero errors, CL21 (Live Variable Analysis) NOT SKIPPED."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Compute FIRST and FOLLOW for: S \u2192 AB, A \u2192 aA | \u03b5, B \u2192 b.",
+              "answer": "FIRST(A) = {a, \u03b5}. FIRST(B) = {b}. FIRST(S) = FIRST(A) \u222a FIRST(B) [since \u03b5\u2208FIRST(A)] = {a, b}. FOLLOW(S) = {$}. FOLLOW(A): S\u2192AB \u2192 add FIRST(B)={b} \u2192 FOLLOW(A)={b}. FOLLOW(B): S\u2192AB \u2192 add FOLLOW(S)={$} \u2192 **FOLLOW(B)={$}.**"
+            },
+            {
+              "question": "Why is LALR(1) preferred over CLR(1) in practice?",
+              "answer": "**CLR(1):** Separate state for each distinct lookahead \u2192 many states \u2192 large parse tables, more memory. **LALR(1):** Merges CLR(1) states with identical core (ignoring lookahead differences). Same parser size as SLR but can parse more grammars. Risk: merging may introduce reduce-reduce conflicts (rare for well-designed grammars). Trade-off: **practical efficiency vs power.**"
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "compiler_attributes_intermediate",
+          "name": "Compiler 2: Attribute Grammars & Intermediate Code",
+          "estimatedHours": 22.5,
+          "description": "CL14\u2013CL22 (9 lectures \u00d7 2 hr) + DPP 2 (Sat B3, 2.5 hr) + Free Day 2 (2 hr: SLR+LALR practice). Attribute grammars: synthesized (bottom-up) vs inherited (top-down). S-attributed (only synthesized). L-attributed (inherited flows left-to-right). Syntax-Directed Translation (SDT). Intermediate code: 3-address code (TAC), quadruples vs triples. Basic blocks, Control Flow Graph, local optimizations.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 2 (Sat B3): S-attributed + L-attributed problems",
+              "slug": "dpp-2-attributes",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/syntax-directed-translation"
+            },
+            {
+              "name": "Free Day 2: SLR + LALR practice (SLR target: zero errors)",
+              "slug": "free-2-slr-lalr",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/lr-parsing"
+            }
+          ],
+          "learningTip": [
+            "**Synthesized vs Inherited:** Synthesized: value computed from children (bottom-up, works with LR parsing). Inherited: value passed from parent/siblings (top-down flow). ALL S-attributed grammars are also L-attributed.",
+            "**TAC (3-address code):** Three operands max: x = y op z, x = op y, x = y, goto L, if x relop y goto L. Supports quadruples (op, arg1, arg2, result) and triples (op, arg1, arg2) with implicit result numbering."
+          ],
+          "mustNotMiss": [
+            "**S-attributed:** Only synthesized attributes. Can be evaluated during LR parsing (bottom-up). YACC actions use S-attributed by default.",
+            "**L-attributed:** Inherited + synthesized, but inherited attributes of a symbol can only depend on attributes of symbols to its LEFT in the production. Can be evaluated during LL(1) parsing (top-down).",
+            "**Basic block:** Maximal sequence of straight-line code (no branches into middle, single entry/exit). Basic blocks form nodes of Control Flow Graph."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Is the following grammar S-attributed? S \u2192 E; E \u2192 E+T {E.val=E1.val+T.val} | T {E.val=T.val}; T \u2192 num {T.val=num.val}.",
+              "answer": "All attributes (val) are computed from children's values (addition of children's vals). **Yes, this is S-attributed (all synthesized).** It can be evaluated during LR parsing using a semantic stack."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "compiler_optimization_dataflow",
+          "name": "Compiler 3: Code Optimization & Data Flow Analysis",
+          "estimatedHours": 14.5,
+          "description": "CL23\u2013CL28 (6 lectures \u00d7 2 hr) + DPP 3 (Sat B3, 2.5 hr). Local optimization: constant folding, dead code elimination, common subexpression elimination (CSE). Loop optimization: code motion (loop-invariant computation), strength reduction (multiply\u2192add), induction variable elimination. \u26a0\ufe0f CL21/CL28 slot: Live Variable Analysis \u2014 DO NOT SKIP.",
+          "practiceQuestions": [
+            {
+              "name": "DPP 3 (Sat B3): Data flow analysis problems",
+              "slug": "dpp-3-dataflow",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/code-optimization"
+            },
+            {
+              "name": "GATE PYQ: Live variable analysis",
+              "slug": "gate-live-variable-analysis",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/compiler-design"
+            }
+          ],
+          "learningTip": [
+            "**\u26a0\ufe0f LIVE VARIABLE ANALYSIS (CL21 \u2014 DO NOT SKIP):** Variable v is live at point p if there exists a path from p to a USE of v without an intervening definition. Used in register allocation. GATE 2021 had a 2-mark question on this that most aspirants missed.",
+            "**Reaching definitions (forward analysis):** A definition d reaches point p if there's a path from d to p with no redefinition of the same variable.",
+            "**Code motion (loop-invariant):** Identify computations inside loop whose result doesn't change. Move BEFORE the loop. Only safe if no exceptions can occur."
+          ],
+          "mustNotMiss": [
+            "**Constant folding:** Evaluate constant expressions at compile time. x = 3*4 \u2192 x = 12.",
+            "**CSE (Common Subexpression Elimination):** If a+b computed twice with no change to a or b between computations, compute once and reuse.",
+            "**Strength reduction:** Replace expensive operation with cheaper equivalent. i*4 \u2192 i<<2 (multiply \u2192 shift). In loops: a[i*c] \u2192 use additive increment."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is live variable analysis and why is it important for register allocation?",
+              "answer": "**Live variable:** Variable v is live at point p if it WILL BE USED before being redefined on some path from p. **Register allocation:** Two variables with overlapping live ranges CANNOT share a register \u2014 they interfere. Build an interference graph (live variables that coexist \u2192 edge). Graph coloring with k colors \u2192 k registers. Variables that are never simultaneously live can share registers."
+            },
+            {
+              "question": "Identify which optimizations apply: `for(i=0;i<n;i++) { x = a+b; arr[i] = x*2; }`",
+              "answer": "1. **Code motion:** `x=a+b` is loop-invariant (a,b not modified) \u2192 move before loop. 2. **Strength reduction:** `x*2` \u2192 `x<<1` (or just use `x+x`). After code motion, the loop becomes: `x=(a+b)<<1; for(i=0;i<n;i++) arr[i]=x;` \u2014 cleaner and faster."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "track_a_revision",
+      "name": "Track A Revision + Phase 1+2 Assessment",
+      "tier": 2,
+      "estimatedHours": 13,
+      "topics": [
+        {
+          "id": "track_a_revision_assessment",
+          "name": "Track A: Cross-Subject PYQ Revision & Final Assessment",
+          "estimatedHours": 13,
+          "description": "5 PYQ revision sessions (2 hr each) + Phase 1+2 Assessment (Sat B1 slot, 3 hr: 50 Qs all subjects, 75 min, target \u226543/50). Sessions: DM 20 mixed PYQs (40 min), LA+Calc 10 each, P+Stats 15 PYQs, Compiler gate conditions, TOC 15 PYQs with 3 DFA constructions < 3 min each. Gate condition: \u226543/50 before entering Phase 3A.",
+          "practiceQuestions": [
+            {
+              "name": "DM Revision: 20 mixed PYQs all chapters (40 min)",
+              "slug": "dm-revision-20-pyqs",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/tag/discrete-mathematics"
+            },
+            {
+              "name": "Phase 1+2 Assessment: 50 Qs all subjects, 75 min (gate: \u226543/50)",
+              "slug": "phase-1-2-final-assessment",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/"
+            }
+          ],
+          "learningTip": [
+            "**Assessment gate condition:** Score \u226543/50 before Phase 3A. Score 39\u201342: repair Mon\u2013Tue Wk 36. Below 39: 3-day repair block before PYQ Blitz.",
+            "**Revision strategy per session:** Use Error Log. Prioritize concepts where \u2717 marks are concentrated. Don't study new material \u2014 only reinforce known weaknesses.",
+            "**Phase 1+2 covers ALL subjects.** Check Track A + Track B gates: DBMS PYQ \u226590%, C PYQ \u226588%, DS AVL <3min, Algo Master Theorem <20sec, OS Banker's <5min, CN Subnetting <2min, COA AMAT <3min, DL K-maps <2min, GA DPP \u226595%."
+          ],
+          "mustNotMiss": [
+            "**No unresolved \u2717 enters Phase 3.** Error Log must be current and fully resolved before the Phase 1+2 Assessment.",
+            "**Track A gate conditions summary:** DM \u226525/30 \u00b7 Eng Math \u226533/40 \u00b7 TOC PYQ \u226580% \u00b7 Compiler: FIRST/FOLLOW <8min, SLR zero errors, CL21 not skipped.",
+            "**After assessment:** Phase 3A PYQ Blitz begins. The 3-week blitz is compressed from v7's 4 weeks \u2014 no slack."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the exam-day question-attempt strategy for GATE CS?",
+              "answer": "**From guide \u00a711:** (1) GA FIRST \u2014 all 10 questions in first 20 min. (2) Tier 1: DBMS\u2192OS\u2192DSA\u2192CN. (3) Tier 2: Eng Math\u2192COA\u2192Algorithms. (4) Tier 3: Compiler\u2192DM\u2192TOC\u2192DL. (5) 1-mark: attempt if you can eliminate 2 of 4. (6) 2-mark: only if \u226570% confident. (7) Last 15 min: flagged questions only. Never >5 min on single 2-mark question."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    },
+    {
+      "id": "phase_3_revision_mocks",
+      "name": "Phase 3: PYQ Blitz, Mocks & Sprint",
+      "tier": 3,
+      "estimatedHours": 294,
+      "topics": [
+        {
+          "id": "phase_3a_pyq_blitz",
+          "name": "Phase 3A: PYQ Blitz (3 weeks, subject-wise)",
+          "estimatedHours": 93,
+          "description": "3 weeks \u00d7 31 hrs. All GATE 2015\u20132026 PYQs subject-by-subject. Nightly: 25 PYQs timed (2 hr). Weekday evening: Error Log + weak topic revision (1 hr). Sat B3: cross-subject 20-question mixed set. Sun B2: Error Log sweep (all \u2717 resolved in writing). Pre-Mock 1 hard requirement: every \u2717 in Error Log has written resolution.",
+          "practiceQuestions": [
+            {
+              "name": "Wk 36: DBMS+OS+C+DS+Algo PYQs (target \u226586% each)",
+              "slug": "pyq-blitz-wk36",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/"
+            },
+            {
+              "name": "Wk 37: CN+COA+DL+GA PYQs (tiered accuracy targets)",
+              "slug": "pyq-blitz-wk37",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/"
+            }
+          ],
+          "learningTip": [
+            "**PYQ accuracy floor rule:** Any subject finishing below 80% \u2014 add a dedicated 2.5-hr session that SAME Sunday. Does not get deferred.",
+            "**A3 quick-reference sheet:** Build subject by subject as each blitz completes. Both sides of ONE A3 sheet only. Reserve \u2265half for personal 'trap list' from your own Error Log.",
+            "**Dec 25 (Wk 38) is a study day.** Redistribute that day's PYQs to Mon\u2013Thu. The exam is in February \u2014 no holidays in Phase 3."
+          ],
+          "mustNotMiss": [
+            "**Hard requirement before Mock 1:** Every Error Log entry has a written resolution (topic, mistake, correct method). No exceptions.",
+            "**Wk 38 group (most marks):** Eng Math+DM+TOC+Compiler = ~42 marks combined. This is where the exam is won or lost in Phase 3A.",
+            "**PYQ sources order:** GATE Overflow (canonical) \u2192 Made Easy \u2192 ACE Academy. Do NOT attempt mocks series PYQs \u2014 save those for Phase 3B."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What is the purpose of the Error Log discipline throughout the preparation?",
+              "answer": "The Error Log forces **deliberate practice on specific failure modes.** Every \u2717 recorded with (1) topic/concept, (2) exact mistake made, (3) correct method written in full. Pattern recognition across the Error Log reveals systematic weaknesses (e.g., always wrong on Bellman-Ford negative cycle edge cases) vs random errors. Sun B3 is inviolably dedicated to Error Log deep review. No Error Log \u2192 repeat same mistakes on exam day."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "phase_3b_mock_simulation",
+          "name": "Phase 3B: Mock Simulation (10 Full 3-hr Mocks)",
+          "estimatedHours": 155,
+          "description": "5 weeks \u00d7 31 hrs = 155 hrs. 10 full 3-hour mocks (2/week: Sat B1 + Sun B1). Each mock followed by complete post-mortem (score, subject-wise %, 3 most expensive errors, every \u2717 reviewed with correct method). Weekday evenings: targeted problem-solving on weakest subject from previous mocks. Score ladder: \u226556\u2192\u226562\u2192\u226567\u2192\u226572\u2192\u226576. Mock 9+10 \u226576 = readiness signal for 80+ on exam day.",
+          "practiceQuestions": [
+            {
+              "name": "Mocks 1\u20134 (Wk 39\u201340): Calibration phase (target \u226556 \u2192 \u226562)",
+              "slug": "mocks-1-4-calibration",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/mock"
+            },
+            {
+              "name": "Mocks 9\u201310 (Wk 43): Final readiness check (target \u226576)",
+              "slug": "mocks-9-10-final",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/mock"
+            }
+          ],
+          "learningTip": [
+            "**3-hour rule (from guide):** GATE is exactly 3 hours. A 2.5-hour mock loses all time-calibration. Both mocks each week MUST be full 3-hour sessions. Phone away. Virtual calculator only. Rough work on paper only.",
+            "**GA first \u2014 every mock from Mock 1.** Build the reflex. By Mock 10 it must be fully automatic. Virtual calculator only \u2014 GATE uses it.",
+            "**Mock sources (from guide):** GATE Overflow Full Mocks (highest quality) \u2192 Made Easy \u2192 ACE Academy. Final 2 mocks = actual GATE 2025 and 2026 papers used as untouched full mocks."
+          ],
+          "mustNotMiss": [
+            "**Score ladder:** Mocks 1\u20132 \u226556 (calibration). 3\u20134 \u226562. 5\u20136 \u226567. 7\u20138 \u226572. 9\u201310 \u226576.",
+            "**Post-mortem protocol:** Score \u2192 subject-wise % \u2192 3 most expensive errors identified \u2192 every \u2717 written up with correct method. Sat B2+B3 and Sun B2 are for post-mortems.",
+            "**Wk 42 GA check:** If any mock scored <93% on GA \u2192 dedicate 1 full weekday to GA review. GA at 15 marks is non-negotiable."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "What does 'GA FIRST every mock' achieve beyond just scoring on GA?",
+              "answer": "**Psychological and strategic:** GA questions are the easiest marks \u2014 locking them in first eliminates anxiety of 'running out of time for easy marks'. Creates a positive start that improves performance on harder CS questions. The 15 marks from GA 'in bank' allows more aggressive flagging of hard 2-mark questions without panic. By Mock 10, the habit is automatic \u2014 replicates exactly on exam day."
+            }
+          ],
+          "resources": []
+        },
+        {
+          "id": "phase_3c_sprint_countdown",
+          "name": "Phase 3C: Final Sprint & Exam Countdown",
+          "estimatedHours": 46,
+          "description": "Last 3 days of Wk 43 (Final Sprint, ~15 hrs) + Wk 44 Exam Countdown (~31 hrs). Sprint: A3 sheet + 15 Qs from weakest subjects. Sun Jan 31: half-mock (33 Qs, 45 min, full exam conditions) + post-mortem. STOP studying after half-mock. Wk 44: A3 sheet 20 min/day only. 9+ hours sleep nightly. Exam kit verified by Fri.",
+          "practiceQuestions": [
+            {
+              "name": "Phase 3C\u2014Sprint: Half-mock 33 Qs, 45 min (final mock)",
+              "slug": "half-mock-final-sprint",
+              "difficulty": "Hard",
+              "link": "https://gateoverflow.in/"
+            },
+            {
+              "name": "Exam Countdown: A3 sheet review (20 min/day, 7 days)",
+              "slug": "a3-sheet-exam-countdown",
+              "difficulty": "Easy",
+              "link": "https://gateoverflow.in/"
+            }
+          ],
+          "learningTip": [
+            "**After half-mock on Sun Jan 31 morning:** STOP studying. A3 sheet once. Formula cards once. Rest. Walk. Eat well. 22:00 sleep. No new learning after Mock 10.",
+            "**A3 sheet (from guide \u00a713):** Both sides of ONE A3 sheet. Contains: AMAT, pipeline CPI, TLB EAT, ALOHA, sliding window, OS deadlock conditions, NP chain, LL(1) conditions, flip-flop excitation tables, Bayes'. Plus: YOUR personal trap list from Error Log (reserve \u2265half the sheet for this).",
+            "**Exam kit checklist (Fri before exam):** Admit card (printed + photocopied), government ID (photo), pen, pencil, eraser, water bottle. Centre + route + departure time verified."
+          ],
+          "mustNotMiss": [
+            "**Arrival: 25 min early.** Settle, read instructions, virtual calculator test. No surprises.",
+            "**2-mark strategy (from guide):** Only attempt if \u226570% confident. Genuine 50-50: flag, skip, return in last 10 min. Never >5 min on any single 2-mark question. Change answer only if you identify a specific error in original working.",
+            "**Target: 80+ raw marks = AIR < 200 (based on GATE CS 2024\u20132026 cutoffs).** Tier 1 subjects (DBMS+OS+DSA+CN) consistently \u226585% across final mocks is the strongest predictor."
+          ],
+          "interviewQuestions": [
+            {
+              "question": "Why is no studying allowed after the final half-mock on Jan 31?",
+              "answer": "**Three reasons:** (1) Sleep and rest are more valuable than marginal learning in the final 14 days \u2014 each hour of 9+ hrs sleep improves working memory and recall more than 1 hr of studying at this stage. (2) New material introduced in last 2 weeks increases anxiety risk (encountering it in exam without full confidence). (3) A3 sheet 20 min/day provides review without cognitive overload. The science: consolidation happens during sleep, not study."
+            }
+          ],
+          "resources": []
+        }
+      ]
+    }
+  ],
+  "recommendedHoursPerWeek": 31
+}

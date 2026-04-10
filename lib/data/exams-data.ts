@@ -20,6 +20,7 @@ import systemsDsa from './exams/systems-dsa.json';
 import hldSystemDesign from './exams/hld-system-design.json';
 import lldLowLevelDesign from './exams/lld-low-level-design.json';
 import databaseSql from './exams/databases-sql-by-rahul-grover.json';
+import gate2027CseGuide from './exams/gate-2027-cse-guide.json';
 
 /**
  * Array of predefined goals with complete syllabus data
@@ -50,6 +51,7 @@ export const EXAMS_DATA: Exam[] = [
   hldSystemDesign as Exam,
   lldLowLevelDesign as Exam,
   databaseSql as Exam,
+  gate2027CseGuide as Exam,
 ];
 
 /**
