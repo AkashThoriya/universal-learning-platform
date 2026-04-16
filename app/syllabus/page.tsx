@@ -97,6 +97,14 @@ export default function SyllabusPage() {
   const [userProfile, setUserProfile] = useState<any>(null); // Using any temporarily to avoid Import hell, but ideally User type
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
   const [masteryFilter, setMasteryFilter] = useState<string>('all');
   const [hideMastered, setHideMastered] = useState(true);
   const [expandedSubjects, setExpandedSubjects] = useState<Set<string>>(new Set());
@@ -423,11 +431,11 @@ export default function SyllabusPage() {
     return map;
   }, [progress]);
 
-  const getTopicProgress = (topicId: string) => {
+  const getTopicProgress = useCallback((topicId: string) => {
     return progressMap.get(topicId);
-  };
+  }, [progressMap]);
 
-  const getSubjectMastery = (subject: SyllabusSubject) => {
+  const getSubjectMastery = useCallback((subject: SyllabusSubject) => {
     if (!subject.topics || subject.topics.length === 0) {
       return 0;
     }
@@ -438,43 +446,43 @@ export default function SyllabusPage() {
     }, 0);
 
     return Math.round(totalMastery / subject.topics.length);
-  };
+  }, [getTopicProgress]);
 
-  const filteredSyllabus = syllabus.filter(subject => {
-    // Search filter
-    const matchesSearch =
-      searchQuery === '' ||
-      subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      subject.topics.some(topic => topic.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredSyllabus = useMemo(() => {
+    return syllabus.filter(subject => {
+      // Search filter
+      const matchesSearch =
+        debouncedSearchQuery === '' ||
+        subject.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        subject.topics.some(topic => topic.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
 
-    // Mastery filter
-    let matchesMastery = true;
-    if (masteryFilter !== 'all') {
-      const subjectMastery = getSubjectMastery(subject);
-      switch (masteryFilter) {
-        case 'low':
-          matchesMastery = subjectMastery < MEDIUM_MASTERY_THRESHOLD;
-          break;
-        case 'medium':
-          matchesMastery = subjectMastery >= MEDIUM_MASTERY_THRESHOLD && subjectMastery < MASTERY_THRESHOLD;
-          break;
-        case 'high':
-          matchesMastery = subjectMastery >= MASTERY_THRESHOLD;
-          break;
+      // Mastery filter
+      let matchesMastery = true;
+      if (masteryFilter !== 'all') {
+        const subjectMastery = getSubjectMastery(subject);
+        switch (masteryFilter) {
+          case 'low':
+            matchesMastery = subjectMastery < MEDIUM_MASTERY_THRESHOLD;
+            break;
+          case 'medium':
+            matchesMastery = subjectMastery >= MEDIUM_MASTERY_THRESHOLD && subjectMastery < MASTERY_THRESHOLD;
+            break;
+          case 'high':
+            matchesMastery = subjectMastery >= MASTERY_THRESHOLD;
+            break;
+        }
       }
-    }
 
+      // Hide Mastered filter
+      let matchesHideMastered = true;
+      if (hideMastered) {
+        const subjectMastery = getSubjectMastery(subject);
+        matchesHideMastered = subjectMastery < 100;
+      }
 
-
-    // Hide Mastered filter
-    let matchesHideMastered = true;
-    if (hideMastered) {
-      const subjectMastery = getSubjectMastery(subject);
-      matchesHideMastered = subjectMastery < 100;
-    }
-
-    return matchesSearch && matchesMastery && matchesHideMastered;
-  }); // Keep natural order - first subjects appear at the top
+      return matchesSearch && matchesMastery && matchesHideMastered;
+    });
+  }, [syllabus, debouncedSearchQuery, masteryFilter, hideMastered, getSubjectMastery]); // Keep natural order - first subjects appear at the top
 
   // Calculate completed topics count for Strategy Insights
   const completedTopicsCount = progress.filter(p => p.status === 'completed' || p.status === 'mastered').length;

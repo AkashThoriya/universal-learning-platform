@@ -1005,8 +1005,8 @@ export default function OnboardingSetupPage() {
                   : Math.round(((form.data.preferences?.dailyStudyGoalMinutes || 60) * 7) / 60),
                 activeDays: [1, 2, 3, 4, 5, 6, 0], // Default to all days active
                 useWeekendSchedule: form.data.preferences?.useWeekendSchedule || false,
-                weekdayStudyMinutes: form.data.preferences?.weekdayStudyMinutes,
-                weekendStudyMinutes: form.data.preferences?.weekendStudyMinutes,
+                ...(form.data.preferences?.weekdayStudyMinutes !== undefined ? { weekdayStudyMinutes: form.data.preferences.weekdayStudyMinutes } : {}),
+                ...(form.data.preferences?.weekendStudyMinutes !== undefined ? { weekendStudyMinutes: form.data.preferences.weekendStudyMinutes } : {}),
                 notificationsEnabled: true,
                 preferredDifficulty: 'intermediate',
               };
