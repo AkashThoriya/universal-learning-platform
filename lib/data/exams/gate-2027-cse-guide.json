@@ -1,7 +1,7 @@
 {
   "id": "gate_2027_cse_guide",
   "name": "GATE 2027 CSE — Complete Preparation Guide",
-  "description": "A complete 865-hour GATE CSE 2027 preparation plan covering all 15 subjects across 452 lectures and 79 DPPs. Enforces a strategic E-E-M-E-H-E-M-H-M-M-H-M-E-M-H difficulty rhythm. Track A (DM, LA, Calc, Prob, TOC, Compiler) at 2 hrs/lecture; Track B (DBMS, OS, C, DS, CN, COA, DL, GA) at 1.5 hrs/lecture. All DPPs and free-day PYQ sessions at 1 hr each. Target: AIR < 200, 80+ raw marks.",
+  "description": "A complete 865-hour GATE CSE 2027 preparation plan covering all 15 subjects across 450 lecture sessions, 96 DPPs, and 19 assessment days. Enforces a strategic E-E-M-E-H-E-M-H-M-M-H-M-E-M-H difficulty rhythm. Track A (DM, LA, Calc, Prob, TOC, Compiler) at 2 hrs/session; Track B (DBMS, OS, C, DS, CN, COA, Algo, DL, GA) at 1.5 hrs/session. All DPPs and free-day PYQ sessions at 1 hr each. Target: AIR < 200, 80+ raw marks.",
   "category": "Engineering",
   "totalEstimatedHours": 865,
   "prerequisites": [
