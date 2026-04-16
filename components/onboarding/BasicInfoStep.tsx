@@ -234,6 +234,13 @@ export function BasicInfoStep({
     return showAllExams ? filteredExams : filteredExams.slice(0, 12);
   }, [searchQuery, activeCategory, filteredExams, examsByCategory, showAllExams]);
 
+  // Track the absolute total number of exams applicable to the current view
+  const currentTotalExams = useMemo(() => {
+    if (searchQuery) return filteredExams.length;
+    if (activeCategory && examsByCategory[activeCategory]) return examsByCategory[activeCategory].length;
+    return filteredExams.length;
+  }, [searchQuery, activeCategory, filteredExams, examsByCategory]);
+
   // Enhanced custom goal handler
   const handleCustomExam = useCallback(() => {
     try {
@@ -392,7 +399,7 @@ export function BasicInfoStep({
                     >
                       <category.icon className="h-4 w-4 mr-2" />
                       {category.name}
-                      <span className="ml-1 text-xs">({category.count})</span>
+                      <span className="ml-1 text-xs">({examsByCategory[category.id]?.length || 0})</span>
                     </Button>
                   )
                 )}
@@ -469,9 +476,9 @@ export function BasicInfoStep({
             </div>
 
             {/* Show More Button */}
-            {!showAllExams && displayExams.length < filteredExams.length && (
+            {!showAllExams && displayExams.length < currentTotalExams && (
               <Button variant="outline" onClick={() => setShowAllExams(true)} className="w-full">
-                Show {filteredExams.length - displayExams.length} more courses
+                Show {currentTotalExams - displayExams.length} more courses
               </Button>
             )}
 
