@@ -174,7 +174,7 @@ export const POPULAR_EXAM_CATEGORIES: readonly ExamCategory[] = [
     id: 'engineering',
     name: 'Engineering',
     icon: BookOpen,
-    count: 2,
+    count: 3,
     color: 'bg-orange-50 text-orange-700 border-orange-200',
     description: 'JEE, GATE, and technical competitions',
   },

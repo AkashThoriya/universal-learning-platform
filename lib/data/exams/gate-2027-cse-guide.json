@@ -2,7 +2,7 @@
   "id": "gate_2027_cse_guide",
   "name": "GATE 2027 CSE — Complete Preparation Guide",
   "description": "A rigorous 44-week, 1,341-hour dual-track preparation plan for GATE CSE 2027. Track A (21:30–23:30 weekdays) covers 156 lectures across Engineering Mathematics and Theory subjects. Track B (20:30–21:30 weekdays + full weekends) covers ~296 lectures across Core CS subjects with 79 DPPs. Includes 17 Track A DPPs, 5 subject assessments, and 10 full 3-hour mock exams. Target: AIR < 200, 80+ raw marks.",
-  "category": "GATE CSE",
+  "category": "Engineering",
   "totalEstimatedHours": 1599.5,
   "prerequisites": [
     "B.Tech CS/IT or equivalent undergraduate background",
