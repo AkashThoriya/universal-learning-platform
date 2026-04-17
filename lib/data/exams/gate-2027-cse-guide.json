@@ -1,9 +1,9 @@
 {
   "id": "gate_2027_cse_guide",
   "name": "GATE 2027 CSE — Complete Preparation Guide",
-  "description": "A complete 865-hour GATE CSE 2027 preparation plan covering all 15 subjects across 450 lecture sessions, 96 DPPs, and 19 assessment days. Enforces a strategic E-E-M-E-H-E-M-H-M-M-H-M-E-M-H difficulty rhythm. Track A (DM, LA, Calc, Prob, TOC, Compiler) at 2 hrs/session; Track B (DBMS, OS, C, DS, CN, COA, Algo, DL, GA) at 1.5 hrs/session. All DPPs and free-day PYQ sessions at 1 hr each. Target: AIR < 200, 80+ raw marks.",
+  "description": "A complete 1200-hour+ GATE CSE 2027 preparation plan covering all 15 subjects across 452 lectures and 99 DPPs. Enforces a strategic E-E-M-E-H-E-M-H-M-M-H-M-E-M-H difficulty rhythm. Every lecture = 2h, every DPP = 1h. Target: AIR < 200.",
   "category": "Engineering",
-  "totalEstimatedHours": 865,
+  "totalEstimatedHours": 1241.5,
   "prerequisites": [
     "B.Tech CS/IT or equivalent undergraduate background",
     "Basic programming knowledge (C language essential)",
@@ -113,176 +113,141 @@
   "defaultSyllabus": [
     {
       "id": "dbms",
-      "name": "DBMS",
+      "name": "Database Management System",
       "tier": 1,
       "topics": [
         {
-          "id": "dbms_l01",
-          "name": "ER model — entities (strong vs weak), attributes (simple/composite/multivalued/derived)",
-          "estimatedHours": 1.5
+          "id": "dbms_ch01_l1",
+          "name": "CH01: DBMS — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "dbms_l02",
-          "name": "ER model — relationships (cardinality 1:1/1:N/M:N, participation total/partial)",
-          "estimatedHours": 1.5
+          "id": "dbms_ch01_l2",
+          "name": "CH01: DBMS — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "dbms_l03",
-          "name": "Translate 2 ER diagrams to relational schema",
-          "estimatedHours": 1.5
+          "id": "dbms_ch01_l3",
+          "name": "CH01: DBMS — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "dbms_l04",
-          "name": "1NF (atomic, no repeating groups); 2NF (no partial dependency on any proper subset of composite key)",
-          "estimatedHours": 1.5
+          "id": "dbms_ch01_l4",
+          "name": "CH01: DBMS — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "dbms_l05",
-          "name": "3NF (no transitive dependency: non-prime depends on non-prime through non-prime)",
-          "estimatedHours": 1.5
+          "id": "dbms_twt1",
+          "name": "DBMS Topic Wise Test 1 — Normalization",
+          "estimatedHours": 0.75
         },
         {
-          "id": "dbms_l06",
-          "name": "BCNF (every determinant is a superkey — BCNF ⊂ 3NF, may lose dependency preservation)",
-          "estimatedHours": 1.5
+          "id": "dbms_ch01_l5",
+          "name": "CH01: DBMS — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "dbms_l07",
-          "name": "Lossless join test: R1∩R2 → R1 or R1∩R2 → R2",
-          "estimatedHours": 1.5
+          "id": "dbms_ch01_l6",
+          "name": "CH01: DBMS — Lecture 6",
+          "estimatedHours": 2
         },
         {
-          "id": "dbms_dpp1",
-          "name": "DPP 1 — 10 normalization PYQs on paper",
+          "id": "dbms_ch01_l7",
+          "name": "CH01: DBMS — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_twt2",
+          "name": "DBMS Topic Wise Test 2 — ER Model, Integrity Constraints",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "dbms_ch01_l8",
+          "name": "CH01: DBMS — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_ch01_l9",
+          "name": "CH01: DBMS — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_ch01_l10",
+          "name": "CH01: DBMS — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_twt3",
+          "name": "DBMS Topic Wise Test 3 — Queries, SQL, TRC, Relational Algebra",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "dbms_ch01_l11",
+          "name": "CH01: DBMS — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_ch01_l12",
+          "name": "CH01: DBMS — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_ch01_l13",
+          "name": "CH01: DBMS — Lecture 13",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_twt4",
+          "name": "DBMS Topic Wise Test 4 — Indexing, B Tree, B+ Tree",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "dbms_ch01_l14",
+          "name": "CH01: DBMS — Lecture 14",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_ch01_l15",
+          "name": "CH01: DBMS — Lecture 15",
+          "estimatedHours": 2
+        },
+        {
+          "id": "dbms_ch01_dpp1",
+          "name": "CH01: DBMS — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dbms_l08",
-          "name": "Relational algebra: σ (select rows), π (project columns), × (Cartesian product)",
-          "estimatedHours": 1.5
+          "id": "dbms_twt5",
+          "name": "DBMS Topic Wise Test 5 — Transaction Management",
+          "estimatedHours": 0.75
         },
         {
-          "id": "dbms_l09",
-          "name": "Relational algebra: ⋈ (natural join = ×+rename+π), ⋈θ (theta join), ÷ (division for 'for all' queries)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l10",
-          "name": "SQL: SELECT/FROM/WHERE, GROUP BY/HAVING, all join types (INNER/LEFT/RIGHT/FULL OUTER/NATURAL/CROSS)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l11",
-          "name": "SQL: aggregate functions, correlated vs non-correlated subqueries, EXISTS/NOT EXISTS",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l12",
-          "name": "Transactions: ACID properties; Serializability: conflict-equivalent (same conflicting pairs, same order)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l13",
-          "name": "Precedence graph (cycle → not conflict-serializable); View-equivalence",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_dpp2",
-          "name": "DPP 2 — 10 transaction + SQL PYQs on paper",
+          "id": "dbms_ch01_dpp2",
+          "name": "CH01: DBMS — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "dbms_l14",
-          "name": "2-Phase Locking: growing phase (acquire only), shrinking phase (release only)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l15",
-          "name": "Strict 2PL (hold all locks until commit — prevents dirty reads); Conservative 2PL (acquire all at start — no deadlock)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l16",
-          "name": "Indexing: B+ tree (all records in leaves, leaves linked, internal nodes have keys only)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l17",
-          "name": "Dense vs sparse index, multilevel indexing",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l18",
-          "name": "All GATE DBMS PYQs 2015–2026 timed 55 min — Part 1",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l19",
-          "name": "All GATE DBMS PYQs 2015–2026 timed 55 min — Part 2; Error Log",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_dpp3",
-          "name": "DPP 3 — Final DBMS DPP on paper",
+          "id": "dbms_ch01_dpp3",
+          "name": "CH01: DBMS — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "dbms_l20",
-          "name": "DBMS Lecture 20",
+          "id": "dbms_swt1",
+          "name": "DBMS Subject Wise Test 1 — Complete Database Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "dbms_l21",
-          "name": "DBMS Lecture 21",
+          "id": "dbms_swt2",
+          "name": "DBMS Subject Wise Test 2 — Complete Database Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "dbms_l22",
-          "name": "DBMS Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l23",
-          "name": "DBMS Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l24",
-          "name": "DBMS Lecture 24",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l25",
-          "name": "DBMS Lecture 25",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l26",
-          "name": "DBMS Lecture 26",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l27",
-          "name": "DBMS Lecture 27",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l28",
-          "name": "DBMS Lecture 28",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l29",
-          "name": "DBMS Lecture 29",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dbms_l30",
-          "name": "DBMS Lecture 30",
+          "id": "dbms_swt3",
+          "name": "DBMS Subject Wise Test 3 — Complete Database Syllabus",
           "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 48
+      "estimatedHours": 41.25
     },
     {
       "id": "operating_systems",
@@ -290,267 +255,227 @@
       "tier": 1,
       "topics": [
         {
-          "id": "os_l01",
-          "name": "Process states: new→ready→running→waiting→terminated (all transitions); PCB: PID, state, PC, registers, memory maps, open files",
-          "estimatedHours": 1.5
+          "id": "operating_systems_ch01_l1",
+          "name": "CH01: Basics of OS — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "os_l02",
-          "name": "CPU scheduling — FCFS Gantt chart: P1(0,10) P2(1,1) P3(2,2) P4(3,1) P5(4,5)",
-          "estimatedHours": 1.5
+          "id": "operating_systems_ch02_l1",
+          "name": "CH02: Process Management — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "os_l03",
-          "name": "CPU scheduling — SJF and SRTF Gantt charts on same workload",
-          "estimatedHours": 1.5
+          "id": "operating_systems_ch02_l2",
+          "name": "CH02: Process Management — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "os_l04",
-          "name": "CPU scheduling — Round Robin (Quantum=3) and Priority scheduling Gantt charts",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l05",
-          "name": "Calculate avg waiting time and avg turnaround for all 5 algorithms",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_dpp1",
-          "name": "DPP 1 — CPU Scheduling Gantt charts on paper",
+          "id": "operating_systems_ch02_dpp1",
+          "name": "CH02: Process Management — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "os_dpp2",
-          "name": "DPP 2 — Avg waiting time / turnaround calculations",
+          "id": "operating_systems_ch03_l1",
+          "name": "CH03: CPU Scheduling — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch03_l2",
+          "name": "CH03: CPU Scheduling — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch03_l3",
+          "name": "CH03: CPU Scheduling — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch03_l4",
+          "name": "CH03: CPU Scheduling — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_twt1",
+          "name": "OS Topic Wise Test 1 — Scheduling",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "operating_systems_ch03_l5",
+          "name": "CH03: CPU Scheduling — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch03_l6",
+          "name": "CH03: CPU Scheduling — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch03_dpp1",
+          "name": "CH03: CPU Scheduling — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "os_dpp3",
-          "name": "DPP 3 — Mixed CPU Scheduling problems",
+          "id": "operating_systems_ch04_l1",
+          "name": "CH04: Multithreading — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_l1",
+          "name": "CH05: Process Synchronization — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_l2",
+          "name": "CH05: Process Synchronization — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_l3",
+          "name": "CH05: Process Synchronization — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_twt2",
+          "name": "OS Topic Wise Test 2 — Synchronisation, Deadlock",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "operating_systems_ch05_l4",
+          "name": "CH05: Process Synchronization — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_l5",
+          "name": "CH05: Process Synchronization — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_l6",
+          "name": "CH05: Process Synchronization — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_l7",
+          "name": "CH05: Process Synchronization — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch05_dpp1",
+          "name": "CH05: Process Synchronization — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "os_l06",
-          "name": "Deadlock 4 necessary conditions: (1) Mutual Exclusion, (2) Hold and Wait, (3) No Preemption, (4) Circular Wait",
-          "estimatedHours": 1.5
+          "id": "operating_systems_ch06_l1",
+          "name": "CH06: Deadlock — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "os_l07",
-          "name": "RAG: single-instance (cycle ↔ deadlock); multi-instance (cycle necessary not sufficient)",
-          "estimatedHours": 1.5
+          "id": "operating_systems_ch06_l2",
+          "name": "CH06: Deadlock — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "os_l08",
-          "name": "Banker's safety check: find process with Need≤Available, run it, add Allocation to Available, repeat. Work: 3 resources (A=10,B=5,C=7), 5 processes — find safe sequence",
-          "estimatedHours": 1.5
+          "id": "operating_systems_ch06_l3",
+          "name": "CH06: Deadlock — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "os_l09",
-          "name": "Banker's request: (1) Request≤Need, (2) Request≤Available, (3) tentative allocate, (4) safety check → grant or rollback",
-          "estimatedHours": 1.5
+          "id": "operating_systems_twt3",
+          "name": "OS Topic Wise Test 3 — Memory Management",
+          "estimatedHours": 0.75
         },
         {
-          "id": "os_l10",
-          "name": "Paging EAT: no TLB = 2×t_m; with TLB: h×t_m+(1−h)×(t_m+t_p). Solve 5 EAT numericals",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l11",
-          "name": "Page replacement: FIFO — Belady's anomaly (demonstrate on 1,2,3,4,1,2,5,1,2,3,4,5 with 3 vs 4 frames)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l12",
-          "name": "Page replacement: LRU and OPT algorithms",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_dpp4",
-          "name": "DPP 4 — Deadlock conditions and RAG problems",
+          "id": "operating_systems_ch06_dpp1",
+          "name": "CH06: Deadlock — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "os_dpp5",
-          "name": "DPP 5 — Banker's Algorithm problems on paper",
+          "id": "operating_systems_ch07_l1",
+          "name": "CH07: Memory Management — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch07_l2",
+          "name": "CH07: Memory Management — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch07_l3",
+          "name": "CH07: Memory Management — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch07_l4",
+          "name": "CH07: Memory Management — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch07_l5",
+          "name": "CH07: Memory Management — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch07_l6",
+          "name": "CH07: Memory Management — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_twt4",
+          "name": "OS Topic Wise Test 4 — File System, Fork, System Calls",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "operating_systems_ch07_l7",
+          "name": "CH07: Memory Management — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch07_dpp1",
+          "name": "CH07: Memory Management — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "os_dpp6",
-          "name": "DPP 6 — Paging EAT calculations",
+          "id": "operating_systems_ch07_dpp2",
+          "name": "CH07: Memory Management — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "os_dpp7",
-          "name": "DPP 7 — Page replacement FIFO/LRU/OPT on paper",
+          "id": "operating_systems_ch08_l1",
+          "name": "CH08: File System — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch08_l2",
+          "name": "CH08: File System — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch09_l1",
+          "name": "CH09: Disk Scheduling Algorithm — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "operating_systems_ch09_dpp1",
+          "name": "CH09: Disk Scheduling Algorithm — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "os_l13",
-          "name": "Semaphores: binary (mutex) vs counting. P(s): s>0→s-- else block. V(s): s++, unblock one waiter",
+          "id": "operating_systems_swt1",
+          "name": "OS Subject Wise Test 1 — Complete Operating Systems Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "os_l14",
-          "name": "Monitor: mutex + condition variables. wait(c): release mutex, sleep. signal(c): wake one waiter",
+          "id": "operating_systems_swt2",
+          "name": "OS Subject Wise Test 2 — Complete Operating Systems Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "os_l15",
-          "name": "Classical problems: producer-consumer (mutex + empty=N + full=0), readers-writers (first and second variants)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l16",
-          "name": "All GATE OS PYQs 2015–2026 timed 60 min; Error Log",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_dpp8",
-          "name": "DPP 8 — Semaphores and concurrency problems",
-          "estimatedHours": 1
-        },
-        {
-          "id": "os_l17",
-          "name": "OS Lecture 17",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l18",
-          "name": "OS Lecture 18",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l19",
-          "name": "OS Lecture 19",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l20",
-          "name": "OS Lecture 20",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l21",
-          "name": "OS Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l22",
-          "name": "OS Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l23",
-          "name": "OS Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l24",
-          "name": "OS Lecture 24",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l25",
-          "name": "OS Lecture 25",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l26",
-          "name": "OS Lecture 26",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l27",
-          "name": "OS Lecture 27",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l28",
-          "name": "OS Lecture 28",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l29",
-          "name": "OS Lecture 29",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l30",
-          "name": "OS Lecture 30",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l31",
-          "name": "OS Lecture 31",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l32",
-          "name": "OS Lecture 32",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l33",
-          "name": "OS Lecture 33",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l34",
-          "name": "OS Lecture 34",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l35",
-          "name": "OS Lecture 35",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l36",
-          "name": "OS Lecture 36",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l37",
-          "name": "OS Lecture 37",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l38",
-          "name": "OS Lecture 38",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l39",
-          "name": "OS Lecture 39",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l40",
-          "name": "OS Lecture 40",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l41",
-          "name": "OS Lecture 41",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l42",
-          "name": "OS Lecture 42",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l43",
-          "name": "OS Lecture 43",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "os_l44",
-          "name": "OS Lecture 44",
+          "id": "operating_systems_swt3",
+          "name": "OS Subject Wise Test 3 — Complete Operating Systems Syllabus",
           "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 74
+      "estimatedHours": 74.5
     },
     {
       "id": "c_programming",
@@ -558,192 +483,202 @@
       "tier": 2,
       "topics": [
         {
-          "id": "c_l01",
-          "name": "Pointer declarations: int *p, int **p, int (*fp)(int), int *a[5] vs int (*a)[5]; pointer arithmetic: p+1 = p + sizeof(*p)",
-          "estimatedHours": 1.5
+          "id": "c_programming_ch01_l1",
+          "name": "CH01: Data Types and Operator — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "c_l02",
-          "name": "void* requires cast; NULL dereference is UB; function pointers",
-          "estimatedHours": 1.5
+          "id": "c_programming_ch01_l2",
+          "name": "CH01: Data Types and Operator — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "c_l03",
-          "name": "Storage classes: auto (stack, uninitialised), static (persists across calls), extern (defined elsewhere), register (hint only, can't take address)",
-          "estimatedHours": 1.5
+          "id": "c_programming_ch01_l3",
+          "name": "CH01: Data Types and Operator — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "c_l04",
-          "name": "UB: read before init, signed overflow, double-free, access after free, strict aliasing",
-          "estimatedHours": 1.5
+          "id": "c_programming_ch01_l4",
+          "name": "CH01: Data Types and Operator — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "c_l05",
-          "name": "Struct padding: members aligned to their size; struct size rounds up to largest member's alignment",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l06",
-          "name": "Union: all members share starting address, last written member valid to read; sizeof(array) vs sizeof(pointer)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l07",
-          "name": "Bitwise: x&(x−1) clears lowest set bit, x|(x+1) sets lowest clear bit; Macro pitfalls: SQ(2+3)=11 not 25 with #define SQ(x) x*x",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_dpp01",
-          "name": "DPP 1 — Output prediction: trace program on paper",
+          "id": "c_programming_ch01_dpp1",
+          "name": "CH01: Data Types and Operator — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp02",
-          "name": "DPP 2 — Output prediction: trace program on paper",
+          "id": "c_programming_ch01_dpp2",
+          "name": "CH01: Data Types and Operator — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp03",
-          "name": "DPP 3 — Output prediction: trace program on paper",
+          "id": "c_programming_ch01_dpp3",
+          "name": "CH01: Data Types and Operator — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp04",
-          "name": "DPP 4 — Output prediction: trace program on paper",
+          "id": "c_programming_ch02_l1",
+          "name": "CH02: Control Flow Statements — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch02_l2",
+          "name": "CH02: Control Flow Statements — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_twt1",
+          "name": "C Programming Topic Wise Test 1 — Number Representation, Control Statements, Operators",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "c_programming_ch02_l3",
+          "name": "CH02: Control Flow Statements — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch02_l4",
+          "name": "CH02: Control Flow Statements — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch02_dpp1",
+          "name": "CH02: Control Flow Statements — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp05",
-          "name": "DPP 5 — Output prediction: trace program on paper",
+          "id": "c_programming_ch02_dpp2",
+          "name": "CH02: Control Flow Statements — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp06",
-          "name": "DPP 6 — Output prediction: trace program on paper",
+          "id": "c_programming_ch03_l1",
+          "name": "CH03: Function and Storage Class — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch03_l2",
+          "name": "CH03: Function and Storage Class — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch03_l3",
+          "name": "CH03: Function and Storage Class — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch03_l4",
+          "name": "CH03: Function and Storage Class — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_twt2",
+          "name": "C Programming Topic Wise Test 2 — Compilation, Storage Class, Function, Recursion, Pointers",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "c_programming_ch03_l5",
+          "name": "CH03: Function and Storage Class — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch03_dpp1",
+          "name": "CH03: Function and Storage Class — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp07",
-          "name": "DPP 7 — Output prediction: trace program on paper",
+          "id": "c_programming_ch03_dpp2",
+          "name": "CH03: Function and Storage Class — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "c_l08",
-          "name": "All GATE C PYQs 2015–2026 — 1 minute per question, output prediction (Part 1)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l09",
-          "name": "All GATE C PYQs 2015–2026 — 1 minute per question, output prediction (Part 2)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_dpp08",
-          "name": "DPP 8 — Output prediction: trace program on paper",
+          "id": "c_programming_ch03_dpp3",
+          "name": "CH03: Function and Storage Class — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp09",
-          "name": "DPP 9 — Output prediction: trace program on paper",
+          "id": "c_programming_ch03_dpp4",
+          "name": "CH03: Function and Storage Class — DPP 4",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp10",
-          "name": "DPP 10 — Output prediction: trace program on paper",
+          "id": "c_programming_ch04_l1",
+          "name": "CH04: Array and Pointer — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch04_l2",
+          "name": "CH04: Array and Pointer — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch04_l3",
+          "name": "CH04: Array and Pointer — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_twt3",
+          "name": "C Programming Topic Wise Test 3 — Pointers, Char Arrays, Strings, Structures, Dynamic Memory",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "c_programming_ch04_l4",
+          "name": "CH04: Array and Pointer — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch04_dpp1",
+          "name": "CH04: Array and Pointer — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp11",
-          "name": "DPP 11 — Output prediction: trace program on paper",
+          "id": "c_programming_ch04_dpp2",
+          "name": "CH04: Array and Pointer — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp12",
-          "name": "DPP 12 — Output prediction: trace program on paper",
+          "id": "c_programming_ch04_dpp3",
+          "name": "CH04: Array and Pointer — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "c_dpp13",
-          "name": "DPP 13 — Output prediction: trace program on paper",
+          "id": "c_programming_ch05_l1",
+          "name": "CH05: String — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch05_l2",
+          "name": "CH05: String — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_ch05_dpp1",
+          "name": "CH05: String — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "c_l10",
-          "name": "Complete remaining C lectures — Part 1; Review Error Log from Wk 4–5",
+          "id": "c_programming_ch06_l1",
+          "name": "CH06: Structure and Union — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "c_programming_swt1",
+          "name": "C Programming Subject Wise Test 1 — Complete C Programming Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "c_l11",
-          "name": "Complete remaining C lectures — Part 2",
+          "id": "c_programming_swt2",
+          "name": "C Programming Subject Wise Test 2 — Complete C Programming Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "c_l12",
-          "name": "Error Log for all C ✗; C Programming complete",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l13",
-          "name": "C Programming Lecture 13",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l14",
-          "name": "C Programming Lecture 14",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l15",
-          "name": "C Programming Lecture 15",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l16",
-          "name": "C Programming Lecture 16",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l17",
-          "name": "C Programming Lecture 17",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l18",
-          "name": "C Programming Lecture 18",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l19",
-          "name": "C Programming Lecture 19",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l20",
-          "name": "C Programming Lecture 20",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l21",
-          "name": "C Programming Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l22",
-          "name": "C Programming Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l23",
-          "name": "C Programming Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "c_l24",
-          "name": "C Programming Lecture 24",
+          "id": "c_programming_swt3",
+          "name": "C Programming Subject Wise Test 3 — Complete C Programming Syllabus",
           "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 49
+      "estimatedHours": 59.75
     },
     {
       "id": "data_structures",
@@ -751,247 +686,217 @@
       "tier": 1,
       "topics": [
         {
-          "id": "ds_l01",
-          "name": "Arrays: 2D row-major address = base + (i×C + j)×esize; column-major = base + (j×R + i)×esize",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch01_l1",
+          "name": "CH01: Array — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l02",
-          "name": "LL reversal: iterative (3-pointer prev/curr/next) and recursive",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch01_l2",
+          "name": "CH01: Array — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l03",
-          "name": "Floyd's cycle detection: slow×1, fast×2; detect at meeting point, find entry by resetting pointer to head",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch01_l3",
+          "name": "CH01: Array — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l04",
-          "name": "Infix→postfix: work 3 full examples with nested parentheses",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch01_l4",
+          "name": "CH01: Array — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l05",
-          "name": "BST deletion: 3 cases (leaf: delete; one child: replace with child; two children: replace with in-order successor — draw 5 two-child deletions explicitly)",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch01_l5",
+          "name": "CH01: Array — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_dpp1",
-          "name": "DPP 1 — Arrays and Linked List problems on paper",
+          "id": "data_structures_ch01_l6",
+          "name": "CH01: Array — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_twt1",
+          "name": "DS Topic Wise Test 1 — Linked List",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "data_structures_ch01_dpp1",
+          "name": "CH01: Array — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ds_dpp2",
-          "name": "DPP 2 — BST and Stack problems on paper",
+          "id": "data_structures_ch02_l1",
+          "name": "CH02: Stack — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch02_l2",
+          "name": "CH02: Stack — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch02_l3",
+          "name": "CH02: Stack — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch02_l4",
+          "name": "CH02: Stack — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch02_l5",
+          "name": "CH02: Stack — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_twt2",
+          "name": "DS Topic Wise Test 2 — Asymptotic Notations and Loop Time Complexity",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "data_structures_ch03_l1",
+          "name": "CH03: Queue — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch03_l2",
+          "name": "CH03: Queue — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch03_dpp1",
+          "name": "CH03: Queue — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ds_l06",
-          "name": "AVL trees: balance factor = h(left)−h(right) ∈ {−1,0,1}; draw all 4 rotations from memory: LL (right rotate), RR (left rotate)",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch04_l1",
+          "name": "CH04: Tree — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l07",
-          "name": "AVL trees: LR (left rotate left child, then right rotate), RL (right rotate right child, then left rotate); insert 5 sequences",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch04_l2",
+          "name": "CH04: Tree — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l08",
-          "name": "B-trees: order m, max m−1 keys/node, min ⌈m/2⌉−1 (except root); split on overflow",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch04_l3",
+          "name": "CH04: Tree — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l09",
-          "name": "Heaps: max-heap property (parent ≥ children); build-heap from array O(n) — heapify-down from n/2→1; heap sort trace",
-          "estimatedHours": 1.5
+          "id": "data_structures_twt3",
+          "name": "DS Topic Wise Test 3 — Stack and Queue",
+          "estimatedHours": 0.75
         },
         {
-          "id": "ds_l10",
-          "name": "Priority queue: insert O(log n), extract-max O(log n)",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch04_l4",
+          "name": "CH04: Tree — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l11",
-          "name": "Hashing: chaining (load factor α=n/m, expected successful search = 1+α/2, unsuccessful = 1+α)",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch04_l5",
+          "name": "CH04: Tree — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_l12",
-          "name": "Open addressing: linear probing (primary clustering), quadratic (secondary clustering), double hashing h(k,i)=(h1(k)+i×h2(k)) mod m",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch04_l6",
+          "name": "CH04: Tree — Lecture 6",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_dpp3",
-          "name": "DPP 3 — AVL tree rotation problems on paper",
+          "id": "data_structures_ch04_l7",
+          "name": "CH04: Tree — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch04_l8",
+          "name": "CH04: Tree — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_twt4",
+          "name": "DS Topic Wise Test 4 — Trees (Binary, BST, AVL, Heap)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "data_structures_ch04_dpp1",
+          "name": "CH04: Tree — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ds_dpp4",
-          "name": "DPP 4 — Heap and priority queue problems",
+          "id": "data_structures_ch04_dpp2",
+          "name": "CH04: Tree — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "ds_dpp5",
-          "name": "DPP 5 — Hashing problems on paper",
+          "id": "data_structures_ch05_l1",
+          "name": "CH05: Linked List — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch05_l2",
+          "name": "CH05: Linked List — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch05_l3",
+          "name": "CH05: Linked List — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch05_l4",
+          "name": "CH05: Linked List — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_twt5",
+          "name": "DS Topic Wise Test 5 — Hashing with Probability",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "data_structures_ch05_dpp1",
+          "name": "CH05: Linked List — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ds_l13",
-          "name": "All GATE DS PYQs 2015–2026 timed 50 min; Error Log",
-          "estimatedHours": 1.5
+          "id": "data_structures_ch06_l1",
+          "name": "CH06: Graph and Hashing — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "ds_dpp6",
-          "name": "DPP 6 — Final DS DPP on paper",
+          "id": "data_structures_ch06_l2",
+          "name": "CH06: Graph and Hashing — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch06_l3",
+          "name": "CH06: Graph and Hashing — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "data_structures_ch06_dpp1",
+          "name": "CH06: Graph and Hashing — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ds_l14",
-          "name": "Data Structures Lecture 14",
+          "id": "data_structures_swt1",
+          "name": "DS Subject Wise Test 1 — Complete Data Structures Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "ds_l15",
-          "name": "Data Structures Lecture 15",
+          "id": "data_structures_swt2",
+          "name": "DS Subject Wise Test 2 — Complete Data Structures Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "ds_l16",
-          "name": "Data Structures Lecture 16",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l17",
-          "name": "Data Structures Lecture 17",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l18",
-          "name": "Data Structures Lecture 18",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l19",
-          "name": "Data Structures Lecture 19",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l20",
-          "name": "Data Structures Lecture 20",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l21",
-          "name": "Data Structures Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l22",
-          "name": "Data Structures Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l23",
-          "name": "Data Structures Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l24",
-          "name": "Data Structures Lecture 24",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l25",
-          "name": "Data Structures Lecture 25",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l26",
-          "name": "Data Structures Lecture 26",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l27",
-          "name": "Data Structures Lecture 27",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l28",
-          "name": "Data Structures Lecture 28",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l29",
-          "name": "Data Structures Lecture 29",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l30",
-          "name": "Data Structures Lecture 30",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l31",
-          "name": "Data Structures Lecture 31",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l32",
-          "name": "Data Structures Lecture 32",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l33",
-          "name": "Data Structures Lecture 33",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l34",
-          "name": "Data Structures Lecture 34",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l35",
-          "name": "Data Structures Lecture 35",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l36",
-          "name": "Data Structures Lecture 36",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l37",
-          "name": "Data Structures Lecture 37",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l38",
-          "name": "Data Structures Lecture 38",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l39",
-          "name": "Data Structures Lecture 39",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l40",
-          "name": "Data Structures Lecture 40",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l41",
-          "name": "Data Structures Lecture 41",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ds_l42",
-          "name": "Data Structures Lecture 42",
+          "id": "data_structures_swt3",
+          "name": "DS Subject Wise Test 3 — Complete Data Structures Syllabus",
           "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 69
+      "estimatedHours": 70.25
     },
     {
       "id": "discrete_mathematics",
@@ -999,312 +904,352 @@
       "tier": 3,
       "topics": [
         {
-          "id": "dm_l01",
-          "name": "Ch01 L1 — Sets: types, power set, all 5 operations (draw Venn diagrams)",
+          "id": "discrete_mathematics_ch01_l1",
+          "name": "CH01: Set Theory and Algebra — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "dm_l02",
-          "name": "Ch01 L2 — Relations: Cartesian product, types (reflexive, symmetric, transitive, antisymmetric, equivalence, partial order). Check from matrix.",
+          "id": "discrete_mathematics_ch01_l2",
+          "name": "CH01: Set Theory and Algebra — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "dm_l03",
-          "name": "Ch01 L3 — Functions: injective, surjective, bijective. f∘g, inverse. Counting: n^m, P(n,m), surjections.",
+          "id": "discrete_mathematics_ch01_l3",
+          "name": "CH01: Set Theory and Algebra — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "dm_l04",
-          "name": "Ch01 L4 — Algebraic structures: semigroup, monoid, group, abelian group. Verify all 4 axioms.",
+          "id": "discrete_mathematics_ch01_l4",
+          "name": "CH01: Set Theory and Algebra — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "dm_dpp1",
-          "name": "DPP 1",
+          "id": "discrete_mathematics_ch01_l5",
+          "name": "CH01: Set Theory and Algebra — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l6",
+          "name": "CH01: Set Theory and Algebra — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l7",
+          "name": "CH01: Set Theory and Algebra — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l8",
+          "name": "CH01: Set Theory and Algebra — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l9",
+          "name": "CH01: Set Theory and Algebra — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l10",
+          "name": "CH01: Set Theory and Algebra — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l11",
+          "name": "CH01: Set Theory and Algebra — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_twt1",
+          "name": "DM Topic Wise Test 1 — Propositional Logic, First Order Logic",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "discrete_mathematics_ch01_l12",
+          "name": "CH01: Set Theory and Algebra — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l13",
+          "name": "CH01: Set Theory and Algebra — Lecture 13",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l14",
+          "name": "CH01: Set Theory and Algebra — Lecture 14",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l15",
+          "name": "CH01: Set Theory and Algebra — Lecture 15",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l16",
+          "name": "CH01: Set Theory and Algebra — Lecture 16",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l17",
+          "name": "CH01: Set Theory and Algebra — Lecture 17",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l18",
+          "name": "CH01: Set Theory and Algebra — Lecture 18",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l19",
+          "name": "CH01: Set Theory and Algebra — Lecture 19",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l20",
+          "name": "CH01: Set Theory and Algebra — Lecture 20",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l21",
+          "name": "CH01: Set Theory and Algebra — Lecture 21",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_twt2",
+          "name": "DM Topic Wise Test 2 — Set Theory, Functions, Relations, Lattices",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "discrete_mathematics_ch01_l22",
+          "name": "CH01: Set Theory and Algebra — Lecture 22",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l23",
+          "name": "CH01: Set Theory and Algebra — Lecture 23",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_l24",
+          "name": "CH01: Set Theory and Algebra — Lecture 24",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch01_dpp1",
+          "name": "CH01: Set Theory and Algebra — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l05",
-          "name": "Ch01 L5 — Subgroups, cosets, Lagrange's theorem",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l06",
-          "name": "Ch01 L6 — Lattices: POSET, Hasse diagrams, GLB (meet ∧), LUB (join ∨)",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l07",
-          "name": "Ch01 L7 — Boolean algebra: axioms, De Morgan, duality, canonical SOP/POS from truth table",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l08",
-          "name": "Ch01 L8 — Proof techniques: direct, contradiction, contrapositive. Mathematical induction: base + step. Prove 3 identities.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp2",
-          "name": "DPP 3",
+          "id": "discrete_mathematics_ch01_dpp2",
+          "name": "CH01: Set Theory and Algebra — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l09",
-          "name": "Ch01 L9 — Strong induction, well-ordering, structural induction. Prove: every n>1 has a prime factor.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l10",
-          "name": "Ch01 L10 — Countability: N,Z,Q countable; R uncountable. Cantor's diagonalization — reproduce the proof.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l11",
-          "name": "Ch01 L11 — Recurrences: linear homogeneous (characteristic equation), non-homogeneous (particular solution). Solve T(n)=3T(n−1)−2T(n−2).",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l12",
-          "name": "Ch01 L12 — Generating functions: OGF, closed forms, coin-change application",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp3",
-          "name": "DPP 5",
+          "id": "discrete_mathematics_ch01_dpp3",
+          "name": "CH01: Set Theory and Algebra — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l13",
-          "name": "Ch01 L13 — EGF: sequences, permutation counting applications",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l14",
-          "name": "Ch01 L14 — Modular arithmetic, Fermat's little theorem, Euler's theorem. CRT — solve 2 full problems.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l15",
-          "name": "Ch01 L15 — Normal subgroups, quotient groups, homomorphisms, isomorphism theorems (statements)",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l16",
-          "name": "Ch01 L16 — Rings, integral domains, field hierarchy. Self-quiz: 10 questions from memory without notes.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp4",
-          "name": "DPP 7",
+          "id": "discrete_mathematics_ch01_dpp4",
+          "name": "CH01: Set Theory and Algebra — DPP 4",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l17",
-          "name": "Ch01 L17",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l18",
-          "name": "Ch01 L18",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l19",
-          "name": "Ch01 L19",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l20",
-          "name": "Ch01 L20",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp5",
-          "name": "DPP 9",
+          "id": "discrete_mathematics_ch01_dpp5",
+          "name": "CH01: Set Theory and Algebra — DPP 5",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l21",
-          "name": "Ch01 L21",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l22",
-          "name": "Ch01 L22",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l23",
-          "name": "Ch01 L23",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l24",
-          "name": "Ch01 L24 — Last Set Theory + Algebra lecture",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_free1",
-          "name": "Free day 1: 15 Ch01 PYQs, timed 30 min (exam conditions)",
+          "id": "discrete_mathematics_ch01_dpp6",
+          "name": "CH01: Set Theory and Algebra — DPP 6",
           "estimatedHours": 1
         },
         {
-          "id": "dm_dpp6",
-          "name": "DPP 11 (Ch01 final DPP)",
+          "id": "discrete_mathematics_ch02_l1",
+          "name": "CH02: Graph Theory — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_twt3",
+          "name": "DM Topic Wise Test 3 — Group Theory",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "discrete_mathematics_ch02_l2",
+          "name": "CH02: Graph Theory — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l3",
+          "name": "CH02: Graph Theory — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l4",
+          "name": "CH02: Graph Theory — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l5",
+          "name": "CH02: Graph Theory — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l6",
+          "name": "CH02: Graph Theory — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l7",
+          "name": "CH02: Graph Theory — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l8",
+          "name": "CH02: Graph Theory — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l9",
+          "name": "CH02: Graph Theory — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l10",
+          "name": "CH02: Graph Theory — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_l11",
+          "name": "CH02: Graph Theory — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_twt4",
+          "name": "DM Topic Wise Test 4 — Combinatorics",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "discrete_mathematics_ch02_l12",
+          "name": "CH02: Graph Theory — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch02_dpp1",
+          "name": "CH02: Graph Theory — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l25",
-          "name": "Ch02 L1 — Graphs: formal def (V,E), types, degree, handshaking lemma Σdeg=2|E|, adjacency",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l26",
-          "name": "Ch02 L2 — Paths, cycles, connectivity, strongly connected, connected components",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l27",
-          "name": "Ch02 L3 — Trees: connected acyclic, n vertices→n−1 edges, rooted, binary, height, Cayley's formula n^(n−2)",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l28",
-          "name": "Ch02 L4 — BFS/DFS: O(V+E), edge classification (tree/back/forward/cross), timestamps d[v] and f[v]",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp7",
-          "name": "Ch02 DPP 1",
+          "id": "discrete_mathematics_ch02_dpp2",
+          "name": "CH02: Graph Theory — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l29",
-          "name": "Ch02 L5 — Eulerian: circuit (all even degree), path (exactly 2 odd). Hamiltonian: NP-complete to decide.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l30",
-          "name": "Ch02 L6 — Bipartite: 2-colourable ↔ no odd cycles. König's theorem (min vertex cover = max matching).",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l31",
-          "name": "Ch02 L7 — Planar graphs: Euler's formula V−E+F=2. E≤3V−6. K5 and K3,3 non-planar. Kuratowski's.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l32",
-          "name": "Ch02 L8 — Graph colouring: χ(G). χ(tree)=2, χ(odd cycle)=3, χ(Kn)=n. 4-colour theorem (statement).",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp8",
-          "name": "Ch02 DPP 2",
+          "id": "discrete_mathematics_ch02_dpp3",
+          "name": "CH02: Graph Theory — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l33",
-          "name": "Ch02 L9 — Matchings: maximum, perfect. Hall's marriage theorem.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l34",
-          "name": "Ch02 L10 — Spanning trees: BFS/DFS spanning, MST concept",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l35",
-          "name": "Ch02 L11",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l36",
-          "name": "Ch02 L12 — Last Graph Theory lecture",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_free2",
-          "name": "Free day 2: Full Graph Theory PYQ review (Ch02 DPP 3)",
+          "id": "discrete_mathematics_ch02_dpp4",
+          "name": "CH02: Graph Theory — DPP 4",
           "estimatedHours": 1
         },
         {
-          "id": "dm_dpp9",
-          "name": "Ch02 DPP 3",
+          "id": "discrete_mathematics_ch03_l1",
+          "name": "CH03: Mathematical Logic — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_l2",
+          "name": "CH03: Mathematical Logic — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_l3",
+          "name": "CH03: Mathematical Logic — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_l4",
+          "name": "CH03: Mathematical Logic — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_l5",
+          "name": "CH03: Mathematical Logic — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_twt5",
+          "name": "DM Topic Wise Test 5 — Graph Theory",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "discrete_mathematics_ch03_l6",
+          "name": "CH03: Mathematical Logic — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_l7",
+          "name": "CH03: Mathematical Logic — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_l8",
+          "name": "CH03: Mathematical Logic — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "discrete_mathematics_ch03_dpp1",
+          "name": "CH03: Mathematical Logic — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l37",
-          "name": "Ch03 L1 — Propositional logic: connectives, truth tables, tautology, De Morgan, absorption, double negation",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l38",
-          "name": "Ch03 L2 — CNF: conjunction of clauses. DNF: disjunction of minterms. Convert any formula to CNF.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp10",
-          "name": "Ch03 DPP 1",
+          "id": "discrete_mathematics_ch03_dpp2",
+          "name": "CH03: Mathematical Logic — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l39",
-          "name": "Ch03 L3+L4 — Predicate logic: ∀, ∃, scope, Prenex NF. Inference: modus ponens, modus tollens, resolution.",
+          "id": "discrete_mathematics_ch04_l1",
+          "name": "CH04: Combinatorics — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "dm_l40",
-          "name": "Ch03 L5",
+          "id": "discrete_mathematics_ch04_l2",
+          "name": "CH04: Combinatorics — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "dm_l41",
-          "name": "Ch03 L6",
+          "id": "discrete_mathematics_ch04_l3",
+          "name": "CH04: Combinatorics — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "dm_l42",
-          "name": "Ch03 L7",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l43",
-          "name": "Ch03 L8",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_dpp11",
-          "name": "Ch03 DPP 2",
+          "id": "discrete_mathematics_ch04_dpp1",
+          "name": "CH04: Combinatorics — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dm_l44",
-          "name": "Ch04 L1–L3 — Combinatorics: pigeonhole, inclusion-exclusion |A∪B∪C|, derangements D_n, circular permutations (n−1)!",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l45",
-          "name": "Ch04 L2",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l46",
-          "name": "Ch04 L3",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_l47",
-          "name": "Ch04 — Remaining DM topics and wrap-up (47th lecture)",
-          "estimatedHours": 2
-        },
-        {
-          "id": "dm_free3",
-          "name": "Free day 3: DM FULL ASSESSMENT — 30 questions, all chapters, 45 min, exam conditions. Gate: ≥25/30.",
+          "id": "discrete_mathematics_ch04_dpp2",
+          "name": "CH04: Combinatorics — DPP 2",
           "estimatedHours": 1
+        },
+        {
+          "id": "discrete_mathematics_swt1",
+          "name": "DM Subject Wise Test 1 — Complete Discrete Maths Syllabus",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "discrete_mathematics_swt2",
+          "name": "DM Subject Wise Test 2 — Complete Discrete Maths Syllabus",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "discrete_mathematics_swt3",
+          "name": "DM Subject Wise Test 3 — Complete Discrete Maths Syllabus",
+          "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 108
+      "estimatedHours": 116.25
     },
     {
       "id": "computer_networks",
@@ -1312,232 +1257,292 @@
       "tier": 1,
       "topics": [
         {
-          "id": "cn_l01",
-          "name": "OSI 7 layers: Physical (bits, cables), Data Link (frames, MAC, error control), Network (packets, routing, IP), Transport (segments, TCP/UDP), Session, Presentation, Application (HTTP, SMTP)",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch01_l1",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l02",
-          "name": "TCP/IP 4-layer model",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch01_l2",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l03",
-          "name": "CRC by hand: divide message polynomial by generator polynomial, remainder = FCS (work 2 full examples)",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch01_l3",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l04",
-          "name": "Hamming distance: detect d errors → distance ≥ d+1; correct d → distance ≥ 2d+1",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch01_l4",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_dpp1",
-          "name": "DPP 1 — OSI, CRC, Hamming distance problems",
+          "id": "computer_networks_ch01_l5",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_l6",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_l7",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_l8",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_l9",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_l10",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_l11",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_twt1",
+          "name": "CN Topic Wise Test 1 — IP Addressing (Subnetting, Supernetting), Data Link Layer",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "computer_networks_ch01_l12",
+          "name": "CH01: IP Address, Subnetting, Supernetting — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch01_dpp1",
+          "name": "CH01: IP Address, Subnetting, Supernetting — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cn_l05",
-          "name": "Flow control: stop-and-wait η=1/(1+2a); GBN (retransmit from error: window≤2^n−1 — cumulative ACK); SR (window≤2^(n-1) — receiver buffers)",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch02_l1",
+          "name": "CH02: Flow Control Methods — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l06",
-          "name": "Flow control: Solve 5 efficiency problems",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch02_l2",
+          "name": "CH02: Flow Control Methods — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l07",
-          "name": "MAC protocols: ALOHA pure+slotted (derive max throughput — Pure 18.4% at G=0.5, Slotted 36.8% at G=1)",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch02_l3",
+          "name": "CH02: Flow Control Methods — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l08",
-          "name": "MAC protocols: CSMA/CD — sense→transmit→collision→jam→exponential backoff. Min frame size: t_frame ≥ 2×t_prop",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch02_l4",
+          "name": "CH02: Flow Control Methods — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_dpp2",
-          "name": "DPP 2 — Flow control efficiency and ALOHA throughput calculations",
+          "id": "computer_networks_ch02_l5",
+          "name": "CH02: Flow Control Methods — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch03_l1",
+          "name": "CH03: Error Control Methods — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch03_dpp1",
+          "name": "CH03: Error Control Methods — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cn_l09",
-          "name": "IP: Class A (0.x.x.x, /8), Class B (128-191.x.x.x, /16), Class C (192-223.x.x.x, /24). Special: 0.0.0.0, 255.255.255.255, 127.0.0.1",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch04_l1",
+          "name": "CH04: ISO-OSI Stack — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_l10",
-          "name": "CIDR; Subnetting: borrow host bits, subnets=2^borrowed, hosts=2^remaining−2",
-          "estimatedHours": 1.5
+          "id": "computer_networks_twt2",
+          "name": "CN Topic Wise Test 2 — Network Layer",
+          "estimatedHours": 0.75
         },
         {
-          "id": "cn_l11",
-          "name": "VLSM: 5 problems (192.168.1.0/24 → subnets for 60/30/10/10 hosts)",
-          "estimatedHours": 1.5
+          "id": "computer_networks_ch04_l2",
+          "name": "CH04: ISO-OSI Stack — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "cn_dpp3",
-          "name": "DPP 3 — Subnetting and VLSM calculations on paper",
+          "id": "computer_networks_ch04_l3",
+          "name": "CH04: ISO-OSI Stack — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_l4",
+          "name": "CH04: ISO-OSI Stack — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_l5",
+          "name": "CH04: ISO-OSI Stack — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_l6",
+          "name": "CH04: ISO-OSI Stack — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_l7",
+          "name": "CH04: ISO-OSI Stack — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_l8",
+          "name": "CH04: ISO-OSI Stack — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_l9",
+          "name": "CH04: ISO-OSI Stack — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch04_dpp1",
+          "name": "CH04: ISO-OSI Stack — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cn_l12",
-          "name": "Routing lectures continue at reduced pace (Wk 25 evgs only)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l13",
-          "name": "Routing: RIP (Bellman-Ford, distance vector, count-to-infinity, split horizon with poisoned reverse)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l14",
-          "name": "Routing: OSPF (link-state, Dijkstra, faster convergence); BGP (path vector, inter-AS, TCP port 179)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l15",
-          "name": "TCP 3-way handshake (SYN→SYN-ACK→ACK), 4-way teardown; sequence numbers: byte-based",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l16",
-          "name": "Congestion control: slow start (cwnd doubles/RTT until ssthresh), congestion avoidance (+1 MSS/RTT), fast retransmit (3 dup-ACKs)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l17",
-          "name": "UDP; DNS hierarchy (root→TLD→authoritative), recursive vs iterative, record types (A/AAAA/MX/CNAME/NS); HTTP persistent vs non-persistent; SMTP (push, TCP 25)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l18",
-          "name": "All GATE CN PYQs 2015–2026 timed 60 min; Error Log",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_dpp4",
-          "name": "DPP 4 — Routing protocol problems",
+          "id": "computer_networks_ch04_dpp2",
+          "name": "CH04: ISO-OSI Stack — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "cn_dpp5",
-          "name": "DPP 5 — TCP sequencing and congestion control",
+          "id": "computer_networks_twt3",
+          "name": "CN Topic Wise Test 3 — Routing Algorithms, Transport Layer",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "computer_networks_ch05_l1",
+          "name": "CH05: Routing — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch05_l2",
+          "name": "CH05: Routing — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch05_dpp1",
+          "name": "CH05: Routing — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cn_dpp6",
-          "name": "DPP 6 — DNS and Application layer problems",
+          "id": "computer_networks_ch06_l1",
+          "name": "CH06: TCP and UDP — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch06_l2",
+          "name": "CH06: TCP and UDP — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch06_l3",
+          "name": "CH06: TCP and UDP — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch06_l4",
+          "name": "CH06: TCP and UDP — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch06_dpp1",
+          "name": "CH06: TCP and UDP — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cn_dpp7",
-          "name": "DPP 7 — Mixed CN final DPP on paper",
+          "id": "computer_networks_ch07_l1",
+          "name": "CH07: Hardware and Various Devices — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch07_l2",
+          "name": "CH07: Hardware and Various Devices — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_twt4",
+          "name": "CN Topic Wise Test 4 — Transport Layer, Application Layer",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "computer_networks_ch07_l3",
+          "name": "CH07: Hardware and Various Devices — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch08_l1",
+          "name": "CH08: Application Layer Protocols — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch08_l2",
+          "name": "CH08: Application Layer Protocols — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch08_l3",
+          "name": "CH08: Application Layer Protocols — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch08_l4",
+          "name": "CH08: Application Layer Protocols — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch08_dpp1",
+          "name": "CH08: Application Layer Protocols — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cn_l19",
-          "name": "Computer Networks Lecture 19",
+          "id": "computer_networks_ch09_l1",
+          "name": "CH09: PYQ - CN — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch09_l2",
+          "name": "CH09: PYQ - CN — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_ch09_l3",
+          "name": "CH09: PYQ - CN — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "computer_networks_swt1",
+          "name": "CN Subject Wise Test 1 — Complete Computer Networks Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "cn_l20",
-          "name": "Computer Networks Lecture 20",
+          "id": "computer_networks_swt2",
+          "name": "CN Subject Wise Test 2 — Complete Computer Networks Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "cn_l21",
-          "name": "Computer Networks Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l22",
-          "name": "Computer Networks Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l23",
-          "name": "Computer Networks Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l24",
-          "name": "Computer Networks Lecture 24",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l25",
-          "name": "Computer Networks Lecture 25",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l26",
-          "name": "Computer Networks Lecture 26",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l27",
-          "name": "Computer Networks Lecture 27",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l28",
-          "name": "Computer Networks Lecture 28",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l29",
-          "name": "Computer Networks Lecture 29",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l30",
-          "name": "Computer Networks Lecture 30",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l31",
-          "name": "Computer Networks Lecture 31",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l32",
-          "name": "Computer Networks Lecture 32",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l33",
-          "name": "Computer Networks Lecture 33",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l34",
-          "name": "Computer Networks Lecture 34",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l35",
-          "name": "Computer Networks Lecture 35",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l36",
-          "name": "Computer Networks Lecture 36",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l37",
-          "name": "Computer Networks Lecture 37",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "cn_l38",
-          "name": "Computer Networks Lecture 38",
+          "id": "computer_networks_swt3",
+          "name": "CN Subject Wise Test 3 — Complete Computer Networks Syllabus",
           "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 64
+      "estimatedHours": 100.5
     },
     {
       "id": "linear_algebra",
@@ -1545,453 +1550,473 @@
       "tier": 2,
       "topics": [
         {
-          "id": "la_l01",
-          "name": "LA L1 — Vector spaces: definition, subspaces, span, linear independence, basis, dimension",
+          "id": "linear_algebra_ch01_l1",
+          "name": "CH01: Linear Algebra — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "la_l02",
-          "name": "LA L2 — Row reduction: REF, RREF, rank via elementary row operations",
+          "id": "linear_algebra_ch01_l2",
+          "name": "CH01: Linear Algebra — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "la_l03",
-          "name": "LA L3 — Null space (Ax=0 solution set), column space, rank-nullity theorem: rank(A) + nullity(A) = n",
+          "id": "linear_algebra_ch01_l3",
+          "name": "CH01: Linear Algebra — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "la_l04",
-          "name": "LA L4 — Linear transformations: kernel, image, matrix representation, change of basis",
+          "id": "linear_algebra_ch01_l4",
+          "name": "CH01: Linear Algebra — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "la_l05",
-          "name": "LA L5 — Systems of linear equations: consistent (unique: rank=n; infinite: rank<n) vs inconsistent (rank(A)≠rank([A|b]))",
+          "id": "linear_algebra_ch01_l5",
+          "name": "CH01: Linear Algebra — Lecture 5",
           "estimatedHours": 2
         },
         {
-          "id": "la_l06",
-          "name": "LA L6 — Eigenvalues: characteristic polynomial det(A−λI)=0, compute for 2×2 and 3×3",
+          "id": "linear_algebra_twt1",
+          "name": "EM Topic Wise Test 1 — Complete Linear Algebra",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "linear_algebra_ch01_l6",
+          "name": "CH01: Linear Algebra — Lecture 6",
           "estimatedHours": 2
         },
         {
-          "id": "la_l07",
-          "name": "LA L7 — Eigenvectors, eigenspaces. Algebraic multiplicity vs geometric multiplicity. AM ≥ GM always.",
+          "id": "linear_algebra_ch01_l7",
+          "name": "CH01: Linear Algebra — Lecture 7",
           "estimatedHours": 2
         },
         {
-          "id": "la_l08",
-          "name": "LA L8 — Diagonalization: A=PDP⁻¹. Conditions: n linearly independent eigenvectors. Symmetric → always diagonalizable.",
+          "id": "linear_algebra_ch01_l8",
+          "name": "CH01: Linear Algebra — Lecture 8",
           "estimatedHours": 2
         },
         {
-          "id": "la_l09",
-          "name": "LA L9 — Orthogonality: orthonormal basis, Gram-Schmidt, QR decomposition (concept)",
+          "id": "linear_algebra_ch01_l9",
+          "name": "CH01: Linear Algebra — Lecture 9",
           "estimatedHours": 2
         },
         {
-          "id": "la_l10",
-          "name": "LA L10 — Positive definite matrices: all eigenvalues > 0. Quadratic forms.",
+          "id": "linear_algebra_ch01_l10",
+          "name": "CH01: Linear Algebra — Lecture 10",
           "estimatedHours": 2
         },
         {
-          "id": "la_l11",
-          "name": "LA L11",
+          "id": "linear_algebra_twt2",
+          "name": "Extra Linear Algebra Topic Wise Test 1 — Complete Linear Algebra",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "linear_algebra_ch01_l11",
+          "name": "CH01: Linear Algebra — Lecture 11",
           "estimatedHours": 2
         },
         {
-          "id": "la_l12",
-          "name": "LA L12",
+          "id": "linear_algebra_ch01_l12",
+          "name": "CH01: Linear Algebra — Lecture 12",
           "estimatedHours": 2
         },
         {
-          "id": "la_l13",
-          "name": "LA L13",
+          "id": "linear_algebra_ch01_l13",
+          "name": "CH01: Linear Algebra — Lecture 13",
           "estimatedHours": 2
         },
         {
-          "id": "la_l14",
-          "name": "LA L14 — Last Linear Algebra lecture",
+          "id": "linear_algebra_ch01_l14",
+          "name": "CH01: Linear Algebra — Lecture 14",
           "estimatedHours": 2
-        },
-        {
-          "id": "la_free1",
-          "name": "Free day: LA Assessment — 20 GATE PYQs timed 40 min. Target ≥75%.",
-          "estimatedHours": 1
         }
       ],
-      "estimatedHours": 29
+      "estimatedHours": 29.5
     },
     {
       "id": "coa",
-      "name": "COA",
+      "name": "Computer Organization and Architecture (COA)",
       "tier": 3,
       "topics": [
         {
-          "id": "coa_l01",
-          "name": "Number systems: 1s complement (flip all bits), 2s complement (flip+1); overflow detection: signed overflow when carry into MSB ≠ carry out of MSB",
-          "estimatedHours": 1.5
+          "id": "coa_ch01_l1",
+          "name": "CH01: Basics of COA — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_l02",
-          "name": "IEEE 754 single precision: 1 sign + 8 exponent (biased 127) + 23 mantissa. Special values: 0, denormal, ±∞, NaN. Encode and decode 3 values.",
-          "estimatedHours": 1.5
+          "id": "coa_ch01_l2",
+          "name": "CH01: Basics of COA — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_l03",
-          "name": "Addressing modes: immediate, register, direct, indirect, register indirect, indexed, base+displacement",
-          "estimatedHours": 1.5
+          "id": "coa_ch01_l3",
+          "name": "CH01: Basics of COA — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_l04",
-          "name": "Performance: IC×CPI×T_clock; MIPS = f_clock/(CPI×10^6); Amdahl: Speedup = 1/((1−f)+f/k) — solve 5 problems",
-          "estimatedHours": 1.5
+          "id": "coa_ch01_l4",
+          "name": "CH01: Basics of COA — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_dpp01",
-          "name": "DPP 1 — Number systems and IEEE 754 problems on paper",
+          "id": "coa_ch01_l5",
+          "name": "CH01: Basics of COA — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch01_dpp1",
+          "name": "CH01: Basics of COA — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_dpp02",
-          "name": "DPP 2 — Performance equation and Amdahl problems",
+          "id": "coa_ch02_l1",
+          "name": "CH02: Instruction and Addressing Modes — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch02_l2",
+          "name": "CH02: Instruction and Addressing Modes — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch02_l3",
+          "name": "CH02: Instruction and Addressing Modes — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch02_l4",
+          "name": "CH02: Instruction and Addressing Modes — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch02_l5",
+          "name": "CH02: Instruction and Addressing Modes — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_twt1",
+          "name": "COA Topic Wise Test 1 — Basics, Addressing Modes, Control Unit",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "coa_ch02_l6",
+          "name": "CH02: Instruction and Addressing Modes — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch02_dpp1",
+          "name": "CH02: Instruction and Addressing Modes — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_l05",
-          "name": "Pipelining: 5 stages IF/ID/EX/MEM/WB. Ideal CPI=1. Time=(k+n−1)×T_clock. Speedup→k for large n. Draw timing diagram for 6 instructions.",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l06",
-          "name": "Pipeline hazards: RAW (most common — consumer reads before producer writes), WAR (only in out-of-order), WAW",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l07",
-          "name": "Stall: insert NOP bubble; Forwarding: result from EX/MEM to EX input — eliminates most RAW stalls except load-use (1 stall still needed)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l08",
-          "name": "Control hazard: branch penalty = 2 stalls for 5-stage",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_dpp03",
-          "name": "DPP 3 — Pipeline timing diagram on paper",
+          "id": "coa_ch02_dpp2",
+          "name": "CH02: Instruction and Addressing Modes — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "coa_dpp04",
-          "name": "DPP 4 — Hazard identification and stall counting",
+          "id": "coa_ch03_l1",
+          "name": "CH03: CPU and Control Unit — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch03_l2",
+          "name": "CH03: CPU and Control Unit — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch03_l3",
+          "name": "CH03: CPU and Control Unit — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch03_dpp1",
+          "name": "CH03: CPU and Control Unit — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_dpp05",
-          "name": "DPP 5 — Mixed pipelining problems",
+          "id": "coa_ch04_l1",
+          "name": "CH04: Floating Point Representation — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch04_l2",
+          "name": "CH04: Floating Point Representation — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch04_dpp1",
+          "name": "CH04: Floating Point Representation — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_l09",
-          "name": "Cache: direct mapping (tag|index|offset — index selects line, tag compared)",
-          "estimatedHours": 1.5
+          "id": "coa_twt2",
+          "name": "COA Topic Wise Test 2 — Pipelining",
+          "estimatedHours": 0.75
         },
         {
-          "id": "coa_l10",
-          "name": "Cache: fully associative (compare all tags, LRU/FIFO replacement); k-way set-associative (tag|set index|offset). Cache capacity = sets × k × block size.",
-          "estimatedHours": 1.5
+          "id": "coa_ch05_l1",
+          "name": "CH05: IO Organization — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_l11",
-          "name": "AMAT = L1 hit time + L1 miss rate × (L2 hit time + L2 miss rate × Main memory time). Solve 8 problems including write-through vs write-back cases.",
-          "estimatedHours": 1.5
+          "id": "coa_ch05_l2",
+          "name": "CH05: IO Organization — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_dpp06",
-          "name": "DPP 6 — Cache mapping problems on paper",
+          "id": "coa_ch05_l3",
+          "name": "CH05: IO Organization — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch05_dpp1",
+          "name": "CH05: IO Organization — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_dpp07",
-          "name": "DPP 7 — AMAT calculations (L1+L2+MM hierarchy)",
+          "id": "coa_ch06_l1",
+          "name": "CH06: Memory Organization — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch06_l2",
+          "name": "CH06: Memory Organization — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch06_l3",
+          "name": "CH06: Memory Organization — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch06_dpp1",
+          "name": "CH06: Memory Organization — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_dpp08",
-          "name": "DPP 8 — Mixed cache problems",
+          "id": "coa_ch07_l1",
+          "name": "CH07: Cache Organization — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l2",
+          "name": "CH07: Cache Organization — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_twt3",
+          "name": "COA Topic Wise Test 3 — Cache Memory",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "coa_ch07_l3",
+          "name": "CH07: Cache Organization — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l4",
+          "name": "CH07: Cache Organization — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l5",
+          "name": "CH07: Cache Organization — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l6",
+          "name": "CH07: Cache Organization — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l7",
+          "name": "CH07: Cache Organization — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l8",
+          "name": "CH07: Cache Organization — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l9",
+          "name": "CH07: Cache Organization — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_l10",
+          "name": "CH07: Cache Organization — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch07_dpp1",
+          "name": "CH07: Cache Organization — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_l12",
-          "name": "Virtual memory: VPN→PFN via page table. Single-level: 2 accesses. 2-level: VPN1+VPN2+offset, 3 accesses without TLB.",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l13",
-          "name": "TLB EAT: h×t_m+(1−h)×(t_m+t_p). With 2-level: h×t_m+(1−h)×(2×t_p+t_m). Solve 5 EAT problems. Combined TLB+cache.",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_dpp09",
-          "name": "DPP 9 — Virtual memory and page table problems",
+          "id": "coa_ch07_dpp2",
+          "name": "CH07: Cache Organization — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "coa_dpp10",
-          "name": "DPP 10 — TLB EAT calculations on paper",
+          "id": "coa_twt4",
+          "name": "COA Topic Wise Test 4 — I/O Interfacing, Magnetic Disk",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "coa_ch08_l1",
+          "name": "CH08: Disk — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch08_l2",
+          "name": "CH08: Disk — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch08_dpp1",
+          "name": "CH08: Disk — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_l14",
-          "name": "I/O: programmed I/O (CPU busy-waits); interrupt-driven (CPU interrupted on completion); DMA (CPU sets up, DMA transfers directly, interrupts only on completion)",
-          "estimatedHours": 1.5
+          "id": "coa_ch09_l1",
+          "name": "CH09: Pipeline Processing — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_l15",
-          "name": "All GATE COA PYQs 2015–2026 timed; Error Log",
-          "estimatedHours": 1.5
+          "id": "coa_ch09_l2",
+          "name": "CH09: Pipeline Processing — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "coa_dpp11",
-          "name": "DPP 11 — All 11 COA DPPs complete; Final DPP on paper",
+          "id": "coa_ch09_l3",
+          "name": "CH09: Pipeline Processing — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch09_l4",
+          "name": "CH09: Pipeline Processing — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch09_l5",
+          "name": "CH09: Pipeline Processing — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "coa_ch09_dpp1",
+          "name": "CH09: Pipeline Processing — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "coa_l16",
-          "name": "COA Lecture 16",
+          "id": "coa_swt1",
+          "name": "COA Subject Wise Test 1 — Complete Computer Organisation Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "coa_l17",
-          "name": "COA Lecture 17",
+          "id": "coa_swt2",
+          "name": "COA Subject Wise Test 2 — Complete Computer Organisation Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "coa_l18",
-          "name": "COA Lecture 18",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l19",
-          "name": "COA Lecture 19",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l20",
-          "name": "COA Lecture 20",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l21",
-          "name": "COA Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l22",
-          "name": "COA Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l23",
-          "name": "COA Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l24",
-          "name": "COA Lecture 24",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l25",
-          "name": "COA Lecture 25",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l26",
-          "name": "COA Lecture 26",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l27",
-          "name": "COA Lecture 27",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l28",
-          "name": "COA Lecture 28",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l29",
-          "name": "COA Lecture 29",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l30",
-          "name": "COA Lecture 30",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l31",
-          "name": "COA Lecture 31",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l32",
-          "name": "COA Lecture 32",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l33",
-          "name": "COA Lecture 33",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l34",
-          "name": "COA Lecture 34",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l35",
-          "name": "COA Lecture 35",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l36",
-          "name": "COA Lecture 36",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l37",
-          "name": "COA Lecture 37",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l38",
-          "name": "COA Lecture 38",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l39",
-          "name": "COA Lecture 39",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "coa_l40",
-          "name": "COA Lecture 40",
+          "id": "coa_swt3",
+          "name": "COA Subject Wise Test 3 — Complete Computer Organisation Syllabus",
           "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 71
+      "estimatedHours": 96.5
     },
     {
       "id": "calculus",
-      "name": "Calculus",
+      "name": "Calculus and Optimization",
       "tier": 2,
       "topics": [
         {
-          "id": "ca_l01",
-          "name": "Calc L1 — Limits: ε-δ definition, L'Hôpital (0/0 and ∞/∞).",
+          "id": "calculus_ch01_l1",
+          "name": "CH01: Calculus and Optimization — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l02",
-          "name": "Calc L2 — Continuity: removable/jump/infinite discontinuities, IVT, differentiability → continuity (not converse).",
+          "id": "calculus_ch01_l2",
+          "name": "CH01: Calculus and Optimization — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l03",
-          "name": "Calc L3 — Derivatives: chain rule, product, quotient, implicit differentiation. MVT: f'(c)=(f(b)−f(a))/(b−a). Rolle's.",
+          "id": "calculus_ch01_l3",
+          "name": "CH01: Calculus and Optimization — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l04",
-          "name": "Calc L4 — Applications: maxima/minima (critical points), second derivative test, inflection points.",
+          "id": "calculus_ch01_l4",
+          "name": "CH01: Calculus and Optimization — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "ca_free1",
-          "name": "Free day 1: 10 PYQs on limits + derivatives",
-          "estimatedHours": 1
-        },
-        {
-          "id": "ca_l05",
-          "name": "Calc L5 — Integration: indefinite integral, substitution, integration by parts ∫u dv = uv − ∫v du",
+          "id": "calculus_ch01_l5",
+          "name": "CH01: Calculus and Optimization — Lecture 5",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l06",
-          "name": "Calc L6 — Definite integral: FTC Part 1 (d/dx∫f=f(x)), Part 2 (∫[a,b]f=F(b)−F(a)). Area between curves.",
+          "id": "calculus_ch01_l6",
+          "name": "CH01: Calculus and Optimization — Lecture 6",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l07",
-          "name": "Calc L7 — Multivariable: partial derivatives, gradient ∇f=(∂f/∂x, ∂f/∂y), directional derivative, critical points f(x,y).",
+          "id": "calculus_ch01_l7",
+          "name": "CH01: Calculus and Optimization — Lecture 7",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l08",
-          "name": "Calc L8 — Total derivative, Jacobian matrix, chain rule for multivariable.",
+          "id": "calculus_ch01_l8",
+          "name": "CH01: Calculus and Optimization — Lecture 8",
           "estimatedHours": 2
         },
         {
-          "id": "ca_free2",
-          "name": "Free day 2: 10 PYQs on integration",
-          "estimatedHours": 1
-        },
-        {
-          "id": "ca_l09",
-          "name": "Calc L9 — Double integrals: iterated, changing order, change of variables (Jacobian).",
+          "id": "calculus_ch01_l9",
+          "name": "CH01: Calculus and Optimization — Lecture 9",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l10",
-          "name": "Calc L10 — Taylor series: f(x)=Σf^(n)(a)/n!×(x−a)^n. Maclaurin for e^x, sin x, cos x, ln(1+x), (1+x)^n. Radius of convergence.",
+          "id": "calculus_twt1",
+          "name": "EM Topic Wise Test 5 — Complete GATE CSE Calculus",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "calculus_ch01_l10",
+          "name": "CH01: Calculus and Optimization — Lecture 10",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l11",
-          "name": "Calc L11",
+          "id": "calculus_ch01_l11",
+          "name": "CH01: Calculus and Optimization — Lecture 11",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l12",
-          "name": "Calc L12",
+          "id": "calculus_ch01_l12",
+          "name": "CH01: Calculus and Optimization — Lecture 12",
           "estimatedHours": 2
         },
         {
-          "id": "ca_free3",
-          "name": "Free day 3: 10 PYQs on series + multivariable",
-          "estimatedHours": 1
-        },
-        {
-          "id": "ca_l13",
-          "name": "Calc L13",
+          "id": "calculus_ch01_l13",
+          "name": "CH01: Calculus and Optimization — Lecture 13",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l14",
-          "name": "Calc L14",
+          "id": "calculus_ch01_l14",
+          "name": "CH01: Calculus and Optimization — Lecture 14",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l15",
-          "name": "Calc L15",
+          "id": "calculus_ch01_l15",
+          "name": "CH01: Calculus and Optimization — Lecture 15",
           "estimatedHours": 2
         },
         {
-          "id": "ca_l16",
-          "name": "Calc L16 — Last Calculus lecture",
+          "id": "calculus_ch01_l16",
+          "name": "CH01: Calculus and Optimization — Lecture 16",
           "estimatedHours": 2
-        },
-        {
-          "id": "ca_free4",
-          "name": "Free day 4: Calc Assessment — 20 PYQs timed 40 min. Target ≥72%.",
-          "estimatedHours": 1
         }
       ],
-      "estimatedHours": 36
+      "estimatedHours": 32.75
     },
     {
       "id": "algorithms",
@@ -1999,415 +2024,485 @@
       "tier": 2,
       "topics": [
         {
-          "id": "al_l01",
-          "name": "Complexity: Big-O/Theta/Omega. Growth rates: 1 < log n < √n < n < n log n < n² < n³ < 2^n < n!",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch01_l1",
+          "name": "CH01: Analysis of Algorithms — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l02",
-          "name": "Master Theorem — 3 cases (memorise the conditions cold, solve 10 recurrences in first session)",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch01_l2",
+          "name": "CH01: Analysis of Algorithms — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l03",
-          "name": "Sorting: merge sort (stable, Case 2 MT, T(n)=2T(n/2)+n); quicksort (best/avg O(n log n), worst O(n²)); heapsort (O(n log n) all cases, in-place, not stable)",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch01_l3",
+          "name": "CH01: Analysis of Algorithms — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l04",
-          "name": "Lower bound: Ω(n log n) (decision tree argument, n! leaves)",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch01_l4",
+          "name": "CH01: Analysis of Algorithms — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l05",
-          "name": "BFS O(V+E): shortest paths in unweighted. DFS O(V+E): timestamps d[v], f[v]. Edge types in directed DFS: tree, back (ancestor → cycle), forward, cross.",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch01_l5",
+          "name": "CH01: Analysis of Algorithms — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l06",
-          "name": "Topological sort: DFS, output nodes in decreasing f[v] order (DAGs only)",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch01_l6",
+          "name": "CH01: Analysis of Algorithms — Lecture 6",
+          "estimatedHours": 2
         },
         {
-          "id": "al_dpp1",
-          "name": "DPP 1 — Complexity and Master Theorem problems",
+          "id": "algorithms_ch01_l7",
+          "name": "CH01: Analysis of Algorithms — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch01_l8",
+          "name": "CH01: Analysis of Algorithms — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch01_l9",
+          "name": "CH01: Analysis of Algorithms — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch01_l10",
+          "name": "CH01: Analysis of Algorithms — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch01_l11",
+          "name": "CH01: Analysis of Algorithms — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch01_l12",
+          "name": "CH01: Analysis of Algorithms — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_twt1",
+          "name": "Algorithms Topic Wise Test 1 — Divide and Conquer",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "algorithms_ch01_dpp1",
+          "name": "CH01: Analysis of Algorithms — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_dpp2",
-          "name": "DPP 2 — Sorting and graph traversal problems",
+          "id": "algorithms_ch01_dpp2",
+          "name": "CH01: Analysis of Algorithms — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "al_dpp3",
-          "name": "DPP 3 — Mixed graph problems",
+          "id": "algorithms_ch02_l1",
+          "name": "CH02: Sorting Algorithms — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch02_l2",
+          "name": "CH02: Sorting Algorithms — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch02_l3",
+          "name": "CH02: Sorting Algorithms — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch02_dpp1",
+          "name": "CH02: Sorting Algorithms — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_l07",
-          "name": "SCC Kosaraju: (1) DFS on G record finish times, (2) compute G^T, (3) DFS on G^T in decreasing finish time — each DFS tree = one SCC",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch03_l1",
+          "name": "CH03: Divide and Conquer — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l08",
-          "name": "Dijkstra: greedy, min-priority queue, O((V+E) log V). Fails on negative edges.",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch03_l2",
+          "name": "CH03: Divide and Conquer — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l09",
-          "name": "Bellman-Ford: relax all edges V−1 times, O(VE). Detect negative cycles (one more round — if any relaxation possible → cycle)",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch03_l3",
+          "name": "CH03: Divide and Conquer — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l10",
-          "name": "Floyd-Warshall: d[i][j][k]=min(d[i][j][k−1], d[i][k][k−1]+d[k][j][k−1]), O(V³)",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch03_l4",
+          "name": "CH03: Divide and Conquer — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l11",
-          "name": "MST: Kruskal (sort edges, union-find, add if no cycle, O(E log E)); Prim (grow tree: add min-weight edge crossing cut, O(E log V)). Both correct by cut property.",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch03_l5",
+          "name": "CH03: Divide and Conquer — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l12",
-          "name": "Greedy: activity selection (sort by finish time, always pick earliest compatible); fractional knapsack (sort by value/weight); Huffman (always merge 2 lowest-frequency nodes)",
-          "estimatedHours": 1.5
+          "id": "algorithms_twt2",
+          "name": "Algorithms Topic Wise Test 2 — Recurrence Relations (Master Theorem, Iteration, Tree Method)",
+          "estimatedHours": 0.75
         },
         {
-          "id": "al_dpp4",
-          "name": "DPP 4 — Dijkstra and Bellman-Ford problems",
+          "id": "algorithms_ch03_l6",
+          "name": "CH03: Divide and Conquer — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch03_l7",
+          "name": "CH03: Divide and Conquer — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch03_l8",
+          "name": "CH03: Divide and Conquer — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch03_dpp1",
+          "name": "CH03: Divide and Conquer — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_dpp5",
-          "name": "DPP 5 — Floyd-Warshall and MST problems",
+          "id": "algorithms_ch04_l1",
+          "name": "CH04: Greedy Method — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch04_l2",
+          "name": "CH04: Greedy Method — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch04_l3",
+          "name": "CH04: Greedy Method — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch04_l4",
+          "name": "CH04: Greedy Method — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch04_l5",
+          "name": "CH04: Greedy Method — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch04_l6",
+          "name": "CH04: Greedy Method — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch04_l7",
+          "name": "CH04: Greedy Method — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_twt3",
+          "name": "Algorithms Topic Wise Test 3 — Greedy Algorithms",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "algorithms_ch04_dpp1",
+          "name": "CH04: Greedy Method — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_dpp6",
-          "name": "DPP 6 — Greedy problems on paper",
+          "id": "algorithms_ch05_l1",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l2",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l3",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l4",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l5",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l6",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l7",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_l8",
+          "name": "CH05: Dynamic Programming (DP) — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch05_dpp1",
+          "name": "CH05: Dynamic Programming (DP) — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_l13",
-          "name": "DP on paper: 0/1 Knapsack (n×W table: dp[i][w]=max(dp[i−1][w], dp[i−1][w−w_i]+v_i))",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch06_l1",
+          "name": "CH06: Graph Algorithms — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l14",
-          "name": "DP on paper: LCS (dp[i][j]=dp[i−1][j−1]+1 if match); LIS (dp[i]=max dp[j]+1 for j<i, a[j]<a[i])",
-          "estimatedHours": 1.5
+          "id": "algorithms_twt4",
+          "name": "Algorithms Topic Wise Test 4 — Dynamic Programming",
+          "estimatedHours": 0.75
         },
         {
-          "id": "al_l15",
-          "name": "DP on paper: Matrix Chain Multiplication (dp[i][j]=min over k: dp[i][k]+dp[k+1][j]+p[i-1]×p[k]×p[j])",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch06_l2",
+          "name": "CH06: Graph Algorithms — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "al_l16",
-          "name": "All GATE Algorithms PYQs 2015–2026 timed; Error Log",
-          "estimatedHours": 1.5
+          "id": "algorithms_ch06_l3",
+          "name": "CH06: Graph Algorithms — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "al_dpp7",
-          "name": "DPP 7 — Dynamic programming problems on paper",
+          "id": "algorithms_ch07_l1",
+          "name": "CH07: Heap Algorithms — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch07_l2",
+          "name": "CH07: Heap Algorithms — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch07_l3",
+          "name": "CH07: Heap Algorithms — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch07_dpp1",
+          "name": "CH07: Heap Algorithms — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_dpp8",
-          "name": "DPP 8 — Mixed Algorithms final DPP on paper",
+          "id": "algorithms_ch08_l1",
+          "name": "CH08: Miscellaneous — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch08_l2",
+          "name": "CH08: Miscellaneous — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch08_l3",
+          "name": "CH08: Miscellaneous — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch08_l4",
+          "name": "CH08: Miscellaneous — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "algorithms_ch08_dpp1",
+          "name": "CH08: Miscellaneous — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "al_l17",
-          "name": "Algorithms Lecture 17",
+          "id": "algorithms_swt1",
+          "name": "Algorithms Subject Wise Test 1 — Complete Algorithm Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "al_l18",
-          "name": "Algorithms Lecture 18",
+          "id": "algorithms_swt2",
+          "name": "Algorithms Subject Wise Test 2 — Complete Algorithm Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "al_l19",
-          "name": "Algorithms Lecture 19",
+          "id": "algorithms_swt3",
+          "name": "Algorithms Subject Wise Test 3 — Complete Algorithm Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "al_l20",
-          "name": "Algorithms Lecture 20",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l21",
-          "name": "Algorithms Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l22",
-          "name": "Algorithms Lecture 22",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l23",
-          "name": "Algorithms Lecture 23",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l24",
-          "name": "Algorithms Lecture 24",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l25",
-          "name": "Algorithms Lecture 25",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l26",
-          "name": "Algorithms Lecture 26",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l27",
-          "name": "Algorithms Lecture 27",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l28",
-          "name": "Algorithms Lecture 28",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l29",
-          "name": "Algorithms Lecture 29",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l30",
-          "name": "Algorithms Lecture 30",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l31",
-          "name": "Algorithms Lecture 31",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l32",
-          "name": "Algorithms Lecture 32",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l33",
-          "name": "Algorithms Lecture 33",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l34",
-          "name": "Algorithms Lecture 34",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l35",
-          "name": "Algorithms Lecture 35",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l36",
-          "name": "Algorithms Lecture 36",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l37",
-          "name": "Algorithms Lecture 37",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l38",
-          "name": "Algorithms Lecture 38",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l39",
-          "name": "Algorithms Lecture 39",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l40",
-          "name": "Algorithms Lecture 40",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l41",
-          "name": "Algorithms Lecture 41",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l42",
-          "name": "Algorithms Lecture 42",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l43",
-          "name": "Algorithms Lecture 43",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l44",
-          "name": "Algorithms Lecture 44",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l45",
-          "name": "Algorithms Lecture 45",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l46",
-          "name": "Algorithms Lecture 46",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l47",
-          "name": "Algorithms Lecture 47",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "al_l48",
-          "name": "Algorithms Lecture 48",
-          "estimatedHours": 1.5
+          "id": "algorithms_flt1",
+          "name": "C, DS, Algo 65Q Full Length Test 4 — Complete C Programming, Data Structures, and Algorithm Syllabus",
+          "estimatedHours": 3
         }
       ],
-      "estimatedHours": 80
+      "estimatedHours": 114.5
     },
     {
       "id": "probability_statistics",
-      "name": "Probability + Statistics",
+      "name": "Probability and Statistics",
       "tier": 3,
       "topics": [
         {
-          "id": "pr_l01",
-          "name": "Prob L1 — Sample space, events, Kolmogorov axioms, classical probability",
+          "id": "probability_statistics_ch01_l1",
+          "name": "CH01: Permutations and Combinations — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l02",
-          "name": "Prob L2 — Conditional probability P(A|B)=P(A∩B)/P(B), multiplication rule, independent events",
+          "id": "probability_statistics_ch01_l2",
+          "name": "CH01: Permutations and Combinations — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l03",
-          "name": "Prob L3 — Bayes' theorem: P(A|B)=P(B|A)P(A)/P(B). Total probability rule. Draw probability trees — 3 full Bayes' examples.",
+          "id": "probability_statistics_ch01_l3",
+          "name": "CH01: Permutations and Combinations — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l04",
-          "name": "Prob L4 — Random variables: discrete PMF, CDF F(x)=P(X≤x), E[X], Var(X)=E[X²]−(E[X])²",
+          "id": "probability_statistics_ch01_l4",
+          "name": "CH01: Permutations and Combinations — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "pr_free1",
-          "name": "Free day 1: 10 Bayes' theorem PYQs",
-          "estimatedHours": 1
-        },
-        {
-          "id": "pr_l05",
-          "name": "Prob L5 — Moments, MGF M_X(t)=E[e^tX]",
+          "id": "probability_statistics_ch01_l5",
+          "name": "CH01: Permutations and Combinations — Lecture 5",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l06",
-          "name": "Prob L6 — Binomial: X~B(n,p), P(X=k)=C(n,k)p^k(1-p)^(n-k), mean=np, var=np(1-p)",
+          "id": "probability_statistics_twt1",
+          "name": "EM Topic Wise Test 2 — Counting",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "probability_statistics_ch02_l1",
+          "name": "CH02: Probability — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l07",
-          "name": "Prob L7 — Poisson: X~Pois(λ), P(X=k)=e^(−λ)λ^k/k!, mean=var=λ. B(n,p)→Pois(np) when n large, p small.",
+          "id": "probability_statistics_ch02_l2",
+          "name": "CH02: Probability — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l08",
-          "name": "Prob L8 — Normal: X~N(μ,σ²), Z=(X−μ)/σ, 68-95-99.7 rule",
+          "id": "probability_statistics_ch02_l3",
+          "name": "CH02: Probability — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "pr_free2",
-          "name": "Free day 2: 10 PYQs on Binomial / Poisson / Normal",
-          "estimatedHours": 1
-        },
-        {
-          "id": "pr_l09",
-          "name": "Prob L9 — Exponential: memoryless P(X>s+t|X>s)=P(X>t). Uniform X~U(a,b).",
+          "id": "probability_statistics_ch02_l4",
+          "name": "CH02: Probability — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l10",
-          "name": "Prob L10 — Joint distributions: joint PMF/PDF, marginals, conditional, independence (joint = product of marginals)",
+          "id": "probability_statistics_twt2",
+          "name": "Extra Combinatorics Counting Topic Wise Test 1 — Counting",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "probability_statistics_ch02_l5",
+          "name": "CH02: Probability — Lecture 5",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l11",
-          "name": "Prob L11 — Covariance: Cov(X,Y)=E[XY]−E[X]E[Y]. Correlation ρ=Cov/√(Var(X)Var(Y)). Independent → uncorrelated (not converse).",
+          "id": "probability_statistics_ch02_l6",
+          "name": "CH02: Probability — Lecture 6",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l12",
-          "name": "Prob L12 — Functions of RVs: Z=X+Y (convolution), Z=max(X,Y), Z=min(X,Y)",
+          "id": "probability_statistics_ch02_l7",
+          "name": "CH02: Probability — Lecture 7",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l13",
-          "name": "Prob L13 — LLN (weak: X̄→μ in probability), CLT: √n(X̄−μ)/σ → N(0,1)",
+          "id": "probability_statistics_ch03_l1",
+          "name": "CH03: Statistics — Discrete Random Variables — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l14",
-          "name": "Prob L14 — Markov chains: state space, transition matrix P, n-step P^n, classification",
+          "id": "probability_statistics_ch03_l2",
+          "name": "CH03: Statistics — Discrete Random Variables — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l15",
-          "name": "Prob L15 — Steady-state distribution π: πP=π, Σπ_i=1. Ergodic chains have unique steady state.",
+          "id": "probability_statistics_twt3",
+          "name": "EM Topic Wise Test 3 — Bayes Theorem, Conditional Probability",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "probability_statistics_ch03_l3",
+          "name": "CH03: Statistics — Discrete Random Variables — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l16",
-          "name": "Prob L16",
+          "id": "probability_statistics_ch03_l4",
+          "name": "CH03: Statistics — Discrete Random Variables — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "pr_free3",
-          "name": "Free day 3: 10 PYQs on Markov chains",
-          "estimatedHours": 1
-        },
-        {
-          "id": "pr_l17",
-          "name": "Prob L17",
+          "id": "probability_statistics_ch04_l1",
+          "name": "CH04: Statistics — Continuous Random Variables — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l18",
-          "name": "Prob L18",
+          "id": "probability_statistics_ch04_l2",
+          "name": "CH04: Statistics — Continuous Random Variables — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l19",
-          "name": "Prob L19",
+          "id": "probability_statistics_twt4",
+          "name": "EM Topic Wise Test 4 — Complete GATE CSE Probability",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "probability_statistics_ch04_l3",
+          "name": "CH04: Statistics — Continuous Random Variables — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "pr_l2022",
-          "name": "Prob L20–L22 — Final 3 Probability lectures (complete)",
+          "id": "probability_statistics_ch04_l4",
+          "name": "CH04: Statistics — Continuous Random Variables — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "pr_assess",
-          "name": "Eng Math Final Assessment — 40 questions (LA+Calc+Prob), 60 min. Gate: ≥33/40. Score 29–32: repair Mon–Wed Wk 23 before TOC L1.",
-          "estimatedHours": 1
+          "id": "probability_statistics_ch04_l5",
+          "name": "CH04: Statistics — Continuous Random Variables — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "probability_statistics_ch04_l6",
+          "name": "CH04: Statistics — Continuous Random Variables — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "probability_statistics_swt1",
+          "name": "EM Subject Wise Test 1 — Complete Engineering Maths Syllabus",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "probability_statistics_swt2",
+          "name": "EM Subject Wise Test 2 — Complete Engineering Maths Syllabus",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "probability_statistics_swt3",
+          "name": "EM Subject Wise Test 3 — Complete Engineering Maths Syllabus",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "probability_statistics_flt1",
+          "name": "DM, EM 65Q Full Length Test 1 — Complete Discrete Maths and Engineering Maths Syllabus",
+          "estimatedHours": 3
         }
       ],
-      "estimatedHours": 44
+      "estimatedHours": 54.5
     },
     {
       "id": "digital_logic",
@@ -2415,132 +2510,277 @@
       "tier": 2,
       "topics": [
         {
-          "id": "dl_l01",
-          "name": "Boolean algebra: postulates, De Morgan (A+B)'=A'B', duality (swap + and ·, swap 0 and 1)",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch01_l1",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l02",
-          "name": "Canonical SOP (sum of minterms) and POS (product of maxterms)",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch01_l2",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l03",
-          "name": "K-maps 2/3-variable: groups of 1/2/4/8 only, wrap-around edges adjacent",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch01_l3",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l04",
-          "name": "Combinational: half adder (S=A⊕B, C=AB), full adder, ripple carry, carry lookahead",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch01_l4",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l05",
-          "name": "MUX (any 3-variable function with 4-to-1 MUX), DEMUX, decoder, priority encoder",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch01_l5",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_dpp1",
-          "name": "DPP 1 — Boolean algebra and 2/3-var K-map problems on paper",
+          "id": "digital_logic_ch01_l6",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch01_l7",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch01_l8",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch01_l9",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch01_l10",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch01_l11",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch01_l12",
+          "name": "CH01: Boolean Theorems and Gates — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_twt1",
+          "name": "DL Topic Wise Test 1 — Boolean Algebra, Minimization, Number System",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "digital_logic_ch01_dpp1",
+          "name": "CH01: Boolean Theorems and Gates — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dl_l06",
-          "name": "K-maps 4-variable: corners adjacent (group of 4). Don't cares: include if they help make larger groups. Derive SOP and POS for 10 K-maps.",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch02_l1",
+          "name": "CH02: Combinational Circuit — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l07",
-          "name": "Flip-flops SR: 0→0:S=0,R=x; 0→1:S=1,R=0; 1→0:S=0,R=1; 1→1:S=x,R=0",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch02_l2",
+          "name": "CH02: Combinational Circuit — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l08",
-          "name": "Flip-flops JK: 0→0:J=0,K=x; 0→1:J=1,K=x; 1→0:J=x,K=1; 1→1:J=x,K=0",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch02_l3",
+          "name": "CH02: Combinational Circuit — Lecture 3",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l09",
-          "name": "Flip-flops D: D=Q_next always; T: T=Q⊕Q_next. Memorise all 4 excitation tables cold.",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch02_l4",
+          "name": "CH02: Combinational Circuit — Lecture 4",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l10",
-          "name": "State machines: Moore (output from state only) vs Mealy (output from state + input)",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch02_l5",
+          "name": "CH02: Combinational Circuit — Lecture 5",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_dpp2",
-          "name": "DPP 2 — Flip-flop excitation table and state machine problems",
+          "id": "digital_logic_ch02_l6",
+          "name": "CH02: Combinational Circuit — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l7",
+          "name": "CH02: Combinational Circuit — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l8",
+          "name": "CH02: Combinational Circuit — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l9",
+          "name": "CH02: Combinational Circuit — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l10",
+          "name": "CH02: Combinational Circuit — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l11",
+          "name": "CH02: Combinational Circuit — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_twt2",
+          "name": "DL Topic Wise Test 2 — Combinational Circuits",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "digital_logic_ch02_l12",
+          "name": "CH02: Combinational Circuit — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l13",
+          "name": "CH02: Combinational Circuit — Lecture 13",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_l14",
+          "name": "CH02: Combinational Circuit — Lecture 14",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch02_dpp1",
+          "name": "CH02: Combinational Circuit — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dl_l11",
-          "name": "Complete DL lectures — Part 1; K-map timed drill: any 4-variable K-map in < 2 min target",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch03_l1",
+          "name": "CH03: Sequential Circuit — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_l12",
-          "name": "Complete DL lectures — Part 2",
-          "estimatedHours": 1.5
+          "id": "digital_logic_ch03_l2",
+          "name": "CH03: Sequential Circuit — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "dl_dpp3",
-          "name": "DPP 3 — Final DL DPP on paper",
+          "id": "digital_logic_ch03_l3",
+          "name": "CH03: Sequential Circuit — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_l4",
+          "name": "CH03: Sequential Circuit — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_l5",
+          "name": "CH03: Sequential Circuit — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_l6",
+          "name": "CH03: Sequential Circuit — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_l7",
+          "name": "CH03: Sequential Circuit — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_l8",
+          "name": "CH03: Sequential Circuit — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_twt3",
+          "name": "DL Topic Wise Test 3 — Sequential Circuits",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "digital_logic_ch03_l9",
+          "name": "CH03: Sequential Circuit — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_l10",
+          "name": "CH03: Sequential Circuit — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch03_dpp1",
+          "name": "CH03: Sequential Circuit — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "dl_l13",
-          "name": "All GATE DL PYQs 2015–2026 timed; Error Log",
+          "id": "digital_logic_ch04_l1",
+          "name": "CH04: Miscellaneous Topics — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l2",
+          "name": "CH04: Miscellaneous Topics — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l3",
+          "name": "CH04: Miscellaneous Topics — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l4",
+          "name": "CH04: Miscellaneous Topics — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l5",
+          "name": "CH04: Miscellaneous Topics — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l6",
+          "name": "CH04: Miscellaneous Topics — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l7",
+          "name": "CH04: Miscellaneous Topics — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_ch04_l8",
+          "name": "CH04: Miscellaneous Topics — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "digital_logic_swt1",
+          "name": "DL Subject Wise Test 1 — Complete Digital Logic Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "dl_l14",
-          "name": "Digital Logic Lecture 14",
+          "id": "digital_logic_swt2",
+          "name": "DL Subject Wise Test 2 — Complete Digital Logic Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "dl_l15",
-          "name": "Digital Logic Lecture 15",
+          "id": "digital_logic_swt3",
+          "name": "DL Subject Wise Test 3 — Complete Digital Logic Syllabus",
           "estimatedHours": 1.5
         },
         {
-          "id": "dl_l16",
-          "name": "Digital Logic Lecture 16",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dl_l17",
-          "name": "Digital Logic Lecture 17",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dl_l18",
-          "name": "Digital Logic Lecture 18",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dl_l19",
-          "name": "Digital Logic Lecture 19",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dl_l20",
-          "name": "Digital Logic Lecture 20",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dl_l21",
-          "name": "Digital Logic Lecture 21",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "dl_l22",
-          "name": "Digital Logic Lecture 22",
-          "estimatedHours": 1.5
+          "id": "digital_logic_flt1",
+          "name": "OS, COA, Digital Logic 65Q Full Length Test 3 — Complete OS, COA, and Digital Logic Syllabus",
+          "estimatedHours": 3
         }
       ],
-      "estimatedHours": 36
+      "estimatedHours": 100.75
     },
     {
       "id": "general_aptitude",
@@ -2548,167 +2788,252 @@
       "tier": 1,
       "topics": [
         {
-          "id": "ga_l01",
-          "name": "Quantitative aptitude: patterns, number series",
-          "estimatedHours": 1.5
+          "id": "general_aptitude_ch01_l1",
+          "name": "CH01: Parts of Speech — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "ga_l02",
-          "name": "Verbal fundamentals: sentence correction, reading comprehension",
-          "estimatedHours": 1.5
+          "id": "general_aptitude_ch01_l2",
+          "name": "CH01: Parts of Speech — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "ga_l03",
-          "name": "GA Lecture 3 — Arithmetic: ratio/proportion, percentages, profit-loss",
-          "estimatedHours": 1.5
+          "id": "general_aptitude_ch02_l1",
+          "name": "CH02: Vocabulary — Lecture 1",
+          "estimatedHours": 2
         },
         {
-          "id": "ga_l04",
-          "name": "GA Lecture 4 — Time-speed-distance (d=st, relative speed); time-work (combined rate=1/A+1/B)",
-          "estimatedHours": 1.5
+          "id": "general_aptitude_ch02_l2",
+          "name": "CH02: Vocabulary — Lecture 2",
+          "estimatedHours": 2
         },
         {
-          "id": "ga_dpp01",
-          "name": "DPP 1 — Number series on paper",
+          "id": "general_aptitude_ch03_l1",
+          "name": "CH03: Reading Comprehension — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch03_dpp1",
+          "name": "CH03: Reading Comprehension — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp02",
-          "name": "DPP 2 — Arithmetic word problems",
+          "id": "general_aptitude_ch04_l1",
+          "name": "CH04: Quantitative Aptitude — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l2",
+          "name": "CH04: Quantitative Aptitude — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l3",
+          "name": "CH04: Quantitative Aptitude — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l4",
+          "name": "CH04: Quantitative Aptitude — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l5",
+          "name": "CH04: Quantitative Aptitude — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l6",
+          "name": "CH04: Quantitative Aptitude — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l7",
+          "name": "CH04: Quantitative Aptitude — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l8",
+          "name": "CH04: Quantitative Aptitude — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l9",
+          "name": "CH04: Quantitative Aptitude — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l10",
+          "name": "CH04: Quantitative Aptitude — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l11",
+          "name": "CH04: Quantitative Aptitude — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l12",
+          "name": "CH04: Quantitative Aptitude — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l13",
+          "name": "CH04: Quantitative Aptitude — Lecture 13",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l14",
+          "name": "CH04: Quantitative Aptitude — Lecture 14",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l15",
+          "name": "CH04: Quantitative Aptitude — Lecture 15",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_l16",
+          "name": "CH04: Quantitative Aptitude — Lecture 16",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch04_dpp1",
+          "name": "CH04: Quantitative Aptitude — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp03",
-          "name": "DPP 3 — Time-speed-distance problems",
+          "id": "general_aptitude_ch04_dpp2",
+          "name": "CH04: Quantitative Aptitude — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp04",
-          "name": "DPP 4 — Ratio/proportion problems",
+          "id": "general_aptitude_ch04_dpp3",
+          "name": "CH04: Quantitative Aptitude — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp05",
-          "name": "DPP 5 — Percentages and profit-loss",
+          "id": "general_aptitude_ch04_dpp4",
+          "name": "CH04: Quantitative Aptitude — DPP 4",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp06",
-          "name": "DPP 6 — Time-work problems",
+          "id": "general_aptitude_ch04_dpp5",
+          "name": "CH04: Quantitative Aptitude — DPP 5",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp07",
-          "name": "DPP 7 — Mixed quantitative problems",
+          "id": "general_aptitude_ch04_dpp6",
+          "name": "CH04: Quantitative Aptitude — DPP 6",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp08",
-          "name": "DPP 8 — Mixed quantitative problems",
+          "id": "general_aptitude_ch04_dpp7",
+          "name": "CH04: Quantitative Aptitude — DPP 7",
           "estimatedHours": 1
         },
         {
-          "id": "ga_l05",
-          "name": "GA Lecture 5 — Mixtures and alligation",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l06",
-          "name": "GA Lecture 6 — Syllogisms (Venn diagram for 3-statement)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l07",
-          "name": "GA Lecture 7 — Critical reasoning: assumption/strengthen/weaken",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l08",
-          "name": "GA Lecture 8 — Blood relations (draw family tree)",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l09",
-          "name": "GA Lecture 9 — Sentence correction: subject-verb agreement, parallelism, dangling modifier",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l10",
-          "name": "GA Lecture 10 — Reading comprehension: read once, answer from text",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l11",
-          "name": "GA Lecture 11",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_l12",
-          "name": "GA Lecture 12 — All GATE GA PYQs 2015–2026 timed (10 questions in 20 min); Error Log",
-          "estimatedHours": 1.5
-        },
-        {
-          "id": "ga_dpp09",
-          "name": "DPP 9 — Mixtures and alligation",
+          "id": "general_aptitude_ch04_dpp8",
+          "name": "CH04: Quantitative Aptitude — DPP 8",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp10",
-          "name": "DPP 10 — Syllogisms problems",
+          "id": "general_aptitude_ch04_dpp9",
+          "name": "CH04: Quantitative Aptitude — DPP 9",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp11",
-          "name": "DPP 11 — Critical reasoning",
+          "id": "general_aptitude_ch04_dpp10",
+          "name": "CH04: Quantitative Aptitude — DPP 10",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp12",
-          "name": "DPP 12 — Blood relations",
+          "id": "general_aptitude_ch04_dpp11",
+          "name": "CH04: Quantitative Aptitude — DPP 11",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp13",
-          "name": "DPP 13 — Sentence correction",
+          "id": "general_aptitude_ch05_l1",
+          "name": "CH05: Analytical Aptitude — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch05_l2",
+          "name": "CH05: Analytical Aptitude — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch05_l3",
+          "name": "CH05: Analytical Aptitude — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch05_l4",
+          "name": "CH05: Analytical Aptitude — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch05_l5",
+          "name": "CH05: Analytical Aptitude — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch05_l6",
+          "name": "CH05: Analytical Aptitude — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch05_dpp1",
+          "name": "CH05: Analytical Aptitude — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp14",
-          "name": "DPP 14 — Reading comprehension",
+          "id": "general_aptitude_ch05_dpp2",
+          "name": "CH05: Analytical Aptitude — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp15",
-          "name": "DPP 15 — Mixed verbal problems",
+          "id": "general_aptitude_ch05_dpp3",
+          "name": "CH05: Analytical Aptitude — DPP 3",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp16",
-          "name": "DPP 16 — Mixed verbal problems",
+          "id": "general_aptitude_ch05_dpp4",
+          "name": "CH05: Analytical Aptitude — DPP 4",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp17",
-          "name": "DPP 17 — Mixed GA problems",
+          "id": "general_aptitude_ch05_dpp5",
+          "name": "CH05: Analytical Aptitude — DPP 5",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp18",
-          "name": "DPP 18 — Mixed GA problems",
+          "id": "general_aptitude_ch05_dpp6",
+          "name": "CH05: Analytical Aptitude — DPP 6",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp19",
-          "name": "DPP 19 — Mixed GA problems",
+          "id": "general_aptitude_ch06_l1",
+          "name": "CH06: Spatial Aptitude — Lecture 1",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch06_l2",
+          "name": "CH06: Spatial Aptitude — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "general_aptitude_ch06_dpp1",
+          "name": "CH06: Spatial Aptitude — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "ga_dpp20",
-          "name": "DPP 20 — Final GA DPP on paper",
+          "id": "general_aptitude_ch06_dpp2",
+          "name": "CH06: Spatial Aptitude — DPP 2",
           "estimatedHours": 1
         }
       ],
-      "estimatedHours": 38
+      "estimatedHours": 78
     },
     {
       "id": "compiler_design",
@@ -2716,172 +3041,192 @@
       "tier": 2,
       "topics": [
         {
-          "id": "cp_l01",
-          "name": "CL1 — Phases: 6 phases (lexical, syntax, semantic, IR gen, optimization, code gen). Symbol table, error recovery.",
+          "id": "compiler_design_ch01_l1",
+          "name": "CH01: Introduction — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l02",
-          "name": "CL2 — Lexical analysis: tokens, lexeme, patterns. RE for tokens. LEX tool structure.",
+          "id": "compiler_design_ch01_l2",
+          "name": "CH01: Introduction — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l03",
-          "name": "CL3 — FIRST sets: FIRST(terminal)={terminal}. FIRST(ε-production) includes ε. FIRST(A)=FIRST of all RHS. Compute for 2 grammars fully.",
+          "id": "compiler_design_ch02_l1",
+          "name": "CH02: Parsers — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l04",
-          "name": "CL4 — FOLLOW sets: FOLLOW(S)={$}. For A→αBβ: FOLLOW(B)⊇FIRST(β)−{ε}. If ε∈FIRST(β): FOLLOW(B)⊇FOLLOW(A). Compute for same 2 grammars.",
+          "id": "compiler_design_ch02_l2",
+          "name": "CH02: Parsers — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "cp_free1",
-          "name": "Free day 1: 10 FIRST+FOLLOW PYQs — timed",
+          "id": "compiler_design_ch02_l3",
+          "name": "CH02: Parsers — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l4",
+          "name": "CH02: Parsers — Lecture 4",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l5",
+          "name": "CH02: Parsers — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l6",
+          "name": "CH02: Parsers — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l7",
+          "name": "CH02: Parsers — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_twt1",
+          "name": "CD Topic Wise Test 1 — Lexical Analysis, Syntax Analysis, Parsers",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "compiler_design_ch02_l8",
+          "name": "CH02: Parsers — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l9",
+          "name": "CH02: Parsers — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l10",
+          "name": "CH02: Parsers — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l11",
+          "name": "CH02: Parsers — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l12",
+          "name": "CH02: Parsers — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l13",
+          "name": "CH02: Parsers — Lecture 13",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l14",
+          "name": "CH02: Parsers — Lecture 14",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch02_l15",
+          "name": "CH02: Parsers — Lecture 15",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_twt2",
+          "name": "CD Topic Wise Test 2 — Semantic Analysis, SDT, SDD, Parser",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "compiler_design_ch02_dpp1",
+          "name": "CH02: Parsers — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cp_l05",
-          "name": "CL5 — LL(1) conditions: no left recursion, no common prefixes, FIRST(α)∩FIRST(β)=∅, if ε∈FIRST(α): FIRST(α)∩FOLLOW(A)=∅",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l06",
-          "name": "CL6 — LL(1) parse table: add A→α to table[A][a] for each a∈FIRST(α). If ε∈FIRST(α), also add for b∈FOLLOW(A). Parse 1 string fully.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l07",
-          "name": "CL7 — LR(0) items: dotted productions. Closure (add items for dot-before-nonterminal). Goto. Build LR(0) automaton.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l08",
-          "name": "CL8 — SLR table: states from LR(0) automaton. Shift on goto. Reduce A→α● in state: add to all a∈FOLLOW(A).",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_dpp1",
-          "name": "DPP 1 — LL(1) parse table + SLR automaton on paper",
+          "id": "compiler_design_ch02_dpp2",
+          "name": "CH02: Parsers — DPP 2",
           "estimatedHours": 1
         },
         {
-          "id": "cp_l09",
-          "name": "CL9 — LALR(1): merge CLR(1) states with identical cores, combine lookaheads. More powerful than SLR, less than CLR(1).",
+          "id": "compiler_design_ch03_l1",
+          "name": "CH03: Syntax Directed Translation — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l10",
-          "name": "CL10 — CLR(1): full canonical LR. Items are (production, lookahead) pairs. Closure with lookahead propagation. Work 1 full CLR example.",
+          "id": "compiler_design_ch03_l2",
+          "name": "CH03: Syntax Directed Translation — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l11",
-          "name": "CL11 — Conflicts: shift-reduce (ambiguous grammar), reduce-reduce (same lookahead). Operator precedence resolves dangling else.",
+          "id": "compiler_design_ch03_l3",
+          "name": "CH03: Syntax Directed Translation — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l12",
-          "name": "CL12 — Semantic analysis: attribute grammars. Synthesized (children→parent: bottom-up) vs inherited (parent→children: top-down).",
+          "id": "compiler_design_ch03_l4",
+          "name": "CH03: Syntax Directed Translation — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "cp_dpp2",
-          "name": "DPP 2 — LALR vs CLR conflicts identification on paper",
+          "id": "compiler_design_ch03_dpp1",
+          "name": "CH03: Syntax Directed Translation — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cp_l13",
-          "name": "CL13 — S-attributed: only synthesized. Evaluated during LR parsing (single bottom-up pass).",
+          "id": "compiler_design_ch04_l1",
+          "name": "CH04: Intermediate Code Generation — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l14",
-          "name": "CL14 — L-attributed: inherited attributes flow left-to-right. Every S-attributed is L-attributed.",
+          "id": "compiler_design_twt3",
+          "name": "CD Topic Wise Test 3 — Intermediate Codes, DAG, SSA, Code Optimisation",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "compiler_design_ch04_l2",
+          "name": "CH04: Intermediate Code Generation — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l15",
-          "name": "CL15 — SDT: syntax-directed translation schemes, embedding actions in grammar productions",
+          "id": "compiler_design_ch05_l1",
+          "name": "CH05: Runtime Environments — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l16",
-          "name": "CL16",
+          "id": "compiler_design_ch06_l1",
+          "name": "CH06: Code Optimisation — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_free2",
-          "name": "Free day 2: SLR + LALR practice on 2 new grammars (timed)",
+          "id": "compiler_design_ch06_l2",
+          "name": "CH06: Code Optimisation — Lecture 2",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch06_l3",
+          "name": "CH06: Code Optimisation — Lecture 3",
+          "estimatedHours": 2
+        },
+        {
+          "id": "compiler_design_ch06_dpp1",
+          "name": "CH06: Code Optimisation — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "cp_l17",
-          "name": "CL17 — Intermediate code: 3-address code x=y op z. TAC. Quadruples vs Triples.",
+          "id": "compiler_design_ch07_l1",
+          "name": "CH07: Live Variable Analysis — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "cp_l18",
-          "name": "CL18 — Basic blocks (maximal straight-line code). Control flow graph: nodes=basic blocks, edges=control flow.",
-          "estimatedHours": 2
+          "id": "compiler_design_swt1",
+          "name": "CD Subject Wise Test 1 — Complete Compiler Design Syllabus",
+          "estimatedHours": 1.5
         },
         {
-          "id": "cp_l19",
-          "name": "CL19 — Local optimization: constant folding (3+4→7), dead code elimination, CSE.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l20",
-          "name": "CL20",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_free3",
-          "name": "Free day 3: Compiler DPP 3",
-          "estimatedHours": 1
-        },
-        {
-          "id": "cp_dpp3",
-          "name": "DPP 3 — TAC tracing and optimization on paper",
-          "estimatedHours": 1
-        },
-        {
-          "id": "cp_l21",
-          "name": "CL21",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l22",
-          "name": "CL22",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l23",
-          "name": "CL23 — ⚠️ DO NOT SKIP: Data flow analysis. LIVE VARIABLE ANALYSIS: variable v is live at point p if there exists a path from p to a use of v without redefinition. Used in register allocation.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l24",
-          "name": "CL24 — Loop optimization: code motion (loop-invariant computation moved outside), strength reduction (x*2→x+x), induction variable elimination",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l25",
-          "name": "CL25",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_l26",
-          "name": "CL26–CL28 — Code generation, register allocation concepts (complete)",
-          "estimatedHours": 2
-        },
-        {
-          "id": "cp_free4",
-          "name": "Free day 4: Compiler timed drill — FIRST/FOLLOW for 2 new grammars. SLR table for 1 grammar. Target: FIRST/FOLLOW < 8 min, SLR zero errors.",
-          "estimatedHours": 1
+          "id": "compiler_design_swt2",
+          "name": "CD Subject Wise Test 2 — Complete Compiler Design Syllabus",
+          "estimatedHours": 1.5
         }
       ],
-      "estimatedHours": 59
+      "estimatedHours": 65.25
     },
     {
       "id": "theory_of_computation",
@@ -2889,172 +3234,573 @@
       "tier": 3,
       "topics": [
         {
-          "id": "toc_l01",
-          "name": "TOC L1 — DFA: formal 5-tuple (Q,Σ,δ,q0,F), δ*, language of a DFA",
+          "id": "theory_of_computation_ch01_l1",
+          "name": "CH01: Regular Languages — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l02",
-          "name": "TOC L2 — DFA construction: even 0s, strings ending in 01, divisibility by 3 — draw complete state diagram for each",
+          "id": "theory_of_computation_ch01_l2",
+          "name": "CH01: Regular Languages — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l03",
-          "name": "TOC L3 — DFA minimization: table-filling algorithm (Myhill-Nerode). Work 1 full example with 6+ states.",
+          "id": "theory_of_computation_ch01_l3",
+          "name": "CH01: Regular Languages — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l04",
-          "name": "TOC L4 — NFA: formal def, ε-transitions, ε-closure, language equivalence with DFA",
+          "id": "theory_of_computation_ch01_l4",
+          "name": "CH01: Regular Languages — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "toc_dpp1",
-          "name": "DPP 1 — DFA/NFA construction and minimization on paper",
+          "id": "theory_of_computation_ch01_l5",
+          "name": "CH01: Regular Languages — Lecture 5",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l6",
+          "name": "CH01: Regular Languages — Lecture 6",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_twt1",
+          "name": "TOC Topic Wise Test 1 — Finite Automata",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "theory_of_computation_ch01_l7",
+          "name": "CH01: Regular Languages — Lecture 7",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l8",
+          "name": "CH01: Regular Languages — Lecture 8",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l9",
+          "name": "CH01: Regular Languages — Lecture 9",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l10",
+          "name": "CH01: Regular Languages — Lecture 10",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l11",
+          "name": "CH01: Regular Languages — Lecture 11",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_twt2",
+          "name": "TOC Topic Wise Test 2 — Regular Expression",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "theory_of_computation_ch01_l12",
+          "name": "CH01: Regular Languages — Lecture 12",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l13",
+          "name": "CH01: Regular Languages — Lecture 13",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l14",
+          "name": "CH01: Regular Languages — Lecture 14",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_l15",
+          "name": "CH01: Regular Languages — Lecture 15",
+          "estimatedHours": 2
+        },
+        {
+          "id": "theory_of_computation_ch01_dpp1",
+          "name": "CH01: Regular Languages — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "toc_l05",
-          "name": "TOC L5 — NFA→DFA: subset construction. Work through 1 complete example — draw all reachable states.",
+          "id": "theory_of_computation_ch02_l1",
+          "name": "CH02: Context Free Languages — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l06",
-          "name": "TOC L6 — Regular Expressions: Kleene star, concatenation, union. RE→DFA (Thompson's concept). DFA→RE (state elimination).",
+          "id": "theory_of_computation_twt3",
+          "name": "TOC Topic Wise Test 3 — CFG, PDA",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "theory_of_computation_ch02_l2",
+          "name": "CH02: Context Free Languages — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l07",
-          "name": "TOC L7 — Kleene's theorem: RE = NFA = DFA. RL closure: union, concatenation, star, complement, intersection.",
+          "id": "theory_of_computation_ch02_l3",
+          "name": "CH02: Context Free Languages — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l08",
-          "name": "TOC L8 — Pumping Lemma for RL. Work through 3 full non-regularity proofs.",
+          "id": "theory_of_computation_ch02_l4",
+          "name": "CH02: Context Free Languages — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l09",
-          "name": "TOC L9 — CFG: 4-tuple (V,Σ,R,S), derivations (leftmost, rightmost), parse trees, yield",
+          "id": "theory_of_computation_ch02_l5",
+          "name": "CH02: Context Free Languages — Lecture 5",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l10",
-          "name": "TOC L10 — Ambiguity: ≥2 parse trees for same string. Inherent ambiguity.",
+          "id": "theory_of_computation_ch02_l6",
+          "name": "CH02: Context Free Languages — Lecture 6",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l11",
-          "name": "TOC L11 — CFG simplification: remove ε-productions, unit productions, useless symbols. CNF: A→BC or A→a.",
+          "id": "theory_of_computation_twt4",
+          "name": "TOC Topic Wise Test 4 — Closure Properties, Language Class Detection",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "theory_of_computation_ch02_l7",
+          "name": "CH02: Context Free Languages — Lecture 7",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l12",
-          "name": "TOC L12 — GNF: A→aα. CYK algorithm for parsing O(n³) — concept.",
+          "id": "theory_of_computation_ch02_l8",
+          "name": "CH02: Context Free Languages — Lecture 8",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l13",
-          "name": "TOC L13 — PDA: 6-tuple, stack operations, configurations. Acceptance by final state vs empty stack.",
+          "id": "theory_of_computation_ch02_l9",
+          "name": "CH02: Context Free Languages — Lecture 9",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l14",
-          "name": "TOC L14 — Deterministic PDA: deterministic ↔ DCFL. CFL ⊃ DCFL. L={ww^R} is CFL but not DCFL.",
+          "id": "theory_of_computation_ch02_l10",
+          "name": "CH02: Context Free Languages — Lecture 10",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l15",
-          "name": "TOC L15 — CFL Pumping Lemma: uvxyz, |vxy|≤p, |vy|≥1. Prove {a^n b^n c^n} not CFL.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "toc_free1",
-          "name": "Free day 1: 25 GATE DFA/NFA/CFG PYQs timed 45 min",
+          "id": "theory_of_computation_ch02_dpp1",
+          "name": "CH02: Context Free Languages — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "toc_l16",
-          "name": "TOC L16 — CFL closure: closed under union, concatenation, star. NOT closed under intersection, complement.",
+          "id": "theory_of_computation_twt5",
+          "name": "TOC Topic Wise Test 5 — Decidability, Undecidability",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "theory_of_computation_ch03_l1",
+          "name": "CH03: Turing Machines — Lecture 1",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l17",
-          "name": "TOC L17 — TM: 7-tuple, tape alphabet Γ⊃Σ, transition δ:Q×Γ→Q×Γ×{L,R}, accept/reject/loop",
+          "id": "theory_of_computation_ch03_l2",
+          "name": "CH03: Turing Machines — Lecture 2",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l18",
-          "name": "TOC L18 — TM examples: binary increment, unary addition, palindrome recognition",
+          "id": "theory_of_computation_ch03_l3",
+          "name": "CH03: Turing Machines — Lecture 3",
           "estimatedHours": 2
         },
         {
-          "id": "toc_l19",
-          "name": "TOC L19 — TM variants: multi-tape (same power), NDTM, 2-stack PDA. All equivalent to standard TM.",
+          "id": "theory_of_computation_ch03_l4",
+          "name": "CH03: Turing Machines — Lecture 4",
           "estimatedHours": 2
         },
         {
-          "id": "toc_dpp2",
-          "name": "DPP 2 — CFG derivation, PDA states, and TM problems on paper",
+          "id": "theory_of_computation_ch03_dpp1",
+          "name": "CH03: Turing Machines — DPP 1",
           "estimatedHours": 1
         },
         {
-          "id": "toc_l20",
-          "name": "TOC L20 — Church-Turing thesis. R (recursive) languages: TM always halts. RE languages: TM may loop on non-members.",
-          "estimatedHours": 2
+          "id": "theory_of_computation_swt1",
+          "name": "TOC Subject Wise Test 1 — Complete Theory of Computation Syllabus",
+          "estimatedHours": 1.5
         },
         {
-          "id": "toc_l21",
-          "name": "TOC L21 — Halting problem: undecidable. Proof by diagonalization — reproduce the proof from scratch.",
-          "estimatedHours": 2
+          "id": "theory_of_computation_swt2",
+          "name": "TOC Subject Wise Test 2 — Complete Theory of Computation Syllabus",
+          "estimatedHours": 1.5
         },
         {
-          "id": "toc_l22",
-          "name": "TOC L22 — Rice's theorem: any non-trivial semantic property of TM languages is undecidable. Apply: 'does TM accept ε?'",
-          "estimatedHours": 2
+          "id": "theory_of_computation_swt3",
+          "name": "TOC Subject Wise Test 3 — Complete Theory of Computation Syllabus",
+          "estimatedHours": 1.5
         },
         {
-          "id": "toc_l23",
-          "name": "TOC L23 — Post Correspondence Problem: undecidable. Used as basis for other undecidability proofs.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "toc_dpp3",
-          "name": "DPP 3 — Decidability and reduction mapping problems on paper",
-          "estimatedHours": 1
-        },
-        {
-          "id": "toc_l24",
-          "name": "TOC L24–L26 — P and NP: P (decided in poly time), NP (verified in poly time), NP-hard, NP-complete. Cook's theorem (SAT is NP-complete). Reduction chain: SAT → 3-SAT → Vertex Cover → Independent Set → Clique → Hamiltonian Path → TSP. Know this chain cold.",
-          "estimatedHours": 2
-        },
-        {
-          "id": "toc_l25",
-          "name": "TOC L27",
-          "estimatedHours": 2
-        },
-        {
-          "id": "toc_l26",
-          "name": "TOC L28",
-          "estimatedHours": 2
-        },
-        {
-          "id": "toc_l27",
-          "name": "TOC L29 — Last TOC lecture",
-          "estimatedHours": 2
-        },
-        {
-          "id": "toc_free2",
-          "name": "Free day 2: TOC Assessment — 25 PYQs, 45 min. Target ≥80% (≥20/25).",
-          "estimatedHours": 1
-        },
-        {
-          "id": "toc_free3",
-          "name": "Free day 3 (bonus): DFA construction timed drills — build 5 DFAs under time pressure.",
-          "estimatedHours": 1
+          "id": "theory_of_computation_flt1",
+          "name": "CN, DBMS, TOC, CD 65Q Full Length Test 2 — Complete CN, DBMS, TOC, and Compiler Design Syllabus",
+          "estimatedHours": 3
         }
       ],
-      "estimatedHours": 60
+      "estimatedHours": 72.25
+    },
+    {
+      "id": "go_classes_mocks",
+      "name": "GO Classes Full-Length Mocks",
+      "tier": 4,
+      "estimatedHours": 63,
+      "topics": [
+        {
+          "id": "go_mocks_mock1",
+          "name": "GO Classes CS 2027 Mock Test 1 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock2",
+          "name": "GO Classes CS 2027 Mock Test 2 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock3",
+          "name": "GO Classes CS 2027 Mock Test 3 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock4",
+          "name": "GO Classes CS 2027 Mock Test 4 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock5",
+          "name": "GO Classes CS 2027 Mock Test 5 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock6",
+          "name": "GO Classes CS 2027 Mock Test 6 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock7",
+          "name": "GO Classes CS 2027 Mock Test 7 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock8",
+          "name": "GO Classes CS 2027 Mock Test 8 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock9",
+          "name": "GO Classes CS 2027 Mock Test 9 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock10",
+          "name": "GO Classes CS 2027 Mock Test 10 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock11",
+          "name": "GO Classes CS 2027 Mock Test 11 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock12",
+          "name": "GO Classes CS 2027 Mock Test 12 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock13",
+          "name": "GO Classes CS 2027 Mock Test 13 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock14",
+          "name": "GO Classes CS 2027 Mock Test 14 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock15",
+          "name": "GO Classes CS 2027 Mock Test 15 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock16",
+          "name": "GO Classes CS 2027 Mock Test 16 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock17",
+          "name": "GO Classes CS 2027 Mock Test 17 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock18",
+          "name": "GO Classes CS 2027 Mock Test 18 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock19",
+          "name": "GO Classes CS 2027 Mock Test 19 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock20",
+          "name": "GO Classes CS 2027 Mock Test 20 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "go_mocks_mock21",
+          "name": "GO Classes CS 2027 Mock Test 21 — Full Syllabus Mock (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        }
+      ]
+    },
+    {
+      "id": "made_easy_tests",
+      "name": "Made Easy Test Series",
+      "tier": 4,
+      "estimatedHours": 72,
+      "topics": [
+        {
+          "id": "made_easy_twt1",
+          "name": "Made Easy Topic Wise Test 1 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt2",
+          "name": "Made Easy Topic Wise Test 2 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt3",
+          "name": "Made Easy Topic Wise Test 3 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt4",
+          "name": "Made Easy Topic Wise Test 4 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt5",
+          "name": "Made Easy Topic Wise Test 5 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt6",
+          "name": "Made Easy Topic Wise Test 6 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt7",
+          "name": "Made Easy Topic Wise Test 7 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt8",
+          "name": "Made Easy Topic Wise Test 8 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt9",
+          "name": "Made Easy Topic Wise Test 9 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt10",
+          "name": "Made Easy Topic Wise Test 10 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt11",
+          "name": "Made Easy Topic Wise Test 11 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt12",
+          "name": "Made Easy Topic Wise Test 12 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt13",
+          "name": "Made Easy Topic Wise Test 13 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt14",
+          "name": "Made Easy Topic Wise Test 14 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt15",
+          "name": "Made Easy Topic Wise Test 15 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt16",
+          "name": "Made Easy Topic Wise Test 16 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt17",
+          "name": "Made Easy Topic Wise Test 17 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt18",
+          "name": "Made Easy Topic Wise Test 18 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt19",
+          "name": "Made Easy Topic Wise Test 19 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt20",
+          "name": "Made Easy Topic Wise Test 20 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt21",
+          "name": "Made Easy Topic Wise Test 21 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt22",
+          "name": "Made Easy Topic Wise Test 22 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt23",
+          "name": "Made Easy Topic Wise Test 23 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_twt24",
+          "name": "Made Easy Topic Wise Test 24 — Part Syllabus (17Q, 25M, 45 min)",
+          "estimatedHours": 0.75
+        },
+        {
+          "id": "made_easy_swt1",
+          "name": "Made Easy Single Subject Wise Test 1 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt2",
+          "name": "Made Easy Single Subject Wise Test 2 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt3",
+          "name": "Made Easy Single Subject Wise Test 3 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt4",
+          "name": "Made Easy Single Subject Wise Test 4 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt5",
+          "name": "Made Easy Single Subject Wise Test 5 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt6",
+          "name": "Made Easy Single Subject Wise Test 6 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt7",
+          "name": "Made Easy Single Subject Wise Test 7 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt8",
+          "name": "Made Easy Single Subject Wise Test 8 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt9",
+          "name": "Made Easy Single Subject Wise Test 9 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt10",
+          "name": "Made Easy Single Subject Wise Test 10 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt11",
+          "name": "Made Easy Single Subject Wise Test 11 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_swt12",
+          "name": "Made Easy Single Subject Wise Test 12 — Part Syllabus (33Q, 50M, 90 min)",
+          "estimatedHours": 1.5
+        },
+        {
+          "id": "made_easy_basic1",
+          "name": "Made Easy Basic Level Full Syllabus Test 1 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_basic2",
+          "name": "Made Easy Basic Level Full Syllabus Test 2 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_basic3",
+          "name": "Made Easy Basic Level Full Syllabus Test 3 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_basic4",
+          "name": "Made Easy Basic Level Full Syllabus Test 4 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_advance1",
+          "name": "Made Easy Advance Level Full Syllabus Test 1 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_advance2",
+          "name": "Made Easy Advance Level Full Syllabus Test 2 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_advance3",
+          "name": "Made Easy Advance Level Full Syllabus Test 3 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_advance4",
+          "name": "Made Easy Advance Level Full Syllabus Test 4 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_mock1",
+          "name": "Made Easy Mock Level Full Syllabus Test 1 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_mock2",
+          "name": "Made Easy Mock Level Full Syllabus Test 2 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_mock3",
+          "name": "Made Easy Mock Level Full Syllabus Test 3 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        },
+        {
+          "id": "made_easy_mock4",
+          "name": "Made Easy Mock Level Full Syllabus Test 4 — (65Q, 100M, 3h)",
+          "estimatedHours": 3
+        }
+      ]
     }
   ],
   "recommendedHoursPerWeek": 31
